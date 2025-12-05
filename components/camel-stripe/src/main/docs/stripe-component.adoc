@@ -1,0 +1,543 @@
+= Stripe Component
+:doctitle: Stripe
+:shortname: stripe
+:artifactid: camel-stripe
+:description: Camel Stripe component
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:camel-spring-boot-name: stripe
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Stripe component provides integration with the https://stripe.com/[Stripe] payment platform API using Stripe Java SDK version {stripe-java-version}.
+
+Stripe is a popular payment processing platform that allows businesses to accept payments, send payouts, and manage their online businesses. This component enables Apache Camel routes to interact with Stripe's API for operations such as:
+
+* Creating and managing customers
+* Processing payments and payment intents
+* Managing products and prices
+* Handling subscriptions
+* Creating and managing invoices
+* Processing refunds
+* And more
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-stripe</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+stripe:operation[?options]
+----
+
+Where `operation` is one of the following:
+
+* `charges` - Create, retrieve, update, list, and capture charges
+* `customers` - Create, retrieve, update, delete, and list customers
+* `paymentIntents` - Create, retrieve, update, cancel, and list payment intents
+* `paymentMethods` - Create, retrieve, update, and list payment methods
+* `refunds` - Create, retrieve, update, and list refunds
+* `subscriptions` - Create, retrieve, update, cancel, and list subscriptions
+* `invoices` - Create, retrieve, update, and list invoices
+* `products` - Create, retrieve, update, delete, and list products
+* `prices` - Create, retrieve, update, and list prices
+* `balanceTransactions` - Retrieve and list balance transactions
+
+// component-configure options: START
+
+== Configuring Options
+
+Camel components are configured on two separate levels:
+
+- component level
+- endpoint level
+
+=== Configuring Component Options
+
+At the component level, you set general and shared configurations that are, then, inherited by the endpoints.
+You can set them directly via Java code, or through the properties component.
+
+[source,java]
+----
+StripeComponent stripe = context.getComponent("stripe", StripeComponent.class);
+stripe.setApiKey("sk_test_...");
+----
+
+=== Configuring Endpoint Options
+
+You usually use the endpoint for configuring the API operation and parameters specific to each call.
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+include::partial$endpoint-options.adoc[]
+// endpoint options: END
+
+== Message Headers
+
+[width="100%",cols="10%,10%,80%",options="header"]
+|===
+|Name |Type |Description
+
+|`CamelStripeOperation` |String |Override the operation specified in the endpoint URI
+|`CamelStripeMethod` |String |The method to invoke (create, retrieve, update, delete, list, cancel, capture)
+|`CamelStripeObjectId` |String |The ID of the object to retrieve, update, or delete
+|===
+
+== Authentication
+
+The Stripe component requires a Stripe API key for authentication. You can obtain your API keys from the Stripe Dashboard.
+
+=== Getting Your Stripe API Key
+
+==== Step 1: Create a Stripe Account
+
+. Go to https://stripe.com/[Stripe's website]
+. Click "Sign up" or "Start now"
+. Fill in your email, password, and country
+. Verify your email address by clicking the link sent to your email
+. Complete your account setup by providing business information
+
+==== Step 2: Access the Stripe Dashboard
+
+. Log in to your Stripe account at https://dashboard.stripe.com/[dashboard.stripe.com]
+. You will land on the Stripe Dashboard home page
+
+==== Step 3: Get Your API Keys
+
+. In the Stripe Dashboard, click on the "Developers" link in the left sidebar
+. Click on "API keys" in the submenu
+. You will see two types of keys:
+** *Publishable key*: Used in client-side code (not needed for this component)
+** *Secret key*: Used for server-side API calls (this is what you need)
+
+. For testing, use the *Test mode* keys (toggle is at the top right)
+** Test keys start with `sk_test_...`
+** Test mode allows you to make API calls without processing real payments
+. For production, switch to *Live mode* (requires account verification)
+** Live keys start with `sk_live_...`
+** *WARNING*: Never use live keys for testing or development!
+
+. Click "Reveal test key" to view your secret API key
+. Copy the key starting with `sk_test_...`
+
+==== Important Security Notes
+
+* *Never commit API keys to version control* (Git, SVN, etc.)
+* *Never expose API keys in client-side code*
+* *Use environment variables or secure configuration management* for production
+* *Always use test keys for development and testing*
+* *Rotate your API keys regularly* for security
+* *Use restricted API keys* in production for least privilege access
+
+=== Configuring Authentication in Camel
+
+You can configure the API key in several ways:
+
+==== Option 1: Component Level (Recommended for Single Key)
+
+[source,java]
+----
+StripeComponent stripe = context.getComponent("stripe", StripeComponent.class);
+stripe.setApiKey("sk_test_...");
+----
+
+==== Option 2: Endpoint Level with Property Placeholder
+
+[source,java]
+----
+from("direct:start")
+    .to("stripe:customers?apiKey={{stripe.apiKey}}");
+----
+
+Then in `application.properties`:
+----
+stripe.apiKey=sk_test_...
+----
+
+==== Option 3: System Property (Recommended for Production)
+
+[source,java]
+----
+from("direct:start")
+    .to("stripe:customers?apiKey={{STRIPE_API_KEY}}");
+----
+
+Set via system property:
+----
+mvn camel:run -DSTRIPE_API_KEY=sk_test_...
+----
+
+== Usage Examples
+
+The Stripe component accepts both Map objects and JSON strings as input, providing flexibility for different integration scenarios.
+
+=== Creating a Customer
+
+Using a Map:
+
+[source,java]
+----
+from("direct:createCustomer")
+    .setBody(constant(Map.of(
+        "email", "customer@example.com",
+        "name", "John Doe",
+        "description", "New customer"
+    )))
+    .to("stripe:customers?apiKey={{stripe.apiKey}}")
+    .log("Created customer: ${body.id}");
+----
+
+Using JSON:
+
+[source,java]
+----
+from("direct:createCustomerJson")
+    .setBody(constant("""
+        {
+            "email": "customer@example.com",
+            "name": "John Doe",
+            "description": "New customer"
+        }
+    """))
+    .to("stripe:customers?apiKey={{stripe.apiKey}}")
+    .log("Created customer: ${body.id}");
+----
+
+=== Creating a Payment Intent
+
+Using a Map:
+
+[source,java]
+----
+from("direct:payment")
+    .setBody(constant(Map.of(
+        "amount", 2000L,  // Amount in cents ($20.00)
+        "currency", "usd",
+        "payment_method_types", List.of("card"),
+        "description", "Payment for order #12345"
+    )))
+    .to("stripe:paymentIntents?apiKey={{stripe.apiKey}}")
+    .log("Payment intent created: ${body.id}");
+----
+
+Using JSON (useful when integrating with REST endpoints):
+
+[source,java]
+----
+from("rest:post:/payments")
+    .log("Received payment request: ${body}")
+    // Body is already JSON from REST endpoint
+    .to("stripe:paymentIntents?apiKey={{stripe.apiKey}}")
+    .log("Payment intent created: ${body.id}");
+----
+
+=== Retrieving a Customer
+
+[source,java]
+----
+from("direct:getCustomer")
+    .setHeader(StripeConstants.OBJECT_ID, constant("cus_xxxxx"))
+    .setHeader(StripeConstants.METHOD_HEADER, constant(StripeConstants.METHOD_RETRIEVE))
+    .to("stripe:customers?apiKey={{stripe.apiKey}}")
+    .log("Retrieved customer: ${body.email}");
+----
+
+=== Updating a Payment Intent
+
+[source,java]
+----
+from("direct:updatePayment")
+    .setHeader(StripeConstants.OBJECT_ID, simple("${exchangeProperty.paymentIntentId}"))
+    .setHeader(StripeConstants.METHOD_HEADER, constant(StripeConstants.METHOD_UPDATE))
+    .setBody(constant(Map.of(
+        "description", "Updated description",
+        "metadata", Map.of("order_id", "12345")
+    )))
+    .to("stripe:paymentIntents?apiKey={{stripe.apiKey}}");
+----
+
+=== Listing Customers
+
+[source,java]
+----
+from("direct:listCustomers")
+    .setHeader(StripeConstants.METHOD_HEADER, constant(StripeConstants.METHOD_LIST))
+    .setBody(constant(Map.of("limit", 10)))
+    .to("stripe:customers?apiKey={{stripe.apiKey}}")
+    .log("Found ${body.data.size()} customers");
+----
+
+=== Creating a Product with Price
+
+[source,java]
+----
+from("direct:createProduct")
+    // Create product
+    .setBody(constant(Map.of(
+        "name", "Premium Subscription",
+        "description", "Monthly premium access"
+    )))
+    .to("stripe:products?apiKey={{stripe.apiKey}}")
+    .setProperty("productId", simple("${body.id}"))
+    // Create price for the product
+    .process(exchange -> {
+        Map<String, Object> priceParams = new HashMap<>();
+        priceParams.put("product", exchange.getProperty("productId", String.class));
+        priceParams.put("currency", "usd");
+        priceParams.put("unit_amount", 2999L);  // $29.99
+        priceParams.put("recurring", Map.of("interval", "month"));
+        exchange.getMessage().setBody(priceParams);
+    })
+    .to("stripe:prices?apiKey={{stripe.apiKey}}")
+    .log("Created product ${exchangeProperty.productId} with price ${body.id}");
+----
+
+=== Processing a Refund
+
+[source,java]
+----
+from("direct:refund")
+    .setBody(constant(Map.of(
+        "charge", "ch_xxxxx",
+        "amount", 1000L,  // Partial refund of $10.00
+        "reason", "requested_by_customer"
+    )))
+    .to("stripe:refunds?apiKey={{stripe.apiKey}}")
+    .log("Refund processed: ${body.id}");
+----
+
+=== Canceling a Payment Intent
+
+[source,java]
+----
+from("direct:cancelPayment")
+    .setHeader(StripeConstants.OBJECT_ID, simple("${header.paymentIntentId}"))
+    .setHeader(StripeConstants.METHOD_HEADER, constant(StripeConstants.METHOD_CANCEL))
+    .to("stripe:paymentIntents?apiKey={{stripe.apiKey}}")
+    .log("Payment intent canceled: ${body.id}");
+----
+
+== Running Integration Tests
+
+The Stripe component includes comprehensive integration tests that verify functionality against the Stripe API.
+
+=== Prerequisites
+
+. A Stripe account (free to create)
+. A test API key (obtained from the Stripe Dashboard as described above)
+. Maven 3.x and Java 11 or higher
+
+=== Running the Tests
+
+Provide the API key via system property:
+
+[source,bash]
+----
+mvn verify -Dtest=Stripe*IntegrationTest -DSTRIPE_API_KEY=sk_test_51...
+----
+
+==== Running Specific Test Classes
+
+[source,bash]
+----
+# Test customer operations
+mvn verify -Dtest=StripeCustomerIntegrationTest -DSTRIPE_API_KEY=sk_test_51...
+
+# Test payment intent operations
+mvn verify -Dtest=StripePaymentIntentIntegrationTest -DSTRIPE_API_KEY=sk_test_51...
+
+# Test product operations
+mvn verify -Dtest=StripeProductIntegrationTest -DSTRIPE_API_KEY=sk_test_51...
+----
+
+==== Running All Tests
+
+[source,bash]
+----
+mvn verify -DSTRIPE_API_KEY=sk_test_51...
+----
+
+=== Test Safety
+
+All integration tests:
+
+* *Only use test mode API keys* (verified by checking `sk_test_` prefix)
+* *Create temporary test data* that is cleaned up after each test
+* *Never process real payments* or affect production data
+* *Can be run unlimited times* without cost
+* *Automatically skip* if no API key is provided
+
+=== Viewing Test Results in Stripe Dashboard
+
+. Log in to the Stripe Dashboard
+. Ensure you're in *Test mode* (toggle at top right)
+. Navigate to the relevant section:
+** Customers: https://dashboard.stripe.com/test/customers
+** Payments: https://dashboard.stripe.com/test/payments
+** Products: https://dashboard.stripe.com/test/products
+
+You can see all the test data created during integration test runs.
+
+== Supported Operations and Methods
+
+=== Charges
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a charge for a payment
+|`retrieve` |Retrieve a charge by ID
+|`update` |Update a charge's metadata
+|`list` |List all charges
+|`capture` |Capture a previously uncaptured charge
+|===
+
+=== Customers
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a new customer
+|`retrieve` |Retrieve a customer by ID
+|`update` |Update customer information
+|`delete` |Delete a customer
+|`list` |List all customers
+|===
+
+=== Payment Intents
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a payment intent
+|`retrieve` |Retrieve a payment intent by ID
+|`update` |Update payment intent information
+|`cancel` |Cancel a payment intent
+|`list` |List all payment intents
+|===
+
+=== Payment Methods
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a payment method
+|`retrieve` |Retrieve a payment method by ID
+|`update` |Update payment method information
+|`list` |List all payment methods
+|===
+
+=== Refunds
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a refund
+|`retrieve` |Retrieve a refund by ID
+|`update` |Update refund metadata
+|`list` |List all refunds
+|===
+
+=== Subscriptions
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a subscription
+|`retrieve` |Retrieve a subscription by ID
+|`update` |Update subscription information
+|`cancel` |Cancel a subscription
+|`list` |List all subscriptions
+|===
+
+=== Invoices
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create an invoice
+|`retrieve` |Retrieve an invoice by ID
+|`update` |Update invoice information
+|`list` |List all invoices
+|===
+
+=== Products
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a product
+|`retrieve` |Retrieve a product by ID
+|`update` |Update product information
+|`delete` |Delete a product
+|`list` |List all products
+|===
+
+=== Prices
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`create` |Create a price
+|`retrieve` |Retrieve a price by ID
+|`update` |Update price metadata
+|`list` |List all prices
+|===
+
+=== Balance Transactions
+
+[width="100%",cols="20%,80%",options="header"]
+|===
+|Method |Description
+|`retrieve` |Retrieve a balance transaction by ID
+|`list` |List all balance transactions
+|===
+
+== Error Handling
+
+The Stripe API may return various errors. The component propagates these as exceptions:
+
+[source,java]
+----
+from("direct:createPayment")
+    .doTry()
+        .to("stripe:paymentIntents?apiKey={{stripe.apiKey}}")
+        .log("Payment successful: ${body.id}")
+    .doCatch(com.stripe.exception.CardException.class)
+        .log("Card was declined: ${exception.message}")
+    .doCatch(com.stripe.exception.InvalidRequestException.class)
+        .log("Invalid parameters: ${exception.message}")
+    .doCatch(com.stripe.exception.AuthenticationException.class)
+        .log("Authentication failed - check API key")
+    .doCatch(com.stripe.exception.ApiException.class)
+        .log("Stripe API error: ${exception.message}")
+    .end();
+----
+
+== Additional Resources
+
+* https://stripe.com/docs/api[Stripe API Documentation]
+* https://stripe.com/docs/testing[Stripe Testing Guide]
+* https://stripe.com/docs/keys[API Keys Documentation]
+* https://github.com/stripe/stripe-java[Stripe Java SDK]

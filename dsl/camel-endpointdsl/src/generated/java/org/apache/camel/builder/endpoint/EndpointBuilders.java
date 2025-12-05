@@ -345,6 +345,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.StripeEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StubEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.TahuEdgeEndpointBuilderFactory,

@@ -350,6 +350,7 @@
 ** xref:stomp-component.adoc[Stomp]
 ** xref:stream-component.adoc[Stream]
 ** xref:string-template-component.adoc[String Template]
+** xref:stripe-component.adoc[Stripe]
 ** xref:stub-component.adoc[Stub]
 ** xref:tahu-summary.adoc[Tahu]
 *** xref:tahu-edge-component.adoc[Tahu Edge Node / Device]

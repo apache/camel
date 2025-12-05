@@ -304,6 +304,7 @@
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>
+        <module>camel-stripe</module>
         <module>camel-swift</module>
         <module>camel-openapi-java</module>
         <module>camel-openapi-validator</module>

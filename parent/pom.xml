@@ -509,6 +509,7 @@
         <squareup-okio-version>1.17.5</squareup-okio-version>
         <sshd-version>2.16.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
+        <stripe-java-version>31.0.0</stripe-java-version>
         <stumbleupon-async-version>1.4.1</stumbleupon-async-version>
         <swagger-java-version>1.6.10</swagger-java-version>
         <swagger-openapi3-version>2.2.36</swagger-openapi3-version>
@@ -2612,6 +2613,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-stringtemplate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-stripe</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

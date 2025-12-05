@@ -1,0 +1,43 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "stripe",
+    "title": "Stripe",
+    "description": "Camel Stripe component",
+    "deprecated": false,
+    "firstVersion": "4.17.0",
+    "label": "cloud",
+    "javaType": "org.apache.camel.component.stripe.StripeComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-stripe",
+    "version": "4.17.0-SNAPSHOT",
+    "scheme": "stripe",
+    "extendsScheme": "",
+    "syntax": "stripe:operation",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "lazyStartProducer": { "index": 0, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "apiBase": { "index": 1, "kind": "property", "displayName": "Api Base", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Override the default Stripe API base URL (for testing purposes)" },
+    "autowiredEnabled": { "index": 2, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
+    "apiKey": { "index": 3, "kind": "property", "displayName": "Api Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "description": "The Stripe API key for authentication" }
+  },
+  "headers": {
+    "CamelStripeOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.stripe.StripeConstants#OPERATION_HEADER" },
+    "CamelStripeMethod": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The method to invoke (create, retrieve, update, delete, list, cancel, capture)", "constantName": "org.apache.camel.component.stripe.StripeConstants#METHOD_HEADER" },
+    "CamelStripeObjectId": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ID of the object to retrieve, update, or delete", "constantName": "org.apache.camel.component.stripe.StripeConstants#OBJECT_ID" }
+  },
+  "properties": {
+    "operation": { "index": 0, "kind": "path", "displayName": "Operation", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.stripe.StripeConfiguration", "configurationField": "configuration", "description": "The Stripe operation to perform" },
+    "lazyStartProducer": { "index": 1, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "apiBase": { "index": 2, "kind": "parameter", "displayName": "Api Base", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.stripe.StripeConfiguration", "configurationField": "configuration", "description": "Override the default Stripe API base URL (for testing purposes)" },
+    "apiKey": { "index": 3, "kind": "parameter", "displayName": "Api Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "configurationClass": "org.apache.camel.component.stripe.StripeConfiguration", "configurationField": "configuration", "description": "The Stripe API key for authentication" }
+  }
+}
