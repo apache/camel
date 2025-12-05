@@ -46,7 +46,6 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.ExpandedTitleContentHandler;
-import org.apache.tika.sax.boilerpipe.BoilerpipeContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,9 +148,6 @@ public class TikaProducer extends DefaultProducer {
                 break;
             case text:
                 result = new BodyContentHandler(new OutputStreamWriter(outputStream, this.encoding));
-                break;
-            case textMain:
-                result = new BoilerpipeContentHandler(new OutputStreamWriter(outputStream, this.encoding));
                 break;
             case html:
                 result = new ExpandedTitleContentHandler(getTransformerHandler(outputStream, "html", true));
