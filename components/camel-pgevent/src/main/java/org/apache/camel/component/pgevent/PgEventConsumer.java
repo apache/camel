@@ -124,8 +124,12 @@ public class PgEventConsumer extends DefaultConsumer {
 
         public void initConnection() throws Exception {
             dbConnection = endpoint.initJdbc();
-            String sql = String.format("LISTEN %s", endpoint.getChannel());
-            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+            String channel = endpoint.getChannel();
+            if (!channel.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+                throw new IllegalArgumentException("Invalid channel name");
+            }
+            String sql = String.format("LISTEN %s", channel);
+            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) { // NOSONAR
                 statement.execute();
             }
             dbConnection.addNotificationListener(endpoint.getChannel(), endpoint.getChannel(), listener);
@@ -134,9 +138,13 @@ public class PgEventConsumer extends DefaultConsumer {
         public void closeConnection() throws Exception {
             if (dbConnection != null) {
                 try {
-                    dbConnection.removeNotificationListener(endpoint.getChannel());
-                    String sql = String.format("UNLISTEN %s", endpoint.getChannel());
-                    try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+                    String channel = endpoint.getChannel();
+                    if (!channel.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+                        throw new IllegalArgumentException("Invalid channel name");
+                    }
+                    dbConnection.removeNotificationListener(channel);
+                    String sql = String.format("UNLISTEN %s", channel);
+                    try (PreparedStatement statement = dbConnection.prepareStatement(sql)) { // NOSONAR
                         statement.execute();
                     }
                     dbConnection.close();

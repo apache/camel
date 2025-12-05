@@ -77,7 +77,7 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
                     LOG.debug("Removing key {}", correlationId);
                     String table = getRepositoryName();
                     verifyTableName(table);
-                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
+                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version, true);
