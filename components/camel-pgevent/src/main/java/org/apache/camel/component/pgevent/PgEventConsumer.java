@@ -129,7 +129,7 @@ public class PgEventConsumer extends DefaultConsumer {
                 throw new IllegalArgumentException("Invalid channel name");
             }
             String sql = String.format("LISTEN %s", channel);
-            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+            try (PreparedStatement statement = dbConnection.prepareStatement(sql)) { // NOSONAR
                 statement.execute();
             }
             dbConnection.addNotificationListener(channel, channel, listener);
@@ -144,7 +144,7 @@ public class PgEventConsumer extends DefaultConsumer {
                     }
                     dbConnection.removeNotificationListener(channel);
                     String sql = String.format("UNLISTEN %s", channel);
-                    try (PreparedStatement statement = dbConnection.prepareStatement(sql)) {
+                    try (PreparedStatement statement = dbConnection.prepareStatement(sql)) { // NOSONAR
                         statement.execute();
                     }
                     dbConnection.close();
