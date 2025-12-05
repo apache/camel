@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.time.Duration;
+
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.policy.NeverRetryPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.core.retry.RetryPolicy;
 
 import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.*;
 
@@ -71,19 +71,22 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
             listener.setAdviceChain(endpoint.getRetry());
         } else {
             RetryInterceptorBuilder<?, ?> builder = RetryInterceptorBuilder.stateless();
+            RetryPolicy.Builder retryPolicyBuilder = RetryPolicy.builder();
+
             if (endpoint.getMaximumRetryAttempts() <= 0) {
-                builder.retryPolicy(new NeverRetryPolicy());
+                retryPolicyBuilder.maxRetries(0);
             } else if (endpoint.getMaximumRetryAttempts() > 0) {
-                builder.retryPolicy(new SimpleRetryPolicy(endpoint.getMaximumRetryAttempts()));
+                retryPolicyBuilder.maxRetries(endpoint.getMaximumRetryAttempts());
             }
             if (endpoint.getRetryDelay() > 0) {
-                FixedBackOffPolicy delay = new FixedBackOffPolicy();
-                delay.setBackOffPeriod(endpoint.getRetryDelay());
-                builder.backOffPolicy(delay);
+                retryPolicyBuilder.delay(Duration.ofMillis(endpoint.getRetryDelay()));
+                retryPolicyBuilder.multiplier(1);
+                retryPolicyBuilder.maxDelay(Duration.ofMillis(endpoint.getRetryDelay()));
             }
             if (endpoint.isRejectAndDontRequeue()) {
                 builder.recoverer(new RejectAndDontRequeueRecoverer());
             }
+            builder.retryPolicy(retryPolicyBuilder.build());
             listener.setAdviceChain(builder.build());
         }
 

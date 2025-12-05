@@ -820,14 +820,14 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * other settings such as maximumRetryAttempts for retry are not in use.
          * 
          * The option is a:
-         * <code>org.springframework.retry.interceptor.RetryOperationsInterceptor</code> type.
+         * <code>org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor</code> type.
          * 
          * Group: consumer (advanced)
          * 
          * @param retry the value to set
          * @return the dsl builder
          */
-        default AdvancedSpringRabbitMQEndpointConsumerBuilder retry(org.springframework.retry.interceptor.RetryOperationsInterceptor retry) {
+        default AdvancedSpringRabbitMQEndpointConsumerBuilder retry(org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor retry) {
             doSetProperty("retry", retry);
             return this;
         }
@@ -836,7 +836,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
          * other settings such as maximumRetryAttempts for retry are not in use.
          * 
          * The option will be converted to a
-         * <code>org.springframework.retry.interceptor.RetryOperationsInterceptor</code> type.
+         * <code>org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor</code> type.
          * 
          * Group: consumer (advanced)
          * 
