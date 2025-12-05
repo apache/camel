@@ -14,7 +14,7 @@
 
 *{component-header}*
 
-The Stripe component provides integration with the https://stripe.com/[Stripe] payment platform API using Stripe Java SDK version {stripe-java-version}.
+The Stripe component provides integration with the https://stripe.com/[Stripe] payment platform API using Stripe Java SDK.
 
 Stripe is a popular payment processing platform that allows businesses to accept payments, send payouts, and manage their online businesses. This component enables Apache Camel routes to interact with Stripe's API for operations such as:
 
@@ -81,28 +81,11 @@ stripe.setApiKey("sk_test_...");
 
 You usually use the endpoint for configuring the API operation and parameters specific to each call.
 
-// component-configure options: END
-
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
-
-// endpoint options: START
-include::partial$endpoint-options.adoc[]
-// endpoint options: END
-
-== Message Headers
-
-[width="100%",cols="10%,10%,80%",options="header"]
-|===
-|Name |Type |Description
-
-|`CamelStripeOperation` |String |Override the operation specified in the endpoint URI
-|`CamelStripeMethod` |String |The method to invoke (create, retrieve, update, delete, list, cancel, capture)
-|`CamelStripeObjectId` |String |The ID of the object to retrieve, update, or delete
-|===
 
 == Authentication
 
