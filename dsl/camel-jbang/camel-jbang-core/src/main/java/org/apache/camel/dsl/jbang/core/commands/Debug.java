@@ -778,6 +778,9 @@ public class Debug extends Run {
                                     history.index = line.getIntegerOrDefault("index", 0);
                                     history.routeId = line.getString("routeId");
                                     history.nodeId = line.getString("nodeId");
+                                    history.nodeShortName = line.getString("nodeShortName");
+                                    history.nodeLabel = line.getString("nodeLabel");
+                                    history.level = line.getIntegerOrDefault("level", 0);
                                     history.elapsed = line.getLongOrDefault("elapsed", 0);
                                     history.skipOver = line.getBooleanOrDefault("skipOver", false);
                                     history.location = line.getString("location");
@@ -955,8 +958,11 @@ public class Debug extends Run {
                     }
 
                     String c = "";
-                    if (h.code != null) {
+                    if (source && h.code != null) {
                         c = Jsoner.unescape(h.code);
+                        c = c.trim();
+                    } else {
+                        c = Jsoner.unescape(h.nodeLabel);
                         c = c.trim();
                     }
 
@@ -1221,6 +1227,9 @@ public class Debug extends Run {
         int index;
         String routeId;
         String nodeId;
+        String nodeShortName;
+        String nodeLabel;
+        int level;
         long elapsed;
         boolean skipOver;
         String location;
