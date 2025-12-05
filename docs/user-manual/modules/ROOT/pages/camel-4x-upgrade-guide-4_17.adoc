@@ -53,6 +53,10 @@ Virtual threads are enabled by default for embedded mode with `camel-infinispan-
 If you choose to listen for cache events on the `infinispan-embedded` consumer, it is possible that events are not processed in a predicatable order.
 Disabling virtual threads by setting system property `org.infinispan.threads.virtual` to `false` leads to more predicatable event order processing.
 
+=== camel-tika
+
+Upgraded to Tika v3, and removed `textMain` from `tikaParseOutputFormat` option.
+
 === Component deprecation
 
 The `camel-stomp` component is deprecated.
