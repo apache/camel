@@ -316,7 +316,7 @@ public class DebugDevConsole extends AbstractDevConsole {
                 jo.put("nodeId", h.getNode().getId());
                 jo.put("nodeShortName", h.getNode().getShortName());
                 jo.put("nodeLabel", h.getNode().getLabel());
-                jo.put("nodeLevel", h.getNode().getLevel());
+                jo.put("level", h.getNode().getLevel());
                 if (h.getNode().getLocation() != null) {
                     String loc = h.getNode().getLocation();
                     // strip schema
