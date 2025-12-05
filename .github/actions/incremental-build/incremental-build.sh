@@ -106,14 +106,23 @@ function main() {
         echo "The build-dependents label has been detected thus the projects that depend on the affected projects will be built"
         totalTestableProjects=0
       else
+        for w in $pl; do
+          echo "$w"
+        done
         totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
         echo "Launching fast build command against the projects ${pl}, their dependencies and the projects that depend on them"
+        for w in $pl; do
+          echo "$w"
+        done
         $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -amd -am
         ret=$?
       else
         echo "Launching fast build command against the projects ${pl} and their dependencies"
+        for w in $pl; do
+          echo "$w"
+        done
         $mavenBinary -l $log $MVND_OPTS -DskipTests install -pl "$pl" -am
         ret=$?
       fi
@@ -138,12 +147,20 @@ function main() {
         totalTestableProjects=$(./mvnw -q -amd exec:exec -Dexec.executable="pwd" -pl "$pl" | wc -l)
       fi
       if [[ ${totalTestableProjects} -gt ${maxNumberOfTestableProjects} ]] ; then
-        echo "There are too many projects to test so only the affected projects are tested"
-        $mavenBinary -l $log $MVND_OPTS install -pl "$pl"
+        echo "There are too many projects to test so only the affected projects are tested:"
+        for w in $pl; do
+          echo "$w"
+        done
+        # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
+        $mavenBinary -l $log $MVND_OPTS install -DskipITs -pl "$pl"
         ret=$?
       else
-        echo "Testing the affected projects and the projects that depend on them"
-        $mavenBinary -l $log $MVND_OPTS install -pl "$pl" -amd
+        echo "Testing the affected projects and the projects that depend on them:"
+        for w in $pl; do
+          echo "$w"
+        done
+        # This need to install, other commands like test are not enough, otherwise test-infra will fail due to jandex maven plugin
+        $mavenBinary -l $log $MVND_OPTS install -DskipITs -pl "$pl" -amd
         ret=$?
       fi
     fi
