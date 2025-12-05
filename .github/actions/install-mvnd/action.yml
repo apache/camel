@@ -25,7 +25,7 @@ inputs:
   distribution:
     description: 'The maven distribution to use'
     required: true
-    default: 'm39-linux-amd64'
+    default: 'linux-amd64'
   dry-run:
     description: 'Flag to enable to the dry-run mode'
     required: true
