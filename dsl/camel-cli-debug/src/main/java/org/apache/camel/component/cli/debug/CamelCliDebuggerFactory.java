@@ -87,13 +87,13 @@ public class CamelCliDebuggerFactory implements DebuggerFactory {
             long pid = ProcessHandle.current().pid();
 
             LOG.info("=".repeat(80));
-            LOG.info("Waiting for CLI to remote attach (camel debug --remote-attach --name={})", pid);
+            LOG.info("Waiting for CLI to remote attach: camel debug --remote-attach --name={}", pid);
             StopWatch watch = new StopWatch();
             while (!hangupIntercepted.get() && !backlog.isEnabled() && !camelContext.isStopping()) {
                 try {
                     Thread.sleep(1000);
-                    if (watch.taken() > 5000) {
-                        LOG.info("Waiting for CLI to remote attach (camel debug --remote-attach --name={})", pid);
+                    if (watch.taken() > 10000) {
+                        LOG.info("Waiting for CLI to remote attach: camel debug --remote-attach --name={}", pid);
                         watch.restart();
                     }
                 } catch (InterruptedException e) {
@@ -101,7 +101,7 @@ public class CamelCliDebuggerFactory implements DebuggerFactory {
                 }
             }
             if (backlog.isEnabled()) {
-                LOG.info("CLI debugger attached");
+                LOG.info("CLI remote debugger attached");
             }
         }
 
