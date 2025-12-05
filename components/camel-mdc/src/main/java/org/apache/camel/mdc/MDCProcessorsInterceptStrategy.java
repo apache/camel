@@ -26,6 +26,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * MDCProcessorsInterceptStrategy is used to wrap each processor calls and generate the MDC context for each process
@@ -49,26 +51,18 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
 
         final AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(target);
 
-        return new AsyncProcessor() {
+        return new AsyncProcessorSupport() {
 
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
                 mdcService.setMDC(exchange);
-                boolean answer = asyncProcessor.process(exchange, doneSync -> {
-                    callback.done(doneSync);
-                });
-                mdcService.unsetMDC(exchange);
-                return answer;
+                return asyncProcessor.process(exchange, callback);
             }
 
             @Override
             public void process(Exchange exchange) throws Exception {
                 mdcService.setMDC(exchange);
-                try {
-                    asyncProcessor.process(exchange);
-                } finally {
-                    mdcService.unsetMDC(exchange);
-                }
+                asyncProcessor.process(exchange);
             }
 
             @Override
@@ -82,8 +76,22 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
                         future.complete(exchange);
                     }
                 });
-                mdcService.unsetMDC(exchange);
                 return future;
+            }
+
+            @Override
+            protected void doInit() throws Exception {
+                ServiceHelper.initService(target);
+            }
+
+            @Override
+            protected void doStart() throws Exception {
+                ServiceHelper.startService(target);
+            }
+
+            @Override
+            protected void doStop() throws Exception {
+                ServiceHelper.stopService(target);
             }
         };
     }
