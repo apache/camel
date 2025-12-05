@@ -195,7 +195,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                     String table = getRepositoryName();
                     verifyTableName(table);
                     boolean present = jdbcTemplate.queryForObject(
-                            "SELECT COUNT(1) FROM " + table + " WHERE " + ID + " = ?", Integer.class,
+                            "SELECT COUNT(1) FROM " + table + " WHERE " + ID + " = ?", Integer.class, // NOSONAR
                             correlationId) != 0;
 
                     // Recover existing exchange with that ID
@@ -386,7 +386,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                 try {
                     verifyTableName(repositoryName);
                     Map<String, Object> columns = jdbcTemplate.queryForMap(
-                            String.format("SELECT %1$s, %2$s FROM %3$s WHERE %4$s=?", EXCHANGE, VERSION, repositoryName, ID),
+                            String.format("SELECT %1$s, %2$s FROM %3$s WHERE %4$s=?", EXCHANGE, VERSION, repositoryName, ID), // NOSONAR
                             new Object[] { key }, new int[] { Types.VARCHAR });
 
                     byte[] marshalledExchange = (byte[]) columns.get(EXCHANGE);
@@ -426,7 +426,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                     LOG.debug("Removing key {}", correlationId);
                     String table = getRepositoryName();
                     verifyTableName(table);
-                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
+                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
@@ -452,7 +452,7 @@ public class JdbcAggregationRepository extends ServiceSupport
                 String table = getRepositoryNameCompleted();
                 verifyTableName(table);
                 final int mustBeOne = jdbcTemplate
-                        .update("DELETE FROM " + table + " WHERE " + ID + " = ?", exchangeId);
+                        .update("DELETE FROM " + table + " WHERE " + ID + " = ?", exchangeId); // NOSONAR
                 if (mustBeOne != 1) {
                     LOG.error("problem removing row {} from {} - DELETE statement did not return 1 but {}",
                             exchangeId, getRepositoryNameCompleted(), mustBeOne);
@@ -483,7 +483,7 @@ public class JdbcAggregationRepository extends ServiceSupport
         return transactionTemplateReadOnly.execute(new TransactionCallback<LinkedHashSet<String>>() {
             public LinkedHashSet<String> doInTransaction(TransactionStatus status) {
                 verifyTableName(repositoryName);
-                List<String> keys = jdbcTemplate.query("SELECT " + ID + " FROM " + repositoryName,
+                List<String> keys = jdbcTemplate.query("SELECT " + ID + " FROM " + repositoryName, // NOSONAR
                         new RowMapper<String>() {
                             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                                 String id = rs.getString(ID);
@@ -711,7 +711,7 @@ public class JdbcAggregationRepository extends ServiceSupport
 
     private int rowCount(final String repository) {
         verifyTableName(repository);
-        return jdbcTemplate.queryForObject("SELECT COUNT(1) FROM " + repository, Integer.class);
+        return jdbcTemplate.queryForObject("SELECT COUNT(1) FROM " + repository, Integer.class); // NOSONAR
     }
 
     @Override
