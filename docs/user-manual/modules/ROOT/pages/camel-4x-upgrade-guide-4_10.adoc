@@ -4,6 +4,12 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
 from both 4.0 to 4.1 and 4.1 to 4.2.
 
+== Upgrading from 4.10.7 to 4.10.8
+
+=== camel-tika
+
+Upgraded to Tika v3, and removed `textMain` from `tikaParseOutputFormat` option.
+
 == Upgrading from 4.10.2 to 4.10.7
 
 === camel-file / camel-ftp / camel-smb / camel-azure-files

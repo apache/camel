@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parser-html-commons</artifactId>
+            <artifactId>tika-parser-html-module</artifactId>
             <version>${tika-version}</version>
         </dependency>
         <dependency>
