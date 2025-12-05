@@ -70,7 +70,7 @@ public class OptimisticLockRetryPolicy {
             sleepFor = exponentialBackOff
                     ? (retryDelay << retryCounter)
                     : (randomBackOff
-                            ? ThreadLocalRandom.current()
+                            ? ThreadLocalRandom.current() // NOSONAR
                                     .nextInt((int) (maximumRetryDelay > 0 ? maximumRetryDelay : DEFAULT_MAXIMUM_RETRY_DELAY))
                             : retryDelay);
             if (maximumRetryDelay > 0 && sleepFor > maximumRetryDelay) {

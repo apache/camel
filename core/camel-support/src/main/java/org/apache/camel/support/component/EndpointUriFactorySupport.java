@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -30,7 +29,7 @@ import org.apache.camel.util.URISupport;
  * Base class used by Camel Package Maven Plugin when it generates source code for fast endpoint uri factory via
  * {@link EndpointUriFactory}.
  */
-public abstract class EndpointUriFactorySupport implements CamelContextAware, EndpointUriFactory {
+public abstract class EndpointUriFactorySupport implements EndpointUriFactory {
 
     protected CamelContext camelContext;
 

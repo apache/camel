@@ -157,7 +157,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     /**
      * Cleanup the pool (removing stale instances that should be evicted)
      */
-    @SuppressWarnings("rawtypes")
     public void cleanUp() {
         if (cache instanceof LRUCache lru) {
             lru.cleanUp();

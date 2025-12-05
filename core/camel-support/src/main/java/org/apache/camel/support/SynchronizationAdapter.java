@@ -24,7 +24,7 @@ import org.apache.camel.spi.SynchronizationVetoable;
 /**
  * Simple {@link Synchronization} adapter with empty methods for easier overriding of single methods.
  */
-public class SynchronizationAdapter implements SynchronizationVetoable, Ordered, Synchronization {
+public class SynchronizationAdapter implements SynchronizationVetoable, Ordered {
     @Override
     public void onComplete(Exchange exchange) {
         onDone(exchange);

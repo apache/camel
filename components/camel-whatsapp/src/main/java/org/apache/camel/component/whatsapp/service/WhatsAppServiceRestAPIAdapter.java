@@ -124,7 +124,7 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
             formData.put("messaging_product", "whatsapp");
             formData.put("file", message.getUploadMedia());
 
-            String boundary = new BigInteger(256, new Random()).toString();
+            String boundary = new BigInteger(256, new Random()).toString(); // NOSONAR
             try {
                 builder.POST(ofStreamPart(formData, boundary));
             } catch (IOException e) {

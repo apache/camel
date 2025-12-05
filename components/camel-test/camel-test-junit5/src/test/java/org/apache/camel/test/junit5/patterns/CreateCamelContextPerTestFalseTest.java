@@ -59,7 +59,6 @@ public class CreateCamelContextPerTestFalseTest extends CamelTestSupport {
     protected void doPostTearDown() throws Exception {
         LOG.info("doPostTearDown()");
         POST_TEAR_DOWN.incrementAndGet();
-        super.doPostTearDown();
     }
 
     @Test
