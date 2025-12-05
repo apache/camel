@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;

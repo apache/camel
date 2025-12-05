@@ -34,7 +34,7 @@ public class TelegramBodyPublisher {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramBodyPublisher.class);
 
     private final Set<TelegramBodyPart> bodyParts = new LinkedHashSet<>();
-    private final String boundary = RandomStringUtils.randomAlphanumeric(12);
+    private final String boundary = RandomStringUtils.secure().nextAlphanumeric(12);
     private final int bufferSize;
 
     public TelegramBodyPublisher(int bufferSize) {

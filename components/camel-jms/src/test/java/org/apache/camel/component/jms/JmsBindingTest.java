@@ -66,11 +66,12 @@ public class JmsBindingTest {
 
         ActiveMQTextMessage message = mock(ActiveMQTextMessage.class);
         message.setText("test");
-        DefaultCamelContext camelContext = new DefaultCamelContext();
-        Exchange exchange = camelContext.getEndpoint("jms:queue:foo").createExchange();
-        exchange.getIn().setBody("test");
-        exchange.getIn().setHeader("JMSCorrelationID", null);
-        assertDoesNotThrow(() -> testBindingWithoutEndpoint.appendJmsProperties(message, exchange));
+        try (DefaultCamelContext camelContext = new DefaultCamelContext()) {
+            Exchange exchange = camelContext.getEndpoint("jms:queue:foo").createExchange();
+            exchange.getIn().setBody("test");
+            exchange.getIn().setHeader("JMSCorrelationID", null);
+            assertDoesNotThrow(() -> testBindingWithoutEndpoint.appendJmsProperties(message, exchange));
+        }
     }
 
     @Test

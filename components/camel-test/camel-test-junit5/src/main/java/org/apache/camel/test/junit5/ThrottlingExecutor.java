@@ -26,7 +26,6 @@ public final class ThrottlingExecutor {
     private final List<IntConsumer> beforeTasks = new ArrayList<>();
     private final List<IntConsumer> afterTasks = new ArrayList<>();
     private int repetitions;
-    private long beforeWait;
     private long awaiting;
     private TimeUnit timeUnit;
 

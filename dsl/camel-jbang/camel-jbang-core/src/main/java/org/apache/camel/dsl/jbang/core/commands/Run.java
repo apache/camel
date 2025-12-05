@@ -1530,7 +1530,7 @@ public class Run extends CamelCommand {
         Path logPath = null;
         if (backgroundWait) {
             // store background output in a log file to capture any error on startup
-            logPath = getRunBackgroundLogFile("" + new Random().nextLong());
+            logPath = getRunBackgroundLogFile("" + new Random().nextLong()); // NOSONAR
             try {
                 Path logDir = CommandLineHelper.getCamelDir();
                 Files.createDirectories(logDir); //make sure the parent dir exists

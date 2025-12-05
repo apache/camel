@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -41,7 +40,6 @@ public class JmsPriorityConsumerTest extends AbstractJMSTest {
     public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
 
     protected ProducerTemplate template;
-    private CamelContext context;
 
     @Override
     protected String getComponentName() {
@@ -98,7 +96,6 @@ public class JmsPriorityConsumerTest extends AbstractJMSTest {
 
     @BeforeEach
     void setUpRequirements() {
-        context = camelContextExtension.getContext();
         template = camelContextExtension.getProducerTemplate();
     }
 }
