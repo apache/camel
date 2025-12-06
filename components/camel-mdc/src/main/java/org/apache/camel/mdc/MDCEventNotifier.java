@@ -19,6 +19,10 @@ package org.apache.camel.mdc;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 
+/**
+ * Use {@link org.apache.camel.spi.EventNotifier} to ensure MDC is unset when exchange is either completed/failed or
+ * handed over to another thread via asynchronous processing.
+ */
 class MDCEventNotifier extends SimpleEventNotifierSupport {
 
     private final MDCService mdc;

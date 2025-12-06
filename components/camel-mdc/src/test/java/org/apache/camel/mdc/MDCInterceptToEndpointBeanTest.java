@@ -26,6 +26,10 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MDCInterceptToEndpointBeanTest extends CamelTestSupport {
 
@@ -34,7 +38,12 @@ public class MDCInterceptToEndpointBeanTest extends CamelTestSupport {
     private Processor myBean = new Processor() {
         @Override
         public void process(Exchange exchange) throws Exception {
-            LOG.info("MDC Values lost");
+            LOG.info("MDC Values present");
+
+            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
         }
     };
 
@@ -50,6 +59,9 @@ public class MDCInterceptToEndpointBeanTest extends CamelTestSupport {
     @Test
     public void testMDC() throws Exception {
         template.sendBody("direct:start", "Hello World");
+
+        // We should get no MDC after the route has been executed
+        assertEquals(0, MDC.getCopyOfContextMap().size());
     }
 
     @Override
@@ -63,8 +75,20 @@ public class MDCInterceptToEndpointBeanTest extends CamelTestSupport {
 
                 from("direct:start")
                         .log(LoggingLevel.INFO, "MyRoute.logBefore", "MDC Values present")
+                        .process(e -> {
+                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
+                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
+                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
+                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
+                        })
                         .to("bean:myMapper")
-                        .log(LoggingLevel.INFO, "MyRoute.logAfter", "MDC Values present");
+                        .log(LoggingLevel.INFO, "MyRoute.logAfter", "MDC Values present")
+                        .process(e -> {
+                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
+                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
+                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
+                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
+                        });
 
                 from("direct:beforeSend")
                         .log(LoggingLevel.INFO, "MyRoute.beforeSend", "MDC Values present");

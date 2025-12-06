@@ -20,10 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.CamelMDCService;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -94,12 +92,12 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     @Override
     public void doInit() {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-        //        camelContext.getCamelContextExtension().addLogListener(new MDCLogListener());
-        InterceptStrategy interceptStrategy = new MDCProcessorsInterceptStrategy(this);
-        camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
-        //        camelContext.getCamelContextExtension().addContextPlugin(InterceptEndpointFactory.class, new MDCInterceptEndpointFactory(interceptStrategy));
+
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
 
+        InterceptStrategy interceptStrategy
+                = (context, definition, target, nextTarget) -> new MDCProcessor(MDCService.this, target);
+        camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
     }
 
     @Override
@@ -146,21 +144,6 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
 
     protected void unsetMDC(Exchange exchange) {
         setOrUnsetMDC(exchange, false);
-    }
-
-    @Deprecated
-    private final class MDCLogListener implements LogListener {
-
-        @Override
-        public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            //            setMDC(exchange);
-            return message;
-        }
-
-        @Override
-        public void afterLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            //            unsetMDC(exchange);
-        }
     }
 
     // Default basic MDC properties to set/unset MDC context.
