@@ -16,28 +16,23 @@
  */
 package org.apache.camel.mdc;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.processor.DelegateProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
-@Deprecated
-public class MDCProcessor extends DelegateProcessor {
+class MDCProcessor extends DelegateAsyncProcessor {
 
-    private final MDCService mdc;
+    private final MDCService mdcService;
 
-    public MDCProcessor(MDCService mdc, Processor processor) {
+    public MDCProcessor(MDCService mdcService, Processor processor) {
         super(processor);
-        this.mdc = mdc;
+        this.mdcService = mdcService;
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        mdc.setMDC(exchange);
-        try {
-            super.process(exchange);
-        } finally {
-            //            mdc.unsetMDC(exchange);
-        }
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        mdcService.setMDC(exchange);
+        return super.process(exchange, callback);
     }
-
 }
