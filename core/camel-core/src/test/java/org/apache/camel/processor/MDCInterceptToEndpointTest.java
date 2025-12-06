@@ -76,8 +76,8 @@ public class MDCInterceptToEndpointTest extends ContextTestSupport {
                         MDC.put("custom.id", "1");
                     }
                 }).to("log:foo")
-                    .to("direct:cheese")
-                    .to("direct:b");
+                        .to("direct:cheese")
+                        .to("direct:b");
 
                 from("direct:b").routeId("route-b").step("step-b").process(new Processor() {
                     public void process(Exchange exchange) {
