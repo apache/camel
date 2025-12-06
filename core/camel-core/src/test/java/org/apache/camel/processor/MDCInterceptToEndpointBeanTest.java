@@ -25,9 +25,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class MDCInterceptToEndpointBeanTest extends ContextTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MDCInterceptToEndpointBeanTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger("MyRoute.myBean");
 
     private Processor myBean = new Processor() {
         @Override
