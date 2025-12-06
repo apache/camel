@@ -137,7 +137,7 @@ public interface StripeEndpointBuilderFactory {
          * Stripe (camel-stripe)
          * Camel Stripe component
          * 
-         * Category: cloud
+         * Category: saas,finance
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-stripe
          * 
@@ -150,7 +150,7 @@ public interface StripeEndpointBuilderFactory {
          * Stripe (camel-stripe)
          * Camel Stripe component
          * 
-         * Category: cloud
+         * Category: saas,finance
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-stripe
          * 
@@ -169,7 +169,7 @@ public interface StripeEndpointBuilderFactory {
          * Stripe (camel-stripe)
          * Camel Stripe component
          * 
-         * Category: cloud
+         * Category: saas,finance
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-stripe
          * 

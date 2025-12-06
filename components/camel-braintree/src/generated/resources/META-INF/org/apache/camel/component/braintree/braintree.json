@@ -6,7 +6,7 @@
     "description": "Process payments using Braintree Payments.",
     "deprecated": false,
     "firstVersion": "2.17.0",
-    "label": "saas",
+    "label": "saas,finance",
     "javaType": "org.apache.camel.component.braintree.BraintreeComponent",
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",

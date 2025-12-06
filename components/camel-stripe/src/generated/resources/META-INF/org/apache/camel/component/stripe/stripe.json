@@ -6,7 +6,7 @@
     "description": "Camel Stripe component",
     "deprecated": false,
     "firstVersion": "4.17.0",
-    "label": "saas",
+    "label": "saas,finance",
     "javaType": "org.apache.camel.component.stripe.StripeComponent",
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
