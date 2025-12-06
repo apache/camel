@@ -24,7 +24,11 @@ class MDCEventNotifier extends SimpleEventNotifierSupport {
     private final MDCService mdc;
 
     public MDCEventNotifier(MDCService mdc) {
-        // ignore these
+        this.mdc = mdc;
+    }
+
+    @Override
+    protected void setupIgnore(boolean ignore) {
         setIgnoreCamelContextEvents(true);
         setIgnoreCamelContextInitEvents(true);
         setIgnoreRouteEvents(true);
@@ -32,7 +36,6 @@ class MDCEventNotifier extends SimpleEventNotifierSupport {
         setIgnoreStepEvents(true);
         // we need also async processing started events
         setIgnoreExchangeAsyncProcessingStartedEvents(false);
-        this.mdc = mdc;
     }
 
     @Override
@@ -40,6 +43,12 @@ class MDCEventNotifier extends SimpleEventNotifierSupport {
         if (event instanceof CamelEvent.ExchangeAsyncProcessingStartedEvent eap) {
             // exchange is continued processed on another thread so unset MDC
             mdc.unsetMDC(eap.getExchange());
+        } else if (event instanceof CamelEvent.ExchangeCompletedEvent ec) {
+            // exchange is completed so unset MDC
+            mdc.unsetMDC(ec.getExchange());
+        } else if (event instanceof CamelEvent.ExchangeFailedEvent ef) {
+            // exchange is failed so unset MDC
+            mdc.unsetMDC(ef.getExchange());
         }
     }
 }
