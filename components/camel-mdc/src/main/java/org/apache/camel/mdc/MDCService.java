@@ -94,10 +94,10 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     @Override
     public void doInit() {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-//        camelContext.getCamelContextExtension().addLogListener(new MDCLogListener());
+        //        camelContext.getCamelContextExtension().addLogListener(new MDCLogListener());
         InterceptStrategy interceptStrategy = new MDCProcessorsInterceptStrategy(this);
         camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
-//        camelContext.getCamelContextExtension().addContextPlugin(InterceptEndpointFactory.class, new MDCInterceptEndpointFactory(interceptStrategy));
+        //        camelContext.getCamelContextExtension().addContextPlugin(InterceptEndpointFactory.class, new MDCInterceptEndpointFactory(interceptStrategy));
         camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
 
     }
@@ -153,13 +153,13 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
 
         @Override
         public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
-//            setMDC(exchange);
+            //            setMDC(exchange);
             return message;
         }
 
         @Override
         public void afterLog(Exchange exchange, CamelLogger camelLogger, String message) {
-//            unsetMDC(exchange);
+            //            unsetMDC(exchange);
         }
     }
 

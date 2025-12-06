@@ -36,9 +36,10 @@ public class MDCInterceptEndpointFactory implements InterceptEndpointFactory {
     }
 
     @Override
-    public InterceptSendToEndpoint createInterceptSendToEndpoint(CamelContext camelContext, Endpoint endpoint,
-                                                                 boolean skip, Predicate onWhen,
-                                                                 Processor before, Processor after) {
+    public InterceptSendToEndpoint createInterceptSendToEndpoint(
+            CamelContext camelContext, Endpoint endpoint,
+            boolean skip, Predicate onWhen,
+            Processor before, Processor after) {
         DefaultInterceptSendToEndpoint answer = new DefaultInterceptSendToEndpoint(endpoint, skip);
         answer.setOnWhen(onWhen);
         // before should be wrapped
