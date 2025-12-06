@@ -4562,6 +4562,19 @@ public interface ComponentsBuilderFactory {
         return StringTemplateComponentBuilderFactory.stringTemplate();
     }
     /**
+     * Stripe (camel-stripe)
+     * Camel Stripe component
+     * 
+     * Category: cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-stripe
+     * 
+     * @return the dsl builder
+     */
+    static StripeComponentBuilderFactory.StripeComponentBuilder stripe() {
+        return StripeComponentBuilderFactory.stripe();
+    }
+    /**
      * Stub (camel-stub)
      * Stub out any physical endpoints while in development or testing.
      * 

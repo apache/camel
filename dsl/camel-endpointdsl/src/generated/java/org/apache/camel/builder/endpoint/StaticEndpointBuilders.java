@@ -15294,6 +15294,46 @@ public class StaticEndpointBuilders {
         return StringTemplateEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Stripe (camel-stripe)
+     * Camel Stripe component
+     * 
+     * Category: cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-stripe
+     * 
+     * Syntax: <code>stripe:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Stripe operation to perform
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static StripeEndpointBuilderFactory.StripeEndpointBuilder stripe(String path) {
+        return stripe("stripe", path);
+    }
+    /**
+     * Stripe (camel-stripe)
+     * Camel Stripe component
+     * 
+     * Category: cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-stripe
+     * 
+     * Syntax: <code>stripe:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Stripe operation to perform
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static StripeEndpointBuilderFactory.StripeEndpointBuilder stripe(String componentName, String path) {
+        return StripeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Stub (camel-stub)
      * Stub out any physical endpoints while in development or testing.
      * 
