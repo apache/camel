@@ -20,11 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.CamelMDCService;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -43,6 +42,7 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     static String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCService.class);
+    private final MDCEventNotifier eventNotifier = new MDCEventNotifier(this);
 
     private CamelContext camelContext;
 
@@ -92,15 +92,26 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
     @Override
     public void doInit() {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
-        camelContext.getCamelContextExtension().addLogListener(new MDCLogListener());
-        InterceptStrategy interceptStrategy = new MDCProcessorsInterceptStrategy(this);
+
+        camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
+
+        InterceptStrategy interceptStrategy
+                = (context, definition, target, nextTarget) -> new MDCProcessor(MDCService.this, target);
         camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        ServiceHelper.startService(eventNotifier);
         LOG.info("Mapped Diagnostic Context (MDC) enabled");
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
+        ServiceHelper.stopService(eventNotifier);
     }
 
     private void setOrUnsetMDC(Exchange exchange, boolean push) {
@@ -133,20 +144,6 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
 
     protected void unsetMDC(Exchange exchange) {
         setOrUnsetMDC(exchange, false);
-    }
-
-    private final class MDCLogListener implements LogListener {
-
-        @Override
-        public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            setMDC(exchange);
-            return message;
-        }
-
-        @Override
-        public void afterLog(Exchange exchange, CamelLogger camelLogger, String message) {
-            unsetMDC(exchange);
-        }
     }
 
     // Default basic MDC properties to set/unset MDC context.

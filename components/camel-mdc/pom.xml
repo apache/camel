@@ -31,6 +31,7 @@
     <firstVersion>4.15.0</firstVersion>
     <label>logging</label>
     <supportLevel>Preview</supportLevel>
+    <title>MDC Logging</title>
   </properties>
 
   <artifactId>camel-mdc</artifactId>
