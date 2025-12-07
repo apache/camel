@@ -43,11 +43,11 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
+import org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 
 import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.DIRECT_MESSAGE_LISTENER_CONTAINER;
 
@@ -192,7 +192,7 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
     private Integer maxConcurrentConsumers;
     @UriParam(label = "consumer,advanced", description = "Custom retry configuration to use. "
                                                          + "If this is configured then the other settings such as maximumRetryAttempts for retry are not in use.")
-    private RetryOperationsInterceptor retry;
+    private StatelessRetryOperationsInterceptor retry;
     @UriParam(label = "consumer", defaultValue = "5",
               description = "How many times a Rabbitmq consumer will try the same message if Camel failed to process the message (The number of attempts includes the initial try)")
     private int maximumRetryAttempts = 5;
@@ -520,11 +520,11 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
         this.maxConcurrentConsumers = maxConcurrentConsumers;
     }
 
-    public RetryOperationsInterceptor getRetry() {
+    public StatelessRetryOperationsInterceptor getRetry() {
         return retry;
     }
 
-    public void setRetry(RetryOperationsInterceptor retry) {
+    public void setRetry(StatelessRetryOperationsInterceptor retry) {
         this.retry = retry;
     }
 
