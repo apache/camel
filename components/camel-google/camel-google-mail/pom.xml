@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-parent</artifactId>
-        <version>4.10.8</version>
+        <version>4.10.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-mail</artifactId>
