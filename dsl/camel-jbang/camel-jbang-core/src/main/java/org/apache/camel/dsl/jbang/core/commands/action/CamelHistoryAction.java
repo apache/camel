@@ -81,35 +81,35 @@ public class CamelHistoryAction extends ActionWatchCommand {
     int limitSplit;
 
     @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
-            description = "Print timestamp.")
+                        description = "Print timestamp.")
     boolean timestamp = true;
 
     @CommandLine.Option(names = { "--ago" },
-            description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
     @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-            description = "Show exchange properties in debug messages")
+                        description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
     @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
-            description = "Show exchange variables in debug messages")
+                        description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
     @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-            description = "Show message headers in debug messages")
+                        description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
     @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-            description = "Show message body in debug messages")
+                        description = "Show message body in debug messages")
     boolean showBody = true;
 
     @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
-            description = "Show exception and stacktrace for failed messages")
+                        description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
     @CommandLine.Option(names = { "--pretty" },
-            description = "Pretty print message body when using JSon or XML format")
+                        description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
@@ -264,7 +264,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private String getDataAsTable(Row r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.aggregate, r.endpoint, r.endpointService, r.message, r.exception);
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.aggregate, r.endpoint, r.endpointService,
+                r.message, r.exception);
     }
 
     private void printSourceAndHistory(Row row) {
@@ -839,7 +840,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     }
                 }
                 cur.history.add(h);
-             }
+            }
         }
     }
 
