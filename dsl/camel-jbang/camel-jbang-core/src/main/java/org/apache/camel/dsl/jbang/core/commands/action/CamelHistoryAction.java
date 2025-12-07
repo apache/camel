@@ -210,9 +210,18 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 line = line.trim();
                 if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     quit.set(true);
+                } else if ("p".equalsIgnoreCase(line)) {
+                    if (index.get() > 0) {
+                        index.decrementAndGet();
+                    }
+                } else if (line.isBlank() || "n".equalsIgnoreCase(line)) {
+                    index.incrementAndGet();
+                } else {
+                    int idx = lineIsNumber(line);
+                    if (idx >= 0) {
+                        index.set(idx);
+                    }
                 }
-                // user have pressed ENTER so continue
-                index.incrementAndGet();
                 waitForUser.set(false);
             }
         } while (!quit.get());
@@ -241,12 +250,34 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 String s = String.format("Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
                         first.exchangeId, status, ago, first.pid, first.name);
                 printer().println(s);
+                printer().println();
 
                 int i = index.get();
+                if (i > rows.size()) {
+                    i = 0; // start over again
+                    index.set(0);
+                }
                 if (i < rows.size()) {
                     Row r = rows.get(i);
                     printSourceAndHistory(r);
                     printCurrentRow(r);
+                }
+                printer().println();
+
+                int total = rows.size() - 1;
+                int pos = i;
+
+                if (pos == total) {
+                    index.set(-1); // start over again
+                }
+
+                String msg
+                        = "    Message History (" + pos + "/" + total
+                          + "). Press ENTER to continue (n = next (default), p = previous, number = jump to index, q = quit).";
+                if (loggingColor) {
+                    AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
+                } else {
+                    printer().println(msg);
                 }
                 waitForUser.set(true);
             }
@@ -259,7 +290,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         try {
             return Integer.parseInt(line);
         } catch (Exception e) {
-            return 0;
+            return -1;
         }
     }
 
