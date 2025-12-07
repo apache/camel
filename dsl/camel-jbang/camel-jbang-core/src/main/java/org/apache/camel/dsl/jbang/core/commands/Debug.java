@@ -962,9 +962,12 @@ public class Debug extends Run {
                         c = Jsoner.unescape(h.code);
                         c = c.trim();
                     } else {
-                        c = Jsoner.unescape(h.nodeLabel);
+                        c = Jsoner.escape(h.nodeLabel);
                         c = c.trim();
                     }
+                    // pad with level
+                    String pad = StringHelper.padString(h.level);
+                    c = pad + c;
 
                     String fids = String.format("%-30.30s", ids);
                     String msg;
