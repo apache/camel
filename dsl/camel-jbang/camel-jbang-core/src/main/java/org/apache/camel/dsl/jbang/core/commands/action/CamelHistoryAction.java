@@ -38,6 +38,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.FileUtil;
@@ -263,9 +264,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private String getDataAsTable(Row r) {
-        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, null, r.endpoint, r.endpointService,
-                r.message,
-                r.exception);
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.aggregate, r.endpoint, r.endpointService, r.message, r.exception);
     }
 
     private void printSourceAndHistory(Row row) {
@@ -536,8 +535,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private static String locationAndLine(String loc, int line) {
-        // shorten path as there is no much space
-        loc = FileUtil.stripPath(loc);
+        // shorten path as there is no much space (there are no scheme as add fake)
+        loc = LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
         return line == -1 ? loc : loc + ":" + line;
     }
 
@@ -831,9 +830,14 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 h.location = r.location;
                 h.elapsed = r.elapsed;
                 h.level = r.nodeLevel;
-                // TODO
-                h.code = "some code here";
-                h.line = 123;
+                if (r.code != null) {
+                    for (var c : r.code) {
+                        if (c.match) {
+                            h.code = c.code;
+                            h.line = c.line;
+                        }
+                    }
+                }
                 cur.history.add(h);
              }
         }

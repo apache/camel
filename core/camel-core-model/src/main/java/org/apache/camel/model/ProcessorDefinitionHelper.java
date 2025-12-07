@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
@@ -522,6 +523,32 @@ public final class ProcessorDefinitionHelper {
             wrap = true;
         }
         return wrap;
+    }
+
+    /**
+     * Gets the resource the given node belongs to.
+     *
+     * @param  node the node
+     * @return      the resource, or <tt>null</tt> if not possible to find
+     */
+    public static Resource getResource(NamedNode node) {
+        if (node == null) {
+            return null;
+        }
+        if (node instanceof ResourceAware ra) {
+            return ra.getResource();
+        }
+
+        NamedNode def = node;
+        while (def != null && def.getParent() != null) {
+            def = def.getParent();
+            if (def instanceof ResourceAware ra) {
+                return ra.getResource();
+            }
+        }
+
+        // not found
+        return null;
     }
 
 }

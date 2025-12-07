@@ -69,7 +69,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.PredicateExceptionFactory;
 import org.apache.camel.spi.Resource;
-import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
 
@@ -227,7 +226,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 || context.isDebugging() || context.isDebugStandby()
                 || context.isTracing() || context.isTracingStandby())) {
             // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
-            Resource resource = this instanceof ResourceAware ? ((ResourceAware) this).getResource() : null;
+            Resource resource = ProcessorDefinitionHelper.getResource(this);
             ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
         }
     }

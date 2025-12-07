@@ -45,6 +45,7 @@ import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -1085,8 +1086,8 @@ public class Debug extends Run {
     }
 
     private static String locationAndLine(String loc, int line) {
-        // shorten path as there is no much space
-        loc = FileUtil.stripPath(loc);
+        // shorten path as there is no much space (there are no scheme as add fake)
+        loc = LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
         return line == -1 ? loc : loc + ":" + line;
     }
 
