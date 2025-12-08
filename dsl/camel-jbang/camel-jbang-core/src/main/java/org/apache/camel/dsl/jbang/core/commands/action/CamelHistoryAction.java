@@ -203,13 +203,16 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private void doRead(Console c, AtomicBoolean quit, AtomicInteger index) {
+    private void doRead(Console c, AtomicBoolean quit, AtomicInteger index, AtomicBoolean refresh) {
         do {
             String line = c.readLine();
             if (line != null) {
                 line = line.trim();
                 if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
                     quit.set(true);
+                } else if ("r".equalsIgnoreCase(line)) {
+                    refresh.set(true);
+                    index.set(0);
                 } else if ("p".equalsIgnoreCase(line)) {
                     if (index.get() > 0) {
                         index.decrementAndGet();
@@ -230,8 +233,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
     private Integer doInteractiveCall(List<Row> rows) throws Exception {
         // read CLI input from user
         final AtomicInteger index = new AtomicInteger();
+        final AtomicBoolean refresh = new AtomicBoolean();
         final Console c = System.console();
-        Thread t2 = new Thread(() -> doRead(c, quit, index), "ReadCommand");
+        Thread t2 = new Thread(() -> doRead(c, quit, index, refresh), "ReadCommand");
         t2.start();
 
         tableHelper = new MessageTableHelper();
@@ -242,6 +246,13 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
         do {
             if (!waitForUser.get()) {
+                if (refresh.compareAndSet(true, false)) {
+                    var reloaded = loadRows();
+                    if (reloaded.size() == 1) {
+                        rows = reloaded.get(0);
+                    }
+                }
+
                 clearScreen();
                 Row first = rows.get(0);
                 String ago = TimeUtils.printSince(first.timestamp);
@@ -273,7 +284,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
                 String msg
                         = "    Message History (" + pos + "/" + total
-                          + "). Press ENTER to continue (n = next (default), p = previous, number = jump to index, q = quit).";
+                          + "). Press ENTER to continue (n = next (default), p = previous, number = jump to index, r = refresh, q = quit).";
                 if (loggingColor) {
                     AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
                 } else {
