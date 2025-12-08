@@ -57,6 +57,9 @@ pipeline {
                 agent {
                     label "${PLATFORM}"
                 }
+                options {
+                    throttle(['camel'])
+                }
                 when { anyOf {
                     expression { params.PLATFORM_FILTER == 'all' }
                     expression { params.PLATFORM_FILTER == env.PLATFORM }
