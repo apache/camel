@@ -36,6 +36,11 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         disableConcurrentBuilds()
+        throttleJobProperty(
+          categories: ['camel'],
+          throttleEnabled: true,
+          throttleOption: 'category'
+      )
 
         // This is required if you want to clean before build
         skipDefaultCheckout(true)
