@@ -21,6 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
+/**
+ * MDC {@link Processor} that sets MDC context before processing.
+ *
+ * Important: The {@link MDCEventNotifier} is responsible for unsetting MDC because of the exchange can become
+ * asynchronously processed by another thread, which this processor cannot do.
+ *
+ * @see MDCEventNotifier
+ */
 class MDCProcessor extends DelegateAsyncProcessor {
 
     private final MDCService mdcService;

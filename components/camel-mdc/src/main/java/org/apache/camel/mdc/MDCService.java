@@ -30,6 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+/**
+ * MDC {@link org.apache.camel.Service} that setup MDC support via the camel-mdc component.
+ */
 @JdkService("mdc-service")
 public class MDCService extends ServiceSupport implements CamelMDCService {
 
