@@ -35,7 +35,7 @@ public interface StripeComponentBuilderFactory {
      * Stripe (camel-stripe)
      * Camel Stripe component
      * 
-     * Category: cloud
+     * Category: saas,finance
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-stripe
      * 

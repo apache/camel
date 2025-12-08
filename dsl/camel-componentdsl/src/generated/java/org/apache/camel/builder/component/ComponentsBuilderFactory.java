@@ -744,7 +744,7 @@ public interface ComponentsBuilderFactory {
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
      * 
-     * Category: saas
+     * Category: saas,finance
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      * 
@@ -4565,7 +4565,7 @@ public interface ComponentsBuilderFactory {
      * Stripe (camel-stripe)
      * Camel Stripe component
      * 
-     * Category: cloud
+     * Category: saas,finance
      * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-stripe
      * 
