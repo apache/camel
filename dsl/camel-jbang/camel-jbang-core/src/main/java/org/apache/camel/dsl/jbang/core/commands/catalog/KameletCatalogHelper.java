@@ -33,8 +33,8 @@ public final class KameletCatalogHelper {
     private KameletCatalogHelper() {
     }
 
-    public static List<String> findKameletNames(String version) throws Exception {
-        Map<String, Object> kamelets = loadKamelets(version);
+    public static List<String> findKameletNames(String version, String repositories) throws Exception {
+        Map<String, Object> kamelets = loadKamelets(version, repositories);
         return new ArrayList<>(kamelets.keySet());
     }
 
@@ -140,12 +140,13 @@ public final class KameletCatalogHelper {
         return (String) ObjectHelper.invokeMethod(m, meta);
     }
 
-    public static Map<String, Object> loadKamelets(String version) throws Exception {
+    public static Map<String, Object> loadKamelets(String version, String repositories) throws Exception {
         var tccLoader = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader cl = createClassLoader();
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(cl);
+            downloader.setRepositories(repositories);
             downloader.start();
             downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
 
@@ -159,12 +160,13 @@ public final class KameletCatalogHelper {
         }
     }
 
-    public static InputStream loadKameletYamlSchema(String name, String version) throws Exception {
+    public static InputStream loadKameletYamlSchema(String name, String version, String repositories) throws Exception {
         var tccLoader = Thread.currentThread().getContextClassLoader();
         try {
             ClassLoader cl = createClassLoader();
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(cl);
+            downloader.setRepositories(repositories);
             downloader.start();
             downloader.downloadDependency("org.apache.camel.kamelets", "camel-kamelets-catalog", version);
             Thread.currentThread().setContextClassLoader(cl);
@@ -174,8 +176,8 @@ public final class KameletCatalogHelper {
         }
     }
 
-    public static KameletModel loadKameletModel(String name, String version) throws Exception {
-        Map<String, Object> kamelets = loadKamelets(version);
+    public static KameletModel loadKameletModel(String name, String version, String repositories) throws Exception {
+        Map<String, Object> kamelets = loadKamelets(version, repositories);
         if (kamelets != null) {
             Object k = kamelets.get(name);
             if (k != null) {
