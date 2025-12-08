@@ -450,7 +450,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
 
         // check if we use custom and/or official ASF kamelets
-        List<String> officialKamelets = KameletCatalogHelper.findKameletNames(kameletsVersion);
+        List<String> officialKamelets = KameletCatalogHelper.findKameletNames(kameletsVersion, repositories);
         boolean kamelets = false;
         boolean asfKamelets = false;
         for (String line : lines) {
