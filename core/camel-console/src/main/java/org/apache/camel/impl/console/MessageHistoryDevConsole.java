@@ -16,20 +16,30 @@
  */
 package org.apache.camel.impl.console;
 
+import java.io.LineNumberReader;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Route;
 import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole(name = "message-history", displayName = "Message History", description = "History of latest completed exchange")
 @Configurer(extended = true)
 public class MessageHistoryDevConsole extends AbstractDevConsole {
+
+    public static final String CODE_LIMIT = "codeLimit";
 
     public MessageHistoryDevConsole() {
         super("camel", "message-history", "Message History", "History of latest completed exchange");
@@ -53,20 +63,79 @@ public class MessageHistoryDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
+        String codeLimit = (String) options.getOrDefault(CODE_LIMIT, "5");
+
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
             JsonArray arr = new JsonArray();
 
             Collection<BacklogTracerEventMessage> queue = tracer.getLatestMessageHistory();
             for (BacklogTracerEventMessage t : queue) {
-                JsonObject jo = (JsonObject) t.asJSon();
-                arr.add(jo);
+                JsonObject to = (JsonObject) t.asJSon();
+
+                // enrich with source code +/- lines around location
+                int limit = Integer.parseInt(codeLimit);
+                if (limit > 0) {
+                    String rid = to.getString("routeId");
+                    String loc = to.getString("location");
+                    if (rid != null) {
+                        List<JsonObject> code = enrichSourceCode(rid, loc, limit);
+                        if (code != null && !code.isEmpty()) {
+                            to.put("code", code);
+                        }
+                    }
+                }
+
+                arr.add(to);
             }
             root.put("name", getCamelContext().getName());
             root.put("traces", arr);
         }
 
         return root;
+    }
+
+    private List<JsonObject> enrichSourceCode(String routeId, String location, int lines) {
+        Route route = getCamelContext().getRoute(routeId);
+        if (route == null) {
+            return null;
+        }
+        Resource resource = route.getSourceResource();
+        if (resource == null) {
+            return null;
+        }
+
+        List<JsonObject> code = new ArrayList<>();
+
+        location = StringHelper.afterLast(location, ":");
+        int line = 0;
+        try {
+            if (location != null) {
+                line = Integer.parseInt(location);
+            }
+            LineNumberReader reader = new LineNumberReader(resource.getReader());
+            for (int i = 1; i <= line + lines; i++) {
+                String t = reader.readLine();
+                if (t != null) {
+                    int low = line - lines + 2; // grab more of the following code than previous code (+2)
+                    int high = line + lines + 1 + 2;
+                    if (i >= low && i <= high) {
+                        JsonObject c = new JsonObject();
+                        c.put("line", i);
+                        if (line == i) {
+                            c.put("match", true);
+                        }
+                        c.put("code", Jsoner.escape(t));
+                        code.add(c);
+                    }
+                }
+            }
+            IOHelper.close(reader);
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return code;
     }
 
 }

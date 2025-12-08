@@ -707,15 +707,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         pseudoFirst = new DefaultBacklogTracerEventMessage(
                                 camelContext,
                                 true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, input.getId(),
-                                null, null,
-                                null,
+                                null, null, null,
                                 input.getShortName(), input.getLabel(),
                                 level - 1, exchangeId, correlationExchangeId, rest, template, data);
                     } else {
                         pseudoFirst = new DefaultBacklogTracerEventMessage(
                                 camelContext,
-                                true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, null, null,
+                                true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, input.getId(),
                                 null, null, null,
+                                input.getShortName(), input.getLabel(),
                                 level, exchangeId, correlationExchangeId, rest, template, data);
                         if (exchange.getFromEndpoint() instanceof EndpointServiceLocation esl) {
                             pseudoFirst.setEndpointServiceUrl(esl.getServiceUrl());
@@ -793,7 +793,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (endpoint != null) {
                 uri = endpoint.getEndpointUri();
                 remote = endpoint.isRemote();
-            } else if ((data.isFirst() || data.isLast()) && data.getToNode() == null && routeDefinition != null) {
+            } else if ((data.isFirst() || data.isLast()) && !"aggregate".equals(data.getToNodeShortName())
+                    && routeDefinition != null) {
                 // pseudo first/last event (the from in the route)
                 Route route = camelContext.getRoute(routeDefinition.getRouteId());
                 if (route != null && route.getConsumer() != null) {

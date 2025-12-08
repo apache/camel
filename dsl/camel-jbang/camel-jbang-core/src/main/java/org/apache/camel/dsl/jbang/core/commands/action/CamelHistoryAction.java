@@ -16,15 +16,20 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.io.Console;
 import java.io.LineNumberReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -33,8 +38,10 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -43,6 +50,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "history",
@@ -51,6 +59,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
+
+    @CommandLine.Option(names = { "--it" },
+                        description = "Interactive mode for enhanced history information")
+    boolean it;
 
     @CommandLine.Option(names = { "--source" },
                         description = "Prefer to display source filename/code instead of IDs")
@@ -68,10 +80,57 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         description = "Limit Split to a maximum number of entries to be displayed")
     int limitSplit;
 
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+                        description = "Print timestamp.")
+    boolean timestamp = true;
+
+    @CommandLine.Option(names = { "--ago" },
+                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    boolean ago;
+
+    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
+                        description = "Show exchange properties in debug messages")
+    boolean showExchangeProperties;
+
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+                        description = "Show exchange variables in debug messages")
+    boolean showExchangeVariables = true;
+
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+                        description = "Show message headers in debug messages")
+    boolean showHeaders = true;
+
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+                        description = "Show message body in debug messages")
+    boolean showBody = true;
+
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+                        description = "Show exception and stacktrace for failed messages")
+    boolean showException = true;
+
+    @CommandLine.Option(names = { "--pretty" },
+                        description = "Pretty print message body when using JSon or XML format")
+    boolean pretty;
+
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    boolean loggingColor = true;
+
+    private MessageTableHelper tableHelper;
+    private final AtomicBoolean quit = new AtomicBoolean();
+    private final AtomicBoolean waitForUser = new AtomicBoolean();
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public CamelHistoryAction(CamelJBangMain main) {
         super(main);
+    }
+
+    @Override
+    public Integer doCall() throws Exception {
+        if (it) {
+            // cannot run in watch mode for interactive
+            watch = false;
+        }
+        return super.doCall();
     }
 
     @Override
@@ -83,6 +142,13 @@ public class CamelHistoryAction extends ActionWatchCommand {
         List<List<Row>> pids = loadRows();
 
         if (!pids.isEmpty()) {
+            if (it) {
+                if (pids.size() > 1) {
+                    printer().println("Interactive mode only operate on a single Camel application");
+                    return 0;
+                }
+                return doInteractiveCall(pids.get(0));
+            }
             if (watch) {
                 clearScreen();
             }
@@ -135,6 +201,386 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
 
         return 0;
+    }
+
+    private void doRead(Console c, AtomicBoolean quit, AtomicInteger index, AtomicBoolean refresh) {
+        do {
+            String line = c.readLine();
+            if (line != null) {
+                line = line.trim();
+                if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
+                    quit.set(true);
+                } else if ("r".equalsIgnoreCase(line)) {
+                    refresh.set(true);
+                    index.set(0);
+                } else if ("p".equalsIgnoreCase(line)) {
+                    if (index.get() > 0) {
+                        index.decrementAndGet();
+                    }
+                } else if (line.isBlank() || "n".equalsIgnoreCase(line)) {
+                    index.incrementAndGet();
+                } else {
+                    int idx = lineIsNumber(line);
+                    if (idx >= 0) {
+                        index.set(idx);
+                    }
+                }
+                waitForUser.set(false);
+            }
+        } while (!quit.get());
+    }
+
+    private Integer doInteractiveCall(List<Row> rows) throws Exception {
+        // read CLI input from user
+        final AtomicInteger index = new AtomicInteger();
+        final AtomicBoolean refresh = new AtomicBoolean();
+        final Console c = System.console();
+        Thread t2 = new Thread(() -> doRead(c, quit, index, refresh), "ReadCommand");
+        t2.start();
+
+        tableHelper = new MessageTableHelper();
+        tableHelper.setPretty(pretty);
+        tableHelper.setLoggingColor(loggingColor);
+        tableHelper.setShowExchangeProperties(showExchangeProperties);
+        tableHelper.setShowExchangeVariables(showExchangeVariables);
+
+        do {
+            if (!waitForUser.get()) {
+                if (refresh.compareAndSet(true, false)) {
+                    var reloaded = loadRows();
+                    if (reloaded.size() == 1) {
+                        rows = reloaded.get(0);
+                    }
+                }
+
+                clearScreen();
+                Row first = rows.get(0);
+                String ago = TimeUtils.printSince(first.timestamp);
+                Row last = rows.get(rows.size() - 1);
+                String status = last.failed ? "failed" : "success";
+                String s = String.format("Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
+                        first.exchangeId, status, ago, first.pid, first.name);
+                printer().println(s);
+                printer().println();
+
+                int i = index.get();
+                if (i > rows.size()) {
+                    i = 0; // start over again
+                    index.set(0);
+                }
+                if (i < rows.size()) {
+                    Row r = rows.get(i);
+                    printSourceAndHistory(r);
+                    printCurrentRow(r);
+                }
+                printer().println();
+
+                int total = rows.size() - 1;
+                int pos = i;
+
+                if (pos == total) {
+                    index.set(-1); // start over again
+                }
+
+                String msg
+                        = "    Message History (" + pos + "/" + total
+                          + "). Press ENTER to continue (n = next (default), p = previous, number = jump to index, r = refresh, q = quit).";
+                if (loggingColor) {
+                    AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
+                } else {
+                    printer().println(msg);
+                }
+                waitForUser.set(true);
+            }
+        } while (!quit.get() || waitForUser.get());
+
+        return 0;
+    }
+
+    private static int lineIsNumber(String line) {
+        try {
+            return Integer.parseInt(line);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    private String getDataAsTable(Row r) {
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, r.aggregate, r.endpoint, r.endpointService,
+                r.message, r.exception);
+    }
+
+    private void printSourceAndHistory(Row row) {
+        List<Panel> panel = new ArrayList<>();
+        if (!row.code.isEmpty()) {
+            String loc = StringHelper.beforeLast(row.location, ":", row.location);
+            if (loc != null && loc.length() < 72) {
+                loc = loc + " ".repeat(72 - loc.length());
+            } else {
+                loc = "";
+            }
+            panel.add(Panel.withCode("Source: " + loc).andHistory("History"));
+            panel.add(Panel.withCode("-".repeat(80))
+                    .andHistory("-".repeat(90)));
+
+            for (int i = 0; i < row.code.size(); i++) {
+                Code code = row.code.get(i);
+                String c = Jsoner.unescape(code.code);
+                String arrow = "    ";
+                if (code.match) {
+                    if (row.first) {
+                        arrow = "*-->";
+                    } else if (row.last) {
+                        arrow = "<--*";
+                    } else {
+                        arrow = "--->";
+                    }
+                }
+                String msg = String.format("%4d: %s %s", code.line, arrow, c);
+                if (msg.length() > 80) {
+                    msg = msg.substring(0, 80);
+                }
+                int length = msg.length();
+                if (loggingColor && code.match) {
+                    Ansi.Color col = Ansi.Color.BLUE;
+                    Ansi.Attribute it = Ansi.Attribute.INTENSITY_BOLD;
+                    if (row.failed && row.last) {
+                        col = Ansi.Color.RED;
+                    } else if (row.last) {
+                        col = Ansi.Color.GREEN;
+                    }
+                    // need to fill out entire line, so fill in spaces
+                    if (length < 80) {
+                        String extra = " ".repeat(80 - length);
+                        msg = msg + extra;
+                        length = 80;
+                    }
+                    msg = Ansi.ansi().bg(col).a(it).a(msg).reset().toString();
+                } else {
+                    // need to fill out entire line, so fill in spaces
+                    if (length < 80) {
+                        String extra = " ".repeat(80 - length);
+                        msg = msg + extra;
+                        length = 80;
+                    }
+                }
+                panel.add(Panel.withCode(msg, length));
+            }
+            for (int i = row.code.size(); i < 11; i++) {
+                // empty lines so source code has same height
+                panel.add(Panel.withCode(" ".repeat(80)));
+            }
+        }
+
+        if (!row.history.isEmpty()) {
+            if (row.history.size() > (panel.size() - 4)) {
+                // cut to only what we can display
+                int pos = row.history.size() - (panel.size() - 4);
+                if (row.history.size() > pos) {
+                    row.history = row.history.subList(pos, row.history.size());
+                }
+            }
+            for (int i = 2; panel.size() > 2 && i < 11; i++) {
+                Panel p = panel.get(i);
+                if (row.history.size() > (i - 2)) {
+                    History h = row.history.get(i - 2);
+                    boolean top = h == row.history.get(row.history.size() - 1);
+
+                    String ids;
+                    if (source) {
+                        ids = locationAndLine(h.location, h.line);
+                    } else {
+                        ids = h.routeId + "/" + h.nodeId;
+                    }
+                    if (ids.length() > 30) {
+                        ids = ids.substring(ids.length() - 30);
+                    }
+
+                    ids = String.format("%-30.30s", ids);
+                    if (loggingColor) {
+                        ids = Ansi.ansi().fgCyan().a(ids).reset().toString();
+                    }
+                    long e = i == 2 ? 0 : h.elapsed; // the pseudo from should have 0 as elapsed
+                    String elapsed = "(" + e + "ms)";
+
+                    String c = "";
+                    if (source && h.code != null) {
+                        c = Jsoner.unescape(h.code);
+                        c = c.trim();
+                    } else if (h.nodeLabel != null) {
+                        c = Jsoner.escape(h.nodeLabel);
+                        c = c.trim();
+                    }
+                    // pad with level
+                    String pad = StringHelper.padString(h.level);
+                    c = pad + c;
+
+                    String fids = String.format("%-30.30s", ids);
+                    String msg;
+                    if (top && !row.last) {
+                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
+                    } else {
+                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
+                    }
+                    int len = msg.length();
+                    if (loggingColor) {
+                        fids = String.format("%-30.30s", ids);
+                        fids = Ansi.ansi().fgCyan().a(fids).reset().toString();
+                        if (top && !row.last) {
+                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
+                        } else {
+                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
+                        }
+                    }
+
+                    p.history = msg;
+                    p.historyLength = len;
+                }
+            }
+        }
+        // the ascii-table does not work well with color cells (https://github.com/freva/ascii-table/issues/26)
+        for (Panel p : panel) {
+            String c = p.code;
+            String h = p.history;
+            int len = p.historyLength;
+            if (len > 90) {
+                h = h.substring(0, 90);
+            }
+            String line = c + "    " + h;
+            printer().println(line);
+        }
+    }
+
+    private void printCurrentRow(Row row) {
+        if (timestamp) {
+            String ts;
+            if (ago) {
+                ts = String.format("%12s", TimeUtils.printSince(row.timestamp) + " ago");
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                ts = sdf.format(new Date(row.timestamp));
+            }
+            if (loggingColor) {
+                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+            } else {
+                printer().print(ts);
+            }
+            printer().print("  ");
+        }
+        // pid
+        String p = String.format("%5.5s", row.pid);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
+            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+        } else {
+            printer().print(p);
+            printer().print(" --- ");
+        }
+        // thread name
+        String tn = row.threadName;
+        if (tn.length() > 25) {
+            tn = tn.substring(tn.length() - 25);
+        }
+        tn = String.format("[%25.25s]", tn);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
+        } else {
+            printer().print(tn);
+        }
+        printer().print(" ");
+        // node ids or source location
+        String ids;
+        if (source) {
+            ids = locationAndLine(row.location, -1);
+        } else {
+            ids = row.routeId + "/" + getId(row);
+        }
+        if (ids.length() > 40) {
+            ids = ids.substring(ids.length() - 40);
+        }
+        ids = String.format("%40.40s", ids);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
+        } else {
+            printer().print(ids);
+        }
+        printer().print(" : ");
+        // uuid
+        String u = String.format("%5.5s", row.uid);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
+        } else {
+            printer().print(u);
+        }
+        printer().print(" - ");
+        // status
+        printer().print(getStatus(row));
+        // elapsed
+        String e = getElapsed(row);
+        if (e != null) {
+            if (loggingColor) {
+                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+            } else {
+                printer().print("(" + e + ")");
+            }
+        }
+        printer().println();
+        printer().println(getDataAsTable(row));
+        printer().println();
+    }
+
+    private String getElapsed(Row r) {
+        if (!r.first) {
+            return TimeUtils.printDuration(r.elapsed, true);
+        }
+        return null;
+    }
+
+    private String getStatus(Row r) {
+        boolean remote = r.endpoint != null && r.endpoint.getBooleanOrDefault("remote", false);
+
+        if (r.first) {
+            String s = "Created";
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
+            } else {
+                return s;
+            }
+        } else if (r.last) {
+            String done = r.exception != null ? "Completed (exception)" : "Completed (success)";
+            if (loggingColor) {
+                return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(done).reset().toString();
+            } else {
+                return done;
+            }
+        }
+        if (!r.done) {
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.BLUE).a("Breakpoint").reset().toString();
+            } else {
+                return "Breakpoint";
+            }
+        } else if (r.failed) {
+            String fail = r.exception != null ? "Exception" : "Failed";
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.RED).a(fail).reset().toString();
+            } else {
+                return fail;
+            }
+        } else {
+            String s = remote ? "Sent" : "Processed";
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
+            } else {
+                return s;
+            }
+        }
+    }
+
+    private static String locationAndLine(String loc, int line) {
+        // shorten path as there is no much space (there are no scheme as add fake)
+        loc = LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
+        return line == -1 ? loc : loc + ":" + line;
     }
 
     private boolean filterDepth(Row r) {
@@ -241,8 +687,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         answer.add(rows);
                     }
                 } catch (Exception e) {
-                    // TODO: remove me
-                    e.printStackTrace();
                     // ignore
                 } finally {
                     IOHelper.close(reader);
@@ -284,6 +728,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         row.nodeLabel = URISupport.sanitizeUri(row.nodeLabel);
                     }
                     row.nodeLevel = jo.getIntegerOrDefault("nodeLevel", 0);
+                    if ("aggregate".equals(jo.getString("nodeShortName"))) {
+                        row.aggregate = new JsonObject();
+                        row.aggregate.put("nodeLabel", jo.getString("nodeLabel"));
+                    }
                     String uri = jo.getString("endpointUri");
                     if (uri != null) {
                         row.endpoint = new JsonObject();
@@ -313,6 +761,31 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     // we should exchangeId/pattern elsewhere
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
+                    if (!showExchangeVariables) {
+                        row.message.remove("exchangeVariables");
+                    }
+                    if (!showExchangeProperties) {
+                        row.message.remove("exchangeProperties");
+                    }
+                    if (!showHeaders) {
+                        row.message.remove("headers");
+                    }
+                    if (!showBody) {
+                        row.message.remove("body");
+                    }
+                    if (!showException) {
+                        row.exception = null;
+                    }
+                    List<JsonObject> codeLines = jo.getCollection("code");
+                    if (codeLines != null) {
+                        for (JsonObject cl : codeLines) {
+                            Code code = new Code();
+                            code.line = cl.getInteger("line");
+                            code.match = cl.getBooleanOrDefault("match", false);
+                            code.code = cl.getString("code");
+                            row.code.add(code);
+                        }
+                    }
                     rows.add(row);
                 }
 
@@ -383,6 +856,32 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     String as = map.remove("CamelAggregatedSize");
                     r.summary = "Aggregate (key:" + ak + " size:" + as + ")";
                 }
+            }
+        }
+        for (int i = 1; i < rows.size() - 1; i++) {
+            Row cur = rows.get(i);
+
+            cur.history = new ArrayList<>();
+            for (int j = 0; j < i; j++) {
+                Row r = rows.get(j);
+                History h = new History();
+                h.index = j;
+                h.nodeId = r.nodeId;
+                h.routeId = r.routeId;
+                h.nodeShortName = r.nodeShortName;
+                h.nodeLabel = r.nodeLabel;
+                h.location = r.location;
+                h.elapsed = r.elapsed;
+                h.level = r.nodeLevel;
+                if (r.code != null) {
+                    for (var c : r.code) {
+                        if (c.match) {
+                            h.code = c.code;
+                            h.line = c.line;
+                        }
+                    }
+                }
+                cur.history.add(h);
             }
         }
     }
@@ -470,11 +969,62 @@ public class CamelHistoryAction extends ActionWatchCommand {
         long elapsed;
         boolean done;
         boolean failed;
+        JsonObject aggregate;
         JsonObject endpoint;
         JsonObject endpointService;
         JsonObject message;
         JsonObject exception;
         String summary;
+        List<Code> code = new ArrayList<>();
+        List<History> history = new ArrayList<>();
+    }
+
+    private static class History {
+        int index;
+        String routeId;
+        String nodeId;
+        String nodeShortName;
+        String nodeLabel;
+        int level;
+        long elapsed;
+        String location;
+        int line;
+        String code;
+    }
+
+    private static class Code {
+        int line;
+        String code;
+        boolean match;
+    }
+
+    private static class Panel {
+        String code = "";
+        String history = "";
+        int codeLength;
+        int historyLength;
+
+        static Panel withCode(String code) {
+            return withCode(code, code.length());
+        }
+
+        static Panel withCode(String code, int length) {
+            Panel p = new Panel();
+            p.code = code;
+            p.codeLength = length;
+            return p;
+        }
+
+        Panel andHistory(String history) {
+            return andHistory(history, history.length());
+        }
+
+        Panel andHistory(String history, int length) {
+            this.history = history;
+            this.historyLength = length;
+            return this;
+        }
+
     }
 
 }

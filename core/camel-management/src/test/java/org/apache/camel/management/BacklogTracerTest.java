@@ -34,7 +34,6 @@ import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
@@ -168,7 +167,6 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event0 = events.get(0);
         assertEquals("route1", event0.getRouteId());
-        assertNull(event0.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
                      + "      <exchangeProperties>\n"
@@ -204,7 +202,6 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event3 = events.get(4);
         assertEquals("route1", event3.getRouteId());
-        assertNull(event3.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId()
                      + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n"
                      + "      <exchangeProperties>\n"
