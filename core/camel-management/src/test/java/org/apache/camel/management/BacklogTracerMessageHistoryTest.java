@@ -99,7 +99,7 @@ public class BacklogTracerMessageHistoryTest extends ManagementTestSupport {
 
         assertTrue(events.get(0).isFirst());
         assertEquals("direct://start", events.get(0).getEndpointUri());
-        assertNull(events.get(0).getToNode());
+        assertEquals("from", events.get(0).getToNodeShortName());
 
         assertFalse(events.get(1).isFirst());
         assertFalse(events.get(1).isLast());
