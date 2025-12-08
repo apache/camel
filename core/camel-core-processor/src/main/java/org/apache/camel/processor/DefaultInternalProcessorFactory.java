@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
@@ -73,6 +74,7 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     @Override
     public AsyncProducer createAsyncProducer(Endpoint endpoint) throws Exception {
         AsyncProducer answer = endpoint.createAsyncProducer();
+        CamelContextAware.trySetCamelContext(answer, endpoint.getCamelContext());
         // is auto mocked intercepting enabled?
         if (!endpoint.getCamelContext().getCamelContextExtension().getAutoMockInterceptStrategies().isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);
@@ -83,6 +85,7 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     @Override
     public Producer createProducer(Endpoint endpoint) throws Exception {
         Producer answer = endpoint.createProducer();
+        CamelContextAware.trySetCamelContext(answer, endpoint.getCamelContext());
         // is auto mocked intercepting enabled?
         if (!endpoint.getCamelContext().getCamelContextExtension().getAutoMockInterceptStrategies().isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);
