@@ -492,7 +492,7 @@
         <solr-zookeeper-version>3.9.4</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.3-groovy-4.0</spock-version>
-        <spring-ai-version>1.1.0</spring-ai-version>
+        <spring-ai-version>1.1.1</spring-ai-version>
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
         <spring-batch-version>5.2.4</spring-batch-version>
         <spring-boot-version>3.5.8</spring-boot-version>
