@@ -76,6 +76,7 @@ public class BeanIOIterator implements Iterator<Object>, Closeable {
      * Sets a custom object as the next, such as from a custom error handler
      */
     public void setNext(Object next) {
-        this.forceNext = next;
+        // NOTE: this is forcefully setting forceNext object on purpose.
+        this.forceNext = next; // NOSONAR
     }
 }
