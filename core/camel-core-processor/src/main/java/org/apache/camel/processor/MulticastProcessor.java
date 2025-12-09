@@ -127,7 +127,8 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         @Override
         public Processor getProcessor() {
-            return prepared;
+            // NOTE: we return prepared object on purpose.
+            return prepared; // NOSONAR
         }
 
         @Override
