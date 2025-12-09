@@ -28,9 +28,8 @@ import org.apache.camel.spi.UriPath;
 public class StripeConfiguration {
 
     @UriPath
-    @Metadata(required = true, description = "The Stripe operation to perform",
-              enums = "charges,customers,paymentIntents,paymentMethods,refunds,subscriptions,invoices,products,prices,balanceTransactions")
-    private String operation;
+    @Metadata(required = true, description = "The Stripe operation to perform")
+    private StripeOperation operation;
 
     @UriParam(label = "security", secret = true, description = "The Stripe API key for authentication")
     private String apiKey;
@@ -38,12 +37,16 @@ public class StripeConfiguration {
     @UriParam(label = "advanced", description = "Override the default Stripe API base URL (for testing purposes)")
     private String apiBase;
 
-    public String getOperation() {
+    public StripeOperation getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(StripeOperation operation) {
         this.operation = operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = StripeOperation.fromValue(operation);
     }
 
     public String getApiKey() {

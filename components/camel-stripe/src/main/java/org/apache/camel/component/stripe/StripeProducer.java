@@ -52,10 +52,10 @@ public class StripeProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String operation = getEndpoint().getConfiguration().getOperation();
+        StripeOperation operation = getEndpoint().getConfiguration().getOperation();
         String method = exchange.getIn().getHeader(StripeConstants.METHOD_HEADER, String.class);
 
-        if (ObjectHelper.isEmpty(operation)) {
+        if (operation == null) {
             throw new IllegalArgumentException("Operation must be specified");
         }
 
@@ -100,27 +100,27 @@ public class StripeProducer extends DefaultProducer {
                 "Body must be a Map<String, Object> or a JSON String, but was: " + body.getClass().getName());
     }
 
-    private Object performOperation(Exchange exchange, String operation, String method) throws Exception {
+    private Object performOperation(Exchange exchange, StripeOperation operation, String method) throws Exception {
         switch (operation) {
-            case StripeConstants.OPERATION_CHARGES:
+            case CHARGES:
                 return handleCharges(exchange, method);
-            case StripeConstants.OPERATION_CUSTOMERS:
+            case CUSTOMERS:
                 return handleCustomers(exchange, method);
-            case StripeConstants.OPERATION_PAYMENT_INTENTS:
+            case PAYMENT_INTENTS:
                 return handlePaymentIntents(exchange, method);
-            case StripeConstants.OPERATION_PAYMENT_METHODS:
+            case PAYMENT_METHODS:
                 return handlePaymentMethods(exchange, method);
-            case StripeConstants.OPERATION_REFUNDS:
+            case REFUNDS:
                 return handleRefunds(exchange, method);
-            case StripeConstants.OPERATION_SUBSCRIPTIONS:
+            case SUBSCRIPTIONS:
                 return handleSubscriptions(exchange, method);
-            case StripeConstants.OPERATION_INVOICES:
+            case INVOICES:
                 return handleInvoices(exchange, method);
-            case StripeConstants.OPERATION_PRODUCTS:
+            case PRODUCTS:
                 return handleProducts(exchange, method);
-            case StripeConstants.OPERATION_PRICES:
+            case PRICES:
                 return handlePrices(exchange, method);
-            case StripeConstants.OPERATION_BALANCE_TRANSACTIONS:
+            case BALANCE_TRANSACTIONS:
                 return handleBalanceTransactions(exchange, method);
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
