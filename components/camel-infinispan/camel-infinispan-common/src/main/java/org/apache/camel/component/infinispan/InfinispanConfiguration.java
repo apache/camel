@@ -22,7 +22,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 
 public abstract class InfinispanConfiguration {
-    @UriParam(label = "producer", defaultValue = "PUT", description = "The operation to perform")
+    @UriParam(label = "producer", defaultValue = "PUT", description = "The operation to perform",
+              enums = "PUT,PUTASYNC,PUTALL,PUTALLASYNC,PUTIFABSENT,PUTIFABSENTASYNC,GET,GETORDEFAULT,CONTAINSKEY,CONTAINSVALUE,REMOVE,REMOVEASYNC,REPLACE,REPLACEASYNC,SIZE,CLEAR,CLEARASYNC,QUERY,STATS,COMPUTE,COMPUTEASYNC")
     private InfinispanOperation operation = InfinispanOperation.PUT;
 
     @UriParam(label = "producer", description = "Set a specific key for producer operations")

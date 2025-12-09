@@ -37,7 +37,7 @@ public class CaffeineConfiguration implements Cloneable {
     private Integer initialCapacity;
     @UriParam
     private Integer maximumSize;
-    @UriParam(defaultValue = "SIZE_BASED")
+    @UriParam(defaultValue = "SIZE_BASED", enums = "SIZE_BASED,TIME_BASED")
     private EvictionType evictionType = EvictionType.SIZE_BASED;
     @UriParam(defaultValue = "300")
     private int expireAfterAccessTime = 300;
