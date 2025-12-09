@@ -15305,6 +15305,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The Stripe operation to perform
+     * There are 10 enums and the value can be one of: charges, customers,
+     * paymentIntents, paymentMethods, refunds, subscriptions, invoices,
+     * products, prices, balanceTransactions
      * 
      * @param path operation
      * @return the dsl builder
@@ -15324,6 +15327,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operation (required)
      * The Stripe operation to perform
+     * There are 10 enums and the value can be one of: charges, customers,
+     * paymentIntents, paymentMethods, refunds, subscriptions, invoices,
+     * products, prices, balanceTransactions
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
