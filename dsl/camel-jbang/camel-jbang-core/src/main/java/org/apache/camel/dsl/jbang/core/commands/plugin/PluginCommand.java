@@ -29,7 +29,6 @@ public class PluginCommand extends PluginBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // defaults to list integrations deployed on Kubernetes
         new CommandLine(new PluginGet(getMain())).execute();
         return 0;
     }
