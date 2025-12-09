@@ -60,12 +60,16 @@ public class SmooksDataFormatTest extends CamelTestSupport {
     }
 
     @AfterEach
-    public void afterEach() {
+    public void afterEach() throws IOException {
         dataFormatter.stop();
+        camelContext.stop();
+        camelContext.close();
     }
 
     @Test
     public void unmarshal() throws Exception {
+        @SuppressWarnings("resource")
+        // NOTE: resource will be closed by the context
         final UnmarshalProcessor unmarshalProcessor = new UnmarshalProcessor(dataFormatter);
         final DefaultExchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setBody(getCustomerInputStream(CUSTOMER_XML));
@@ -77,6 +81,8 @@ public class SmooksDataFormatTest extends CamelTestSupport {
 
     @Test
     public void marshal() throws Exception {
+        @SuppressWarnings("resource")
+        // NOTE: resource will be closed by the context
         final MarshalProcessor marshalProcessor = new MarshalProcessor(dataFormatter);
         final DefaultExchange exchange = new DefaultExchange(camelContext);
         final Customer customer = new Customer();

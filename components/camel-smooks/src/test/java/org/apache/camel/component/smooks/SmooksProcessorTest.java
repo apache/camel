@@ -191,7 +191,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
         template.sendBody("direct://input", getOrderEdi());
 
         Exchange exchange = result.assertExchangeReceived(0);
-        assertNotEquals(executionContext[0], exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT));
+        assertNotEquals(executionContext[0],
+                exchange.getMessage().getHeader(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, ExecutionContext.class));
     }
 
     @Test
@@ -299,6 +300,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
     @Test
     public void testProcessGivenCamelCharsetNameProperty() throws Exception {
         context.addRoutes(new RouteBuilder() {
+            @SuppressWarnings("resource")
+            // NOTE: the context will take care to clean resources
             @Override
             public void configure() {
                 Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
@@ -366,6 +369,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
     public void testProcessWhenBodyIsFileAndSmooksExportIsStringSink() throws Exception {
         deleteDirectory("target/smooks");
         context.addRoutes(new RouteBuilder() {
+            @SuppressWarnings("resource")
+            // NOTE: the context will take care to clean resources
             public void configure() {
                 from("file://target/smooks")
                         .process(new SmooksProcessor(new Smooks().setExports(new Exports(StringSink.class)), context))
@@ -384,6 +389,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("resource")
+    // NOTE: the context will take care to clean resources
     public void testProcessWhenSmooksExportIsJavaSinkAndBodyIsVisitedByJavaBeanValue() throws Exception {
         Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
@@ -403,6 +410,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("resource")
+    // NOTE: the context will take care to clean resources
     public void testProcessWhenSmooksExportIsJavaSinkAndBodyIsVisitedByMultipleJavaBeanValues() throws Exception {
         Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
@@ -424,6 +433,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("resource")
+    // NOTE: the context will take care to clean resources
     public void testProcessWhenSmooksExportIsJavaSinkAndBodyIsVisitedByBean() throws Exception {
         Smooks smooks = new Smooks().setExports(new Exports(JavaSink.class));
         context.addRoutes(new RouteBuilder() {
@@ -445,6 +456,8 @@ public class SmooksProcessorTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("resource")
+    // NOTE: the context will take care to clean resources
     public void testProcessWhenSmooksExportIsStringSink() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

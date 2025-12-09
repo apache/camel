@@ -33,9 +33,10 @@ public class SourceConverterTest {
     private TypeConverter typeConverter;
 
     @BeforeEach
-    public void beforeEach() {
-        CamelContext camelContext = new DefaultCamelContext();
-        typeConverter = camelContext.getTypeConverter();
+    public void beforeEach() throws Exception {
+        try (CamelContext camelContext = new DefaultCamelContext()) {
+            typeConverter = camelContext.getTypeConverter();
+        }
     }
 
     @Test
