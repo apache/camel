@@ -73,7 +73,7 @@ public class LangChain4jTavilyWebSearchEngineIT extends CamelTestSupport {
 
         List<WebSearchOrganicResult> listResult = result.getIn().getBody(List.class);
         assertNotNull(listResult, "The list results from the Tavily Search Engine shouldn't be null.");
-        assertNotEquals(0, listResult.get(0), "The list results from the Tavily Search Engine shouldn't be empty.");
+        assertNotEquals(0, listResult.size(), "The list results from the Tavily Search Engine shouldn't be empty.");
         assertNotNull(listResult.get(0).content(), "The first result from the Tavily Search Engine should contain content.");
 
     }
@@ -82,7 +82,7 @@ public class LangChain4jTavilyWebSearchEngineIT extends CamelTestSupport {
     void advancedRequestTest() {
         List<String> response = template.requestBody(WEB_SEARCH_URI, null, List.class);
         assertNotNull(response, "An Exchange is expected.");
-        assertNotEquals(0, response.get(0), "The list results from the Tavily Search Engine shouldn't be empty.");
+        assertNotEquals(0, response.size(), "The list results from the Tavily Search Engine shouldn't be empty.");
     }
 
 }
