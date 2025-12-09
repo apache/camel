@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.Console;
 import java.io.LineNumberReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -51,73 +51,74 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
+import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "history",
-                     description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
+        description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
 public class CamelHistoryAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--it" },
-                        description = "Interactive mode for enhanced history information")
+    @CommandLine.Option(names = {"--it"},
+            description = "Interactive mode for enhanced history information")
     boolean it;
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @CommandLine.Option(names = {"--source"},
+            description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @CommandLine.Option(names = {"--mask"},
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
-                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    @CommandLine.Option(names = {"--depth"}, defaultValue = "9",
+            description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
     int depth;
 
-    @CommandLine.Option(names = { "--limit-split" },
-                        description = "Limit Split to a maximum number of entries to be displayed")
+    @CommandLine.Option(names = {"--limit-split"},
+            description = "Limit Split to a maximum number of entries to be displayed")
     int limitSplit;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
-                        description = "Print timestamp.")
+    @CommandLine.Option(names = {"--timestamp"}, defaultValue = "true",
+            description = "Print timestamp.")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--ago" },
-                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    @CommandLine.Option(names = {"--ago"},
+            description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in debug messages")
+    @CommandLine.Option(names = {"--show-exchange-properties"}, defaultValue = "false",
+            description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
-                        description = "Show exchange variables in debug messages")
+    @CommandLine.Option(names = {"--show-exchange-variables"}, defaultValue = "true",
+            description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
-                        description = "Show message headers in debug messages")
+    @CommandLine.Option(names = {"--show-headers"}, defaultValue = "true",
+            description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
-                        description = "Show message body in debug messages")
+    @CommandLine.Option(names = {"--show-body"}, defaultValue = "true",
+            description = "Show message body in debug messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
-                        description = "Show exception and stacktrace for failed messages")
+    @CommandLine.Option(names = {"--show-exception"}, defaultValue = "true",
+            description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @CommandLine.Option(names = {"--pretty"},
+            description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = {"--logging-color"}, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
     private MessageTableHelper tableHelper;
-    private final AtomicBoolean quit = new AtomicBoolean();
-    private final AtomicBoolean waitForUser = new AtomicBoolean();
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public CamelHistoryAction(CamelJBangMain main) {
@@ -203,40 +204,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private void doRead(Console c, AtomicBoolean quit, AtomicInteger index, AtomicBoolean refresh) {
-        do {
-            String line = c.readLine();
-            if (line != null) {
-                line = line.trim();
-                if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
-                    quit.set(true);
-                } else if ("r".equalsIgnoreCase(line)) {
-                    refresh.set(true);
-                    index.set(0);
-                } else if ("p".equalsIgnoreCase(line)) {
-                    if (index.get() > 0) {
-                        index.decrementAndGet();
-                    }
-                } else if (line.isBlank() || "n".equalsIgnoreCase(line)) {
-                    index.incrementAndGet();
-                } else {
-                    int idx = lineIsNumber(line);
-                    if (idx >= 0) {
-                        index.set(idx);
-                    }
-                }
-                waitForUser.set(false);
-            }
-        } while (!quit.get());
-    }
-
     private Integer doInteractiveCall(List<Row> rows) throws Exception {
-        // read CLI input from user
-        final AtomicInteger index = new AtomicInteger();
-        final AtomicBoolean refresh = new AtomicBoolean();
-        final Console c = System.console();
-        Thread t2 = new Thread(() -> doRead(c, quit, index, refresh), "ReadCommand");
-        t2.start();
+        AtomicInteger index = new AtomicInteger();
+        AtomicBoolean quit = new AtomicBoolean();
 
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
@@ -244,65 +214,106 @@ public class CamelHistoryAction extends ActionWatchCommand {
         tableHelper.setShowExchangeProperties(showExchangeProperties);
         tableHelper.setShowExchangeVariables(showExchangeVariables);
 
+        InteractiveTerminal t = new InteractiveTerminal();
+        t.start();
+        t.addKeyBinding("quit", "q");
+        t.addKeyBinding("up", InfoCmp.Capability.key_up);
+        t.addKeyBinding("down", InfoCmp.Capability.key_down);
+        t.addKeyBinding("refresh", InfoCmp.Capability.key_f5);
+
+        t.clearDisplay();
+        t.updateDisplay(interactiveContent(rows, index));
+        t.flush();
+
         do {
-            if (!waitForUser.get()) {
-                if (refresh.compareAndSet(true, false)) {
+            String operation = t.readNextKeyBinding();
+            if (operation != null) {
+                if ("quit".equals(operation)) {
+                    quit.set(true);
+                } else if ("up".equals(operation)) {
+                    if (index.get() > 0) {
+                        index.addAndGet(-1);
+                    }
+                } else if ("down".equals(operation)) {
+                    if (index.get() < rows.size() - 1) {
+                        index.addAndGet(1);
+                    }
+                } else if ("refresh".equals(operation)) {
                     var reloaded = loadRows();
                     if (reloaded.size() == 1) {
                         rows = reloaded.get(0);
                     }
-                }
-
-                clearScreen();
-                Row first = rows.get(0);
-                String ago = TimeUtils.printSince(first.timestamp);
-                Row last = rows.get(rows.size() - 1);
-                String status = last.failed ? "failed" : "success";
-                String s = String.format("Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
-                        first.exchangeId, status, ago, first.pid, first.name);
-                printer().println(s);
-                printer().println();
-
-                int i = index.get();
-                if (i > rows.size()) {
-                    i = 0; // start over again
                     index.set(0);
                 }
-                if (i < rows.size()) {
-                    Row r = rows.get(i);
-                    printSourceAndHistory(r);
-                    printCurrentRow(r);
-                }
-                printer().println();
-
-                int total = rows.size() - 1;
-                int pos = i;
-
-                if (pos == total) {
-                    index.set(-1); // start over again
-                }
-
-                String msg
-                        = "    Message History (" + pos + "/" + total
-                          + "). Press ENTER to continue (n = next (default), p = previous, number = jump to index, r = refresh, q = quit).";
-                if (loggingColor) {
-                    AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
-                } else {
-                    printer().println(msg);
-                }
-                waitForUser.set(true);
+                t.clearDisplay();
+                t.updateDisplay(interactiveContent(rows, index));
+                t.flush();
             }
-        } while (!quit.get() || waitForUser.get());
+        } while (!quit.get());
 
         return 0;
     }
 
-    private static int lineIsNumber(String line) {
-        try {
-            return Integer.parseInt(line);
-        } catch (Exception e) {
-            return -1;
+    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger index) {
+        List<AttributedString> answer = new ArrayList<>();
+
+        Row first = rows.get(0);
+        String ago = TimeUtils.printSince(first.timestamp);
+        Row last = rows.get(rows.size() - 1);
+        String status = last.failed ? "failed" : "success";
+        String s = String.format("    Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
+                first.exchangeId, status, ago, first.pid, first.name);
+        answer.add(new AttributedString(""));
+        answer.add(new AttributedString(s));
+        answer.add(new AttributedString(""));
+
+        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                new Column().header("").dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(6).maxWidth(6)
+                        .with(this::getDirection),
+                new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(10).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getId),
+                new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(40).maxWidth(55, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getProcessor),
+                new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
+                        .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(r -> "" + r.elapsed),
+                new Column().header("EXCHANGE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getExchangeId),
+                new Column().header("").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(60, OverflowBehaviour.NEWLINE)
+                        .with(this::getMessage)));
+
+        var normal = AttributedStyle.DEFAULT;
+        var select = AttributedStyle.DEFAULT
+                .background(AttributedStyle.YELLOW)
+                .bold();
+        String[] lines = table.split(System.lineSeparator());
+        int pos = index.get() + 1;
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            answer.add(new AttributedString(line, i == pos ? select : normal));
         }
+        answer.add(new AttributedString(""));
+
+        // load data for current pos
+        Row r = rows.get(index.get());
+        String header = rowDetailedHeader(r);
+        answer.add(AttributedString.fromAnsi(header));
+        answer.add(new AttributedString(""));
+        // table with message details
+        table = getDataAsTable(r);
+        lines = table.split(System.lineSeparator());
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            answer.add(AttributedString.fromAnsi(line));
+        }
+        answer.add(new AttributedString(""));
+
+        return answer;
     }
 
     private String getDataAsTable(Row r) {
@@ -310,148 +321,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 r.message, r.exception);
     }
 
-    private void printSourceAndHistory(Row row) {
-        List<Panel> panel = new ArrayList<>();
-        if (!row.code.isEmpty()) {
-            String loc = StringHelper.beforeLast(row.location, ":", row.location);
-            if (loc != null && loc.length() < 72) {
-                loc = loc + " ".repeat(72 - loc.length());
-            } else {
-                loc = "";
-            }
-            panel.add(Panel.withCode("Source: " + loc).andHistory("History"));
-            panel.add(Panel.withCode("-".repeat(80))
-                    .andHistory("-".repeat(90)));
+    private String rowDetailedHeader(Row row) {
+        StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < row.code.size(); i++) {
-                Code code = row.code.get(i);
-                String c = Jsoner.unescape(code.code);
-                String arrow = "    ";
-                if (code.match) {
-                    if (row.first) {
-                        arrow = "*-->";
-                    } else if (row.last) {
-                        arrow = "<--*";
-                    } else {
-                        arrow = "--->";
-                    }
-                }
-                String msg = String.format("%4d: %s %s", code.line, arrow, c);
-                if (msg.length() > 80) {
-                    msg = msg.substring(0, 80);
-                }
-                int length = msg.length();
-                if (loggingColor && code.match) {
-                    Ansi.Color col = Ansi.Color.BLUE;
-                    Ansi.Attribute it = Ansi.Attribute.INTENSITY_BOLD;
-                    if (row.failed && row.last) {
-                        col = Ansi.Color.RED;
-                    } else if (row.last) {
-                        col = Ansi.Color.GREEN;
-                    }
-                    // need to fill out entire line, so fill in spaces
-                    if (length < 80) {
-                        String extra = " ".repeat(80 - length);
-                        msg = msg + extra;
-                        length = 80;
-                    }
-                    msg = Ansi.ansi().bg(col).a(it).a(msg).reset().toString();
-                } else {
-                    // need to fill out entire line, so fill in spaces
-                    if (length < 80) {
-                        String extra = " ".repeat(80 - length);
-                        msg = msg + extra;
-                        length = 80;
-                    }
-                }
-                panel.add(Panel.withCode(msg, length));
-            }
-            for (int i = row.code.size(); i < 11; i++) {
-                // empty lines so source code has same height
-                panel.add(Panel.withCode(" ".repeat(80)));
-            }
-        }
-
-        if (!row.history.isEmpty()) {
-            if (row.history.size() > (panel.size() - 4)) {
-                // cut to only what we can display
-                int pos = row.history.size() - (panel.size() - 4);
-                if (row.history.size() > pos) {
-                    row.history = row.history.subList(pos, row.history.size());
-                }
-            }
-            for (int i = 2; panel.size() > 2 && i < 11; i++) {
-                Panel p = panel.get(i);
-                if (row.history.size() > (i - 2)) {
-                    History h = row.history.get(i - 2);
-                    boolean top = h == row.history.get(row.history.size() - 1);
-
-                    String ids;
-                    if (source) {
-                        ids = locationAndLine(h.location, h.line);
-                    } else {
-                        ids = h.routeId + "/" + h.nodeId;
-                    }
-                    if (ids.length() > 30) {
-                        ids = ids.substring(ids.length() - 30);
-                    }
-
-                    ids = String.format("%-30.30s", ids);
-                    if (loggingColor) {
-                        ids = Ansi.ansi().fgCyan().a(ids).reset().toString();
-                    }
-                    long e = i == 2 ? 0 : h.elapsed; // the pseudo from should have 0 as elapsed
-                    String elapsed = "(" + e + "ms)";
-
-                    String c = "";
-                    if (source && h.code != null) {
-                        c = Jsoner.unescape(h.code);
-                        c = c.trim();
-                    } else if (h.nodeLabel != null) {
-                        c = Jsoner.escape(h.nodeLabel);
-                        c = c.trim();
-                    }
-                    // pad with level
-                    String pad = StringHelper.padString(h.level);
-                    c = pad + c;
-
-                    String fids = String.format("%-30.30s", ids);
-                    String msg;
-                    if (top && !row.last) {
-                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
-                    } else {
-                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
-                    }
-                    int len = msg.length();
-                    if (loggingColor) {
-                        fids = String.format("%-30.30s", ids);
-                        fids = Ansi.ansi().fgCyan().a(fids).reset().toString();
-                        if (top && !row.last) {
-                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
-                        } else {
-                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
-                        }
-                    }
-
-                    p.history = msg;
-                    p.historyLength = len;
-                }
-            }
-        }
-        // the ascii-table does not work well with color cells (https://github.com/freva/ascii-table/issues/26)
-        for (Panel p : panel) {
-            String c = p.code;
-            String h = p.history;
-            int len = p.historyLength;
-            if (len > 90) {
-                h = h.substring(0, 90);
-            }
-            String line = c + "    " + h;
-            printer().println(line);
-        }
-    }
-
-    private void printCurrentRow(Row row) {
         if (timestamp) {
             String ts;
             if (ago) {
@@ -461,20 +333,20 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 ts = sdf.format(new Date(row.timestamp));
             }
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+                sb.append(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
             } else {
-                printer().print(ts);
+                sb.append(ts);
             }
-            printer().print("  ");
+            sb.append("  ");
         }
         // pid
         String p = String.format("%5.5s", row.pid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            sb.append(Ansi.ansi().fgMagenta().a(p).reset());
+            sb.append(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
-            printer().print(p);
-            printer().print(" --- ");
+            sb.append(p);
+            sb.append(" --- ");
         }
         // thread name
         String tn = row.threadName;
@@ -483,11 +355,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
         tn = String.format("[%25.25s]", tn);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
+            sb.append(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
         } else {
-            printer().print(tn);
+            sb.append(tn);
         }
-        printer().print(" ");
+        sb.append(" ");
         // node ids or source location
         String ids;
         if (source) {
@@ -500,33 +372,31 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
         ids = String.format("%40.40s", ids);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
+            sb.append(Ansi.ansi().fgCyan().a(ids).reset());
         } else {
-            printer().print(ids);
+            sb.append(ids);
         }
-        printer().print(" : ");
+        sb.append(" : ");
         // uuid
         String u = String.format("%5.5s", row.uid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
+            sb.append(Ansi.ansi().fgMagenta().a(u).reset());
         } else {
-            printer().print(u);
+            sb.append(u);
         }
-        printer().print(" - ");
+        sb.append(" - ");
         // status
-        printer().print(getStatus(row));
+        sb.append(getStatus(row));
         // elapsed
         String e = getElapsed(row);
         if (e != null) {
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+                sb.append(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
             } else {
-                printer().print("(" + e + ")");
+                sb.append("(" + e + ")");
             }
         }
-        printer().println();
-        printer().println(getDataAsTable(row));
-        printer().println();
+        return sb.toString();
     }
 
     private String getElapsed(Row r) {
