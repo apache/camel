@@ -28,7 +28,8 @@ import org.apache.camel.spi.UriPath;
 public class StripeConfiguration {
 
     @UriPath
-    @Metadata(required = true, description = "The Stripe operation to perform")
+    @Metadata(required = true, description = "The Stripe operation to perform",
+              enums = "charges,customers,paymentIntents,paymentMethods,refunds,subscriptions,invoices,products,prices,balanceTransactions")
     private String operation;
 
     @UriParam(label = "security", secret = true, description = "The Stripe API key for authentication")
