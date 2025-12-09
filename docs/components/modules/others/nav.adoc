@@ -36,6 +36,7 @@
 ** xref:microprofile-config.adoc[Microprofile Config]
 ** xref:microprofile-fault-tolerance.adoc[Microprofile Fault Tolerance]
 ** xref:microprofile-health.adoc[Microprofile Health]
+** xref:oauth.adoc[Oauth]
 ** xref:observability-services.adoc[Observability Services]
 ** xref:openapi-java.adoc[Openapi Java]
 ** xref:openapi-validator.adoc[Openapi Validator]

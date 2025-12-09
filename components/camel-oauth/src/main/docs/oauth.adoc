@@ -1,18 +1,13 @@
-= OAuth Component
-:doctitle: OAuth
+= Oauth Component
+:doctitle: Oauth
 :shortname: oauth
 :artifactid: camel-oauth
-:description: Socket level networking using TCP or UDP with Netty 4.x.
+:description: Camel OAuth (Preview)
 :since: 4.12
 :supportlevel: Preview
 :tabs-sync-option:
-:component-header: Set of Exchange Processors
-//Manually maintained attributes
-//:camel-spring-boot-name: oauth
 
 *Since Camel {since}*
-
-*{component-header}*
 
 The camel-oauth module comes with Processors that can be added to a route on the client and resource owner side.
 These processors intercept the message flow and perform the necessary authentication steps against an Identity Provider (IdP) in some specs it also called Authorization Server. Our primary choice of IdP is https://www.keycloak.org[Keycloak]
@@ -132,7 +127,7 @@ Keycloak is already configured in such a way that below examples should run with
 
 There is a comprehensive set of camel-oauth examples as part of https://github.com/tdiesler/camel-cloud-examples[camel-cloud-examples]. You'll find xref:manual::camel-jbang.adoc[camel-jbang kubernetes] examples for every OAuth flow, for every runtime, on every supported cluster.
 
-For example ...
+For example in the following _makefile_:
 
 [source,makefile]
 ----
@@ -156,4 +151,3 @@ k8s-export: k8s-fetch-cert
 	--trait container.image-pull-policy=IfNotPresent \
 	--runtime=camel-main
 ----
-

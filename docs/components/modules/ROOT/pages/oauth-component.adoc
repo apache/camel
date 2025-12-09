@@ -1,1 +1,0 @@
-../../../../../components/camel-oauth/src/main/docs/oauth-component.adoc
