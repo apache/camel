@@ -138,7 +138,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // fetch.max.wait.ms
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer fetchWaitMaxMs = 500;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", enums = "BEGINNING,END")
     private SeekPolicy seekTo;
 
     // Consumer configuration properties
@@ -150,7 +150,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean breakOnFirstError;
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
-    @UriParam(label = "consumer", defaultValue = "ERROR_HANDLER")
+    @UriParam(label = "consumer", defaultValue = "ERROR_HANDLER", enums = "DISCARD,ERROR_HANDLER,RECONNECT,RETRY,STOP")
     private PollOnError pollOnError = PollOnError.ERROR_HANDLER;
     @UriParam(label = "consumer", defaultValue = "5000", javaType = "java.time.Duration")
     private Long commitTimeoutMs = 5000L;

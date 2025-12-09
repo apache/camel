@@ -65,7 +65,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                             + " specified or the value is false, then Object Serialization is assumed over TCP - however only Strings are allowed"
                             + " to be serialized by default.")
     private boolean textline;
-    @UriParam(label = "codec", defaultValue = "LINE",
+    @UriParam(label = "codec", defaultValue = "LINE", enums = "LINE,NULL",
               description = "The delimiter to use for the textline codec. Possible values are LINE and NULL.")
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
     @UriParam(label = "codec", defaultValue = "true",
@@ -104,13 +104,13 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.")
     private boolean disconnectOnNoReply = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "WARN",
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "If sync is enabled this option dictates NettyConsumer which logging level to use when logging a there is no reply to send back.")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
-    @UriParam(label = "consumer,advanced", defaultValue = "WARN",
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "If the server (NettyConsumer) catches an exception then its logged using this logging level.")
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
-    @UriParam(label = "consumer,advanced", defaultValue = "DEBUG",
+    @UriParam(label = "consumer,advanced", defaultValue = "DEBUG", enums = "TRACE,DEBUG,INFO,WARN,ERROR,OFF",
               description = "If the server (NettyConsumer) catches an java.nio.channels.ClosedChannelException then its logged using this"
                             + " logging level. This is used to avoid logging the closed channel exceptions, as clients can disconnect abruptly"
                             + " and then cause a flood of closed exceptions in the Netty server.")

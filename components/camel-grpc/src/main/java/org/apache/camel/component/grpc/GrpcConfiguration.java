@@ -51,13 +51,13 @@ public class GrpcConfiguration {
     @UriParam(label = "producer")
     private String method;
 
-    @UriParam(label = "security", defaultValue = "PLAINTEXT")
+    @UriParam(label = "security", defaultValue = "PLAINTEXT", enums = "PLAINTEXT,TLS")
     private NegotiationType negotiationType = NegotiationType.PLAINTEXT;
 
-    @UriParam(label = "security", defaultValue = "NONE")
+    @UriParam(label = "security", defaultValue = "NONE", enums = "NONE,GOOGLE,JWT")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
 
-    @UriParam(label = "security", defaultValue = "HMAC256")
+    @UriParam(label = "security", defaultValue = "HMAC256", enums = "HMAC256,HMAC384,HMAC512,RSA256,RSA384,RSA512")
     private JwtAlgorithm jwtAlgorithm = JwtAlgorithm.HMAC256;
 
     @UriParam(label = "security", secret = true)
@@ -88,7 +88,7 @@ public class GrpcConfiguration {
     @Metadata(supportFileReference = true)
     private String trustCertCollectionResource;
 
-    @UriParam(label = "producer", defaultValue = "SIMPLE")
+    @UriParam(label = "producer", defaultValue = "SIMPLE", enums = "SIMPLE,STREAMING")
     private GrpcProducerStrategy producerStrategy = GrpcProducerStrategy.SIMPLE;
 
     @UriParam(label = "producer")
@@ -97,7 +97,7 @@ public class GrpcConfiguration {
     @UriParam(label = "producer")
     private String userAgent;
 
-    @UriParam(label = "consumer", defaultValue = "PROPAGATION")
+    @UriParam(label = "consumer", defaultValue = "PROPAGATION", enums = "AGGREGATION,PROPAGATION,DELEGATION")
     private GrpcConsumerStrategy consumerStrategy = GrpcConsumerStrategy.PROPAGATION;
 
     @UriParam(label = "consumer", defaultValue = "false")
