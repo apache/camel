@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -50,72 +49,71 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "history",
-        description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
+                     description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
 public class CamelHistoryAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = {"--it"},
-            description = "Interactive mode for enhanced history information")
+    @CommandLine.Option(names = { "--it" },
+                        description = "Interactive mode for enhanced history information")
     boolean it;
 
-    @CommandLine.Option(names = {"--source"},
-            description = "Prefer to display source filename/code instead of IDs")
+    @CommandLine.Option(names = { "--source" },
+                        description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = {"--mask"},
-            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @CommandLine.Option(names = { "--mask" },
+                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = {"--depth"}, defaultValue = "9",
-            description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
+                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
     int depth;
 
-    @CommandLine.Option(names = {"--limit-split"},
-            description = "Limit Split to a maximum number of entries to be displayed")
+    @CommandLine.Option(names = { "--limit-split" },
+                        description = "Limit Split to a maximum number of entries to be displayed")
     int limitSplit;
 
-    @CommandLine.Option(names = {"--timestamp"}, defaultValue = "true",
-            description = "Print timestamp.")
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+                        description = "Print timestamp.")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = {"--ago"},
-            description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    @CommandLine.Option(names = { "--ago" },
+                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
-    @CommandLine.Option(names = {"--show-exchange-properties"}, defaultValue = "false",
-            description = "Show exchange properties in debug messages")
+    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
+                        description = "Show exchange properties in debug messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = {"--show-exchange-variables"}, defaultValue = "true",
-            description = "Show exchange variables in debug messages")
+    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true",
+                        description = "Show exchange variables in debug messages")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = {"--show-headers"}, defaultValue = "true",
-            description = "Show message headers in debug messages")
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
+                        description = "Show message headers in debug messages")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = {"--show-body"}, defaultValue = "true",
-            description = "Show message body in debug messages")
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
+                        description = "Show message body in debug messages")
     boolean showBody = true;
 
-    @CommandLine.Option(names = {"--show-exception"}, defaultValue = "true",
-            description = "Show exception and stacktrace for failed messages")
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
+                        description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
-    @CommandLine.Option(names = {"--pretty"},
-            description = "Pretty print message body when using JSon or XML format")
+    @CommandLine.Option(names = { "--pretty" },
+                        description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = {"--logging-color"}, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
     private MessageTableHelper tableHelper;
