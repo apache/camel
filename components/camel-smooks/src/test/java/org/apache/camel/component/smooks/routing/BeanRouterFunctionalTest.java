@@ -32,13 +32,14 @@ public class BeanRouterFunctionalTest extends CamelTestSupport {
         MockEndpoint endpoint = createAndConfigureMockEndpoint("mock://beanRouterUnitTest");
         endpoint.setExpectedMessageCount(1);
 
-        Smooks smooks = new Smooks("bean-routing-smooks-config.xml");
-        smooks.getApplicationContext().getRegistry().registerObject(CamelContext.class, endpoint.getCamelContext());
-        smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/xml/customer.xml")));
+        try (Smooks smooks = new Smooks("bean-routing-smooks-config.xml")) {
+            smooks.getApplicationContext().getRegistry().registerObject(CamelContext.class, endpoint.getCamelContext());
+            smooks.filterSource(new StreamSource<>(getClass().getResourceAsStream("/xml/customer.xml")));
 
-        endpoint.assertIsSatisfied();
-        Customer customer = endpoint.getReceivedExchanges().get(0).getMessage().getBody(Customer.class);
-        assertEquals("Wonderland", customer.getCountry());
+            endpoint.assertIsSatisfied();
+            Customer customer = endpoint.getReceivedExchanges().get(0).getMessage().getBody(Customer.class);
+            assertEquals("Wonderland", customer.getCountry());
+        }
     }
 
     private MockEndpoint createAndConfigureMockEndpoint(String endpointUri) throws Exception {

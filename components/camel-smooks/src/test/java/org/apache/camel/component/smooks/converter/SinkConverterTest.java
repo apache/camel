@@ -17,6 +17,7 @@
 package org.apache.camel.component.smooks.converter;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -32,9 +33,10 @@ public class SinkConverterTest {
     private TypeConverter typeConverter;
 
     @BeforeEach
-    public void beforeEach() {
-        DefaultCamelContext camelContext = new DefaultCamelContext();
-        typeConverter = camelContext.getTypeConverter();
+    public void beforeEach() throws IOException {
+        try (DefaultCamelContext camelContext = new DefaultCamelContext()) {
+            this.typeConverter = camelContext.getTypeConverter();
+        }
     }
 
     @Test
