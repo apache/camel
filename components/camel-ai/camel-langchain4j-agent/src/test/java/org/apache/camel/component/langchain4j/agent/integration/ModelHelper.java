@@ -43,7 +43,7 @@ public class ModelHelper {
     protected static ChatModel createGeminiModel(String apiKey) {
         return GoogleAiGeminiChatModel.builder()
                 .apiKey(apiKey)
-                .modelName("gemini-2.5-flash")
+                .modelName("gemini-2.5-flash-lite")
                 .temperature(1.0)
                 .timeout(ofSeconds(60))
                 .logRequestsAndResponses(true)
@@ -51,14 +51,28 @@ public class ModelHelper {
     }
 
     protected static ChatModel createOpenAiModel(String apiKey) {
-        return OpenAiChatModel.builder()
+        OpenAiChatModel.OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(apiKey)
-                .modelName(OpenAiChatModelName.GPT_4_O_MINI)
                 .temperature(1.0)
                 .timeout(ofSeconds(60))
                 .logRequests(true)
-                .logResponses(true)
-                .build();
+                .logResponses(true);
+
+        // Support custom base URL for OpenAI-compatible endpoints
+        String baseUrl = System.getenv(MODEL_BASE_URL);
+        if (baseUrl != null && !baseUrl.trim().isEmpty()) {
+            builder.baseUrl(baseUrl);
+        }
+
+        // Support custom model name, default to GPT-4o-mini
+        String modelName = System.getenv(MODEL_NAME);
+        if (modelName != null && !modelName.trim().isEmpty()) {
+            builder.modelName(modelName);
+        } else {
+            builder.modelName(OpenAiChatModelName.GPT_4_O_MINI);
+        }
+
+        return builder.build();
     }
 
     protected static ChatModel createExternalChatModel(String name, String apiKey) {

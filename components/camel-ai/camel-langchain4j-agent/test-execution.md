@@ -4,7 +4,7 @@
 If ollama is already installed on the system execute the test with 
 
 ```bash
-mvn verify -Dollama.endpoint=http://localhost:11434/ -Dollama.model=granite4:tiny-h -Dollama.instance.type=remote
+mvn verify -Dollama.endpoint=http://localhost:11434/ -Dollama.model=granite4:3b -Dollama.instance.type=remote
 ```
 
 The Ollama docker image is really slow on macbook without nvidia hardware acceleration

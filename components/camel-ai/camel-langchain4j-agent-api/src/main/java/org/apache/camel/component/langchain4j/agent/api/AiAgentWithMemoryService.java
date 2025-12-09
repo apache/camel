@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import dev.langchain4j.data.message.Content;
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
@@ -37,6 +38,16 @@ public interface AiAgentWithMemoryService {
     String chat(@MemoryId Object memoryId, @UserMessage String message);
 
     /**
+     * Chat with a user message containing both text and additional content (e.g., images, audio) with memory support.
+     *
+     * @param  memoryId the memory identifier for conversation history
+     * @param  message  the text portion of the user message
+     * @param  content  additional content such as ImageContent, AudioContent, etc.
+     * @return          the AI response
+     */
+    String chat(@MemoryId Object memoryId, @UserMessage String message, @UserMessage Content content);
+
+    /**
      * Simple chat with a user message, system message and memory window
      *
      * @param  memoryId
@@ -45,6 +56,22 @@ public interface AiAgentWithMemoryService {
      * @return
      */
     @SystemMessage("{{prompt}}")
-    String chat(@MemoryId Object memoryId, @UserMessage String message, @V("prompt") String prompt);
+    String chat(
+            @MemoryId Object memoryId, @UserMessage String message,
+            @V("prompt") String prompt);
+
+    /**
+     * Chat with a user message containing both text and additional content, with system message and memory support.
+     *
+     * @param  memoryId the memory identifier for conversation history
+     * @param  message  the text portion of the user message
+     * @param  content  additional content such as ImageContent, AudioContent, etc.
+     * @param  prompt   the system message template
+     * @return          the AI response
+     */
+    @SystemMessage("{{prompt}}")
+    String chat(
+            @MemoryId Object memoryId, @UserMessage String message,
+            @UserMessage Content content, @V("prompt") String prompt);
 
 }

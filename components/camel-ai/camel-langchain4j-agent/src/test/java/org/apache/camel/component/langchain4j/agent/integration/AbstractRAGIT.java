@@ -31,11 +31,9 @@ import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.camel.component.langchain4j.agent.BaseLangChain4jAgent;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
 
-    @RegisterExtension
     static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
             ? null
             : OllamaServiceFactory.createSingletonService();
