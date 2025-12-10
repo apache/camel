@@ -353,7 +353,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
             answer.addAll(pending.subList(pos - 9, pos + 1));
         }
 
-        String help = String.format("  select:%d/%d   q=quit   f5=refresh    (arrow up/down   page up/down   home/end)", pos + 1, rows.size());
+        String help = String.format("  row:%d/%d   q=quit   f5=refresh    (arrow up/down   page up/down   home/end)", pos + 1, rows.size());
         String pad = StringHelper.padString(maxLength - help.length(), 1);
         answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
         answer.add(new AttributedString(""));
