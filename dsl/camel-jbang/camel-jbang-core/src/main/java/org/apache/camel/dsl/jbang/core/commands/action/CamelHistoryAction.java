@@ -49,6 +49,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
+import org.jline.keymap.KeyMap;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.InfoCmp;
@@ -212,42 +213,44 @@ public class CamelHistoryAction extends ActionWatchCommand {
         tableHelper.setShowExchangeProperties(showExchangeProperties);
         tableHelper.setShowExchangeVariables(showExchangeVariables);
 
-        InteractiveTerminal t = new InteractiveTerminal();
-        t.start();
-        t.addKeyBinding("quit", "q");
-        t.addKeyBinding("up", InfoCmp.Capability.key_up);
-        t.addKeyBinding("down", InfoCmp.Capability.key_down);
-        t.addKeyBinding("refresh", InfoCmp.Capability.key_f5);
+        try (InteractiveTerminal t = new InteractiveTerminal()) {
+            t.sigint(() -> quit.set(true));
+            t.addKeyBinding("quit", KeyMap.ctrl('c'), "q");
+            t.addKeyBinding("up", InfoCmp.Capability.key_up);
+            t.addKeyBinding("down", InfoCmp.Capability.key_down);
+            t.addKeyBinding("refresh", InfoCmp.Capability.key_f5);
+            t.start();
 
-        t.clearDisplay();
-        t.updateDisplay(interactiveContent(rows, index));
-        t.flush();
+            t.clearDisplay();
+            t.updateDisplay(interactiveContent(rows, index));
+            t.flush();
 
-        do {
-            String operation = t.readNextKeyBinding();
-            if (operation != null) {
-                if ("quit".equals(operation)) {
-                    quit.set(true);
-                } else if ("up".equals(operation)) {
-                    if (index.get() > 0) {
-                        index.addAndGet(-1);
+            do {
+                String operation = t.readNextKeyBinding();
+                if (operation != null) {
+                    if ("quit".equals(operation)) {
+                        quit.set(true);
+                    } else if ("up".equals(operation)) {
+                        if (index.get() > 0) {
+                            index.addAndGet(-1);
+                        }
+                    } else if ("down".equals(operation)) {
+                        if (index.get() < rows.size() - 1) {
+                            index.addAndGet(1);
+                        }
+                    } else if ("refresh".equals(operation)) {
+                        var reloaded = loadRows();
+                        if (reloaded.size() == 1) {
+                            rows = reloaded.get(0);
+                        }
+                        index.set(0);
                     }
-                } else if ("down".equals(operation)) {
-                    if (index.get() < rows.size() - 1) {
-                        index.addAndGet(1);
-                    }
-                } else if ("refresh".equals(operation)) {
-                    var reloaded = loadRows();
-                    if (reloaded.size() == 1) {
-                        rows = reloaded.get(0);
-                    }
-                    index.set(0);
+                    t.clearDisplay();
+                    t.updateDisplay(interactiveContent(rows, index));
+                    t.flush();
                 }
-                t.clearDisplay();
-                t.updateDisplay(interactiveContent(rows, index));
-                t.flush();
-            }
-        } while (!quit.get());
+            } while (!quit.get());
+        }
 
         return 0;
     }

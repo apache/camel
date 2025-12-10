@@ -43,10 +43,13 @@ public class InteractiveTerminal implements Closeable {
     private Display display;
     private Size size;
     private BindingReader bindingReader;
+    private Runnable sigint;
 
-    public void start() throws Exception {
+    public InteractiveTerminal() throws Exception {
         terminal = TerminalBuilder.builder().build();
+    }
 
+    public void start() {
         Attributes attributes = terminal.getAttributes();
         int vsusp = attributes.getControlChar(Attributes.ControlChar.VSUSP);
         if (vsusp > 0) {
@@ -72,9 +75,19 @@ public class InteractiveTerminal implements Closeable {
         display.resize(size.getRows(), size.getColumns());
 
         bindingReader = new BindingReader(terminal.reader());
+
+        if (sigint != null) {
+            terminal.handle(Terminal.Signal.INT, signal -> {
+                sigint.run();
+            });
+        }
     }
 
-    public void addKeyBinding(String operation, String key) {
+    public void sigint(Runnable task) {
+        this.sigint = task;
+    }
+
+    public void addKeyBinding(String operation, String... key) {
         keys.bind(operation, key);
     }
 
