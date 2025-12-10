@@ -677,7 +677,8 @@ public class BeanInfo {
             throws AmbiguousMethodCallException {
         // we have hardcoded parameters so need to match that with the given operations
         int count = 0;
-        for (String o : ObjectHelper.createIterable(parameters)) {
+        for (@SuppressWarnings("unused")
+        String o : ObjectHelper.createIterable(parameters)) {
             count++;
         }
 
