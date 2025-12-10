@@ -4,7 +4,7 @@
 :artifactid: camel-iggy
 :description: Camel Iggy component
 :since: 4.14
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -30,6 +30,26 @@ for this component.
 </dependency>
 ------------------------------------------------------------
 
+== Netty Version Requirement
+
+The Iggy client library requires Netty 4.2.x or later. If your application uses an older version of Netty (e.g., 4.1.x),
+you will need to import the Netty 4.2.x BOM in your `dependencyManagement` section to ensure compatibility with the Iggy client:
+
+[source,xml]
+------------------------------------------------------------
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-bom</artifactId>
+            <version>4.2.7.Final</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+------------------------------------------------------------
+
 == URI format
 
 ---------------------------
@@ -44,6 +64,7 @@ iggy:topic[?options]
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 // endpoint options: START
@@ -94,5 +115,3 @@ from("direct:start")
     .setBody(constant("Message from Camel"))
     .to("iggy:my_topic?streamName=my_stream&host=localhost&port=8090");
 ----
-
-include::spring-boot:partial$starter.adoc[]

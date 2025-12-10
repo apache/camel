@@ -37,6 +37,15 @@ public class IggyContainer extends GenericContainer<IggyContainer> {
 
                 addEnv("IGGY_ROOT_USERNAME", IggyProperties.DEFAULT_USERNAME);
                 addEnv("IGGY_ROOT_PASSWORD", IggyProperties.DEFAULT_PASSWORD);
+                // Bind to all interfaces so the host can connect to the container
+                addEnv("IGGY_TCP_ADDRESS", "0.0.0.0:" + IggyProperties.DEFAULT_TCP_PORT);
+
+                // Required capabilities for Iggy container as per docker-compose
+                withCreateContainerCmdModifier(cmd -> {
+                    cmd.getHostConfig()
+                            .withCapAdd(com.github.dockerjava.api.model.Capability.SYS_NICE)
+                            .withSecurityOpts(java.util.List.of("seccomp:unconfined"));
+                });
 
                 if (fixedPort) {
                     addFixedExposedPort(IggyProperties.DEFAULT_TCP_PORT, IggyProperties.DEFAULT_TCP_PORT);

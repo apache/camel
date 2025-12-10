@@ -7293,6 +7293,46 @@ public class StaticEndpointBuilders {
         return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Iggy (camel-iggy)
+     * Camel Iggy component
+     * 
+     * Category: messaging
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * Syntax: <code>iggy:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Name of the topic
+     * 
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String path) {
+        return iggy("iggy", path);
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Camel Iggy component
+     * 
+     * Category: messaging
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * Syntax: <code>iggy:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Name of the topic
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String componentName, String path) {
+        return IggyEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.

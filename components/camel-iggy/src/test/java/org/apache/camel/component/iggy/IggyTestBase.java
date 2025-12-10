@@ -94,7 +94,6 @@ public abstract class IggyTestBase {
             client.consumerGroups().createConsumerGroup(
                     StreamId.of(stream),
                     TopicId.of(topic),
-                    empty(),
                     CONSUMER_GROUP);
         } catch (Exception e) {
             // already created

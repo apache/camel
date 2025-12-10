@@ -21,7 +21,7 @@ public class IggyEndpointUriFactory extends org.apache.camel.support.component.E
 
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
-    private static final Set<String> MULTI_VALUE_PREFIXES;
+    private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
         Set<String> props = new HashSet<>(28);
         props.add("autoCommit");
@@ -57,7 +57,7 @@ public class IggyEndpointUriFactory extends org.apache.camel.support.component.E
         secretProps.add("password");
         secretProps.add("username");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        MULTI_VALUE_PREFIXES = Collections.emptyMap();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class IggyEndpointUriFactory extends org.apache.camel.support.component.E
     }
 
     @Override
-    public Set<String> multiValuePrefixes() {
+    public Map<String, String> multiValuePrefixes() {
         return MULTI_VALUE_PREFIXES;
     }
 
