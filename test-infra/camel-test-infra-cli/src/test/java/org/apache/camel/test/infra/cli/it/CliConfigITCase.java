@@ -31,11 +31,11 @@ import org.junitpioneer.jupiter.SetSystemProperty;
 public class CliConfigITCase extends AbstractTestSupport {
 
     @Test
-    @SetSystemProperty(key = "cli.service.version", value = "4.8.3")
+    @SetSystemProperty(key = "cli.service.version", value = "4.16.0")
     public void setJBangVersionTest() {
         execute(cliService -> {
             String version = cliService.version();
-            Assertions.assertEquals("4.8.3", version, "Check specific Camel JBang version");
+            Assertions.assertEquals("4.16.0", version, "Check specific Camel JBang version");
         });
     }
 
@@ -49,7 +49,7 @@ public class CliConfigITCase extends AbstractTestSupport {
     }
 
     @Test
-    @SetSystemProperty(key = "cli.service.version", value = "4.8.3")
+    @SetSystemProperty(key = "cli.service.version", value = "4.16.0")
     @SetSystemProperty(key = "cli.service.execute.version", value = "4.8.0")
     public void setJBangAndCamelVersionTest() {
         execute(cliService -> {
