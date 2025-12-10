@@ -40,7 +40,7 @@ public class AWS2S3Console extends AbstractDevConsole {
 
         List<Consumer> list = getCamelContext().getRoutes()
                 .stream().map(Route::getConsumer)
-                .filter(c -> AWS2S3Consumer.class.getName().equals(c.getClass().getName()))
+                .filter(c -> c instanceof AWS2S3Consumer)
                 .collect(Collectors.toList());
 
         sb.append(String.format("    %s:%s:%s:%s:%s:%s:%s\n", "bucket", "accessKeys", "defaultCredentialsProvider",
@@ -62,7 +62,7 @@ public class AWS2S3Console extends AbstractDevConsole {
 
         List<Consumer> list = getCamelContext().getRoutes()
                 .stream().map(Route::getConsumer)
-                .filter(c -> AWS2S3Consumer.class.getName().equals(c.getClass().getName()))
+                .filter(c -> c instanceof AWS2S3Consumer)
                 .collect(Collectors.toList());
 
         List<JsonObject> arr = new ArrayList<>();
