@@ -61,6 +61,8 @@ public class CxfEndpointUtilsTest {
         return new DefaultCamelContext();
     }
 
+    @SuppressWarnings("resource")
+    // NOTE: method client must close the resource.
     protected CxfEndpoint createEndpoint(String uri) throws Exception {
         CamelContext context = getCamelContext();
         return (CxfEndpoint) new CxfComponent(context).createEndpoint(uri);
@@ -68,9 +70,10 @@ public class CxfEndpointUtilsTest {
 
     @Test
     public void testGetProperties() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI());
-        QName service = endpoint.getServiceNameAsQName();
-        assertEquals(SERVICE_NAME, service, "We should get the right service name");
+        try (CxfEndpoint endpoint = createEndpoint(getEndpointURI())) {
+            QName service = endpoint.getServiceNameAsQName();
+            assertEquals(SERVICE_NAME, service, "We should get the right service name");
+        }
     }
 
     public char sepChar() {
@@ -79,42 +82,46 @@ public class CxfEndpointUtilsTest {
 
     @Test
     public void testGetDataFormatCXF() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=CXF_MESSAGE");
-        assertEquals(DataFormat.CXF_MESSAGE, endpoint.getDataFormat(), "We should get the Message DataFormat");
+        try (CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=CXF_MESSAGE")) {
+            assertEquals(DataFormat.CXF_MESSAGE, endpoint.getDataFormat(), "We should get the Message DataFormat");
+        }
     }
 
     @Test
     public void testGetDataFormatRAW() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=RAW");
-        assertEquals(DataFormat.RAW, endpoint.getDataFormat(), "We should get the Message DataFormat");
+        try (CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=RAW")) {
+            assertEquals(DataFormat.RAW, endpoint.getDataFormat(), "We should get the Message DataFormat");
+        }
     }
 
     @Test
     public void testCheckServiceClassWithTheEndpoint() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
-        assertNull(endpoint.getServiceClass());
+        try (CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI())) {
+            assertNull(endpoint.getServiceClass());
+        }
     }
 
     @Test
     public void testCheckServiceClassProcedure() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
-        assertNotNull(endpoint.createProducer());
+        try (CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI())) {
+            assertNotNull(endpoint.createProducer());
+        }
     }
 
     @Test
     public void testCheckServiceClassConsumer() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
+        try (CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI())) {
+            Consumer cxfConsumer = endpoint.createConsumer(new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    // noop
+                }
+            });
 
-        Consumer cxfConsumer = endpoint.createConsumer(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                // noop
-            }
-        });
-
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> cxfConsumer.start());
-        assertNotNull(ex, "Should get a CamelException here");
-        assertTrue(ex.getMessage().startsWith("serviceClass must be specified"));
+            Exception ex = assertThrows(IllegalArgumentException.class, () -> cxfConsumer.start());
+            assertNotNull(ex, "Should get a CamelException here");
+            assertTrue(ex.getMessage().startsWith("serviceClass must be specified"));
+        }
     }
 
 }

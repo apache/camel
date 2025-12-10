@@ -123,7 +123,6 @@ public final class CxfConverter {
      * @param  registry type converter registry
      * @return          the converted value of the desired type or null if no suitable converter found
      */
-    @SuppressWarnings("unchecked")
     @Converter(fallback = true)
     public static <T> T convertTo(
             Class<T> type, Exchange exchange, Object value,
