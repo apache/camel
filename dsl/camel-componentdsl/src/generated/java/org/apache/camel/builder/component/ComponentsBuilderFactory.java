@@ -2252,6 +2252,19 @@ public interface ComponentsBuilderFactory {
         return Iec60870ServerComponentBuilderFactory.iec60870Server();
     }
     /**
+     * Iggy (camel-iggy)
+     * Camel Iggy component
+     * 
+     * Category: messaging
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * @return the dsl builder
+     */
+    static IggyComponentBuilderFactory.IggyComponentBuilder iggy() {
+        return IggyComponentBuilderFactory.iggy();
+    }
+    /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
      * continuous query.

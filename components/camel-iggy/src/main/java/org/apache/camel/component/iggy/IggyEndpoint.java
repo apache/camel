@@ -40,8 +40,6 @@ import org.apache.iggy.topic.TopicDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Optional.empty;
-
 @UriEndpoint(firstVersion = "4.14.0", scheme = "iggy", title = "Iggy", syntax = "iggy:topicName",
              category = { Category.MESSAGING }, headersClass = IggyConstants.class)
 public class IggyEndpoint extends DefaultEndpoint {
@@ -81,8 +79,7 @@ public class IggyEndpoint extends DefaultEndpoint {
                 client.streams().getStream(StreamId.of(iggyConfiguration.getStreamId())).orElseGet(() -> {
                     LOG.debug("Creating stream with id {} and name {}", iggyConfiguration.getStreamId(),
                             iggyConfiguration.getStreamName());
-                    StreamDetails streamDetails = client.streams().createStream(Optional.of(iggyConfiguration.getStreamId()),
-                            iggyConfiguration.getStreamName());
+                    StreamDetails streamDetails = client.streams().createStream(iggyConfiguration.getStreamName());
 
                     LOG.debug("Stream created with details: {}", streamDetails.toString());
 
@@ -91,7 +88,7 @@ public class IggyEndpoint extends DefaultEndpoint {
             } else {
                 client.streams().getStream(StreamId.of(stream)).orElseGet(() -> {
                     LOG.debug("Creating stream with name {}", stream);
-                    StreamDetails streamDetails = client.streams().createStream(empty(), stream);
+                    StreamDetails streamDetails = client.streams().createStream(stream);
                     LOG.debug("Stream created with details: {}", streamDetails.toString());
 
                     return streamDetails;
@@ -106,7 +103,6 @@ public class IggyEndpoint extends DefaultEndpoint {
                     .orElseGet(() -> {
                         LOG.debug("Creating topic with name {}", topic);
                         TopicDetails topicDetails = client.topics().createTopic(StreamId.of(stream),
-                                empty(),
                                 iggyConfiguration.getPartitionsCount(),
                                 iggyConfiguration.getCompressionAlgorithm(),
                                 BigInteger.valueOf(iggyConfiguration.getMessageExpiry()),
@@ -139,7 +135,6 @@ public class IggyEndpoint extends DefaultEndpoint {
                     ConsumerGroupDetails consumerGroupDetails = client.consumerGroups().createConsumerGroup(
                             StreamId.of(getConfiguration().getStreamName()),
                             TopicId.of(getTopicName()),
-                            empty(),
                             getConfiguration().getConsumerGroupName());
 
                     LOG.debug("Created consumer group {}", consumerGroupDetails);
