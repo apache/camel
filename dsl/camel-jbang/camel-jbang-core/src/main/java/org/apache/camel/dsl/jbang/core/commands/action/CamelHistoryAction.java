@@ -282,14 +282,13 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String s = String.format("    Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
                 first.exchangeId, status, ago, first.pid, first.name);
         answer.add(new AttributedString(s));
-        answer.add(new AttributedString("Pos: " + index.get()));
+        answer.add(new AttributedString(""));
 
         int pos = index.get();
 
+        // ensure there are empty rows if we do not have 10 traces
         List<Row> copy = new ArrayList<>(rows);
-
-        // ensure there are empty rows if we do not have 7 traces
-        while (copy.size() < 7) {
+        while (copy.size() < 10) {
             copy.add(new Row());
         }
 
@@ -314,24 +313,27 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         .maxWidth(60, OverflowBehaviour.NEWLINE)
                         .with(this::getMessage)));
 
-        List<String> lines = new ArrayList<>(List.of(table.split(System.lineSeparator())));
-        // header
-        answer.add(new AttributedString(lines.remove(0)));
-
-        // slice table based on position
-        // 6 rows 1 empty
-        // pos = 0
-
-
         // print table
         var normal = AttributedStyle.DEFAULT;
         var select = AttributedStyle.DEFAULT
                 .background(AttributedStyle.YELLOW)
                 .bold();
-        for (int i = 0; i < 7; i++) {
-            String line = lines.get(i);
-            answer.add(new AttributedString(line, i == pos ? select : normal));
+
+        int maxLength = 0;
+        String[] lines = table.split(System.lineSeparator());
+        for (int i = 1; i < lines.length; i++) {
+            String line = lines[i];
+            maxLength = Math.max(maxLength, line.length());
         }
+
+        answer.add(new AttributedString(lines[0])); // header
+        for (int i = 1; i < lines.length; i++) {
+            String line = lines[i];
+            answer.add(new AttributedString(line, i == pos + 1 ? select : normal));
+        }
+        String help = String.format("  select:%d/%d   q=quit   f5=refresh    (arrow up/down   page up/down   home/end)", pos + 1, rows.size());
+        String pad = StringHelper.padString(maxLength - help.length(), 1);
+        answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
         answer.add(new AttributedString(""));
 
         // load data for current pos
@@ -341,7 +343,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         answer.add(new AttributedString(""));
         // table with message details
         table = getDataAsTable(r);
-        lines = List.of(table.split(System.lineSeparator()));
+        lines = table.split(System.lineSeparator());
         for (String line : lines) {
             answer.add(AttributedString.fromAnsi(line));
         }
