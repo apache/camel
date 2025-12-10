@@ -51,7 +51,7 @@ public class IssueWithWrongEncodingTest extends CamelTestSupport {
     @Test
     public void testOkEncoding() throws Exception {
         MockEndpoint.resetMocks(context);
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(2);
 
         File file = new File("src/test/resources/products_with_valid_utf8.xml");
 
