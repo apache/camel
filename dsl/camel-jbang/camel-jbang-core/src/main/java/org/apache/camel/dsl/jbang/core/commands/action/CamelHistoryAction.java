@@ -50,6 +50,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
 import org.jline.keymap.KeyMap;
+import org.jline.terminal.Size;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.InfoCmp;
@@ -227,8 +228,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
             t.start();
 
             t.clearDisplay();
-            t.updateDisplay(interactiveContent(rows, index, index2));
+            t.updateDisplay(interactiveContent(rows, index, index2, t.size()));
             t.flush();
+
+            // how many lines to jump per page
+            int pageSize = t.size().getRows() - 18;
 
             do {
                 String operation = t.readNextKeyBinding();
@@ -248,10 +252,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     } else if ("end".equals(operation)) {
                         index2.set(Integer.MAX_VALUE);
                     } else if ("npage".equals(operation)) {
-                        index2.addAndGet(10);
-                        // TODO: end of message content
+                        index2.addAndGet(pageSize);
                     } else if ("ppage".equals(operation)) {
-                        index2.addAndGet(-10);
+                        index2.addAndGet(-pageSize);
                         if (index2.get() < 0) {
                             index2.set(0);
                         }
@@ -263,7 +266,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         index.set(0);
                     }
                     t.clearDisplay();
-                    t.updateDisplay(interactiveContent(rows, index, index2));
+                    t.updateDisplay(interactiveContent(rows, index, index2, t.size()));
                     t.flush();
                 }
             } while (!quit.get());
@@ -272,7 +275,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger index, AtomicInteger index2) {
+    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger index, AtomicInteger index2, Size size) {
         List<AttributedString> answer = new ArrayList<>();
 
         Row first = rows.get(0);
@@ -318,8 +321,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
         var select = AttributedStyle.DEFAULT
                 .background(AttributedStyle.YELLOW)
                 .bold();
-        var faint = AttributedStyle.DEFAULT.faint();
-        var faint_u = AttributedStyle.DEFAULT.faint().underline();
 
         int maxLength = 0;
         String[] lines = table.split(System.lineSeparator());
@@ -341,7 +342,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 style = select;
             } else {
                 style = normal;
-//                style = faint;
             }
             pending.add(new AttributedString(line, style));
         }
@@ -353,23 +353,47 @@ public class CamelHistoryAction extends ActionWatchCommand {
             answer.addAll(pending.subList(pos - 9, pos + 1));
         }
 
-        String help = String.format("  row:%d/%d   q=quit   f5=refresh    (arrow up/down   page up/down   home/end)", pos + 1, rows.size());
+        // load data for current pos
+        int pos2 = index2.get();
+        Row r = rows.get(index.get());
+        table = getDataAsTable(r);
+        lines = table.split(System.lineSeparator());
+        // how many lines for bottom panel
+        int maxBottom = size.getRows() - 18;
+        if (lines.length < maxBottom) {
+            pos2 = 0;
+            index2.set(pos2);
+        }
+        if (pos2 > lines.length - maxBottom) {
+            pos2 = Math.max(0, lines.length - maxBottom);
+            index2.set(pos2);
+        }
+
+        int n1 = (int) Math.ceil((double) pos2 / maxBottom) + 1;
+        int n2 = (int) Math.ceil((double) lines.length / maxBottom);
+
+        String help = String.format("   row:%d/%d (\u2191\u2193)   page:%d/%d (pgup/pgdn/home/end)    q=quit   f5=refresh",
+                pos + 1, rows.size(), n1, n2);
         String pad = StringHelper.padString(maxLength - help.length(), 1);
         answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
         answer.add(new AttributedString(""));
 
         // load data for current pos
-        Row r = rows.get(index.get());
         String header = rowDetailedHeader(r);
         answer.add(AttributedString.fromAnsi(header));
         answer.add(new AttributedString(""));
-        // table with message details
-        table = getDataAsTable(r);
-        lines = table.split(System.lineSeparator());
+
+        pending.clear();
         for (String line : lines) {
-            answer.add(AttributedString.fromAnsi(line));
+            pending.add(AttributedString.fromAnsi(line));
         }
-        answer.add(new AttributedString(""));
+        if (pos2 > 0 && pos2 < pending.size()) {
+            pending = pending.subList(pos2, pending.size());
+        }
+        if (pending.size() > maxBottom) {
+            pending = pending.subList(0, maxBottom);
+        }
+        answer.addAll(pending);
 
         return answer;
     }

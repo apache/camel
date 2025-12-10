@@ -119,6 +119,10 @@ public class InteractiveTerminal implements Closeable {
         status.update(newLines);
     }
 
+    public Size size() {
+        return size;
+    }
+
     public void flush() {
         terminal.flush();
     }
