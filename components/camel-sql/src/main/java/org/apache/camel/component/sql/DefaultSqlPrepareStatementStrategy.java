@@ -29,9 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
@@ -71,7 +69,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                 Matcher matcher = REPLACE_IN_PATTERN.matcher(query);
                 while (matcher.find()) {
                     String found = matcher.group(1);
-                    Object parameter = lookupParameter(found, exchange, null);
+                    Object parameter = SqlHelper.lookupParameter(found, exchange, null);
                     if (parameter != null) {
                         Iterator<?> it = createInParameterIterator(parameter);
                         StringJoiner replaceBuilder = new StringJoiner(",");
@@ -266,54 +264,6 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         }
     }
 
-    protected static Object lookupParameter(String nextParam, Exchange exchange, Object batchBody) {
-        Object body = batchBody != null ? batchBody : exchange.getMessage().getBody();
-        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, body));
-        Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
-        Map<?, ?> variablesMap = safeMap(exchange.getVariables());
-
-        Object answer = null;
-        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
-            if (batchBody != null) {
-                // in batch mode then need to work on a copy of the original exchange and set the batch body
-                exchange = ExchangeHelper.createCopy(exchange, true);
-                exchange.getMessage().setBody(batchBody);
-            }
-            Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(nextParam);
-            answer = exp.evaluate(exchange, Object.class);
-        } else if (bodyMap.containsKey(nextParam)) {
-            answer = bodyMap.get(nextParam);
-        } else if (headersMap.containsKey(nextParam)) {
-            answer = headersMap.get(nextParam);
-        } else if (variablesMap.containsKey(nextParam)) {
-            answer = variablesMap.get(nextParam);
-        }
-
-        return answer;
-    }
-
-    protected static boolean hasParameter(String nextParam, Exchange exchange, Object body) {
-        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
-        Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
-        Map<?, ?> variablesMap = safeMap(exchange.getVariables());
-
-        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
-            return true;
-        } else if (bodyMap.containsKey(nextParam)) {
-            return true;
-        } else if (headersMap.containsKey(nextParam)) {
-            return true;
-        } else if (variablesMap.containsKey(nextParam)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static Map<?, ?> safeMap(Map<?, ?> map) {
-        return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
-    }
-
     @SuppressWarnings("unchecked")
     protected static CompositeIterator<?> createInParameterIterator(Object value) {
         Iterator<?> it;
@@ -367,9 +317,9 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
             Object next = null;
             try {
-                boolean hasNext = hasParameter(nextParam, exchange, body);
+                boolean hasNext = SqlHelper.hasParameter(nextParam, exchange, body);
                 if (hasNext) {
-                    next = lookupParameter(nextParam, exchange, body);
+                    next = SqlHelper.lookupParameter(nextParam, exchange, body);
                     if (in && next != null) {
                         // if SQL IN we need to return an iterator that can iterate the parameter values
                         next = createInParameterIterator(next);
