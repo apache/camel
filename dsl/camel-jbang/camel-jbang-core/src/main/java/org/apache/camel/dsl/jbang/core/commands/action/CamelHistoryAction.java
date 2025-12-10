@@ -318,6 +318,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         var select = AttributedStyle.DEFAULT
                 .background(AttributedStyle.YELLOW)
                 .bold();
+        var faint = AttributedStyle.DEFAULT.faint();
+        var faint_u = AttributedStyle.DEFAULT.faint().underline();
 
         int maxLength = 0;
         String[] lines = table.split(System.lineSeparator());
@@ -327,10 +329,30 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
 
         answer.add(new AttributedString(lines[0])); // header
+
+        List<AttributedString> pending = new ArrayList<>();
         for (int i = 1; i < lines.length; i++) {
+            int j = i - 1;
             String line = lines[i];
-            answer.add(new AttributedString(line, i == pos + 1 ? select : normal));
+            AttributedStyle style;
+            if (j < pos) {
+                style = normal;
+            } else if (j == pos) {
+                style = select;
+            } else {
+                style = normal;
+//                style = faint;
+            }
+            pending.add(new AttributedString(line, style));
         }
+        if (rows.size() <= 10) {
+            answer.addAll(pending);
+        } else if (pos < 10) {
+            answer.addAll(pending.subList(0, 10));
+        } else {
+            answer.addAll(pending.subList(pos - 9, pos + 1));
+        }
+
         String help = String.format("  select:%d/%d   q=quit   f5=refresh    (arrow up/down   page up/down   home/end)", pos + 1, rows.size());
         String pad = StringHelper.padString(maxLength - help.length(), 1);
         answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
