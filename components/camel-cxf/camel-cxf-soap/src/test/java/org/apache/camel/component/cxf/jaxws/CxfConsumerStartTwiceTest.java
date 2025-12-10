@@ -30,38 +30,38 @@ public class CxfConsumerStartTwiceTest {
 
     @Test
     public void startServiceTwice() throws Exception {
-        CamelContext context = new DefaultCamelContext();
+        try (CamelContext context = new DefaultCamelContext()) {
+            final String fromStr = "cxf:http://localhost:" + PORT + "/"
+                                   + this.getClass().getSimpleName()
+                                   + "/test?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
-        final String fromStr = "cxf:http://localhost:" + PORT + "/"
-                               + this.getClass().getSimpleName()
-                               + "/test?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+            //add the same route twice...
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    from(fromStr)
+                            .to("log:POJO");
+                }
+            });
 
-        //add the same route twice...
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from(fromStr)
-                        .to("log:POJO");
+            context.addRoutes(new RouteBuilder() {
+                public void configure() {
+                    from(fromStr)
+                            .to("log:POJO");
+                }
+            });
+
+            try {
+                context.start();
+                fail("Expect to catch an exception here");
+            } catch (Exception ex) {
+                assertTrue(ex.getMessage().endsWith(
+                        "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + PORT
+                                                    + "/" + getClass().getSimpleName()
+                                                    + "/test?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"));
             }
-        });
 
-        context.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from(fromStr)
-                        .to("log:POJO");
-            }
-        });
-
-        try {
-            context.start();
-            fail("Expect to catch an exception here");
-        } catch (Exception ex) {
-            assertTrue(ex.getMessage().endsWith(
-                    "Multiple consumers for the same endpoint is not allowed: cxf://http://localhost:" + PORT
-                                                + "/" + getClass().getSimpleName()
-                                                + "/test?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"));
+            context.stop();
         }
-
-        context.stop();
     }
 
 }

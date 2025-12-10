@@ -25,6 +25,7 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.OneWayProcessorInterceptor;
+import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class RAWDataFormatFeature extends AbstractDataFormatFeature {
         if (isOneway()) {
             Interceptor<? extends Message> toRemove = null;
             for (Interceptor<? extends Message> i : server.getEndpoint().getService().getInInterceptors()) {
-                if (i.getClass().getName().equals("org.apache.cxf.interceptor.OutgoingChainInterceptor")) {
+                if (i instanceof OutgoingChainInterceptor) {
                     toRemove = i;
                 }
             }

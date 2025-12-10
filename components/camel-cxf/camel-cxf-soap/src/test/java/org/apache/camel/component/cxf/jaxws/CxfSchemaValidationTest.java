@@ -108,7 +108,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
     public void schemaValidationDisabledServerTest() throws Exception {
         // invoke the service with a non-valid message
         try {
-            invokeService(serviceAddressValidationDisabled, RandomStringUtils.random(40, true, true));
+            invokeService(serviceAddressValidationDisabled, RandomStringUtils.secure().next(40, true, true));
         } catch (SOAPFaultException e) {
             fail("Do not expect an exception here");
         }
@@ -117,7 +117,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
     @Test
     public void schemaValidationEnabledServerTest() throws Exception {
         //first, invoke service with valid message. No exception should be thrown
-        invokeService(serviceAddressValidationEnabled, RandomStringUtils.random(10, true, true));
+        invokeService(serviceAddressValidationEnabled, RandomStringUtils.secure().next(10, true, true));
 
         // then invoke the service with a non-valid message
 
@@ -134,7 +134,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
 
         */
         try {
-            invokeService(serviceAddressValidationEnabled, RandomStringUtils.random(40, true, true));
+            invokeService(serviceAddressValidationEnabled, RandomStringUtils.secure().next(40, true, true));
             fail("expect a Validation exception here");
         } catch (SOAPFaultException e) {
             assertEquals("the length of the value is 40, but the required maximum is 30.", e.getMessage(), "");

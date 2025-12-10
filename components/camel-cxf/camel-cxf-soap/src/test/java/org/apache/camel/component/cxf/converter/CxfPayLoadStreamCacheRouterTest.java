@@ -37,7 +37,7 @@ public class CxfPayLoadStreamCacheRouterTest extends CxfSimpleRouterTest {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: payload
-                from(routerEndpointURI).streamCaching().process(new Processor() {
+                from(routerEndpointURI).streamCache(true).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Object payload = exchange.getIn().getBody();
                         assertTrue(payload instanceof StreamCache, "payload is not a StreamCache");

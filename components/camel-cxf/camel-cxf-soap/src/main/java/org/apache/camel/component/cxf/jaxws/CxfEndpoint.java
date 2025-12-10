@@ -56,7 +56,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
 import org.apache.camel.component.cxf.common.CxfBinding;
 import org.apache.camel.component.cxf.common.CxfPayload;
 import org.apache.camel.component.cxf.common.DataFormat;
@@ -133,7 +132,7 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
 @Metadata(annotations = {
         "protocol=http",
 })
-public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Service, Cloneable {
+public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 

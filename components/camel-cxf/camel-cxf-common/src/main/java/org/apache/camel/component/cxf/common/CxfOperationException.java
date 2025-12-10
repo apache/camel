@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.cxf.common;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.camel.CamelException;
 
-public class CxfOperationException extends CamelException implements Serializable {
+public class CxfOperationException extends CamelException {
 
     private static final long serialVersionUID = 803109169584916327L;
     private final String uri;
