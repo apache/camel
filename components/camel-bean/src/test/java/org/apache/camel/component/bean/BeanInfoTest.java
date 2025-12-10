@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import net.bytebuddy.ByteBuddy;
@@ -106,6 +108,13 @@ public class BeanInfoTest {
 
         BeanInfo info = new BeanInfo(context, mhi.getClass());
         assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    @Test
+    public void testVoidMethod() throws NoSuchMethodException, SecurityException {
+        Method method = MyClass.class.getMethod("myMethod");
+        MethodInfo info = new MethodInfo(context, MyClass.class, method, new ArrayList<>(), new ArrayList<>(), false, false);
+        assertTrue(info.isReturnTypeVoid());
     }
 
     private Object buildProxyObject() {

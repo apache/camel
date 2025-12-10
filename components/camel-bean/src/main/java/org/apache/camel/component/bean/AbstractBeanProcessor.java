@@ -22,7 +22,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.BeanScope;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -91,8 +90,6 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     private static boolean useMethodInvocation(
             Exchange exchange, AsyncCallback callback, String explicitMethodName, BeanInfo beanInfo, Object beanInstance) {
-        final Message in = exchange.getIn();
-
         // set explicit method name to invoke as a exchange property, which is how BeanInfo can detect it
         if (explicitMethodName != null) {
             exchange.setProperty(BeanConstants.BEAN_METHOD_NAME, explicitMethodName);

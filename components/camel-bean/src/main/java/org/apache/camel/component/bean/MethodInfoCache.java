@@ -63,7 +63,6 @@ public class MethodInfoCache {
         return new BeanInfo(camelContext, declaringClass);
     }
 
-    @SuppressWarnings("unchecked")
     protected static <K, V> Map<K, V> createLruCache(int size) {
         // use a soft cache
         return LRUCacheFactory.newLRUSoftCache(size);

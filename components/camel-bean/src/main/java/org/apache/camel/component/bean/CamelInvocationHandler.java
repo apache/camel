@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 import org.apache.camel.Endpoint;
@@ -26,7 +25,7 @@ import org.apache.camel.Producer;
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a message exchange on a camel {@link Endpoint}
  */
-public class CamelInvocationHandler extends AbstractCamelInvocationHandler implements InvocationHandler {
+public class CamelInvocationHandler extends AbstractCamelInvocationHandler {
     private final MethodInfoCache methodInfoCache;
     private final boolean binding;
 
