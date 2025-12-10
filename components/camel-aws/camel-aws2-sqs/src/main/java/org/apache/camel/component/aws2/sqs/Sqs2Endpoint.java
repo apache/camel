@@ -384,7 +384,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
      * If queue does not exist during endpoint initialization, the queueUrl has to be initialized again. See
      * https://issues.apache.org/jira/browse/CAMEL-18968 for more details.
      */
-    protected String getQueueUrl() {
+    protected synchronized String getQueueUrl() {
         if (!queueUrlInitialized) {
             LOG.trace("Queue url was not initialized during the start of the component. Initializing again.");
             initQueueUrl();
