@@ -31,6 +31,7 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedString;
 import org.jline.utils.Display;
 import org.jline.utils.InfoCmp;
+import org.jline.utils.Status;
 
 /**
  * Interactive terminal that runs in full screen and allows a more immersive user experience with Camel JBang CLI.
@@ -44,6 +45,8 @@ public class InteractiveTerminal implements Closeable {
     private Size size;
     private BindingReader bindingReader;
     private Runnable sigint;
+    private Status status;
+    private Runnable statusTask;
 
     public InteractiveTerminal() throws Exception {
         terminal = TerminalBuilder.builder().build();
@@ -74,6 +77,7 @@ public class InteractiveTerminal implements Closeable {
         // resize display
         display.resize(size.getRows(), size.getColumns());
 
+        status = Status.getStatus(terminal);
         bindingReader = new BindingReader(terminal.reader());
 
         if (sigint != null) {
@@ -85,6 +89,10 @@ public class InteractiveTerminal implements Closeable {
 
     public void sigint(Runnable task) {
         this.sigint = task;
+    }
+
+    public void status(Runnable task) {
+        this.statusTask = task;
     }
 
     public void addKeyBinding(String operation, String... key) {
@@ -105,6 +113,10 @@ public class InteractiveTerminal implements Closeable {
 
     public void updateDisplay(List<AttributedString> newLines) {
         display.update(newLines, size.cursorPos(0, 0));
+    }
+
+    public void updateStatus(List<AttributedString> newLines) {
+        status.update(newLines);
     }
 
     public void flush() {

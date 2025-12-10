@@ -205,6 +205,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
     private Integer doInteractiveCall(List<Row> rows) throws Exception {
         AtomicInteger index = new AtomicInteger();
+        AtomicInteger index2 = new AtomicInteger();
         AtomicBoolean quit = new AtomicBoolean();
 
         tableHelper = new MessageTableHelper();
@@ -216,13 +217,17 @@ public class CamelHistoryAction extends ActionWatchCommand {
         try (InteractiveTerminal t = new InteractiveTerminal()) {
             t.sigint(() -> quit.set(true));
             t.addKeyBinding("quit", KeyMap.ctrl('c'), "q");
-            t.addKeyBinding("up", InfoCmp.Capability.key_up);
-            t.addKeyBinding("down", InfoCmp.Capability.key_down);
             t.addKeyBinding("refresh", InfoCmp.Capability.key_f5);
+            t.addKeyBinding("down", InfoCmp.Capability.key_down);
+            t.addKeyBinding("up", InfoCmp.Capability.key_up);
+            t.addKeyBinding("npage", InfoCmp.Capability.key_npage);
+            t.addKeyBinding("ppage", InfoCmp.Capability.key_ppage);
+            t.addKeyBinding("home", InfoCmp.Capability.key_home);
+            t.addKeyBinding("end", InfoCmp.Capability.key_end);
             t.start();
 
             t.clearDisplay();
-            t.updateDisplay(interactiveContent(rows, index));
+            t.updateDisplay(interactiveContent(rows, index, index2));
             t.flush();
 
             do {
@@ -238,6 +243,18 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         if (index.get() < rows.size() - 1) {
                             index.addAndGet(1);
                         }
+                    } else if ("home".equals(operation)) {
+                        index2.set(0);
+                    } else if ("end".equals(operation)) {
+                        index2.set(Integer.MAX_VALUE);
+                    } else if ("npage".equals(operation)) {
+                        index2.addAndGet(10);
+                        // TODO: end of message content
+                    } else if ("ppage".equals(operation)) {
+                        index2.addAndGet(-10);
+                        if (index2.get() < 0) {
+                            index2.set(0);
+                        }
                     } else if ("refresh".equals(operation)) {
                         var reloaded = loadRows();
                         if (reloaded.size() == 1) {
@@ -246,7 +263,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         index.set(0);
                     }
                     t.clearDisplay();
-                    t.updateDisplay(interactiveContent(rows, index));
+                    t.updateDisplay(interactiveContent(rows, index, index2));
                     t.flush();
                 }
             } while (!quit.get());
@@ -255,7 +272,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger index) {
+    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger index, AtomicInteger index2) {
         List<AttributedString> answer = new ArrayList<>();
 
         Row first = rows.get(0);
@@ -264,11 +281,20 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String status = last.failed ? "failed" : "success";
         String s = String.format("    Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
                 first.exchangeId, status, ago, first.pid, first.name);
-        answer.add(new AttributedString(""));
         answer.add(new AttributedString(s));
-        answer.add(new AttributedString(""));
+        answer.add(new AttributedString("Pos: " + index.get()));
 
-        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+        int pos = index.get();
+
+        List<Row> copy = new ArrayList<>(rows);
+
+        // ensure there are empty rows if we do not have 7 traces
+        while (copy.size() < 7) {
+            copy.add(new Row());
+        }
+
+        // build full table with all data so the table sizing are always the same when scrolling
+        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, copy, Arrays.asList(
                 new Column().header("").dataAlign(HorizontalAlign.LEFT)
                         .minWidth(6).maxWidth(6)
                         .with(this::getDirection),
@@ -280,7 +306,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         .with(this::getProcessor),
                 new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
                         .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
-                        .with(r -> "" + r.elapsed),
+                        .with(this::getElapsed),
                 new Column().header("EXCHANGE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getExchangeId),
@@ -288,14 +314,22 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         .maxWidth(60, OverflowBehaviour.NEWLINE)
                         .with(this::getMessage)));
 
+        List<String> lines = new ArrayList<>(List.of(table.split(System.lineSeparator())));
+        // header
+        answer.add(new AttributedString(lines.remove(0)));
+
+        // slice table based on position
+        // 6 rows 1 empty
+        // pos = 0
+
+
+        // print table
         var normal = AttributedStyle.DEFAULT;
         var select = AttributedStyle.DEFAULT
                 .background(AttributedStyle.YELLOW)
                 .bold();
-        String[] lines = table.split(System.lineSeparator());
-        int pos = index.get() + 1;
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
+        for (int i = 0; i < 7; i++) {
+            String line = lines.get(i);
             answer.add(new AttributedString(line, i == pos ? select : normal));
         }
         answer.add(new AttributedString(""));
@@ -307,9 +341,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         answer.add(new AttributedString(""));
         // table with message details
         table = getDataAsTable(r);
-        lines = table.split(System.lineSeparator());
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
+        lines = List.of(table.split(System.lineSeparator()));
+        for (String line : lines) {
             answer.add(AttributedString.fromAnsi(line));
         }
         answer.add(new AttributedString(""));
@@ -401,7 +434,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private String getElapsed(Row r) {
-        if (!r.first) {
+        if (r.exchangeId != null && !r.first) {
             return TimeUtils.printDuration(r.elapsed, true);
         }
         return null;
@@ -512,11 +545,14 @@ public class CamelHistoryAction extends ActionWatchCommand {
         } else if (r.last) {
             return "*<--";
         } else {
-            return "";
+            return null;
         }
     }
 
     private String getExchangeId(Row r) {
+        if (r.exchangeId == null) {
+            return null;
+        }
         String id = r.exchangeId.substring(r.exchangeId.length() - 4);
         String cid = r.correlationExchangeId;
         if (cid != null) {
