@@ -48,7 +48,6 @@ public class S3CreateDownloadLinkWithProvidedPresignerOperationIT extends Aws2S3
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
-    @SuppressWarnings("unchecked")
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
