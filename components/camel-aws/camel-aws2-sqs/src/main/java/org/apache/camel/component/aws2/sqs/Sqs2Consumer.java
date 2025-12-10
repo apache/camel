@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
@@ -547,7 +548,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         private final IOConsumer<SqsClient> createQueueOperation;
 
         private final String queueName;
-        private final String queueUrl;
+        private final Supplier<String> getQueueUrlOperation;
         private final int maxMessagesPerPoll;
         private final Integer visibilityTimeout;
         private final Integer waitTimeSeconds;
@@ -565,7 +566,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             createQueueOperation = endpoint::createQueue;
 
             queueName = endpoint.getConfiguration().getQueueName();
-            queueUrl = endpoint.getQueueUrl();
+            getQueueUrlOperation = endpoint::getQueueUrl;
             visibilityTimeout = endpoint.getConfiguration().getVisibilityTimeout();
             waitTimeSeconds = endpoint.getConfiguration().getWaitTimeSeconds();
             messageAttributeNames = splitCommaSeparatedValues(endpoint.getConfiguration().getMessageAttributeNames());
@@ -670,6 +671,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         private ReceiveMessageRequest createReceiveRequest(int maxNumberOfMessages) {
+            String queueUrl = getQueueUrlOperation.get();
             ReceiveMessageRequest.Builder requestBuilder
                     = ReceiveMessageRequest.builder().queueUrl(queueUrl).maxNumberOfMessages(maxNumberOfMessages)
                             .visibilityTimeout(visibilityTimeout).waitTimeSeconds(waitTimeSeconds);
