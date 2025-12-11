@@ -399,7 +399,8 @@ public final class CamelAnnotationsHandler {
                         new StubComponentResolver(stubEndpoints));
                 // need to replace autowire strategy with stub capable
                 camelContext.getLifecycleStrategies()
-                        .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
+                        // NOTE: the DefaultAutowiredLifecycleStrategy is not public.
+                        .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy")); // NOSONAR
                 camelContext.getLifecycleStrategies().add(new StubComponentAutowireStrategy(camelContext, stubEndpoints));
             });
         }
