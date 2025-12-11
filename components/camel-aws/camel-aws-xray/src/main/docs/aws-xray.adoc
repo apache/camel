@@ -8,6 +8,7 @@
 :deprecated: *deprecated*
 :tabs-sync-option:
 //Manually maintained attributes
+:group: AWS
 :camel-spring-boot-name: aws-xray
 
 *Since Camel {since}*
