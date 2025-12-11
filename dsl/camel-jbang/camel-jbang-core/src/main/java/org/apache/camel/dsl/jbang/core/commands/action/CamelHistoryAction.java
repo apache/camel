@@ -161,7 +161,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 Row last = rows.get(rows.size() - 1);
                 String status = last.failed ? "failed" : "success";
                 String elapsed = TimeUtils.printDuration(last.elapsed, true);
-                ;
                 String s = String.format("Message History of last completed (id:%s status:%s elapsed:%s ago:%s pid:%d name:%s)",
                         first.exchangeId, status, elapsed, ago, first.pid, first.name);
                 printer().println(s);
@@ -330,7 +329,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(this::getExchangeId),
                 new Column().header("").dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(60, OverflowBehaviour.NEWLINE)
+                        .maxWidth(Integer.MAX_VALUE) // capture all in single line
                         .with(this::getMessage)));
 
         // styles for highlighting the selected row
@@ -487,7 +486,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         // node ids or source location
         String ids;
         if (source) {
-            ids = locationAndLine(row.location, -1);
+            ids = location(row.location);
         } else {
             ids = row.routeId + "/" + getId(row);
         }
@@ -517,7 +516,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
             if (loggingColor) {
                 sb.append(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
             } else {
-                sb.append("(" + e + ")");
+                sb.append("(").append(e).append(")");
             }
         }
         return sb.toString();
@@ -571,10 +570,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
     }
 
-    private static String locationAndLine(String loc, int line) {
+    private static String location(String loc) {
         // shorten path as there is no much space (there are no scheme as add fake)
-        loc = LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
-        return line == -1 ? loc : loc + ":" + line;
+        return LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
     }
 
     private boolean filterDepth(Row r) {
@@ -594,8 +592,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
         JsonArray arr = r.message.getCollection("exchangeProperties");
         if (arr != null) {
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jo = (JsonObject) arr.get(i);
+            for (Object o : arr) {
+                JsonObject jo = (JsonObject) o;
                 if ("CamelSplitIndex".equals(jo.getString("key"))) {
                     long idx = jo.getLongOrDefault("value", Long.MAX_VALUE);
                     return idx < limitSplit;
@@ -868,8 +866,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     if (eh.isImportant()) {
                         JsonArray arr = r.message.getCollection("headers");
                         if (arr != null) {
-                            for (int i = 0; i < arr.size(); i++) {
-                                JsonObject jo = (JsonObject) arr.get(i);
+                            for (Object o : arr) {
+                                JsonObject jo = (JsonObject) o;
                                 String key = jo.getString("key");
                                 if (key.equals(eh.getName())) {
                                     answer.put(key, jo.getString("value"));
@@ -893,8 +891,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 if (ep.isImportant()) {
                     JsonArray arr = r.message.getCollection("exchangeProperties");
                     if (arr != null) {
-                        for (int i = 0; i < arr.size(); i++) {
-                            JsonObject jo = (JsonObject) arr.get(i);
+                        for (Object o : arr) {
+                            JsonObject jo = (JsonObject) o;
                             String key = jo.getString("key");
                             if (key.equals(ep.getName())) {
                                 answer.put(key, jo.getString("value"));
@@ -903,8 +901,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     }
                     arr = r.message.getCollection("headers");
                     if (arr != null) {
-                        for (int i = 0; i < arr.size(); i++) {
-                            JsonObject jo = (JsonObject) arr.get(i);
+                        for (Object o : arr) {
+                            JsonObject jo = (JsonObject) o;
                             String key = jo.getString("key");
                             if (key.equals(ep.getName())) {
                                 answer.put(key, jo.getString("value"));
