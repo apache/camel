@@ -22,10 +22,14 @@ import java.util.Map;
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.spi.BeanIntrospection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 final class JmsServiceLocationHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsServiceLocationHelper.class);
 
     private JmsServiceLocationHelper() {
     }
@@ -78,7 +82,8 @@ final class JmsServiceLocationHelper {
 
     private static String artemisBrokerURL(ConnectionFactory cf) {
         try {
-            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) {
+            // NOTE: the dependency has to be provided by final user.
+            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) { // NOSONAR
                 Object obj = invokeMethodSafe("getServerLocator", cf);
                 if (obj != null) {
                     Object[] arr = (Object[]) invokeMethodSafe("getStaticTransportConfigurations", obj);
@@ -96,18 +101,19 @@ final class JmsServiceLocationHelper {
                 }
             }
         } catch (Exception e) {
-            // ignore
+            LOG.warn("An exception occurred while parsing broker url: ignoring", e);
         }
         return null;
     }
 
     private static String artemisUsername(ConnectionFactory cf) {
         try {
-            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) {
+            // NOTE: the dependency has to be provided by final user.
+            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) { // NOSONAR
                 return (String) invokeMethodSafe("getUser", cf);
             }
         } catch (Exception e) {
-            // ignore
+            LOG.warn("An exception occurred while parsing username: ignoring", e);
         }
         return null;
     }
