@@ -60,6 +60,8 @@ import picocli.CommandLine;
                      description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
 public class CamelHistoryAction extends ActionWatchCommand {
 
+    private static final int IT_MAX_ROWS = 10;
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
@@ -289,14 +291,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         answer.add(new AttributedString(s));
         answer.add(new AttributedString(""));
 
-        // ensure there are empty rows if we do not have 10 traces
-        List<Row> copy = new ArrayList<>(rows);
-        while (copy.size() < 10) {
-            copy.add(new Row());
-        }
-
         // build full table with all data so the table sizing are always the same when scrolling
-        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, copy, Arrays.asList(
+        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().header("").dataAlign(HorizontalAlign.LEFT)
                         .minWidth(6).maxWidth(6)
                         .with(this::getDirection),
@@ -330,59 +326,66 @@ public class CamelHistoryAction extends ActionWatchCommand {
             maxLength = Math.max(maxLength, line.length());
         }
 
+        // calculate top table max size
+        int maxRows = Math.min(IT_MAX_ROWS, rows.size());
+
         // table header
         answer.add(new AttributedString(lines[0]));
 
         // slice top table with maximum 10 rows
-        int pos = rowIndex.get();
+        int rowPos = rowIndex.get();
         List<AttributedString> pending = new ArrayList<>();
         for (int i = 1; i < lines.length; i++) {
             int j = i - 1;
             String line = lines[i];
             AttributedStyle style;
-            if (j < pos) {
+            if (j < rowPos) {
                 style = normal;
-            } else if (j == pos) {
+            } else if (j == rowPos) {
                 style = select;
             } else {
                 style = normal;
             }
             pending.add(new AttributedString(line, style));
         }
-        if (rows.size() <= 10) {
+        if (rows.size() <= IT_MAX_ROWS) {
+            // show all rows as there are no need to scroll
             answer.addAll(pending);
-        } else if (pos < 10) {
-            answer.addAll(pending.subList(0, 10));
+        } else if (rowPos < IT_MAX_ROWS) {
+            // show all rows as we are in the top before scrolling
+            answer.addAll(pending.subList(0, IT_MAX_ROWS));
         } else {
-            answer.addAll(pending.subList(pos - 9, pos + 1));
+            // scroll down to add 1 new row
+            answer.addAll(pending.subList(rowPos - (IT_MAX_ROWS - 1), rowPos + 1));
         }
 
         // detailed data for current selected row
         // need to pre-calculate how much lines of this data can be visibly shown
         // in the bottom panel
-        int pos2 = pageIndex.get();
+        int pagePos = pageIndex.get();
         Row r = rows.get(rowIndex.get());
         table = getDataAsTable(r);
         lines = table.split(System.lineSeparator());
         // how many lines for bottom panel
-        int maxBottom = size.getRows() - 18;
+        int maxBottom = size.getRows() - Math.min(maxRows, rows.size());
         if (lines.length < maxBottom) {
-            pos2 = 0;
-            pageIndex.set(pos2);
+            pagePos = 0;
+            pageIndex.set(pagePos);
         }
-        if (pos2 > lines.length - maxBottom) {
-            pos2 = Math.max(0, lines.length - maxBottom);
-            pageIndex.set(pos2);
+        if (pagePos > lines.length - maxBottom) {
+            pagePos = Math.max(0, lines.length - maxBottom);
+            pageIndex.set(pagePos);
         }
 
         // calculate page index/total
-        int p1 = (int) Math.ceil((double) pos2 / maxBottom) + 1;
+        int p1 = (int) Math.ceil((double) pagePos / maxBottom) + 1;
         int p2 = (int) Math.ceil((double) lines.length / maxBottom);
 
         // status panel in the middle
-        String help = String.format("   row:%d/%d (\u2191\u2193)   page:%d/%d (pgup/pgdn/home/end)    q=quit   f5=refresh",
-                pos + 1, rows.size(), p1, p2);
+        String help = String.format("   row:%d/%d (\u2191\u2193)   page:%d/%d (pgup/pgdn/home/end)    f5=refresh    q=quit",
+                rowPos + 1, rows.size(), p1, p2);
         String pad = StringHelper.padString(maxLength - help.length(), 1);
+        answer.add(new AttributedString(""));
         answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
         answer.add(new AttributedString(""));
 
@@ -396,8 +399,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         for (String line : lines) {
             pending.add(AttributedString.fromAnsi(line));
         }
-        if (pos2 > 0 && pos2 < pending.size()) {
-            pending = pending.subList(pos2, pending.size());
+        if (pagePos > 0 && pagePos < pending.size()) {
+            pending = pending.subList(pagePos, pending.size());
         }
         if (pending.size() > maxBottom) {
             pending = pending.subList(0, maxBottom);
