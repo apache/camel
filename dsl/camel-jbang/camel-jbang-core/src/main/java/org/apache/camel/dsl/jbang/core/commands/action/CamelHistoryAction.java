@@ -225,8 +225,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
             t.addKeyBinding("refresh", InfoCmp.Capability.key_f5);
             t.addKeyBinding("down", InfoCmp.Capability.key_down);
             t.addKeyBinding("up", InfoCmp.Capability.key_up);
-            t.addKeyBinding("npage", InfoCmp.Capability.key_npage);
-            t.addKeyBinding("ppage", InfoCmp.Capability.key_ppage);
+            t.addKeyBinding("pgdn", InfoCmp.Capability.key_npage);
+            t.addKeyBinding("pgup", InfoCmp.Capability.key_ppage);
             t.addKeyBinding("home", InfoCmp.Capability.key_home);
             t.addKeyBinding("end", InfoCmp.Capability.key_end);
             t.start();
@@ -253,10 +253,24 @@ public class CamelHistoryAction extends ActionWatchCommand {
                                 rowIndex.addAndGet(1);
                             }
                         }
-                        case "home" -> pageIndex.set(0);
-                        case "end" -> pageIndex.set(Integer.MAX_VALUE);
-                        case "npage" -> pageIndex.addAndGet(pageSize);
-                        case "ppage" -> {
+                        case "pgup" -> {
+                            if (rowIndex.get() > 0) {
+                                rowIndex.addAndGet(-IT_MAX_ROWS);
+                            }
+                            if (rowIndex.get() < 0) {
+                                rowIndex.set(0);
+                            }
+                        }
+                        case "pgdn" -> {
+                            if (rowIndex.get() < rows.size() - 1) {
+                                rowIndex.addAndGet(IT_MAX_ROWS);
+                            }
+                            if (rowIndex.get() > rows.size() - 1) {
+                                rowIndex.set(rows.size() - 1);
+                            }
+                        }
+                        case "end" -> pageIndex.addAndGet(pageSize);
+                        case "home" -> {
                             pageIndex.addAndGet(-pageSize);
                             if (pageIndex.get() < 0) {
                                 pageIndex.set(0);
@@ -393,7 +407,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         int p2 = (int) Math.ceil((double) lines.length / maxBottom);
 
         // status panel in the middle
-        String help = String.format("   row:%d/%d (\u2191\u2193)   page:%d/%d (pgup/pgdn/home/end)    f5=refresh    q=quit",
+        String help = String.format("   row:%d/%d (\u2191\u2193pgup/pgdn)   page:%d/%d (home/end)    f5=refresh    q=quit",
                 rowPos + 1, rows.size(), p1, p2);
         String pad = StringHelper.padString(maxLength - help.length(), 1);
         if (moreRows) {
