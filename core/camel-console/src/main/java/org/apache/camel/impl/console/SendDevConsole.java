@@ -320,7 +320,7 @@ public class SendDevConsole extends AbstractDevConsole {
         return b;
     }
 
-    private Map prepareHeaders(Map<String, Object> options) {
+    private Map<String, Object> prepareHeaders(Map<String, Object> options) {
         Map<String, Object> answer = new HashMap<>();
         options.forEach((k, v) -> {
             if (isCustomHeader(k)) {
