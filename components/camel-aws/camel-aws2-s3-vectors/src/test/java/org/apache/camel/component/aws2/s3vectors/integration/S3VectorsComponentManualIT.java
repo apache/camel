@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -54,6 +55,7 @@ import software.amazon.awssdk.services.s3vectors.model.DeleteVectorBucketRequest
 import software.amazon.awssdk.services.s3vectors.model.PutVectorsResponse;
 import software.amazon.awssdk.services.s3vectors.model.QueryOutputVector;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -109,8 +111,8 @@ public class S3VectorsComponentManualIT extends CamelTestSupport {
                     .build());
             LOG.info("Vector bucket created successfully");
 
-            // Wait a bit for bucket to be ready
-            Thread.sleep(2000);
+            // Wait for bucket to be ready
+            await().pollDelay(2, TimeUnit.SECONDS).until(() -> true);
 
             // Create vector index
             client.createIndex(CreateIndexRequest.builder()
@@ -123,7 +125,7 @@ public class S3VectorsComponentManualIT extends CamelTestSupport {
             LOG.info("Vector index [{}] created successfully", TEST_INDEX_NAME);
 
             // Wait for index to be ready
-            Thread.sleep(5000);
+            await().pollDelay(5, TimeUnit.SECONDS).until(() -> true);
 
         } catch (Exception e) {
             LOG.error("Failed to setup vector bucket and index", e);
@@ -143,8 +145,8 @@ public class S3VectorsComponentManualIT extends CamelTestSupport {
                     .build());
             LOG.info("Vector index deleted successfully");
 
-            // Wait a bit
-            Thread.sleep(2000);
+            // Wait for index deletion to propagate
+            await().pollDelay(2, TimeUnit.SECONDS).until(() -> true);
 
             // Delete vector bucket
             client.deleteVectorBucket(DeleteVectorBucketRequest.builder()
@@ -223,7 +225,7 @@ public class S3VectorsComponentManualIT extends CamelTestSupport {
         LOG.info("Multiple vectors inserted successfully");
 
         // Wait for vectors to be indexed
-        Thread.sleep(3000);
+        await().pollDelay(3, TimeUnit.SECONDS).until(() -> true);
     }
 
     @Test
