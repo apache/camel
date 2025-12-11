@@ -236,7 +236,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
             t.flush();
 
             // how many lines to jump per page
-            int pageSize = t.size().getRows() - 18;
+            int pageSize = t.size().getRows() - IT_MAX_ROWS;
 
             do {
                 String operation = t.readNextKeyBinding();
@@ -338,7 +338,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         // table header
         answer.add(new AttributedString(lines[0]));
 
-        // slice top table with maximum 10 rows
+        // slice top table with maximum IT_MAX_ROWS number of rows
         int rowPos = rowIndex.get();
         List<AttributedString> pending = new ArrayList<>();
         for (int i = 1; i < lines.length; i++) {
