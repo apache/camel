@@ -205,8 +205,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private Integer doInteractiveCall(List<Row> rows) throws Exception {
-        AtomicInteger index = new AtomicInteger();
-        AtomicInteger index2 = new AtomicInteger();
+        AtomicInteger rowIndex = new AtomicInteger();
+        AtomicInteger pageIndex = new AtomicInteger();
         AtomicBoolean quit = new AtomicBoolean();
 
         tableHelper = new MessageTableHelper();
@@ -228,7 +228,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
             t.start();
 
             t.clearDisplay();
-            t.updateDisplay(interactiveContent(rows, index, index2, t.size()));
+            t.updateDisplay(interactiveContent(rows, rowIndex, pageIndex, t.size()));
             t.flush();
 
             // how many lines to jump per page
@@ -237,36 +237,37 @@ public class CamelHistoryAction extends ActionWatchCommand {
             do {
                 String operation = t.readNextKeyBinding();
                 if (operation != null) {
-                    if ("quit".equals(operation)) {
-                        quit.set(true);
-                    } else if ("up".equals(operation)) {
-                        if (index.get() > 0) {
-                            index.addAndGet(-1);
+                    switch (operation) {
+                        case "quit" -> quit.set(true);
+                        case "up" -> {
+                            if (rowIndex.get() > 0) {
+                                rowIndex.addAndGet(-1);
+                            }
                         }
-                    } else if ("down".equals(operation)) {
-                        if (index.get() < rows.size() - 1) {
-                            index.addAndGet(1);
+                        case "down" -> {
+                            if (rowIndex.get() < rows.size() - 1) {
+                                rowIndex.addAndGet(1);
+                            }
                         }
-                    } else if ("home".equals(operation)) {
-                        index2.set(0);
-                    } else if ("end".equals(operation)) {
-                        index2.set(Integer.MAX_VALUE);
-                    } else if ("npage".equals(operation)) {
-                        index2.addAndGet(pageSize);
-                    } else if ("ppage".equals(operation)) {
-                        index2.addAndGet(-pageSize);
-                        if (index2.get() < 0) {
-                            index2.set(0);
+                        case "home" -> pageIndex.set(0);
+                        case "end" -> pageIndex.set(Integer.MAX_VALUE);
+                        case "npage" -> pageIndex.addAndGet(pageSize);
+                        case "ppage" -> {
+                            pageIndex.addAndGet(-pageSize);
+                            if (pageIndex.get() < 0) {
+                                pageIndex.set(0);
+                            }
                         }
-                    } else if ("refresh".equals(operation)) {
-                        var reloaded = loadRows();
-                        if (reloaded.size() == 1) {
-                            rows = reloaded.get(0);
+                        case "refresh" -> {
+                            var reloaded = loadRows();
+                            if (reloaded.size() == 1) {
+                                rows = reloaded.get(0);
+                            }
+                            rowIndex.set(0);
                         }
-                        index.set(0);
                     }
                     t.clearDisplay();
-                    t.updateDisplay(interactiveContent(rows, index, index2, t.size()));
+                    t.updateDisplay(interactiveContent(rows, rowIndex, pageIndex, t.size()));
                     t.flush();
                 }
             } while (!quit.get());
@@ -275,9 +276,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger index, AtomicInteger index2, Size size) {
+    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger rowIndex, AtomicInteger pageIndex, Size size) {
         List<AttributedString> answer = new ArrayList<>();
 
+        // top message
         Row first = rows.get(0);
         String ago = TimeUtils.printSince(first.timestamp);
         Row last = rows.get(rows.size() - 1);
@@ -286,8 +288,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 first.exchangeId, status, ago, first.pid, first.name);
         answer.add(new AttributedString(s));
         answer.add(new AttributedString(""));
-
-        int pos = index.get();
 
         // ensure there are empty rows if we do not have 10 traces
         List<Row> copy = new ArrayList<>(rows);
@@ -316,12 +316,13 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         .maxWidth(60, OverflowBehaviour.NEWLINE)
                         .with(this::getMessage)));
 
-        // print table
+        // styles for highlighting the selected row
         var normal = AttributedStyle.DEFAULT;
         var select = AttributedStyle.DEFAULT
                 .background(AttributedStyle.YELLOW)
                 .bold();
 
+        // calculate the max width from all the message traces
         int maxLength = 0;
         String[] lines = table.split(System.lineSeparator());
         for (int i = 1; i < lines.length; i++) {
@@ -329,8 +330,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
             maxLength = Math.max(maxLength, line.length());
         }
 
-        answer.add(new AttributedString(lines[0])); // header
+        // table header
+        answer.add(new AttributedString(lines[0]));
 
+        // slice top table with maximum 10 rows
+        int pos = rowIndex.get();
         List<AttributedString> pending = new ArrayList<>();
         for (int i = 1; i < lines.length; i++) {
             int j = i - 1;
@@ -353,36 +357,41 @@ public class CamelHistoryAction extends ActionWatchCommand {
             answer.addAll(pending.subList(pos - 9, pos + 1));
         }
 
-        // load data for current pos
-        int pos2 = index2.get();
-        Row r = rows.get(index.get());
+        // detailed data for current selected row
+        // need to pre-calculate how much lines of this data can be visibly shown
+        // in the bottom panel
+        int pos2 = pageIndex.get();
+        Row r = rows.get(rowIndex.get());
         table = getDataAsTable(r);
         lines = table.split(System.lineSeparator());
         // how many lines for bottom panel
         int maxBottom = size.getRows() - 18;
         if (lines.length < maxBottom) {
             pos2 = 0;
-            index2.set(pos2);
+            pageIndex.set(pos2);
         }
         if (pos2 > lines.length - maxBottom) {
             pos2 = Math.max(0, lines.length - maxBottom);
-            index2.set(pos2);
+            pageIndex.set(pos2);
         }
 
-        int n1 = (int) Math.ceil((double) pos2 / maxBottom) + 1;
-        int n2 = (int) Math.ceil((double) lines.length / maxBottom);
+        // calculate page index/total
+        int p1 = (int) Math.ceil((double) pos2 / maxBottom) + 1;
+        int p2 = (int) Math.ceil((double) lines.length / maxBottom);
 
+        // status panel in the middle
         String help = String.format("   row:%d/%d (\u2191\u2193)   page:%d/%d (pgup/pgdn/home/end)    q=quit   f5=refresh",
-                pos + 1, rows.size(), n1, n2);
+                pos + 1, rows.size(), p1, p2);
         String pad = StringHelper.padString(maxLength - help.length(), 1);
         answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
         answer.add(new AttributedString(""));
 
-        // load data for current pos
+        // bottom header
         String header = rowDetailedHeader(r);
         answer.add(AttributedString.fromAnsi(header));
         answer.add(new AttributedString(""));
 
+        // slice bottom panel to show selected page
         pending.clear();
         for (String line : lines) {
             pending.add(AttributedString.fromAnsi(line));
@@ -813,32 +822,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 }
             }
         }
-        for (int i = 1; i < rows.size() - 1; i++) {
-            Row cur = rows.get(i);
-
-            cur.history = new ArrayList<>();
-            for (int j = 0; j < i; j++) {
-                Row r = rows.get(j);
-                History h = new History();
-                h.index = j;
-                h.nodeId = r.nodeId;
-                h.routeId = r.routeId;
-                h.nodeShortName = r.nodeShortName;
-                h.nodeLabel = r.nodeLabel;
-                h.location = r.location;
-                h.elapsed = r.elapsed;
-                h.level = r.nodeLevel;
-                if (r.code != null) {
-                    for (var c : r.code) {
-                        if (c.match) {
-                            h.code = c.code;
-                            h.line = c.line;
-                        }
-                    }
-                }
-                cur.history.add(h);
-            }
-        }
     }
 
     private Map<String, String> extractComponentModel(String uri, Row r) {
@@ -931,55 +914,12 @@ public class CamelHistoryAction extends ActionWatchCommand {
         JsonObject exception;
         String summary;
         List<Code> code = new ArrayList<>();
-        List<History> history = new ArrayList<>();
-    }
-
-    private static class History {
-        int index;
-        String routeId;
-        String nodeId;
-        String nodeShortName;
-        String nodeLabel;
-        int level;
-        long elapsed;
-        String location;
-        int line;
-        String code;
     }
 
     private static class Code {
         int line;
         String code;
         boolean match;
-    }
-
-    private static class Panel {
-        String code = "";
-        String history = "";
-        int codeLength;
-        int historyLength;
-
-        static Panel withCode(String code) {
-            return withCode(code, code.length());
-        }
-
-        static Panel withCode(String code, int length) {
-            Panel p = new Panel();
-            p.code = code;
-            p.codeLength = length;
-            return p;
-        }
-
-        Panel andHistory(String history) {
-            return andHistory(history, history.length());
-        }
-
-        Panel andHistory(String history, int length) {
-            this.history = history;
-            this.historyLength = length;
-            return this;
-        }
-
     }
 
 }
