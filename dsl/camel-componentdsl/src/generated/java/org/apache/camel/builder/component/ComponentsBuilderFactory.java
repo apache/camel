@@ -465,6 +465,20 @@ public interface ComponentsBuilderFactory {
         return Aws2S3ComponentBuilderFactory.aws2S3();
     }
     /**
+     * AWS S3 Vectors (camel-aws2-s3-vectors)
+     * Store and query vector embeddings using AWS S3 Vectors with similarity
+     * search.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
+     * 
+     * @return the dsl builder
+     */
+    static Aws2S3VectorsComponentBuilderFactory.Aws2S3VectorsComponentBuilder aws2S3Vectors() {
+        return Aws2S3VectorsComponentBuilderFactory.aws2S3Vectors();
+    }
+    /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
      * 

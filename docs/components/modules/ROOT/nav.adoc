@@ -57,6 +57,7 @@
 *** xref:aws2-mq-component.adoc[AWS MQ]
 *** xref:aws2-redshift-data-component.adoc[AWS RedshiftData]
 *** xref:aws2-s3-component.adoc[AWS S3 Storage Service]
+*** xref:aws2-s3-vectors-component.adoc[AWS S3 Vectors]
 *** xref:aws-secrets-manager-component.adoc[AWS Secrets Manager]
 *** xref:aws2-sts-component.adoc[AWS Security Token Service (STS)]
 *** xref:aws2-ses-component.adoc[AWS Simple Email Service (SES)]

@@ -123,7 +123,8 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
                         dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
                         dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"), dir.resolve("camel-aws-bedrock"),
-                        dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"));
+                        dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"),
+                        dir.resolve("camel-aws2-s3-vectors"));
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),
