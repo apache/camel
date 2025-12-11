@@ -278,7 +278,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private List<AttributedString> interactiveContent(List<Row> rows, AtomicInteger rowIndex, AtomicInteger pageIndex, Size size) {
+    private List<AttributedString> interactiveContent(
+            List<Row> rows, AtomicInteger rowIndex, AtomicInteger pageIndex, Size size) {
         List<AttributedString> answer = new ArrayList<>();
 
         // top message
