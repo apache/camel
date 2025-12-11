@@ -335,6 +335,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
         // styles for highlighting the selected row
         var faint = AttributedStyle.DEFAULT.faint();
+        var bold = AttributedStyle.DEFAULT.bold();
         var normal = AttributedStyle.DEFAULT;
         var select = AttributedStyle.DEFAULT
                 .background(loggingColor ? AttributedStyle.BLUE : AttributedStyle.BRIGHT)
@@ -352,7 +353,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         int maxRows = Math.min(IT_MAX_ROWS, rows.size());
 
         // table header
-        answer.add(new AttributedString(lines[0]));
+        answer.add(new AttributedString(lines[0], bold));
 
         // slice top table with maximum IT_MAX_ROWS number of rows
         int rowPos = rowIndex.get();
