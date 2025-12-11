@@ -142,8 +142,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             IOHelper.close(THREAD_APP_CONTEXT.get());
             THREAD_APP_CONTEXT.remove();
         }
-
-        super.doPostTearDown();
     }
 
     /**
