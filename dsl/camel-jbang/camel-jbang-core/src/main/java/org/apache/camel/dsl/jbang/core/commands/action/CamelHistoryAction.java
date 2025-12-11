@@ -338,6 +338,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         var normal = AttributedStyle.DEFAULT;
         var select = AttributedStyle.DEFAULT
                 .background(loggingColor ? AttributedStyle.BLUE : AttributedStyle.BRIGHT)
+                .foreground(AttributedStyle.WHITE)
                 .bold();
 
         // calculate the max width from all the message traces
