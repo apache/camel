@@ -1377,6 +1377,48 @@ public class StaticEndpointBuilders {
         return AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS S3 Vectors (camel-aws2-s3-vectors)
+     * Store and query vector embeddings using AWS S3 Vectors with similarity
+     * search.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
+     * 
+     * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
+     * 
+     * Path parameter: vectorBucketName (required)
+     * Vector bucket name or ARN
+     * 
+     * @param path vectorBucketName
+     * @return the dsl builder
+     */
+    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String path) {
+        return aws2S3Vectors("aws2-s3-vectors", path);
+    }
+    /**
+     * AWS S3 Vectors (camel-aws2-s3-vectors)
+     * Store and query vector embeddings using AWS S3 Vectors with similarity
+     * search.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
+     * 
+     * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
+     * 
+     * Path parameter: vectorBucketName (required)
+     * Vector bucket name or ARN
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path vectorBucketName
+     * @return the dsl builder
+     */
+    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String componentName, String path) {
+        return AWS2S3VectorsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
      * 
