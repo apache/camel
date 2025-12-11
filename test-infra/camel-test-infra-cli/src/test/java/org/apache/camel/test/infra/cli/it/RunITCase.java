@@ -40,7 +40,7 @@ public class RunITCase extends AbstractTestSupport {
     }
 
     @Test
-    @SetSystemProperty(key = "cli.service.version", value = "4.8.3")
+    @SetSystemProperty(key = "cli.service.version", value = "4.16.0")
     public void readPidFromBackgroundExecutionInPreviousVersionTest() {
         execute(this::checkPidFromBackgroundExec);
     }
