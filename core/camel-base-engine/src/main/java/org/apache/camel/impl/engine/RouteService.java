@@ -391,7 +391,8 @@ public class RouteService extends ChildServiceSupport {
             StartupStep step = null;
             // skip internal services / route pipeline (starting point for route)
             boolean shouldRecord
-                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
+                    // NOTE: RoutePipeline belong to dependency not visible by this class at build time.
+                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName())); // NOSONAR
             if (shouldRecord) {
                 step = beginStep(service, "Init");
             }
@@ -409,7 +410,8 @@ public class RouteService extends ChildServiceSupport {
             StartupStep step = null;
             // skip internal services / route pipeline (starting point for route)
             boolean shouldRecord
-                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName()));
+                    // NOTE: RoutePipeline belong to dependency not visible by this class at build time.
+                    = !(service instanceof InternalProcessor || "RoutePipeline".equals(service.getClass().getSimpleName())); // NOSONAR
             if (shouldRecord) {
                 step = beginStep(service, "Start");
             }

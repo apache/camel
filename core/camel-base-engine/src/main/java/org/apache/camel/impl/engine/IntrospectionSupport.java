@@ -569,7 +569,8 @@ final class IntrospectionSupport {
         while (it.hasNext()) {
             Method setter = it.next();
             Class<?> parameterType = setter.getParameterTypes()[0];
-            if (parameterType.getName().equals("java.lang.String")) {
+            // NOTE: we need to check the parameter type, not a specific object instance
+            if (parameterType.getName().equals("java.lang.String")) { // NOSONAR
                 stringSetterMethod = setter;
             }
             Object ref = value;
