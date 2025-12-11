@@ -323,7 +323,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         var faint = AttributedStyle.DEFAULT.faint();
         var normal = AttributedStyle.DEFAULT;
         var select = AttributedStyle.DEFAULT
-                .background(loggingColor ? AttributedStyle.YELLOW : AttributedStyle.BRIGHT)
+                .background(loggingColor ? AttributedStyle.BLUE : AttributedStyle.BRIGHT)
                 .bold();
 
         // calculate the max width from all the message traces
