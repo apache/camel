@@ -160,8 +160,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 String ago = TimeUtils.printSince(first.timestamp);
                 Row last = rows.get(rows.size() - 1);
                 String status = last.failed ? "failed" : "success";
-                String s = String.format("Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
-                        first.exchangeId, status, ago, first.pid, first.name);
+                String elapsed = TimeUtils.printDuration(last.elapsed, true);
+                ;
+                String s = String.format("Message History of last completed (id:%s status:%s elapsed:%s ago:%s pid:%d name:%s)",
+                        first.exchangeId, status, elapsed, ago, first.pid, first.name);
                 printer().println(s);
 
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
@@ -287,8 +289,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String ago = TimeUtils.printSince(first.timestamp);
         Row last = rows.get(rows.size() - 1);
         String status = last.failed ? "failed" : "success";
-        String s = String.format("    Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
-                first.exchangeId, status, ago, first.pid, first.name);
+        String elapsed = TimeUtils.printDuration(last.elapsed, true);
+        ;
+        String s = String.format("    Message History of last completed (id:%s status:%s elapsed:%s ago:%s pid:%d name:%s)",
+                first.exchangeId, status, elapsed, ago, first.pid, first.name);
         answer.add(new AttributedString(s));
         answer.add(new AttributedString(""));
 
@@ -314,9 +318,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
                         .with(this::getMessage)));
 
         // styles for highlighting the selected row
+        var faint = AttributedStyle.DEFAULT.faint();
         var normal = AttributedStyle.DEFAULT;
         var select = AttributedStyle.DEFAULT
-                .background(AttributedStyle.YELLOW)
+                .background(loggingColor ? AttributedStyle.YELLOW : AttributedStyle.BRIGHT)
                 .bold();
 
         // calculate the max width from all the message traces
@@ -378,6 +383,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
             pageIndex.set(pagePos);
         }
 
+        // are there more rows?
+        boolean moreRows = rows.size() > IT_MAX_ROWS && rowPos + 1 < rows.size();
+
         // calculate page index/total
         int p1 = (int) Math.ceil((double) pagePos / maxBottom) + 1;
         int p2 = (int) Math.ceil((double) lines.length / maxBottom);
@@ -386,7 +394,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String help = String.format("   row:%d/%d (\u2191\u2193)   page:%d/%d (pgup/pgdn/home/end)    f5=refresh    q=quit",
                 rowPos + 1, rows.size(), p1, p2);
         String pad = StringHelper.padString(maxLength - help.length(), 1);
-        answer.add(new AttributedString(""));
+        if (moreRows) {
+            answer.add(new AttributedString("       ...", faint));
+        } else {
+            answer.add(new AttributedString(""));
+        }
         answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
         answer.add(new AttributedString(""));
 
@@ -495,7 +507,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private String getElapsed(Row r) {
-        if (r.exchangeId != null && !r.first) {
+        if (r.exchangeId != null) {
             return TimeUtils.printDuration(r.elapsed, true);
         }
         return null;
