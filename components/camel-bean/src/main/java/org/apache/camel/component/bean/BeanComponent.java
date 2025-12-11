@@ -97,6 +97,16 @@ public class BeanComponent extends DefaultComponent {
         }
     }
 
+    /**
+     * Number of beans currently in the bean cache
+     */
+    public int getCurrentBeanCacheSize() {
+        if (beanInfoCache != null) {
+            return beanInfoCache.size();
+        }
+        return 0;
+    }
+
     @Override
     protected void doShutdown() throws Exception {
         if (LOG.isDebugEnabled() && beanInfoCache instanceof LRUCache<BeanInfoCacheKey, BeanInfo> cache) {

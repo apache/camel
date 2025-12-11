@@ -461,6 +461,10 @@ public class BeanInfo {
                     = parametersAnnotations[i].toArray(new Annotation[0]);
             Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
+            if (expression == null) {
+                expression = strategy.getDefaultParameterTypeExpression(parameterType);
+            }
+
             // whether this parameter is vararg which must be last parameter
             boolean varargs = method.isVarArgs() && i == size - 1;
 
@@ -1028,8 +1032,7 @@ public class BeanInfo {
                 return answer;
             }
         }
-        // no annotations then try the default parameter mappings
-        return strategy.getDefaultParameterTypeExpression(parameterType);
+        return null;
     }
 
     private Expression createParameterUnmarshalExpressionForAnnotation(
