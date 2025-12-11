@@ -289,8 +289,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String ago = TimeUtils.printSince(first.timestamp);
         Row last = rows.get(rows.size() - 1);
         String status = last.failed ? "failed" : "success";
+        if (loggingColor) {
+            status = Ansi.ansi().fg(last.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(status).reset().toString();
+        }
         String elapsed = TimeUtils.printDuration(last.elapsed, true);
-        ;
         String s = String.format("    Message History of last completed (id:%s status:%s elapsed:%s ago:%s pid:%d name:%s)",
                 first.exchangeId, status, elapsed, ago, first.pid, first.name);
         answer.add(new AttributedString(s));
