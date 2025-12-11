@@ -215,6 +215,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
         tableHelper.setLoggingColor(loggingColor);
+        tableHelper.setShowHeaders(showHeaders);
         tableHelper.setShowExchangeProperties(showExchangeProperties);
         tableHelper.setShowExchangeVariables(showExchangeVariables);
 
@@ -757,15 +758,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     // we should exchangeId/pattern elsewhere
                     row.message.remove("exchangeId");
                     row.message.remove("exchangePattern");
-                    if (!showExchangeVariables) {
-                        row.message.remove("exchangeVariables");
-                    }
-                    if (!showExchangeProperties) {
-                        row.message.remove("exchangeProperties");
-                    }
-                    if (!showHeaders) {
-                        row.message.remove("headers");
-                    }
                     if (!showBody) {
                         row.message.remove("body");
                     }
