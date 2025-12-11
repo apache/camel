@@ -415,6 +415,9 @@ public class MessageTableHelper {
                 s = "WrappedInputStream";
             } else if (type.startsWith("org.apache.camel.converter.stream.")) {
                 s = type.substring(34);
+            } else if (type
+                    .equals("org.apache.camel.processor.aggregate.AbstractListAggregationStrategy.GroupedExchangeList")) {
+                s = "GroupedExchangeList";
             } else if (type.length() > 34) {
                 // type must not be too long
                 int pos = type.lastIndexOf('.');
@@ -446,6 +449,9 @@ public class MessageTableHelper {
                 s = "WrappedInputStream";
             } else if (type.startsWith("org.apache.camel.converter.stream.")) {
                 s = type.substring(34);
+            } else if (type
+                    .equals("org.apache.camel.processor.aggregate.AbstractListAggregationStrategy.GroupedExchangeList")) {
+                s = "GroupedExchangeList";
             } else {
                 s = type;
             }

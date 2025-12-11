@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import java.io.Console;
 import java.io.LineNumberReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,12 +49,18 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
+import org.jline.keymap.KeyMap;
+import org.jline.terminal.Size;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
+import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "history",
                      description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
 public class CamelHistoryAction extends ActionWatchCommand {
+
+    private static final int IT_MAX_ROWS = 10;
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -116,8 +121,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
     boolean loggingColor = true;
 
     private MessageTableHelper tableHelper;
-    private final AtomicBoolean quit = new AtomicBoolean();
-    private final AtomicBoolean waitForUser = new AtomicBoolean();
     private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
 
     public CamelHistoryAction(CamelJBangMain main) {
@@ -157,8 +160,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 String ago = TimeUtils.printSince(first.timestamp);
                 Row last = rows.get(rows.size() - 1);
                 String status = last.failed ? "failed" : "success";
-                String s = String.format("Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
-                        first.exchangeId, status, ago, first.pid, first.name);
+                String elapsed = TimeUtils.printDuration(last.elapsed, true);
+                String s = String.format("Message History of last completed (id:%s status:%s elapsed:%s ago:%s pid:%d name:%s)",
+                        first.exchangeId, status, elapsed, ago, first.pid, first.name);
                 printer().println(s);
 
                 printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
@@ -203,40 +207,10 @@ public class CamelHistoryAction extends ActionWatchCommand {
         return 0;
     }
 
-    private void doRead(Console c, AtomicBoolean quit, AtomicInteger index, AtomicBoolean refresh) {
-        do {
-            String line = c.readLine();
-            if (line != null) {
-                line = line.trim();
-                if ("q".equalsIgnoreCase(line) || "quit".equalsIgnoreCase(line) || "exit".equalsIgnoreCase(line)) {
-                    quit.set(true);
-                } else if ("r".equalsIgnoreCase(line)) {
-                    refresh.set(true);
-                    index.set(0);
-                } else if ("p".equalsIgnoreCase(line)) {
-                    if (index.get() > 0) {
-                        index.decrementAndGet();
-                    }
-                } else if (line.isBlank() || "n".equalsIgnoreCase(line)) {
-                    index.incrementAndGet();
-                } else {
-                    int idx = lineIsNumber(line);
-                    if (idx >= 0) {
-                        index.set(idx);
-                    }
-                }
-                waitForUser.set(false);
-            }
-        } while (!quit.get());
-    }
-
     private Integer doInteractiveCall(List<Row> rows) throws Exception {
-        // read CLI input from user
-        final AtomicInteger index = new AtomicInteger();
-        final AtomicBoolean refresh = new AtomicBoolean();
-        final Console c = System.console();
-        Thread t2 = new Thread(() -> doRead(c, quit, index, refresh), "ReadCommand");
-        t2.start();
+        AtomicInteger rowIndex = new AtomicInteger();
+        AtomicInteger pageIndex = new AtomicInteger();
+        AtomicBoolean quit = new AtomicBoolean();
 
         tableHelper = new MessageTableHelper();
         tableHelper.setPretty(pretty);
@@ -244,65 +218,225 @@ public class CamelHistoryAction extends ActionWatchCommand {
         tableHelper.setShowExchangeProperties(showExchangeProperties);
         tableHelper.setShowExchangeVariables(showExchangeVariables);
 
-        do {
-            if (!waitForUser.get()) {
-                if (refresh.compareAndSet(true, false)) {
-                    var reloaded = loadRows();
-                    if (reloaded.size() == 1) {
-                        rows = reloaded.get(0);
+        try (InteractiveTerminal t = new InteractiveTerminal()) {
+            t.sigint(() -> quit.set(true));
+            t.addKeyBinding("quit", KeyMap.ctrl('c'), "q");
+            t.addKeyBinding("refresh", InfoCmp.Capability.key_f5);
+            t.addKeyBinding("down", InfoCmp.Capability.key_down);
+            t.addKeyBinding("up", InfoCmp.Capability.key_up);
+            t.addKeyBinding("pgdn", InfoCmp.Capability.key_npage);
+            t.addKeyBinding("pgup", InfoCmp.Capability.key_ppage);
+            t.addKeyBinding("home", InfoCmp.Capability.key_home);
+            t.addKeyBinding("end", InfoCmp.Capability.key_end);
+            t.start();
+
+            t.clearDisplay();
+            t.updateDisplay(interactiveContent(rows, rowIndex, pageIndex, t.size()));
+            t.flush();
+
+            // how many lines to jump per page
+            int pageSize = t.size().getRows() - IT_MAX_ROWS;
+
+            do {
+                String operation = t.readNextKeyBinding();
+                if (operation != null) {
+                    switch (operation) {
+                        case "quit" -> quit.set(true);
+                        case "up" -> {
+                            if (rowIndex.get() > 0) {
+                                rowIndex.addAndGet(-1);
+                            }
+                        }
+                        case "down" -> {
+                            if (rowIndex.get() < rows.size() - 1) {
+                                rowIndex.addAndGet(1);
+                            }
+                        }
+                        case "pgup" -> {
+                            if (rowIndex.get() > 0) {
+                                rowIndex.addAndGet(-IT_MAX_ROWS);
+                            }
+                            if (rowIndex.get() < 0) {
+                                rowIndex.set(0);
+                            }
+                        }
+                        case "pgdn" -> {
+                            if (rowIndex.get() < rows.size() - 1) {
+                                rowIndex.addAndGet(IT_MAX_ROWS);
+                            }
+                            if (rowIndex.get() > rows.size() - 1) {
+                                rowIndex.set(rows.size() - 1);
+                            }
+                        }
+                        case "end" -> pageIndex.addAndGet(pageSize);
+                        case "home" -> {
+                            pageIndex.addAndGet(-pageSize);
+                            if (pageIndex.get() < 0) {
+                                pageIndex.set(0);
+                            }
+                        }
+                        case "refresh" -> {
+                            var reloaded = loadRows();
+                            if (reloaded.size() == 1) {
+                                rows = reloaded.get(0);
+                            }
+                            rowIndex.set(0);
+                        }
                     }
+                    t.clearDisplay();
+                    t.updateDisplay(interactiveContent(rows, rowIndex, pageIndex, t.size()));
+                    t.flush();
                 }
-
-                clearScreen();
-                Row first = rows.get(0);
-                String ago = TimeUtils.printSince(first.timestamp);
-                Row last = rows.get(rows.size() - 1);
-                String status = last.failed ? "failed" : "success";
-                String s = String.format("Message History of last completed (id:%s status:%s ago:%s pid:%d name:%s)",
-                        first.exchangeId, status, ago, first.pid, first.name);
-                printer().println(s);
-                printer().println();
-
-                int i = index.get();
-                if (i > rows.size()) {
-                    i = 0; // start over again
-                    index.set(0);
-                }
-                if (i < rows.size()) {
-                    Row r = rows.get(i);
-                    printSourceAndHistory(r);
-                    printCurrentRow(r);
-                }
-                printer().println();
-
-                int total = rows.size() - 1;
-                int pos = i;
-
-                if (pos == total) {
-                    index.set(-1); // start over again
-                }
-
-                String msg
-                        = "    Message History (" + pos + "/" + total
-                          + "). Press ENTER to continue (n = next (default), p = previous, number = jump to index, r = refresh, q = quit).";
-                if (loggingColor) {
-                    AnsiConsole.out().println(Ansi.ansi().a(Ansi.Attribute.INTENSITY_BOLD).a(msg).reset());
-                } else {
-                    printer().println(msg);
-                }
-                waitForUser.set(true);
-            }
-        } while (!quit.get() || waitForUser.get());
+            } while (!quit.get());
+        }
 
         return 0;
     }
 
-    private static int lineIsNumber(String line) {
-        try {
-            return Integer.parseInt(line);
-        } catch (Exception e) {
-            return -1;
+    private List<AttributedString> interactiveContent(
+            List<Row> rows, AtomicInteger rowIndex, AtomicInteger pageIndex, Size size) {
+        List<AttributedString> answer = new ArrayList<>();
+
+        // top message
+        Row first = rows.get(0);
+        String ago = TimeUtils.printSince(first.timestamp);
+        Row last = rows.get(rows.size() - 1);
+        String status = last.failed ? "failed" : "success";
+        if (loggingColor) {
+            status = Ansi.ansi().fg(last.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(status).reset().toString();
         }
+        String elapsed = TimeUtils.printDuration(last.elapsed, true);
+        String s = String.format("    Message History of last completed (id:%s status:%s elapsed:%s ago:%s pid:%d name:%s)",
+                first.exchangeId, status, elapsed, ago, first.pid, first.name);
+        answer.add(new AttributedString(s));
+        answer.add(new AttributedString(""));
+
+        // build full table with all data so the table sizing are always the same when scrolling
+        String table = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                new Column().header("").dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(6).maxWidth(6)
+                        .with(this::getDirection),
+                new Column().header("ID").dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(10).maxWidth(20, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getId),
+                new Column().header("PROCESSOR").dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(40).maxWidth(55, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getProcessor),
+                new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT)
+                        .maxWidth(10, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getElapsed),
+                new Column().header("EXCHANGE").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .maxWidth(12, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(this::getExchangeId),
+                new Column().header("").dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(Integer.MAX_VALUE) // capture all in single line
+                        .with(this::getMessage)));
+
+        // styles for highlighting the selected row
+        var faint = AttributedStyle.DEFAULT.faint();
+        var bold = AttributedStyle.DEFAULT.bold();
+        var normal = AttributedStyle.DEFAULT;
+        var select = AttributedStyle.DEFAULT
+                .background(loggingColor ? AttributedStyle.BLUE : AttributedStyle.BRIGHT)
+                .bold();
+
+        // calculate the max width from all the message traces
+        int maxLength = 0;
+        String[] lines = table.split(System.lineSeparator());
+        for (int i = 1; i < lines.length; i++) {
+            String line = lines[i];
+            maxLength = Math.max(maxLength, line.length());
+        }
+
+        // calculate top table max size
+        int maxRows = Math.min(IT_MAX_ROWS, rows.size());
+
+        // table header
+        answer.add(new AttributedString(lines[0], bold));
+
+        // slice top table with maximum IT_MAX_ROWS number of rows
+        int rowPos = rowIndex.get();
+        List<AttributedString> pending = new ArrayList<>();
+        for (int i = 1; i < lines.length; i++) {
+            int j = i - 1;
+            String line = lines[i];
+            AttributedStyle style;
+            if (j < rowPos) {
+                style = normal;
+            } else if (j == rowPos) {
+                style = select;
+            } else {
+                style = normal;
+            }
+            pending.add(new AttributedString(line, style));
+        }
+        if (rows.size() <= IT_MAX_ROWS) {
+            // show all rows as there are no need to scroll
+            answer.addAll(pending);
+        } else if (rowPos < IT_MAX_ROWS) {
+            // show all rows as we are in the top before scrolling
+            answer.addAll(pending.subList(0, IT_MAX_ROWS));
+        } else {
+            // scroll down to add 1 new row
+            answer.addAll(pending.subList(rowPos - (IT_MAX_ROWS - 1), rowPos + 1));
+        }
+
+        // detailed data for current selected row
+        // need to pre-calculate how much lines of this data can be visibly shown
+        // in the bottom panel
+        int pagePos = pageIndex.get();
+        Row r = rows.get(rowIndex.get());
+        table = getDataAsTable(r);
+        lines = table.split(System.lineSeparator());
+        // how many lines for bottom panel
+        int maxBottom = size.getRows() - Math.min(maxRows, rows.size());
+        if (lines.length < maxBottom) {
+            pagePos = 0;
+            pageIndex.set(pagePos);
+        }
+        if (pagePos > lines.length - maxBottom) {
+            pagePos = Math.max(0, lines.length - maxBottom);
+            pageIndex.set(pagePos);
+        }
+
+        // are there more rows?
+        boolean moreRows = rows.size() > IT_MAX_ROWS && rowPos + 1 < rows.size();
+
+        // calculate page index/total
+        int p1 = (int) Math.ceil((double) pagePos / maxBottom) + 1;
+        int p2 = (int) Math.ceil((double) lines.length / maxBottom);
+
+        // status panel in the middle
+        String help = String.format("   row:%d/%d (\u2191\u2193pgup/pgdn)   page:%d/%d (home/end)    f5=refresh    q=quit",
+                rowPos + 1, rows.size(), p1, p2);
+        String pad = StringHelper.padString(maxLength - help.length(), 1);
+        if (moreRows) {
+            answer.add(new AttributedString("       ...", faint));
+        } else {
+            answer.add(new AttributedString(""));
+        }
+        answer.add(new AttributedString(help + pad, AttributedStyle.INVERSE));
+        answer.add(new AttributedString(""));
+
+        // bottom header
+        String header = rowDetailedHeader(r);
+        answer.add(AttributedString.fromAnsi(header));
+        answer.add(new AttributedString(""));
+
+        // slice bottom panel to show selected page
+        pending.clear();
+        for (String line : lines) {
+            pending.add(AttributedString.fromAnsi(line));
+        }
+        if (pagePos > 0 && pagePos < pending.size()) {
+            pending = pending.subList(pagePos, pending.size());
+        }
+        if (pending.size() > maxBottom) {
+            pending = pending.subList(0, maxBottom);
+        }
+        answer.addAll(pending);
+
+        return answer;
     }
 
     private String getDataAsTable(Row r) {
@@ -310,148 +444,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 r.message, r.exception);
     }
 
-    private void printSourceAndHistory(Row row) {
-        List<Panel> panel = new ArrayList<>();
-        if (!row.code.isEmpty()) {
-            String loc = StringHelper.beforeLast(row.location, ":", row.location);
-            if (loc != null && loc.length() < 72) {
-                loc = loc + " ".repeat(72 - loc.length());
-            } else {
-                loc = "";
-            }
-            panel.add(Panel.withCode("Source: " + loc).andHistory("History"));
-            panel.add(Panel.withCode("-".repeat(80))
-                    .andHistory("-".repeat(90)));
+    private String rowDetailedHeader(Row row) {
+        StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < row.code.size(); i++) {
-                Code code = row.code.get(i);
-                String c = Jsoner.unescape(code.code);
-                String arrow = "    ";
-                if (code.match) {
-                    if (row.first) {
-                        arrow = "*-->";
-                    } else if (row.last) {
-                        arrow = "<--*";
-                    } else {
-                        arrow = "--->";
-                    }
-                }
-                String msg = String.format("%4d: %s %s", code.line, arrow, c);
-                if (msg.length() > 80) {
-                    msg = msg.substring(0, 80);
-                }
-                int length = msg.length();
-                if (loggingColor && code.match) {
-                    Ansi.Color col = Ansi.Color.BLUE;
-                    Ansi.Attribute it = Ansi.Attribute.INTENSITY_BOLD;
-                    if (row.failed && row.last) {
-                        col = Ansi.Color.RED;
-                    } else if (row.last) {
-                        col = Ansi.Color.GREEN;
-                    }
-                    // need to fill out entire line, so fill in spaces
-                    if (length < 80) {
-                        String extra = " ".repeat(80 - length);
-                        msg = msg + extra;
-                        length = 80;
-                    }
-                    msg = Ansi.ansi().bg(col).a(it).a(msg).reset().toString();
-                } else {
-                    // need to fill out entire line, so fill in spaces
-                    if (length < 80) {
-                        String extra = " ".repeat(80 - length);
-                        msg = msg + extra;
-                        length = 80;
-                    }
-                }
-                panel.add(Panel.withCode(msg, length));
-            }
-            for (int i = row.code.size(); i < 11; i++) {
-                // empty lines so source code has same height
-                panel.add(Panel.withCode(" ".repeat(80)));
-            }
-        }
-
-        if (!row.history.isEmpty()) {
-            if (row.history.size() > (panel.size() - 4)) {
-                // cut to only what we can display
-                int pos = row.history.size() - (panel.size() - 4);
-                if (row.history.size() > pos) {
-                    row.history = row.history.subList(pos, row.history.size());
-                }
-            }
-            for (int i = 2; panel.size() > 2 && i < 11; i++) {
-                Panel p = panel.get(i);
-                if (row.history.size() > (i - 2)) {
-                    History h = row.history.get(i - 2);
-                    boolean top = h == row.history.get(row.history.size() - 1);
-
-                    String ids;
-                    if (source) {
-                        ids = locationAndLine(h.location, h.line);
-                    } else {
-                        ids = h.routeId + "/" + h.nodeId;
-                    }
-                    if (ids.length() > 30) {
-                        ids = ids.substring(ids.length() - 30);
-                    }
-
-                    ids = String.format("%-30.30s", ids);
-                    if (loggingColor) {
-                        ids = Ansi.ansi().fgCyan().a(ids).reset().toString();
-                    }
-                    long e = i == 2 ? 0 : h.elapsed; // the pseudo from should have 0 as elapsed
-                    String elapsed = "(" + e + "ms)";
-
-                    String c = "";
-                    if (source && h.code != null) {
-                        c = Jsoner.unescape(h.code);
-                        c = c.trim();
-                    } else if (h.nodeLabel != null) {
-                        c = Jsoner.escape(h.nodeLabel);
-                        c = c.trim();
-                    }
-                    // pad with level
-                    String pad = StringHelper.padString(h.level);
-                    c = pad + c;
-
-                    String fids = String.format("%-30.30s", ids);
-                    String msg;
-                    if (top && !row.last) {
-                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
-                    } else {
-                        msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
-                    }
-                    int len = msg.length();
-                    if (loggingColor) {
-                        fids = String.format("%-30.30s", ids);
-                        fids = Ansi.ansi().fgCyan().a(fids).reset().toString();
-                        if (top && !row.last) {
-                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, "--->", fids, h.line, c);
-                        } else {
-                            msg = String.format("%2d %10.10s %s %4d:   %s", h.index, elapsed, fids, h.line, c);
-                        }
-                    }
-
-                    p.history = msg;
-                    p.historyLength = len;
-                }
-            }
-        }
-        // the ascii-table does not work well with color cells (https://github.com/freva/ascii-table/issues/26)
-        for (Panel p : panel) {
-            String c = p.code;
-            String h = p.history;
-            int len = p.historyLength;
-            if (len > 90) {
-                h = h.substring(0, 90);
-            }
-            String line = c + "    " + h;
-            printer().println(line);
-        }
-    }
-
-    private void printCurrentRow(Row row) {
         if (timestamp) {
             String ts;
             if (ago) {
@@ -461,20 +456,20 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 ts = sdf.format(new Date(row.timestamp));
             }
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
+                sb.append(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
             } else {
-                printer().print(ts);
+                sb.append(ts);
             }
-            printer().print("  ");
+            sb.append("  ");
         }
         // pid
         String p = String.format("%5.5s", row.pid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
+            sb.append(Ansi.ansi().fgMagenta().a(p).reset());
+            sb.append(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
-            printer().print(p);
-            printer().print(" --- ");
+            sb.append(p);
+            sb.append(" --- ");
         }
         // thread name
         String tn = row.threadName;
@@ -483,15 +478,15 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
         tn = String.format("[%25.25s]", tn);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
+            sb.append(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
         } else {
-            printer().print(tn);
+            sb.append(tn);
         }
-        printer().print(" ");
+        sb.append(" ");
         // node ids or source location
         String ids;
         if (source) {
-            ids = locationAndLine(row.location, -1);
+            ids = location(row.location);
         } else {
             ids = row.routeId + "/" + getId(row);
         }
@@ -500,37 +495,35 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
         ids = String.format("%40.40s", ids);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
+            sb.append(Ansi.ansi().fgCyan().a(ids).reset());
         } else {
-            printer().print(ids);
+            sb.append(ids);
         }
-        printer().print(" : ");
+        sb.append(" : ");
         // uuid
         String u = String.format("%5.5s", row.uid);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(u).reset());
+            sb.append(Ansi.ansi().fgMagenta().a(u).reset());
         } else {
-            printer().print(u);
+            sb.append(u);
         }
-        printer().print(" - ");
+        sb.append(" - ");
         // status
-        printer().print(getStatus(row));
+        sb.append(getStatus(row));
         // elapsed
         String e = getElapsed(row);
         if (e != null) {
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+                sb.append(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
             } else {
-                printer().print("(" + e + ")");
+                sb.append("(").append(e).append(")");
             }
         }
-        printer().println();
-        printer().println(getDataAsTable(row));
-        printer().println();
+        return sb.toString();
     }
 
     private String getElapsed(Row r) {
-        if (!r.first) {
+        if (r.exchangeId != null) {
             return TimeUtils.printDuration(r.elapsed, true);
         }
         return null;
@@ -577,10 +570,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
     }
 
-    private static String locationAndLine(String loc, int line) {
+    private static String location(String loc) {
         // shorten path as there is no much space (there are no scheme as add fake)
-        loc = LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
-        return line == -1 ? loc : loc + ":" + line;
+        return LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
     }
 
     private boolean filterDepth(Row r) {
@@ -600,8 +592,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
         }
         JsonArray arr = r.message.getCollection("exchangeProperties");
         if (arr != null) {
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jo = (JsonObject) arr.get(i);
+            for (Object o : arr) {
+                JsonObject jo = (JsonObject) o;
                 if ("CamelSplitIndex".equals(jo.getString("key"))) {
                     long idx = jo.getLongOrDefault("value", Long.MAX_VALUE);
                     return idx < limitSplit;
@@ -641,11 +633,14 @@ public class CamelHistoryAction extends ActionWatchCommand {
         } else if (r.last) {
             return "*<--";
         } else {
-            return "";
+            return null;
         }
     }
 
     private String getExchangeId(Row r) {
+        if (r.exchangeId == null) {
+            return null;
+        }
         String id = r.exchangeId.substring(r.exchangeId.length() - 4);
         String cid = r.correlationExchangeId;
         if (cid != null) {
@@ -858,32 +853,6 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 }
             }
         }
-        for (int i = 1; i < rows.size() - 1; i++) {
-            Row cur = rows.get(i);
-
-            cur.history = new ArrayList<>();
-            for (int j = 0; j < i; j++) {
-                Row r = rows.get(j);
-                History h = new History();
-                h.index = j;
-                h.nodeId = r.nodeId;
-                h.routeId = r.routeId;
-                h.nodeShortName = r.nodeShortName;
-                h.nodeLabel = r.nodeLabel;
-                h.location = r.location;
-                h.elapsed = r.elapsed;
-                h.level = r.nodeLevel;
-                if (r.code != null) {
-                    for (var c : r.code) {
-                        if (c.match) {
-                            h.code = c.code;
-                            h.line = c.line;
-                        }
-                    }
-                }
-                cur.history.add(h);
-            }
-        }
     }
 
     private Map<String, String> extractComponentModel(String uri, Row r) {
@@ -897,8 +866,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     if (eh.isImportant()) {
                         JsonArray arr = r.message.getCollection("headers");
                         if (arr != null) {
-                            for (int i = 0; i < arr.size(); i++) {
-                                JsonObject jo = (JsonObject) arr.get(i);
+                            for (Object o : arr) {
+                                JsonObject jo = (JsonObject) o;
                                 String key = jo.getString("key");
                                 if (key.equals(eh.getName())) {
                                     answer.put(key, jo.getString("value"));
@@ -922,8 +891,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                 if (ep.isImportant()) {
                     JsonArray arr = r.message.getCollection("exchangeProperties");
                     if (arr != null) {
-                        for (int i = 0; i < arr.size(); i++) {
-                            JsonObject jo = (JsonObject) arr.get(i);
+                        for (Object o : arr) {
+                            JsonObject jo = (JsonObject) o;
                             String key = jo.getString("key");
                             if (key.equals(ep.getName())) {
                                 answer.put(key, jo.getString("value"));
@@ -932,8 +901,8 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     }
                     arr = r.message.getCollection("headers");
                     if (arr != null) {
-                        for (int i = 0; i < arr.size(); i++) {
-                            JsonObject jo = (JsonObject) arr.get(i);
+                        for (Object o : arr) {
+                            JsonObject jo = (JsonObject) o;
                             String key = jo.getString("key");
                             if (key.equals(ep.getName())) {
                                 answer.put(key, jo.getString("value"));
@@ -976,55 +945,12 @@ public class CamelHistoryAction extends ActionWatchCommand {
         JsonObject exception;
         String summary;
         List<Code> code = new ArrayList<>();
-        List<History> history = new ArrayList<>();
-    }
-
-    private static class History {
-        int index;
-        String routeId;
-        String nodeId;
-        String nodeShortName;
-        String nodeLabel;
-        int level;
-        long elapsed;
-        String location;
-        int line;
-        String code;
     }
 
     private static class Code {
         int line;
         String code;
         boolean match;
-    }
-
-    private static class Panel {
-        String code = "";
-        String history = "";
-        int codeLength;
-        int historyLength;
-
-        static Panel withCode(String code) {
-            return withCode(code, code.length());
-        }
-
-        static Panel withCode(String code, int length) {
-            Panel p = new Panel();
-            p.code = code;
-            p.codeLength = length;
-            return p;
-        }
-
-        Panel andHistory(String history) {
-            return andHistory(history, history.length());
-        }
-
-        Panel andHistory(String history, int length) {
-            this.history = history;
-            this.historyLength = length;
-            return this;
-        }
-
     }
 
 }
