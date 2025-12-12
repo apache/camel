@@ -19,7 +19,7 @@ package org.apache.camel.component.file.azure;
 import com.azure.core.http.policy.AzureSasCredentialPolicy;
 import com.azure.core.http.policy.BearerTokenAuthenticationPolicy;
 import com.azure.storage.common.policy.StorageSharedKeyCredentialPolicy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

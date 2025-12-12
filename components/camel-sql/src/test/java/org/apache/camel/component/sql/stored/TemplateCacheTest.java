@@ -19,7 +19,7 @@ package org.apache.camel.component.sql.stored;
 import java.io.IOException;
 
 import org.apache.camel.component.sql.stored.template.TemplateParser;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;

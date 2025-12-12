@@ -25,7 +25,7 @@ import org.apache.camel.component.github.services.MockIssueService;
 import org.apache.camel.component.github.services.MockPullRequestService;
 import org.apache.camel.component.github.services.MockRepositoryService;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

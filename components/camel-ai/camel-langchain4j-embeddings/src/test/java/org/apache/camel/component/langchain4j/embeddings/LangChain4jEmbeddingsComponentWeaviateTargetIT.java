@@ -36,7 +36,7 @@ import org.apache.camel.component.weaviate.WeaviateVectorDbHeaders;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.test.infra.weaviate.services.WeaviateService;
 import org.apache.camel.test.infra.weaviate.services.WeaviateServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;

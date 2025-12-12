@@ -27,7 +27,7 @@ import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 

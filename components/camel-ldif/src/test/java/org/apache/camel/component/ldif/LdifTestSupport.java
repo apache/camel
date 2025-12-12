@@ -18,7 +18,7 @@ package org.apache.camel.component.ldif;
 
 import org.apache.camel.test.infra.openldap.services.OpenldapService;
 import org.apache.camel.test.infra.openldap.services.OpenldapServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class LdifTestSupport extends CamelTestSupport {

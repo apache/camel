@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.lucene.LuceneConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.lucene.support.Hits;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.junit.jupiter.api.Test;

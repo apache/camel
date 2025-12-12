@@ -20,7 +20,7 @@ import java.net.Socket;
 
 import com.splunk.Service;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;

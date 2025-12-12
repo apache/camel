@@ -17,7 +17,7 @@
 package org.apache.camel.component.hl7;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 
 public abstract class HL7TestSupport extends CamelTestSupport {

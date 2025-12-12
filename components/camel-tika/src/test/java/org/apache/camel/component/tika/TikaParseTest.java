@@ -30,7 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.txt.UniversalEncodingDetector;
 import org.junit.jupiter.api.Test;

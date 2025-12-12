@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.jupiter.api.Test;

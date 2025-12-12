@@ -24,9 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.assertExpression;
-import static org.apache.camel.test.junit5.TestSupport.assertInMessageHeader;
-import static org.apache.camel.test.junit5.TestSupport.assertPredicate;
+import static org.apache.camel.test.junit6.TestSupport.assertExpression;
+import static org.apache.camel.test.junit6.TestSupport.assertInMessageHeader;
+import static org.apache.camel.test.junit6.TestSupport.assertPredicate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -23,7 +23,7 @@ import org.apache.camel.component.dataset.DataSetSupport;
 import org.apache.camel.component.ironmq.IronMQConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

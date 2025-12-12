@@ -19,7 +19,7 @@ package org.apache.camel.component.springai.chat;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.ollama.OllamaChatModel;

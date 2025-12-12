@@ -28,7 +28,7 @@ import com.prowidesoftware.swift.model.mx.MxCamt04800103;
 import com.prowidesoftware.swift.model.mx.MxPacs00800107;
 import com.prowidesoftware.swift.model.mx.sys.MxXsys01100102;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;

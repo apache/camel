@@ -18,8 +18,8 @@ package org.apache.camel.component.digitalocean.integration;
 
 import java.util.Properties;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

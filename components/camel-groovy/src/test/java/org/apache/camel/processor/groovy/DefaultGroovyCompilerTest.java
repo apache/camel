@@ -23,7 +23,7 @@ import org.apache.camel.impl.engine.DefaultCompileStrategy;
 import org.apache.camel.language.groovy.DefaultGroovyScriptCompiler;
 import org.apache.camel.spi.CompileStrategy;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

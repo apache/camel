@@ -50,7 +50,7 @@ import org.apache.camel.component.cm.test.mocks.cmsender.NotPhoneNumberFoundExce
 import org.apache.camel.component.cm.test.mocks.cmsender.UnknownErrorExceptionSender;
 import org.apache.camel.component.cm.test.mocks.cmsender.UnroutableMessageExceptionSender;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
