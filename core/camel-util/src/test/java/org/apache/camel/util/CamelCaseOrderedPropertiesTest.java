@@ -33,7 +33,7 @@ public class CamelCaseOrderedPropertiesTest {
 
         assertEquals(2, prop.size());
 
-        Iterator it = prop.keySet().iterator();
+        Iterator<Object> it = prop.keySet().iterator();
         assertEquals("hello-world", it.next());
         assertEquals("camel.main.stream-caching-enabled", it.next());
 
@@ -56,7 +56,7 @@ public class CamelCaseOrderedPropertiesTest {
 
         assertEquals(4, prop.size());
 
-        Iterator it = prop.keySet().iterator();
+        Iterator<Object> it = prop.keySet().iterator();
         assertEquals("hello", it.next());
         assertEquals("camel.component.seda.concurrent-consumers", it.next());
         assertEquals("camel.component.seda.queueSize", it.next());
