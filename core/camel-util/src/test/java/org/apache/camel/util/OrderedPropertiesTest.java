@@ -36,7 +36,7 @@ public class OrderedPropertiesTest {
 
         assertEquals(5, prop.size());
 
-        Iterator it = prop.keySet().iterator();
+        Iterator<Object> it = prop.keySet().iterator();
         assertEquals("c", it.next());
         assertEquals("d", it.next());
         assertEquals("e", it.next());
@@ -58,7 +58,7 @@ public class OrderedPropertiesTest {
 
         assertEquals(4, prop.size());
 
-        Iterator it = prop.keySet().iterator();
+        Iterator<Object> it = prop.keySet().iterator();
         assertEquals("hello", it.next());
         assertEquals("camel.component.seda.concurrent-consumers", it.next());
         assertEquals("camel.component.seda.queueSize", it.next());

@@ -31,30 +31,40 @@ public class SynchronousExecutorServiceTest {
     @Test
     public void testSynchronousExecutorService() {
         String name1 = Thread.currentThread().getName();
-
+        @SuppressWarnings("resource")
+        // Will be shutdown in the finally clause.
         ExecutorService service = new SynchronousExecutorService();
-        service.execute(new Runnable() {
-            public void run() {
-                invoked = true;
-                name2 = Thread.currentThread().getName();
-            }
-        });
+        try {
+            service.execute(new Runnable() {
+                public void run() {
+                    invoked = true;
+                    name2 = Thread.currentThread().getName();
+                }
+            });
 
-        assertTrue(invoked, "Should have been invoked");
-        assertEquals(name1, name2, "Should use same thread");
+            assertTrue(invoked, "Should have been invoked");
+            assertEquals(name1, name2, "Should use same thread");
+        } finally {
+            service.shutdown();
+        }
     }
 
     @Test
     public void testSynchronousExecutorServiceShutdown() {
+        @SuppressWarnings("resource")
+        // Will be shutdown in the finally clause.
         ExecutorService service = new SynchronousExecutorService();
-        service.execute(new Runnable() {
-            public void run() {
-                invoked = true;
-            }
-        });
-        service.shutdown();
+        try {
+            service.execute(new Runnable() {
+                public void run() {
+                    invoked = true;
+                }
+            });
+        } finally {
+            service.shutdown();
 
-        assertTrue(service.isShutdown());
-        assertTrue(service.isTerminated());
+            assertTrue(service.isShutdown());
+            assertTrue(service.isTerminated());
+        }
     }
 }
