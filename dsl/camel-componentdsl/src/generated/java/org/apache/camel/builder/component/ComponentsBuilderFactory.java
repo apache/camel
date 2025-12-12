@@ -1826,6 +1826,19 @@ public interface ComponentsBuilderFactory {
         return GoogleStorageComponentBuilderFactory.googleStorage();
     }
     /**
+     * Google Vertex AI (camel-google-vertexai)
+     * Interact with Google Cloud Vertex AI generative models.
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-google-vertexai
+     * 
+     * @return the dsl builder
+     */
+    static GoogleVertexaiComponentBuilderFactory.GoogleVertexaiComponentBuilder googleVertexai() {
+        return GoogleVertexaiComponentBuilderFactory.googleVertexai();
+    }
+    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.

@@ -213,6 +213,8 @@
         <google-cloud-pubsublite-version>1.15.19</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.80.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.60.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.81.0</google-cloud-aiplatform-version>
+        <google-genai-version>1.30.0</google-genai-version>
         <graaljs-version>25.0.1</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
         <greenmail-version>2.1.7</greenmail-version>
@@ -1464,6 +1466,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-google-storage</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-google-vertexai</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -5990,6 +5990,58 @@ public class StaticEndpointBuilders {
         return GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Vertex AI (camel-google-vertexai)
+     * Interact with Google Cloud Vertex AI generative models.
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-google-vertexai
+     * 
+     * Syntax: <code>google-vertexai:projectId:location:modelId</code>
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project ID
+     * 
+     * Path parameter: location (required)
+     * Google Cloud location/region (e.g., us-central1)
+     * 
+     * Path parameter: modelId (required)
+     * Model ID to use for predictions
+     * 
+     * @param path projectId:location:modelId
+     * @return the dsl builder
+     */
+    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String path) {
+        return googleVertexai("google-vertexai", path);
+    }
+    /**
+     * Google Vertex AI (camel-google-vertexai)
+     * Interact with Google Cloud Vertex AI generative models.
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-google-vertexai
+     * 
+     * Syntax: <code>google-vertexai:projectId:location:modelId</code>
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project ID
+     * 
+     * Path parameter: location (required)
+     * Google Cloud location/region (e.g., us-central1)
+     * 
+     * Path parameter: modelId (required)
+     * Model ID to use for predictions
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path projectId:location:modelId
+     * @return the dsl builder
+     */
+    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String componentName, String path) {
+        return GoogleVertexAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.
