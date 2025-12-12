@@ -28,7 +28,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -51,7 +50,7 @@ import static org.apache.camel.model.RouteDefinitionHelper.routesByIdOrPattern;
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinition>
-        implements RouteContainer, CamelContextAware, ResourceAware {
+        implements RouteContainer, ResourceAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(RoutesDefinition.class);
 
