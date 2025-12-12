@@ -45,7 +45,7 @@ import org.apache.camel.support.DefaultEndpoint;
                      Category.DATABASE,
                      Category.AI
              },
-             headersClass = Qdrant.Headers.class)
+             headersClass = QdrantHeaders.class)
 public class QdrantEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @Metadata(required = true)

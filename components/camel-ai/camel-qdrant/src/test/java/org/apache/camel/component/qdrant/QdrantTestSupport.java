@@ -33,8 +33,8 @@ public class QdrantTestSupport extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
 
         QdrantComponent component = context.getComponent(Qdrant.SCHEME, QdrantComponent.class);
-        component.getConfiguration().setHost(QDRANT.getGrpcHost());
-        component.getConfiguration().setPort(QDRANT.getGrpcPort());
+        component.getConfiguration().setHost(QDRANT.host());
+        component.getConfiguration().setPort(QDRANT.port());
         component.getConfiguration().setTls(false);
 
         return context;
