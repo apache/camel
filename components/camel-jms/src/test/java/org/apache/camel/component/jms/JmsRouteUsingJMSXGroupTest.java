@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
-import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.apache.camel.test.junit6.TestSupport.body;
 
 @Timeout(20)
 public class JmsRouteUsingJMSXGroupTest extends AbstractJMSTest {

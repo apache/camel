@@ -18,7 +18,7 @@ package org.apache.camel.github;
 
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

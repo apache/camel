@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.kserve.KServeComponent;
 import org.apache.camel.test.infra.triton.services.TritonService;
 import org.apache.camel.test.infra.triton.services.TritonServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 class KServeITSupport extends CamelTestSupport {

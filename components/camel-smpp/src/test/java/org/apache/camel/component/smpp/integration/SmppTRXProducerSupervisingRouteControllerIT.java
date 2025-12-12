@@ -35,7 +35,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jsmpp.examples.SMPPServerSimulator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

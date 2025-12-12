@@ -23,7 +23,7 @@ import jakarta.persistence.EntityManager;
 import org.apache.camel.Consumer;
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;

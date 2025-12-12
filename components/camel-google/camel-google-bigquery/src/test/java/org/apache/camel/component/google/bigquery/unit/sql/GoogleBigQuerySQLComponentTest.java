@@ -18,7 +18,7 @@ package org.apache.camel.component.google.bigquery.unit.sql;
 
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLComponent;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

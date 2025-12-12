@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.jaxrs.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.jaxrs.SpringJAXRSServerFactoryBean;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;

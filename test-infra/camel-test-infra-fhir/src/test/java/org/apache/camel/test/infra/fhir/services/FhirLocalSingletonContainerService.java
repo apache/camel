@@ -23,7 +23,7 @@ public class FhirLocalSingletonContainerService extends FhirLocalContainerServic
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
-        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).getOrComputeIfAbsent("fhir", s -> {
+        extensionContext.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).computeIfAbsent("fhir", s -> {
             super.initialize();
             return this;
         });

@@ -18,7 +18,7 @@ package org.apache.camel.component.elasticsearch.rest.client;
 
 import java.io.IOException;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 import org.junit.jupiter.api.Test;

@@ -36,7 +36,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
+import static org.apache.camel.test.junit6.TestSupport.assertMessageHeader;
 
 /**
  * Let us test that a number of headers MQSeries doesn't like to be sent are excluded when forwarding a JMS message from

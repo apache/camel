@@ -20,7 +20,7 @@ import org.apache.camel.component.aws2.timestream.query.AmazonTimestreamQueryCli
 import org.apache.camel.component.aws2.timestream.query.Timestream2QueryEndpoint;
 import org.apache.camel.component.aws2.timestream.write.AmazonTimestreamWriteClientMock;
 import org.apache.camel.component.aws2.timestream.write.Timestream2WriteEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

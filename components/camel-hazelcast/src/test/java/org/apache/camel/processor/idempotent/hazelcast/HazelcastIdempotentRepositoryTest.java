@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.apache.camel.test.infra.hazelcast.services.HazelcastService;
 import org.apache.camel.test.infra.hazelcast.services.HazelcastServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

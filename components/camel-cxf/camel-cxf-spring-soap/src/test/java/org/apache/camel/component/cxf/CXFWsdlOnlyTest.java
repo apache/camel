@@ -25,7 +25,7 @@ import jakarta.xml.ws.Holder;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;

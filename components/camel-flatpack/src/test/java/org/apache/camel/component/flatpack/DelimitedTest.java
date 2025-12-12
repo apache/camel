@@ -23,7 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

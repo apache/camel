@@ -225,22 +225,22 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        context.getStore(NAMESPACE).getOrComputeIfAbsent(State.class).beforeAll(context);
+        context.getStore(NAMESPACE).computeIfAbsent(State.class).beforeAll(context);
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        context.getStore(NAMESPACE).getOrComputeIfAbsent(State.class).beforeEach(context);
+        context.getStore(NAMESPACE).computeIfAbsent(State.class).beforeEach(context);
     }
 
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
-        context.getStore(NAMESPACE).getOrComputeIfAbsent(State.class).afterEach(context);
+        context.getStore(NAMESPACE).computeIfAbsent(State.class).afterEach(context);
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        context.getStore(NAMESPACE).getOrComputeIfAbsent(State.class).afterAll(context);
+        context.getStore(NAMESPACE).computeIfAbsent(State.class).afterAll(context);
     }
 
 }

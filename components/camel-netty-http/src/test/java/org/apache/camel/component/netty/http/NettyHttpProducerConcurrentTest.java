@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.apache.camel.test.junit6.TestSupport.body;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("TODO: investigate for Camel 3.0")

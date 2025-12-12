@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.xray.TestDataBuilder.TestTrace;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 

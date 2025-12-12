@@ -24,7 +24,7 @@ import org.apache.camel.model.FaultToleranceConfigurationDefinition;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.support.PluginHelper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -22,7 +22,7 @@ import java.util.Properties;
 
 import io.minio.ListObjectsArgs;
 import io.minio.MinioClient;
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 
 public final class MinioTestUtils {
 

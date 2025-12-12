@@ -19,7 +19,7 @@ package org.apache.camel.component.wordpress;
 import java.io.IOException;
 
 import org.apache.camel.component.wordpress.api.test.WordpressMockServerTestSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 

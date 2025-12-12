@@ -19,8 +19,8 @@ package org.apache.camel.component.jooq;
 import java.nio.file.Files;
 import java.sql.Connection;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
