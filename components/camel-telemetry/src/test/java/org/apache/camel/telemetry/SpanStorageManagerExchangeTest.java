@@ -18,7 +18,7 @@ package org.apache.camel.telemetry;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.telemetry.mock.MockSpanAdapter;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

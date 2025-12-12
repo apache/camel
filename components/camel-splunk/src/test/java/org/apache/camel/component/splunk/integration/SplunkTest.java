@@ -17,7 +17,7 @@
 package org.apache.camel.component.splunk.integration;
 
 import org.apache.camel.component.splunk.event.SplunkEvent;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class SplunkTest extends CamelTestSupport {

@@ -18,7 +18,7 @@ package org.apache.camel.component.gson;
 
 import com.google.gson.FieldNamingPolicy;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.flink.annotations.AnnotatedDataSetCallback;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.api.java.operators.DataSource;

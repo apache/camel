@@ -28,7 +28,7 @@ import ai.djl.modality.audio.AudioFactory;
 import ai.djl.modality.audio.translator.SpeechRecognitionTranslator;
 import ai.djl.util.ZipUtils;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

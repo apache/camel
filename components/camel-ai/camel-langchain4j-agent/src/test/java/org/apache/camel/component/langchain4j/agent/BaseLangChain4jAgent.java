@@ -23,7 +23,7 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.rag.RetrievalAugmentor;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import org.apache.camel.component.langchain4j.agent.pojos.PersistentChatMemoryStore;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
 import static java.time.Duration.ofSeconds;

@@ -18,8 +18,8 @@ package org.apache.camel.component.tahu;
 
 import java.util.List;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.eclipse.tahu.model.MqttServerDefinition;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

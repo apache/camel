@@ -25,10 +25,10 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 /**
  * JcrRouteTestSupport

@@ -23,7 +23,7 @@ import java.util.logging.LogManager;
 
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.infra.xmpp.services.XmppServerContainer;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

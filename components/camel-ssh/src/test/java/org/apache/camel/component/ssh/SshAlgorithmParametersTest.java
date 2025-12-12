@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.sshd.client.ClientBuilder;
 import org.apache.sshd.client.SshClient;

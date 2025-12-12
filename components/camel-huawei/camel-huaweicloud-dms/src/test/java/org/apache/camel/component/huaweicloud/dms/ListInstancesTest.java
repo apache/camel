@@ -27,7 +27,7 @@ import org.apache.camel.component.huaweicloud.dms.models.DmsInstance;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesRequest;
 import org.apache.camel.component.huaweicloud.dms.models.ListInstancesResponse;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

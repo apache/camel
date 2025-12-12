@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class JMSTransactionThrottlingRoutePolicyIT extends AbstractSpringJMSITSupport {

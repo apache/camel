@@ -30,7 +30,7 @@ import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**

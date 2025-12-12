@@ -21,7 +21,7 @@ import jakarta.validation.ValidatorFactory;
 import jakarta.validation.bootstrap.GenericBootstrap;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 

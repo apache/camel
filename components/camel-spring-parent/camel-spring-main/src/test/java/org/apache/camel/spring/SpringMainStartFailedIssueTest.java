@@ -17,10 +17,10 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SpringMainStartFailedIssueTest extends CamelTestSupport {

@@ -25,7 +25,7 @@ import com.pubnub.api.java.v2.PNConfiguration;
 import com.pubnub.internal.java.PubNubForJavaImpl;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static com.pubnub.api.enums.PNHeartbeatNotificationOptions.NONE;

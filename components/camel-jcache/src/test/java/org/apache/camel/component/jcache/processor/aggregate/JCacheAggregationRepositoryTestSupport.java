@@ -18,7 +18,7 @@ package org.apache.camel.component.jcache.processor.aggregate;
 
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.support.HazelcastTest;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 @HazelcastTest
 class JCacheAggregationRepositoryTestSupport extends CamelTestSupport {

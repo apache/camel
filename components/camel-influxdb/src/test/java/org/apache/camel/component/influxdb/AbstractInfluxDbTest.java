@@ -17,7 +17,7 @@
 package org.apache.camel.component.influxdb;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.influxdb.InfluxDB;
 import org.influxdb.impl.InfluxDBImpl;
 

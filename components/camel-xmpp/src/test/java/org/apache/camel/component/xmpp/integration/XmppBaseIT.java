@@ -24,7 +24,7 @@ import org.apache.camel.component.xmpp.XmppTestUtil;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.infra.xmpp.services.XmppService;
 import org.apache.camel.test.infra.xmpp.services.XmppServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;

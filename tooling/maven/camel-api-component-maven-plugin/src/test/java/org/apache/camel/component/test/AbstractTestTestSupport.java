@@ -19,7 +19,7 @@ package org.apache.camel.component.test;
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 /**
  * Dummy TestSupport class.

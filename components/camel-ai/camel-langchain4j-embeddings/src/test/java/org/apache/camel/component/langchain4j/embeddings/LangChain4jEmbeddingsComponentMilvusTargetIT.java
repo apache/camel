@@ -41,7 +41,7 @@ import org.apache.camel.component.milvus.MilvusComponent;
 import org.apache.camel.component.milvus.MilvusHeaders;
 import org.apache.camel.test.infra.milvus.services.MilvusService;
 import org.apache.camel.test.infra.milvus.services.MilvusServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;

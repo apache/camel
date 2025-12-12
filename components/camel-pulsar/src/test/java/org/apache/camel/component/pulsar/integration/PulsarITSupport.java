@@ -22,7 +22,7 @@ import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.infra.pulsar.services.PulsarService;
 import org.apache.camel.test.infra.pulsar.services.PulsarServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

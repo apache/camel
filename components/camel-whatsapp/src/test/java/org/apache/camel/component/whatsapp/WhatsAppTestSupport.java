@@ -17,7 +17,7 @@
 package org.apache.camel.component.whatsapp;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public class WhatsAppTestSupport extends CamelTestSupport {
 

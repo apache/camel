@@ -28,7 +28,7 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.services.ArtemisEmbeddedServiceBuilder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.fusesource.stomp.client.Stomp;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

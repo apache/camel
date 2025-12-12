@@ -106,7 +106,7 @@ public class CamelCatalogTest {
     public void testFindOtherNames() {
         List<String> names = catalog.findOtherNames();
 
-        assertTrue(names.contains("test-spring-junit5"));
+        assertTrue(names.contains("test-spring-junit6"));
 
         assertFalse(names.contains("http-common"));
         assertFalse(names.contains("kura"));

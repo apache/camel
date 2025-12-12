@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.common.TestEntityNameGenerator;
 import org.apache.camel.test.infra.ignite.services.IgniteService;
 import org.apache.camel.test.infra.ignite.services.IgniteServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.junit.jupiter.api.BeforeEach;

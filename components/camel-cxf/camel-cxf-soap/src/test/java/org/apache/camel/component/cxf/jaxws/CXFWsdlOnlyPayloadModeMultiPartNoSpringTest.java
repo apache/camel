@@ -26,7 +26,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.wsdl_first.PersonMultiPartImpl;
 import org.apache.camel.wsdl_first.PersonMultiPartPortType;
 import org.apache.camel.wsdl_first.PersonMultiPartService;

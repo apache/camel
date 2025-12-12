@@ -304,8 +304,8 @@ but the following listed types were not enhanced at build time or at class load 
     at org.springframework.transaction.support.TransactionTemplate.execute(TransactionTemplate.java:127)
     at org.apache.camel.processor.jpa.JpaRouteTest.cleanupRepository(JpaRouteTest.java:96)
     at org.apache.camel.processor.jpa.JpaRouteTest.createCamelContext(JpaRouteTest.java:67)
-    at org.apache.camel.test.junit5.CamelTestSupport.doSetUp(CamelTestSupport.java:238)
-    at org.apache.camel.test.junit5.CamelTestSupport.setUp(CamelTestSupport.java:208)
+    at org.apache.camel.test.junit6.CamelTestSupport.doSetUp(CamelTestSupport.java:238)
+    at org.apache.camel.test.junit6.CamelTestSupport.setUp(CamelTestSupport.java:208)
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 The problem here is that the source has been compiled or recompiled through

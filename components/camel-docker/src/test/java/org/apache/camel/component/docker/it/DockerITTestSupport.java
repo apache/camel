@@ -24,8 +24,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.docker.DockerComponent;
 import org.apache.camel.component.docker.DockerConfiguration;
 import org.apache.camel.support.PropertyBindingSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 
 public class DockerITTestSupport extends CamelTestSupport {
 

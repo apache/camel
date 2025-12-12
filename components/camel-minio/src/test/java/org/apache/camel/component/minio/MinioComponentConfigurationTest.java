@@ -19,7 +19,7 @@ package org.apache.camel.component.minio;
 import java.util.Properties;
 
 import io.minio.MinioClient;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

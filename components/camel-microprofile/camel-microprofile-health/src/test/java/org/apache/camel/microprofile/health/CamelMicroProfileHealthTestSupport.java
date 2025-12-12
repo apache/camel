@@ -35,7 +35,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 
 public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {

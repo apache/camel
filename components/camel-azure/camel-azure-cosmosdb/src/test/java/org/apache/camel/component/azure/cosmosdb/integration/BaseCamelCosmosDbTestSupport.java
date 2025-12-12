@@ -20,7 +20,7 @@ import com.azure.cosmos.CosmosAsyncClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbComponent;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public abstract class BaseCamelCosmosDbTestSupport extends CamelTestSupport {
 
