@@ -25,11 +25,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.executeSlowly;
+import static org.apache.camel.test.junit6.TestSupport.executeSlowly;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MultiplePoliciesOnRouteTest extends CamelTestSupport {

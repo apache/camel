@@ -17,7 +17,7 @@
 package org.apache.camel.component.ibm.cos;
 
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

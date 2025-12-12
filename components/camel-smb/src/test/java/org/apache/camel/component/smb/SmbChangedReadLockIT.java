@@ -35,7 +35,7 @@ import com.hierynomus.smbj.share.File;
 import com.hierynomus.smbj.utils.SmbFiles;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

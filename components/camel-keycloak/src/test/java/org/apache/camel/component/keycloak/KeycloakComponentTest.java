@@ -17,7 +17,7 @@
 package org.apache.camel.component.keycloak;
 
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.keycloak.admin.client.Keycloak;
 import org.mockito.Mockito;

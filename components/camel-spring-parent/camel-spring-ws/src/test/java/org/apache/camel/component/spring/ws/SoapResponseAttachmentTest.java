@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.attachment.AttachmentMessage;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 

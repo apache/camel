@@ -25,7 +25,7 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.impl.VertxInternal;
 import io.vertx.core.impl.btc.BlockedThreadEvent;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public class VertxHttpTestSupport extends CamelTestSupport {
 

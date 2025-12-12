@@ -23,7 +23,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.smpp.SmppConstants;
 import org.apache.camel.component.smpp.SmppMessageType;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

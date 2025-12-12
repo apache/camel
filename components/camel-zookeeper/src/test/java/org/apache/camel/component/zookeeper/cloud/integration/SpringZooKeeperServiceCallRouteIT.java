@@ -23,7 +23,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinderPropertiesFunction;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperServiceFactory;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;

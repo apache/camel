@@ -18,7 +18,7 @@ package org.apache.camel.component.infinispan;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.infinispan.commons.api.BasicCache;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;

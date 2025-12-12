@@ -21,7 +21,7 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
 

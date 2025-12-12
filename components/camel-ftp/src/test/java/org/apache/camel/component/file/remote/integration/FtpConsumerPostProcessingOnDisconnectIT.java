@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
+import static org.apache.camel.test.junit6.TestSupport.assertFileNotExists;
 import static org.awaitility.Awaitility.await;
 
 public class FtpConsumerPostProcessingOnDisconnectIT extends FtpServerTestSupport {

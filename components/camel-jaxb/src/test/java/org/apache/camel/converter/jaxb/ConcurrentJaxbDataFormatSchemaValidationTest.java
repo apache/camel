@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.address.Address;
 import org.apache.camel.converter.jaxb.person.Person;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

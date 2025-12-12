@@ -20,7 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

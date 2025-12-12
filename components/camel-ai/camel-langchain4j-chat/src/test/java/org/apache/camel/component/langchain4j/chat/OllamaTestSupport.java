@@ -20,7 +20,7 @@ import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static java.time.Duration.ofSeconds;

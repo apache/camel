@@ -38,7 +38,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.jupiter.api.Assertions;
