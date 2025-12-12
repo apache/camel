@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelNodeDetails;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.jupiter.api.Test;

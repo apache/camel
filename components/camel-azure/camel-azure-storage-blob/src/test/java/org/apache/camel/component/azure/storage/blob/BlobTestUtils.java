@@ -18,7 +18,7 @@ package org.apache.camel.component.azure.storage.blob;
 
 import java.util.Properties;
 
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 
 public final class BlobTestUtils {
 

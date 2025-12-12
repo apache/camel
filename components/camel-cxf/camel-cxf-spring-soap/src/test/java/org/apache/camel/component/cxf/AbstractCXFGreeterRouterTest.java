@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;

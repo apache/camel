@@ -25,7 +25,7 @@ import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 public class PollEnrichFilterTest extends BaseEndpointDslTest {
 

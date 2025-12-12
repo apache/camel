@@ -39,7 +39,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.test.junit5.TestSupport.bodyAs;
+import static org.apache.camel.test.junit6.TestSupport.bodyAs;
 
 public final class SparkplugTCKService implements TestService {
 

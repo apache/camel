@@ -17,7 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;

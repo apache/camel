@@ -45,7 +45,7 @@ public class SingletonService<T extends InfrastructureService>
         final ExtensionContext.Store store = root.getStore(ExtensionContext.Namespace.GLOBAL);
         LOG.debug("Using store: {}", store);
 
-        store.getOrComputeIfAbsent(name, this::doInitializeService);
+        store.computeIfAbsent(name, this::doInitializeService);
 
         Runtime.getRuntime().addShutdownHook(new Thread(service::shutdown));
     }

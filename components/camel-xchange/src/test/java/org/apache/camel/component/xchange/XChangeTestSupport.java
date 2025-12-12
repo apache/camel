@@ -18,7 +18,7 @@ package org.apache.camel.component.xchange;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.knowm.xchange.Exchange;

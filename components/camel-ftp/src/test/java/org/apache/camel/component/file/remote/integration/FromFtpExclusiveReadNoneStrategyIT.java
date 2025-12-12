@@ -30,8 +30,8 @@ import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.createDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**

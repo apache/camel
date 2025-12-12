@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.pinecone.PineconeVectorDbAction;
 import org.apache.camel.component.pinecone.PineconeVectorDbHeaders;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;

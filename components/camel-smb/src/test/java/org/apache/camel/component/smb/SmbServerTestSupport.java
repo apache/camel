@@ -25,7 +25,7 @@ import com.hierynomus.smbj.utils.SmbFiles;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.infra.smb.services.SmbService;
 import org.apache.camel.test.infra.smb.services.SmbServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

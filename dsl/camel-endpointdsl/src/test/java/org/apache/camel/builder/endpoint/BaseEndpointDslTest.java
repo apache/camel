@@ -19,7 +19,7 @@ package org.apache.camel.builder.endpoint;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public abstract class BaseEndpointDslTest extends CamelTestSupport {
 

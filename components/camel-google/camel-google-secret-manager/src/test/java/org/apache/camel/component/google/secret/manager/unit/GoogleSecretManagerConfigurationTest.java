@@ -19,7 +19,7 @@ package org.apache.camel.component.google.secret.manager.unit;
 import org.apache.camel.component.google.secret.manager.GoogleSecretManagerComponent;
 import org.apache.camel.component.google.secret.manager.GoogleSecretManagerEndpoint;
 import org.apache.camel.component.google.secret.manager.GoogleSecretManagerOperations;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -74,7 +74,7 @@
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-main-junit5</artifactId>
+      <artifactId>camel-test-main-junit6</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

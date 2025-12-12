@@ -19,7 +19,7 @@ package org.apache.camel.builder.saxon;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.xquery.XQuery;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

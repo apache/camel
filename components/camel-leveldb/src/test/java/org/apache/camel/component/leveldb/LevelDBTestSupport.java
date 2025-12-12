@@ -25,10 +25,10 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.leveldb.serializer.DefaultLevelDBSerializer;
 import org.apache.camel.component.leveldb.serializer.JacksonLevelDBSerializer;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.params.Parameter;
-import org.apache.camel.test.junit5.params.Parameterized;
-import org.apache.camel.test.junit5.params.Parameters;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.params.Parameter;
+import org.apache.camel.test.junit6.params.Parameterized;
+import org.apache.camel.test.junit6.params.Parameters;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
