@@ -144,24 +144,6 @@ public class PrepareCamelMainMojo extends AbstractGeneratorMojo {
         return answer;
     }
 
-    private static String fromMainToType(String type) {
-        if ("boolean".equals(type) || "java.lang.Boolean".equals(type)) {
-            return "boolean";
-        } else if ("int".equals(type) || "java.lang.Integer".equals(type)) {
-            return "integer";
-        } else if ("long".equals(type) || "java.lang.Long".equals(type)) {
-            return "integer";
-        } else if ("float".equals(type) || "java.lang.Float".equals(type)) {
-            return "number";
-        } else if ("double".equals(type) || "java.lang.Double".equals(type)) {
-            return "number";
-        } else if ("string".equals(type) || "java.lang.String".equals(type)) {
-            return "string";
-        } else {
-            return "object";
-        }
-    }
-
     private static Object asDefaultValue(String type, String defaultValue) {
         if (defaultValue != null) {
             if ("boolean".equals(type)) {
