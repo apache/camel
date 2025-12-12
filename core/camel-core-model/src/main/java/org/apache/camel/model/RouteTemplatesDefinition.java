@@ -26,7 +26,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Resource;
@@ -39,7 +38,7 @@ import org.apache.camel.spi.ResourceAware;
 @XmlRootElement(name = "routeTemplates")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RouteTemplatesDefinition extends OptionalIdentifiedDefinition<RouteTemplatesDefinition>
-        implements RouteTemplateContainer, CamelContextAware, ResourceAware {
+        implements RouteTemplateContainer, ResourceAware {
 
     @XmlTransient
     private CamelContext camelContext;
