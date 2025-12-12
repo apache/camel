@@ -80,7 +80,7 @@ public final class AnnotationHelper {
         if (checkMetaAnnotations) {
             for (Annotation a : elem.getAnnotations()) {
                 for (Annotation meta : a.annotationType().getAnnotations()) {
-                    if (meta.annotationType().getName().equals(annotationType.getName())) {
+                    if (meta.annotationType() == annotationType) {
                         return true;
                     }
                 }

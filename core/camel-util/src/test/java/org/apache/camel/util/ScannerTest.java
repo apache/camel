@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -28,34 +29,34 @@ import org.junit.jupiter.api.Test;
 public class ScannerTest {
 
     @Test
-    public void testScannerString() {
+    public void testScannerString() throws IOException {
         String d = "data1\ndata2\ndata3\n";
 
-        Scanner s = new Scanner(d, "\n");
-
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data1", s.next());
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data2", s.next());
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data3", s.next());
-        Assertions.assertFalse(s.hasNext());
+        try (Scanner s = new Scanner(d, "\n")) {
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data1", s.next());
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data2", s.next());
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data3", s.next());
+            Assertions.assertFalse(s.hasNext());
+        }
     }
 
     @Test
-    public void testScannerInputStream() {
+    public void testScannerInputStream() throws IOException {
         String d = "data1\ndata2\ndata3\n";
         InputStream is = new ByteArrayInputStream(d.getBytes(StandardCharsets.UTF_8));
 
-        Scanner s = new Scanner(is, "UTF-8", "\n");
-
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data1", s.next());
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data2", s.next());
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data3", s.next());
-        Assertions.assertFalse(s.hasNext());
+        try (Scanner s = new Scanner(is, "UTF-8", "\n")) {
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data1", s.next());
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data2", s.next());
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data3", s.next());
+            Assertions.assertFalse(s.hasNext());
+        }
     }
 
     @Test
@@ -68,14 +69,14 @@ public class ScannerTest {
         pos.write("data3\n".getBytes());
         pos.flush();
 
-        Scanner s = new Scanner(is, "UTF-8", "\n");
-
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data1", s.next());
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data2", s.next());
-        Assertions.assertTrue(s.hasNext());
-        Assertions.assertEquals("data3", s.next());
+        try (Scanner s = new Scanner(is, "UTF-8", "\n")) {
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data1", s.next());
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data2", s.next());
+            Assertions.assertTrue(s.hasNext());
+            Assertions.assertEquals("data3", s.next());
+        }
     }
 
 }

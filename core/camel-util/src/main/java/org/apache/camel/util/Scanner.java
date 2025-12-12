@@ -82,6 +82,8 @@ public final class Scanner implements Iterator<String>, Closeable {
         this(new InputStreamReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName)), cachePattern(pattern));
     }
 
+    @SuppressWarnings("resource")
+    // The stream will be closed by the class lifecycle accordingly.
     public Scanner(File source, String charsetName, String pattern) throws FileNotFoundException {
         this(new FileInputStream(Objects.requireNonNull(source, "source")).getChannel(), charsetName, pattern);
     }

@@ -35,25 +35,28 @@ public class SizedScheduledExecutorServiceTest {
     public void testSizedScheduledExecutorService() {
         ScheduledThreadPoolExecutor delegate = new ScheduledThreadPoolExecutor(5);
 
+        @SuppressWarnings("resource")
+        // Will be shutdown in the finally clause.
         SizedScheduledExecutorService sized = new SizedScheduledExecutorService(delegate, 2);
+        try {
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    // noop
+                }
+            };
 
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                // noop
-            }
-        };
+            sized.schedule(task, 2, TimeUnit.SECONDS);
+            sized.schedule(task, 3, TimeUnit.SECONDS);
 
-        sized.schedule(task, 2, TimeUnit.SECONDS);
-        sized.schedule(task, 3, TimeUnit.SECONDS);
-
-        RejectedExecutionException e
-                = assertThrows(RejectedExecutionException.class, () -> sized.schedule(task, 4, TimeUnit.SECONDS),
-                        "Should have thrown a RejectedExecutionException");
-        assertEquals("Task rejected due queue size limit reached", e.getMessage());
-
-        sized.shutdownNow();
-        assertTrue(sized.isShutdown() || sized.isTerminating(), "Should be shutdown");
-        assertTrue(delegate.isShutdown() || sized.isTerminating(), "Should be shutdown");
+            RejectedExecutionException e
+                    = assertThrows(RejectedExecutionException.class, () -> sized.schedule(task, 4, TimeUnit.SECONDS),
+                            "Should have thrown a RejectedExecutionException");
+            assertEquals("Task rejected due queue size limit reached", e.getMessage());
+        } finally {
+            sized.shutdownNow();
+            assertTrue(sized.isShutdown() || sized.isTerminating(), "Should be shutdown");
+            assertTrue(delegate.isShutdown() || sized.isTerminating(), "Should be shutdown");
+        }
     }
 }

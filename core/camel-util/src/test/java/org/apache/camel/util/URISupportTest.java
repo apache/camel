@@ -442,27 +442,27 @@ public class URISupportTest {
     public void testScanRaw() {
         List<Pair<Integer>> pairs1 = URISupport.scanRaw("password=RAW(++?5w0rd)&serviceName=somechat");
         assertEquals(1, pairs1.size());
-        assertEquals(new Pair(9, 21), pairs1.get(0));
+        assertEquals(new Pair<Integer>(9, 21), pairs1.get(0));
 
         List<Pair<Integer>> pairs2 = URISupport.scanRaw("password=RAW{++?5w0rd}&serviceName=somechat");
         assertEquals(1, pairs2.size());
-        assertEquals(new Pair(9, 21), pairs2.get(0));
+        assertEquals(new Pair<Integer>(9, 21), pairs2.get(0));
 
         List<Pair<Integer>> pairs3 = URISupport.scanRaw("password=RAW{++?)&0rd}&serviceName=somechat");
         assertEquals(1, pairs3.size());
-        assertEquals(new Pair(9, 21), pairs3.get(0));
+        assertEquals(new Pair<Integer>(9, 21), pairs3.get(0));
 
         List<Pair<Integer>> pairs4 = URISupport.scanRaw("password1=RAW(++?}&0rd)&password2=RAW{++?)&0rd}&serviceName=somechat");
         assertEquals(2, pairs4.size());
-        assertEquals(new Pair(10, 22), pairs4.get(0));
-        assertEquals(new Pair(34, 46), pairs4.get(1));
+        assertEquals(new Pair<Integer>(10, 22), pairs4.get(0));
+        assertEquals(new Pair<Integer>(34, 46), pairs4.get(1));
     }
 
     @Test
     public void testIsRaw() {
         List<Pair<Integer>> pairs = Arrays.asList(
-                new Pair(3, 5),
-                new Pair(8, 10));
+                new Pair<Integer>(3, 5),
+                new Pair<Integer>(8, 10));
         for (int i = 0; i < 3; i++) {
             assertFalse(URISupport.isRaw(i, pairs));
         }
