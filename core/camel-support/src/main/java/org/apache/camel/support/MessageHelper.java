@@ -365,7 +365,8 @@ public final class MessageHelper {
                     return "[Body is instance of java.io.Reader]";
                 } else if (obj instanceof Writer) {
                     return "[Body is instance of java.io.Writer]";
-                } else if (obj.getClass().getName().equals("javax.xml.transform.stax.StAXSource")) {
+                    // NOTE: the class is not available at compilation time
+                } else if (obj.getClass().getName().equals("javax.xml.transform.stax.StAXSource")) { // NOSONAR
                     // StAX source is streaming based
                     return "[Body is instance of javax.xml.transform.Source]";
                 }
