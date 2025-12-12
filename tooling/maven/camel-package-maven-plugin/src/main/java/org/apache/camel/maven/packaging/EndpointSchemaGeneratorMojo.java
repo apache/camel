@@ -1699,7 +1699,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             return false;
         }
 
-        return "groovy.lang.MetaClass".equals(method.getReturnType().getName());
+        // NOTE: we check the return type and the type may not be available
+        return "groovy.lang.MetaClass".equals(method.getReturnType().getName()); // NOSONAR
     }
 
     protected void generatePropertyConfigurer(

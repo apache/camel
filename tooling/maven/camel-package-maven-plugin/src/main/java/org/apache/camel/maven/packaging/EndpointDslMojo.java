@@ -393,10 +393,6 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         };
     }
 
-    private String getEndpointName(String type) {
-        return getComponentNameFromType(type) + "EndpointBuilder";
-    }
-
     private boolean writeSourceIfChanged(String code, String filePath, String fileName) throws MojoFailureException {
         try {
             if (getLog().isDebugEnabled()) {
