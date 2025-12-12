@@ -23,10 +23,10 @@ import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
 import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
-import org.apache.camel.test.junit5.params.Parameter;
-import org.apache.camel.test.junit5.params.Parameterized;
-import org.apache.camel.test.junit5.params.Parameters;
-import org.apache.camel.test.junit5.params.Test;
+import org.apache.camel.test.junit6.params.Parameter;
+import org.apache.camel.test.junit6.params.Parameterized;
+import org.apache.camel.test.junit6.params.Parameters;
+import org.apache.camel.test.junit6.params.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

@@ -19,12 +19,12 @@ package org.apache.camel.component.stream;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.createDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 /**
  * Unit test for scan stream file

@@ -21,7 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

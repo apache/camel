@@ -23,7 +23,7 @@ import org.apache.camel.component.dapr.DaprConfigurationOptionsProxy;
 import org.apache.camel.component.dapr.DaprEndpoint;
 import org.apache.camel.component.dapr.DaprOperation;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

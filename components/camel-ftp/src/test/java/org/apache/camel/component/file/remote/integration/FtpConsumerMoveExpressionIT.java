@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit6.TestSupport.assertFileExists;
 import static org.awaitility.Awaitility.await;
 
 /**

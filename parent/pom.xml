@@ -3260,7 +3260,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>${junit-jupiter-version}</version>
+                <version>${junit6-jupiter-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

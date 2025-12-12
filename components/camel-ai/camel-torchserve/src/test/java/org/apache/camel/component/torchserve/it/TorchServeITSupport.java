@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.torchserve.TorchServeComponent;
 import org.apache.camel.test.infra.torchserve.services.TorchServeService;
 import org.apache.camel.test.infra.torchserve.services.TorchServeServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 class TorchServeITSupport extends CamelTestSupport {

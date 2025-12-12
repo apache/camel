@@ -20,7 +20,7 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;

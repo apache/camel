@@ -36,7 +36,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.apache.camel.test.junit5.TestSupport.fileUri;
+import static org.apache.camel.test.junit6.TestSupport.fileUri;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OpenTelemetryTracingStrategyPropagateContextTest extends CamelOpenTelemetryTestSupport {

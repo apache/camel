@@ -19,7 +19,7 @@ package org.apache.camel.component.thrift;
 import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.server.THsHaServer.Args;
 import org.apache.thrift.server.TServer;

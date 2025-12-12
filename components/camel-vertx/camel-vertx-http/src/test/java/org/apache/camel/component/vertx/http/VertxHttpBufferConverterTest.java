@@ -23,7 +23,7 @@ import io.netty.buffer.Unpooled;
 import io.vertx.core.buffer.Buffer;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.ExchangeBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -19,7 +19,7 @@ package org.apache.camel.component.xslt;
 import net.sf.saxon.trans.XPathException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

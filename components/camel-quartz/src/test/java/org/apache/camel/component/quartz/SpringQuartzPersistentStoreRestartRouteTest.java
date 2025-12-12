@@ -19,7 +19,7 @@ package org.apache.camel.component.quartz;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;

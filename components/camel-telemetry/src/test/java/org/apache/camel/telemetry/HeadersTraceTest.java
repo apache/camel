@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

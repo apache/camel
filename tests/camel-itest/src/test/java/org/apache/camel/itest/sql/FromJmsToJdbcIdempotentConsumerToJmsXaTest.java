@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 

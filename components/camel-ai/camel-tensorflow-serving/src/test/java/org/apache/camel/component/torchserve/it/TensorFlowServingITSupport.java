@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.tensorflow.serving.TensorFlowServingComponent;
 import org.apache.camel.test.infra.tensorflow.serving.services.TensorFlowServingService;
 import org.apache.camel.test.infra.tensorflow.serving.services.TensorFlowServingServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 class TensorFlowServingITSupport extends CamelTestSupport {

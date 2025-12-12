@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.ocsf.model.DetectionFinding;
 import org.apache.camel.dataformat.ocsf.model.FindingInfo;
 import org.apache.camel.dataformat.ocsf.model.OcsfEvent;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

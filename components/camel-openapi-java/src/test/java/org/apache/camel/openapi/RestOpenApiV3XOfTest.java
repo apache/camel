@@ -24,7 +24,7 @@ import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.openapi.model.AllOfFormWrapper;
 import org.apache.camel.openapi.model.AnyOfFormWrapper;
 import org.apache.camel.openapi.model.OneOfFormWrapper;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;

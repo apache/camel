@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.ibm.watson.language.integration;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 /**
  * Base class for Watson Natural Language Understanding integration tests.

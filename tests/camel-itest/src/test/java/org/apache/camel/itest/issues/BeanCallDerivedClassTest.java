@@ -16,7 +16,7 @@
  */
 package org.apache.camel.itest.issues;
 
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;

@@ -27,7 +27,7 @@ import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestPojo;
 import org.apache.camel.avro.test.TestReflection;
 import org.apache.camel.avro.test.TestReflectionImpl;
-import org.apache.camel.test.junit5.TestNameExtension;
+import org.apache.camel.test.junit6.TestNameExtension;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

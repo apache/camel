@@ -34,7 +34,7 @@ import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

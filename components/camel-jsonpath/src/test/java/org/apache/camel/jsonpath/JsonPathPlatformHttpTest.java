@@ -24,7 +24,7 @@ import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServer;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpServerConfiguration;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

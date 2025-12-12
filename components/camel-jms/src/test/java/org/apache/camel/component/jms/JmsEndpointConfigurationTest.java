@@ -49,7 +49,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

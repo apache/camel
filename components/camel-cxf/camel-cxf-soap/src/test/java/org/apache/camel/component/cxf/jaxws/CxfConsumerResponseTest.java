@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;

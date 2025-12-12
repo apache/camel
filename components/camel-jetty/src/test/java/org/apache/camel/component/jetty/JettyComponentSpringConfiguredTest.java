@@ -19,7 +19,7 @@ package org.apache.camel.component.jetty;
 import java.util.Map;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;

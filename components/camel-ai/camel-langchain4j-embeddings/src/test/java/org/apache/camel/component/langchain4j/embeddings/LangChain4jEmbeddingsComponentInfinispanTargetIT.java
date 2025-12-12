@@ -42,7 +42,7 @@ import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;

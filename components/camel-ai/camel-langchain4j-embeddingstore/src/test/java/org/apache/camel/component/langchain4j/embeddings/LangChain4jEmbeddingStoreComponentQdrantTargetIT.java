@@ -40,7 +40,7 @@ import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddin
 import org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreHeaders;
 import org.apache.camel.test.infra.qdrant.services.QdrantService;
 import org.apache.camel.test.infra.qdrant.services.QdrantServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

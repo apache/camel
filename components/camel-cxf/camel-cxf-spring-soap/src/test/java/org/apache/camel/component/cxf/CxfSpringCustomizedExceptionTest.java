@@ -25,7 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.interceptor.Fault;

@@ -18,7 +18,7 @@ package org.apache.camel.component.spring.batch;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

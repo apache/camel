@@ -27,7 +27,7 @@ import org.apache.camel.component.docker.DockerComponent;
 import org.apache.camel.component.docker.DockerConfiguration;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

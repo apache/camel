@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.camel.support.PropertyBindingListener;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;

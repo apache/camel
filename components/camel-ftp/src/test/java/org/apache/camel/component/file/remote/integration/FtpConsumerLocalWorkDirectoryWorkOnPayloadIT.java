@@ -19,7 +19,7 @@ package org.apache.camel.component.file.remote.integration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 
 public class FtpConsumerLocalWorkDirectoryWorkOnPayloadIT extends FtpConsumerLocalWorkDirectoryIT {
 

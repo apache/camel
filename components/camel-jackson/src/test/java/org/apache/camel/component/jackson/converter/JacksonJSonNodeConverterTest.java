@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

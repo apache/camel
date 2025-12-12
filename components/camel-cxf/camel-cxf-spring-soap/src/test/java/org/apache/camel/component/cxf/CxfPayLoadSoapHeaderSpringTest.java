@@ -40,7 +40,7 @@ import org.apache.camel.pizza.types.CallerIDHeaderType;
 import org.apache.camel.pizza.types.OrderPizzaResponseType;
 import org.apache.camel.pizza.types.OrderPizzaType;
 import org.apache.camel.pizza.types.ToppingsListType;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.headers.Header;
 import org.junit.jupiter.api.BeforeEach;

@@ -38,7 +38,7 @@ import org.apache.camel.component.keycloak.security.cache.TokenCache;
 import org.apache.camel.component.keycloak.security.cache.TokenCacheType;
 import org.apache.camel.test.infra.keycloak.services.KeycloakService;
 import org.apache.camel.test.infra.keycloak.services.KeycloakServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;

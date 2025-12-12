@@ -25,7 +25,7 @@ import io.undertow.util.HttpString;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;

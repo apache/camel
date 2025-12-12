@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;

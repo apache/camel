@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 

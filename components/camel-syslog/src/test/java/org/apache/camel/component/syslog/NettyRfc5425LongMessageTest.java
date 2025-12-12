@@ -27,7 +27,7 @@ import org.apache.camel.component.syslog.netty.Rfc5425FrameDecoder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

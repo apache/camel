@@ -29,7 +29,7 @@ import org.apache.camel.component.file.remote.FtpConsumer;
 import org.apache.camel.component.file.strategy.GenericFileNoOpProcessStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
-import org.apache.camel.test.junit5.TestSupport;
+import org.apache.camel.test.junit6.TestSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

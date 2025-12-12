@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;

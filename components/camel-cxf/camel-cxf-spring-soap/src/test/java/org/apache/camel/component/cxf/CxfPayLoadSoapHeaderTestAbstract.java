@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf;
 import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CxfPayLoadSoapHeaderTestAbstract extends CamelTestSupport {

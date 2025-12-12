@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.apache.camel.test.spring.junit6.MockEndpoints;
 import org.apache.cxf.message.Message;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

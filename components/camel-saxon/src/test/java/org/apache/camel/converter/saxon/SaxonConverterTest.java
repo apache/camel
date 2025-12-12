@@ -34,7 +34,7 @@ import net.sf.saxon.xpath.XPathEvaluator;
 import org.apache.camel.Exchange;
 import org.apache.camel.language.xpath.DefaultNamespaceContext;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.Test;
 

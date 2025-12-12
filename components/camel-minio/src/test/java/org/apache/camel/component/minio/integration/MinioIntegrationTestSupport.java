@@ -18,7 +18,7 @@ package org.apache.camel.component.minio.integration;
 
 import org.apache.camel.test.infra.minio.services.MinioService;
 import org.apache.camel.test.infra.minio.services.MinioServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 class MinioIntegrationTestSupport extends CamelTestSupport {

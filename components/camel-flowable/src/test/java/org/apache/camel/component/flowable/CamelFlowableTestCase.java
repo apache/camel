@@ -18,7 +18,7 @@ package org.apache.camel.component.flowable;
 
 import java.util.List;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.RepositoryService;

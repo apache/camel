@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 /**
  * Unit test to test CAMEL-1652

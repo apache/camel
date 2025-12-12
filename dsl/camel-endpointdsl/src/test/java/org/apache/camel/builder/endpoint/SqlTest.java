@@ -24,7 +24,7 @@ import org.apache.camel.component.sql.SqlEndpoint;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SqlTest extends BaseEndpointDslTest {

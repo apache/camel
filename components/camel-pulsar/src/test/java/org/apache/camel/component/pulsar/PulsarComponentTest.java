@@ -18,7 +18,7 @@ package org.apache.camel.component.pulsar;
 
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 

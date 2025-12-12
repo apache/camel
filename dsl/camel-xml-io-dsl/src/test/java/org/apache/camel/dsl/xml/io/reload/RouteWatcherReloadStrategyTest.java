@@ -26,14 +26,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.createDirectory;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.createDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

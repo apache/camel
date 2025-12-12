@@ -23,7 +23,7 @@ import org.apache.camel.component.huaweicloud.common.models.ServiceKeys;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSProperties;
 import org.apache.camel.component.huaweicloud.dms.models.UpdateInstanceRequestBody;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

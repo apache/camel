@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

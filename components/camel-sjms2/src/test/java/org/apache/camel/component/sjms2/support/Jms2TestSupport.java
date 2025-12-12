@@ -31,7 +31,7 @@ import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms2.Sjms2Component;
 import org.apache.camel.component.sjms2.jms.Jms2ObjectFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public abstract class Jms2TestSupport extends CamelTestSupport {
     }
 
     /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
+     * @see org.apache.camel.test.junit6.CamelTestSupport#createCamelContext()
      * @return
      * @throws Exception
      */

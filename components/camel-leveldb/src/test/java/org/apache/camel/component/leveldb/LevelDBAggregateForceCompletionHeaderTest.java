@@ -22,11 +22,11 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.params.Test;
+import org.apache.camel.test.junit6.params.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 /**
  * To test CAMEL-4118 support for completing all aggregation groups with a signal message

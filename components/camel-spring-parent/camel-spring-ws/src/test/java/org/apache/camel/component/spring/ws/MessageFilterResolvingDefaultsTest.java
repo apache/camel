@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 
 import net.javacrumbs.smock.springws.client.AbstractSmockClientTest;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

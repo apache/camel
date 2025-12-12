@@ -26,7 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.infra.fhir.services.FhirService;
 import org.apache.camel.test.infra.fhir.services.FhirServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Patient;

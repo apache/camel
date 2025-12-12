@@ -20,8 +20,8 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.camel.test.junit5.TestNameExtension;
+import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.test.junit6.TestNameExtension;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;

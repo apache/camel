@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.ibm.watsonx.ai.integration;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 /**
  * Base class for watsonx.ai integration tests.

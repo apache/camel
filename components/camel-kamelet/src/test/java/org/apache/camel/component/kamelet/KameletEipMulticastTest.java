@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

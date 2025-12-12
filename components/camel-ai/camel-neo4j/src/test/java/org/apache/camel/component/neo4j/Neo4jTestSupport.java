@@ -19,7 +19,7 @@ package org.apache.camel.component.neo4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.infra.neo4j.services.Neo4jService;
 import org.apache.camel.test.infra.neo4j.services.Neo4jServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

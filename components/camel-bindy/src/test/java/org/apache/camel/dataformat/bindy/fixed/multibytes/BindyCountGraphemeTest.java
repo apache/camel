@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class BindyCountGraphemeTest extends CamelTestSupport {

@@ -20,11 +20,11 @@ import java.security.SecureRandom;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import static org.apache.camel.test.junit5.TestSupport.bodyAs;
+import static org.apache.camel.test.junit6.TestSupport.bodyAs;
 
 /**
  * Concurrency test of XQuery using classpath resources (to).

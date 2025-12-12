@@ -51,7 +51,7 @@ import static com.mongodb.client.model.Updates.currentTimestamp;
 import static com.mongodb.client.model.Updates.set;
 import static org.apache.camel.component.mongodb.MongoDbConstants.CRITERIA;
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
-import static org.apache.camel.test.junit5.TestSupport.assertListSize;
+import static org.apache.camel.test.junit6.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

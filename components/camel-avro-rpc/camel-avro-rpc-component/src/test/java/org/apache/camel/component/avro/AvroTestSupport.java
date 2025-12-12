@@ -18,7 +18,7 @@ package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public class AvroTestSupport extends CamelTestSupport {
     protected int port = 9100;

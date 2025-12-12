@@ -22,14 +22,14 @@ import java.util.Map;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.util.HeaderDto;
-import org.apache.camel.test.junit5.params.Test;
+import org.apache.camel.test.junit6.params.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 @DisabledOnOs({ OS.AIX, OS.OTHER })
 public class LevelDBAggregateSerializedHeadersTest extends LevelDBTestSupport {
