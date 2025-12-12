@@ -27,6 +27,7 @@ import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Handler;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -106,6 +107,15 @@ public class BeanInfoTest {
 
         BeanInfo info = new BeanInfo(context, mhi.getClass());
         assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    @Test
+    public void testExchangeClass() {
+        BeanInfo info = new BeanInfo(context, DefaultExchange.class);
+        assertFalse(info.hasAnyMethodHandlerAnnotation());
+
+        BeanInfo info2 = new BeanInfo(context, DefaultExchange.class);
+        assertFalse(info2.hasAnyMethodHandlerAnnotation());
     }
 
     private Object buildProxyObject() {
