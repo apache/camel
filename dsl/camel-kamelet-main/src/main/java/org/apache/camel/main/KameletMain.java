@@ -673,7 +673,8 @@ public class KameletMain extends MainCommandLineSupport {
             if (stubPattern != null) {
                 // need to replace autowire strategy with stub capable
                 answer.getLifecycleStrategies()
-                        .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
+                        // NOTE: class not available at compilation time.
+                        .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy")); // NOSONAR
                 answer.getLifecycleStrategies().add(new StubComponentAutowireStrategy(answer, stubPattern));
             }
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stubPattern, silent));
