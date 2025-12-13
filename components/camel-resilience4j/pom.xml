@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.10.8-SNAPSHOT</version>
+        <version>4.10.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-resilience4j</artifactId>
