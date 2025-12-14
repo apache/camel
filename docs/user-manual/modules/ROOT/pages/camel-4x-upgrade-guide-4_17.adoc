@@ -64,3 +64,24 @@ The `camel-stomp` component is deprecated.
 === TestContainers updated to 2.0.2
 
 TestContainers (TC) is updated to 2.0.2, see the https://github.com/testcontainers/testcontainers-java/releases[TC release notes since 2.0.0] and CAMEL-22720, noteworthy are: Removed JUnit 4 support, All modules are now prefixed with testcontainers-. For example, org.testcontainers:mysql is now org.testcontainers:testcontainers-mysql. Update docker image version to 25.0.5. Set default docker API version to 1.44.
+
+=== camel-salesforce
+
+==== clientSecret now optional for refresh token authentication
+
+The `clientSecret` parameter is now optional when using refresh token authentication (`authenticationType=REFRESH_TOKEN`).
+This enables use of Salesforce connected apps that don't require a client secret, such as the Salesforce CLI's built-in `PlatformCLI` connected app.
+
+If you were previously providing a `clientSecret` with refresh token authentication, no changes are required - it will continue to work.
+
+==== Integration test infrastructure changes
+
+The integration test setup has been modernized to use Salesforce CLI instead of the deprecated Ant-based deployment.
+If you are a developer running or contributing to the Salesforce component integration tests:
+
+* **Prerequisites**: Install https://developer.salesforce.com/tools/salesforcecli[Salesforce CLI] and https://jqlang.github.io/jq/[jq]
+* **Scratch org support**: Tests can now automatically create and use scratch orgs (requires Dev Hub authentication)
+* **Refresh token authentication**: Tests use refresh token flow with SF CLI's `PlatformCLI` connected app - no security token required
+* **Legacy directory removed**: `it/resources/salesforce/` has been removed; metadata is now in `it/resources/sfdx-project/salesforce-source/`
+
+See `components/camel-salesforce/it/resources/README.md` for detailed setup instructions.

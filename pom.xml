@@ -327,6 +327,9 @@
                                     <exclude>**/ignite/**</exclude>
                                     <exclude>**/it/resources/*.connectedApp</exclude>
                                     <exclude>**/it/resources/salesforce/**</exclude>
+                                    <exclude>**/it/resources/sfdx-project/.sf/**</exclude>
+                                    <exclude>**/it/resources/sfdx-project/.sfdx/**</exclude>
+                                    <exclude>**/it/resources/sfdx-project/salesforce-source/**</exclude>
                                     <exclude>**/javamail.default.*</exclude>
                                     <exclude>**/kafka*.config</exclude>
                                     <exclude>**/known_hosts*</exclude>

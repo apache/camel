@@ -220,7 +220,9 @@ public class SalesforceSession extends ServiceSupport {
                 fields.put("password", config.getPassword());
                 break;
             case REFRESH_TOKEN:
-                fields.put("client_secret", config.getClientSecret());
+                if (ObjectHelper.isNotEmpty(config.getClientSecret())) {
+                    fields.put("client_secret", config.getClientSecret());
+                }
                 fields.put("grant_type", "refresh_token");
                 fields.put("refresh_token", config.getRefreshToken());
                 break;
