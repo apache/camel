@@ -335,28 +335,29 @@
                                         <requireFilesExist>
                                             <files>
                                                 <file>
-                                                    ${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar
+                                                    ${salesforce.component.root}/it/resources/setup-salesforce.sh
                                                 </file>
                                             </files>
-                                            <message><![CDATA[Salesforce Migration Tool required
+                                            <message><![CDATA[Salesforce CLI Setup Script required
 
-You need to download the Salesforce Migration Tool (ZIP file) and
-extract the `ant-salesforce.jar` out of it to:
+The integration tests require the Salesforce CLI (sf) to be installed.
 
-${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar
+For information about the Salesforce CLI:
+https://developer.salesforce.com/tools/salesforcecli
 
-It's needed by the integration tests to setup the Salesforce instance
-with custom sObjects/fields that are required by the tests.
+EASIEST OPTION - Auto Scratch Org:
+1. Authenticate to Dev Hub (one-time):
+   sf org login web --set-default-dev-hub
 
-Have a look at:
+2. Run tests (scratch org auto-created):
+   mvn clean verify -Pintegration
 
-${salesforce.component.root}/it/resources/salesforce
+ALTERNATIVE - Traditional Org:
+   - Set SALESFORCE_USERNAME, SALESFORCE_PASSWORD, and SALESFORCE_LOGIN_URL
+   - Or configure in test-salesforce-login.properties
 
-To see what will be done.
-
-For information and download of the Salesforce Migration Tool consult:
-
-https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
+Source metadata location:
+${salesforce.component.root}/it/resources/salesforce-source]]></message>
                                         </requireFilesExist>
                                     </rules>
                                     <fail>true</fail>
@@ -385,79 +386,35 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
                                     </resources>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <id>set-connected-app-client-id</id>
-                                <phase>generate-test-resources</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>
-                                        ${salesforce.component.root}/it/resources/salesforce/connectedApps
-                                    </outputDirectory>
-                                    <overwrite>true</overwrite>
-                                    <filters>
-                                        <filter>${salesforce.component.root}/test-salesforce-login.properties</filter>
-                                    </filters>
-                                    <resources>
-                                        <resource>
-                                            <directory>${salesforce.component.root}/it/resources/</directory>
-                                            <include>CamelSalesforceIntegrationTests.connectedApp</include>
-                                            <filtering>true</filtering>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>setup-salesforce-instance</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
                                 <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
                                 <configuration>
-                                    <target xmlns:if="ant:if" xmlns:unless="ant:unless">
-                                        <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
-                                            <classpath>
-                                                <pathelement location="${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar" />
-                                            </classpath>
-                                        </taskdef>
-
-                                        <property prefix="prop" file="${project.build.directory}/test-classes/test-salesforce-login.properties" />
-                                        <property environment="env" />
-
-                                        <property name="username" value="${prop.salesforce.username}" if:set="prop.salesforce.username" />
-                                        <property name="username" value="${env.SALESFORCE_USERNAME}" if:set="env.SALESFORCE_USERNAME" />
-
-                                        <property name="password" value="${prop.salesforce.password}" if:set="prop.salesforce.password" />
-                                        <property name="password" value="${env.SALESFORCE_PASSWORD}" if:set="env.SALESFORCE_PASSWORD" />
-
-                                        <property name="serverurl" value="${prop.salesforce.login.url}" if:set="prop.salesforce.login.url" />
-                                        <property name="serverurl" value="${env.SALESFORCE_LOGIN_URL}" if:set="env.SALESFORCE_LOGIN_URL" />
-
-                                        <fail unless:set="username" message="To run the migrations you need to specify either `salesforce.username` in: ${project.build.directory}/generated-resources/test-salesforce-login.properties or set SALESFORCE_USERNAME environment variable" />
-
-                                        <fail unless:set="password" message="To run the migrations you need to specify either `salesforce.password` in: ${project.build.directory}/generated-resources/test-salesforce-login.properties or set SALESFORCE_PASSWORD environment variable" />
-
-                                        <fail unless:set="serverurl" message="To run the migrations you need to specify either `salesforce.login.url` in: ${project.build.directory}/generated-resources/test-salesforce-login.properties or set SALESFORCE_LOGIN_URL environment variable" />
-
-                                        <sf:deploy xmlns:sf="antlib:com.salesforce" username="${username}" password="${password}" deployRoot="${salesforce.component.root}/it/resources/salesforce" rollbackOnError="true" serverurl="${serverurl}" />
-                                    </target>
+                                    <executable>bash</executable>
+                                    <workingDirectory>${salesforce.component.root}/it/resources</workingDirectory>
+                                    <arguments>
+                                        <argument>setup-salesforce.sh</argument>
+                                    </arguments>
+                                    <environmentVariables>
+                                        <SALESFORCE_USERNAME>${env.SALESFORCE_USERNAME}</SALESFORCE_USERNAME>
+                                        <SALESFORCE_PASSWORD>${env.SALESFORCE_PASSWORD}</SALESFORCE_PASSWORD>
+                                        <SALESFORCE_LOGIN_URL>${env.SALESFORCE_LOGIN_URL}</SALESFORCE_LOGIN_URL>
+                                        <SALESFORCE_DEV_HUB>${env.SALESFORCE_DEV_HUB}</SALESFORCE_DEV_HUB>
+                                        <SALESFORCE_DEPLOY_SOURCE>${env.SALESFORCE_DEPLOY_SOURCE}</SALESFORCE_DEPLOY_SOURCE>
+                                        <SALESFORCE_SCRATCH_ORG_DURATION>${env.SALESFORCE_SCRATCH_ORG_DURATION}</SALESFORCE_SCRATCH_ORG_DURATION>
+                                    </environmentVariables>
                                 </configuration>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.apache.ant</groupId>
-                                <artifactId>ant</artifactId>
-                                <version>1.10.15</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                     <plugin>
                         <artifactId>maven-failsafe-plugin</artifactId>

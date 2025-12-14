@@ -193,7 +193,7 @@ public class SalesforceLoginConfig {
         throw new IllegalArgumentException(
                 "You must specify parameters aligned with one of the supported authentication methods:"
                                            + " for username and password authentication: userName, password, clientSecret;"
-                                           + " for refresh token authentication: refreshToken, clientSecret;"
+                                           + " for refresh token authentication: refreshToken (clientSecret optional);"
                                            + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
     }
 
@@ -252,7 +252,7 @@ public class SalesforceLoginConfig {
                 break;
             case REFRESH_TOKEN:
                 ObjectHelper.notNull(refreshToken, "refreshToken (authentication with refresh token)");
-                ObjectHelper.notNull(clientSecret, "clientSecret (authentication with refresh token)");
+                // clientSecret can be optional for refresh token flow
                 break;
             case JWT:
                 ObjectHelper.notNull(userName, "userName (JWT authentication)");
