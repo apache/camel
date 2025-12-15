@@ -16,54 +16,55 @@
  */
 package org.apache.camel.component.aws2.s3;
 
-import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.s3.S3Client;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AWSS3ClientFactoryTest {
 
     @Test
-    public void getStandardS3ClientDefault() {
-        AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
-        AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        assertTrue(awss3Client instanceof AWS2S3ClientStandardImpl);
-    }
-
-    @Test
-    public void getStandardS3Client() {
-        AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
-        s3Configuration.setUseDefaultCredentialsProvider(false);
-        AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        assertTrue(awss3Client instanceof AWS2S3ClientStandardImpl);
-    }
-
-    @Test
-    public void getIAMOptimizedS3Client() {
+    public void getS3ClientWithDefaultCredentials() {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
         s3Configuration.setUseDefaultCredentialsProvider(true);
-        AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        assertTrue(awss3Client instanceof AWS2S3ClientIAMOptimizedImpl);
+        s3Configuration.setRegion("eu-west-1");
+        S3Client s3Client = AWS2S3ClientFactory.getS3Client(s3Configuration);
+        assertNotNull(s3Client);
+        s3Client.close();
     }
 
     @Test
-    public void getIAMProfileOptimizedS3Client() {
+    public void getS3ClientWithStaticCredentials() {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
-        s3Configuration.setUseProfileCredentialsProvider(true);
-        AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        assertTrue(awss3Client instanceof AWS2S3ClientIAMProfileOptimizedImpl);
+        s3Configuration.setAccessKey("testAccessKey");
+        s3Configuration.setSecretKey("testSecretKey");
+        s3Configuration.setRegion("eu-west-1");
+        S3Client s3Client = AWS2S3ClientFactory.getS3Client(s3Configuration);
+        assertNotNull(s3Client);
+        s3Client.close();
     }
 
     @Test
-    public void getSessionTokenS3Client() {
+    public void getS3ClientWithForcePathStyle() {
         AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
-        s3Configuration.setUseSessionCredentials(true);
-        AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
-        assertTrue(awss3Client instanceof AWS2S3ClientSessionTokenImpl);
+        s3Configuration.setUseDefaultCredentialsProvider(true);
+        s3Configuration.setRegion("eu-west-1");
+        s3Configuration.setForcePathStyle(true);
+        S3Client s3Client = AWS2S3ClientFactory.getS3Client(s3Configuration);
+        assertNotNull(s3Client);
+        s3Client.close();
+    }
+
+    @Test
+    public void getS3ClientWithEndpointOverride() {
+        AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
+        s3Configuration.setUseDefaultCredentialsProvider(true);
+        s3Configuration.setRegion("eu-west-1");
+        s3Configuration.setOverrideEndpoint(true);
+        s3Configuration.setUriEndpointOverride("http://localhost:4566");
+        S3Client s3Client = AWS2S3ClientFactory.getS3Client(s3Configuration);
+        assertNotNull(s3Client);
+        s3Client.close();
     }
 }

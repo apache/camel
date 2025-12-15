@@ -18,6 +18,7 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -26,38 +27,20 @@
         <version>4.17.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-aws2-s3</artifactId>
+    <artifactId>camel-aws-common</artifactId>
     <packaging>jar</packaging>
-
-    <name>Camel :: AWS2 S3</name>
-    <description>Consume files and upload files through AWS S3 Service</description>
+    <name>Camel :: AWS :: Common</name>
+    <description>Camel AWS Common utilities for client initialization</description>
 
     <properties>
+        <firstVersion>4.17.0</firstVersion>
+        <label>cloud,aws</label>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-aws-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
-            <version>${aws-java-sdk2-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>checksums</artifactId>
-            <version>${aws-java-sdk2-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>sts</artifactId>
-            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
@@ -65,29 +48,25 @@
             <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-health</artifactId>
-        </dependency>
-
-        <!-- for testing -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring-junit5</artifactId>
-            <scope>test</scope>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>auth</artifactId>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-zip-deflater</artifactId>
-            <scope>test</scope>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>regions</artifactId>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
-
-        <!-- test infra -->
-       <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-aws-v2</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sdk-core</artifactId>
+            <version>${aws-java-sdk2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>aws-core</artifactId>
+            <version>${aws-java-sdk2-version}</version>
         </dependency>
     </dependencies>
+
 </project>
