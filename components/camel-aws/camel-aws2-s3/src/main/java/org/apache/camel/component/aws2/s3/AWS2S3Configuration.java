@@ -587,7 +587,7 @@ public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 

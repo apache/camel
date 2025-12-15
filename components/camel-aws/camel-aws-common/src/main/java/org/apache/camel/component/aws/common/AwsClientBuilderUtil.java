@@ -161,7 +161,7 @@ public final class AwsClientBuilderUtil {
     private static AwsCredentialsProvider resolveCredentialsProvider(AwsCommonConfiguration config) {
 
         // Priority 1: Default credentials provider (IAM roles, env vars, etc.)
-        if (Boolean.TRUE.equals(config.isUseDefaultCredentialsProvider())) {
+        if (config.isUseDefaultCredentialsProvider()) {
             LOG.trace("Using default credentials provider (IAM)");
             return DefaultCredentialsProvider.create();
         }

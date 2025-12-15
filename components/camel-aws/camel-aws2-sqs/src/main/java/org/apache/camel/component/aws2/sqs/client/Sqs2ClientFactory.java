@@ -16,35 +16,59 @@
  */
 package org.apache.camel.component.aws2.sqs.client;
 
+import java.net.URI;
+
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.sqs.Sqs2Configuration;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientIAMOptimized;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientStandardImpl;
+import org.apache.camel.util.FileUtil;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 /**
- * Factory class to return the correct type of AWS SQS aws.
+ * Factory class to create AWS SQS clients using common configuration.
  */
 public final class Sqs2ClientFactory {
+
+    private static final String DEFAULT_AWS_HOST = "amazonaws.com";
 
     private Sqs2ClientFactory() {
     }
 
     /**
-     * Return the correct aws SQS client (based on remote vs local).
+     * Create an SQS client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               SqsClient
+     * @param  configuration The SQS configuration
+     * @return               Configured SqsClient
      */
-    public static Sqs2InternalClient getSqsClient(Sqs2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Sqs2ClientIAMOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Sqs2ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Sqs2ClientSessionTokenImpl(configuration);
-        } else {
-            return new Sqs2ClientStandardImpl(configuration);
+    public static SqsClient getSqsClient(Sqs2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                SqsClient::builder,
+                builder -> {
+                    // SQS-specific: Handle custom AWS host (non-amazonaws.com endpoints)
+                    if (!isDefaultAwsHost(configuration) && !configuration.isOverrideEndpoint()) {
+                        String endpointOverrideUri = getAwsEndpointUri(configuration);
+                        builder.endpointOverride(URI.create(endpointOverrideUri));
+                    }
+                });
+    }
+
+    private static boolean isDefaultAwsHost(Sqs2Configuration configuration) {
+        return DEFAULT_AWS_HOST.equals(configuration.getAmazonAWSHost());
+    }
+
+    private static String getAwsEndpointUri(Sqs2Configuration configuration) {
+        return configuration.getProtocol() + "://" + getFullyQualifiedAWSHost(configuration);
+    }
+
+    private static String getFullyQualifiedAWSHost(Sqs2Configuration configuration) {
+        String host = configuration.getAmazonAWSHost();
+        host = FileUtil.stripTrailingSeparator(host);
+
+        if (isDefaultAwsHost(configuration)) {
+            return "sqs." + Region.of(configuration.getRegion()).id() + "." + host;
         }
+
+        return host;
     }
 }

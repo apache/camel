@@ -49,7 +49,7 @@ public interface AwsCommonConfiguration {
     /**
      * Set whether the client should expect to load credentials through a default credentials provider.
      */
-    Boolean isUseDefaultCredentialsProvider();
+    boolean isUseDefaultCredentialsProvider();
 
     /**
      * Set whether the client should expect to load credentials through a profile credentials provider.
