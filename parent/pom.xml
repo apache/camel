@@ -414,7 +414,7 @@
         <neo4j-version>6.0.2</neo4j-version>
         <netty-version>4.1.128.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
-        <networknt-json-schema-validator-version>1.5.9</networknt-json-schema-validator-version>
+        <networknt-json-schema-validator-version>3.0.0</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.6</nimbus-jose-jwt>
         <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
