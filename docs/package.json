@@ -8,7 +8,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "del": "^8.0.1",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-n": "^17.23.1",
