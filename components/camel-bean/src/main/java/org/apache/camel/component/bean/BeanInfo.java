@@ -164,7 +164,7 @@ public class BeanInfo {
         methodMap = Collections.unmodifiableMap(methodMap);
 
         // key must be instance based for custom/handler annotations
-        boolean instanceBased = (!operationsWithCustomAnnotation.isEmpty() || !operationsWithHandlerAnnotation.isEmpty());
+        boolean instanceBased = !operationsWithCustomAnnotation.isEmpty() || !operationsWithHandlerAnnotation.isEmpty();
         // do not cache Exchange based beans
         instanceBased &= DefaultExchange.class != type;
         if (instanceBased) {
