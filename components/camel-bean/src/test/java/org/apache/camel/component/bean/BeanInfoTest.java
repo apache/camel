@@ -27,6 +27,7 @@ import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
@@ -150,6 +151,13 @@ public class BeanInfoTest {
         }
     }
 
+    @Test
+    public void methodWithExchangeArg() throws NoSuchMethodException {
+        BeanInfo info = new BeanInfo(context, MyClass.class);
+        MethodInfo mi = info.getMethodInfo(MyClass.class.getMethod("methodWithExchangeArg", Exchange.class));
+        assertTrue(mi.hasCustomAnnotation());
+    }
+
     public static class MyClass {
         @Handler
         public void myMethod() {
@@ -157,6 +165,9 @@ public class BeanInfoTest {
 
         public String myOtherMethod() {
             return "";
+        }
+
+        public void methodWithExchangeArg(Exchange exchange) {
         }
     }
 

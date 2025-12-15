@@ -460,10 +460,10 @@ public class BeanInfo {
             Annotation[] parameterAnnotations
                     = parametersAnnotations[i].toArray(new Annotation[0]);
             Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
-            hasCustomAnnotation |= expression != null;
             if (expression == null) {
                 expression = strategy.getDefaultParameterTypeExpression(parameterType);
             }
+            hasCustomAnnotation |= expression != null;
 
             // whether this parameter is vararg which must be last parameter
             boolean varargs = method.isVarArgs() && i == size - 1;
