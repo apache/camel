@@ -39,6 +39,7 @@
     </properties>
 
     <modules>
+        <module>camel-aws-common</module>
         <module>camel-aws2-athena</module>
         <module>camel-aws-bedrock</module>
         <module>camel-aws-cloudtrail</module>

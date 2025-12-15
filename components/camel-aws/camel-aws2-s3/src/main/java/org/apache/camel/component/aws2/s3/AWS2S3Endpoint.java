@@ -132,7 +132,7 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
         super.doStart();
 
         s3Client = configuration.getAmazonS3Client() != null
-                ? configuration.getAmazonS3Client() : AWS2S3ClientFactory.getAWSS3Client(configuration).getS3Client();
+                ? configuration.getAmazonS3Client() : AWS2S3ClientFactory.getS3Client(configuration);
 
         String fileName = getConfiguration().getFileName();
 
