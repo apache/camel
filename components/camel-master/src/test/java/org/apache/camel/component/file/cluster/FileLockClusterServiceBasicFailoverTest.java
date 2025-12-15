@@ -168,6 +168,71 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
     }
 
     @Test
+    void clusterFailoverWithBackoffWhenLeaderCamelContextStopped() throws Exception {
+        CamelContext clusterLeader = createCamelContext();
+
+        ClusterConfig followerConfig = new ClusterConfig();
+        followerConfig.setAcquireLockDelay(2);
+        followerConfig.setAcquireLeadershipBackoff(5);
+        CamelContext clusterFollower = createCamelContext(followerConfig);
+
+        try {
+            MockEndpoint mockEndpointClustered = clusterLeader.getEndpoint("mock:result", MockEndpoint.class);
+            mockEndpointClustered.expectedMessageCount(5);
+
+            clusterLeader.start();
+            clusterFollower.start();
+
+            mockEndpointClustered.assertIsSatisfied();
+
+            AtomicReference<String> leaderId = new AtomicReference<>();
+            Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> {
+                assertTrue(Files.exists(lockFile));
+                assertTrue(Files.exists(dataFile));
+                assertTrue(getClusterMember(clusterLeader).isLeader());
+
+                FileLockClusterLeaderInfo clusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(dataFile);
+                assertNotNull(clusterLeaderInfo);
+
+                assertNotNull(clusterLeaderInfo.getId());
+                assertDoesNotThrow(() -> UUID.fromString(clusterLeaderInfo.getId()));
+                leaderId.set(clusterLeaderInfo.getId());
+            });
+
+            // Wait enough time for the follower to have run its lock acquisition scheduled task
+            Thread.sleep(followerConfig.getStartupDelayWithOffsetMillis());
+
+            // The follower should not have produced any messages
+            MockEndpoint mockEndpointFollower = clusterFollower.getEndpoint("mock:result", MockEndpoint.class);
+            assertTrue(mockEndpointFollower.getExchanges().isEmpty());
+
+            // Stop the cluster leader
+            clusterLeader.stop();
+
+            // Backoff is configured so the follower should not claim leadership within most of that period
+            Awaitility.await().during(Duration.ofMillis(4900)).untilAsserted(() -> {
+                assertFalse(getClusterMember(clusterFollower).isLeader());
+            });
+
+            // Verify the follower was elected as the new cluster leader
+            Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> {
+                FileLockClusterLeaderInfo updatedClusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(dataFile);
+                assertNotNull(updatedClusterLeaderInfo);
+
+                String newLeaderId = updatedClusterLeaderInfo.getId();
+                assertNotNull(newLeaderId);
+                assertDoesNotThrow(() -> UUID.fromString(newLeaderId));
+                assertNotEquals(leaderId.get(), newLeaderId);
+                assertEquals(5, mockEndpointFollower.getExchanges().size());
+            });
+        } finally {
+            clusterFollower.stop();
+        }
+
+        assertEquals(0, Files.size(dataFile));
+    }
+
+    @Test
     void singleClusterMemberRecoversLeadershipIfUUIDRemovedFromLockFile() throws Exception {
         try (CamelContext clusterLeader = createCamelContext()) {
             MockEndpoint mockEndpoint = clusterLeader.getEndpoint("mock:result", MockEndpoint.class);
@@ -237,6 +302,19 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
     void zeroHeartbeatTimeoutMultiplierThrowsException() throws Exception {
         ClusterConfig config = new ClusterConfig();
         config.setHeartbeatTimeoutMultiplier(0);
+
+        Exception exception = assertThrows(Exception.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
+
+    @Test
+    void negativeAcquireLeadershipBackoffThrowsException() throws Exception {
+        ClusterConfig config = new ClusterConfig();
+        config.setAcquireLeadershipBackoff(-1);
 
         Exception exception = assertThrows(Exception.class, () -> {
             try (CamelContext camelContext = createCamelContext(config)) {

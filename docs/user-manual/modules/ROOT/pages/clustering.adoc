@@ -45,7 +45,7 @@ Out of the box camel provides the following implementations:
 
 Configuration options:
 
-*ConsulClusterService*
+=== ConsulClusterService
 
 [options="header", cols="15,55,15,15"]
 |===
@@ -56,7 +56,7 @@ Configuration options:
 | rootPath | The Consul cluster root directory path   | /camel | String
 |===
 
-*FileLockClusterService*
+=== FileLockClusterService
 
 [options="header", cols="15,55,15,15"]
 |===
@@ -65,11 +65,32 @@ Configuration options:
 | acquireLockDelayUnit | The time unit for acquireLockDelay | SECONDS | TimeUnit
 | acquireLockInterval | The time to wait between attempts to try to acquire the cluster lock | 10 | long
 | acquireLockIntervalUnit | The time unit for acquireLockInterval | SECONDS | TimeUnit
-| heartbeatTimeoutMultiplier | Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait before considering the leader "stale". For example, if the leader updates its heartbeat every 2 seconds and the heartbeatTimeoutMultiplier is 3, followers will tolerate up to {@code 2s * 3 = 6s} of silence before declaring the leader unavailable | 5 | int
+| acquireLeadershipBackoff | The time to wait before a cluster member broadcasts acquisition of gaining cluster leadership. A value of 0 (the default) disables the backoff wait period. This can be useful to introduce a delay to ensure that the cluster leader has fully surrendered its leadership. A sensible value is acquireLockDelay + 5 seconds. Or whatever is appropriate for your environment and requirements | 0 | long
+| acquireLeadershipBackoffIntervalUnit | The time unit for acquireLeadershipBackoff | SECONDS | TimeUnit
+| heartbeatTimeoutMultiplier | Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait before considering the leader "stale". For example, if the leader updates its heartbeat every 2 seconds and the heartbeatTimeoutMultiplier is 3, followers will tolerate up to code 2s * 3 = 6s of silence before declaring the leader unavailable | 5 | int
 | rootPath | The file cluster root directory path | | String
 |===
 
-*InfinispanClusterService*
+[IMPORTANT]
+====
+As with most clustering implementations, it is important that the clocks on all machines in the file lock cluster are kept in sync.
+====
+
+==== Storing the cluster root directory on NFS
+
+When storing the FileLockClusterService cluster root directory (see the rootPath configuration option) on NFS, all cluster members must use NFS client mount options that allow failover to work reliably.
+
+The following NFS client mount options can help with this. You may need to adjust these options depending on your needs.
+
+* `soft` - Disables continuous retransmission attempts by the client when the NFS server does not respond to a request.
+* `timeo=10` - The time, in deciseconds, the NFS client waits for a response from the NFS server, before it sends another request. The default is 600 (60 seconds).
+* `retrans=1` - Specifies the number of times the NFS client attempts to retransmit a failed request to the NFS server. The default is 3. The client waits a `timeo` timeout period between each `retrans` attempt.
+* `lookupcache=none` — Specifies how the kernel manages its cache of directory entries for the mount point. `none` forces the client to revalidate all cache entries before they are used. This enables the cluster leader to immediately detect any change made to its lock file, and it prevents the lock checking mechanism from returning incorrect validity information.
+* `sync` — Any system call that writes data to files on the mount point causes the data to be flushed to the NFS server before the system call returns control to user space. This option provides greater data cache coherence.
+
+For more information about NFS mount options, see http://linux.die.net/man/5/nfs.
+
+=== InfinispanClusterService
 
 [options="header", cols="15,55,15,15"]
 |===
@@ -78,7 +99,7 @@ Configuration options:
 | lifespanTimeUnit | The TimeUnit of the lifespan | SECONDS | TimeUnit
 |===
 
-*JGroupsRaftClusterService*
+=== JGroupsRaftClusterService
 
 [options="header", cols="15,55,15,15"]
 |===
@@ -89,7 +110,7 @@ Configuration options:
 | raftId | Unique Raft id | | String
 |===
 
-*KubernetesClusterService*
+=== KubernetesClusterService
 
 [options="header", cols="15,55,15,15"]
 |===
@@ -106,7 +127,7 @@ Configuration options:
 | retryPeriodMillis | The time between two subsequent attempts to check and acquire the leadership. It is randomized using the jitter factor | 2000 | long
 |===
 
-*ZooKeeperClusterService*
+=== ZooKeeperClusterService
 
 [options="header", cols="15,55,15,15"]
 |===
@@ -127,7 +148,7 @@ Configuration options:
 | basePath | The base path to store in ZooKeeper | | String
 |===
 
-Configuration examples:
+=== Configuration examples:
 
 - *Spring Boot*
 +

@@ -305,7 +305,7 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
             clusterLeader.stop();
 
             // Make the cluster data file appear stale (i.e. not updated within acceptable bounds)
-            long staleHeartbeatTimestamp = leaderInfo.get().getHeartbeatNanoseconds() - TimeUnit.SECONDS.toNanos(100);
+            long staleHeartbeatTimestamp = leaderInfo.get().getHeartbeatMilliseconds() - TimeUnit.SECONDS.toMillis(100);
 
             FileLockClusterLeaderInfo updatedInfo
                     = new FileLockClusterLeaderInfo(
