@@ -32,6 +32,8 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     private TimeUnit acquireLockIntervalUnit;
     private ScheduledExecutorService executor;
     private int heartbeatTimeoutMultiplier;
+    private long acquireLeadershipBackoff;
+    private TimeUnit acquireLeadershipBackoffIntervalUnit;
 
     public FileLockClusterService() {
         this.acquireLockDelay = 1;
@@ -39,6 +41,8 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
         this.acquireLockInterval = 10;
         this.acquireLockIntervalUnit = TimeUnit.SECONDS;
         this.heartbeatTimeoutMultiplier = 5;
+        this.acquireLeadershipBackoff = 0;
+        this.acquireLeadershipBackoffIntervalUnit = TimeUnit.SECONDS;
     }
 
     @Override
@@ -125,6 +129,31 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
 
     public int getHeartbeatTimeoutMultiplier() {
         return heartbeatTimeoutMultiplier;
+    }
+
+    /**
+     * The time to wait before a cluster member broadcasts acquisition of gaining cluster leadership. A value of 0 (the
+     * default) disables the backoff wait period. This can be useful to introduce a delay to ensure that the cluster
+     * leader has fully surrendered its leadership. A sensible value is acquireLockDelay + 5 seconds. Or whatever is
+     * approprite for your environment and requirements.
+     */
+    public void setAcquireLeadershipBackoff(long acquireLeadershipBackoff) {
+        this.acquireLeadershipBackoff = acquireLeadershipBackoff;
+    }
+
+    public long getAcquireLeadershipBackoff() {
+        return acquireLeadershipBackoff;
+    }
+
+    /**
+     * The time unit for the acquireLeadershipBackoff, default to TimeUnit.SECONDS.
+     */
+    public void setAcquireLeadershipBackoffIntervalUnit(TimeUnit acquireLeadershipBackoffIntervalUnit) {
+        this.acquireLeadershipBackoffIntervalUnit = acquireLeadershipBackoffIntervalUnit;
+    }
+
+    public TimeUnit getAcquireLeadershipBackoffIntervalUnit() {
+        return acquireLeadershipBackoffIntervalUnit;
     }
 
     @Override
