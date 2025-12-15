@@ -102,7 +102,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void doInit() throws Exception {
         super.doInit();
         snsClient = configuration.getAmazonSNSClient() != null
-                ? configuration.getAmazonSNSClient() : Sns2ClientFactory.getSnsClient(configuration).getSNSClient();
+                ? configuration.getAmazonSNSClient() : Sns2ClientFactory.getSnsClient(configuration);
 
         // check the setting the headerFilterStrategy
         if (headerFilterStrategy == null) {
