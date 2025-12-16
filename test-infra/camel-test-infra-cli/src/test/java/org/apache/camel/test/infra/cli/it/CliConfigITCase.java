@@ -54,7 +54,7 @@ public class CliConfigITCase extends AbstractTestSupport {
     public void setJBangAndCamelVersionTest() {
         execute(cliService -> {
             String version = cliService.version();
-            Assertions.assertEquals("4.8.0", version, "Check specific Camel JBang and Camel version");
+            Assertions.assertEquals("4.16.0", version, "Check specific Camel JBang and Camel version");
         });
     }
 
