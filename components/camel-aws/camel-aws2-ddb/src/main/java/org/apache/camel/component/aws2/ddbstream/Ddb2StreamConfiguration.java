@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.ddbstream;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 @UriParams
-public class Ddb2StreamConfiguration implements Cloneable {
+public class Ddb2StreamConfiguration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(label = "consumer", description = "Name of the dynamodb table")
     @Metadata(required = true)
@@ -196,7 +197,7 @@ public class Ddb2StreamConfiguration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 
