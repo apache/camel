@@ -34,10 +34,6 @@
     <description>Cassandra CQL3 support</description>
 
     <properties>
-        <!-- Cassandra does not run reliably on Power.
-            See https://issues.apache.org/jira/browse/INFRA-25195
-        -->
-        <skipITs.ppc64le>true</skipITs.ppc64le>
         <!-- Make use of native access during IT test execution only -->
         <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
     </properties>
