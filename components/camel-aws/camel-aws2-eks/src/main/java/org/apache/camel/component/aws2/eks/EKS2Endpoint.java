@@ -67,7 +67,7 @@ public class EKS2Endpoint extends ScheduledPollEndpoint implements EndpointServi
         super.doStart();
 
         eksClient = configuration.getEksClient() != null
-                ? configuration.getEksClient() : EKS2ClientFactory.getEksClient(configuration).getEksClient();
+                ? configuration.getEksClient() : EKS2ClientFactory.getEksClient(configuration);
     }
 
     @Override
