@@ -217,7 +217,7 @@
         <google-genai-version>1.31.0</google-genai-version>
         <graaljs-version>25.0.1</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
-        <greenmail-version>2.1.7</greenmail-version>
+        <greenmail-version>2.1.8</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.29</groovy-version>
         <grpc-version>1.77.0</grpc-version>
