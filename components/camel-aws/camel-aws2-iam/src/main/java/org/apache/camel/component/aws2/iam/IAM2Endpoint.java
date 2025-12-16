@@ -68,7 +68,7 @@ public class IAM2Endpoint extends ScheduledPollEndpoint implements EndpointServi
 
         iamClient = configuration.getIamClient() != null
                 ? configuration.getIamClient()
-                : IAM2ClientFactory.getIamClient(configuration).getIamClient();
+                : IAM2ClientFactory.getIamClient(configuration);
     }
 
     @Override
