@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.ec2.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.ec2.AWS2EC2Configuration;
-import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientStandardImpl;
+import software.amazon.awssdk.services.ec2.Ec2Client;
 
 /**
- * Factory class to return the correct type of AWS Athena client.
+ * Factory class to create AWS EC2 clients using common configuration.
  */
 public final class AWS2EC2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class AWS2EC2ClientFactory {
     }
 
     /**
-     * Return the correct AWS EC2 client (based on remote vs local).
+     * Create an EC2 client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               Ec2Client
+     * @param  configuration The EC2 configuration
+     * @return               Configured Ec2Client
      */
-    public static AWS2EC2InternalClient getEc2Client(AWS2EC2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new AWS2EC2ClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new AWS2EC2ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new AWS2EC2ClientSessionTokenImpl(configuration);
-        } else {
-            return new AWS2EC2ClientStandardImpl(configuration);
-        }
+    public static Ec2Client getEc2Client(AWS2EC2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                Ec2Client::builder);
     }
 }

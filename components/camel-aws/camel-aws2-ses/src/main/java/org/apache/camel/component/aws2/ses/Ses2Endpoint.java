@@ -56,7 +56,7 @@ public class Ses2Endpoint extends DefaultEndpoint implements EndpointServiceLoca
         super.doStart();
         sesClient = configuration.getAmazonSESClient() != null
                 ? configuration.getAmazonSESClient()
-                : Ses2ClientFactory.getSesClient(configuration).getSesClient();
+                : Ses2ClientFactory.getSesClient(configuration);
     }
 
     @Override

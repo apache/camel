@@ -67,7 +67,7 @@ public class ECS2Endpoint extends ScheduledPollEndpoint implements EndpointServi
         super.doStart();
 
         ecsClient = configuration.getEcsClient() != null
-                ? configuration.getEcsClient() : ECS2ClientFactory.getEcsClient(configuration).getEcsClient();
+                ? configuration.getEcsClient() : ECS2ClientFactory.getEcsClient(configuration);
     }
 
     @Override

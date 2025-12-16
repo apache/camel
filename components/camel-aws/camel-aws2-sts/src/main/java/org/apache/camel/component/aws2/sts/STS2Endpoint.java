@@ -65,7 +65,7 @@ public class STS2Endpoint extends DefaultEndpoint implements EndpointServiceLoca
 
         stsClient = configuration.getStsClient() != null
                 ? configuration.getStsClient()
-                : STS2ClientFactory.getStsClient(configuration).getStsClient();
+                : STS2ClientFactory.getStsClient(configuration);
     }
 
     @Override
