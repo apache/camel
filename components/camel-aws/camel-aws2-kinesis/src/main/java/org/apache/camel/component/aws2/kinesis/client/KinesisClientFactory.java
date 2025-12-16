@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.aws2.kinesis.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.kinesis.Kinesis2Configuration;
-import org.apache.camel.component.aws2.kinesis.client.impl.*;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
+import software.amazon.awssdk.services.kinesis.KinesisClient;
 
 /**
- * Factory class to return the correct type of AWS Kinesis client.
+ * Factory class to create AWS Kinesis clients using common configuration.
  */
 public final class KinesisClientFactory {
 
@@ -28,38 +30,26 @@ public final class KinesisClientFactory {
     }
 
     /**
-     * Return the correct aws Kinesis client (based on remote vs local).
+     * Create a Kinesis sync client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               KinesisClient
+     * @param  configuration The Kinesis configuration
+     * @return               Configured KinesisClient
      */
-    public static KinesisInternalClient getKinesisClient(Kinesis2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new KinesisClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new KinesisClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new KinesisClientSessionTokenImpl(configuration);
-        } else {
-            return new KinesisClientStandardImpl(configuration);
-        }
+    public static KinesisClient getKinesisClient(Kinesis2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                KinesisClient::builder);
     }
 
     /**
-     * Return the standard aws Kinesis Async client.
+     * Create a Kinesis async client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               KinesisAsyncClient
+     * @param  configuration The Kinesis configuration
+     * @return               Configured KinesisAsyncClient
      */
-    public static KinesisAsyncInternalClient getKinesisAsyncClient(Kinesis2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new KinesisAsyncClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new KinesisAsyncClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new KinesisAsyncClientSessionTokenImpl(configuration);
-        } else {
-            return new KinesisAsyncClientStandardImpl(configuration);
-        }
+    public static KinesisAsyncClient getKinesisAsyncClient(Kinesis2Configuration configuration) {
+        return AwsClientBuilderUtil.buildAsyncClient(
+                configuration,
+                KinesisAsyncClient::builder);
     }
 }
