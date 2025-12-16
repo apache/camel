@@ -246,6 +246,11 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                         return;
                     }
 
+                    // Try to recreate the cluster data directory in case it got removed
+                    if (!Files.exists(leaderLockPath.getParent())) {
+                        Files.createDirectories(leaderLockPath.getParent());
+                    }
+
                     // Attempt to obtain cluster leadership
                     LOGGER.debug("Try to acquire a lock on {} (cluster-member-id={})", leaderLockPath, localMember.getUuid());
                     leaderLockFile = new RandomAccessFile(leaderLockPath.toFile(), "rw");
