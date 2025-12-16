@@ -32,7 +32,7 @@
     <description>Camel Iggy component</description>
 
     <properties>
-        <iggy-netty-version>4.2.7.Final</iggy-netty-version>
+        <iggy-netty-version>4.2.9.Final</iggy-netty-version>
     </properties>
 
     <!-- Iggy client 0.6.0 requires Netty 4.2.x for MultiThreadIoEventLoopGroup -->
