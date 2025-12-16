@@ -138,9 +138,9 @@ public final class PluginHelper {
      * Gets the active plugins according to the local plugin configuration file. Performs version check to make sure
      * that the current Camel JBang version is able to execute the plugin.
      *
-     * @param  main to exit the CLI process in case of error
-     * @param repos custom maven repositories
-     * @return      map of plugins where key represents the plugin command and value the plugin instance.
+     * @param  main  to exit the CLI process in case of error
+     * @param  repos custom maven repositories
+     * @return       map of plugins where key represents the plugin command and value the plugin instance.
      */
     public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos) {
         Map<String, Plugin> activePlugins = new HashMap<>();
