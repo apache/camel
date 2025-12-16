@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,22 +25,12 @@ import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BulkApiJobManualIT extends AbstractBulkApiTestBase {
-
-    @BeforeEach
-    public void setupProfileWithHardDelete() throws IOException {
-        final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
-
-        template().requestBodyAndHeader("salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String",
-                null,
-                SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
-    }
 
     @ParameterizedTest
     @MethodSource("getJobs")

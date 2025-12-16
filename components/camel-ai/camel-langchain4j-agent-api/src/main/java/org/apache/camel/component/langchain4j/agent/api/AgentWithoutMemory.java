@@ -16,82 +16,52 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
-import java.util.List;
-
-import dev.langchain4j.mcp.McpToolProvider;
+import dev.langchain4j.data.message.Content;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.tool.ToolProvider;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Implementation of Agent for AI agents without memory support. This agent handles chat interactions without
  * maintaining conversation history.
  *
+ * <p>
  * This is an internal class used only within the LangChain4j agent component.
  */
-public class AgentWithoutMemory implements Agent {
-
-    private final AgentConfiguration configuration;
+public class AgentWithoutMemory extends AbstractAgent<AiAgentWithoutMemoryService> {
 
     public AgentWithoutMemory(AgentConfiguration configuration) {
-        this.configuration = configuration;
+        super(configuration);
     }
 
     @Override
     public String chat(AiAgentBody<?> aiAgentBody, ToolProvider toolProvider) {
         AiAgentWithoutMemoryService agentService = createAiAgentService(toolProvider);
 
-        return aiAgentBody.getSystemMessage() != null
-                ? agentService.chat(aiAgentBody.getUserMessage(), aiAgentBody.getSystemMessage())
-                : agentService.chat(aiAgentBody.getUserMessage());
+        String userMessage = aiAgentBody.getUserMessage();
+        String systemMessage = aiAgentBody.getSystemMessage();
+        Content content = aiAgentBody.getContent();
+
+        if (content != null) {
+            // Multi-modal message with content
+            return systemMessage != null
+                    ? agentService.chat(userMessage, content, systemMessage)
+                    : agentService.chat(userMessage, content);
+        } else {
+            // Text-only message
+            return systemMessage != null
+                    ? agentService.chat(userMessage, systemMessage)
+                    : agentService.chat(userMessage);
+        }
     }
 
     /**
-     * Create AI service with a single universal tool that handles multiple Camel routes and additional tools
+     * Create AI service with common configurations (no memory provider).
      */
-    private AiAgentWithoutMemoryService createAiAgentService(
-            ToolProvider toolProvider) {
+    private AiAgentWithoutMemoryService createAiAgentService(ToolProvider toolProvider) {
         var builder = AiServices.builder(AiAgentWithoutMemoryService.class)
                 .chatModel(configuration.getChatModel());
 
-        // Apache Camel Tool Provider
-        if (toolProvider != null) {
-            builder.toolProvider(toolProvider);
-        }
-
-        // MCP Clients - create MCP ToolProvider if MCP clients are configured
-        // import org.apache.camel.util.ObjectHelper
-        if (ObjectHelper.isNotEmpty(configuration.getMcpClients())) {
-            McpToolProvider.Builder mcpBuilder = McpToolProvider.builder()
-                    .mcpClients(configuration.getMcpClients());
-
-            // Apply MCP tool filter if configured
-            if (configuration.getMcpToolProviderFilter() != null) {
-                mcpBuilder.filter(configuration.getMcpToolProviderFilter());
-            }
-
-            builder.toolProvider(mcpBuilder.build());
-        }
-
-        // Additional custom LangChain4j Tool Instances (objects with @Tool methods)
-        if (configuration.getCustomTools() != null && !configuration.getCustomTools().isEmpty()) {
-            builder.tools(configuration.getCustomTools());
-        }
-
-        // RAG
-        if (configuration.getRetrievalAugmentor() != null) {
-            builder.retrievalAugmentor(configuration.getRetrievalAugmentor());
-        }
-
-        // Input Guardrails
-        if (configuration.getInputGuardrailClasses() != null && !configuration.getInputGuardrailClasses().isEmpty()) {
-            builder.inputGuardrailClasses((List) configuration.getInputGuardrailClasses());
-        }
-
-        // Output Guardrails
-        if (configuration.getOutputGuardrailClasses() != null && !configuration.getOutputGuardrailClasses().isEmpty()) {
-            builder.outputGuardrailClasses((List) configuration.getOutputGuardrailClasses());
-        }
+        configureBuilder(builder, toolProvider);
 
         return builder.build();
     }

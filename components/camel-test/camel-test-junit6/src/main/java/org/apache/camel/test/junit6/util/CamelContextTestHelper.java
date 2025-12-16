@@ -179,7 +179,8 @@ public final class CamelContextTestHelper {
                     new StubComponentResolver(pattern));
             // need to replace autowire strategy with stub capable
             context.getLifecycleStrategies()
-                    .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy"));
+                    // NOTE: the DefaultAutowiredLifecycleStrategy is not public.
+                    .removeIf(s -> s.getClass().getSimpleName().equals("DefaultAutowiredLifecycleStrategy")); // NOSONAR
             context.getLifecycleStrategies().add(new StubComponentAutowireStrategy(context, pattern));
         }
     }

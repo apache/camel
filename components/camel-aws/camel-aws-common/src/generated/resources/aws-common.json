@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "aws-common",
+    "title": "Aws Common",
+    "description": "Camel AWS Common utilities for client initialization",
+    "deprecated": false,
+    "firstVersion": "4.17.0",
+    "label": "cloud,aws",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-aws-common",
+    "version": "4.17.0-SNAPSHOT"
+  }
+}

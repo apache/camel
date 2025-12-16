@@ -138,6 +138,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-aws-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws-config</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -224,6 +229,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws2-s3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-aws2-s3-vectors</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -793,6 +803,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-google-vertexai</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-grape</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -944,6 +959,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-iec60870</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-iggy</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

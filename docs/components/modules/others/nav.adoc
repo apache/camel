@@ -3,8 +3,8 @@
 
 * xref:others:index.adoc[Miscellaneous Components]
 ** xref:attachments.adoc[Attachments]
-** xref:aws-xray.adoc[AWS XRay]
-** xref:azure-schema-registry.adoc[Azure Schema Registry]
+*** xref:aws-xray.adoc[AWS XRay]
+*** xref:azure-schema-registry.adoc[Azure Schema Registry]
 ** xref:cli-connector.adoc[CLI Connector]
 ** xref:cli-debug.adoc[CLI Debug]
 ** xref:cloudevents.adoc[Cloudevents]

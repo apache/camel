@@ -43,6 +43,7 @@
         <module>camel-google-secret-manager</module>
         <module>camel-google-sheets</module>
         <module>camel-google-storage</module>
+        <module>camel-google-vertexai</module>
     </modules>
 
 </project>

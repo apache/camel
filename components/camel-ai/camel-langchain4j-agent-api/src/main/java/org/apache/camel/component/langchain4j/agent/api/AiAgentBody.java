@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.langchain4j.agent.api;
 
+import dev.langchain4j.data.message.Content;
+
 /**
  * Request body class for AI agent chat interactions in the Apache Camel LangChain4j integration.
  *
@@ -56,7 +58,7 @@ package org.apache.camel.component.langchain4j.agent.api;
  * @param <C> the type of content (e.g., TextContent, ImageContent, AudioContent, VideoContent, PdfFileContent)
  * @since     4.9.0
  */
-public class AiAgentBody<C> {
+public class AiAgentBody<C extends Content> {
     private String userMessage;
     private String systemMessage;
     private Object memoryId;

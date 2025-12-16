@@ -17,53 +17,55 @@
 package org.apache.camel.component.aws2.sqs;
 
 import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
-import org.apache.camel.component.aws2.sqs.client.Sqs2InternalClient;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientIAMOptimized;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SqsClientFactoryTest {
 
     @Test
-    public void getStandardSqsClientDefault() {
-        Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
-        Sqs2InternalClient awsssqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
-        assertTrue(awsssqsClient instanceof Sqs2ClientStandardImpl);
-    }
-
-    @Test
-    public void getStandardSqsClient() {
-        Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
-        sqsConfiguration.setUseDefaultCredentialsProvider(false);
-        Sqs2InternalClient awsssqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
-        assertTrue(awsssqsClient instanceof Sqs2ClientStandardImpl);
-    }
-
-    @Test
-    public void getIAMOptimizedSqsClient() {
+    public void getSqsClientWithDefaultCredentials() {
         Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
         sqsConfiguration.setUseDefaultCredentialsProvider(true);
-        Sqs2InternalClient awsssqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
-        assertTrue(awsssqsClient instanceof Sqs2ClientIAMOptimized);
+        sqsConfiguration.setRegion("eu-west-1");
+        SqsClient sqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
+        assertNotNull(sqsClient);
+        sqsClient.close();
     }
 
     @Test
-    public void getIAMProfileOptimizedSqsClient() {
+    public void getSqsClientWithStaticCredentials() {
         Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
-        sqsConfiguration.setUseProfileCredentialsProvider(true);
-        Sqs2InternalClient awsssqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
-        assertTrue(awsssqsClient instanceof Sqs2ClientIAMProfileOptimizedImpl);
+        sqsConfiguration.setAccessKey("testAccessKey");
+        sqsConfiguration.setSecretKey("testSecretKey");
+        sqsConfiguration.setRegion("eu-west-1");
+        SqsClient sqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
+        assertNotNull(sqsClient);
+        sqsClient.close();
     }
 
     @Test
-    public void getSessionTokenSqsClient() {
+    public void getSqsClientWithEndpointOverride() {
         Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
-        sqsConfiguration.setUseSessionCredentials(true);
-        Sqs2InternalClient awsssqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
-        assertTrue(awsssqsClient instanceof Sqs2ClientSessionTokenImpl);
+        sqsConfiguration.setUseDefaultCredentialsProvider(true);
+        sqsConfiguration.setRegion("eu-west-1");
+        sqsConfiguration.setOverrideEndpoint(true);
+        sqsConfiguration.setUriEndpointOverride("http://localhost:4566");
+        SqsClient sqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
+        assertNotNull(sqsClient);
+        sqsClient.close();
+    }
+
+    @Test
+    public void getSqsClientWithCustomHost() {
+        Sqs2Configuration sqsConfiguration = new Sqs2Configuration();
+        sqsConfiguration.setUseDefaultCredentialsProvider(true);
+        sqsConfiguration.setRegion("eu-west-1");
+        sqsConfiguration.setAmazonAWSHost("localhost:4566");
+        sqsConfiguration.setProtocol("http");
+        SqsClient sqsClient = Sqs2ClientFactory.getSqsClient(sqsConfiguration);
+        assertNotNull(sqsClient);
+        sqsClient.close();
     }
 }

@@ -49,7 +49,6 @@ public class CliConfigITCase extends AbstractTestSupport {
     }
 
     @Test
-    @SetSystemProperty(key = "cli.service.version", value = "4.16.0")
     @SetSystemProperty(key = "cli.service.execute.version", value = "4.14.2")
     public void setJBangAndCamelVersionTest() {
         execute(cliService -> {

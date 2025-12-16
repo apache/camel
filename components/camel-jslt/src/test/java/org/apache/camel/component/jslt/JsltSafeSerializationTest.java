@@ -19,7 +19,6 @@ package org.apache.camel.component.jslt;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ResourceHelper;
@@ -39,7 +38,7 @@ public class JsltSafeSerializationTest extends CamelTestSupport {
                         .trim() // Remove the last newline added by IOHelper.loadText()
         );
 
-        final Exchange resultExchange = template().send("direct://start",
+        template().send("direct://start",
                 exchange -> {
                     exchange.getIn().setBody(IOHelper.loadText(ResourceHelper.resolveMandatoryResourceAsInputStream(
                             context, "org/apache/camel/component/jslt/serialization/input.json")));

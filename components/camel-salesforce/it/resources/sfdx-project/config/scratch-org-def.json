@@ -1,0 +1,21 @@
+{
+  "orgName": "Camel Salesforce Integration Test Org",
+  "edition": "Developer",
+  "features": ["API", "AuthorApex", "ContactsToMultipleAccounts"],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    },
+    "oauthOidcSettings": {
+      "blockOAuthUnPwFlow": false
+    },
+    "securitySettings": {
+      "sessionSettings": {
+        "forceRelogin": false
+      }
+    }
+  }
+}

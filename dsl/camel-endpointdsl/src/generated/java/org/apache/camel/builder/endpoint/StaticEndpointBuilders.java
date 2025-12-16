@@ -1377,6 +1377,48 @@ public class StaticEndpointBuilders {
         return AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS S3 Vectors (camel-aws2-s3-vectors)
+     * Store and query vector embeddings using AWS S3 Vectors with similarity
+     * search.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
+     * 
+     * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
+     * 
+     * Path parameter: vectorBucketName (required)
+     * Vector bucket name or ARN
+     * 
+     * @param path vectorBucketName
+     * @return the dsl builder
+     */
+    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String path) {
+        return aws2S3Vectors("aws2-s3-vectors", path);
+    }
+    /**
+     * AWS S3 Vectors (camel-aws2-s3-vectors)
+     * Store and query vector embeddings using AWS S3 Vectors with similarity
+     * search.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
+     * 
+     * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
+     * 
+     * Path parameter: vectorBucketName (required)
+     * Vector bucket name or ARN
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path vectorBucketName
+     * @return the dsl builder
+     */
+    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String componentName, String path) {
+        return AWS2S3VectorsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
      * 
@@ -5948,6 +5990,58 @@ public class StaticEndpointBuilders {
         return GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Vertex AI (camel-google-vertexai)
+     * Interact with Google Cloud Vertex AI generative models.
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-google-vertexai
+     * 
+     * Syntax: <code>google-vertexai:projectId:location:modelId</code>
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project ID
+     * 
+     * Path parameter: location (required)
+     * Google Cloud location/region (e.g., us-central1)
+     * 
+     * Path parameter: modelId (required)
+     * Model ID to use for predictions
+     * 
+     * @param path projectId:location:modelId
+     * @return the dsl builder
+     */
+    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String path) {
+        return googleVertexai("google-vertexai", path);
+    }
+    /**
+     * Google Vertex AI (camel-google-vertexai)
+     * Interact with Google Cloud Vertex AI generative models.
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-google-vertexai
+     * 
+     * Syntax: <code>google-vertexai:projectId:location:modelId</code>
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project ID
+     * 
+     * Path parameter: location (required)
+     * Google Cloud location/region (e.g., us-central1)
+     * 
+     * Path parameter: modelId (required)
+     * Model ID to use for predictions
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path projectId:location:modelId
+     * @return the dsl builder
+     */
+    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String componentName, String path) {
+        return GoogleVertexAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.
@@ -7291,6 +7385,46 @@ public class StaticEndpointBuilders {
      */
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
         return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Camel Iggy component
+     * 
+     * Category: messaging
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * Syntax: <code>iggy:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Name of the topic
+     * 
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String path) {
+        return iggy("iggy", path);
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Camel Iggy component
+     * 
+     * Category: messaging
+     * Since: 4.14
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * Syntax: <code>iggy:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Name of the topic
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String componentName, String path) {
+        return IggyEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Ignite Cache (camel-ignite)

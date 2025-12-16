@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Objects;
 
@@ -75,8 +76,8 @@ final class FileLockClusterUtils {
 
         ByteBuffer buf = ByteBuffer.allocate(LOCKFILE_BUFFER_SIZE);
         buf.put(uuidBytes);
-        buf.putLong(clusterLeaderInfo.getHeartbeatUpdateIntervalNanoseconds());
-        buf.putLong(clusterLeaderInfo.getHeartbeatNanoseconds());
+        buf.putLong(clusterLeaderInfo.getHeartbeatUpdateIntervalMilliseconds());
+        buf.putLong(clusterLeaderInfo.getHeartbeatMilliseconds());
         buf.flip();
 
         if (forceMetaData) {
@@ -100,26 +101,28 @@ final class FileLockClusterUtils {
      * @throws IOException    If reading the lock file failed
      */
     static FileLockClusterLeaderInfo readClusterLeaderInfo(Path leaderDataPath) throws IOException {
-        if (!Files.exists(leaderDataPath)) {
+        try {
+            byte[] bytes = Files.readAllBytes(leaderDataPath);
+
+            if (bytes.length < LOCKFILE_BUFFER_SIZE) {
+                // Data is incomplete or in a transient / corrupt state
+                return null;
+            }
+
+            // Parse the cluster leader data
+            ByteBuffer buf = ByteBuffer.wrap(bytes);
+            byte[] uuidBytes = new byte[UUID_BYTE_LENGTH];
+            buf.get(uuidBytes);
+
+            String uuidStr = new String(uuidBytes, StandardCharsets.UTF_8);
+            long intervalMillis = buf.getLong();
+            long lastHeartbeat = buf.getLong();
+
+            return new FileLockClusterLeaderInfo(uuidStr, intervalMillis, lastHeartbeat);
+        } catch (NoSuchFileException e) {
+            // Handle NoSuchFileException to give the ClusterView a chance to recreate the leadership data
             return null;
         }
-
-        byte[] bytes = Files.readAllBytes(leaderDataPath);
-        if (bytes.length < LOCKFILE_BUFFER_SIZE) {
-            // Data is incomplete or in a transient / corrupt state
-            return null;
-        }
-
-        // Parse the cluster leader data
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
-        byte[] uuidBytes = new byte[UUID_BYTE_LENGTH];
-        buf.get(uuidBytes);
-
-        String uuidStr = new String(uuidBytes, StandardCharsets.UTF_8);
-        long intervalNanos = buf.getLong();
-        long lastHeartbeat = buf.getLong();
-
-        return new FileLockClusterLeaderInfo(uuidStr, intervalNanos, lastHeartbeat);
     }
 
     /**
@@ -130,15 +133,15 @@ final class FileLockClusterUtils {
      *                                   leader state
      * @param  previousClusterLeaderInfo The {@link FileLockClusterLeaderInfo} instance representing the previously
      *                                   recorded cluster leader state
-     * @param  currentNanoTime           The current time in nanoseconds, as returned by {@link System#nanoTime()} is
-     *                                   held
+     * @param  currentTimeMillis         The current time in milliseconds, as returned by
+     *                                   {@link System#currentTimeMillis()} is held
      * @return                           {@code true} if the leader is considered stale. {@code false} if the leader is
      *                                   still active
      */
     static boolean isLeaderStale(
             FileLockClusterLeaderInfo latestClusterLeaderInfo,
             FileLockClusterLeaderInfo previousClusterLeaderInfo,
-            long currentNanoTime,
+            long currentTimeMillis,
             int heartbeatTimeoutMultiplier) {
 
         if (latestClusterLeaderInfo == null) {
@@ -150,8 +153,8 @@ final class FileLockClusterUtils {
             return false;
         }
 
-        final long latestHeartbeat = latestClusterLeaderInfo.getHeartbeatNanoseconds();
-        final long previousObservedHeartbeat = previousClusterLeaderInfo.getHeartbeatNanoseconds();
+        final long latestHeartbeat = latestClusterLeaderInfo.getHeartbeatMilliseconds();
+        final long previousObservedHeartbeat = previousClusterLeaderInfo.getHeartbeatMilliseconds();
 
         if (latestHeartbeat > previousObservedHeartbeat) {
             // Not stale. Cluster leader is alive and updating the lock file
@@ -164,9 +167,9 @@ final class FileLockClusterUtils {
         }
 
         // Check if cluster leader has updated the lock file within acceptable limits
-        final long elapsed = currentNanoTime - previousObservedHeartbeat;
-        final long heartbeatUpdateIntervalNanoseconds = latestClusterLeaderInfo.getHeartbeatUpdateIntervalNanoseconds();
-        final long timeout = heartbeatUpdateIntervalNanoseconds * (long) heartbeatTimeoutMultiplier;
+        final long elapsed = currentTimeMillis - previousObservedHeartbeat;
+        final long heartbeatUpdateIntervalMilliseconds = latestClusterLeaderInfo.getHeartbeatUpdateIntervalMilliseconds();
+        final long timeout = heartbeatUpdateIntervalMilliseconds * (long) heartbeatTimeoutMultiplier;
         return elapsed > timeout;
     }
 }

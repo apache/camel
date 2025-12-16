@@ -28,4 +28,11 @@ public class Headers {
 
     @Metadata(description = "Memory ID.", javaType = "Object")
     public static final String MEMORY_ID = "CamelLangChain4jAgentMemoryId";
+
+    @Metadata(description = "The user message to accompany file content when using WrappedFile as input.", javaType = "String")
+    public static final String USER_MESSAGE = "CamelLangChain4jAgentUserMessage";
+
+    @Metadata(description = "The media type (MIME type) of the file content. Overrides auto-detection from file extension.",
+              javaType = "String")
+    public static final String MEDIA_TYPE = "CamelLangChain4jAgentMediaType";
 }

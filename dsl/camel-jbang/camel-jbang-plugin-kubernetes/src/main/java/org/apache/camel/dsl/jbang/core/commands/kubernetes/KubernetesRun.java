@@ -158,7 +158,9 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String imageBuilder = "jib";
 
     @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube.")
+                        completionCandidates = ClusterTypeCompletionCandidates.class,
+                        converter = ClusterTypeConverter.class,
+                        description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
     String clusterType = "Kubernetes";
 
     @CommandLine.Option(names = { "--image-build" }, defaultValue = "true",

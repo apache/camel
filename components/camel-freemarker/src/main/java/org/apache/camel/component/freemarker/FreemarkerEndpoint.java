@@ -179,7 +179,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         if (reader != null) {
             log.debug("Freemarker is evaluating template read from header {} using context: {}",
                     FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
-            template = new Template("temp", reader, new Configuration(Configuration.VERSION_2_3_34));
+            template = new Template("temp", reader, configuration);
         } else {
             log.debug("Freemarker is evaluating {} using context: {}", path, dataModel);
             if (getEncoding() != null) {

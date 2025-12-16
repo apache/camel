@@ -161,4 +161,32 @@
         </dependency>
     </dependencies>
 
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>require-isolated-jvm</excludedGroups>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>isolated-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <excludedGroups combine.self="override"/>
+                            <groups>require-isolated-jvm</groups>
+                            <reuseForks>false</reuseForks>
+                            <forkCount>1</forkCount>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
