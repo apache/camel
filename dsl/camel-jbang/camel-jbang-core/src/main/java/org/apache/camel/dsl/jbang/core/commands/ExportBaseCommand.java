@@ -399,7 +399,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Properties properties = mapBuildProperties();
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
@@ -597,7 +597,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
@@ -777,7 +777,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
