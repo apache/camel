@@ -210,14 +210,14 @@
         <google-cloud-functions-version>2.72.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.0.2</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.144.0</google-cloud-pubsub-version>
-        <google-cloud-pubsublite-version>1.15.19</google-cloud-pubsublite-version>
+        <google-cloud-pubsublite-version>1.15.20</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.80.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.60.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.81.0</google-cloud-aiplatform-version>
         <google-genai-version>1.31.0</google-genai-version>
         <graaljs-version>25.0.1</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
-        <greenmail-version>2.1.7</greenmail-version>
+        <greenmail-version>2.1.8</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <groovy-version>4.0.29</groovy-version>
         <grpc-version>1.77.0</grpc-version>
