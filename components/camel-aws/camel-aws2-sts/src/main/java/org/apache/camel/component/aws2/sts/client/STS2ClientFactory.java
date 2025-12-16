@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.aws2.sts.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.sts.STS2Configuration;
-import org.apache.camel.component.aws2.sts.client.impl.STS2ClientIAMOptimized;
-import org.apache.camel.component.aws2.sts.client.impl.STS2ClientIAMProfileOptimized;
-import org.apache.camel.component.aws2.sts.client.impl.STS2ClientStandardImpl;
+import software.amazon.awssdk.services.sts.StsClient;
 
 /**
- * Factory class to return the correct type of AWS STS aws.
+ * Factory class to create AWS STS clients using common configuration.
  */
 public final class STS2ClientFactory {
 
@@ -30,18 +29,14 @@ public final class STS2ClientFactory {
     }
 
     /**
-     * Return the correct aws STS client (based on remote vs local).
+     * Create an STS client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               StsClient
+     * @param  configuration The STS configuration
+     * @return               Configured StsClient
      */
-    public static STS2InternalClient getStsClient(STS2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new STS2ClientIAMOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new STS2ClientIAMProfileOptimized(configuration);
-        } else {
-            return new STS2ClientStandardImpl(configuration);
-        }
+    public static StsClient getStsClient(STS2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                StsClient::builder);
     }
 }

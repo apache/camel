@@ -17,35 +17,43 @@
 package org.apache.camel.component.aws2.sts;
 
 import org.apache.camel.component.aws2.sts.client.STS2ClientFactory;
-import org.apache.camel.component.aws2.sts.client.STS2InternalClient;
-import org.apache.camel.component.aws2.sts.client.impl.STS2ClientIAMOptimized;
-import org.apache.camel.component.aws2.sts.client.impl.STS2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.sts.StsClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class STS2ClientFactoryTest {
 
     @Test
-    public void getStandardSTSClientDefault() {
-        STS2Configuration sts2Configuration = new STS2Configuration();
-        STS2InternalClient stsClient = STS2ClientFactory.getStsClient(sts2Configuration);
-        assertTrue(stsClient instanceof STS2ClientStandardImpl);
+    public void getStsClientWithDefaultCredentials() {
+        STS2Configuration configuration = new STS2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        StsClient stsClient = STS2ClientFactory.getStsClient(configuration);
+        assertNotNull(stsClient);
+        stsClient.close();
     }
 
     @Test
-    public void getStandardSTSClient() {
-        STS2Configuration sts2Configuration = new STS2Configuration();
-        sts2Configuration.setUseDefaultCredentialsProvider(false);
-        STS2InternalClient stsClient = STS2ClientFactory.getStsClient(sts2Configuration);
-        assertTrue(stsClient instanceof STS2ClientStandardImpl);
+    public void getStsClientWithStaticCredentials() {
+        STS2Configuration configuration = new STS2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        StsClient stsClient = STS2ClientFactory.getStsClient(configuration);
+        assertNotNull(stsClient);
+        stsClient.close();
     }
 
     @Test
-    public void getSTSOptimizedIAMClient() {
-        STS2Configuration sts2Configuration = new STS2Configuration();
-        sts2Configuration.setUseDefaultCredentialsProvider(true);
-        STS2InternalClient stsClient = STS2ClientFactory.getStsClient(sts2Configuration);
-        assertTrue(stsClient instanceof STS2ClientIAMOptimized);
+    public void getStsClientWithEndpointOverride() {
+        STS2Configuration configuration = new STS2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        StsClient stsClient = STS2ClientFactory.getStsClient(configuration);
+        assertNotNull(stsClient);
+        stsClient.close();
     }
 }

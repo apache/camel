@@ -41,6 +41,10 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-aws-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.angus</groupId>
             <artifactId>angus-mail</artifactId>
             <version>${angus-mail-version}</version>
