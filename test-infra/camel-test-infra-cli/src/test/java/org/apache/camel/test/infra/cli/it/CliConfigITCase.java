@@ -40,11 +40,11 @@ public class CliConfigITCase extends AbstractTestSupport {
     }
 
     @Test
-    @SetSystemProperty(key = "cli.service.execute.version", value = "4.8.0")
+    @SetSystemProperty(key = "cli.service.execute.version", value = "4.16.0")
     public void setCamelVersionTest() {
         execute(cliService -> {
             String version = cliService.version();
-            Assertions.assertEquals("4.8.0", version, "Check specific Camel version");
+            Assertions.assertEquals("4.16.0", version, "Check specific Camel version");
         });
     }
 
@@ -54,7 +54,7 @@ public class CliConfigITCase extends AbstractTestSupport {
     public void setJBangAndCamelVersionTest() {
         execute(cliService -> {
             String version = cliService.version();
-            Assertions.assertEquals("4.8.0", version, "Check specific Camel JBang and Camel version");
+            Assertions.assertEquals("4.16.0", version, "Check specific Camel JBang and Camel version");
         });
     }
 
