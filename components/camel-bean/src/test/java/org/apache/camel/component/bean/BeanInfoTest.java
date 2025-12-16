@@ -27,6 +27,7 @@ import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultExchange;
@@ -37,7 +38,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.lenient;
 
@@ -127,6 +130,20 @@ public class BeanInfoTest {
         assertFalse(info2.hasAnyMethodHandlerAnnotation());
     }
 
+    @Test
+    public void testChooseExchangeMethod() {
+        DefaultExchange exchange = new DefaultExchange(context);
+        BeanInfo info = new BeanInfo(context, MyClassTwo.class);
+        MethodInfo mi = info.chooseMethod(null, exchange, null);
+        assertNotNull(mi);
+        assertTrue(mi.hasCustomAnnotation()); // not really correct; but backwards compatible
+        assertFalse(mi.hasHandlerAnnotation());
+        assertTrue(mi.hasParameters());
+        assertFalse(mi.hasBodyParameter());
+        assertEquals("myExchangeMethod", mi.getMethod().getName());
+        assertEquals(Exchange.class, mi.getMethod().getParameterTypes()[0]);
+    }
+
     private Object buildProxyObject() {
         try {
             return new ByteBuddy()
@@ -157,6 +174,24 @@ public class BeanInfoTest {
 
         public String myOtherMethod() {
             return "";
+        }
+    }
+
+    public static class MyClassTwo {
+
+        public void myMethod() {
+        }
+
+        public String myOtherMethod() {
+            return "";
+        }
+
+        public String myExchangeMethod(Exchange exchange) {
+            return exchange.getExchangeId();
+        }
+
+        public void myBooleanMethod(boolean fool) {
+            // noop
         }
     }
 
