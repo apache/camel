@@ -67,6 +67,11 @@
             <artifactId>aws-core</artifactId>
             <version>${aws-java-sdk2-version}</version>
         </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>netty-nio-client</artifactId>
+            <version>${aws-java-sdk2-version}</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -41,7 +41,7 @@ public class KinesisConnection implements Closeable {
             if (Objects.isNull(kinesisClient)) {
                 kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient() != null
                         ? endpoint.getConfiguration().getAmazonKinesisClient()
-                        : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration()).getKinesisClient();
+                        : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration());
             }
             return kinesisClient;
         } finally {
@@ -55,7 +55,7 @@ public class KinesisConnection implements Closeable {
             if (Objects.isNull(kinesisAsyncClient)) {
                 kinesisAsyncClient = endpoint.getConfiguration().getAmazonKinesisAsyncClient() != null
                         ? endpoint.getConfiguration().getAmazonKinesisAsyncClient()
-                        : KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration()).getKinesisAsyncClient();
+                        : KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration());
             }
             return kinesisAsyncClient;
         } finally {

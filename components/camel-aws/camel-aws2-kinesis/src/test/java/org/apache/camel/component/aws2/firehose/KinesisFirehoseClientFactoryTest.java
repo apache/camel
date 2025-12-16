@@ -17,48 +17,43 @@
 package org.apache.camel.component.aws2.firehose;
 
 import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseClientFactory;
-import org.apache.camel.component.aws2.firehose.client.KinesisFirehoseInternalClient;
-import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientSessionTokenImpl;
-import org.apache.camel.component.aws2.firehose.client.impl.KinesisFirehoseClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.firehose.FirehoseClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KinesisFirehoseClientFactoryTest {
 
     @Test
-    public void getStandardFirehoseClientDefault() {
-        KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
-        KinesisFirehoseInternalClient kinesisFirehoseClient
-                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
-        assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientStandardImpl);
+    public void getFirehoseClientWithDefaultCredentials() {
+        KinesisFirehose2Configuration configuration = new KinesisFirehose2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        FirehoseClient firehoseClient = KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration);
+        assertNotNull(firehoseClient);
+        firehoseClient.close();
     }
 
     @Test
-    public void getStandardFirehoseClient() {
-        KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
-        kinesis2Configuration.setUseDefaultCredentialsProvider(false);
-        KinesisFirehoseInternalClient kinesisFirehoseClient
-                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
-        assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientStandardImpl);
+    public void getFirehoseClientWithStaticCredentials() {
+        KinesisFirehose2Configuration configuration = new KinesisFirehose2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        FirehoseClient firehoseClient = KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration);
+        assertNotNull(firehoseClient);
+        firehoseClient.close();
     }
 
     @Test
-    public void getIAMOptimizedFirehoseClient() {
-        KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
-        kinesis2Configuration.setUseDefaultCredentialsProvider(true);
-        KinesisFirehoseInternalClient kinesisFirehoseClient
-                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
-        assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientIAMOptimizedImpl);
-    }
-
-    @Test
-    public void getSessionTokenFirehoseClient() {
-        KinesisFirehose2Configuration kinesis2Configuration = new KinesisFirehose2Configuration();
-        kinesis2Configuration.setUseSessionCredentials(true);
-        KinesisFirehoseInternalClient kinesisFirehoseClient
-                = KinesisFirehoseClientFactory.getKinesisFirehoseClient(kinesis2Configuration);
-        assertTrue(kinesisFirehoseClient instanceof KinesisFirehoseClientSessionTokenImpl);
+    public void getFirehoseClientWithEndpointOverride() {
+        KinesisFirehose2Configuration configuration = new KinesisFirehose2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        FirehoseClient firehoseClient = KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration);
+        assertNotNull(firehoseClient);
+        firehoseClient.close();
     }
 }

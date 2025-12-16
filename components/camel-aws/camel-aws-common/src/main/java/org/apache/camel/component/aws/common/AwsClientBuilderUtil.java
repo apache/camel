@@ -31,11 +31,14 @@ import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.core.SdkClient;
+import software.amazon.awssdk.core.client.builder.SdkAsyncClientBuilder;
 import software.amazon.awssdk.core.client.builder.SdkSyncClientBuilder;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
+import software.amazon.awssdk.http.async.SdkAsyncHttpClient;
+import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.utils.AttributeMap;
 
@@ -141,6 +144,98 @@ public final class AwsClientBuilderUtil {
             AwsCommonConfiguration config,
             Supplier<B> builderSupplier) {
         return buildClient(config, builderSupplier, null);
+    }
+
+    /**
+     * Build an AWS async client with the given configuration.
+     *
+     * @param  config                The common AWS configuration
+     * @param  builderSupplier       Supplier for the service-specific async client builder (e.g.,
+     *                               KinesisAsyncClient::builder)
+     * @param  serviceSpecificConfig Optional consumer for service-specific configuration
+     * @param  <B>                   The builder type (must extend both AwsClientBuilder and SdkAsyncClientBuilder)
+     * @param  <C>                   The client type
+     * @return                       The configured AWS async client
+     */
+    @SuppressWarnings("unchecked")
+    public static <B extends AwsClientBuilder<B, C> & SdkAsyncClientBuilder<B, C>, C extends SdkClient> C buildAsyncClient(
+            AwsCommonConfiguration config,
+            Supplier<B> builderSupplier,
+            Consumer<B> serviceSpecificConfig) {
+
+        B clientBuilder = builderSupplier.get();
+        NettyNioAsyncHttpClient.Builder httpClientBuilder = null;
+        boolean httpClientConfigured = false;
+
+        // 1. Configure proxy
+        if (ObjectHelper.isNotEmpty(config.getProxyHost())
+                && ObjectHelper.isNotEmpty(config.getProxyPort())) {
+            LOG.trace("Configuring async proxy: {}:{}", config.getProxyHost(), config.getProxyPort());
+            software.amazon.awssdk.http.nio.netty.ProxyConfiguration proxyConfig
+                    = software.amazon.awssdk.http.nio.netty.ProxyConfiguration.builder()
+                            .scheme(config.getProxyProtocol().toString())
+                            .host(config.getProxyHost())
+                            .port(config.getProxyPort())
+                            .build();
+            httpClientBuilder = NettyNioAsyncHttpClient.builder().proxyConfiguration(proxyConfig);
+            httpClientConfigured = true;
+        }
+
+        // 2. Configure credentials
+        AwsCredentialsProvider credentialsProvider = resolveCredentialsProvider(config);
+        if (credentialsProvider != null) {
+            clientBuilder.credentialsProvider(credentialsProvider);
+        }
+
+        // 3. Apply HTTP client builder if configured (before trust all certs check)
+        if (httpClientConfigured) {
+            clientBuilder.httpClientBuilder(httpClientBuilder);
+        }
+
+        // 4. Configure region
+        if (ObjectHelper.isNotEmpty(config.getRegion())) {
+            clientBuilder.region(Region.of(config.getRegion()));
+        }
+
+        // 5. Configure endpoint override
+        if (config.isOverrideEndpoint() && ObjectHelper.isNotEmpty(config.getUriEndpointOverride())) {
+            clientBuilder.endpointOverride(URI.create(config.getUriEndpointOverride()));
+        }
+
+        // 6. Configure trust all certificates
+        if (config.isTrustAllCertificates()) {
+            if (httpClientBuilder == null) {
+                httpClientBuilder = NettyNioAsyncHttpClient.builder();
+            }
+            SdkAsyncHttpClient asyncHttpClient = httpClientBuilder.buildWithDefaults(
+                    AttributeMap.builder()
+                            .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE)
+                            .build());
+            clientBuilder.httpClient(asyncHttpClient);
+            clientBuilder.httpClientBuilder(null);
+        }
+
+        // 7. Apply service-specific configuration
+        if (serviceSpecificConfig != null) {
+            serviceSpecificConfig.accept(clientBuilder);
+        }
+
+        return clientBuilder.build();
+    }
+
+    /**
+     * Build an AWS async client with the given configuration, without service-specific configuration.
+     *
+     * @param  config          The common AWS configuration
+     * @param  builderSupplier Supplier for the service-specific async client builder
+     * @param  <B>             The builder type
+     * @param  <C>             The client type
+     * @return                 The configured AWS async client
+     */
+    public static <B extends AwsClientBuilder<B, C> & SdkAsyncClientBuilder<B, C>, C extends SdkClient> C buildAsyncClient(
+            AwsCommonConfiguration config,
+            Supplier<B> builderSupplier) {
+        return buildAsyncClient(config, builderSupplier, null);
     }
 
     /**
