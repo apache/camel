@@ -84,6 +84,30 @@ public final class PluginHelper {
             // Ignore errors in embedded plugin loading
         }
 
+        // allow to download plugins from 3rd party maven repositories by --repos argument
+        String repos = null;
+        try {
+            for (String a : args) {
+                if (a.startsWith("--repos=")) {
+                    repos = a.substring(8).trim();
+                } else if (a.startsWith("--repo=")) {
+                    repos = a.substring(7).trim();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (repos == null) {
+            // fallback to load user configuration
+            Properties configProperties = new Properties();
+            CommandLineHelper.loadProperties(configProperties::putAll);
+            repos = configProperties.getProperty("repos");
+            if (repos == null) {
+                repos = configProperties.getProperty("repo");
+            }
+        }
+
         // If we found embedded plugins, and we're looking for a specific target,
         // check if it was satisfied by embedded plugins
         if (foundEmbeddedPlugins && target != null && !"shell".equals(target)) {
@@ -94,7 +118,7 @@ public final class PluginHelper {
         }
 
         // Fall back to JSON configuration for additional or missing plugins
-        Map<String, Plugin> plugins = getActivePlugins(main);
+        Map<String, Plugin> plugins = getActivePlugins(main, repos);
         for (Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
             // only load the plugin if the command-line is calling this plugin
             if (target != null && !"shell".equals(target) && !target.equals(plugin.getKey())) {
@@ -114,10 +138,11 @@ public final class PluginHelper {
      * Gets the active plugins according to the local plugin configuration file. Performs version check to make sure
      * that the current Camel JBang version is able to execute the plugin.
      *
-     * @param  main to exit the CLI process in case of error
-     * @return      map of plugins where key represents the plugin command and value the plugin instance.
+     * @param  main  to exit the CLI process in case of error
+     * @param  repos custom maven repositories
+     * @return       map of plugins where key represents the plugin command and value the plugin instance.
      */
-    public static Map<String, Plugin> getActivePlugins(CamelJBangMain main) {
+    public static Map<String, Plugin> getActivePlugins(CamelJBangMain main, String repos) {
         Map<String, Plugin> activePlugins = new HashMap<>();
         JsonObject config = getPluginConfig();
         if (config != null) {
@@ -138,7 +163,7 @@ public final class PluginHelper {
                     versionCheck(main, version, firstVersion, command);
                 }
 
-                Optional<Plugin> plugin = getPlugin(command, version, gav, main.getOut());
+                Optional<Plugin> plugin = getPlugin(command, version, gav, repos, main.getOut());
                 if (plugin.isPresent()) {
                     activePlugins.put(command, plugin.get());
                 } else {
@@ -151,14 +176,14 @@ public final class PluginHelper {
         return activePlugins;
     }
 
-    public static Optional<Plugin> getPlugin(String name, String defaultVersion, String gav, Printer printer) {
+    public static Optional<Plugin> getPlugin(String name, String defaultVersion, String gav, String repos, Printer printer) {
         Optional<Plugin> plugin = FACTORY_FINDER.newInstance("camel-jbang-plugin-" + name, Plugin.class);
         if (plugin.isEmpty()) {
             final MavenGav mavenGav = dependencyAsMavenGav(gav);
             final String group = extractGroup(mavenGav, "org.apache.camel");
             final String depVersion = extractVersion(mavenGav, defaultVersion);
 
-            plugin = downloadPlugin(name, depVersion, group, printer);
+            plugin = downloadPlugin(name, depVersion, group, repos, printer);
         }
 
         return plugin;
@@ -186,10 +211,14 @@ public final class PluginHelper {
         }
     }
 
-    private static Optional<Plugin> downloadPlugin(String command, String version, String group, Printer printer) {
+    private static Optional<Plugin> downloadPlugin(
+            String command, String version, String group, String repos, Printer printer) {
         DependencyDownloader downloader = new MavenDependencyDownloader();
         DependencyDownloaderClassLoader ddlcl = new DependencyDownloaderClassLoader(PluginHelper.class.getClassLoader());
         downloader.setClassLoader(ddlcl);
+        if (repos != null && !repos.isBlank()) {
+            downloader.setRepositories(repos);
+        }
         downloader.start();
         // downloads and adds to the classpath
         downloader.downloadDependencyWithParent("org.apache.camel:camel-jbang-parent:" + version, group,

@@ -26,38 +26,42 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "add",
-                     description = "Add new plugin.", sortOptions = false, showDefaultValues = true)
+                     description = "Add new plugin", sortOptions = false, showDefaultValues = true)
 public class PluginAdd extends PluginBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel plugin to add.",
+    @CommandLine.Parameters(description = "The Camel plugin to add",
                             paramLabel = "<name>")
     String name;
 
     @CommandLine.Option(names = { "--command" },
-                        description = "The command that the plugin uses.")
+                        description = "The command that the plugin uses")
     String command;
 
     @CommandLine.Option(names = { "--description" },
-                        description = "A short description of the plugin.")
+                        description = "A short description of the plugin")
     String description;
 
+    @CommandLine.Option(names = { "--repo", "--repos" },
+                        description = "Additional maven repositories to use for downloading the plugin (Use commas to separate multiple repositories)")
+    String repositories;
+
     @CommandLine.Option(names = { "--artifactId" },
-                        description = "Maven artifactId.")
+                        description = "Maven artifactId")
     String artifactId;
 
     @CommandLine.Option(names = { "--groupId" },
                         defaultValue = "org.apache.camel",
-                        description = "Maven groupId.")
+                        description = "Maven groupId")
     String groupId = "org.apache.camel";
 
     @CommandLine.Option(names = { "--version" },
                         defaultValue = "${camel-version}",
-                        description = "Maven artifact version.")
+                        description = "Maven artifact version")
     String version;
 
     @CommandLine.Option(names = { "--first-version" },
                         defaultValue = "${camel-version}",
-                        description = "First version of this plugin.")
+                        description = "First version of this plugin")
     String firstVersion;
 
     @CommandLine.Option(names = { "--gav" },
@@ -116,6 +120,9 @@ public class PluginAdd extends PluginBaseCommand {
 
         if (gav != null) {
             plugin.put("dependency", gav);
+        }
+        if (repositories != null) {
+            plugin.put("repos", repositories);
         }
 
         plugins.put(name, plugin);

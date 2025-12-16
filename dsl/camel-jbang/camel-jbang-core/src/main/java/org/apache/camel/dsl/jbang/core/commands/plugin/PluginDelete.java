@@ -21,10 +21,10 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "delete",
-                     description = "Removes a plugin.", sortOptions = false, showDefaultValues = true)
+                     description = "Removes a plugin", sortOptions = false, showDefaultValues = true)
 public class PluginDelete extends PluginBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel plugin to remove.",
+    @CommandLine.Parameters(description = "The Camel plugin to remove",
                             paramLabel = "<plugin>")
     String name;
 
