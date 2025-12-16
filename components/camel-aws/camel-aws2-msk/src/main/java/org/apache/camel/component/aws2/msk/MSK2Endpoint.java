@@ -68,7 +68,7 @@ public class MSK2Endpoint extends ScheduledPollEndpoint implements EndpointServi
 
         mskClient = configuration.getMskClient() != null
                 ? configuration.getMskClient()
-                : MSK2ClientFactory.getKafkaClient(configuration).getKafkaClient();
+                : MSK2ClientFactory.getKafkaClient(configuration);
     }
 
     @Override

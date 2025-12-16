@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.msk;
 
 import org.apache.camel.component.aws2.msk.client.MSK2ClientFactory;
-import org.apache.camel.component.aws2.msk.client.MSK2InternalClient;
-import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.kafka.KafkaClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MSK2ClientFactoryTest {
 
     @Test
-    public void getStandardMSKClientDefault() {
-        MSK2Configuration msk2Configuration = new MSK2Configuration();
-        MSK2InternalClient mskClient = MSK2ClientFactory.getKafkaClient(msk2Configuration);
-        assertTrue(mskClient instanceof MSK2ClientStandardImpl);
+    public void getMskClientWithDefaultCredentials() {
+        MSK2Configuration configuration = new MSK2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        KafkaClient kafkaClient = MSK2ClientFactory.getKafkaClient(configuration);
+        assertNotNull(kafkaClient);
+        kafkaClient.close();
     }
 
     @Test
-    public void getStandardMSKClient() {
-        MSK2Configuration msk2Configuration = new MSK2Configuration();
-        msk2Configuration.setUseDefaultCredentialsProvider(false);
-        MSK2InternalClient mskClient = MSK2ClientFactory.getKafkaClient(msk2Configuration);
-        assertTrue(mskClient instanceof MSK2ClientStandardImpl);
+    public void getMskClientWithStaticCredentials() {
+        MSK2Configuration configuration = new MSK2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        KafkaClient kafkaClient = MSK2ClientFactory.getKafkaClient(configuration);
+        assertNotNull(kafkaClient);
+        kafkaClient.close();
     }
 
     @Test
-    public void getMSKOptimizedMSKClient() {
-        MSK2Configuration msk2Configuration = new MSK2Configuration();
-        msk2Configuration.setUseDefaultCredentialsProvider(true);
-        MSK2InternalClient mskClient = MSK2ClientFactory.getKafkaClient(msk2Configuration);
-        assertTrue(mskClient instanceof MSK2ClientOptimizedImpl);
-    }
-
-    @Test
-    public void getMSKSessionTokenClient() {
-        MSK2Configuration msk2Configuration = new MSK2Configuration();
-        msk2Configuration.setUseSessionCredentials(true);
-        MSK2InternalClient mskClient = MSK2ClientFactory.getKafkaClient(msk2Configuration);
-        assertTrue(mskClient instanceof MSK2ClientSessionTokenImpl);
+    public void getMskClientWithEndpointOverride() {
+        MSK2Configuration configuration = new MSK2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        KafkaClient kafkaClient = MSK2ClientFactory.getKafkaClient(configuration);
+        assertNotNull(kafkaClient);
+        kafkaClient.close();
     }
 }
