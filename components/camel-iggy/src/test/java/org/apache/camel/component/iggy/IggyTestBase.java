@@ -39,13 +39,8 @@ import org.apache.iggy.message.Partitioning;
 import org.apache.iggy.message.PollingStrategy;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static java.util.Optional.empty;
-
-@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
-                          disabledReason = "Iggy 0.6.0+ requires io_uring which is not available on CI environments")
 public abstract class IggyTestBase {
 
     @Order(1)
