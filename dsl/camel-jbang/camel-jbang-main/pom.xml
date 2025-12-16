@@ -40,6 +40,8 @@
         <supportLevel>Preview</supportLevel>
         <dist.dir>dist</dist.dir>
         <camel-prepare-component>false</camel-prepare-component>
+        <!-- This property is a modification to workaround false positive on md5 verification when publishing to Nexus -->
+        <workaround>workaround</workaround>
     </properties>
 
     <dependencies>
