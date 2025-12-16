@@ -522,7 +522,7 @@
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.17</tahu-version>
-        <testcontainers-version>2.0.2</testcontainers-version>
+        <testcontainers-version>2.0.3</testcontainers-version>
         <thymeleaf-version>3.1.3.RELEASE</thymeleaf-version>
         <tika-version>3.2.3</tika-version>
         <twilio-version>11.2.0</twilio-version>
