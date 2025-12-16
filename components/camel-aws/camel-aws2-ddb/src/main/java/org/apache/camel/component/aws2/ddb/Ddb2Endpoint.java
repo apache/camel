@@ -88,7 +88,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
         super.doStart();
 
         ddbClient = configuration.getAmazonDDBClient() != null
-                ? configuration.getAmazonDDBClient() : Ddb2ClientFactory.getDynamoDBClient(configuration).getDynamoDBClient();
+                ? configuration.getAmazonDDBClient() : Ddb2ClientFactory.getDynamoDBClient(configuration);
 
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
