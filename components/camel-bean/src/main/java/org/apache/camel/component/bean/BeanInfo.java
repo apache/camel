@@ -44,6 +44,7 @@ import org.apache.camel.Message;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.Variable;
 import org.apache.camel.Variables;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.language.AnnotationExpressionFactory;
@@ -164,11 +165,13 @@ public class BeanInfo {
 
         // key must be instance based for custom/handler annotations
         boolean instanceBased = !operationsWithCustomAnnotation.isEmpty() || !operationsWithHandlerAnnotation.isEmpty();
+        // do not cache Exchange based beans
+        instanceBased &= DefaultExchange.class != type;
         if (instanceBased) {
             // add new bean info to cache (instance based)
             component.addBeanInfoToCache(key, this);
         } else {
-            // add new bean info to cache (not instance based, favour key2 if possible)
+            // add new bean info to cache (not instance based, favor key2 if possible)
             BeanInfoCacheKey k = key2 != null ? key2 : key;
             component.addBeanInfoToCache(k, this);
         }
@@ -460,10 +463,12 @@ public class BeanInfo {
             Annotation[] parameterAnnotations
                     = parametersAnnotations[i].toArray(new Annotation[0]);
             Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
-            hasCustomAnnotation |= expression != null;
             if (expression == null) {
                 expression = strategy.getDefaultParameterTypeExpression(parameterType);
             }
+            // this is not entirely correct as the parameter may be a default parameter type and not a custom annotation
+            // but we need to keep this logic for backwards compatability
+            hasCustomAnnotation |= expression != null;
 
             // whether this parameter is vararg which must be last parameter
             boolean varargs = method.isVarArgs() && i == size - 1;
