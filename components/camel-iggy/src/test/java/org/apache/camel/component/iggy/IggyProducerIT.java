@@ -25,7 +25,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.iggy.message.Message;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Iggy 0.6.0+ requires io_uring which is not available on CI environments")
 public class IggyProducerIT extends IggyTestBase {
 
     @Test
