@@ -38,8 +38,8 @@ class VersionListTest extends CamelCommandBaseTest {
         List<String> lines = printer.getLines();
         // there was a change where the information is stored in 4.15, thus the test on 4.14.1 and 4.15.0
         Assertions.assertThat(lines.stream().collect(Collectors.joining("\n")))
-                .contains("4.14.1         3.5.6     17,21   LTS")
-                .contains("4.15.0         3.5.6     17,21");
+                .contains("4.14.1         3.5.6      17,21   LTS")
+                .contains("4.15.0         3.5.6      17,21");
     }
 
     @Test
