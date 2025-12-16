@@ -21,7 +21,6 @@ import java.util.concurrent.Callable;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.*;
-import org.apache.camel.dsl.jbang.core.commands.bind.Bind;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogComponent;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDataFormat;
@@ -166,7 +165,6 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("other", new CommandLine(new CatalogOther(main)))
                         .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(main))))
                 .addSubcommand("doc", new CommandLine(new CatalogDoc(main)))
-                .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("script", new CommandLine(new Script(main)))
                 .addSubcommand("jolokia", new CommandLine(new Jolokia(main)))
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
