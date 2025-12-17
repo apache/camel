@@ -67,7 +67,7 @@ public class Cw2Endpoint extends DefaultEndpoint implements EndpointServiceLocat
         super.doInit();
 
         cloudWatchClient = configuration.getAmazonCwClient() != null
-                ? configuration.getAmazonCwClient() : Cw2ClientFactory.getCloudWatchClient(configuration).getCloudWatchClient();
+                ? configuration.getAmazonCwClient() : Cw2ClientFactory.getCloudWatchClient(configuration);
     }
 
     @Override

@@ -418,6 +418,41 @@ public interface Aws2TimestreamComponentBuilderFactory {
             doSetProperty("secretKey", secretKey);
             return this;
         }
+    
+        /**
+         * Amazon AWS Session Token used when the user needs to assume an IAM
+         * role.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sessionToken the value to set
+         * @return the dsl builder
+         */
+        default Aws2TimestreamComponentBuilder sessionToken(java.lang.String sessionToken) {
+            doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+    
+        
+        /**
+         * Set whether the Timestream client should expect to use Session
+         * Credentials. This is useful in a situation in which the user needs to
+         * assume an IAM role for doing operations in Timestream.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param useSessionCredentials the value to set
+         * @return the dsl builder
+         */
+        default Aws2TimestreamComponentBuilder useSessionCredentials(boolean useSessionCredentials) {
+            doSetProperty("useSessionCredentials", useSessionCredentials);
+            return this;
+        }
     }
 
     class Aws2TimestreamComponentBuilderImpl
@@ -460,6 +495,8 @@ public interface Aws2TimestreamComponentBuilderFactory {
             case "proxyProtocol": getOrCreateConfiguration((Timestream2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "accessKey": getOrCreateConfiguration((Timestream2Component) component).setAccessKey((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Timestream2Component) component).setSecretKey((java.lang.String) value); return true;
+            case "sessionToken": getOrCreateConfiguration((Timestream2Component) component).setSessionToken((java.lang.String) value); return true;
+            case "useSessionCredentials": getOrCreateConfiguration((Timestream2Component) component).setUseSessionCredentials((boolean) value); return true;
             default: return false;
             }
         }

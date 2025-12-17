@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.translate.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.translate.Translate2Configuration;
-import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientIAMOptimized;
-import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientIAMProfileOptimized;
-import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.translate.client.impl.Translate2ClientStandardImpl;
+import software.amazon.awssdk.services.translate.TranslateClient;
 
 /**
- * Factory class to return the correct type of AWS Translate aws.
+ * Factory class to create AWS Translate clients using common configuration.
  */
 public final class Translate2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class Translate2ClientFactory {
     }
 
     /**
-     * Return the correct aws Translate client (based on remote vs local).
+     * Create a TranslateClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               TranslateClient
+     * @param  configuration The Translate configuration
+     * @return               Configured TranslateClient
      */
-    public static Translate2InternalClient getTranslateClient(Translate2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Translate2ClientIAMOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Translate2ClientIAMProfileOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Translate2ClientSessionTokenImpl(configuration);
-        } else {
-            return new Translate2ClientStandardImpl(configuration);
-        }
+    public static TranslateClient getTranslateClient(Translate2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                TranslateClient::builder);
     }
 }

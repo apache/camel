@@ -67,7 +67,7 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
 
         bedrockAgentRuntimeClient = configuration.getBedrockAgentRuntimeClient() != null
                 ? configuration.getBedrockAgentRuntimeClient()
-                : BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(configuration).getBedrockAgentRuntimeClient();
+                : BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(configuration);
     }
 
     @Override

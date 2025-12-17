@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.bedrock.agent.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.bedrock.agent.BedrockAgentConfiguration;
-import org.apache.camel.component.aws2.bedrock.agent.client.impl.BedrockAgentClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.bedrock.agent.client.impl.BedrockAgentClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.bedrock.agent.client.impl.BedrockAgentClientSessionTokenImpl;
-import org.apache.camel.component.aws2.bedrock.agent.client.impl.BedrockAgentClientStandardImpl;
+import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
 
 /**
- * Factory class to return the correct type of AWS Bedrock runtime client.
+ * Factory class to create AWS Bedrock Agent clients using common configuration.
  */
 public final class BedrockAgentClientFactory {
 
@@ -31,21 +29,14 @@ public final class BedrockAgentClientFactory {
     }
 
     /**
-     * Return the correct AWS Bedrock Agent client (based on remote vs local).
+     * Create a BedrockAgentClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               BedrockAgentInternalClient
+     * @param  configuration The Bedrock Agent configuration
+     * @return               Configured BedrockAgentClient
      */
-    public static BedrockAgentInternalClient getBedrockAgentClient(
-            BedrockAgentConfiguration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new BedrockAgentClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new BedrockAgentClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new BedrockAgentClientSessionTokenImpl(configuration);
-        } else {
-            return new BedrockAgentClientStandardImpl(configuration);
-        }
+    public static BedrockAgentClient getBedrockAgentClient(BedrockAgentConfiguration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                BedrockAgentClient::builder);
     }
 }

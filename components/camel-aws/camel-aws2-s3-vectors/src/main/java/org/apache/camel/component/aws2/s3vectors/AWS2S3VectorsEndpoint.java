@@ -104,7 +104,7 @@ public class AWS2S3VectorsEndpoint extends ScheduledPollEndpoint implements Endp
 
         s3VectorsClient = configuration.getS3VectorsClient() != null
                 ? configuration.getS3VectorsClient()
-                : AWS2S3VectorsClientFactory.getS3VectorsClient(configuration).getS3VectorsClient();
+                : AWS2S3VectorsClientFactory.getS3VectorsClient(configuration);
 
         LOG.trace("Using vector bucket [{}]", vectorBucketName);
     }

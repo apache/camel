@@ -418,9 +418,9 @@ public interface AwsSecretsManagerComponentBuilderFactory {
     
         
         /**
-         * Set whether the Translate client should expect to load credentials
-         * through a default credentials provider or to expect static
-         * credentials to be passed in.
+         * Set whether the Secrets Manager client should expect to load
+         * credentials through a default credentials provider or to expect
+         * static credentials to be passed in.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

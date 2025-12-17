@@ -68,7 +68,7 @@ public class Translate2Endpoint extends ScheduledPollEndpoint implements Endpoin
         translateClient
                 = configuration.getTranslateClient() != null
                         ? configuration.getTranslateClient()
-                        : Translate2ClientFactory.getTranslateClient(configuration).getTranslateClient();
+                        : Translate2ClientFactory.getTranslateClient(configuration);
     }
 
     @Override

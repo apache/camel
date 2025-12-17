@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.timestream;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -26,7 +27,7 @@ import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
 import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
 
 @UriParams
-public class Timestream2Configuration implements Cloneable {
+public class Timestream2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Type of client - write/query")
     @Metadata(required = true)
@@ -41,6 +42,10 @@ public class Timestream2Configuration implements Cloneable {
     private String accessKey;
     @UriParam(label = "security", secret = true)
     private String secretKey;
+    @UriParam(label = "security", secret = true)
+    private String sessionToken;
+    @UriParam(label = "security")
+    private boolean useSessionCredentials;
     @UriParam(enums = "ap-south-2,ap-south-1,eu-south-1,eu-south-2,us-gov-east-1,me-central-1,il-central-1,ca-central-1,eu-central-1,us-iso-west-1,eu-central-2,eu-isoe-west-1,us-west-1,us-west-2,af-south-1,eu-north-1,eu-west-3,eu-west-2,eu-west-1,ap-northeast-3,ap-northeast-2,ap-northeast-1,me-south-1,sa-east-1,ap-east-1,cn-north-1,ca-west-1,us-gov-west-1,ap-southeast-1,ap-southeast-2,us-iso-east-1,ap-southeast-3,ap-southeast-4,us-east-1,us-east-2,cn-northwest-1,us-isob-east-1,aws-global,aws-cn-global,aws-us-gov-global,aws-iso-global,aws-iso-b-global")
     private String region;
     @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
@@ -116,6 +121,29 @@ public class Timestream2Configuration implements Cloneable {
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public String getSessionToken() {
+        return sessionToken;
+    }
+
+    /**
+     * Amazon AWS Session Token used when the user needs to assume an IAM role
+     */
+    public void setSessionToken(String sessionToken) {
+        this.sessionToken = sessionToken;
+    }
+
+    public boolean isUseSessionCredentials() {
+        return useSessionCredentials;
+    }
+
+    /**
+     * Set whether the Timestream client should expect to use Session Credentials. This is useful in a situation in
+     * which the user needs to assume an IAM role for doing operations in Timestream.
+     */
+    public void setUseSessionCredentials(boolean useSessionCredentials) {
+        this.useSessionCredentials = useSessionCredentials;
     }
 
     public String getRegion() {
@@ -231,7 +259,7 @@ public class Timestream2Configuration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 

@@ -53,7 +53,7 @@ public class CloudtrailEndpoint extends ScheduledPollEndpoint implements Endpoin
         super.doStart();
         cloudTrailClient = configuration.getCloudTrailClient() != null
                 ? configuration.getCloudTrailClient()
-                : CloudtrailClientFactory.getCloudtrailClient(configuration).getCloudtrailClient();
+                : CloudtrailClientFactory.getCloudtrailClient(configuration);
     }
 
     @Override

@@ -74,12 +74,12 @@ public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointSe
         // Get sync client
         bedrockRuntimeClient = configuration.getBedrockRuntimeClient() != null
                 ? configuration.getBedrockRuntimeClient()
-                : BedrockClientFactory.getBedrockRuntimeClient(configuration).getBedrockRuntimeClient();
+                : BedrockClientFactory.getBedrockRuntimeClient(configuration);
 
         // Get async client for streaming operations
         bedrockRuntimeAsyncClient = configuration.getBedrockRuntimeAsyncClient() != null
                 ? configuration.getBedrockRuntimeAsyncClient()
-                : BedrockClientFactory.getBedrockRuntimeClient(configuration).getBedrockRuntimeAsyncClient();
+                : BedrockClientFactory.getBedrockRuntimeAsyncClient(configuration);
     }
 
     @Override

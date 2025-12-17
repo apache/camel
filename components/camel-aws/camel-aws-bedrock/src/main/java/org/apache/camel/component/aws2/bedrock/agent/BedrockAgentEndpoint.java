@@ -74,7 +74,7 @@ public class BedrockAgentEndpoint extends ScheduledPollEndpoint implements Endpo
 
         bedrockAgentClient = configuration.getBedrockAgentClient() != null
                 ? configuration.getBedrockAgentClient()
-                : BedrockAgentClientFactory.getBedrockAgentClient(configuration).getBedrockAgentClient();
+                : BedrockAgentClientFactory.getBedrockAgentClient(configuration);
     }
 
     @Override

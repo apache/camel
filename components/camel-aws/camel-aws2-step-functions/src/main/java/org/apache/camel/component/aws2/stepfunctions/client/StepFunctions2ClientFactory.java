@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.stepfunctions.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.stepfunctions.StepFunctions2Configuration;
-import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.stepfunctions.client.impl.StepFunctions2ClientStandardImpl;
+import software.amazon.awssdk.services.sfn.SfnClient;
 
 /**
- * Factory class to return the correct type of AWS StepFunctions client.
+ * Factory class to create AWS StepFunctions clients using common configuration.
  */
 public final class StepFunctions2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class StepFunctions2ClientFactory {
     }
 
     /**
-     * Return the correct AWS StepFunctions client (based on remote vs local).
+     * Create a SfnClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               StepFunctionsClient
+     * @param  configuration The StepFunctions configuration
+     * @return               Configured SfnClient
      */
-    public static StepFunctions2InternalClient getSfnClient(StepFunctions2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new StepFunctions2ClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new StepFunctions2ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new StepFunctions2ClientSessionTokenImpl(configuration);
-        } else {
-            return new StepFunctions2ClientStandardImpl(configuration);
-        }
+    public static SfnClient getSfnClient(StepFunctions2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                SfnClient::builder);
     }
 }
