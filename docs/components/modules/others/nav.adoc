@@ -29,7 +29,7 @@
 ** xref:lra.adoc[LRA]
 ** xref:mail-microsoft-oauth.adoc[Mail Microsoft Oauth]
 ** xref:main.adoc[Main]
-** xref:mdc.adoc[Mdc]
+** xref:mdc.adoc[MDC Logging]
 ** xref:observation.adoc[Micrometer Observability]
 ** xref:micrometer-observability.adoc[Micrometer Observability 2]
 ** xref:micrometer-prometheus.adoc[Micrometer Prometheus]
