@@ -175,9 +175,8 @@ AggregationStrategy agg = AggregationStrategies.flexible(Integer.class)
 
 === Aggregating on timeout
 
-If your aggregation strategy implements
-`TimeoutAwareAggregationStrategy`, then Camel will invoke the `timeout`
-method when the timeout occurs. Notice that the values for index and
+Camel invokes the `timeout` method on `AggregationStrategy` when the timeout occurs.
+Notice that the values for index and
 total parameters will be -1, and the timeout parameter will be provided
 only if configured as a fixed value. You must *not* throw any exceptions
 from the `timeout` method.
@@ -282,11 +281,9 @@ completions
 * any other completions are not used (such as by size, from batch consumer, etc.)
 * _eagerCheckCompletion_ is implied as `true`, but the option has no effect
 
-=== CompletionAwareAggregationStrategy
+=== Completion AggregationStrategy
 
-If your aggregation strategy implements
-`CompletionAwareAggregationStrategy`, then Camel will invoke the
-`onComplete` method when the aggregated `Exchange` is completed. This
+Camel invokes the `onComplete` on `AggregationStrategy` method when the aggregated `Exchange` is completed. This
 allows you to do any last minute custom logic such as to clean up some
 resources, or additional work on the exchange as it's now completed.
 You must *not* throw any exceptions from the `onCompletion` method.

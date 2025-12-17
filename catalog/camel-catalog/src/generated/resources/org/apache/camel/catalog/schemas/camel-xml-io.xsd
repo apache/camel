@@ -9894,9 +9894,9 @@ behavior is to not stop but continue processing till the end. Default value: fal
 <![CDATA[
 Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to send and
 process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out and continues.
-Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the
-timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in
-a graceful manner may continue to run. So use this option with a bit of care. Default value: 0
+The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain
+tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with
+a bit of care. Default value: 0
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10949,9 +10949,9 @@ routing after the recipient list is complete, even if parallel processing is ena
 <![CDATA[
 Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able to send
 and process all replies within the given timeframe, then the timeout triggers and the Recipient List breaks out and
-continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking
-out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to
-shut down in a graceful manner may continue to run. So use this option with a bit of care. Default value: 0
+continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still
+remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So
+use this option with a bit of care. Default value: 0
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12618,11 +12618,11 @@ behavior is to not stop but continue processing till the end. Default value: fal
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to split and
-process all the sub messages within the given timeframe, then the timeout triggers and the Splitter breaks out and
-continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking
-out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to
-shut down in a graceful manner may continue to run. So use this option with a bit of care. Default value: 0
+Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and
+process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The
+timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain
+tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with
+a bit of care. Default value: 0
 ]]>
             </xs:documentation>
           </xs:annotation>

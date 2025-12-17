@@ -570,15 +570,14 @@ public interface DynamicRouterEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a total timeout specified in milliseconds, when using parallel
-         * processing. If the Multicast has not been able to send and process
-         * all replies within the given timeframe, then the timeout triggers and
-         * the Multicast breaks out and continues. Notice that, if you provide a
-         * TimeoutAwareAggregationStrategy, then the timeout method is invoked
-         * before breaking out. If the timeout is reached with running tasks
-         * still remaining, certain tasks (for which it is difficult for Camel
-         * to shut down in a graceful manner) may continue to run. So use this
-         * option with a bit of care.
+         * Sets a total timeout specified in millis, when using parallel
+         * processing. If the Dynamic Router hasn't been able to send and
+         * process all replies within the given timeframe, then the timeout
+         * triggers and the Dynamic Router breaks out and continues. The timeout
+         * method is invoked before breaking out. If the timeout is reached with
+         * running tasks still remaining, certain tasks for which it is
+         * difficult for Camel to shut down in a graceful manner may continue to
+         * run. So use this option with a bit of care.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -593,15 +592,14 @@ public interface DynamicRouterEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a total timeout specified in milliseconds, when using parallel
-         * processing. If the Multicast has not been able to send and process
-         * all replies within the given timeframe, then the timeout triggers and
-         * the Multicast breaks out and continues. Notice that, if you provide a
-         * TimeoutAwareAggregationStrategy, then the timeout method is invoked
-         * before breaking out. If the timeout is reached with running tasks
-         * still remaining, certain tasks (for which it is difficult for Camel
-         * to shut down in a graceful manner) may continue to run. So use this
-         * option with a bit of care.
+         * Sets a total timeout specified in millis, when using parallel
+         * processing. If the Dynamic Router hasn't been able to send and
+         * process all replies within the given timeframe, then the timeout
+         * triggers and the Dynamic Router breaks out and continues. The timeout
+         * method is invoked before breaking out. If the timeout is reached with
+         * running tasks still remaining, certain tasks for which it is
+         * difficult for Camel to shut down in a graceful manner may continue to
+         * run. So use this option with a bit of care.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
