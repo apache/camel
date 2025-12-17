@@ -41,7 +41,7 @@ This component supports two modes of operation:
 pip install docling
 ----
 
-2. **API Mode**: Requires a running docling-serve instance. You can run it using:
+2. **API Mode**: Requires a running docling-serve instance. The component uses the official https://github.com/docling-project/docling-java[docling-java] library for communication with docling-serve, providing robust API integration with native async support. You can run docling-serve using:
 +
 [source,bash]
 ----
@@ -1999,104 +1999,33 @@ The component handles various error scenarios:
 - **Async Configuration**: Adjust `asyncPollInterval` (default 2000ms) and `asyncTimeout` (default 300000ms/5 minutes) based on your document size and processing requirements
 - **Batch Processing**: When processing multiple documents, async mode allows better parallelization as the docling-serve instance can process multiple documents concurrently while Camel polls for results
 
-== Connection Pool Configuration
+== HTTP Client Configuration
 
-When using docling-serve API mode, the component uses an HTTP connection pool for efficient connection management and reuse. The connection pool can be configured using the following advanced parameters:
+When using docling-serve API mode, the component uses the https://github.com/docling-project/docling-java[docling-java] library which internally uses Java's built-in `HttpClient`. The HTTP client is configured with sensible defaults and connection management is handled automatically by the library.
 
-=== Connection Pool Parameters
+=== Async Configuration Parameters
+
+The most important configuration parameters for API mode relate to async processing:
 
 [width="100%",cols="2,1,4",options="header"]
 |===
 | Parameter | Default | Description
 
-| `maxTotalConnections`
-| 20
-| Maximum total connections in the connection pool
-
-| `maxConnectionsPerRoute`
-| 10
-| Maximum connections per route (per target host)
-
-| `connectionTimeout`
-| 30000
-| Connection timeout in milliseconds (time to establish connection)
-
-| `socketTimeout`
-| 60000
-| Socket timeout in milliseconds (time waiting for data)
-
-| `connectionRequestTimeout`
-| 30000
-| Connection request timeout in milliseconds (time to get connection from pool)
-
-| `connectionTimeToLive`
-| -1
-| Time to live for connections in milliseconds (-1 for infinite)
-
-| `validateAfterInactivity`
+| `asyncPollInterval`
 | 2000
-| Validate connections after inactivity in milliseconds
+| Poll interval in milliseconds when checking async task status
 
-| `evictIdleConnections`
-| true
-| Enable eviction of idle connections from the pool
-
-| `maxIdleTime`
-| 60000
-| Maximum idle time for connections in milliseconds before eviction
+| `asyncTimeout`
+| 300000
+| Maximum time to wait for async conversion completion in milliseconds (5 minutes)
 
 |===
 
-=== Connection Pool Tuning Examples
-
-==== High-Volume Processing
-
-For high-volume document processing with concurrent requests:
-
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "maxTotalConnections=50&" +
-        "maxConnectionsPerRoute=25&" +
-        "connectionTimeout=10000&" +
-        "socketTimeout=120000&" +
-        "contentInBody=true")
-    .to("file:///data/output");
-----
-
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            maxTotalConnections: 50
-            maxConnectionsPerRoute: 25
-            connectionTimeout: 10000
-            socketTimeout: 120000
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
+=== Configuration Examples
 
 ==== Long-Running Document Processing
 
-For large documents that take a long time to process:
+For large documents that take a long time to process, increase the async timeout:
 
 [tabs]
 ====
@@ -2107,10 +2036,9 @@ Java::
 from("file:///data/large-documents?include=.*\\.pdf")
     .to("docling:CONVERT_TO_MARKDOWN?" +
         "useDoclingServe=true&" +
-        "socketTimeout=300000&" +        // 5 minutes
-        "connectionTimeout=60000&" +     // 1 minute
-        "validateAfterInactivity=5000&" +
-        "maxIdleTime=120000&" +
+        "useAsyncMode=true&" +
+        "asyncPollInterval=5000&" +      // Check every 5 seconds
+        "asyncTimeout=600000&" +          // 10 minutes timeout
         "contentInBody=true")
     .to("file:///data/output");
 ----
@@ -2129,75 +2057,23 @@ YAML::
           uri: "docling:CONVERT_TO_MARKDOWN"
           parameters:
             useDoclingServe: true
-            socketTimeout: 300000
-            connectionTimeout: 60000
-            validateAfterInactivity: 5000
-            maxIdleTime: 120000
+            useAsyncMode: true
+            asyncPollInterval: 5000
+            asyncTimeout: 600000
             contentInBody: true
       - to:
           uri: "file:///data/output"
 ----
 ====
 
-==== Resource-Constrained Environment
+=== Best Practices
 
-For environments with limited resources:
+1. **Use async mode for large documents**: Enable `useAsyncMode=true` for documents that may take longer to process. The docling-java library handles polling automatically.
 
-[tabs]
-====
-Java::
-+
-[source,java]
-----
-from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:CONVERT_TO_MARKDOWN?" +
-        "useDoclingServe=true&" +
-        "maxTotalConnections=5&" +
-        "maxConnectionsPerRoute=2&" +
-        "connectionTimeToLive=30000&" +  // Recycle connections every 30 seconds
-        "evictIdleConnections=true&" +
-        "maxIdleTime=10000&" +           // Evict after 10 seconds idle
-        "contentInBody=true")
-    .to("file:///data/output");
-----
+2. **Adjust poll interval appropriately**: For high-volume scenarios, increase `asyncPollInterval` to reduce polling overhead. For interactive use cases, a shorter interval provides faster feedback.
 
-YAML::
-+
-[source,yaml]
-----
-- route:
-    from:
-      uri: "file:///data/documents"
-      parameters:
-        include: ".*\\.pdf"
-    steps:
-      - to:
-          uri: "docling:CONVERT_TO_MARKDOWN"
-          parameters:
-            useDoclingServe: true
-            maxTotalConnections: 5
-            maxConnectionsPerRoute: 2
-            connectionTimeToLive: 30000
-            evictIdleConnections: true
-            maxIdleTime: 10000
-            contentInBody: true
-      - to:
-          uri: "file:///data/output"
-----
-====
+3. **Set appropriate timeouts**: Adjust `asyncTimeout` based on your largest expected document size. The default 5 minutes is suitable for most documents.
 
-=== Connection Pool Best Practices
-
-1. **Size the pool appropriately**: Set `maxTotalConnections` based on expected concurrent requests. A good starting point is 2-3 times the number of concurrent threads.
-
-2. **Configure per-route limits**: Set `maxConnectionsPerRoute` to prevent a single host from consuming all connections. Typically 50-70% of `maxTotalConnections`.
-
-3. **Set appropriate timeouts**: Adjust `socketTimeout` based on average document processing time. Add a safety margin for larger documents.
-
-4. **Enable connection validation**: Use `validateAfterInactivity` to ensure connections are healthy before use, especially in unreliable network environments.
-
-5. **Clean up idle connections**: Enable `evictIdleConnections` to free resources when the pool is underutilized.
-
-6. **Monitor pool statistics**: Use logging at DEBUG level to monitor connection pool usage and adjust parameters accordingly.
+4. **Monitor with logging**: Use DEBUG level logging to monitor API calls and async task status.
 
 include::spring-boot:partial$starter.adoc[]
