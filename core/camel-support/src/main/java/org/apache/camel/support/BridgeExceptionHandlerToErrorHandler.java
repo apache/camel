@@ -58,29 +58,36 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
 
     @Override
     public void handleException(String message, Exchange exchange, Throwable exception) {
+        Exchange copy;
         if (exchange == null) {
-            exchange = consumer.getEndpoint().createExchange();
+            copy = consumer.getEndpoint().createExchange();
+        } else {
+            // use a copy to as must be processed independently unit of work
+            copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
         }
 
         // set the caused exception
-        exchange.setException(exception);
-        exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
+        copy.setException(exception);
+        copy.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, exception);
         // and the message
-        exchange.getIn().setBody(message);
+        copy.getIn().setBody(message);
         // mark as bridged
-        exchange.setProperty(ExchangePropertyKey.ERRORHANDLER_BRIDGE, true);
+        copy.setProperty(ExchangePropertyKey.ERRORHANDLER_BRIDGE, true);
         // and mark as redelivery exhausted as we cannot do redeliveries
-        exchange.getExchangeExtension().setRedeliveryExhausted(true);
+        copy.getExchangeExtension().setRedeliveryExhausted(true);
 
         // wrap in UoW
         UnitOfWork uow = null;
         try {
-            uow = consumer.createUoW(exchange);
-            bridge.process(exchange);
+            uow = consumer.createUoW(copy);
+            // process synchronously
+            bridge.process(copy);
         } catch (Exception e) {
-            fallback.handleException("Error handling exception " + exception.getMessage(), exchange, e);
+            fallback.handleException(
+                    "Error bridge handling existing exception " + exception.getMessage() + " due to: " + e.getMessage(), copy,
+                    e);
         } finally {
-            UnitOfWorkHelper.doneUow(uow, exchange);
+            UnitOfWorkHelper.doneUow(uow, copy);
         }
     }
 }
