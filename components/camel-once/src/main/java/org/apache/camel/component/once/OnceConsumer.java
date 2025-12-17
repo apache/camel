@@ -49,6 +49,7 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
             public void run() {
                 Exchange exchange = createExchange(false);
                 try {
+                    // TODO: options for body/headers to enrich the exchange message
                     getProcessor().process(exchange);
                 } catch (Exception e) {
                     exchange.setException(e);
