@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.athena.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.athena.Athena2Configuration;
-import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.athena.client.impl.Athena2ClientStandardImpl;
+import software.amazon.awssdk.services.athena.AthenaClient;
 
 /**
- * Factory class to return the correct type of AWS Athena client.
+ * Factory class to create AWS Athena clients using common configuration.
  */
 public final class Athena2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class Athena2ClientFactory {
     }
 
     /**
-     * Return the correct AWS Athena client (based on remote vs local).
+     * Create an Athena client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               AthenaClient
+     * @param  configuration The Athena configuration
+     * @return               Configured AthenaClient
      */
-    public static Athena2InternalClient getAWSAthenaClient(Athena2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Athena2ClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Athena2ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Athena2ClientSessionTokenImpl(configuration);
-        } else {
-            return new Athena2ClientStandardImpl(configuration);
-        }
+    public static AthenaClient getAthenaClient(Athena2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                AthenaClient::builder);
     }
 }

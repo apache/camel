@@ -301,6 +301,38 @@ public interface Athena2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Set the need for overriding the endpoint. This option needs to be
+         * used in combination with the uriEndpointOverride option.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
+         * Set the need for overriding the endpoint. This option needs to be
+         * used in combination with the uriEndpointOverride option.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder overrideEndpoint(String overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+        /**
          * The unique ID identifying the query execution.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -403,6 +435,21 @@ public interface Athena2EndpointBuilderFactory {
          */
         default Athena2EndpointBuilder retry(String retry) {
             doSetProperty("retry", retry);
+            return this;
+        }
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder uriEndpointOverride(String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
         /**
@@ -630,6 +677,38 @@ public interface Athena2EndpointBuilderFactory {
          */
         default Athena2EndpointBuilder sessionToken(String sessionToken) {
             doSetProperty("sessionToken", sessionToken);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+        /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Athena2EndpointBuilder trustAllCertificates(String trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
             return this;
         }
         /**

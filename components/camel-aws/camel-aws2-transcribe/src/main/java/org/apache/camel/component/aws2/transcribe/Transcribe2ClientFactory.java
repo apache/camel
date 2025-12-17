@@ -16,58 +16,26 @@
  */
 package org.apache.camel.component.aws2.transcribe;
 
-import java.net.URI;
-
-import org.apache.camel.component.aws2.transcribe.client.Transcribe2InternalClient;
-import org.apache.camel.component.aws2.transcribe.client.impl.Transcribe2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.transcribe.client.impl.Transcribe2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.transcribe.client.impl.Transcribe2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.transcribe.client.impl.Transcribe2ClientStandardImpl;
-import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.http.apache.ProxyConfiguration;
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
+/**
+ * Factory class to create AWS Transcribe clients using common configuration.
+ */
 public final class Transcribe2ClientFactory {
 
     private Transcribe2ClientFactory() {
     }
 
+    /**
+     * Create a TranscribeClient based on configuration.
+     *
+     * @param  configuration The Transcribe configuration
+     * @return               Configured TranscribeClient
+     */
     public static TranscribeClient getTranscribeClient(Transcribe2Configuration configuration) {
-        TranscribeClient client = null;
-        Transcribe2InternalClient transcribeInternalClient = null;
-        if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ProxyConfiguration.Builder proxyConfig = ProxyConfiguration.builder();
-            proxyConfig = proxyConfig.endpoint(URI.create(configuration.getProxyProtocol() + "://"
-                                                          + configuration.getProxyHost() + ":" + configuration.getProxyPort()));
-            if (ObjectHelper.isNotEmpty(configuration.getProxyUsername())
-                    && ObjectHelper.isNotEmpty(configuration.getProxyPassword())) {
-                proxyConfig.username(configuration.getProxyUsername());
-                proxyConfig.password(configuration.getProxyPassword());
-            }
-            ApacheHttpClient.Builder httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
-            if (configuration.isUseDefaultCredentialsProvider()) {
-                transcribeInternalClient = new Transcribe2ClientIAMOptimizedImpl(httpClientBuilder.build(), configuration);
-            } else if (configuration.isUseProfileCredentialsProvider()) {
-                transcribeInternalClient
-                        = new Transcribe2ClientIAMProfileOptimizedImpl(httpClientBuilder.build(), configuration);
-            } else if (configuration.isUseSessionCredentials()) {
-                transcribeInternalClient = new Transcribe2ClientSessionTokenImpl(httpClientBuilder.build(), configuration);
-            } else {
-                transcribeInternalClient = new Transcribe2ClientStandardImpl(httpClientBuilder.build(), configuration);
-            }
-        } else {
-            if (configuration.isUseDefaultCredentialsProvider()) {
-                transcribeInternalClient = new Transcribe2ClientIAMOptimizedImpl(configuration);
-            } else if (configuration.isUseProfileCredentialsProvider()) {
-                transcribeInternalClient = new Transcribe2ClientIAMProfileOptimizedImpl(configuration);
-            } else if (configuration.isUseSessionCredentials()) {
-                transcribeInternalClient = new Transcribe2ClientSessionTokenImpl(configuration);
-            } else {
-                transcribeInternalClient = new Transcribe2ClientStandardImpl(configuration);
-            }
-        }
-        client = transcribeInternalClient.getTranscribeClient();
-        return client;
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                TranscribeClient::builder);
     }
 }

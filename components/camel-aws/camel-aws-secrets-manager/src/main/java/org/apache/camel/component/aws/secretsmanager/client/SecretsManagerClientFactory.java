@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws.secretsmanager.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws.secretsmanager.SecretsManagerConfiguration;
-import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientIAMOptimized;
-import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientIAMProfileOptimized;
-import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientSessionTokenImpl;
-import org.apache.camel.component.aws.secretsmanager.client.impl.SecretsManagerClientStandardImpl;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
 /**
- * Factory class to return the correct type of AWS Secrets Manager aws.
+ * Factory class to create AWS Secrets Manager clients using common configuration.
  */
 public final class SecretsManagerClientFactory {
 
@@ -31,20 +29,14 @@ public final class SecretsManagerClientFactory {
     }
 
     /**
-     * Return the correct aws Secrets Manager client (based on remote vs local).
+     * Create a SecretsManagerClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               SecretsManagerClient
+     * @param  configuration The Secrets Manager configuration
+     * @return               Configured SecretsManagerClient
      */
-    public static SecretsManagerInternalClient getSecretsManagerClient(SecretsManagerConfiguration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new SecretsManagerClientIAMOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new SecretsManagerClientIAMProfileOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new SecretsManagerClientSessionTokenImpl(configuration);
-        } else {
-            return new SecretsManagerClientStandardImpl(configuration);
-        }
+    public static SecretsManagerClient getSecretsManagerClient(SecretsManagerConfiguration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                SecretsManagerClient::builder);
     }
 }

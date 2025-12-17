@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.textract.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.textract.Textract2Configuration;
-import org.apache.camel.component.aws2.textract.client.impl.Textract2ClientIAMOptimized;
-import org.apache.camel.component.aws2.textract.client.impl.Textract2ClientIAMProfileOptimized;
-import org.apache.camel.component.aws2.textract.client.impl.Textract2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.textract.client.impl.Textract2ClientStandardImpl;
+import software.amazon.awssdk.services.textract.TextractClient;
 
 /**
- * Factory class to return the correct type of AWS Textract client.
+ * Factory class to create AWS Textract clients using common configuration.
  */
 public final class Textract2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class Textract2ClientFactory {
     }
 
     /**
-     * Return the correct aws Textract client (based on remote vs local).
+     * Create a TextractClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               TextractClient
+     * @param  configuration The Textract configuration
+     * @return               Configured TextractClient
      */
-    public static Textract2InternalClient getTextractClient(Textract2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Textract2ClientIAMOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Textract2ClientIAMProfileOptimized(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Textract2ClientSessionTokenImpl(configuration);
-        } else {
-            return new Textract2ClientStandardImpl(configuration);
-        }
+    public static TextractClient getTextractClient(Textract2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                TextractClient::builder);
     }
 }

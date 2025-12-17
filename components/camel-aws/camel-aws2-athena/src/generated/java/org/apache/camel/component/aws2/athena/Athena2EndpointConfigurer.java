@@ -52,6 +52,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputLocation": target.getConfiguration().setOutputLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "outputtype":
         case "outputType": target.getConfiguration().setOutputType(property(camelContext, org.apache.camel.component.aws2.athena.Athena2OutputType.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "profilecredentialsname":
         case "profileCredentialsName": target.getConfiguration().setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -72,6 +74,10 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": target.getConfiguration().setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontoken":
         case "sessionToken": target.getConfiguration().setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": target.getConfiguration().setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
@@ -123,6 +129,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputLocation": return java.lang.String.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.aws2.athena.Athena2OutputType.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "profilecredentialsname":
         case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
@@ -143,6 +151,10 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": return java.lang.String.class;
         case "sessiontoken":
         case "sessionToken": return java.lang.String.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
@@ -190,6 +202,8 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputLocation": return target.getConfiguration().getOutputLocation();
         case "outputtype":
         case "outputType": return target.getConfiguration().getOutputType();
+        case "overrideendpoint":
+        case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "profilecredentialsname":
         case "profileCredentialsName": return target.getConfiguration().getProfileCredentialsName();
         case "proxyhost":
@@ -210,6 +224,10 @@ public class Athena2EndpointConfigurer extends PropertyConfigurerSupport impleme
         case "secretKey": return target.getConfiguration().getSecretKey();
         case "sessiontoken":
         case "sessionToken": return target.getConfiguration().getSessionToken();
+        case "trustallcertificates":
+        case "trustAllCertificates": return target.getConfiguration().isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":

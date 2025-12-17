@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.aws2.redshift.data.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.redshift.data.RedshiftData2Configuration;
-import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.redshift.data.client.impl.RedshiftData2ClientStandardImpl;
+import software.amazon.awssdk.services.redshiftdata.RedshiftDataClient;
 
 /**
- * Factory class to return the correct type of AWS RedshiftData client.
+ * Factory class to create AWS RedshiftData clients using common configuration.
  */
 public final class RedshiftData2ClientFactory {
 
@@ -30,18 +29,14 @@ public final class RedshiftData2ClientFactory {
     }
 
     /**
-     * Return the correct AWS RedshiftData client (based on remote vs local).
+     * Create a RedshiftData client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               RedshiftDataClient
+     * @param  configuration The RedshiftData configuration
+     * @return               Configured RedshiftDataClient
      */
-    public static RedshiftData2InternalClient getRedshiftDataClient(RedshiftData2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new RedshiftData2ClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new RedshiftData2ClientSessionTokenImpl(configuration);
-        } else {
-            return new RedshiftData2ClientStandardImpl(configuration);
-        }
+    public static RedshiftDataClient getRedshiftDataClient(RedshiftData2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                RedshiftDataClient::builder);
     }
 }

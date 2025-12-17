@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.s3vectors.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.s3vectors.AWS2S3VectorsConfiguration;
-import org.apache.camel.component.aws2.s3vectors.client.impl.AWS2S3VectorsClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.s3vectors.client.impl.AWS2S3VectorsClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.s3vectors.client.impl.AWS2S3VectorsClientSessionTokenImpl;
-import org.apache.camel.component.aws2.s3vectors.client.impl.AWS2S3VectorsClientStandardImpl;
+import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
 
 /**
- * Factory class to return the correct type of AWS S3 Vectors client.
+ * Factory class to create AWS S3 Vectors clients using common configuration.
  */
 public final class AWS2S3VectorsClientFactory {
 
@@ -31,20 +29,14 @@ public final class AWS2S3VectorsClientFactory {
     }
 
     /**
-     * Return the correct AWS S3 Vectors client (based on configuration).
+     * Create a S3VectorsClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               AWS2CamelS3VectorsInternalClient
+     * @param  configuration The S3 Vectors configuration
+     * @return               Configured S3VectorsClient
      */
-    public static AWS2CamelS3VectorsInternalClient getS3VectorsClient(AWS2S3VectorsConfiguration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new AWS2S3VectorsClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new AWS2S3VectorsClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new AWS2S3VectorsClientSessionTokenImpl(configuration);
-        } else {
-            return new AWS2S3VectorsClientStandardImpl(configuration);
-        }
+    public static S3VectorsClient getS3VectorsClient(AWS2S3VectorsConfiguration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                S3VectorsClient::builder);
     }
 }

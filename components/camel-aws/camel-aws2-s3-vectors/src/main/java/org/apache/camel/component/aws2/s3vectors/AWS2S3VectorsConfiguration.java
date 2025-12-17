@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.s3vectors;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -24,7 +25,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.s3vectors.S3VectorsClient;
 
 @UriParams
-public class AWS2S3VectorsConfiguration implements Cloneable {
+public class AWS2S3VectorsConfiguration implements Cloneable, AwsCommonConfiguration {
 
     private String vectorBucketName;
     @UriParam(label = "advanced")

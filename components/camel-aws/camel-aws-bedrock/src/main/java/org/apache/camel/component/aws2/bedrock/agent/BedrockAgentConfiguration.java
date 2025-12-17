@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.bedrock.agent;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.bedrockagent.BedrockAgentClient;
 
 @UriParams
-public class BedrockAgentConfiguration implements Cloneable {
+public class BedrockAgentConfiguration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Logical name")
     @Metadata(required = true)
@@ -232,7 +233,7 @@ public class BedrockAgentConfiguration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 
