@@ -1,0 +1,1 @@
+../../../../../components/camel-once/src/main/docs/once-component.adoc
