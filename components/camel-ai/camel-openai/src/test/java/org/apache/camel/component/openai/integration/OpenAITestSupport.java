@@ -18,7 +18,7 @@ package org.apache.camel.component.openai.integration;
 
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public class OpenAITestSupport extends CamelTestSupport {
 
