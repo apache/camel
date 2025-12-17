@@ -31,10 +31,11 @@ import org.slf4j.MDC;
 
 /**
  * MDCProcessorsInterceptStrategy is used to wrap each processor calls and generate the MDC context for each process
- * execution. IMPORTANT NOTE: When working in async mode there is no possible way to clean the thread MDC context reliably
- * as any spinoff process (for example, InterceptSendToEndpoint EIP) would loose the possibility to reuse the context map previously
- * set by this InterceptStrategy. This is not a consistency problem, since, the MDC service is in charge to reset the MDC context at every
- * exchange execution with the values expected for each execution (either synchronous or asynchronous).
+ * execution. IMPORTANT NOTE: When working in async mode there is no possible way to clean the thread MDC context
+ * reliably as any spinoff process (for example, InterceptSendToEndpoint EIP) would loose the possibility to reuse the
+ * context map previously set by this InterceptStrategy. This is not a consistency problem, since, the MDC service is in
+ * charge to reset the MDC context at every exchange execution with the values expected for each execution (either
+ * synchronous or asynchronous).
  */
 public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
 

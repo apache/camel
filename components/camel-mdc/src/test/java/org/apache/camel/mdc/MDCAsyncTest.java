@@ -58,6 +58,8 @@ public class MDCAsyncTest extends ExchangeTestSupport {
         before.assertIsSatisfied();
         after.assertIsSatisfied();
         result.assertIsSatisfied();
+
+        // NOTE: more assertions directly in process as it was simpler to verify the condition while executing the async process.
     }
 
     @Override
