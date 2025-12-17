@@ -43,6 +43,12 @@
             <groupId>io.debezium</groupId>
             <artifactId>debezium-connector-sqlserver</artifactId>
             <version>${debezium-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.lz4</groupId>
+                    <artifactId>lz4-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- test -->
