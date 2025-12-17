@@ -22,15 +22,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@ManagedResource(description = "Managed OnceEndpoint")
 @UriEndpoint(firstVersion = "4.170.0", scheme = "once", title = "Once", syntax = "once:name", consumerOnly = true,
              remote = false, category = { Category.CORE, Category.SCHEDULING })
 public class OnceEndpoint extends DefaultEndpoint {
@@ -71,7 +68,6 @@ public class OnceEndpoint extends DefaultEndpoint {
         return answer;
     }
 
-    @ManagedAttribute(description = "Name")
     public String getName() {
         return name;
     }
@@ -83,7 +79,6 @@ public class OnceEndpoint extends DefaultEndpoint {
         this.name = name;
     }
 
-    @ManagedAttribute(description = "Delay")
     public long getDelay() {
         return delay;
     }
@@ -93,7 +88,6 @@ public class OnceEndpoint extends DefaultEndpoint {
      * <p/>
      * The default value is 1000.
      */
-    @ManagedAttribute(description = "Delay")
     public void setDelay(long delay) {
         this.delay = delay;
     }
