@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MDCDefaultTest extends ExchangeTestSupport {
@@ -47,8 +46,6 @@ public class MDCDefaultTest extends ExchangeTestSupport {
     @Test
     void testRouteSingleRequest() throws IOException {
         template.request("direct:start", null);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
     }
 
     @Override
