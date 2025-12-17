@@ -395,14 +395,14 @@ public interface SpringRabbitmqComponentBuilderFactory {
          * other settings such as maximumRetryAttempts for retry are not in use.
          * 
          * The option is a:
-         * &lt;code&gt;org.springframework.retry.interceptor.RetryOperationsInterceptor&lt;/code&gt; type.
+         * &lt;code&gt;org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
          * @param retry the value to set
          * @return the dsl builder
          */
-        default SpringRabbitmqComponentBuilder retry(org.springframework.retry.interceptor.RetryOperationsInterceptor retry) {
+        default SpringRabbitmqComponentBuilder retry(org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor retry) {
             doSetProperty("retry", retry);
             return this;
         }
@@ -654,7 +654,7 @@ public interface SpringRabbitmqComponentBuilderFactory {
             case "maxConcurrentConsumers": ((SpringRabbitMQComponent) component).setMaxConcurrentConsumers((java.lang.Integer) value); return true;
             case "messageListenerContainerType": ((SpringRabbitMQComponent) component).setMessageListenerContainerType((java.lang.String) value); return true;
             case "prefetchCount": ((SpringRabbitMQComponent) component).setPrefetchCount((int) value); return true;
-            case "retry": ((SpringRabbitMQComponent) component).setRetry((org.springframework.retry.interceptor.RetryOperationsInterceptor) value); return true;
+            case "retry": ((SpringRabbitMQComponent) component).setRetry((org.springframework.amqp.rabbit.config.StatelessRetryOperationsInterceptor) value); return true;
             case "shutdownTimeout": ((SpringRabbitMQComponent) component).setShutdownTimeout((long) value); return true;
             case "allowNullBody": ((SpringRabbitMQComponent) component).setAllowNullBody((boolean) value); return true;
             case "autoDeclareProducer": ((SpringRabbitMQComponent) component).setAutoDeclareProducer((boolean) value); return true;
