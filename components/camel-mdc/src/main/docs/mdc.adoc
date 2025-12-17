@@ -1,5 +1,5 @@
-= Mdc Component
-:doctitle: Mdc
+= MDC Logging Component
+:doctitle: MDC Logging
 :shortname: mdc
 :artifactid: camel-mdc
 :description: Logging MDC (Mapped Diagnostic Context) Service
@@ -19,26 +19,32 @@ When you enable the MDC Service provided in this component, you will instruct yo
 
 If you want to use the feature, you need to include the `camel-mdc` dependency in your `pom.xml` and configure it with the parameters in the `application.properties` configuration file (at least set `camel.mdc.enabled=true`).
 
+NOTE: don't set legacy MDC via `context.setUseMDCLogging(true)` on `CamelContext` at the same time. Instead, only use `camel-mdc`.
+
 The goal of this component is to avoid to work on low level API in Java. In older MDC implementations you had to hack into the code to include MDC such as:
 
-```java
+[source,java]
+----
     org.slf4j.MDC.put("myCustomMDCKey", "myCustomKeyValue");
-```
+----
 
 And later you had to make sure to provide MDC context propagation in async components (eg, `wiretap`) in order to make sure to have such context available in the new executing async thread. With this new service, the only thing to do is to add the value as a Camel Exchange header (or a property), for example:
 
-```java
+[source,java]
+----
     .setHeader("myCustomMDCKey", simple("myCustomKeyValue"))
-```
+----
+
 include the MDC service and additionally instruct the Camel application to treat that header as a MDC trace (via `camel.mdc.customHeaders=myCustomMDCKey` or `*` to include all headers). You won't need any longer to worry about context propagation as the propagation will be done via Camel Exchange instead.
 
 NOTE: you won't also need any longer to hack the code using Java DSL, as you can put headers in any Camel DSL.
 
 Depending on the logging technology used, you can now include the MDC parameters you want to trace in your logging configuration. For example, in `log4j2` configuration you can include them as shown below:
 
-```
+[source,text]
+----
 ... [%X{camel.contextId}, %X{camel.routeId}, %X{camel.exchangeId}, %X{camel.messageId}, %X{customHead}, %X{customProp}]
-```
+----
 
 During the execution you can verify the output of the log to see the traces appended to your logger.
 
@@ -54,7 +60,7 @@ This is the list of default MDC values included in each execution:
 * camel.contextId
 * camel.threadId
 
-If they exists in the Exchange, then, they will be included in the MDC. You can use `camel.mdc.customHeaders` and `camel.mdc.customProperties` to include any further header and property you need to trace.
+If they exist in the Exchange, then, they will be included in the MDC. You can use `camel.mdc.customHeaders` and `camel.mdc.customProperties` to include any further header and property you need to trace.
 
 == Configuration
 

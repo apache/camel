@@ -2,7 +2,7 @@
   "other": {
     "kind": "other",
     "name": "mdc",
-    "title": "Mdc",
+    "title": "MDC Logging",
     "description": "Logging MDC (Mapped Diagnostic Context) Service",
     "deprecated": false,
     "firstVersion": "4.15.0",
