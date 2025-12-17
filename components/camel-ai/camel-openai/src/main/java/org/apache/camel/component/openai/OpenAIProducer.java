@@ -206,7 +206,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         addConversationHistory(messages, in, config);
 
         ChatCompletionMessageParam userMessage = buildUserMessage(in, config);
-        messages.add(userMessage);
+        if (userMessage != null) {
+            messages.add(userMessage);
+        }
+
+        if (messages.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "No input provided to LLM. At least one message (user, system, or developer) must be provided");
+        }
 
         return messages;
     }
@@ -243,9 +250,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private ChatCompletionMessageParam buildTextMessage(Message in, String userPrompt, OpenAIConfiguration config) {
         String prompt = userPrompt != null ? userPrompt : in.getBody(String.class);
-        if (prompt == null || prompt.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Message body or user message configuration must contain the prompt text");
+        if (prompt == null || prompt.trim().isEmpty()) {
+            return null;
         }
         return createTextMessage(prompt);
     }
