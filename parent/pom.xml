@@ -366,7 +366,7 @@
         <littleproxy-version>2.4.7</littleproxy-version>
         <mapstruct-version>1.6.3</mapstruct-version>
         <!-- needed from tooling/archetypes -->
-        <maven-version>3.9.11</maven-version>
+        <maven-version>3.9.12</maven-version>
         <maven-antrun-plugin-version>3.2.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.4.1</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>3.4.1</maven-archetype-packaging-version>
