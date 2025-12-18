@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.once;
 
+import java.util.Map;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -35,11 +37,17 @@ public class OnceEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private String name;
-    @UriParam(defaultValue = "1000")
+    @UriParam(label = "advanced", defaultValue = "1000")
     private long delay = 1000;
     @UriParam
     @Metadata(supportFileReference = true)
     private String body;
+    @UriParam(multiValue = true, prefix = "header.")
+    @Metadata(supportFileReference = true)
+    private Map<String, Object> headers;
+    @UriParam(label = "advanced", multiValue = true, prefix = "variable.")
+    @Metadata(supportFileReference = true)
+    private Map<String, Object> variables;
 
     public OnceEndpoint() {
     }
@@ -105,5 +113,29 @@ public class OnceEndpoint extends DefaultEndpoint {
      */
     public void setBody(String body) {
         this.body = body;
+    }
+
+    /**
+     * The data to use as message headers as key=value pairs. You can externalize the data by using file: or classpath:
+     * as prefix and specify the location of the file.
+     */
+    public Map<String, Object> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Map<String, Object> headers) {
+        this.headers = headers;
+    }
+
+    public Map<String, Object> getVariables() {
+        return variables;
+    }
+
+    /**
+     * The data to use as exchange variables as key=value pairs. You can externalize the data by using file: or
+     * classpath: as prefix and specify the location of the file.
+     */
+    public void setVariables(Map<String, Object> variables) {
+        this.variables = variables;
     }
 }

@@ -64,35 +64,52 @@ public interface OnceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The number of milliseconds to wait before triggering. The default
-         * value is 1000.
+         * The data to use as message headers as key=value pairs. You can
+         * externalize the data by using file: or classpath: as prefix and
+         * specify the location of the file. This is a multi-value option with
+         * prefix: header.
          * 
-         * The option is a: <code>long</code> type.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
-         * Default: 1000
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the headers(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
          * Group: consumer
          * 
-         * @param delay the value to set
+         * @param key the option key
+         * @param value the option value
          * @return the dsl builder
          */
-        default OnceEndpointBuilder delay(long delay) {
-            doSetProperty("delay", delay);
+        default OnceEndpointBuilder headers(String key, Object value) {
+            doSetMultiValueProperty("headers", "header." + key, value);
             return this;
         }
         /**
-         * The number of milliseconds to wait before triggering. The default
-         * value is 1000.
+         * The data to use as message headers as key=value pairs. You can
+         * externalize the data by using file: or classpath: as prefix and
+         * specify the location of the file. This is a multi-value option with
+         * prefix: header.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
          * 
-         * Default: 1000
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the headers(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
          * Group: consumer
          * 
-         * @param delay the value to set
+         * @param values the values
          * @return the dsl builder
          */
-        default OnceEndpointBuilder delay(String delay) {
-            doSetProperty("delay", delay);
+        default OnceEndpointBuilder headers(Map values) {
+            doSetMultiValueProperties("headers", "header.", values);
             return this;
         }
     }
@@ -222,6 +239,87 @@ public interface OnceEndpointBuilderFactory {
          */
         default AdvancedOnceEndpointBuilder exchangePattern(String exchangePattern) {
             doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * The number of milliseconds to wait before triggering. The default
+         * value is 1000.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: advanced
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOnceEndpointBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * The number of milliseconds to wait before triggering. The default
+         * value is 1000.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 1000
+         * Group: advanced
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOnceEndpointBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * The data to use as exchange variables as key=value pairs. You can
+         * externalize the data by using file: or classpath: as prefix and
+         * specify the location of the file. This is a multi-value option with
+         * prefix: variable.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the variables(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedOnceEndpointBuilder variables(String key, Object value) {
+            doSetMultiValueProperty("variables", "variable." + key, value);
+            return this;
+        }
+        /**
+         * The data to use as exchange variables as key=value pairs. You can
+         * externalize the data by using file: or classpath: as prefix and
+         * specify the location of the file. This is a multi-value option with
+         * prefix: variable.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * The option is multivalued, and you can use the variables(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedOnceEndpointBuilder variables(Map values) {
+            doSetMultiValueProperties("variables", "variable.", values);
             return this;
         }
     }

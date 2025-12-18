@@ -22,11 +22,9 @@ import java.util.TimerTask;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -86,8 +84,24 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
         public void run() {
             Exchange exchange = createExchange(false);
             try {
-                String body = resolveData(endpoint.getBody());
+                Object body = resolveData(endpoint.getBody());
                 exchange.getMessage().setBody(body);
+                if (endpoint.getHeaders() != null) {
+                    for (var e : endpoint.getHeaders().entrySet()) {
+                        Object v = resolveData(e.getValue());
+                        if (v != null) {
+                            exchange.getMessage().setHeader(e.getKey(), v);
+                        }
+                    }
+                }
+                if (endpoint.getVariables() != null) {
+                    for (var e : endpoint.getVariables().entrySet()) {
+                        Object v = resolveData(e.getValue());
+                        if (v != null) {
+                            exchange.setVariable(e.getKey(), v);
+                        }
+                    }
+                }
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
@@ -104,10 +118,10 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
         }
     }
 
-    private String resolveData(String data) throws Exception {
-        String answer = data;
-        if (ResourceHelper.hasScheme(data)) {
-            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, data)) {
+    private Object resolveData(Object data) throws Exception {
+        String answer = data instanceof String ? data.toString() : null;
+        if (ResourceHelper.hasScheme(answer)) {
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, answer)) {
                 answer = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
             }
         }
