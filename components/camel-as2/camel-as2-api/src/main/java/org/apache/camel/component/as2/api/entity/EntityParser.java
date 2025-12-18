@@ -884,7 +884,7 @@ public final class EntityParser {
                                     contentTransferEncoding);
                             break;
                         default:
-                            break;
+                            throw new AS2DecryptionException("Unsupported entity content type: " + entityContentType);
                     }
                     break;
                 default:
