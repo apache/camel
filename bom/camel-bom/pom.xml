@@ -1709,6 +1709,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-once</artifactId>
+        <version>4.17.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-openai</artifactId>
         <version>4.17.0-SNAPSHOT</version>
       </dependency>

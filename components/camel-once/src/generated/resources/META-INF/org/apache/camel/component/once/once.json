@@ -1,0 +1,43 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "once",
+    "title": "Once",
+    "description": "Camel Once component",
+    "deprecated": false,
+    "firstVersion": "4.170.0",
+    "label": "core,scheduling",
+    "javaType": "org.apache.camel.component.once.OnceComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-once",
+    "version": "4.17.0-SNAPSHOT",
+    "scheme": "once",
+    "extendsScheme": "",
+    "syntax": "once:name",
+    "async": false,
+    "api": false,
+    "consumerOnly": true,
+    "producerOnly": false,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": false
+  },
+  "componentProperties": {
+    "bridgeErrorHandler": { "index": 0, "kind": "property", "displayName": "Bridge Error Handler", "group": "consumer", "label": "consumer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component and make this possible for future releases. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored." },
+    "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
+    "delay": { "index": 2, "kind": "property", "displayName": "Delay", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "The number of milliseconds to wait before triggering. The default value is 1000." },
+    "languages": { "index": 3, "kind": "property", "displayName": "Languages", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether Camel languages are supported such as simple,groovy." }
+  },
+  "properties": {
+    "name": { "index": 0, "kind": "path", "displayName": "Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The logical name" },
+    "body": { "index": 1, "kind": "parameter", "displayName": "Body", "group": "consumer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "The data to use as message body. You can externalize the data by using file: or classpath: as prefix and specify the location of the file." },
+    "headers": { "index": 2, "kind": "parameter", "displayName": "Headers", "group": "consumer", "label": "", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String>", "prefix": "header.", "multiValue": true, "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "The data to use as message headers as key=value pairs. You can externalize the data by using file: or classpath: as prefix and specify the location of the file. This is a multi-value option with prefix: header." },
+    "bridgeErrorHandler": { "index": 3, "kind": "parameter", "displayName": "Bridge Error Handler", "group": "consumer (advanced)", "label": "consumer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions (if possible) occurred while the Camel consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. Important: This is only possible if the 3rd party component allows Camel to be alerted if an exception was thrown. Some components handle this internally only, and therefore bridgeErrorHandler is not possible. In other situations we may improve the Camel component to hook into the 3rd party component and make this possible for future releases. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored." },
+    "exceptionHandler": { "index": 4, "kind": "parameter", "displayName": "Exception Handler", "group": "consumer (advanced)", "label": "consumer,advanced", "required": false, "type": "object", "javaType": "org.apache.camel.spi.ExceptionHandler", "optionalPrefix": "consumer.", "deprecated": false, "autowired": false, "secret": false, "description": "To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored." },
+    "exchangePattern": { "index": 5, "kind": "parameter", "displayName": "Exchange Pattern", "group": "consumer (advanced)", "label": "consumer,advanced", "required": false, "type": "enum", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOut" ], "deprecated": false, "autowired": false, "secret": false, "description": "Sets the exchange pattern when the consumer creates an exchange." },
+    "delay": { "index": 6, "kind": "parameter", "displayName": "Delay", "group": "advanced", "label": "advanced", "required": false, "type": "integer", "javaType": "long", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 1000, "description": "The number of milliseconds to wait before triggering. The default value is 1000." },
+    "exchangeProperties": { "index": 7, "kind": "parameter", "displayName": "Exchange Properties", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String>", "prefix": "exchangeProperty.", "multiValue": true, "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "The data to use as exchange properties as key=value pairs. You can externalize the data by using file: or classpath: as prefix and specify the location of the file. This is a multi-value option with prefix: exchangeProperty." },
+    "variables": { "index": 8, "kind": "parameter", "displayName": "Variables", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "java.util.Map<java.lang.String, java.lang.String>", "prefix": "variable.", "multiValue": true, "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "supportFileReference": true, "description": "The data to use as exchange variables as key=value pairs. You can externalize the data by using file: or classpath: as prefix and specify the location of the file. This is a multi-value option with prefix: variable." }
+  }
+}

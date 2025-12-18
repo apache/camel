@@ -11841,6 +11841,46 @@ public class StaticEndpointBuilders {
         return Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Once (camel-once)
+     * Camel Once component
+     * 
+     * Category: core,scheduling
+     * Since: 4.170
+     * Maven coordinates: org.apache.camel:camel-once
+     * 
+     * Syntax: <code>once:name</code>
+     * 
+     * Path parameter: name (required)
+     * The logical name
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static OnceEndpointBuilderFactory.OnceEndpointBuilder once(String path) {
+        return once("once", path);
+    }
+    /**
+     * Once (camel-once)
+     * Camel Once component
+     * 
+     * Category: core,scheduling
+     * Since: 4.170
+     * Maven coordinates: org.apache.camel:camel-once
+     * 
+     * Syntax: <code>once:name</code>
+     * 
+     * Path parameter: name (required)
+     * The logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static OnceEndpointBuilderFactory.OnceEndpointBuilder once(String componentName, String path) {
+        return OnceEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
      * 

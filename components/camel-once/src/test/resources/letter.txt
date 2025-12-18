@@ -1,0 +1,1 @@
+Hello this is ${camelId} from ${routeId}

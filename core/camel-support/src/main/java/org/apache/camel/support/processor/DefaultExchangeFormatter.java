@@ -149,7 +149,9 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (route != null) {
                 group = route.getGroup();
             }
-            style(sb, "RouteGroup").append(group);
+            if (group != null) {
+                style(sb, "RouteGroup").append(group);
+            }
         }
         if (showAll || showRouteId) {
             if (multiline) {
