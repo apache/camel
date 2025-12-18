@@ -29,7 +29,7 @@
 
     <artifactId>camel-micrometer-prometheus</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Micrometer Prometheus</name>
+    <name>Camel :: Micrometer :: Prometheus</name>
     <description>Camel Micrometer Prometheus for Camel Main</description>
 
     <properties>

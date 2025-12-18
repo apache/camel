@@ -29,7 +29,7 @@
 
     <artifactId>camel-observation</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Micrometer Observation</name>
+    <name>Camel :: Micrometer :: Observation</name>
     <description>Observability using Micrometer Observation</description>
 
     <properties>

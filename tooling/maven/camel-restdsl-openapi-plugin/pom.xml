@@ -30,7 +30,7 @@
     <artifactId>camel-restdsl-openapi-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>Camel :: Maven Plugins :: OpenApi REST DSL Generator Maven Plugin</name>
+    <name>Camel :: Maven Plugins :: OpenApi REST DSL Generator</name>
     <description>Maven Plugin that generates REST DSL RouteBuilder from OpenApi specification</description>
 
     <properties>

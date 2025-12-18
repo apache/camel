@@ -30,7 +30,7 @@
 
     <artifactId>camel-csimple-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Camel :: Catalog :: Camel Compiled Simple Maven Plugin</name>
+    <name>Camel :: Catalog :: CSimple Maven Plugin</name>
     <description>Maven plugin to source code generate csimple language</description>
 
     <dependencies>
