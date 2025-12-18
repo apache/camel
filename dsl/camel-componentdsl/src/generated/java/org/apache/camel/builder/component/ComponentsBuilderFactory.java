@@ -3554,6 +3554,19 @@ public interface ComponentsBuilderFactory {
         return Olingo4ComponentBuilderFactory.olingo4();
     }
     /**
+     * Once (camel-once)
+     * Camel Once component
+     * 
+     * Category: core,scheduling
+     * Since: 4.170
+     * Maven coordinates: org.apache.camel:camel-once
+     * 
+     * @return the dsl builder
+     */
+    static OnceComponentBuilderFactory.OnceComponentBuilder once() {
+        return OnceComponentBuilderFactory.once();
+    }
+    /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
      * 
