@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.milo.call;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.component.milo.client.MiloClientConsumer;
-import org.apache.camel.component.milo.server.internal.CamelServerItem;
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.Lifecycle;
 import org.eclipse.milo.opcua.sdk.server.ManagedNamespaceWithLifecycle;
@@ -53,8 +50,6 @@ public class MockCamelNamespace extends ManagedNamespaceWithLifecycle {
     private final Function<UaMethodNode, AbstractMethodInvocationHandler> callMethodCreator;
 
     private UaFolderNode folder;
-
-    private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
     public MockCamelNamespace(final OpcUaServer server,
                               Function<UaMethodNode, AbstractMethodInvocationHandler> callMethodCreator) {
