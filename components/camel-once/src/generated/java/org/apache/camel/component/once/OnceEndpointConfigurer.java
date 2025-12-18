@@ -75,8 +75,8 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "headers": return java.lang.Object.class;
-        case "variables": return java.lang.Object.class;
+        case "headers": return java.lang.String.class;
+        case "variables": return java.lang.String.class;
         default: return null;
         }
     }

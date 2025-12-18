@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.once;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -37,8 +38,33 @@ public class OnceComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OnceEndpoint answer = new OnceEndpoint(uri, this, remaining);
         answer.setDelay(delay);
-        answer.setHeaders(PropertiesHelper.extractProperties(parameters, "header."));
-        answer.setVariables(PropertiesHelper.extractProperties(parameters, "variable."));
+
+        Map<String, String> headers = getAndRemoveOrResolveReferenceParameter(parameters, "headers", Map.class);
+        Map<String, Object> map = PropertiesHelper.extractProperties(parameters, "header.");
+        if (map != null && !map.isEmpty()) {
+            if (headers == null) {
+                headers = new LinkedHashMap<>();
+            }
+            for (Map.Entry<String, Object> me : map.entrySet()) {
+                headers.put(me.getKey(), me.getValue().toString());
+            }
+        }
+        if (headers != null && !headers.isEmpty()) {
+            answer.setHeaders(headers);
+        }
+        Map<String, String> variables = getAndRemoveOrResolveReferenceParameter(parameters, "variables", Map.class);
+        map = PropertiesHelper.extractProperties(parameters, "variable.");
+        if (map != null && !map.isEmpty()) {
+            if (variables == null) {
+                variables = new LinkedHashMap<>();
+            }
+            for (Map.Entry<String, Object> me : map.entrySet()) {
+                variables.put(me.getKey(), me.getValue().toString());
+            }
+        }
+        if (variables != null && !variables.isEmpty()) {
+            answer.setVariables(variables);
+        }
         setProperties(answer, parameters);
         return answer;
     }

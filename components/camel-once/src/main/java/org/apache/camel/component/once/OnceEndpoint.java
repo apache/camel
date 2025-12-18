@@ -44,10 +44,10 @@ public class OnceEndpoint extends DefaultEndpoint {
     private String body;
     @UriParam(multiValue = true, prefix = "header.")
     @Metadata(supportFileReference = true)
-    private Map<String, Object> headers;
+    private Map<String, String> headers;
     @UriParam(label = "advanced", multiValue = true, prefix = "variable.")
     @Metadata(supportFileReference = true)
-    private Map<String, Object> variables;
+    private Map<String, String> variables;
 
     public OnceEndpoint() {
     }
@@ -119,15 +119,15 @@ public class OnceEndpoint extends DefaultEndpoint {
      * The data to use as message headers as key=value pairs. You can externalize the data by using file: or classpath:
      * as prefix and specify the location of the file.
      */
-    public Map<String, Object> getHeaders() {
+    public Map<String, String> getHeaders() {
         return headers;
     }
 
-    public void setHeaders(Map<String, Object> headers) {
+    public void setHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
 
-    public Map<String, Object> getVariables() {
+    public Map<String, String> getVariables() {
         return variables;
     }
 
@@ -135,7 +135,7 @@ public class OnceEndpoint extends DefaultEndpoint {
      * The data to use as exchange variables as key=value pairs. You can externalize the data by using file: or
      * classpath: as prefix and specify the location of the file.
      */
-    public void setVariables(Map<String, Object> variables) {
+    public void setVariables(Map<String, String> variables) {
         this.variables = variables;
     }
 }
