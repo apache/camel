@@ -25,8 +25,6 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": target.getConfiguration().setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
-        case "apitimeout":
-        case "apiTimeout": target.getConfiguration().setApiTimeout(property(camelContext, long.class, value)); return true;
         case "asyncpollinterval":
         case "asyncPollInterval": target.getConfiguration().setAsyncPollInterval(property(camelContext, long.class, value)); return true;
         case "asynctimeout":
@@ -43,24 +41,14 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": target.getConfiguration().setBatchSize(property(camelContext, int.class, value)); return true;
         case "batchtimeout":
         case "batchTimeout": target.getConfiguration().setBatchTimeout(property(camelContext, long.class, value)); return true;
-        case "connectionrequesttimeout":
-        case "connectionRequestTimeout": target.getConfiguration().setConnectionRequestTimeout(property(camelContext, int.class, value)); return true;
-        case "connectiontimetolive":
-        case "connectionTimeToLive": target.getConfiguration().setConnectionTimeToLive(property(camelContext, long.class, value)); return true;
-        case "connectiontimeout":
-        case "connectionTimeout": target.getConfiguration().setConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.getConfiguration().setContentInBody(property(camelContext, boolean.class, value)); return true;
-        case "convertendpoint":
-        case "convertEndpoint": target.getConfiguration().setConvertEndpoint(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": target.getConfiguration().setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingserveurl":
         case "doclingServeUrl": target.getConfiguration().setDoclingServeUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "enableocr":
         case "enableOCR": target.getConfiguration().setEnableOCR(property(camelContext, boolean.class, value)); return true;
-        case "evictidleconnections":
-        case "evictIdleConnections": target.getConfiguration().setEvictIdleConnections(property(camelContext, boolean.class, value)); return true;
         case "extractallmetadata":
         case "extractAllMetadata": target.getConfiguration().setExtractAllMetadata(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
@@ -71,14 +59,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeRawMetadata": target.getConfiguration().setIncludeRawMetadata(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "maxconnectionsperroute":
-        case "maxConnectionsPerRoute": target.getConfiguration().setMaxConnectionsPerRoute(property(camelContext, int.class, value)); return true;
         case "maxfilesize":
         case "maxFileSize": target.getConfiguration().setMaxFileSize(property(camelContext, long.class, value)); return true;
-        case "maxidletime":
-        case "maxIdleTime": target.getConfiguration().setMaxIdleTime(property(camelContext, long.class, value)); return true;
-        case "maxtotalconnections":
-        case "maxTotalConnections": target.getConfiguration().setMaxTotalConnections(property(camelContext, int.class, value)); return true;
         case "ocrlanguage":
         case "ocrLanguage": target.getConfiguration().setOcrLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.docling.DoclingOperations.class, value)); return true;
@@ -86,16 +68,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": target.getConfiguration().setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.getConfiguration().setProcessTimeout(property(camelContext, long.class, value)); return true;
-        case "sockettimeout":
-        case "socketTimeout": target.getConfiguration().setSocketTimeout(property(camelContext, int.class, value)); return true;
         case "splitbatchresults":
         case "splitBatchResults": target.getConfiguration().setSplitBatchResults(property(camelContext, boolean.class, value)); return true;
         case "useasyncmode":
         case "useAsyncMode": target.getConfiguration().setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
         case "useDoclingServe": target.getConfiguration().setUseDoclingServe(property(camelContext, boolean.class, value)); return true;
-        case "validateafterinactivity":
-        case "validateAfterInactivity": target.getConfiguration().setValidateAfterInactivity(property(camelContext, int.class, value)); return true;
         case "workingdirectory":
         case "workingDirectory": target.getConfiguration().setWorkingDirectory(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -107,8 +85,6 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return java.lang.String.class;
-        case "apitimeout":
-        case "apiTimeout": return long.class;
         case "asyncpollinterval":
         case "asyncPollInterval": return long.class;
         case "asynctimeout":
@@ -125,24 +101,14 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": return int.class;
         case "batchtimeout":
         case "batchTimeout": return long.class;
-        case "connectionrequesttimeout":
-        case "connectionRequestTimeout": return int.class;
-        case "connectiontimetolive":
-        case "connectionTimeToLive": return long.class;
-        case "connectiontimeout":
-        case "connectionTimeout": return int.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
-        case "convertendpoint":
-        case "convertEndpoint": return java.lang.String.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
         case "doclingserveurl":
         case "doclingServeUrl": return java.lang.String.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
-        case "evictidleconnections":
-        case "evictIdleConnections": return boolean.class;
         case "extractallmetadata":
         case "extractAllMetadata": return boolean.class;
         case "includelayoutinfo":
@@ -153,14 +119,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeRawMetadata": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "maxconnectionsperroute":
-        case "maxConnectionsPerRoute": return int.class;
         case "maxfilesize":
         case "maxFileSize": return long.class;
-        case "maxidletime":
-        case "maxIdleTime": return long.class;
-        case "maxtotalconnections":
-        case "maxTotalConnections": return int.class;
         case "ocrlanguage":
         case "ocrLanguage": return java.lang.String.class;
         case "operation": return org.apache.camel.component.docling.DoclingOperations.class;
@@ -168,16 +128,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
-        case "sockettimeout":
-        case "socketTimeout": return int.class;
         case "splitbatchresults":
         case "splitBatchResults": return boolean.class;
         case "useasyncmode":
         case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
         case "useDoclingServe": return boolean.class;
-        case "validateafterinactivity":
-        case "validateAfterInactivity": return int.class;
         case "workingdirectory":
         case "workingDirectory": return java.lang.String.class;
         default: return null;
@@ -190,8 +146,6 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikeyheader":
         case "apiKeyHeader": return target.getConfiguration().getApiKeyHeader();
-        case "apitimeout":
-        case "apiTimeout": return target.getConfiguration().getApiTimeout();
         case "asyncpollinterval":
         case "asyncPollInterval": return target.getConfiguration().getAsyncPollInterval();
         case "asynctimeout":
@@ -208,24 +162,14 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "batchSize": return target.getConfiguration().getBatchSize();
         case "batchtimeout":
         case "batchTimeout": return target.getConfiguration().getBatchTimeout();
-        case "connectionrequesttimeout":
-        case "connectionRequestTimeout": return target.getConfiguration().getConnectionRequestTimeout();
-        case "connectiontimetolive":
-        case "connectionTimeToLive": return target.getConfiguration().getConnectionTimeToLive();
-        case "connectiontimeout":
-        case "connectionTimeout": return target.getConfiguration().getConnectionTimeout();
         case "contentinbody":
         case "contentInBody": return target.getConfiguration().isContentInBody();
-        case "convertendpoint":
-        case "convertEndpoint": return target.getConfiguration().getConvertEndpoint();
         case "doclingcommand":
         case "doclingCommand": return target.getConfiguration().getDoclingCommand();
         case "doclingserveurl":
         case "doclingServeUrl": return target.getConfiguration().getDoclingServeUrl();
         case "enableocr":
         case "enableOCR": return target.getConfiguration().isEnableOCR();
-        case "evictidleconnections":
-        case "evictIdleConnections": return target.getConfiguration().isEvictIdleConnections();
         case "extractallmetadata":
         case "extractAllMetadata": return target.getConfiguration().isExtractAllMetadata();
         case "includelayoutinfo":
@@ -236,14 +180,8 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "includeRawMetadata": return target.getConfiguration().isIncludeRawMetadata();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
-        case "maxconnectionsperroute":
-        case "maxConnectionsPerRoute": return target.getConfiguration().getMaxConnectionsPerRoute();
         case "maxfilesize":
         case "maxFileSize": return target.getConfiguration().getMaxFileSize();
-        case "maxidletime":
-        case "maxIdleTime": return target.getConfiguration().getMaxIdleTime();
-        case "maxtotalconnections":
-        case "maxTotalConnections": return target.getConfiguration().getMaxTotalConnections();
         case "ocrlanguage":
         case "ocrLanguage": return target.getConfiguration().getOcrLanguage();
         case "operation": return target.getConfiguration().getOperation();
@@ -251,16 +189,12 @@ public class DoclingEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "outputFormat": return target.getConfiguration().getOutputFormat();
         case "processtimeout":
         case "processTimeout": return target.getConfiguration().getProcessTimeout();
-        case "sockettimeout":
-        case "socketTimeout": return target.getConfiguration().getSocketTimeout();
         case "splitbatchresults":
         case "splitBatchResults": return target.getConfiguration().isSplitBatchResults();
         case "useasyncmode":
         case "useAsyncMode": return target.getConfiguration().isUseAsyncMode();
         case "usedoclingserve":
         case "useDoclingServe": return target.getConfiguration().isUseDoclingServe();
-        case "validateafterinactivity":
-        case "validateAfterInactivity": return target.getConfiguration().getValidateAfterInactivity();
         case "workingdirectory":
         case "workingDirectory": return target.getConfiguration().getWorkingDirectory();
         default: return null;
