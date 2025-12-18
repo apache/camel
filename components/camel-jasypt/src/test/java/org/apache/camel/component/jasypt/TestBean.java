@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jasypt;
 
-public class Test {
+public class TestBean {
     private String data = "";
 
     public void setData(String data) {
