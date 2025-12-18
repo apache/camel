@@ -62,10 +62,10 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer implements 
         final PlatformHttpEndpoint endpoint = getEndpoint();
         final String path = endpoint.getPath();
 
-        JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
+        JettyEmbeddedServer jettyServerTest = CamelContextHelper.mandatoryLookup(
                 getEndpoint().getCamelContext(),
-                JettyServerTest.JETTY_SERVER_NAME,
-                JettyServerTest.class);
+                JettyEmbeddedServer.JETTY_SERVER_NAME,
+                JettyEmbeddedServer.class);
 
         ContextHandler contextHandler = createHandler(endpoint, path);
         // add handler after starting server.
