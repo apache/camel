@@ -27,6 +27,7 @@ public class OnceComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
         default: return false;
         }
     }
@@ -38,6 +39,7 @@ public class OnceComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "delay": return long.class;
         default: return null;
         }
     }
@@ -50,6 +52,7 @@ public class OnceComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "delay": return target.getDelay();
         default: return null;
         }
     }

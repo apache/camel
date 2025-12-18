@@ -19,18 +19,40 @@ package org.apache.camel.component.once;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.PropertiesHelper;
 
 @Component("once")
 public class OnceComponent extends DefaultComponent {
+
+    @Metadata(label = "advanced", defaultValue = "1000")
+    private long delay = 1000;
 
     // TOOD: option to support groovy/simple language etc
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OnceEndpoint answer = new OnceEndpoint(uri, this, remaining);
+        answer.setDelay(delay);
+        answer.setHeaders(PropertiesHelper.extractProperties(parameters, "header."));
+        answer.setVariables(PropertiesHelper.extractProperties(parameters, "variable."));
         setProperties(answer, parameters);
         return answer;
     }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    /**
+     * The number of milliseconds to wait before triggering.
+     * <p/>
+     * The default value is 1000.
+     */
+    public void setDelay(long delay) {
+        this.delay = delay;
+    }
+
 }

@@ -73,8 +73,9 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
     }
 
     protected void scheduleTask(TimerTask task, Timer timer) {
-        LOG.debug("Scheduled once after: {} mills for task: {} ", endpoint.getDelay(), task);
-        timer.schedule(task, endpoint.getDelay());
+        long delay = Math.max(0, endpoint.getDelay());
+        LOG.debug("Scheduled once after: {} mills for task: {} ", delay, task);
+        timer.schedule(task, delay);
         scheduled = true;
     }
 
