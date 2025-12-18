@@ -23,7 +23,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ConfigUnsetTest extends BaseConfigTest {
+class ConfigUnsetTest extends BaseConfigTestSupport {
 
     @Test
     public void shouldUnsetConfig() throws Exception {

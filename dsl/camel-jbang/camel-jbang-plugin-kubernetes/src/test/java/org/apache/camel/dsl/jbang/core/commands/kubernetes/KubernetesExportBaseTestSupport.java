@@ -50,7 +50,7 @@ import picocli.CommandLine;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-public class KubernetesExportBaseTest extends KubernetesBaseTest {
+public class KubernetesExportBaseTestSupport extends KubernetesBaseTestSupport {
 
     protected File workingDir;
     protected String[] defaultArgs;

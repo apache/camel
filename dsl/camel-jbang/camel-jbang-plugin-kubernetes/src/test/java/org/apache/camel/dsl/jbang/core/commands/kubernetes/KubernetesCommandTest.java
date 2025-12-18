@@ -35,7 +35,7 @@ import org.junit.jupiter.api.condition.EnabledIf;
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
 @EnabledIf("isDockerAvailable")
-class KubernetesCommandTest extends KubernetesBaseTest {
+class KubernetesCommandTest extends KubernetesBaseTestSupport {
 
     @Test
     public void shouldResolvePlugin() {

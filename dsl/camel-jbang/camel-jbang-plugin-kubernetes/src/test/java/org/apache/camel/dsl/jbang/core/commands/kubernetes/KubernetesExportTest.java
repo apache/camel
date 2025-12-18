@@ -45,7 +45,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-class KubernetesExportTest extends KubernetesExportBaseTest {
+class KubernetesExportTest extends KubernetesExportBaseTestSupport {
 
     private static Stream<Arguments> runtimeProvider() {
         return Stream.of(

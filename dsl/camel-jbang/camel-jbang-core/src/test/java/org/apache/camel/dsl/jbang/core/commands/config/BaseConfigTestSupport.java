@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.AfterEach;
 
-public class BaseConfigTest extends CamelCommandBaseTest {
+public class BaseConfigTestSupport extends CamelCommandBaseTestSupport {
 
     @AfterEach
     void removeLocalConfigFile() throws IOException {
