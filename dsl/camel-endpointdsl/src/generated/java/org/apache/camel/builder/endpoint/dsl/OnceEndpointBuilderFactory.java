@@ -73,7 +73,7 @@ public interface OnceEndpointBuilderFactory {
          * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -98,7 +98,7 @@ public interface OnceEndpointBuilderFactory {
          * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the headers(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -283,7 +283,7 @@ public interface OnceEndpointBuilderFactory {
          * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the variables(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -308,7 +308,7 @@ public interface OnceEndpointBuilderFactory {
          * with file: or classpath: followed by the location of the file.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * java.lang.String&gt;</code> type.
          * The option is multivalued, and you can use the variables(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
