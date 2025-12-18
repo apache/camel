@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static java.util.Collections.singleton;
 import static org.apache.camel.Exchange.HTTP_QUERY;
 
-public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTest {
+public class NettyHttpHeaderFilterStrategyRemovalTest extends BaseNettyTestSupport {
 
     @BindToRegistry("headerFilterStrategy")
     final NettyHttpHeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();

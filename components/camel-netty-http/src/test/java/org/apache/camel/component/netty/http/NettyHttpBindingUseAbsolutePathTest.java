@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTest {
+public class NettyHttpBindingUseAbsolutePathTest extends BaseNettyTestSupport {
 
     @ParameterizedTest
     @ValueSource(strings = {

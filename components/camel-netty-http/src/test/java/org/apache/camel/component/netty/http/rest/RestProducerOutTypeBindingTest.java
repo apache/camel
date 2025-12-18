@@ -19,13 +19,13 @@ package org.apache.camel.component.netty.http.rest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RestProducerOutTypeBindingTest extends BaseNettyTest {
+public class RestProducerOutTypeBindingTest extends BaseNettyTestSupport {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Resp1 {

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NettyHttpMuteExceptionTest extends BaseNettyTest {
+public class NettyHttpMuteExceptionTest extends BaseNettyTestSupport {
 
     @Test
     public void testMuteException() throws Exception {

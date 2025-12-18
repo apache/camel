@@ -27,7 +27,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpTraceDisabledTest extends BaseNettyTest {
+public class NettyHttpTraceDisabledTest extends BaseNettyTestSupport {
 
     @RegisterExtension
     AvailablePortFinder.Port portTraceOn = AvailablePortFinder.find();

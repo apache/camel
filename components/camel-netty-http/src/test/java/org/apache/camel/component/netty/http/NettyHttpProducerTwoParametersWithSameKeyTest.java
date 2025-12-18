@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NettyHttpProducerTwoParametersWithSameKeyTest extends BaseNettyTest {
+public class NettyHttpProducerTwoParametersWithSameKeyTest extends BaseNettyTestSupport {
 
     @Test
     public void testTwoParametersWithSameKey() {

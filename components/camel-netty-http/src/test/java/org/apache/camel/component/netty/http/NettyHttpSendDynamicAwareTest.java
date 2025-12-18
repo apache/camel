@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NettyHttpSendDynamicAwareTest extends BaseNettyTest {
+public class NettyHttpSendDynamicAwareTest extends BaseNettyTestSupport {
 
     @Test
     public void testDynamicAware() {

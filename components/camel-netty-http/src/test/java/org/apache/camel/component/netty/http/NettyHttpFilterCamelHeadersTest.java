@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NettyHttpFilterCamelHeadersTest extends BaseNettyTest {
+public class NettyHttpFilterCamelHeadersTest extends BaseNettyTestSupport {
 
     @BindToRegistry("foo")
     private MyFooBean bean = new MyFooBean();

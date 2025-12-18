@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpCustomOptionsTest extends BaseNettyTest {
+public class NettyHttpCustomOptionsTest extends BaseNettyTestSupport {
 
     final String expectedResponse = "response";
 

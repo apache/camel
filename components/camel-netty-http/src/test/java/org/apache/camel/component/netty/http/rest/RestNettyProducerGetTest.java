@@ -17,13 +17,13 @@
 package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RestNettyProducerGetTest extends BaseNettyTest {
+public class RestNettyProducerGetTest extends BaseNettyTestSupport {
 
     @Test
     public void testNettyProducerGet() {

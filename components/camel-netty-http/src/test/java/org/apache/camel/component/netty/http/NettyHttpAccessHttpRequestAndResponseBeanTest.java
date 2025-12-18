@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTest {
+public class NettyHttpAccessHttpRequestAndResponseBeanTest extends BaseNettyTestSupport {
 
     @Test
     public void testRawHttpRequestAndResponseInBean() throws Exception {

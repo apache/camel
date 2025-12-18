@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Tests https://issues.apache.org/jira/browse/CAMEL-10409
  */
-public class NettyRequestManagementTest extends BaseNettyTest {
+public class NettyRequestManagementTest extends BaseNettyTestSupport {
 
     @Test
     public void testBufferManagement() {

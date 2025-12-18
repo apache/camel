@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.Exchange.HTTP_QUERY;
 import static org.apache.camel.Exchange.HTTP_RAW_QUERY;
 
-public class NettyHttpRawQueryTest extends BaseNettyTest {
+public class NettyHttpRawQueryTest extends BaseNettyTestSupport {
 
     @EndpointInject("mock:test")
     MockEndpoint mockEndpoint;
