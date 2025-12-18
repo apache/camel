@@ -88,7 +88,7 @@ class KubernetesRunCustomTest {
         Assertions.assertEquals(0, exit);
         Assertions.assertEquals(ClusterType.KUBERNETES.name().toLowerCase(), command.clusterType.toLowerCase());
 
-        var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        var manifest = KubernetesBaseTestSupport.getKubernetesManifestAsStream(printer.getOutput(), command.output);
         List<HasMetadata> resources = client.load(manifest).items();
         // expects Service, Deployment manifests in kubernetes.yml
         Assertions.assertEquals(2, resources.size());
@@ -106,7 +106,7 @@ class KubernetesRunCustomTest {
         Assertions.assertEquals(ClusterType.OPENSHIFT.name().toLowerCase(), command.clusterType.toLowerCase(),
                 printer.getOutput());
 
-        var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        var manifest = KubernetesBaseTestSupport.getKubernetesManifestAsStream(printer.getOutput(), command.output);
         List<HasMetadata> resources = client.load(manifest).items();
         // expects Service, Deployment, Route manifests in openshift.yml
         Assertions.assertEquals(3, resources.size());
@@ -162,7 +162,7 @@ class KubernetesRunCustomTest {
         Assertions.assertEquals(0, exit);
         Assertions.assertEquals(ClusterType.MINIKUBE.name().toLowerCase(), command.clusterType.toLowerCase());
 
-        var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        var manifest = KubernetesBaseTestSupport.getKubernetesManifestAsStream(printer.getOutput(), command.output);
         List<HasMetadata> resources = client.load(manifest).items();
         // expects Service, Deployment manifests in kubernetes.yml
         Assertions.assertEquals(2, resources.size());
@@ -188,7 +188,7 @@ class KubernetesRunCustomTest {
         // as the k8s:resource task is skipped for knative-service, there won't be a kubernetes.yml
         // so, we add a triple dash to emulate the first line of the kubernetes.yml
         String output = "---" + System.lineSeparator() + printer.getOutput();
-        var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(output, command.output);
+        var manifest = KubernetesBaseTestSupport.getKubernetesManifestAsStream(output, command.output);
         List<HasMetadata> resources = client.load(manifest).items();
         // expects KnativeService only
         Assertions.assertEquals(1, resources.size());
@@ -216,7 +216,7 @@ class KubernetesRunCustomTest {
         Assertions.assertEquals(0, exit);
         Assertions.assertEquals(ClusterType.MINIKUBE.name().toLowerCase(), command.clusterType.toLowerCase());
 
-        var manifest = KubernetesBaseTest.getKubernetesManifestAsStream(printer.getOutput(), command.output);
+        var manifest = KubernetesBaseTestSupport.getKubernetesManifestAsStream(printer.getOutput(), command.output);
         List<HasMetadata> resources = client.load(manifest).items();
         // expects service and deployment only
         Assertions.assertEquals(2, resources.size());

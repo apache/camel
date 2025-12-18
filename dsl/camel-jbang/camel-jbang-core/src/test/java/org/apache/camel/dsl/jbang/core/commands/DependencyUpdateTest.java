@@ -37,7 +37,7 @@ import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DependencyUpdateTest extends CamelCommandBaseTest {
+class DependencyUpdateTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
 

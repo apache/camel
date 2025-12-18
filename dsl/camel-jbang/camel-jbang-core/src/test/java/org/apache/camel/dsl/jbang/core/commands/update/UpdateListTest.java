@@ -19,12 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.update;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class UpdateListTest extends CamelCommandBaseTest {
+public class UpdateListTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void listUpdateVersions() throws Exception {

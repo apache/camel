@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class PluginAddTest extends CamelCommandBaseTest {
+class PluginAddTest extends CamelCommandBaseTestSupport {
 
     @BeforeEach
     public void setup() throws Exception {

@@ -49,7 +49,7 @@ import picocli.CommandLine;
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
 @EnabledIf("isDockerAvailable")
-class KubernetesRunTest extends KubernetesBaseTest {
+class KubernetesRunTest extends KubernetesBaseTestSupport {
 
     private StringPrinter printer;
 
