@@ -884,7 +884,7 @@ public final class EntityParser {
                                     contentTransferEncoding);
                             break;
                         default:
-                        break;
+                            break;
                     }
                     break;
                 default:
