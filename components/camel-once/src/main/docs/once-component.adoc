@@ -75,6 +75,25 @@ from("once:tick?body=world&header.foo=abc&header.bar=123")
 
 You can do the same for variables with `variable.<key>`.
 
+And in YAML DSL you can use YAML map's directly as shown below:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: once
+      parameters:
+        name: hello
+        body: Hello World
+        headers:
+          foo: foolish
+          bar: 456
+      steps:
+        - to: mock:result
+----
+
+IMPORTANT: This requires that the `uri` does not have any configuration so it must be `uri: once` and not `uri: once:hello`.
+
 === Using custom languages
 
 You can use the Camel languages such as simple, or groovy when specifying body, headers, and variables.
