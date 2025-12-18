@@ -350,7 +350,10 @@ public class MiloServerComponent extends DefaultComponent {
                 .build();
     }
 
+    // May be useful in the future although unused now.
+    @SuppressWarnings("unused")
     private static final class DenyAllCertificateValidator implements CertificateValidator {
+        @SuppressWarnings("unused")
         public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
 
         private DenyAllCertificateValidator() {
@@ -380,7 +383,7 @@ public class MiloServerComponent extends DefaultComponent {
         this.runOnStop.add(runnable);
     }
 
-    private Map createUserMap() {
+    private Map<String, String> createUserMap() {
         Map<String, String> userMap = null;
         if (userAuthenticationCredentials != null) {
             userMap = new HashMap<>();

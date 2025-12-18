@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.milo.server;
 
+import java.io.IOException;
+
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,23 +42,26 @@ public class ServerSetSecurityPoliciesTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSetSecurityPolicies1() {
-        final MiloServerComponent component = new MiloServerComponent();
-        Assertions.assertDoesNotThrow(() -> component.setSecurityPoliciesById("None"));
+    public void testSetSecurityPolicies1() throws IOException {
+        try (final MiloServerComponent component = new MiloServerComponent()) {
+            Assertions.assertDoesNotThrow(() -> component.setSecurityPoliciesById("None"));
+        }
     }
 
     @Test
-    public void testSetSecurityPolicies2() {
-        final MiloServerComponent component = new MiloServerComponent();
-        Assertions.assertDoesNotThrow(
-                () -> component.setSecurityPoliciesById("http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256"));
+    public void testSetSecurityPolicies2() throws IOException {
+        try (final MiloServerComponent component = new MiloServerComponent()) {
+            Assertions.assertDoesNotThrow(
+                    () -> component.setSecurityPoliciesById("http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256"));
+        }
     }
 
     @Test
-    public void testSetSecurityPolicies3() {
-        final MiloServerComponent component = new MiloServerComponent();
-        Assertions.assertDoesNotThrow(
-                () -> component.setSecurityPoliciesById("None,http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256"));
+    public void testSetSecurityPolicies3() throws IOException {
+        try (final MiloServerComponent component = new MiloServerComponent()) {
+            Assertions.assertDoesNotThrow(
+                    () -> component.setSecurityPoliciesById("None,http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256"));
+        }
     }
 
 }
