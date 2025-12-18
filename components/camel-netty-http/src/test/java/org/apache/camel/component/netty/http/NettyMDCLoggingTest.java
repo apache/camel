@@ -51,7 +51,8 @@ public class NettyMDCLoggingTest extends BaseNettyTestSupport {
                         .to("log:client-output")
                         .to("mock:result");
 
-                from("netty-http:http://0.0.0.0:{{port}}/foo").routeId("server").streamCaching()
+                from("netty-http:http://0.0.0.0:{{port}}/foo").routeId("server")
+                        .streamCache(true)
                         .to("log:server-input")
                         .to("mock:input")
                         .transform().simple("Bye ${body}")
