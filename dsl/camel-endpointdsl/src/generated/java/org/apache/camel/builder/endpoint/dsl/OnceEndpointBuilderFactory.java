@@ -45,6 +45,25 @@ public interface OnceEndpointBuilderFactory {
         }
 
         /**
+         * The data to use as message body. You can externalize the data by
+         * using file: or classpath: as prefix and specify the location of the
+         * file.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param body the value to set
+         * @return the dsl builder
+         */
+        default OnceEndpointBuilder body(String body) {
+            doSetProperty("body", body);
+            return this;
+        }
+        /**
          * The number of milliseconds to wait before triggering. The default
          * value is 1000.
          * 

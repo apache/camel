@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.once;
 
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.LanguageHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,47 +36,24 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(OnceConsumer.class);
 
+    private final CamelContext camelContext;
     private final OnceEndpoint endpoint;
     private final Timer timer;
-    private TimerTask task;
+    private final TimerTask task;
     private volatile boolean scheduled;
 
     public OnceConsumer(OnceEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        this.camelContext = endpoint.getCamelContext();
         this.endpoint = endpoint;
         this.timer = new Timer(endpoint.getName());
-    }
-
-    @Override
-    public void doInit() throws Exception {
-        task = new TimerTask() {
-            @Override
-            public void run() {
-                Exchange exchange = createExchange(false);
-                try {
-                    // TODO: options for body/headers to enrich the exchange message
-                    getProcessor().process(exchange);
-                } catch (Exception e) {
-                    exchange.setException(e);
-                }
-
-                // handle any thrown exception
-                try {
-                    if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-                    }
-                } finally {
-                    releaseExchange(exchange, false);
-                }
-            }
-        };
+        this.task = new OnceTimerTask();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        if (task != null && !scheduled && endpoint.getCamelContext().getStatus().isStarted()) {
+        if (!scheduled && endpoint.getCamelContext().getStatus().isStarted()) {
             scheduleTask(task, timer);
         }
     }
@@ -81,15 +63,13 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
         if (task != null) {
             task.cancel();
         }
-        task = null;
         scheduled = false;
-
         super.doStop();
     }
 
     @Override
     public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
-        if (task != null && !scheduled) {
+        if (!scheduled) {
             scheduleTask(task, timer);
         }
     }
@@ -98,5 +78,46 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
         LOG.debug("Scheduled once after: {} mills for task: {} ", endpoint.getDelay(), task);
         timer.schedule(task, endpoint.getDelay());
         scheduled = true;
+    }
+
+    private class OnceTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            Exchange exchange = createExchange(false);
+            try {
+                String body = resolveData(endpoint.getBody());
+                exchange.getMessage().setBody(body);
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            // handle any thrown exception
+            try {
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                }
+            } finally {
+                releaseExchange(exchange, false);
+            }
+        }
+    }
+
+    private String resolveData(String data) throws Exception {
+        String answer = data;
+        if (ResourceHelper.hasScheme(data)) {
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, data)) {
+                answer = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
+            }
+        }
+        if (answer != null) {
+            answer = camelContext.resolvePropertyPlaceholders(answer);
+        }
+        return answer;
+    }
+
+    private static boolean isSimpleLanguage(String pattern) {
+        return StringHelper.hasStartToken(pattern, "simple");
     }
 }

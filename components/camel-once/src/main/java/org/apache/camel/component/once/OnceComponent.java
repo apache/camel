@@ -25,6 +25,8 @@ import org.apache.camel.support.DefaultComponent;
 @Component("once")
 public class OnceComponent extends DefaultComponent {
 
+    // TOOD: option to support groovy/simple language etc
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OnceEndpoint answer = new OnceEndpoint(uri, this, remaining);

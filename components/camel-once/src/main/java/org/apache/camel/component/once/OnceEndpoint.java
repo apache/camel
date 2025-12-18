@@ -37,6 +37,9 @@ public class OnceEndpoint extends DefaultEndpoint {
     private String name;
     @UriParam(defaultValue = "1000")
     private long delay = 1000;
+    @UriParam
+    @Metadata(supportFileReference = true)
+    private String body;
 
     public OnceEndpoint() {
     }
@@ -90,5 +93,17 @@ public class OnceEndpoint extends DefaultEndpoint {
      */
     public void setDelay(long delay) {
         this.delay = delay;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    /**
+     * The data to use as message body. You can externalize the data by using file: or classpath: as prefix and specify
+     * the location of the file.
+     */
+    public void setBody(String body) {
+        this.body = body;
     }
 }

@@ -23,7 +23,8 @@ public class OnceEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(6);
+        props.add("body");
         props.add("bridgeErrorHandler");
         props.add("delay");
         props.add("exceptionHandler");

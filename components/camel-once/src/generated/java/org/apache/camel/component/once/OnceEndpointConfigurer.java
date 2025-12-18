@@ -23,6 +23,7 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OnceEndpoint target = (OnceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "body": target.setBody(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -37,6 +38,7 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "body": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "delay": return long.class;
@@ -52,6 +54,7 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OnceEndpoint target = (OnceEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "body": return target.getBody();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "delay": return target.getDelay();
