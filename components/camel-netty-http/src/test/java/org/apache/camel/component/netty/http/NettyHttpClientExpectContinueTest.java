@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class NettyHttpClientExpectContinueTest extends BaseNettyTest {
+public class NettyHttpClientExpectContinueTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpExpect100Continue() throws Exception {

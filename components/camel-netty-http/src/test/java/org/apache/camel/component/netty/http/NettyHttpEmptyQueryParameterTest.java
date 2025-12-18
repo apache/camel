@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpEmptyQueryParameterTest extends BaseNettyTest {
+public class NettyHttpEmptyQueryParameterTest extends BaseNettyTestSupport {
 
     @Test
     public void testEmpty() throws Exception {

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NettyHttpLoopErrorTest extends BaseNettyTest {
+public class NettyHttpLoopErrorTest extends BaseNettyTestSupport {
 
     @EndpointInject("direct:input")
     DirectEndpoint directEndpoint;

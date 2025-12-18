@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
+public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTestSupport {
 
     private final String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice?urlDecodeHeaders=true";
 

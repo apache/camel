@@ -26,7 +26,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class NettyHttpBasicAuthTest extends BaseNettyTest {
+public class NettyHttpBasicAuthTest extends BaseNettyTestSupport {
 
     @Override
     public void doPreSetup() {

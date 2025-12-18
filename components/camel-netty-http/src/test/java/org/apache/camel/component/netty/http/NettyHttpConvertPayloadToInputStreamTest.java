@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTest {
+public class NettyHttpConvertPayloadToInputStreamTest extends BaseNettyTestSupport {
 
     protected final String expectedBody = "<hello>world!</hello>";
 

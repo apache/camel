@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNettyTest {
+public class NettyHttpBindingPreservePostFormUrlEncodedBodyTest extends BaseNettyTestSupport {
 
     @Test
     public void testSendToNetty() {

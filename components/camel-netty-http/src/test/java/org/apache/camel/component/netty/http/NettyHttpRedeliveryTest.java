@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NettyHttpRedeliveryTest extends BaseNettyTest {
+public class NettyHttpRedeliveryTest extends BaseNettyTestSupport {
 
     private final CountDownLatch latch = new CountDownLatch(5);
 

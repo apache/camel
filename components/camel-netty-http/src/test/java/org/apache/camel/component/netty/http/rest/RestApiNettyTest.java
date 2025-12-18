@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Does not run well on CI due test uses JMX mbeans")
-public class RestApiNettyTest extends BaseNettyTest {
+public class RestApiNettyTest extends BaseNettyTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(RestApiNettyTest.class);
 

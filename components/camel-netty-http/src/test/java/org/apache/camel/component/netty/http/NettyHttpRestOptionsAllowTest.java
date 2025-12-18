@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpRestOptionsAllowTest extends BaseNettyTest {
+public class NettyHttpRestOptionsAllowTest extends BaseNettyTestSupport {
 
     static final String ALLOW_METHODS = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
 

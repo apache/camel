@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpProducerBridgeTest extends BaseNettyTest {
+public class NettyHttpProducerBridgeTest extends BaseNettyTestSupport {
 
     final AvailablePortFinder.Port port1 = port;
     @RegisterExtension

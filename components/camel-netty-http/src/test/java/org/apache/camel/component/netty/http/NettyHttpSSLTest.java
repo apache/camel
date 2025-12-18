@@ -32,7 +32,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
-public class NettyHttpSSLTest extends BaseNettyTest {
+public class NettyHttpSSLTest extends BaseNettyTestSupport {
 
     private static final String NULL_VALUE_MARKER = CamelTestSupport.class.getCanonicalName();
 

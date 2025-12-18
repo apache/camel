@@ -19,13 +19,13 @@ package org.apache.camel.component.netty.http.rest;
 import io.netty.util.ResourceLeakDetector;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.apache.camel.component.netty.http.RestNettyHttpBinding;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RestNettyCircuitBreakerLeakTest extends BaseNettyTest {
+public class RestNettyCircuitBreakerLeakTest extends BaseNettyTestSupport {
 
     @BindToRegistry("mybinding")
     private RestNettyHttpBinding binding = new RestNettyHttpBinding();

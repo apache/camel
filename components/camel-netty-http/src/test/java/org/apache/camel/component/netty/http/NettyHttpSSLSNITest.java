@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
-public class NettyHttpSSLSNITest extends BaseNettyTest {
+public class NettyHttpSSLSNITest extends BaseNettyTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {

@@ -32,10 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Base test class for Netty.
  */
-public class BaseNettyTest extends CamelTestSupport {
-    protected static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
+public class BaseNettyTestSupport extends CamelTestSupport {
+    protected static final Logger LOG = LoggerFactory.getLogger(BaseNettyTestSupport.class);
 
     @RegisterExtension
     AvailablePortFinder.Port port = AvailablePortFinder.find();

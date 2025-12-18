@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTest {
+public class NettyHttpEndpointUriCustomHeaderFilterStrategyTest extends BaseNettyTestSupport {
 
     @BindToRegistry("customHeaderFilterStrategy")
     private CustomHeaderFilterStrategy customHeaderFilterStrategy = new CustomHeaderFilterStrategy();

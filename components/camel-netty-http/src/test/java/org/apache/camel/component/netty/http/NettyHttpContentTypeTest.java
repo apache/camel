@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class NettyHttpContentTypeTest extends BaseNettyTestSupport {
 
     @Test
     public void testContentType() throws Exception {

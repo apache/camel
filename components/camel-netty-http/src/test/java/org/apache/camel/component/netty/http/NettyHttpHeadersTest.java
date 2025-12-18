@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpHeadersTest extends BaseNettyTest {
+public class NettyHttpHeadersTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpHeaders() throws Exception {
