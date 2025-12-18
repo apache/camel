@@ -96,11 +96,12 @@ IMPORTANT: This requires that the `uri` does not have any configuration so it mu
 
 === Using custom languages
 
-You can use the Camel languages such as simple, or groovy when specifying body, headers, and variables.
+You can use the Camel languages such as simple, or groovy when specifying body, headers, exchange properties, and variables.
 
 The once component will set the data in the following order:
 
 - variables
+- exchangeProperties
 - headers
 - body
 

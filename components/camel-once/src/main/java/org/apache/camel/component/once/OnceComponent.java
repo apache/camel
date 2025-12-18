@@ -65,6 +65,19 @@ public class OnceComponent extends DefaultComponent {
         if (variables != null && !variables.isEmpty()) {
             answer.setVariables(variables);
         }
+        Map<String, String> properties = getAndRemoveOrResolveReferenceParameter(parameters, "exchangeProperties", Map.class);
+        map = PropertiesHelper.extractProperties(parameters, "exchangeProperty.");
+        if (map != null && !map.isEmpty()) {
+            if (properties == null) {
+                properties = new LinkedHashMap<>();
+            }
+            for (Map.Entry<String, Object> me : map.entrySet()) {
+                properties.put(me.getKey(), me.getValue().toString());
+            }
+        }
+        if (properties != null && !properties.isEmpty()) {
+            answer.setExchangeProperties(properties);
+        }
         setProperties(answer, parameters);
         return answer;
     }

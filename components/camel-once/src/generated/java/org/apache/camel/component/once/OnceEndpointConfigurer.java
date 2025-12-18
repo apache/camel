@@ -31,6 +31,8 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "exchangeproperties":
+        case "exchangeProperties": target.setExchangeProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "headers": target.setHeaders(property(camelContext, java.util.Map.class, value)); return true;
         case "variables": target.setVariables(property(camelContext, java.util.Map.class, value)); return true;
         default: return false;
@@ -48,6 +50,8 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exchangeproperties":
+        case "exchangeProperties": return java.util.Map.class;
         case "headers": return java.util.Map.class;
         case "variables": return java.util.Map.class;
         default: return null;
@@ -66,6 +70,8 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "exchangeproperties":
+        case "exchangeProperties": return target.getExchangeProperties();
         case "headers": return target.getHeaders();
         case "variables": return target.getVariables();
         default: return null;
@@ -75,6 +81,8 @@ public class OnceEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "exchangeproperties":
+        case "exchangeProperties": return java.lang.String.class;
         case "headers": return java.lang.String.class;
         case "variables": return java.lang.String.class;
         default: return null;

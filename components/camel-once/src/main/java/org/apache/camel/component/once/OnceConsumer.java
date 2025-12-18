@@ -87,12 +87,20 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
         public void run() {
             Exchange exchange = createExchange(false);
             try {
-                // variables,headers,and body last
+                // variables,properties,headers,and body last
                 if (endpoint.getVariables() != null) {
                     for (var e : endpoint.getVariables().entrySet()) {
                         Object v = resolveData(exchange, e.getValue());
                         if (v != null) {
                             exchange.setVariable(e.getKey(), v);
+                        }
+                    }
+                }
+                if (endpoint.getExchangeProperties() != null) {
+                    for (var e : endpoint.getExchangeProperties().entrySet()) {
+                        Object v = resolveData(exchange, e.getValue());
+                        if (v != null) {
+                            exchange.setProperty(e.getKey(), v);
                         }
                     }
                 }

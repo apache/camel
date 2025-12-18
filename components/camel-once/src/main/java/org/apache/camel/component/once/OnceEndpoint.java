@@ -48,6 +48,9 @@ public class OnceEndpoint extends DefaultEndpoint {
     @UriParam(label = "advanced", multiValue = true, prefix = "variable.")
     @Metadata(supportFileReference = true)
     private Map<String, String> variables;
+    @UriParam(label = "advanced", multiValue = true, prefix = "exchangeProperty.")
+    @Metadata(supportFileReference = true)
+    private Map<String, String> exchangeProperties;
 
     public OnceEndpoint() {
     }
@@ -137,5 +140,17 @@ public class OnceEndpoint extends DefaultEndpoint {
      */
     public void setVariables(Map<String, String> variables) {
         this.variables = variables;
+    }
+
+    public Map<String, String> getExchangeProperties() {
+        return exchangeProperties;
+    }
+
+    /**
+     * The data to use as exchange properties as key=value pairs. You can externalize the data by using file: or
+     * classpath: as prefix and specify the location of the file.
+     */
+    public void setExchangeProperties(Map<String, String> exchangeProperties) {
+        this.exchangeProperties = exchangeProperties;
     }
 }

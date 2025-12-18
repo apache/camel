@@ -23,18 +23,20 @@ public class OnceEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(8);
+        Set<String> props = new HashSet<>(9);
         props.add("body");
         props.add("bridgeErrorHandler");
         props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("exchangeProperties");
         props.add("headers");
         props.add("name");
         props.add("variables");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        Map<String, String> prefixes = new HashMap<>(2);
+        Map<String, String> prefixes = new HashMap<>(3);
+        prefixes.put("exchangeProperties", "exchangeProperty.");
         prefixes.put("headers", "header.");
         prefixes.put("variables", "variable.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);

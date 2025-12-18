@@ -274,6 +274,55 @@ public interface OnceEndpointBuilderFactory {
             return this;
         }
         /**
+         * The data to use as exchange properties as key=value pairs. You can
+         * externalize the data by using file: or classpath: as prefix and
+         * specify the location of the file. This is a multi-value option with
+         * prefix: exchangeProperty.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * exchangeProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default AdvancedOnceEndpointBuilder exchangeProperties(String key, Object value) {
+            doSetMultiValueProperty("exchangeProperties", "exchangeProperty." + key, value);
+            return this;
+        }
+        /**
+         * The data to use as exchange properties as key=value pairs. You can
+         * externalize the data by using file: or classpath: as prefix and
+         * specify the location of the file. This is a multi-value option with
+         * prefix: exchangeProperty.
+         * 
+         * This option can also be loaded from an existing file, by prefixing
+         * with file: or classpath: followed by the location of the file.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the
+         * exchangeProperties(String, Object) method to add a value (call the
+         * method multiple times to set more values).
+         * 
+         * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default AdvancedOnceEndpointBuilder exchangeProperties(Map values) {
+            doSetMultiValueProperties("exchangeProperties", "exchangeProperty.", values);
+            return this;
+        }
+        /**
          * The data to use as exchange variables as key=value pairs. You can
          * externalize the data by using file: or classpath: as prefix and
          * specify the location of the file. This is a multi-value option with
