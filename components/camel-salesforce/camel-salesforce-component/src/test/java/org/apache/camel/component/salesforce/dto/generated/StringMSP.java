@@ -26,9 +26,9 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 /**
  * Sample POJO for MSP tests using Strings instead of Constants.
  */
-public class StringMSPTest extends AbstractSObjectBase {
+public class StringMSP extends AbstractSObjectBase {
 
-    public StringMSPTest() {
+    public StringMSP() {
         getAttributes().setType("MSPTest");
     }
 

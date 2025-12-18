@@ -30,9 +30,9 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 /**
  * Sample POJO for MSP tests.
  */
-public class MSPTest extends AbstractSObjectBase {
+public class MSP extends AbstractSObjectBase {
 
-    public MSPTest() {
+    public MSP() {
         getAttributes().setType("MSPTest");
     }
 
