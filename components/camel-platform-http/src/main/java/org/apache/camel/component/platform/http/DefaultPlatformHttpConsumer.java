@@ -20,14 +20,13 @@ import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 
 public class DefaultPlatformHttpConsumer extends DefaultConsumer
-        implements PlatformHttpConsumer, PlatformHttpConsumerAware, Suspendable, SuspendableService {
+        implements PlatformHttpConsumer, PlatformHttpConsumerAware, Suspendable {
 
     private PlatformHttpConsumer platformHttpConsumer;
     private boolean register = true;

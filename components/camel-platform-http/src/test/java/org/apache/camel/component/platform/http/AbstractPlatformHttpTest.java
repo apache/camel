@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 abstract class AbstractPlatformHttpTest {
     protected static int port;
     private static final Object LOCK = new Object();
-    private static JettyServerTest server;
+    private static JettyEmbeddedServer server;
     private static CamelContext ctx;
 
     @BeforeEach
@@ -38,9 +38,9 @@ abstract class AbstractPlatformHttpTest {
                 ctx.getRegistry().bind(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, new JettyCustomPlatformHttpEngine());
 
                 port = AvailablePortFinder.getNextAvailable();
-                server = new JettyServerTest(port);
+                server = new JettyEmbeddedServer(port);
 
-                ctx.getRegistry().bind(JettyServerTest.JETTY_SERVER_NAME, server);
+                ctx.getRegistry().bind(JettyEmbeddedServer.JETTY_SERVER_NAME, server);
                 server.start();
 
                 ctx.addRoutes(routes());

@@ -22,14 +22,14 @@ import org.apache.camel.test.infra.jetty.services.JettyEmbeddedService;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
-public class JettyServerTest {
-    public static final String JETTY_SERVER_NAME = "JettyServerTest";
+public class JettyEmbeddedServer {
+    public static final String JETTY_SERVER_NAME = "JettyEmbeddedServer";
 
     private final int port;
     private final ContextHandlerCollection contextHandlerCollection;
     private final JettyEmbeddedService service;
 
-    public JettyServerTest(int port) {
+    public JettyEmbeddedServer(int port) {
         contextHandlerCollection = new ContextHandlerCollection(true);
 
         final JettyConfiguration configuration = JettyConfigurationBuilder.bareTemplate()

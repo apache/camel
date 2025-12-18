@@ -28,10 +28,10 @@ public class JettyCustomPlatformHttpEngine implements PlatformHttpEngine {
     @Override
     public PlatformHttpConsumer createConsumer(PlatformHttpEndpoint platformHttpEndpoint, Processor processor) {
         if (port == 0) {
-            JettyServerTest jettyServerTest = CamelContextHelper.mandatoryLookup(
+            JettyEmbeddedServer jettyServerTest = CamelContextHelper.mandatoryLookup(
                     platformHttpEndpoint.getCamelContext(),
-                    JettyServerTest.JETTY_SERVER_NAME,
-                    JettyServerTest.class);
+                    JettyEmbeddedServer.JETTY_SERVER_NAME,
+                    JettyEmbeddedServer.class);
 
             port = jettyServerTest.getServerPort();
         }
