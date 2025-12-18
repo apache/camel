@@ -724,6 +724,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         registry.bind(NamedLockFactory.class, LocalReadWriteLockNamedLockFactory.class);
         registry.bind(NamedLockFactory.class, NoopNamedLockFactory.class);
         registry.bind(NamedLockFactory.class, LocalSemaphoreNamedLockFactory.class);
+        registry.bind(NameMappers.GAECV_NAME, NameMapper.class, NameMappers.gaecvNameMapper());
         registry.bind(NameMappers.GAV_NAME, NameMapper.class, NameMappers.gavNameMapper());
         registry.bind(NameMappers.STATIC_NAME, NameMapper.class, NameMappers.staticNameMapper());
         registry.bind(NameMappers.DISCRIMINATING_NAME, NameMapper.class, NameMappers.discriminatingNameMapper());
