@@ -57,7 +57,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProject(RuntimeType rt) throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+        // the backslash is to simulate the windows file separator, related to CAMEL-22776
+        // as the ExportBaseCommand uses Paths.get to read the file it also sets the backslash
+        KubernetesExport command = createCommand(new String[] { "classpath:myapp\\route.yaml" },
                 "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
@@ -77,6 +79,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertNull(props.get("jkube.container-image.platforms"));
 
         Properties applicationProperties = getApplicationProperties(workingDir);
+        String scriptContent = readResource(workingDir, "src/main/scripts/run-java.sh");
+        Assertions.assertNotNull(scriptContent);
+        Assertions.assertTrue(scriptContent.length() > 0);
 
         if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertEquals("9876", applicationProperties.get("quarkus.management.port"));
