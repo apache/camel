@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SpringTest {
+public class SpringTestBean {
 
     // defaulted and overwritten in myproperties.properties
     @Value("${available.prop:no Data}")
