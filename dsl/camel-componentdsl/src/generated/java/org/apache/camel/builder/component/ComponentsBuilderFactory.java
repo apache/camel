@@ -3558,7 +3558,7 @@ public interface ComponentsBuilderFactory {
      * Camel Once component
      * 
      * Category: core,scheduling
-     * Since: 4.170
+     * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-once
      * 
      * @return the dsl builder

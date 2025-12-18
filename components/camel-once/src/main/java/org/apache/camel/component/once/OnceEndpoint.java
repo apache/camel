@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
-@UriEndpoint(firstVersion = "4.170.0", scheme = "once", title = "Once", syntax = "once:name", consumerOnly = true,
+@UriEndpoint(firstVersion = "4.17.0", scheme = "once", title = "Once", syntax = "once:name", consumerOnly = true,
              remote = false, category = { Category.CORE, Category.SCHEDULING })
 public class OnceEndpoint extends DefaultEndpoint {
 

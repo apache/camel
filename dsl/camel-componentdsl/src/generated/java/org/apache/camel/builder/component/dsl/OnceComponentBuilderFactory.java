@@ -36,7 +36,7 @@ public interface OnceComponentBuilderFactory {
      * Camel Once component
      * 
      * Category: core,scheduling
-     * Since: 4.170
+     * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-once
      * 
      * @return the dsl builder
@@ -102,8 +102,8 @@ public interface OnceComponentBuilderFactory {
     
         
         /**
-         * The number of milliseconds to wait before triggering. The default
-         * value is 1000.
+         * The number of milliseconds to wait before triggering. Use 0 or
+         * negative to fire as soon as possible. The default value is 1000.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 

@@ -11845,7 +11845,7 @@ public class StaticEndpointBuilders {
      * Camel Once component
      * 
      * Category: core,scheduling
-     * Since: 4.170
+     * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-once
      * 
      * Syntax: <code>once:name</code>
@@ -11864,7 +11864,7 @@ public class StaticEndpointBuilders {
      * Camel Once component
      * 
      * Category: core,scheduling
-     * Since: 4.170
+     * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-once
      * 
      * Syntax: <code>once:name</code>

@@ -87,9 +87,8 @@ public class OnceComponent extends DefaultComponent {
     }
 
     /**
-     * The number of milliseconds to wait before triggering.
-     * <p/>
-     * The default value is 1000.
+     * The number of milliseconds to wait before triggering. Use 0 or negative to fire as soon as possible. The default
+     * value is 1000.
      */
     public void setDelay(long delay) {
         this.delay = delay;

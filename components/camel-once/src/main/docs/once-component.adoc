@@ -3,7 +3,7 @@
 :shortname: once
 :artifactid: camel-once
 :description: Camel Once component
-:since: 4.170
+:since: 4.17
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only consumer is supported
