@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AbstractOpenTelemetryTest extends CamelTestSupport {
+public class AbstractOpenTelemetryTestSupport extends CamelTestSupport {
 
     public final CamelOpenTelemetryExtension otelExtension = CamelOpenTelemetryExtension.create();
 

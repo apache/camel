@@ -27,7 +27,6 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.metrics.ObservableLongGauge;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -45,7 +44,7 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 
-public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport implements CamelContextAware {
+public class OpenTelemetryExchangeEventNotifier extends EventNotifierSupport {
 
     private static final AtomicLong lastExchangeTimestampHolder = new AtomicLong(0);
     private final Class<ExchangeEvent> eventType = ExchangeEvent.class;
