@@ -18,14 +18,21 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.intercept.InterceptSendToEndpointInOnException;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SpringInterceptSendToEndpointInOnExceptionTest extends InterceptSendToEndpointInOnException {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointInOnExceptionTest.xml");
+    }
+
+    @Test
+    public void createCamelContextWasFine() {
+        assertNotNull(context);
     }
 
 }
