@@ -61,7 +61,7 @@
         <activemq-artemis-version>2.42.0</activemq-artemis-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <amazon-kinesis-client-version>2.6.0</amazon-kinesis-client-version>
-        <angus-mail-version>2.0.4</angus-mail-version>
+        <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
         <arangodb-java-version>7.22.0</arangodb-java-version>
@@ -286,7 +286,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>6.1.0</jedis-client-version>
-        <jetty-version>12.0.30</jetty-version>
+        <jetty-version>12.0.31</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -377,7 +377,7 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.4.0</maven-war-plugin-version>
         <metrics-version>4.2.33</metrics-version>
-        <micrometer-version>1.15.3</micrometer-version>
+        <micrometer-version>1.15.7</micrometer-version>
         <micrometer-tracing-version>1.5.3</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milvus-client-version>2.6.2</milvus-client-version>
@@ -397,7 +397,7 @@
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>5.28.9</neo4j-version>
-        <netty-version>4.1.128.Final</netty-version>
+        <netty-version>4.1.130.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.8</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.4.2</nimbus-jose-jwt>
@@ -481,9 +481,9 @@
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
         <spring-batch-version>5.2.4</spring-batch-version>
         <spring-data-redis-version>3.5.5</spring-data-redis-version>
-        <spring-ldap-version>3.3.4</spring-ldap-version>
+        <spring-ldap-version>3.3.5</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.14</spring-version>
+        <spring-version>6.2.15</spring-version>
         <spring-rabbitmq-version>3.2.6</spring-rabbitmq-version>
         <spring-security-version>6.5.7</spring-security-version>
         <spring-ws-version>4.1.2</spring-ws-version>
@@ -502,7 +502,7 @@
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <tahu-version>1.0.14</tahu-version>
-        <testcontainers-version>1.21.3</testcontainers-version>
+        <testcontainers-version>1.21.4</testcontainers-version>
         <thymeleaf-version>3.1.3.RELEASE</thymeleaf-version>
         <tika-version>3.2.3</tika-version>
         <twilio-version>10.9.2</twilio-version>
