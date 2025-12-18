@@ -62,6 +62,19 @@ And the route in XML DSL:
 </route>
 -----
 
+=== Using headers and variables
+
+You can also specify headers and variables using _multivalue_, where each header is prefixed with `header.<key>`.
+In the sample below we set 2 headers as follows: `foo=abc` and `bar=123`.
+
+[source,java]
+----
+from("once:tick?body=world&header.foo=abc&header.bar=123")
+  .to("bean:myBean");
+----
+
+You can do the same for variables with `variable.<key>`.
+
 === Firing as soon as possible
 
 By default, the component is fired after 1 seconds when Camel has been fully started.
