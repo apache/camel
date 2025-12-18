@@ -888,7 +888,7 @@ public final class EntityParser {
                     }
                     break;
                 default:
-                    break;
+                    throw new AS2DecryptionException("Unsupported entity content type: " + entityContentType);
             }
 
             return entity;
