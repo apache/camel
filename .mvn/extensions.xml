@@ -8,7 +8,7 @@
     <extension>
         <groupId>eu.maveniverse.maven.nisse</groupId>
         <artifactId>extension</artifactId>
-        <version>0.6.2</version>
+        <version>0.6.3</version>
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
