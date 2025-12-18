@@ -20,10 +20,9 @@ import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
+import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
 import org.apache.camel.opentelemetry.metrics.messagehistory.OpenTelemetryMessageHistoryFactory;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MessageHistoryPatternIT extends AbstractOpenTelemetryTest {
+public class MessageHistoryPatternIT extends AbstractOpenTelemetryTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -53,7 +52,7 @@ public class MessageHistoryPatternIT extends AbstractOpenTelemetryTest {
         getMockEndpoint("mock:bar").expectedMessageCount(count);
 
         for (int i = 0; i < count; i++) {
-            Exchange out = template.request("direct:start", e -> {
+            template.request("direct:start", e -> {
                 e.getMessage().setBody("Hello World");
             });
         }

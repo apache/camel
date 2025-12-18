@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
+import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 /**
  * Test OpenTelemetryExchangeEventNotifier with dynamic endpoint URIs.
  */
-public class OpenTelemetryExchangeEventNotifierDynamicTest extends AbstractOpenTelemetryTest {
+public class OpenTelemetryExchangeEventNotifierDynamicTest extends AbstractOpenTelemetryTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

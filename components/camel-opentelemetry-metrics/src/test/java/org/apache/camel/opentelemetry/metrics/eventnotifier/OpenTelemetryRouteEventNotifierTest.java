@@ -22,7 +22,7 @@ import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
+import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTES_ADDED;
@@ -30,7 +30,7 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFA
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class OpenTelemetryRouteEventNotifierTest extends AbstractOpenTelemetryTest {
+public class OpenTelemetryRouteEventNotifierTest extends AbstractOpenTelemetryTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

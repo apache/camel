@@ -23,7 +23,6 @@ import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.LongUpDownCounter;
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.RouteEvent;
@@ -36,7 +35,7 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.EVEN
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ATTRIBUTE;
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.KIND_ROUTE;
 
-public class OpenTelemetryRouteEventNotifier extends EventNotifierSupport implements CamelContextAware {
+public class OpenTelemetryRouteEventNotifier extends EventNotifierSupport {
 
     private final Class<RouteEvent> eventType = RouteEvent.class;
     private Meter meter;

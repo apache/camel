@@ -26,7 +26,7 @@ import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
+import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_EXCHANGE_ELAPSED_TIMER;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OpenTelemetryExchangeEventNotifierTimeUnitTest extends AbstractOpenTelemetryTest {
+public class OpenTelemetryExchangeEventNotifierTimeUnitTest extends AbstractOpenTelemetryTestSupport {
 
     private static final Long DELAY = 1100L;
 
