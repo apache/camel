@@ -161,6 +161,8 @@ configure _tags_ as a Map:
 In this example the _tags_ options is of Map type and can be configured using YAML map syntax.
 Because the keys use underscore, then they are quoted.
 
+IMPORTANT: To use map values for parameters, then the `uri` must only refer to the name of the component, ie `plc4x` and not `plc4x:foo`
+
 == Defining beans
 
 In addition to the general support for creating beans provided by xref:others:main.adoc#_specifying_custom_beans[Camel Main], the YAML DSL provides a convenient syntax to define and configure them:
