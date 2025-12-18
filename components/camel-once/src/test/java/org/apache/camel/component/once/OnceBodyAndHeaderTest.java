@@ -28,7 +28,8 @@ public class OnceBodyAndHeaderTest extends CamelTestSupport {
     public void testOnce() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("world");
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "abc");
-        getMockEndpoint("mock:result").expectedHeaderReceived("bar", "123");
+        getMockEndpoint("mock:result").expectedHeaderReceived("bar", 123);
+        getMockEndpoint("mock:result").expectedHeaderReceived("priority", true);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -38,7 +39,7 @@ public class OnceBodyAndHeaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("once:tick?delay=-1&body=world&header.foo=abc&header.bar=123").to("mock:result");
+                from("once:tick?delay=-1&body=world&header.foo=abc&header.bar=123&header.priority=true").to("mock:result");
             }
         };
     }

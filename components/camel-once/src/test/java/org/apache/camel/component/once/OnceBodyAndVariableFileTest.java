@@ -28,7 +28,7 @@ public class OnceBodyAndVariableFileTest extends CamelTestSupport {
     public void testOnce() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("1,jack", "2,moe");
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "abc");
-        getMockEndpoint("mock:result").expectedVariableReceived("bar", "456");
+        getMockEndpoint("mock:result").expectedVariableReceived("bar", 456);
 
         MockEndpoint.assertIsSatisfied(context);
     }

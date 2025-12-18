@@ -22,13 +22,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class OnceBodyAndVariableTest extends CamelTestSupport {
+public class OnceGroovyFileTest extends CamelTestSupport {
 
     @Test
     public void testOnce() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("world");
-        getMockEndpoint("mock:result").expectedHeaderReceived("foo", "abc");
-        getMockEndpoint("mock:result").expectedVariableReceived("bar", 123);
+        getMockEndpoint("mock:result").expectedBodiesReceived(369);
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -38,7 +36,8 @@ public class OnceBodyAndVariableTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("once:tick?delay=-1&body=world&header.foo=abc&variable.bar=123").to("mock:result");
+                from("once:tick?delay=-1&body=language:groovy:file:src/test/resources/calc.groovy&variable.amount=123")
+                        .to("mock:result");
             }
         };
     }

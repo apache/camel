@@ -30,7 +30,8 @@ public class OnceComponent extends DefaultComponent {
     @Metadata(label = "advanced", defaultValue = "1000")
     private long delay = 1000;
 
-    // TOOD: option to support groovy/simple language etc
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean languages = true;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -55,4 +56,14 @@ public class OnceComponent extends DefaultComponent {
         this.delay = delay;
     }
 
+    public boolean isLanguages() {
+        return languages;
+    }
+
+    /**
+     * Whether Camel languages are supported such as simple,groovy.
+     */
+    public void setLanguages(boolean languages) {
+        this.languages = languages;
+    }
 }

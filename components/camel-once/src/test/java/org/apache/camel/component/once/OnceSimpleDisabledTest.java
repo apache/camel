@@ -22,13 +22,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class OnceBodyAndVariableTest extends CamelTestSupport {
+public class OnceSimpleDisabledTest extends CamelTestSupport {
 
     @Test
     public void testOnce() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("world");
-        getMockEndpoint("mock:result").expectedHeaderReceived("foo", "abc");
-        getMockEndpoint("mock:result").expectedVariableReceived("bar", 123);
+        getMockEndpoint("mock:result").expectedBodiesReceived("language:simple:${camelId}");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -38,7 +36,9 @@ public class OnceBodyAndVariableTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("once:tick?delay=-1&body=world&header.foo=abc&variable.bar=123").to("mock:result");
+                context.getComponent("once", OnceComponent.class).setLanguages(false);
+
+                from("once:tick?delay=-1&body=language:simple:${camelId}").to("mock:result");
             }
         };
     }

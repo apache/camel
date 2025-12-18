@@ -22,8 +22,10 @@ import java.util.TimerTask;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.StringHelper;
@@ -85,24 +87,25 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
         public void run() {
             Exchange exchange = createExchange(false);
             try {
-                Object body = resolveData(endpoint.getBody());
-                exchange.getMessage().setBody(body);
-                if (endpoint.getHeaders() != null) {
-                    for (var e : endpoint.getHeaders().entrySet()) {
-                        Object v = resolveData(e.getValue());
-                        if (v != null) {
-                            exchange.getMessage().setHeader(e.getKey(), v);
-                        }
-                    }
-                }
+                // variables,headers,and body last
                 if (endpoint.getVariables() != null) {
                     for (var e : endpoint.getVariables().entrySet()) {
-                        Object v = resolveData(e.getValue());
+                        Object v = resolveData(exchange, e.getValue());
                         if (v != null) {
                             exchange.setVariable(e.getKey(), v);
                         }
                     }
                 }
+                if (endpoint.getHeaders() != null) {
+                    for (var e : endpoint.getHeaders().entrySet()) {
+                        Object v = resolveData(exchange, e.getValue());
+                        if (v != null) {
+                            exchange.getMessage().setHeader(e.getKey(), v);
+                        }
+                    }
+                }
+                Object body = resolveData(exchange, endpoint.getBody());
+                exchange.getMessage().setBody(body);
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 exchange.setException(e);
@@ -119,20 +122,51 @@ public class OnceConsumer extends DefaultConsumer implements StartupListener {
         }
     }
 
-    private Object resolveData(Object data) throws Exception {
+    private Object resolveData(Exchange exchange, Object data) throws Exception {
         String answer = data instanceof String ? data.toString() : null;
+
+        // if languages is supported then you can prefix with simple:xxx or groovy:xxx to let Camel know
+        Language lan = null;
+        if (answer != null && endpoint.getComponent().isLanguages() && answer.startsWith("language:")) {
+            String text = answer.substring(9);
+            String prefix = StringHelper.before(text, ":");
+            if (prefix != null) {
+                try {
+                    lan = camelContext.resolveLanguage(prefix);
+                    answer = StringHelper.after(text, ":");
+                } catch (NoSuchLanguageException e) {
+                    // ignore it's not a language
+                }
+            }
+        }
+
         if (ResourceHelper.hasScheme(answer)) {
             try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, answer)) {
                 answer = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
             }
         }
-        if (answer != null) {
-            answer = camelContext.resolvePropertyPlaceholders(answer);
+
+        if (answer != null && lan != null) {
+            return lan.createExpression(answer).evaluate(exchange, Object.class);
         }
+
+        // data may be boolean, integer, or literal
+        if ("true".equalsIgnoreCase(answer)) {
+            return true;
+        } else if ("false".equalsIgnoreCase(answer)) {
+            return false;
+        } else {
+            Object val = camelContext.getTypeConverter().tryConvertTo(Integer.class, exchange, data);
+            if (val != null) {
+                return val;
+            }
+            val = camelContext.getTypeConverter().tryConvertTo(Long.class, exchange, data);
+            if (val != null) {
+                return val;
+            }
+        }
+
         return answer;
     }
 
-    private static boolean isSimpleLanguage(String pattern) {
-        return StringHelper.hasStartToken(pattern, "simple");
-    }
 }

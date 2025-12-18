@@ -75,6 +75,47 @@ from("once:tick?body=world&header.foo=abc&header.bar=123")
 
 You can do the same for variables with `variable.<key>`.
 
+=== Using custom languages
+
+You can use the Camel languages such as simple, or groovy when specifying body, headers, and variables.
+
+The once component will set the data in the following order:
+
+- variables
+- headers
+- body
+
+This makes it possible to use groovy or simple language for setting the message body, based
+on data from the variables and headers.
+
+For example:
+
+[source,java]
+----
+from("once:tick?body=language:groovy:file:src/test/resources/calc.groovy&variable.amount=123")
+        .to("mock:result");
+----
+
+You must use `language:groovy:` as prefix when using languages. And you can combine this with loading from file.
+The `calc.groovy` file is as follows:
+
+[source,groovy]
+----
+variable.amount * 3
+----
+
+As you can see this just tells groovy to multiply the amount variable with 3.
+
+=== Automatic type conversion
+
+The body, header, and variables will automatically be converted to the best suitable type for boolean and integers:
+
+- boolean
+- int
+- long
+
+And for any other its `String` or the output from executing a language.
+
 === Firing as soon as possible
 
 By default, the component is fired after 1 seconds when Camel has been fully started.

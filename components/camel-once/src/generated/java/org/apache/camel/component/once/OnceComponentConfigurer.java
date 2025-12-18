@@ -28,6 +28,7 @@ public class OnceComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "languages": target.setLanguages(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -40,6 +41,7 @@ public class OnceComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "delay": return long.class;
+        case "languages": return boolean.class;
         default: return null;
         }
     }
@@ -53,6 +55,7 @@ public class OnceComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "delay": return target.getDelay();
+        case "languages": return target.isLanguages();
         default: return null;
         }
     }
