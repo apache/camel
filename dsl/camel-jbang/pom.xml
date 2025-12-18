@@ -41,7 +41,7 @@
         <module>camel-jbang-plugin-edit</module>
         <module>camel-jbang-plugin-kubernetes</module>
         <module>camel-jbang-plugin-test</module>
-        <module>camel-launcher</module>
         <module>camel-jbang-it</module>
+        <module>camel-launcher</module>
     </modules>
 </project>
