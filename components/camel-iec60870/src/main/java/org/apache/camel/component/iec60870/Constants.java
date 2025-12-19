@@ -54,4 +54,54 @@ public interface Constants {
     String TYPE = "type";
     @Metadata(label = "consumer", description = "Is execute", javaType = "boolean", applicableFor = SCHEME_SERVER)
     String EXECUTE = "execute";
+
+    // Connection state headers
+    @Metadata(label = "consumer", description = "The connection state (CONNECTED, DISCONNECTED, etc.)",
+              javaType = "org.eclipse.neoscada.protocol.iec60870.client.AutoConnectClient.State", applicableFor = SCHEME_CLIENT)
+    String IEC60870_CONNECTION_STATE = "CamelIec60870ConnectionState";
+    @Metadata(label = "consumer", description = "The connection state error if any",
+              javaType = "Throwable", applicableFor = SCHEME_CLIENT)
+    String IEC60870_CONNECTION_ERROR = "CamelIec60870ConnectionError";
+    @Metadata(label = "consumer", description = "Connection uptime in milliseconds since last connected",
+              javaType = "long", applicableFor = SCHEME_CLIENT)
+    String IEC60870_CONNECTION_UPTIME = "CamelIec60870ConnectionUptime";
+
+    // Producer command types
+    @Metadata(label = "producer",
+              description = "The command type: 'value' (default), 'interrogation', 'read', or 'status'",
+              javaType = "String", applicableFor = SCHEME_CLIENT)
+    String IEC60870_COMMAND_TYPE = "CamelIec60870CommandType";
+
+    // Command type values
+    String COMMAND_TYPE_VALUE = "value";
+    String COMMAND_TYPE_INTERROGATION = "interrogation";
+    String COMMAND_TYPE_READ = "read";
+    String COMMAND_TYPE_STATUS = "status";
+
+    // Interrogation headers
+    @Metadata(label = "producer", description = "The ASDU address for interrogation (optional, defaults to broadcast)",
+              javaType = "org.eclipse.neoscada.protocol.iec60870.asdu.types.ASDUAddress", applicableFor = SCHEME_CLIENT)
+    String IEC60870_ASDU_ADDRESS = "CamelIec60870AsduAddress";
+    @Metadata(label = "producer", description = "The qualifier of interrogation: 20 (global) or 21-36 (groups 1-16)",
+              javaType = "short", applicableFor = SCHEME_CLIENT)
+    String IEC60870_QOI = "CamelIec60870Qoi";
+
+    // Individual quality flag headers
+    @Metadata(label = "consumer", description = "Quality flag: Blocked (BL)", javaType = "boolean",
+              applicableFor = SCHEME_CLIENT)
+    String IEC60870_QUALITY_BLOCKED = "CamelIec60870QualityBlocked";
+    @Metadata(label = "consumer", description = "Quality flag: Substituted (SB)", javaType = "boolean",
+              applicableFor = SCHEME_CLIENT)
+    String IEC60870_QUALITY_SUBSTITUTED = "CamelIec60870QualitySubstituted";
+    @Metadata(label = "consumer", description = "Quality flag: Not topical (NT)", javaType = "boolean",
+              applicableFor = SCHEME_CLIENT)
+    String IEC60870_QUALITY_NOT_TOPICAL = "CamelIec60870QualityNotTopical";
+    @Metadata(label = "consumer", description = "Quality flag: Invalid (IV)", javaType = "boolean",
+              applicableFor = SCHEME_CLIENT)
+    String IEC60870_QUALITY_VALID = "CamelIec60870QualityValid";
+
+    // Cause of transmission header
+    @Metadata(label = "consumer", description = "The cause of transmission",
+              javaType = "org.eclipse.neoscada.protocol.iec60870.asdu.types.CauseOfTransmission", applicableFor = SCHEME_CLIENT)
+    String IEC60870_CAUSE_OF_TRANSMISSION = "CamelIec60870CauseOfTransmission";
 }
