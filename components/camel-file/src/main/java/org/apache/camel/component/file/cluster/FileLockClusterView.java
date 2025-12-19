@@ -32,7 +32,6 @@ import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -52,14 +51,12 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     private final Path leaderLockPath;
     private final Path leaderDataPath;
     private final AtomicReference<FileLockClusterLeaderInfo> clusterLeaderInfoRef = new AtomicReference<>();
-    private final AtomicBoolean firstAcquireLockAttemptCompleted = new AtomicBoolean();
     private RandomAccessFile leaderLockFile;
     private RandomAccessFile leaderDataFile;
     private FileLock lock;
     private ScheduledFuture<?> task;
     private int heartbeatTimeoutMultiplier;
     private long acquireLockIntervalMilliseconds;
-    private long acquireLeadershipBackoffMilliseconds;
 
     FileLockClusterView(FileLockClusterService cluster, String namespace) {
         super(cluster, namespace);
@@ -126,14 +123,6 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             throw new IllegalArgumentException("HeartbeatTimeoutMultiplier must be greater than 0");
         }
 
-        long acquireLeadershipBackoff = service.getAcquireLeadershipBackoff();
-        if (acquireLeadershipBackoff < 0) {
-            throw new IllegalArgumentException("acquireLeadershipBackoff must not be a negative value");
-        }
-        acquireLeadershipBackoffMilliseconds = TimeUnit.MILLISECONDS.convert(
-                acquireLeadershipBackoff,
-                service.getAcquireLeadershipBackoffIntervalUnit());
-
         ScheduledExecutorService executor = service.getExecutor();
         task = executor.scheduleWithFixedDelay(this::tryLock,
                 TimeUnit.MILLISECONDS.convert(service.getAcquireLockDelay(), service.getAcquireLockDelayUnit()),
@@ -159,7 +148,6 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         closeInternal();
         localMember.setStatus(ClusterMemberStatus.STOPPED);
         clusterLeaderInfoRef.set(null);
-        firstAcquireLockAttemptCompleted.set(false);
     }
 
     private void closeInternal() {
@@ -262,32 +250,15 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                     if (lock != null) {
                         LOGGER.info("Lock on file {} acquired (lock={}, cluster-member-id={})", leaderLockPath, lock,
                                 localMember.getUuid());
-
-                        boolean interrupted = false;
-                        if (firstAcquireLockAttemptCompleted.get()) {
-                            // If this is not the initial attempt to claim leadership, give some time for the existing leader to fully relinquish leadership
-                            interrupted = applyAcquireLeadershipBackoff();
-                        }
-
-                        if (interrupted) {
-                            // applyAcquireLeadershipBackoff sleep was interrupted, likely because we are being shutdown
-                            lock = null;
-                        } else {
-                            localMember.setStatus(ClusterMemberStatus.LEADER);
-                            clusterLeaderInfoRef.set(null);
-                            firstAcquireLockAttemptCompleted.set(false);
-                            fireLeadershipChangedEvent(localMember);
-                            writeClusterLeaderInfo(true);
-                        }
+                        localMember.setStatus(ClusterMemberStatus.LEADER);
+                        clusterLeaderInfoRef.set(null);
+                        fireLeadershipChangedEvent(localMember);
+                        writeClusterLeaderInfo(true);
                     } else {
                         LOGGER.debug("Lock on file {} not acquired", leaderLockPath);
                     }
                 } else {
                     LOGGER.debug("Existing cluster leader is valid. Retrying leadership acquisition on next interval");
-                }
-
-                if (localMember.getStatus().equals(ClusterMemberStatus.FOLLOWER)) {
-                    firstAcquireLockAttemptCompleted.set(true);
                 }
             } catch (OverlappingFileLockException e) {
                 reason = new IOException(e);
@@ -343,20 +314,6 @@ public class FileLockClusterView extends AbstractCamelClusterView {
             }
         }
         return false;
-    }
-
-    boolean applyAcquireLeadershipBackoff() {
-        boolean interrupted = false;
-        if (acquireLeadershipBackoffMilliseconds > 0) {
-            try {
-                LOGGER.debug("Waiting {} milliseconds before claiming leadership", acquireLeadershipBackoffMilliseconds);
-                Thread.sleep(acquireLeadershipBackoffMilliseconds);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                interrupted = true;
-            }
-        }
-        return interrupted;
     }
 
     private final class ClusterMember implements CamelClusterMember {
