@@ -67,7 +67,6 @@ abstract class FileLockClusterServiceTestBase {
         service.setAcquireLockInterval(1);
         service.setRoot(clusterDir.toString());
         service.setHeartbeatTimeoutMultiplier(config.getHeartbeatTimeoutMultiplier());
-        service.setAcquireLeadershipBackoff(config.getAcquireLeadershipBackoff());
         return service;
     }
 
@@ -84,7 +83,6 @@ abstract class FileLockClusterServiceTestBase {
         private long acquireLockDelay = 1;
         private long timerRepeatCount = 5;
         private int heartbeatTimeoutMultiplier = 5;
-        private long acquireLeadershipBackoff = 0;
 
         long getAcquireLockDelay() {
             return acquireLockDelay;
@@ -112,14 +110,6 @@ abstract class FileLockClusterServiceTestBase {
 
         public void setHeartbeatTimeoutMultiplier(int heartbeatTimeoutMultiplier) {
             this.heartbeatTimeoutMultiplier = heartbeatTimeoutMultiplier;
-        }
-
-        public long getAcquireLeadershipBackoff() {
-            return acquireLeadershipBackoff;
-        }
-
-        public void setAcquireLeadershipBackoff(long acquireLeadershipBackoff) {
-            this.acquireLeadershipBackoff = acquireLeadershipBackoff;
         }
     }
 }
