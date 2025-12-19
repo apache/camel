@@ -65,8 +65,6 @@ Configuration options:
 | acquireLockDelayUnit | The time unit for acquireLockDelay | SECONDS | TimeUnit
 | acquireLockInterval | The time to wait between attempts to try to acquire the cluster lock | 10 | long
 | acquireLockIntervalUnit | The time unit for acquireLockInterval | SECONDS | TimeUnit
-| acquireLeadershipBackoff | The time to wait before a cluster member broadcasts acquisition of gaining cluster leadership. A value of 0 (the default) disables the backoff wait period. This can be useful to introduce a delay to ensure that the cluster leader has fully surrendered its leadership. A sensible value is acquireLockDelay + 5 seconds. Or whatever is appropriate for your environment and requirements | 0 | long
-| acquireLeadershipBackoffIntervalUnit | The time unit for acquireLeadershipBackoff | SECONDS | TimeUnit
 | heartbeatTimeoutMultiplier | Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait before considering the leader "stale". For example, if the leader updates its heartbeat every 2 seconds and the heartbeatTimeoutMultiplier is 3, followers will tolerate up to code 2s * 3 = 6s of silence before declaring the leader unavailable | 5 | int
 | rootPath | The file cluster root directory path | | String
 |===
