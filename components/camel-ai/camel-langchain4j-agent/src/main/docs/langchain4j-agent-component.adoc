@@ -603,6 +603,15 @@ The `camel-langchain4j-agent-api` module provides production-ready guardrails in
 
 |`KeywordFilterGuardrail`
 |Blocks messages containing specific keywords or patterns.
+
+|`LanguageGuardrail`
+|Validates the language/script of user messages. Can allow or block specific languages (English, Cyrillic, Chinese, Japanese, Korean, Arabic, Hebrew, Greek, Thai, Devanagari).
+
+|`CodeInjectionGuardrail`
+|Detects potential code injection attempts including shell commands, SQL injection, JavaScript, HTML/XSS, path traversal, command chaining, and template injection.
+
+|`RegexPatternGuardrail`
+|Flexible guardrail using custom regex patterns. Can define deny patterns (block if matched) and require patterns (must be present).
 |===
 
 ===== Available Output Guardrails
@@ -622,6 +631,12 @@ The `camel-langchain4j-agent-api` module provides production-ready guardrails in
 
 |`KeywordOutputFilterGuardrail`
 |Blocks or redacts specific content in AI responses.
+
+|`NotEmptyGuardrail`
+|Ensures AI responses are not empty or contain only whitespace. Can optionally detect refusal patterns (e.g., "I cannot", "I'm unable to").
+
+|`WordCountGuardrail`
+|Validates the word count of AI responses. Can enforce minimum, maximum, or range constraints.
 |===
 
 ==== Quick Start with Default Guardrails
@@ -814,6 +829,122 @@ KeywordOutputFilterGuardrail outputFilter = KeywordOutputFilterGuardrail.builder
     .build();
 ----
 
+===== Language Validation Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.LanguageGuardrail;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.LanguageGuardrail.Language;
+
+// Allow only English input
+LanguageGuardrail englishOnly = LanguageGuardrail.allowOnly(Language.ENGLISH);
+
+// Allow English and Latin script languages (Spanish, French, German, etc.)
+LanguageGuardrail latinLanguages = LanguageGuardrail.allowOnly(
+    Language.ENGLISH, Language.LATIN_SCRIPT);
+
+// Block specific languages
+LanguageGuardrail blockCyrillic = LanguageGuardrail.block(Language.CYRILLIC);
+
+// Custom configuration with mixed content control
+LanguageGuardrail customLanguage = LanguageGuardrail.builder()
+    .allowedLanguages(Language.ENGLISH, Language.LATIN_SCRIPT)
+    .blockedLanguages(Language.CYRILLIC)
+    .allowMixed(false)  // Don't allow mixed language content
+    .build();
+----
+
+===== Code Injection Detection Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.CodeInjectionGuardrail;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.CodeInjectionGuardrail.InjectionType;
+
+// Default: detect all code injection types
+CodeInjectionGuardrail defaultGuard = new CodeInjectionGuardrail();
+
+// Strict mode: fail on any single pattern match
+CodeInjectionGuardrail strictGuard = CodeInjectionGuardrail.strict();
+
+// Detect only specific injection types
+CodeInjectionGuardrail sqlAndShellOnly = CodeInjectionGuardrail.forTypes(
+    InjectionType.SQL_INJECTION, InjectionType.SHELL_COMMAND);
+
+// Custom configuration
+CodeInjectionGuardrail customGuard = CodeInjectionGuardrail.builder()
+    .detectTypes(InjectionType.SQL_INJECTION, InjectionType.JAVASCRIPT, InjectionType.PATH_TRAVERSAL)
+    .strict(true)
+    .build();
+----
+
+===== Regex Pattern Guardrail Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.RegexPatternGuardrail;
+
+// Block messages containing URLs
+RegexPatternGuardrail noUrls = RegexPatternGuardrail.blocking(
+    "https?://[^\\s]+", "URLs are not allowed in messages");
+
+// Require messages to contain a ticket number
+RegexPatternGuardrail requireTicket = RegexPatternGuardrail.requiring(
+    "TICKET-\\d+", "Please include a ticket number (e.g., TICKET-123)");
+
+// Complex configuration with multiple patterns
+RegexPatternGuardrail customPatterns = RegexPatternGuardrail.builder()
+    .denyPattern("https?://[^\\s]+", "URLs are not allowed")
+    .denyPattern("\\b(password|secret)\\b", "Sensitive keywords are not allowed")
+    .requirePattern("[A-Z]{2,4}-\\d+", "Please include a valid issue ID")
+    .failOnFirstMatch(true)  // Stop checking after first failure
+    .build();
+----
+
+===== Not Empty Guardrail Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.NotEmptyGuardrail;
+
+// Default: just ensure response is not empty
+NotEmptyGuardrail notEmpty = new NotEmptyGuardrail();
+
+// Also detect refusal patterns like "I cannot", "I'm unable to"
+NotEmptyGuardrail withRefusalDetection = NotEmptyGuardrail.withRefusalDetection();
+
+// Require minimum meaningful length
+NotEmptyGuardrail minLength = NotEmptyGuardrail.withMinLength(50);
+
+// Custom configuration
+NotEmptyGuardrail customNotEmpty = new NotEmptyGuardrail(
+    true,   // detectRefusals
+    100     // minMeaningfulLength
+);
+----
+
+===== Word Count Guardrail Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.WordCountGuardrail;
+
+// Require at least 10 words
+WordCountGuardrail atLeast10 = WordCountGuardrail.atLeast(10);
+
+// Limit to maximum 500 words
+WordCountGuardrail atMost500 = WordCountGuardrail.atMost(500);
+
+// Require between 50 and 200 words
+WordCountGuardrail between = WordCountGuardrail.between(50, 200);
+
+// Custom configuration
+WordCountGuardrail custom = WordCountGuardrail.builder()
+    .minWords(20)
+    .maxWords(1000)
+    .build();
+----
+
 ==== Complete Example with Memory and Guardrails
 
 [source,java]
@@ -912,6 +1043,18 @@ public class AgentConfig {
 |Blocked keyword found
 |Blocks the request
 
+|`LanguageGuardrail`
+|Disallowed language/script detected
+|Blocks the request
+
+|`CodeInjectionGuardrail`
+|Code injection pattern detected
+|Blocks the request
+
+|`RegexPatternGuardrail`
+|Deny pattern matched or require pattern missing
+|Blocks the request
+
 |`OutputLengthGuardrail`
 |Response too short/long
 |Retries LLM or truncates
@@ -927,6 +1070,14 @@ public class AgentConfig {
 |`KeywordOutputFilterGuardrail`
 |Blocked content in response
 |Blocks or redacts
+
+|`NotEmptyGuardrail`
+|Empty response or refusal detected
+|Retries LLM call
+
+|`WordCountGuardrail`
+|Word count outside allowed range
+|Retries LLM call
 |===
 
 === Multimodal Content Support
