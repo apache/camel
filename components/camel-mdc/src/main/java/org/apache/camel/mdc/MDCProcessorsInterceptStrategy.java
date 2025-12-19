@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.slf4j.MDC;
 
@@ -93,23 +94,12 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
 
             @Override
             public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-                CompletableFuture<Exchange> future = new CompletableFuture<>();
-                Map<String, String> previousContext = MDC.getCopyOfContextMap();
-                mdcService.setMDC(exchange);
-                asyncProcessor.process(exchange, doneSync -> {
-                    if (exchange.getException() != null) {
-                        future.completeExceptionally(exchange.getException());
-                    } else {
-                        future.complete(exchange);
-                    }
-                    if (previousContext != null) {
-                        MDC.setContextMap(previousContext);
-                    } else {
-                        MDC.clear();
-                    }
-                });
-                return future;
+                AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                        = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                process(exchange, callback);
+                return callback.getFuture();
             }
+
         };
     }
 
