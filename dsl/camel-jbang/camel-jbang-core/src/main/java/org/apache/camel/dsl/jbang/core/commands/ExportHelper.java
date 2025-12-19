@@ -44,7 +44,10 @@ public final class ExportHelper {
             ClassLoader classLoader, String scheme, Path source, Path target, boolean override, boolean symbolicLink)
             throws Exception {
         if ("classpath".equals(scheme)) {
-            try (var ins = classLoader.getResourceAsStream(source.toString());
+            // in windows the source object contains the windows file separator
+            // the getResourceAsStream cannot find the resource file inside the jar in this case
+            // then we have to replace the windows file separator to unix style
+            try (var ins = classLoader.getResourceAsStream(source.toString().replace("\\", "/"));
                  var outs = Files.newOutputStream(target)) {
                 IOHelper.copy(ins, outs);
             }
