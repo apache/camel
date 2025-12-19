@@ -77,11 +77,17 @@ public class MDCProcessorsInterceptStrategy implements InterceptStrategy {
 
             @Override
             public void process(Exchange exchange) throws Exception {
+                Map<String, String> previousContext = MDC.getCopyOfContextMap();
                 mdcService.setMDC(exchange);
                 try {
                     asyncProcessor.process(exchange);
                 } finally {
                     mdcService.unsetMDC(exchange);
+                    if (previousContext != null) {
+                        MDC.setContextMap(previousContext);
+                    } else {
+                        MDC.clear();
+                    }
                 }
             }
 
