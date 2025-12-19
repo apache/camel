@@ -414,7 +414,7 @@
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>6.0.2</neo4j-version>
-        <netty-version>4.1.128.Final</netty-version>
+        <netty-version>4.1.130.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.9</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.6</nimbus-jose-jwt>
@@ -504,7 +504,7 @@
         <spring-data-redis-version>3.5.5</spring-data-redis-version>
         <spring-ldap-version>3.3.4</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.14</spring-version>
+        <spring-version>6.2.15</spring-version>
         <spring-rabbitmq-version>3.2.8</spring-rabbitmq-version>
         <spring-security-version>6.5.7</spring-security-version>
         <spring-ws-version>4.1.2</spring-ws-version>
