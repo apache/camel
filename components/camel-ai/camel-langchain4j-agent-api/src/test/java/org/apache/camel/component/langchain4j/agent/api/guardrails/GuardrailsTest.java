@@ -63,11 +63,24 @@ class GuardrailsTest {
         List<Class<?>> guardrails = Guardrails.strictInputGuardrails();
 
         assertNotNull(guardrails);
-        assertEquals(4, guardrails.size());
+        assertEquals(5, guardrails.size());
         assertTrue(guardrails.contains(InputLengthGuardrail.class));
         assertTrue(guardrails.contains(PiiDetectorGuardrail.class));
         assertTrue(guardrails.contains(PromptInjectionGuardrail.class));
+        assertTrue(guardrails.contains(CodeInjectionGuardrail.class));
         assertTrue(guardrails.contains(KeywordFilterGuardrail.class));
+    }
+
+    @Test
+    void testComprehensiveOutputGuardrails() {
+        List<Class<?>> guardrails = Guardrails.comprehensiveOutputGuardrails();
+
+        assertNotNull(guardrails);
+        assertEquals(4, guardrails.size());
+        assertTrue(guardrails.contains(NotEmptyGuardrail.class));
+        assertTrue(guardrails.contains(OutputLengthGuardrail.class));
+        assertTrue(guardrails.contains(SensitiveDataOutputGuardrail.class));
+        assertTrue(guardrails.contains(KeywordOutputFilterGuardrail.class));
     }
 
     @Test
@@ -164,5 +177,72 @@ class GuardrailsTest {
         assertNotNull(config);
         assertEquals(3, config.getInputGuardrailClasses().size());
         assertEquals(1, config.getOutputGuardrailClasses().size());
+    }
+
+    @Test
+    void testCodeInjectionFactories() {
+        assertNotNull(Guardrails.codeInjection());
+        assertFalse(Guardrails.codeInjection().isStrict());
+        assertTrue(Guardrails.codeInjectionStrict().isStrict());
+    }
+
+    @Test
+    void testLanguageFilterFactory() {
+        LanguageGuardrail guardrail = Guardrails.languageFilter(LanguageGuardrail.Language.ENGLISH);
+        assertNotNull(guardrail);
+        assertTrue(guardrail.getAllowedLanguages().contains(LanguageGuardrail.Language.ENGLISH));
+    }
+
+    @Test
+    void testRegexPatternBuilderFactory() {
+        RegexPatternGuardrail.Builder builder = Guardrails.regexPatternBuilder();
+        assertNotNull(builder);
+
+        RegexPatternGuardrail guardrail = builder
+                .denyPattern("test", "Error")
+                .build();
+        assertNotNull(guardrail);
+    }
+
+    @Test
+    void testWordCountFactories() {
+        WordCountGuardrail atLeast = Guardrails.wordCountAtLeast(10);
+        assertEquals(10, atLeast.getMinWords());
+
+        WordCountGuardrail atMost = Guardrails.wordCountAtMost(100);
+        assertEquals(100, atMost.getMaxWords());
+
+        WordCountGuardrail between = Guardrails.wordCountBetween(5, 50);
+        assertEquals(5, between.getMinWords());
+        assertEquals(50, between.getMaxWords());
+    }
+
+    @Test
+    void testNotEmptyFactories() {
+        NotEmptyGuardrail notEmpty = Guardrails.notEmpty();
+        assertNotNull(notEmpty);
+        assertFalse(notEmpty.isDetectRefusals());
+
+        NotEmptyGuardrail withRefusal = Guardrails.notEmptyWithRefusalDetection();
+        assertNotNull(withRefusal);
+        assertTrue(withRefusal.isDetectRefusals());
+    }
+
+    @Test
+    void testConfigurationBuilderWithNewGuardrails() {
+        AgentConfiguration config = Guardrails.configure()
+                .withCodeInjectionDetection()
+                .withLanguageValidation()
+                .withNotEmptyValidation()
+                .withWordCountValidation()
+                .build();
+
+        assertNotNull(config);
+        assertEquals(2, config.getInputGuardrailClasses().size());
+        assertEquals(2, config.getOutputGuardrailClasses().size());
+        assertTrue(config.getInputGuardrailClasses().contains(CodeInjectionGuardrail.class));
+        assertTrue(config.getInputGuardrailClasses().contains(LanguageGuardrail.class));
+        assertTrue(config.getOutputGuardrailClasses().contains(NotEmptyGuardrail.class));
+        assertTrue(config.getOutputGuardrailClasses().contains(WordCountGuardrail.class));
     }
 }

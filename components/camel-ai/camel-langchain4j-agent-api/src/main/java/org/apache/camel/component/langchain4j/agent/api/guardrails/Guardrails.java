@@ -129,7 +129,21 @@ public final class Guardrails {
                 InputLengthGuardrail.class,
                 PiiDetectorGuardrail.class,
                 PromptInjectionGuardrail.class,
+                CodeInjectionGuardrail.class,
                 KeywordFilterGuardrail.class);
+    }
+
+    /**
+     * Returns a comprehensive set of output guardrails for secure AI responses.
+     *
+     * @return list of comprehensive output guardrail classes
+     */
+    public static List<Class<?>> comprehensiveOutputGuardrails() {
+        return Arrays.asList(
+                NotEmptyGuardrail.class,
+                OutputLengthGuardrail.class,
+                SensitiveDataOutputGuardrail.class,
+                KeywordOutputFilterGuardrail.class);
     }
 
     // ==================== Input Guardrail Factories ====================
@@ -197,6 +211,43 @@ public final class Guardrails {
      */
     public static KeywordFilterGuardrail keywordFilter(String... words) {
         return KeywordFilterGuardrail.blocking(words);
+    }
+
+    /**
+     * Creates a code injection guardrail with default settings.
+     *
+     * @return a new CodeInjectionGuardrail instance
+     */
+    public static CodeInjectionGuardrail codeInjection() {
+        return new CodeInjectionGuardrail();
+    }
+
+    /**
+     * Creates a strict code injection guardrail.
+     *
+     * @return a new strict CodeInjectionGuardrail instance
+     */
+    public static CodeInjectionGuardrail codeInjectionStrict() {
+        return CodeInjectionGuardrail.strict();
+    }
+
+    /**
+     * Creates a language guardrail that only allows specific languages.
+     *
+     * @param  languages the languages to allow
+     * @return           a new LanguageGuardrail instance
+     */
+    public static LanguageGuardrail languageFilter(LanguageGuardrail.Language... languages) {
+        return LanguageGuardrail.allowOnly(languages);
+    }
+
+    /**
+     * Creates a regex pattern guardrail builder.
+     *
+     * @return a new RegexPatternGuardrail.Builder instance
+     */
+    public static RegexPatternGuardrail.Builder regexPatternBuilder() {
+        return RegexPatternGuardrail.builder();
     }
 
     // ==================== Output Guardrail Factories ====================
@@ -285,6 +336,55 @@ public final class Guardrails {
      */
     public static KeywordOutputFilterGuardrail outputKeywordFilterRedacting(String... words) {
         return KeywordOutputFilterGuardrail.redacting(words);
+    }
+
+    /**
+     * Creates a word count guardrail with minimum word count.
+     *
+     * @param  minWords minimum required word count
+     * @return          a new WordCountGuardrail instance
+     */
+    public static WordCountGuardrail wordCountAtLeast(int minWords) {
+        return WordCountGuardrail.atLeast(minWords);
+    }
+
+    /**
+     * Creates a word count guardrail with maximum word count.
+     *
+     * @param  maxWords maximum allowed word count
+     * @return          a new WordCountGuardrail instance
+     */
+    public static WordCountGuardrail wordCountAtMost(int maxWords) {
+        return WordCountGuardrail.atMost(maxWords);
+    }
+
+    /**
+     * Creates a word count guardrail with min and max word count.
+     *
+     * @param  minWords minimum required word count
+     * @param  maxWords maximum allowed word count
+     * @return          a new WordCountGuardrail instance
+     */
+    public static WordCountGuardrail wordCountBetween(int minWords, int maxWords) {
+        return WordCountGuardrail.between(minWords, maxWords);
+    }
+
+    /**
+     * Creates a not-empty guardrail with default settings.
+     *
+     * @return a new NotEmptyGuardrail instance
+     */
+    public static NotEmptyGuardrail notEmpty() {
+        return new NotEmptyGuardrail();
+    }
+
+    /**
+     * Creates a not-empty guardrail that also detects refusal patterns.
+     *
+     * @return a new NotEmptyGuardrail instance with refusal detection
+     */
+    public static NotEmptyGuardrail notEmptyWithRefusalDetection() {
+        return NotEmptyGuardrail.withRefusalDetection();
     }
 
     // ==================== Fluent Configuration Builder ====================
@@ -406,6 +506,42 @@ public final class Guardrails {
          */
         public ConfigurationBuilder withJsonFormatValidation() {
             return withOutputGuardrail(JsonFormatGuardrail.class);
+        }
+
+        /**
+         * Adds code injection detection input guardrail.
+         *
+         * @return this builder
+         */
+        public ConfigurationBuilder withCodeInjectionDetection() {
+            return withInputGuardrail(CodeInjectionGuardrail.class);
+        }
+
+        /**
+         * Adds language validation input guardrail.
+         *
+         * @return this builder
+         */
+        public ConfigurationBuilder withLanguageValidation() {
+            return withInputGuardrail(LanguageGuardrail.class);
+        }
+
+        /**
+         * Adds not-empty output guardrail.
+         *
+         * @return this builder
+         */
+        public ConfigurationBuilder withNotEmptyValidation() {
+            return withOutputGuardrail(NotEmptyGuardrail.class);
+        }
+
+        /**
+         * Adds word count output guardrail.
+         *
+         * @return this builder
+         */
+        public ConfigurationBuilder withWordCountValidation() {
+            return withOutputGuardrail(WordCountGuardrail.class);
         }
 
         /**
