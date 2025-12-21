@@ -149,16 +149,18 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
         }
 
-        if (getEndpoint().getConsumes() != null) {
-            //comma separated contentTypes has to be registered one by one
-            for (String c : getEndpoint().getConsumes().split(",")) {
-                newRoute.consumes(c);
+        if (getEndpoint().getComponent().isServerRequestValidation()) {
+            if (getEndpoint().getConsumes() != null) {
+                //comma separated contentTypes has to be registered one by one
+                for (String c : getEndpoint().getConsumes().split(",")) {
+                    newRoute.consumes(c);
+                }
             }
-        }
-        if (getEndpoint().getProduces() != null) {
-            //comma separated contentTypes has to be registered one by one
-            for (String p : getEndpoint().getProduces().split(",")) {
-                newRoute.produces(p);
+            if (getEndpoint().getProduces() != null) {
+                //comma separated contentTypes has to be registered one by one
+                for (String p : getEndpoint().getProduces().split(",")) {
+                    newRoute.produces(p);
+                }
             }
         }
 
