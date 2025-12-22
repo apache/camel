@@ -45,6 +45,10 @@ The following option is no longer in use `-Dcamel-kamelets.version`.
 Removed automatic fallback to download Kamelet YAML files from GitHub. Instead, kamelets are
 now only loaded from embedded `camel-kamelets` JAR.
 
+=== camel-debezium
+
+The `camel-debezium` component has upgraded from Debezium 3.3.2 to 3.4.0.
+
 === camel-infinispan
 
 `camel-infinispan` has been upgraded to https://infinispan.org/blog/2025/11/10/infinispan-16-0[Infinispan 16].

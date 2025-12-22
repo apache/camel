@@ -470,6 +470,26 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
+         * Regular expression identifying configuration keys whose values should
+         * be masked. When set, this custom pattern replaces Debeziums default
+         * password masking pattern.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * Group: oracle
+         * 
+         * @param customSanitizePattern the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder customSanitizePattern(java.lang.String customSanitizePattern) {
+            doSetProperty("customSanitizePattern", customSanitizePattern);
+            return this;
+        }
+    
+        
+        /**
          * The adapter to use when capturing changes from the database. Options
          * include: 'logminer': (the default) to capture changes using native
          * Oracle LogMiner; 'xstream' to capture changes using Oracle XStreams.
@@ -2142,7 +2162,9 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         /**
          * The name of the data collection that is used to send signals/commands
-         * to Debezium. Signaling is disabled when not set.
+         * to Debezium. For multi-partition mode connectors, multiple signal
+         * data collections can be specified as a comma-separated list.
+         * Signaling is disabled when not set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2769,6 +2791,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumOracleComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumOracleComponent) component).setCustomMetricTags((java.lang.String) value); return true;
+            case "customSanitizePattern": getOrCreateConfiguration((DebeziumOracleComponent) component).setCustomSanitizePattern((java.lang.String) value); return true;
             case "databaseConnectionAdapter": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseConnectionAdapter((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseDbname((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHostname((java.lang.String) value); return true;

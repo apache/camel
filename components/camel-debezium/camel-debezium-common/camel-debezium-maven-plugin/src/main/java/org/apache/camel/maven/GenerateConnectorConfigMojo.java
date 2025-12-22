@@ -35,6 +35,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(name = "generate-connector-config", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class GenerateConnectorConfigMojo extends AbstractMojo {
+
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/connector-configurations")
     private File generatedSrcDir;
 
@@ -42,8 +43,7 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
      * Debezium connector's class name, this has to be fully name with the package, e.g:
      * 'io.debezium.connector.mysql.MySqlConnector'
      */
-    @Parameter(
-               property = "camel.debezium.connector.class",
+    @Parameter(property = "camel.debezium.connector.class",
                required = true)
     private String connectorClassName;
 
@@ -51,8 +51,7 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
      * Debezium connector's config class name, this has to be fully name with the package, e.g:
      * 'io.debezium.connector.mysql.MySqlConnectorConfig'
      */
-    @Parameter(
-               property = "camel.debezium.connector.config.class",
+    @Parameter(property = "camel.debezium.connector.config.class",
                required = true)
     private String connectorConfigClassName;
 
