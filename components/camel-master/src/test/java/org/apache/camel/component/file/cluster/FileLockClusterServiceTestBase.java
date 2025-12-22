@@ -67,6 +67,8 @@ abstract class FileLockClusterServiceTestBase {
         service.setAcquireLockInterval(1);
         service.setRoot(clusterDir.toString());
         service.setHeartbeatTimeoutMultiplier(config.getHeartbeatTimeoutMultiplier());
+        service.setClusterDataTaskMaxAttempts(config.getClusterDataTaskMaxAttempts());
+        service.setClusterDataTaskTimeout(config.getClusterDataTaskTimeout());
         return service;
     }
 
@@ -83,6 +85,8 @@ abstract class FileLockClusterServiceTestBase {
         private long acquireLockDelay = 1;
         private long timerRepeatCount = 5;
         private int heartbeatTimeoutMultiplier = 5;
+        private int clusterDataTaskMaxAttempts = 5;
+        private long clusterDataTaskTimeout = 5;
 
         long getAcquireLockDelay() {
             return acquireLockDelay;
@@ -104,12 +108,28 @@ abstract class FileLockClusterServiceTestBase {
             return TimeUnit.SECONDS.toMillis(getAcquireLockDelay()) + 500;
         }
 
-        public int getHeartbeatTimeoutMultiplier() {
+        int getHeartbeatTimeoutMultiplier() {
             return heartbeatTimeoutMultiplier;
         }
 
-        public void setHeartbeatTimeoutMultiplier(int heartbeatTimeoutMultiplier) {
+        void setHeartbeatTimeoutMultiplier(int heartbeatTimeoutMultiplier) {
             this.heartbeatTimeoutMultiplier = heartbeatTimeoutMultiplier;
+        }
+
+        int getClusterDataTaskMaxAttempts() {
+            return this.clusterDataTaskMaxAttempts;
+        }
+
+        void setClusterDataTaskMaxAttempts(int clusterDataTaskMaxAttempts) {
+            this.clusterDataTaskMaxAttempts = clusterDataTaskMaxAttempts;
+        }
+
+        long getClusterDataTaskTimeout() {
+            return clusterDataTaskTimeout;
+        }
+
+        void setClusterDataTaskTimeout(long clusterDataTaskTimeout) {
+            this.clusterDataTaskTimeout = clusterDataTaskTimeout;
         }
     }
 }
