@@ -479,10 +479,12 @@ public class Run extends CamelCommand {
         // special if user type: camel run . or camel run dirName
         if (sourceDir == null && files != null && files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(files.get(0));
-            Path first = Path.of(name);
-            if (Files.isDirectory(first)) {
-                baseDir = first;
-                RunHelper.dirToFiles(name, files);
+            if (getScheme(name) == null) {
+                Path first = Path.of(name);
+                if (Files.isDirectory(first)) {
+                    baseDir = first;
+                    RunHelper.dirToFiles(name, files);
+                }
             }
         }
 

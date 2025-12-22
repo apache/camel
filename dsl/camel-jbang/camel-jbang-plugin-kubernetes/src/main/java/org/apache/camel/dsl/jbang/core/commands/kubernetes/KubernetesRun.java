@@ -320,10 +320,12 @@ public class KubernetesRun extends KubernetesBaseCommand {
         Path baseDir = Path.of(".");
         if (files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(files.get(0));
-            Path first = Path.of(name);
-            if (Files.isDirectory(first)) {
-                baseDir = first;
-                RunHelper.dirToFiles(name, files);
+            if (getScheme(name) == null) {
+                Path first = Path.of(name);
+                if (Files.isDirectory(first)) {
+                    baseDir = first;
+                    RunHelper.dirToFiles(name, files);
+                }
             }
         }
         // merge the properties from files
@@ -423,7 +425,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     }
 
     private String getIndexedWorkingDir(String projectName) {
-        var workingDir = RUN_PLATFORM_DIR + "/" + projectName;
+        var workingDir = RUN_PLATFORM_DIR + File.separator + projectName;
         if (devModeReloadCount > 0) {
             workingDir += "-%03d".formatted(devModeReloadCount);
         }
@@ -654,7 +656,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
             args.add("--quiet");
         }
         args.add("--file");
-        args.add(workingDir);
+        args.add(new File(workingDir, "pom.xml").getAbsolutePath());
 
         if (!ObjectHelper.isEmpty(namespace)) {
             args.add("-Djkube.namespace=%s".formatted(namespace));
@@ -717,7 +719,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
         // suppress maven transfer progress
         args.add("-ntp");
         args.add("--file");
-        args.add(workingDir);
+        args.add(new File(workingDir, "pom.xml").getAbsolutePath());
 
         if (!imageBuild) {
             args.add("-Djkube.skip.build=true");
