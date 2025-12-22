@@ -62,7 +62,7 @@ final class FileLockClusterUtils {
             FileChannel channel,
             FileLockClusterLeaderInfo clusterLeaderInfo,
             boolean forceMetaData)
-            throws IOException {
+            throws Exception {
 
         Objects.requireNonNull(channel, "channel cannot be null");
         Objects.requireNonNull(clusterLeaderInfo, "clusterLeaderInfo cannot be null");
@@ -100,7 +100,7 @@ final class FileLockClusterUtils {
      *                        inconsistent state
      * @throws IOException    If reading the lock file failed
      */
-    static FileLockClusterLeaderInfo readClusterLeaderInfo(Path leaderDataPath) throws IOException {
+    static FileLockClusterLeaderInfo readClusterLeaderInfo(Path leaderDataPath) throws Exception {
         try {
             byte[] bytes = Files.readAllBytes(leaderDataPath);
 
@@ -119,7 +119,7 @@ final class FileLockClusterUtils {
             long lastHeartbeat = buf.getLong();
 
             return new FileLockClusterLeaderInfo(uuidStr, intervalMillis, lastHeartbeat);
-        } catch (NoSuchFileException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             // Handle NoSuchFileException to give the ClusterView a chance to recreate the leadership data
             return null;
         }

@@ -68,4 +68,13 @@ final class FileLockClusterLeaderInfo {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+    @Override
+    public String toString() {
+        return "FileLockClusterLeaderInfo{" +
+               "id='" + id + '\'' +
+               ", heartbeatUpdateIntervalMilliseconds=" + heartbeatUpdateIntervalMilliseconds +
+               ", heartbeatMilliseconds=" + heartbeatMilliseconds +
+               '}';
+    }
 }

@@ -53,6 +53,11 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 </project>

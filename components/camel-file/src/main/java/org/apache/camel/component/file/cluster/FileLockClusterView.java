@@ -29,14 +29,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
+import org.apache.camel.util.function.ThrowingHelper;
+import org.apache.camel.util.function.ThrowingSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +61,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     private ScheduledFuture<?> task;
     private int heartbeatTimeoutMultiplier;
     private long acquireLockIntervalMilliseconds;
+    private FileLockClusterTaskExecutor clusterTaskExecutor;
 
     FileLockClusterView(FileLockClusterService cluster, String namespace) {
         super(cluster, namespace);
@@ -88,6 +93,8 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStart() throws Exception {
+        FileLockClusterService service = getClusterService().unwrap(FileLockClusterService.class);
+
         // Start critical section
         try {
             contextStartLock.lock();
@@ -97,31 +104,42 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 fireLeadershipChangedEvent((CamelClusterMember) null);
             }
 
-            if (!Files.exists(leaderLockPath.getParent())) {
-                Files.createDirectories(leaderLockPath.getParent());
+            // Attempt to pre-create cluster data files & directories. On failure, it will either be attempted by another cluster member or run again within the tryLock task loop
+            try {
+                if (!Files.exists(leaderLockPath.getParent())) {
+                    Files.createDirectories(leaderLockPath.getParent());
+                }
+            } catch (IOException e) {
+                LOGGER.debug("Error creating directory {}", leaderLockPath.getParent(), e);
             }
 
-            if (!Files.exists(leaderLockPath)) {
-                Files.createFile(leaderLockPath);
+            try {
+                if (!Files.exists(leaderLockPath)) {
+                    Files.createFile(leaderLockPath);
+                }
+            } catch (IOException e) {
+                LOGGER.debug("Error creating cluster leader lock file {}", leaderLockPath, e);
             }
 
-            if (!Files.exists(leaderDataPath)) {
-                Files.createFile(leaderDataPath);
+            try {
+                if (!Files.exists(leaderDataPath)) {
+                    Files.createFile(leaderDataPath);
+                }
+            } catch (IOException e) {
+                LOGGER.debug("Error creating cluster leader data file {}", leaderDataPath, e);
             }
         } finally {
             // End critical section
             contextStartLock.unlock();
         }
 
-        FileLockClusterService service = getClusterService().unwrap(FileLockClusterService.class);
+        clusterTaskExecutor = new FileLockClusterTaskExecutor(service);
+
         acquireLockIntervalMilliseconds = TimeUnit.MILLISECONDS.convert(
                 service.getAcquireLockInterval(),
                 service.getAcquireLockIntervalUnit());
 
         heartbeatTimeoutMultiplier = service.getHeartbeatTimeoutMultiplier();
-        if (heartbeatTimeoutMultiplier <= 0) {
-            throw new IllegalArgumentException("HeartbeatTimeoutMultiplier must be greater than 0");
-        }
 
         ScheduledExecutorService executor = service.getExecutor();
         task = executor.scheduleWithFixedDelay(this::tryLock,
@@ -135,14 +153,20 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     @Override
     protected void doStop() throws Exception {
         if (localMember.isLeader() && leaderDataFile != null) {
-            try {
-                FileChannel channel = leaderDataFile.getChannel();
-                channel.truncate(0);
-                channel.force(true);
-            } catch (Exception e) {
-                // Log and ignore since we need to release the file lock and do cleanup
-                LOGGER.debug("Failed to truncate {} on {} stop", leaderDataPath, getClass().getSimpleName(), e);
-            }
+            clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Void, Throwable>() {
+                @Override
+                public Void get() throws Throwable {
+                    try {
+                        FileChannel channel = leaderDataFile.getChannel();
+                        channel.truncate(0);
+                        channel.force(true);
+                    } catch (Exception e) {
+                        // Log and ignore since we need to release the file lock and do cleanup
+                        LOGGER.debug("Failed to truncate {} on {} stop", leaderDataPath, getClass().getSimpleName(), e);
+                    }
+                    return null;
+                }
+            }));
         }
 
         closeInternal();
@@ -201,7 +225,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                         // Update the cluster data file with the leader state so that other cluster members can interrogate it
                         writeClusterLeaderInfo(false);
                         return;
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         LOGGER.debug("Failed writing cluster leader data to {}", leaderDataPath, e);
                     }
                 }
@@ -212,6 +236,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                             localMember.getUuid());
                     localMember.setStatus(ClusterMemberStatus.FOLLOWER);
                     fireLeadershipChangedEvent((CamelClusterMember) null);
+                    clusterLeaderInfoRef.set(null);
                     releaseFileLock();
                     closeLockFiles();
                     lock = null;
@@ -223,9 +248,8 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
                 // Get & update cluster leader state
                 LOGGER.debug("Reading cluster leader state from {}", leaderDataPath);
-                FileLockClusterLeaderInfo latestClusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(leaderDataPath);
+                FileLockClusterLeaderInfo latestClusterLeaderInfo = readClusterLeaderInfo();
                 FileLockClusterLeaderInfo previousClusterLeaderInfo = clusterLeaderInfoRef.getAndSet(latestClusterLeaderInfo);
-
                 // Check if we can attempt to take cluster leadership
                 if (isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo)
                         || canReclaimLeadership(latestClusterLeaderInfo)) {
@@ -235,19 +259,17 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                     }
 
                     // Try to recreate the cluster data directory in case it got removed
-                    if (!Files.exists(leaderLockPath.getParent())) {
-                        Files.createDirectories(leaderLockPath.getParent());
-                    }
+                    createClusterRootDirectoryIfRequired();
 
                     // Attempt to obtain cluster leadership
                     LOGGER.debug("Try to acquire a lock on {} (cluster-member-id={})", leaderLockPath, localMember.getUuid());
-                    leaderLockFile = new RandomAccessFile(leaderLockPath.toFile(), "rw");
-                    leaderDataFile = new RandomAccessFile(leaderDataPath.toFile(), "rw");
+                    leaderLockFile = createRandomAccessFile(leaderLockPath);
+                    leaderDataFile = createRandomAccessFile(leaderDataPath);
 
                     lock = null;
                     lock = leaderLockFile.getChannel().tryLock(0, Math.max(1, leaderLockFile.getChannel().size()), false);
 
-                    if (lock != null) {
+                    if (lockIsValid()) {
                         LOGGER.info("Lock on file {} acquired (lock={}, cluster-member-id={})", leaderLockPath, lock,
                                 localMember.getUuid());
                         localMember.setStatus(ClusterMemberStatus.LEADER);
@@ -286,32 +308,83 @@ public class FileLockClusterView extends AbstractCamelClusterView {
         return leaderInfo != null && localMember.getUuid().equals(leaderInfo.getId());
     }
 
-    void writeClusterLeaderInfo(boolean forceMetaData) throws IOException {
+    void createClusterRootDirectoryIfRequired() throws ExecutionException, TimeoutException {
+        clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Void, Throwable>() {
+            @Override
+            public Void get() throws Throwable {
+                if (!Files.exists(leaderLockPath.getParent())) {
+                    Files.createDirectories(leaderLockPath.getParent());
+                }
+                return null;
+            }
+        }));
+    }
+
+    RandomAccessFile createRandomAccessFile(Path path) throws ExecutionException, TimeoutException {
+        return clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<RandomAccessFile, Throwable>() {
+            @Override
+            public RandomAccessFile get() throws Throwable {
+                return new RandomAccessFile(path.toFile(), "rw");
+            }
+        }));
+    }
+
+    FileLockClusterLeaderInfo readClusterLeaderInfo() throws Exception {
+        return clusterTaskExecutor
+                .run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<FileLockClusterLeaderInfo, Throwable>() {
+                    @Override
+                    public FileLockClusterLeaderInfo get() throws Throwable {
+                        return FileLockClusterUtils.readClusterLeaderInfo(leaderDataPath);
+                    }
+                }));
+    }
+
+    void writeClusterLeaderInfo(boolean forceMetaData) throws Exception {
         FileLockClusterLeaderInfo latestClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 localMember.getUuid(),
                 acquireLockIntervalMilliseconds,
                 System.currentTimeMillis());
 
-        FileLockClusterUtils.writeClusterLeaderInfo(
-                leaderDataPath,
-                leaderDataFile.getChannel(),
-                latestClusterLeaderInfo,
-                forceMetaData);
+        clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Void, Throwable>() {
+            @Override
+            public Void get() throws Throwable {
+                FileLockClusterUtils.writeClusterLeaderInfo(
+                        leaderDataPath,
+                        leaderDataFile.getChannel(),
+                        latestClusterLeaderInfo,
+                        forceMetaData);
+                return null;
+            }
+        }));
     }
 
     boolean isLeaderInternal() {
         if (localMember.isLeader()) {
             try {
-                FileLockClusterLeaderInfo leaderInfo = FileLockClusterUtils.readClusterLeaderInfo(leaderDataPath);
+                FileLockClusterLeaderInfo leaderInfo = readClusterLeaderInfo();
+                boolean leaderStale = isLeaderStale(leaderInfo, clusterLeaderInfoRef.getAndSet(leaderInfo));
+                LOGGER.debug("Leader read cluster data {}, isStale={}", leaderInfo, leaderStale);
+
                 return leaderInfo != null
-                        && lock != null
-                        && lock.isValid()
+                        && !leaderStale
                         && localMember.getUuid().equals(leaderInfo.getId())
-                        && Files.exists(leaderLockPath);
+                        && lockIsValid();
             } catch (Exception e) {
                 LOGGER.debug("Failed to read {} (cluster-member-id={})", leaderLockPath, localMember.getUuid(), e);
                 return false;
             }
+        }
+        return false;
+    }
+
+    boolean lockIsValid() throws ExecutionException, TimeoutException {
+        if (lock != null && lock.isValid()) {
+            return clusterTaskExecutor.run(ThrowingHelper.wrapAsSupplier(new ThrowingSupplier<Boolean, Throwable>() {
+                @Override
+                public Boolean get() throws Throwable {
+                    return Files.exists(leaderLockPath);
+                }
+            }));
         }
         return false;
     }
