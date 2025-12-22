@@ -91,6 +91,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret";
     @UriParam(label = LABEL_NAME)
     private String collectionIncludeList;
     @UriParam(label = LABEL_NAME)
@@ -337,7 +339,9 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The name of the data collection that is used to send signals/commands to
-     * Debezium. Signaling is disabled when not set.
+     * Debezium. For multi-partition mode connectors, multiple signal data
+     * collections can be specified as a comma-separated list. Signaling is
+     * disabled when not set.
      */
     public void setSignalDataCollection(String signalDataCollection) {
         this.signalDataCollection = signalDataCollection;
@@ -646,6 +650,19 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getGuardrailCollectionsLimitAction() {
         return guardrailCollectionsLimitAction;
+    }
+
+    /**
+     * Regular expression identifying configuration keys whose values should be
+     * masked. When set, this custom pattern replaces Debeziums default password
+     * masking pattern.
+     */
+    public void setCustomSanitizePattern(String customSanitizePattern) {
+        this.customSanitizePattern = customSanitizePattern;
+    }
+
+    public String getCustomSanitizePattern() {
+        return customSanitizePattern;
     }
 
     /**
@@ -1128,6 +1145,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
+        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
         addPropertyIfNotNull(configBuilder, "collection.include.list", collectionIncludeList);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);

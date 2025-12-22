@@ -449,6 +449,26 @@ public interface DebeziumDb2ComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Regular expression identifying configuration keys whose values should
+         * be masked. When set, this custom pattern replaces Debeziums default
+         * password masking pattern.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * Group: db2
+         * 
+         * @param customSanitizePattern the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2ComponentBuilder customSanitizePattern(java.lang.String customSanitizePattern) {
+            doSetProperty("customSanitizePattern", customSanitizePattern);
+            return this;
+        }
+    
         /**
          * The name of the database from which the connector should capture
          * changes.
@@ -1237,7 +1257,9 @@ public interface DebeziumDb2ComponentBuilderFactory {
     
         /**
          * The name of the data collection that is used to send signals/commands
-         * to Debezium. Signaling is disabled when not set.
+         * to Debezium. For multi-partition mode connectors, multiple signal
+         * data collections can be specified as a comma-separated list.
+         * Signaling is disabled when not set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1787,6 +1809,7 @@ public interface DebeziumDb2ComponentBuilderFactory {
             case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumDb2Component) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumDb2Component) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumDb2Component) component).setCustomMetricTags((java.lang.String) value); return true;
+            case "customSanitizePattern": getOrCreateConfiguration((DebeziumDb2Component) component).setCustomSanitizePattern((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabaseDbname((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumDb2Component) component).setDatabasePassword((java.lang.String) value); return true;

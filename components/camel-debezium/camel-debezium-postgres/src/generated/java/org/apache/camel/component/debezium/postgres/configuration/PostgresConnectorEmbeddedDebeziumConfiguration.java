@@ -88,6 +88,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
     private String schemaHistoryInternalFileFilename;
+    @UriParam(label = LABEL_NAME)
+    private String lsnFlushMode;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
@@ -191,6 +193,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret";
     @UriParam(label = LABEL_NAME, defaultValue = "json")
     private String hstoreHandlingMode = "json";
     @UriParam(label = LABEL_NAME)
@@ -208,8 +212,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.postgresql.PostgresSourceInfoStructMaker")
     private String sourceinfoStructMaker = "io.debezium.connector.postgresql.PostgresSourceInfoStructMaker";
-    @UriParam(label = LABEL_NAME, defaultValue = "true")
-    private boolean flushLsnSource = true;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
@@ -387,7 +389,9 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The name of the data collection that is used to send signals/commands to
-     * Debezium. Signaling is disabled when not set.
+     * Debezium. For multi-partition mode connectors, multiple signal data
+     * collections can be specified as a comma-separated list. Signaling is
+     * disabled when not set.
      */
     public void setSignalDataCollection(String signalDataCollection) {
         this.signalDataCollection = signalDataCollection;
@@ -763,6 +767,23 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getSchemaHistoryInternalFileFilename() {
         return schemaHistoryInternalFileFilename;
+    }
+
+    /**
+     * Determines the LSN flushing strategy. Options include: 'connector'
+     * (default) for Debezium managed LSN flushing (replaces deprecated
+     * flush.lsn.source=true); 'manual' for externally managed LSN flushing
+     * (replaces deprecated flush.lsn.source=false); 'connector_and_driver' for
+     * Debezium managed LSN flushing with the pgjdbc driver flushing unmonitored
+     * LSNsusing server keepalive LSN, which prevents WAL growth on low-activity
+     * databases.
+     */
+    public void setLsnFlushMode(String lsnFlushMode) {
+        this.lsnFlushMode = lsnFlushMode;
+    }
+
+    public String getLsnFlushMode() {
+        return lsnFlushMode;
     }
 
     /**
@@ -1447,6 +1468,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Regular expression identifying configuration keys whose values should be
+     * masked. When set, this custom pattern replaces Debeziums default password
+     * masking pattern.
+     */
+    public void setCustomSanitizePattern(String customSanitizePattern) {
+        this.customSanitizePattern = customSanitizePattern;
+    }
+
+    public String getCustomSanitizePattern() {
+        return customSanitizePattern;
+    }
+
+    /**
      * Specify how HSTORE columns should be represented in change events,
      * including: 'json' represents values as string-ified JSON (default); 'map'
      * represents values as a key/value map
@@ -1551,19 +1585,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getSourceinfoStructMaker() {
         return sourceinfoStructMaker;
-    }
-
-    /**
-     * Boolean to determine if Debezium should flush LSN in the source postgres
-     * database. If set to false, user will have to flush the LSN manually
-     * outside Debezium.
-     */
-    public void setFlushLsnSource(boolean flushLsnSource) {
-        this.flushLsnSource = flushLsnSource;
-    }
-
-    public boolean isFlushLsnSource() {
-        return flushLsnSource;
     }
 
     /**
@@ -1825,6 +1846,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
+        addPropertyIfNotNull(configBuilder, "lsn.flush.mode", lsnFlushMode);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
@@ -1876,6 +1898,7 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
+        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
         addPropertyIfNotNull(configBuilder, "hstore.handling.mode", hstoreHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.locking.mode.custom.name", snapshotLockingModeCustomName);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
@@ -1884,7 +1907,6 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "slot.retry.delay.ms", slotRetryDelayMs);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
-        addPropertyIfNotNull(configBuilder, "flush.lsn.source", flushLsnSource);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
         addPropertyIfNotNull(configBuilder, "publication.autocreate.mode", publicationAutocreateMode);

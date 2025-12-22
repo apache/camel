@@ -50,6 +50,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "custommetrictags":
         case "customMetricTags": getOrCreateConfiguration(target).setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "customsanitizepattern":
+        case "customSanitizePattern": getOrCreateConfiguration(target).setCustomSanitizePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "dataquerymode":
         case "dataQueryMode": getOrCreateConfiguration(target).setDataQueryMode(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
@@ -255,6 +257,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "converters": return java.lang.String.class;
         case "custommetrictags":
         case "customMetricTags": return java.lang.String.class;
+        case "customsanitizepattern":
+        case "customSanitizePattern": return java.lang.String.class;
         case "dataquerymode":
         case "dataQueryMode": return java.lang.String.class;
         case "databasehostname":
@@ -461,6 +465,8 @@ public class DebeziumSqlserverComponentConfigurer extends PropertyConfigurerSupp
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "custommetrictags":
         case "customMetricTags": return getOrCreateConfiguration(target).getCustomMetricTags();
+        case "customsanitizepattern":
+        case "customSanitizePattern": return getOrCreateConfiguration(target).getCustomSanitizePattern();
         case "dataquerymode":
         case "dataQueryMode": return getOrCreateConfiguration(target).getDataQueryMode();
         case "databasehostname":

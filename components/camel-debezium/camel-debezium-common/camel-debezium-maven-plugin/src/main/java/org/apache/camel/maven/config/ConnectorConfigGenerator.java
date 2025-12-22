@@ -63,7 +63,7 @@ public final class ConnectorConfigGenerator {
     /**
      * @deprecated use {@link #create(SourceConnector, Class, String)} instead
      */
-    @Deprecated(since = "3.9.0", forRemoval = true)
+    @Deprecated(since = "4.9.0", forRemoval = true)
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass) {
         return create(connector, dbzConfigClass, null, Collections.emptySet(), Collections.emptyMap());
@@ -77,7 +77,7 @@ public final class ConnectorConfigGenerator {
     /**
      * @deprecated use {@link #create(SourceConnector, Class, String, Set)} instead
      */
-    @Deprecated(since = "3.9.0", forRemoval = true)
+    @Deprecated(since = "4.9.0", forRemoval = true)
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass,
             final Set<String> requiredFields) {
@@ -93,7 +93,7 @@ public final class ConnectorConfigGenerator {
     /**
      * @deprecated use {@link #create(SourceConnector, Class, String, Map)} instead
      */
-    @Deprecated(since = "3.9.0", forRemoval = true)
+    @Deprecated(since = "4.9.0", forRemoval = true)
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass,
             final Map<String, Object> overriddenDefaultValues) {

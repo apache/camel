@@ -50,6 +50,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "custommetrictags":
         case "customMetricTags": getOrCreateConfiguration(target).setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "customsanitizepattern":
+        case "customSanitizePattern": getOrCreateConfiguration(target).setCustomSanitizePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": getOrCreateConfiguration(target).setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
@@ -90,8 +92,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "executorShutdownTimeoutMs": getOrCreateConfiguration(target).setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": getOrCreateConfiguration(target).setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
-        case "flushlsnsource":
-        case "flushLsnSource": getOrCreateConfiguration(target).setFlushLsnSource(property(camelContext, boolean.class, value)); return true;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": getOrCreateConfiguration(target).setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionsmax":
@@ -118,6 +118,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "internalValueConverter": getOrCreateConfiguration(target).setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "intervalhandlingmode":
         case "intervalHandlingMode": getOrCreateConfiguration(target).setIntervalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "lsnflushmode":
+        case "lsnFlushMode": getOrCreateConfiguration(target).setLsnFlushMode(property(camelContext, java.lang.String.class, value)); return true;
         case "lsnflushtimeoutaction":
         case "lsnFlushTimeoutAction": getOrCreateConfiguration(target).setLsnFlushTimeoutAction(property(camelContext, java.lang.String.class, value)); return true;
         case "lsnflushtimeoutms":
@@ -309,6 +311,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "converters": return java.lang.String.class;
         case "custommetrictags":
         case "customMetricTags": return java.lang.String.class;
+        case "customsanitizepattern":
+        case "customSanitizePattern": return java.lang.String.class;
         case "databasedbname":
         case "databaseDbname": return java.lang.String.class;
         case "databasehostname":
@@ -349,8 +353,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "executorShutdownTimeoutMs": return long.class;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return boolean.class;
-        case "flushlsnsource":
-        case "flushLsnSource": return boolean.class;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return java.lang.String.class;
         case "guardrailcollectionsmax":
@@ -377,6 +379,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "internalValueConverter": return java.lang.String.class;
         case "intervalhandlingmode":
         case "intervalHandlingMode": return java.lang.String.class;
+        case "lsnflushmode":
+        case "lsnFlushMode": return java.lang.String.class;
         case "lsnflushtimeoutaction":
         case "lsnFlushTimeoutAction": return java.lang.String.class;
         case "lsnflushtimeoutms":
@@ -569,6 +573,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "custommetrictags":
         case "customMetricTags": return getOrCreateConfiguration(target).getCustomMetricTags();
+        case "customsanitizepattern":
+        case "customSanitizePattern": return getOrCreateConfiguration(target).getCustomSanitizePattern();
         case "databasedbname":
         case "databaseDbname": return getOrCreateConfiguration(target).getDatabaseDbname();
         case "databasehostname":
@@ -609,8 +615,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "executorShutdownTimeoutMs": return getOrCreateConfiguration(target).getExecutorShutdownTimeoutMs();
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return getOrCreateConfiguration(target).isExtendedHeadersEnabled();
-        case "flushlsnsource":
-        case "flushLsnSource": return getOrCreateConfiguration(target).isFlushLsnSource();
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return getOrCreateConfiguration(target).getGuardrailCollectionsLimitAction();
         case "guardrailcollectionsmax":
@@ -637,6 +641,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "internalValueConverter": return getOrCreateConfiguration(target).getInternalValueConverter();
         case "intervalhandlingmode":
         case "intervalHandlingMode": return getOrCreateConfiguration(target).getIntervalHandlingMode();
+        case "lsnflushmode":
+        case "lsnFlushMode": return getOrCreateConfiguration(target).getLsnFlushMode();
         case "lsnflushtimeoutaction":
         case "lsnFlushTimeoutAction": return getOrCreateConfiguration(target).getLsnFlushTimeoutAction();
         case "lsnflushtimeoutms":
