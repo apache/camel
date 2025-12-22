@@ -108,27 +108,24 @@ class DependencyRuntimeTest extends CamelCommandBaseTestSupport {
 
     private static class TestArguments {
         static final String QUARKUS_POM = "pom-xml-files/quarkus-pom.xml";
-        static final String QUARKUS_POM_OUTPUT = """
-                Runtime: quarkus
-                Camel Version: 4.11.0
-                Camel Quarkus Version: 3.23.0
-                Quarkus Version: 3.23.0""";
+        static final String QUARKUS_POM_OUTPUT = "Runtime: quarkus" + System.lineSeparator() +
+                                                 "Camel Version: 4.11.0" + System.lineSeparator() +
+                                                 "Camel Quarkus Version: 3.23.0" + System.lineSeparator() +
+                                                 "Quarkus Version: 3.23.0";
         static final String QUARKUS_POM_JSON_OUTPUT
                 = "{\"runtime\":\"quarkus\",\"camelVersion\":\"4.11.0\",\"camelQuarkusVersion\":\"3.23.0\",\"quarkusVersion\":\"3.23.0\",\"quarkusBomGroupId\":\"io.quarkus.platform\",\"quarkusBomArtifactId\":\"quarkus-bom\",\"camelQuarkusBomGroupId\":\"io.quarkus.platform\",\"camelQuarkusBomArtifactId\":\"quarkus-camel-bom\"}";
 
         static final String SPRING_BOOT_POM = "pom-xml-files/springboot-pom.xml";
-        static final String SPRING_BOOT_POM_OUTPUT = """
-                Runtime: spring-boot
-                Camel Version: 4.14.0
-                Camel Spring Boot Version: 4.14.0
-                Spring Boot Version: 3.5.3""";
+        static final String SPRING_BOOT_POM_OUTPUT = "Runtime: spring-boot" + System.lineSeparator() +
+                                                     "Camel Version: 4.14.0" + System.lineSeparator() +
+                                                     "Camel Spring Boot Version: 4.14.0" + System.lineSeparator() +
+                                                     "Spring Boot Version: 3.5.3";
         static final String SPRING_BOOT_POM_JSON_OUTPUT
                 = "{\"runtime\":\"spring-boot\",\"camelVersion\":\"4.14.0\",\"camelSpringBootVersion\":\"4.14.0\",\"springBootVersion\":\"3.5.3\",\"camelSpringBootBomGroupId\":\"org.apache.camel.springboot\",\"camelSpringBootBomArtifactId\":\"camel-spring-boot-bom\"}";
 
         static final String MAIN_POM = "pom-xml-files/main-pom.xml";
-        static final String MAIN_POM_OUTPUT = """
-                Runtime: main
-                Camel Version: 4.14.0""";
+        static final String MAIN_POM_OUTPUT = "Runtime: main" + System.lineSeparator() +
+                                              "Camel Version: 4.14.0";
         static final String MAIN_POM_JSON_OUTPUT
                 = "{\"runtime\":\"main\",\"camelVersion\":\"4.14.0\"}";
 

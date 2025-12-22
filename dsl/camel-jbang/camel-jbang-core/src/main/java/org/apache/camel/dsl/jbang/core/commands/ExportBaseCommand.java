@@ -351,14 +351,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected abstract Integer export() throws Exception;
 
-    protected static String getScheme(String name) {
-        int pos = name.indexOf(":");
-        if (pos != -1) {
-            return name.substring(0, pos);
-        }
-        return null;
-    }
-
     protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run

@@ -94,6 +94,14 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     public abstract Integer doCall() throws Exception;
 
+    protected static String getScheme(String name) {
+        int pos = name.indexOf(":");
+        if (pos != -1) {
+            return name.substring(0, pos);
+        }
+        return null;
+    }
+
     public Path getStatusFile(String pid) {
         return CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
     }
