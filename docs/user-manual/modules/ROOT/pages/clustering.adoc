@@ -65,6 +65,9 @@ Configuration options:
 | acquireLockDelayUnit | The time unit for acquireLockDelay | SECONDS | TimeUnit
 | acquireLockInterval | The time to wait between attempts to try to acquire the cluster lock | 10 | long
 | acquireLockIntervalUnit | The time unit for acquireLockInterval | SECONDS | TimeUnit
+| clusterDataTaskMaxAttempts | Sets how many times a cluster data task will run, counting both the first execution and subsequent retries in case of failure or timeout. This can be useful when the cluster data root is on network based file storage, where I/O operations may occasionally block for long or unpredictable periods | 5 | int
+| clusterDataTaskTimeout | Sets the timeout for a cluster data task (reading or writing cluster data). Timeouts are useful when the cluster data root is on network storage, where I/O operations may occasionally block for long or unpredictable periods | 10 | long
+| clusterDataTaskTimeoutUnit | The time unit for the clusterDataTaskTimeoutUnit | SECONDS | TimeUnit
 | heartbeatTimeoutMultiplier | Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait before considering the leader "stale". For example, if the leader updates its heartbeat every 2 seconds and the heartbeatTimeoutMultiplier is 3, followers will tolerate up to code 2s * 3 = 6s of silence before declaring the leader unavailable | 5 | int
 | rootPath | The file cluster root directory path | | String
 |===
