@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.base64;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 

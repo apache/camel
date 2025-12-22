@@ -26,7 +26,7 @@ import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

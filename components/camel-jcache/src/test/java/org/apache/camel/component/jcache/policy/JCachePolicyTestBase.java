@@ -23,7 +23,7 @@ import javax.cache.CacheManager;
 import javax.cache.Caching;
 
 import org.apache.camel.component.jcache.support.HazelcastTest;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 

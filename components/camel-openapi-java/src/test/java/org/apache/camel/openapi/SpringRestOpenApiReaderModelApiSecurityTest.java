@@ -18,7 +18,7 @@ package org.apache.camel.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.camel.impl.engine.DefaultClassResolver;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 public class FileDelayTest extends BaseEndpointDslTest {
     private static final String TEST_DATA_DIR = BaseEndpointDslTest.generateUniquePath(BaseEndpointDslTest.class);

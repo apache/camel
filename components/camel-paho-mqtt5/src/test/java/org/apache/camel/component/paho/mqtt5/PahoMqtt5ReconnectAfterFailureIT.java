@@ -33,7 +33,7 @@ import org.apache.camel.test.infra.mosquitto.services.MosquittoLocalContainerSer
 import org.apache.camel.test.infra.mosquitto.services.MosquittoRemoteService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

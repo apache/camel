@@ -19,7 +19,7 @@ package org.apache.camel.component.google.storage.unit;
 import org.apache.camel.component.google.storage.GoogleCloudStorageComponent;
 import org.apache.camel.component.google.storage.GoogleCloudStorageConfiguration;
 import org.apache.camel.component.google.storage.GoogleCloudStorageEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

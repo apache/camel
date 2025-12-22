@@ -23,7 +23,7 @@ import java.net.URLClassLoader;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import quickfix.Acceptor;
 import quickfix.DataDictionary;

@@ -19,13 +19,13 @@ package org.apache.camel.component.ironmq.integrationtest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ironmq.IronMQConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 @Disabled("Integration test that requires ironmq account.")
 public class FileCopyManualTest extends CamelTestSupport {

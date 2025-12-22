@@ -32,7 +32,7 @@ import org.apache.camel.dataformat.soap.SoapDataFormat;
 import org.apache.camel.dataformat.soap.TestUtil;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 public class Soap12MarshalTest extends CamelTestSupport {

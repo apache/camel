@@ -18,7 +18,7 @@ package org.apache.camel.component.bonita;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.bonita.util.BonitaOperation;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -19,7 +19,7 @@ package org.apache.camel.component.rocketmq;
 
 import org.apache.camel.test.infra.rocketmq.services.RocketMQService;
 import org.apache.camel.test.infra.rocketmq.services.RocketMQServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 abstract class RocketMQTestSupport extends CamelTestSupport {
