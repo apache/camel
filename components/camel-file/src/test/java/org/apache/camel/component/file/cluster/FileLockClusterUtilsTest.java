@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.cluster;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -171,7 +170,7 @@ class FileLockClusterUtilsTest {
     }
 
     @Test
-    void writeClusterLeaderInfoData(@TempDir Path tempDir) throws IOException {
+    void writeClusterLeaderInfoData(@TempDir Path tempDir) throws Exception {
         Path clusterData = tempDir.resolve("leader.dat");
         try (RandomAccessFile raf = new RandomAccessFile(clusterData.toFile(), "rw")) {
             FileLockClusterLeaderInfo leaderInfo = new FileLockClusterLeaderInfo(UUID.randomUUID().toString(), 1L, 2L);

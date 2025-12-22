@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -221,28 +220,68 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
     }
 
     @Test
-    void negativeHeartbeatTimeoutMultiplierThrowsException() throws Exception {
+    void negativeHeartbeatTimeoutMultiplierThrowsException() {
         ClusterConfig config = new ClusterConfig();
         config.setHeartbeatTimeoutMultiplier(-1);
-
-        Exception exception = assertThrows(Exception.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             try (CamelContext camelContext = createCamelContext(config)) {
                 camelContext.start();
             }
         });
-        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
 
     @Test
-    void zeroHeartbeatTimeoutMultiplierThrowsException() throws Exception {
+    void zeroHeartbeatTimeoutMultiplierThrowsException() {
         ClusterConfig config = new ClusterConfig();
         config.setHeartbeatTimeoutMultiplier(0);
-
-        Exception exception = assertThrows(Exception.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             try (CamelContext camelContext = createCamelContext(config)) {
                 camelContext.start();
             }
         });
-        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
+
+    @Test
+    void negativeClusterDataTaskMaxAttemptsThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskMaxAttempts(-1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void zeroClusterDataTaskMaxAttemptsThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskMaxAttempts(0);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void negativeClusterDataTaskTimeoutThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskTimeout(-1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void zeroClusterDataTaskTimeoutThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskTimeout(0);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
     }
 }
