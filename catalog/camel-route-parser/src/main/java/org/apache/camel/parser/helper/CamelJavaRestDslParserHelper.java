@@ -623,8 +623,7 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private static boolean isValid(Annotation<JavaClassSource> ann) {
-        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName());
     }
 
     private static boolean isNumericOperator(JavaClassSource clazz, Block block, Expression expression) {
