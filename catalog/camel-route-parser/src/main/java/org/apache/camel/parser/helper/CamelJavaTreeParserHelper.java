@@ -270,10 +270,6 @@ public final class CamelJavaTreeParserHelper {
         return node;
     }
 
-    /**
-     * @deprecated currently not in use
-     */
-    @Deprecated
     public static String getLiteralValue(JavaClassSource clazz, Block block, Expression expression) {
         // unwrap parenthesis
         if (expression instanceof ParenthesizedExpression) {

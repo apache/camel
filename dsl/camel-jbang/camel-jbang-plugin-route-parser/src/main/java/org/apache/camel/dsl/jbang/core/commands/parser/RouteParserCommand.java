@@ -112,10 +112,7 @@ public class RouteParserCommand extends CamelCommand {
             return -1;
         }
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(f);
-        String fqn = clazz.getQualifiedName();
-        fqn = fqn.replace('.', '/');
-        fqn = fqn + ".java";
-        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, fqn, true);
+        List<CamelNodeDetails> list = RouteBuilderParser.parseRouteBuilderTree(clazz, file, true);
         if (watch) {
             clearScreen();
         }

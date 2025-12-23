@@ -31,7 +31,7 @@ public final class CamelNodeDetailsFactory {
         return new CamelNodeDetails(parent, name, ++order);
     }
 
-    public CamelNodeDetails copyNode(CamelNodeDetails parent, String name, CamelNodeDetails copoy) {
-        return new CamelNodeDetails(parent, name, ++order, copoy);
+    public CamelNodeDetails copyNode(CamelNodeDetails parent, String name, CamelNodeDetails copy) {
+        return new CamelNodeDetails(parent, name, ++order, copy);
     }
 }
