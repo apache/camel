@@ -53,4 +53,22 @@ public interface FtpInfraService extends InfrastructureService {
     default String directoryName() {
         return "myTestDirectory";
     }
+
+    /**
+     * Returns the SSH host key fingerprint in SHA256 format (SFTP only).
+     *
+     * @return the host key fingerprint or null if not applicable
+     */
+    default String hostKeyFingerprint() {
+        return null;
+    }
+
+    /**
+     * Returns the known_hosts entry for this server (SFTP only).
+     *
+     * @return the known_hosts entry or null if not applicable
+     */
+    default String knownHostsEntry() {
+        return null;
+    }
 }
