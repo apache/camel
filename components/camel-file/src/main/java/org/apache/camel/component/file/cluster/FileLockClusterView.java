@@ -263,11 +263,13 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
                     // Attempt to obtain cluster leadership
                     LOGGER.debug("Try to acquire a lock on {} (cluster-member-id={})", leaderLockPath, localMember.getUuid());
-                    leaderLockFile = createRandomAccessFile(leaderLockPath);
-                    leaderDataFile = createRandomAccessFile(leaderDataPath);
 
                     lock = null;
-                    lock = leaderLockFile.getChannel().tryLock(0, Math.max(1, leaderLockFile.getChannel().size()), false);
+                    leaderLockFile = createRandomAccessFile(leaderLockPath);
+                    leaderDataFile = createRandomAccessFile(leaderDataPath);
+                    if (leaderLockFile != null && leaderDataFile != null) {
+                        lock = leaderLockFile.getChannel().tryLock(0, Math.max(1, leaderLockFile.getChannel().size()), false);
+                    }
 
                     if (lockIsValid()) {
                         LOGGER.info("Lock on file {} acquired (lock={}, cluster-member-id={})", leaderLockPath, lock,
