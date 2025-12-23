@@ -85,8 +85,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesOperations;
 
@@ -98,12 +98,10 @@ import io.fabric8.kubernetes.api.model.batch.JobSpec;
 
 public class KubernetesCreateJob extends RouteBuilder {
 
-    @Inject
-    @Uri("timer:foo?delay=1000&repeatCount=1")
+    @EndpointInject("timer:foo?delay=1000&repeatCount=1")
     private Endpoint inputEndpoint;
 
-    @Inject
-    @Uri("log:output")
+    @EndpointInject("log:output")
     private Endpoint resultEndpoint;
 
     @Override
