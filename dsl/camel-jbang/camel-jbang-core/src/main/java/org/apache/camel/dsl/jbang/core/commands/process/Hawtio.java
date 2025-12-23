@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.support.ObjectHelper;
@@ -37,8 +38,8 @@ public class Hawtio extends CamelCommand {
     String name;
 
     @CommandLine.Option(names = { "--version" },
-                        description = "Version of the Hawtio web console", defaultValue = "4.6.2")
-    String version = "4.6.2";
+                        description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
+    String version = HawtioVersion.HAWTIO_VERSION;
 
     // use port 8888 as 8080 is too commonly used
     @CommandLine.Option(names = { "--port" },

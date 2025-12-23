@@ -126,6 +126,9 @@ class ExportQuarkus extends Export {
                     prop.put("quarkus.management.port", port);
                 }
             }
+            if (hawtio) {
+                prop.setProperty("quarkus.hawtio.authenticationEnabled", "false");
+            }
             return prop;
         });
         // copy docker files
@@ -538,6 +541,11 @@ class ExportQuarkus extends Export {
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
+
+        if (hawtio) {
+            answer.add("mvn:org.apache.camel:camel-management");
+            answer.add("mvn:io.hawt:hawtio-quarkus:" + hawtioVersion);
+        }
 
         return answer;
     }

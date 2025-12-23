@@ -50,6 +50,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
@@ -281,6 +282,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--groovy-pre-compiled" }, defaultValue = "false",
                         description = "Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main)")
     protected boolean groovyPrecompiled;
+
+    @CommandLine.Option(names = { "--hawtio" }, defaultValue = "false",
+                        description = "Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus)")
+    protected boolean hawtio;
+
+    @CommandLine.Option(names = { "--hawtio-version" },
+                        description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
+    protected String hawtioVersion;
 
     protected boolean symbolicLink;     // copy source files using symbolic link
     protected boolean javaLiveReload; // reload java codes in dev
