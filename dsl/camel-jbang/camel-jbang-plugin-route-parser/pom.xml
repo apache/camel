@@ -18,31 +18,41 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>dsl</artifactId>
+        <artifactId>camel-jbang-parent</artifactId>
         <version>4.17.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>camel-jbang-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>camel-jbang-plugin-route-parser</artifactId>
 
-    <name>Camel :: JBang :: Parent</name>
-    <description>Camel JBang Modules (parent)</description>
+    <name>Camel :: JBang :: Plugin :: Route Parser</name>
+    <description>Camel JBang Edit Route Parser</description>
 
-    <modules>
-        <module>camel-jbang-console</module>
-        <module>camel-jbang-core</module>
-        <module>camel-jbang-main</module>
-        <module>camel-jbang-plugin-generate</module>
-        <module>camel-jbang-plugin-edit</module>
-        <module>camel-jbang-plugin-kubernetes</module>
-        <module>camel-jbang-plugin-route-parser</module>
-        <module>camel-jbang-plugin-test</module>
-        <module>camel-jbang-it</module>
-        <module>camel-launcher</module>
-    </modules>
+    <properties>
+        <firstVersion>4.17.0</firstVersion>
+        <label>jbang</label>
+        <supportLevel>Preview</supportLevel>
+        <camel-prepare-component>false</camel-prepare-component>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-route-parser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.roaster</groupId>
+            <artifactId>roaster-jdt</artifactId>
+            <version>${roaster-version}</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -1224,6 +1224,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jbang-plugin-route-parser</artifactId>
+        <version>4.17.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-plugin-test</artifactId>
         <version>4.17.0-SNAPSHOT</version>
       </dependency>

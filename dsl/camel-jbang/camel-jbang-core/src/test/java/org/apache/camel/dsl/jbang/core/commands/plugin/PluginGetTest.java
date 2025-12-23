@@ -70,12 +70,12 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(7, output.size());
+        Assertions.assertEquals(8, output.size());
         Assertions.assertEquals("Supported plugins:", output.get(0));
-        Assertions.assertEquals("NAME        COMMAND     DEPENDENCY                                      DESCRIPTION",
+        Assertions.assertEquals("NAME          COMMAND       DEPENDENCY                                        DESCRIPTION",
                 output.get(2));
         Assertions.assertEquals(
-                "kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  %s"
+                "kubernetes    kubernetes    org.apache.camel:camel-jbang-plugin-kubernetes    %s"
                         .formatted(PluginType.KUBERNETES.getDescription()),
                 output.get(3));
     }
@@ -120,31 +120,35 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
         command.doCall();
 
         List<String> output = printer.getLines();
-        Assertions.assertEquals(10, output.size());
+        Assertions.assertEquals(11, output.size());
         Assertions.assertEquals("NAME        COMMAND  DEPENDENCY                         DESCRIPTION", output.get(0));
         Assertions.assertEquals(
                 "foo-plugin  foo      org.apache.camel:foo-plugin:1.0.0  Plugin foo-plugin called with command foo",
                 output.get(1));
 
         Assertions.assertEquals("Supported plugins:", output.get(3));
-        Assertions.assertEquals("NAME        COMMAND     DEPENDENCY                                      DESCRIPTION",
+        Assertions.assertEquals("NAME          COMMAND       DEPENDENCY                                        DESCRIPTION",
                 output.get(5));
         Assertions.assertEquals(
-                "kubernetes  kubernetes  org.apache.camel:camel-jbang-plugin-kubernetes  %s"
+                "kubernetes    kubernetes    org.apache.camel:camel-jbang-plugin-kubernetes    %s"
                         .formatted(PluginType.KUBERNETES.getDescription()),
                 output.get(6));
         Assertions.assertEquals(
-                "generate    generate    org.apache.camel:camel-jbang-plugin-generate    %s"
+                "generate      generate      org.apache.camel:camel-jbang-plugin-generate      %s"
                         .formatted(PluginType.GENERATE.getDescription()),
                 output.get(7));
         Assertions.assertEquals(
-                "edit        edit        org.apache.camel:camel-jbang-plugin-edit        %s"
+                "edit          edit          org.apache.camel:camel-jbang-plugin-edit          %s"
                         .formatted(PluginType.EDIT.getDescription()),
                 output.get(8));
         Assertions.assertEquals(
-                "test        test        org.apache.camel:camel-jbang-plugin-test        %s"
+                "test          test          org.apache.camel:camel-jbang-plugin-test          %s"
                         .formatted(PluginType.TEST.getDescription()),
                 output.get(9));
+        Assertions.assertEquals(
+                "route-parser  route-parser  org.apache.camel:camel-jbang-plugin-route-parser  %s"
+                        .formatted(PluginType.ROUTE_PARSER.getDescription()),
+                output.get(10));
     }
 
 }

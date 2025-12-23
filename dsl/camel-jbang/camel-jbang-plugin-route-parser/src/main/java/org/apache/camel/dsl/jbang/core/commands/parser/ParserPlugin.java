@@ -14,24 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.parser.model;
+package org.apache.camel.dsl.jbang.core.commands.parser;
 
-public final class CamelNodeDetailsFactory {
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.Plugin;
+import picocli.CommandLine;
 
-    private int order;
+@CamelJBangPlugin(name = "camel-jbang-plugin-route-parser", firstVersion = "4.17.0")
+public class ParserPlugin implements Plugin {
 
-    private CamelNodeDetailsFactory() {
+    @Override
+    public void customize(CommandLine commandLine, CamelJBangMain main) {
+        commandLine.addSubcommand("route-parser", new RouteParserCommand(main));
     }
 
-    public static CamelNodeDetailsFactory newInstance() {
-        return new CamelNodeDetailsFactory();
-    }
-
-    public CamelNodeDetails newNode(CamelNodeDetails parent, String name) {
-        return new CamelNodeDetails(parent, name, ++order);
-    }
-
-    public CamelNodeDetails copyNode(CamelNodeDetails parent, String name, CamelNodeDetails copy) {
-        return new CamelNodeDetails(parent, name, ++order, copy);
-    }
 }
