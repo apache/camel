@@ -30,6 +30,7 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.util.IOHelper;
 import org.apache.maven.model.Dependency;
@@ -797,4 +798,52 @@ class ExportTest {
         assertThat(model.getProperties()).containsEntry("quarkus.platform.version",
                 System.getProperty(CamelJBangConstants.QUARKUS_VERSION));
     }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
+    public void shouldExportHawtio(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportHawtio {}", rt);
+        Export command = new Export(new CamelJBangMain());
+        CommandLine.populateCommand(command, "--gav=examples:route:1.0.0", "--dir=" + workingDir,
+                "--runtime=%s".formatted(rt.runtime()), "--hawtio=true", "target/test-classes/route.yaml");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            // hawtio not supported
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-management-starter",
+                            null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "io.hawt",
+                            "hawtio-springboot", HawtioVersion.HAWTIO_VERSION));
+            // Application properties
+            File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
+            String content = IOHelper.loadText(new FileInputStream(appProperties));
+            Assertions.assertTrue(content.contains("management.endpoints.web.exposure.include=hawtio,jolokia"),
+                    "should contain management.endpoints.web.exposure.include property, was " + content);
+            Assertions.assertTrue(content.contains("spring.jmx.enabled=true"),
+                    "should contain spring.jmx.enabled property, was " + content);
+            Assertions.assertTrue(content.contains("hawtio.authenticationEnabled=false"),
+                    "should contain hawtio.authenticationEnabled property, was " + content);
+        } else if (rt == RuntimeType.quarkus) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-management", null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "io.hawt",
+                            "hawtio-quarkus", HawtioVersion.HAWTIO_VERSION));
+            // Application properties
+            File appProperties = new File(workingDir + "/src/main/resources", "application.properties");
+            String content = IOHelper.loadText(new FileInputStream(appProperties));
+            Assertions.assertTrue(content.contains("quarkus.hawtio.authenticationEnabled=false"),
+                    "should contain quarkus.hawtio.authenticationEnabled property, was " + content);
+        }
+    }
+
 }

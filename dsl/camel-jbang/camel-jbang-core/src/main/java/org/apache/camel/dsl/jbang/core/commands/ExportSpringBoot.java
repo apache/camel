@@ -139,6 +139,18 @@ class ExportSpringBoot extends Export {
                     prop.put("management.server.port", port);
                 }
             }
+            if (hawtio) {
+                // spring boot needs these options configured to support hawtio
+                String s = prop.getProperty("management.endpoints.web.exposure.include");
+                if (s == null) {
+                    s = "hawtio,jolokia";
+                } else {
+                    s = s + ",hawtio,jolokia";
+                }
+                prop.setProperty("management.endpoints.web.exposure.include", s);
+                prop.setProperty("spring.jmx.enabled", "true");
+                prop.setProperty("hawtio.authenticationEnabled", "false");
+            }
             return prop;
         });
         if ("maven".equals(buildTool)) {
@@ -374,6 +386,10 @@ class ExportSpringBoot extends Export {
         if (hasOpenapi(answer) && !http) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http");
+        }
+        if (hawtio) {
+            answer.add("mvn:org.apache.camel:camel-management");
+            answer.add("mvn:io.hawt:hawtio-springboot:" + hawtioVersion);
         }
 
         return answer;

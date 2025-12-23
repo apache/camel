@@ -261,6 +261,8 @@ public class Export extends ExportBaseCommand {
         cmd.verbose = this.verbose;
         cmd.applicationProperties = this.applicationProperties;
         cmd.groovyPrecompiled = this.groovyPrecompiled;
+        cmd.hawtio = this.hawtio;
+        cmd.hawtioVersion = this.hawtioVersion;
         // run export
         return cmd.export();
     }
