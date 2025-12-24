@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.fhir;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "searchByResource", description="Perform a search by resource name", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle searchByResource(String resourceName, java.util.Map<String, java.util.List<String>> searchParameters, ca.uhn.fhir.rest.api.SearchStyleEnum searchStyle, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"}), @ApiMethod(methodName = "searchByUrl", description="Perform a search directly by URL", signatures={"org.hl7.fhir.instance.model.api.IBaseBundle searchByUrl(String url, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class FhirSearchEndpointConfiguration extends FhirConfiguration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "searchByResource", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL"), @ApiMethod(methodName = "searchByUrl", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})

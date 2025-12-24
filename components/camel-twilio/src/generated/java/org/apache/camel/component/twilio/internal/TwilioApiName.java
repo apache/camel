@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.twilio.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component Twilio
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum TwilioApiName implements ApiName {
 
     ACCOUNT("account"),

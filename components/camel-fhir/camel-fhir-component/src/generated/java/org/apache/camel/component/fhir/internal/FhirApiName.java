@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.fhir.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component Fhir
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum FhirApiName implements ApiName {
 
     CAPABILITIES("capabilities"),

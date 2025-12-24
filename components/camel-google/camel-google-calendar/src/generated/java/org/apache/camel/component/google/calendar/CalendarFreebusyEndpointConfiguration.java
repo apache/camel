@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "query", description="Returns free/busy information for a set of calendars", signatures={"com.google.api.services.calendar.Calendar$Freebusy$Query query(com.google.api.services.calendar.model.FreeBusyRequest content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class CalendarFreebusyEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "query", description="The com.google.api.services.calendar.model.FreeBusyRequest")})

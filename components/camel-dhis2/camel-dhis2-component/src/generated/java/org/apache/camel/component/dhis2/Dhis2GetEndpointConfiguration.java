@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.dhis2;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "collection", signatures={"java.util.Iterator<org.apache.camel.component.dhis2.api.Dhis2Resource> collection(String path, String arrayName, Boolean paging, String fields, java.util.List<String> filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"}), @ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, String fields, java.util.List<String> filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "collection")})

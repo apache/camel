@@ -20,11 +20,14 @@
  */
 package $packageName;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component $componentName
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum $apiNameEnum implements ApiName {
 
 #foreach ( $api in $apis )

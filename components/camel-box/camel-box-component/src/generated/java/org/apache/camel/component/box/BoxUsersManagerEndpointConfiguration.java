@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.box;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "addUserEmailAlias", description="Add a new email alias to user's account", signatures={"com.box.sdk.EmailAlias addUserEmailAlias(String userId, String email)"}), @ApiMethod(methodName = "createAppUser", description="Provision a new app user in an enterprise with additional user information using Box Developer Edition", signatures={"com.box.sdk.BoxUser createAppUser(String name, com.box.sdk.CreateUserParams params)"}), @ApiMethod(methodName = "createEnterpriseUser", description="Provision a new user in an enterprise with additional user information", signatures={"com.box.sdk.BoxUser createEnterpriseUser(String login, String name, com.box.sdk.CreateUserParams params)"}), @ApiMethod(methodName = "deleteUser", description="Delete user from an enterprise account", signatures={"void deleteUser(String userId, boolean notifyUser, boolean force)"}), @ApiMethod(methodName = "deleteUserEmailAlias", description="Delete an email alias from user's account", signatures={"void deleteUserEmailAlias(String userId, String emailAliasId)"}), @ApiMethod(methodName = "getAllEnterpriseOrExternalUsers", description="Get any managed users that match the filter term as well as any external users that match the filter term", signatures={"java.util.List<com.box.sdk.BoxUser$Info> getAllEnterpriseOrExternalUsers(String filterTerm, String[] fields)"}), @ApiMethod(methodName = "getCurrentUser", description="Get current user", signatures={"com.box.sdk.BoxUser getCurrentUser()"}), @ApiMethod(methodName = "getUserEmailAlias", description="Get a collection of all the email aliases for user", signatures={"java.util.Collection<com.box.sdk.EmailAlias> getUserEmailAlias(String userId)"}), @ApiMethod(methodName = "getUserInfo", description="Get user information", signatures={"com.box.sdk.BoxUser$Info getUserInfo(String userId)"}), @ApiMethod(methodName = "moveFolderToUser", description="Move root folder for specified user to current user", signatures={"com.box.sdk.BoxFolder$Info moveFolderToUser(String userId, String sourceUserId)"}), @ApiMethod(methodName = "updateUserInfo", description="Update user information", signatures={"com.box.sdk.BoxUser updateUserInfo(String userId, com.box.sdk.BoxUser$Info info)"})}, aliases = {"getCurrentUser=currentUser", "getAllEnterpriseOrExternalUsers=users", "createAppUser=create", "createEnterpriseUser=create", "deleteUser=delete", "addUserEmailAlias=addEmailAlias", "getUserEmailAlias=emailAlias", "deleteUserEmailAlias=deleteEmailAlias", "getUserInfo=info", "updateUserInfo=updateInfo"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxUsersManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "addUserEmailAlias", description="The email address to add as an alias")})

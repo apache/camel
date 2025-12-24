@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.dhis2.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component Dhis2
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum Dhis2ApiName implements ApiName {
 
     POST("post"),

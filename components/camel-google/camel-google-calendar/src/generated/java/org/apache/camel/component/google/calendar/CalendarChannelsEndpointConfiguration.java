@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "stop", description="Stop watching resources through this channel", signatures={"com.google.api.services.calendar.Calendar$Channels$Stop stop(com.google.api.services.calendar.model.Channel content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class CalendarChannelsEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "stop", description="The com.google.api.services.calendar.model.Channel")})

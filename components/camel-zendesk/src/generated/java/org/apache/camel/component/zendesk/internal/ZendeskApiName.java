@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.zendesk.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component Zendesk
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum ZendeskApiName implements ApiName {
 
     DEFAULT("");

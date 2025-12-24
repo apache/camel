@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(String areaCode)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(com.twilio.type.PhoneNumber phoneNumber)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(String pathAccountSid, String areaCode)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber phoneNumber)"}), @ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberReader reader()", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", signatures={"com.twilio.rest.api.v2010.account.IncomingPhoneNumberUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.IncomingPhoneNumberUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class IncomingPhoneNumberEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator")})

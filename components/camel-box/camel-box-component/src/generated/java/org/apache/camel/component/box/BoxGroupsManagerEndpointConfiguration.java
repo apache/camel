@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.box;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "addGroupMembership", description="Add a member to group with the specified role", signatures={"com.box.sdk.BoxGroupMembership addGroupMembership(String groupId, String userId, com.box.sdk.BoxGroupMembership$GroupRole role)"}), @ApiMethod(methodName = "createGroup", description="Create a new group with a specified name and optional additional parameters", signatures={"com.box.sdk.BoxGroup createGroup(String name, String provenance, String externalSyncIdentifier, String description, String invitabilityLevel, String memberViewabilityLevel)"}), @ApiMethod(methodName = "deleteGroup", description="Delete group", signatures={"void deleteGroup(String groupId)"}), @ApiMethod(methodName = "deleteGroupMembership", description="Delete group membership", signatures={"void deleteGroupMembership(String groupMembershipId)"}), @ApiMethod(methodName = "getAllGroups", description="Get all the groups in the enterprise", signatures={"java.util.Collection<com.box.sdk.BoxGroup> getAllGroups()"}), @ApiMethod(methodName = "getGroupInfo", description="Get group information", signatures={"com.box.sdk.BoxGroup$Info getGroupInfo(String groupId)"}), @ApiMethod(methodName = "getGroupMembershipInfo", description="Get group membership information", signatures={"com.box.sdk.BoxGroupMembership$Info getGroupMembershipInfo(String groupMembershipId)"}), @ApiMethod(methodName = "getGroupMemberships", description="Get information about all of the group memberships for this group", signatures={"java.util.Collection<com.box.sdk.BoxGroupMembership$Info> getGroupMemberships(String groupId)"}), @ApiMethod(methodName = "updateGroupInfo", description="Update group information", signatures={"com.box.sdk.BoxGroup updateGroupInfo(String groupId, com.box.sdk.BoxGroup$Info groupInfo)"}), @ApiMethod(methodName = "updateGroupMembershipInfo", description="Update group membership information", signatures={"com.box.sdk.BoxGroupMembership updateGroupMembershipInfo(String groupMembershipId, com.box.sdk.BoxGroupMembership$Info info)"})}, aliases = {"createGroup=create", "deleteGroup=delete", "getAllGroups=groups", "getGroupInfo=info", "addGroupMembership=addMembership", "deleteGroupMembership=deleteMembership", "getGroupMemberships=memberships", "getGroupMembershipInfo=membershipInfo", "updateGroupMembershipInfo=updateMembershipInfo"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxGroupsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "createGroup", description="The description of the new group")})

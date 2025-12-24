@@ -5,6 +5,7 @@ package org.apache.camel.component.as2.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.as2.api.AS2ClientManager;
 
@@ -18,6 +19,7 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 /**
  * Camel {@link ApiMethod} Enumeration for org.apache.camel.component.as2.api.AS2ClientManager
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum AS2ClientManagerApiMethod implements ApiMethod {
 
     SEND(

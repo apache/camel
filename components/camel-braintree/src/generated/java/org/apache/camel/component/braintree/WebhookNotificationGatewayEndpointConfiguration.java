@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "parse", signatures={"com.braintreegateway.WebhookNotification parse(String signature, String payload)"}), @ApiMethod(methodName = "parseWithoutSignatureVerification", signatures={"com.braintreegateway.WebhookNotification parseWithoutSignatureVerification(String payload)"}), @ApiMethod(methodName = "verify", signatures={"String verify(String challenge)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class WebhookNotificationGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "verify")})

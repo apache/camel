@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.AccountCreator creator()"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.AccountFetcher fetcher()", "com.twilio.rest.api.v2010.AccountFetcher fetcher(String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.AccountReader reader()"}), @ApiMethod(methodName = "updater", signatures={"com.twilio.rest.api.v2010.AccountUpdater updater()", "com.twilio.rest.api.v2010.AccountUpdater updater(String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class AccountEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "fetcher"), @ApiMethod(methodName = "updater")})

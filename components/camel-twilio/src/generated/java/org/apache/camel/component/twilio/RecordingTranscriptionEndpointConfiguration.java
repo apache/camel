@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.recording.TranscriptionDeleter deleter(String pathRecordingSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.TranscriptionDeleter deleter(String pathAccountSid, String pathRecordingSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.recording.TranscriptionFetcher fetcher(String pathRecordingSid, String pathSid)", "com.twilio.rest.api.v2010.account.recording.TranscriptionFetcher fetcher(String pathAccountSid, String pathRecordingSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.recording.TranscriptionReader reader(String pathRecordingSid)", "com.twilio.rest.api.v2010.account.recording.TranscriptionReader reader(String pathAccountSid, String pathRecordingSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class RecordingTranscriptionEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "deleter"), @ApiMethod(methodName = "fetcher"), @ApiMethod(methodName = "reader")})

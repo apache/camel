@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.mail;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "create", description="Creates a new draft with the DRAFT label", signatures={"com.google.api.services.gmail.Gmail$Users$Drafts$Create create(String userId, com.google.api.services.gmail.model.Draft content)", "com.google.api.services.gmail.Gmail$Users$Drafts$Create create(String userId, com.google.api.services.gmail.model.Draft content, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), @ApiMethod(methodName = "delete", description="Immediately and permanently deletes the specified draft", signatures={"com.google.api.services.gmail.Gmail$Users$Drafts$Delete delete(String userId, String id)"}), @ApiMethod(methodName = "get", description="Gets the specified draft", signatures={"com.google.api.services.gmail.Gmail$Users$Drafts$Get get(String userId, String id)"}), @ApiMethod(methodName = "list", description="Lists the drafts in the user's mailbox", signatures={"com.google.api.services.gmail.Gmail$Users$Drafts$List list(String userId)"}), @ApiMethod(methodName = "send", description="Sends the specified, existing draft to the recipients in the To, Cc, and Bcc headers", signatures={"com.google.api.services.gmail.Gmail$Users$Drafts$Send send(String userId, com.google.api.services.gmail.model.Draft content)", "com.google.api.services.gmail.Gmail$Users$Drafts$Send send(String userId, com.google.api.services.gmail.model.Draft content, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), @ApiMethod(methodName = "update", description="Replaces a draft's content", signatures={"com.google.api.services.gmail.Gmail$Users$Drafts$Update update(String userId, String id, com.google.api.services.gmail.model.Draft content)", "com.google.api.services.gmail.Gmail$Users$Drafts$Update update(String userId, String id, com.google.api.services.gmail.model.Draft content, com.google.api.client.http.AbstractInputStreamContent mediaContent)"}), }, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class GmailUsersDraftsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.gmail.model.Draft media metadata or null if none"), @ApiMethod(methodName = "send", description="The com.google.api.services.gmail.model.Draft media metadata or null if none"), @ApiMethod(methodName = "update", description="The com.google.api.services.gmail.model.Draft media metadata or null if none")})

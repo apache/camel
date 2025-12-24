@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "create", description="Creates an Address for a Customer", signatures={"com.braintreegateway.Result<com.braintreegateway.Address> create(String customerId, com.braintreegateway.AddressRequest request)"}), @ApiMethod(methodName = "delete", description="Deletes a Customer's Address", signatures={"com.braintreegateway.Result<com.braintreegateway.Address> delete(String customerId, String id)"}), @ApiMethod(methodName = "find", description="Finds a Customer's Address", signatures={"com.braintreegateway.Address find(String customerId, String id)"}), @ApiMethod(methodName = "update", description="Updates a Customer's Address", signatures={"com.braintreegateway.Result<com.braintreegateway.Address> update(String customerId, String id, com.braintreegateway.AddressRequest request)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class AddressGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The id of the Customer"), @ApiMethod(methodName = "delete", description="The id of the Customer"), @ApiMethod(methodName = "find", description="The id of the Customer"), @ApiMethod(methodName = "update", description="The id of the Customer")})
