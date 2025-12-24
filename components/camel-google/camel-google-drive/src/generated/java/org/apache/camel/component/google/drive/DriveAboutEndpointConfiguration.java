@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.drive;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,5 +20,6 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "get", description="Gets information about the user, the user's Drive, and system capabilities", signatures={"com.google.api.services.drive.Drive$About$Get get()"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DriveAboutEndpointConfiguration extends GoogleDriveConfiguration {
 }

@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.box;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "addFolderCollaboration", description="Add a collaboration to this folder", signatures={"com.box.sdk.BoxCollaboration addFolderCollaboration(String folderId, com.box.sdk.BoxCollaborator collaborator, com.box.sdk.BoxCollaboration$Role role)"}), @ApiMethod(methodName = "addFolderCollaborationByEmail", description="Add a collaboration to this folder", signatures={"com.box.sdk.BoxCollaboration addFolderCollaborationByEmail(String folderId, String email, com.box.sdk.BoxCollaboration$Role role)"}), @ApiMethod(methodName = "deleteCollaboration", description="Delete collaboration", signatures={"void deleteCollaboration(String collaborationId)"}), @ApiMethod(methodName = "getCollaborationInfo", description="Get collaboration information", signatures={"com.box.sdk.BoxCollaboration$Info getCollaborationInfo(String collaborationId)"}), @ApiMethod(methodName = "getFolderCollaborations", description="Get information about all of the collaborations for folder", signatures={"java.util.Collection<com.box.sdk.BoxCollaboration$Info> getFolderCollaborations(String folderId)"}), @ApiMethod(methodName = "getPendingCollaborations", description="Get all pending collaboration invites for the current user", signatures={"java.util.Collection<com.box.sdk.BoxCollaboration$Info> getPendingCollaborations()"}), @ApiMethod(methodName = "updateCollaborationInfo", description="Update collaboration information", signatures={"com.box.sdk.BoxCollaboration updateCollaborationInfo(String collaborationId, com.box.sdk.BoxCollaboration$Info info)"})}, aliases = {"addFolderCollaboration=add", "addFolderCollaborationByEmail=addByEmail", "deleteCollaboration=delete", "getFolderCollaborations=collaborations", "getPendingCollaborations=pendingCollaborations", "getCollaborationInfo=info", "updateCollaborationInfo=updateInfo"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxCollaborationsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "deleteCollaboration", description="The id of comment to change"), @ApiMethod(methodName = "getCollaborationInfo", description="The id of collaboration"), @ApiMethod(methodName = "updateCollaborationInfo", description="The id of collaboration")})

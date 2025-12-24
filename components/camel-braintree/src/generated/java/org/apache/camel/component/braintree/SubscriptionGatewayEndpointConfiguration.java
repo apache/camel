@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "cancel", description="Cancels the Subscription with the given id", signatures={"com.braintreegateway.Result<com.braintreegateway.Subscription> cancel(String id)"}), @ApiMethod(methodName = "create", description="Creates a Subscription", signatures={"com.braintreegateway.Result<com.braintreegateway.Subscription> create(com.braintreegateway.SubscriptionRequest request)"}), @ApiMethod(methodName = "delete", signatures={"com.braintreegateway.Result<com.braintreegateway.Subscription> delete(String customerId, String id)"}), @ApiMethod(methodName = "find", description="Finds a Subscription by id", signatures={"com.braintreegateway.Subscription find(String id)"}), @ApiMethod(methodName = "retryCharge", signatures={"com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId)", "com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId, java.math.BigDecimal amount)", "com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId, Boolean submitForSettlement)", "com.braintreegateway.Result<com.braintreegateway.Transaction> retryCharge(String subscriptionId, java.math.BigDecimal amount, Boolean submitForSettlement)"}), @ApiMethod(methodName = "search", description="Search for a Subscription", signatures={"com.braintreegateway.ResourceCollection<com.braintreegateway.Subscription> search(com.braintreegateway.SubscriptionSearchRequest searchRequest)"}), @ApiMethod(methodName = "update", description="Updates a Subscription", signatures={"com.braintreegateway.Result<com.braintreegateway.Subscription> update(String id, com.braintreegateway.SubscriptionRequest request)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class SubscriptionGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "retryCharge")})

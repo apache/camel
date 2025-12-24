@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.account.MessageCreator creator(com.twilio.type.PhoneNumber to, com.twilio.type.PhoneNumber from, String body)", "com.twilio.rest.api.v2010.account.MessageCreator creator(com.twilio.type.PhoneNumber to, com.twilio.type.PhoneNumber from, java.util.List<java.net.URI> mediaUrl)", "com.twilio.rest.api.v2010.account.MessageCreator creator(com.twilio.type.PhoneNumber to, String messagingServiceSid, String body)", "com.twilio.rest.api.v2010.account.MessageCreator creator(com.twilio.type.PhoneNumber to, String messagingServiceSid, java.util.List<java.net.URI> mediaUrl)", "com.twilio.rest.api.v2010.account.MessageCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber to, com.twilio.type.PhoneNumber from, String body)", "com.twilio.rest.api.v2010.account.MessageCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber to, com.twilio.type.PhoneNumber from, java.util.List<java.net.URI> mediaUrl)", "com.twilio.rest.api.v2010.account.MessageCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber to, String messagingServiceSid, String body)", "com.twilio.rest.api.v2010.account.MessageCreator creator(String pathAccountSid, com.twilio.type.PhoneNumber to, String messagingServiceSid, java.util.List<java.net.URI> mediaUrl)"}), @ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.MessageDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.MessageDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.MessageFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.MessageFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.MessageReader reader()", "com.twilio.rest.api.v2010.account.MessageReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", signatures={"com.twilio.rest.api.v2010.account.MessageUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.MessageUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class MessageEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator")})

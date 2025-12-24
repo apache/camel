@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.drive;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "create", description="Creates a permission for a file or shared drive", signatures={"com.google.api.services.drive.Drive$Permissions$Create create(String fileId, com.google.api.services.drive.model.Permission content)"}), @ApiMethod(methodName = "delete", description="Deletes a permission", signatures={"com.google.api.services.drive.Drive$Permissions$Delete delete(String fileId, String permissionId)"}), @ApiMethod(methodName = "get", description="Gets a permission by ID", signatures={"com.google.api.services.drive.Drive$Permissions$Get get(String fileId, String permissionId)"}), @ApiMethod(methodName = "list", description="Lists a file's or shared drive's permissions", signatures={"com.google.api.services.drive.Drive$Permissions$List list(String fileId)"}), @ApiMethod(methodName = "update", description="Updates a permission with patch semantics", signatures={"com.google.api.services.drive.Drive$Permissions$Update update(String fileId, String permissionId, com.google.api.services.drive.model.Permission content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DrivePermissionsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.drive.model.Permission"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.Permission")})

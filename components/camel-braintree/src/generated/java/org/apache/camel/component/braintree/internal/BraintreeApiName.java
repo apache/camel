@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.braintree.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component Braintree
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum BraintreeApiName implements ApiName {
 
     ADD_ON("addOn"),

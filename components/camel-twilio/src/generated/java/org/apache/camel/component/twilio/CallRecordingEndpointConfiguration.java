@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.account.call.RecordingCreator creator(String pathCallSid)", "com.twilio.rest.api.v2010.account.call.RecordingCreator creator(String pathAccountSid, String pathCallSid)"}), @ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.call.RecordingDeleter deleter(String pathCallSid, String pathSid)", "com.twilio.rest.api.v2010.account.call.RecordingDeleter deleter(String pathAccountSid, String pathCallSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.call.RecordingFetcher fetcher(String pathCallSid, String pathSid)", "com.twilio.rest.api.v2010.account.call.RecordingFetcher fetcher(String pathAccountSid, String pathCallSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.call.RecordingReader reader(String pathCallSid)", "com.twilio.rest.api.v2010.account.call.RecordingReader reader(String pathAccountSid, String pathCallSid)"}), @ApiMethod(methodName = "updater", signatures={"com.twilio.rest.api.v2010.account.call.RecordingUpdater updater(String pathCallSid, String pathSid, com.twilio.rest.api.v2010.account.call.Recording$Status status)", "com.twilio.rest.api.v2010.account.call.RecordingUpdater updater(String pathAccountSid, String pathCallSid, String pathSid, com.twilio.rest.api.v2010.account.call.Recording$Status status)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class CallRecordingEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator"), @ApiMethod(methodName = "deleter"), @ApiMethod(methodName = "fetcher"), @ApiMethod(methodName = "reader"), @ApiMethod(methodName = "updater")})

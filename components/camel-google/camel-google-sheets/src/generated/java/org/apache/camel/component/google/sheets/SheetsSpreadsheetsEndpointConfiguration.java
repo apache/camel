@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "batchUpdate", description="Applies one or more updates to the spreadsheet", signatures={"com.google.api.services.sheets.v4.Sheets$Spreadsheets$BatchUpdate batchUpdate(String spreadsheetId, com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest content)"}), @ApiMethod(methodName = "create", description="Creates a spreadsheet, returning the newly created spreadsheet", signatures={"com.google.api.services.sheets.v4.Sheets$Spreadsheets$Create create(com.google.api.services.sheets.v4.model.Spreadsheet content)"}), @ApiMethod(methodName = "developerMetadata", description="An accessor for creating requests from the DeveloperMetadata collection", signatures={"com.google.api.services.sheets.v4.Sheets$Spreadsheets$DeveloperMetadata developerMetadata()"}), @ApiMethod(methodName = "get", description="Returns the spreadsheet at the given ID", signatures={"com.google.api.services.sheets.v4.Sheets$Spreadsheets$Get get(String spreadsheetId)"}), @ApiMethod(methodName = "getByDataFilter", description="Returns the spreadsheet at the given ID", signatures={"com.google.api.services.sheets.v4.Sheets$Spreadsheets$GetByDataFilter getByDataFilter(String spreadsheetId, com.google.api.services.sheets.v4.model.GetSpreadsheetByDataFilterRequest content)"}), @ApiMethod(methodName = "sheets", description="An accessor for creating requests from the SheetsOperations collection", signatures={"com.google.api.services.sheets.v4.Sheets$Spreadsheets$SheetsOperations sheets()"}), @ApiMethod(methodName = "values", description="An accessor for creating requests from the Values collection", signatures={"com.google.api.services.sheets.v4.Sheets$Spreadsheets$Values values()"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class SheetsSpreadsheetsEndpointConfiguration extends GoogleSheetsConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "batchUpdate", description="The com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest")})

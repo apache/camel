@@ -5,6 +5,7 @@ package org.apache.camel.component.google.sheets.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import javax.annotation.processing.Generated;
 
 import com.google.api.services.sheets.v4.Sheets.Spreadsheets.Values;
 
@@ -18,6 +19,7 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 /**
  * Camel {@link ApiMethod} Enumeration for com.google.api.services.sheets.v4.Sheets$Spreadsheets$Values
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum SheetsSpreadsheetsValuesApiMethod implements ApiMethod {
 
     APPEND(

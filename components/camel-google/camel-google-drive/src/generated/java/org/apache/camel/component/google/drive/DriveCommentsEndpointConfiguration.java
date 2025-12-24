@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.drive;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "create", description="Creates a comment on a file", signatures={"com.google.api.services.drive.Drive$Comments$Create create(String fileId, com.google.api.services.drive.model.Comment content)"}), @ApiMethod(methodName = "delete", description="Deletes a comment", signatures={"com.google.api.services.drive.Drive$Comments$Delete delete(String fileId, String commentId)"}), @ApiMethod(methodName = "get", description="Gets a comment by ID", signatures={"com.google.api.services.drive.Drive$Comments$Get get(String fileId, String commentId)"}), @ApiMethod(methodName = "list", description="Lists a file's comments", signatures={"com.google.api.services.drive.Drive$Comments$List list(String fileId)"}), @ApiMethod(methodName = "update", description="Updates a comment with patch semantics", signatures={"com.google.api.services.drive.Drive$Comments$Update update(String fileId, String commentId, com.google.api.services.drive.model.Comment content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DriveCommentsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="The ID of the comment"), @ApiMethod(methodName = "get", description="The ID of the comment"), @ApiMethod(methodName = "update", description="The ID of the comment")})

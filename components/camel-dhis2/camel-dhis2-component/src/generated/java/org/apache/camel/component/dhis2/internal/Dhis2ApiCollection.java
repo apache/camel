@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.dhis2.Dhis2Configuration;
 import org.apache.camel.component.dhis2.Dhis2PostEndpointConfiguration;
@@ -23,6 +24,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for Dhis2
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2Configuration> {
 
     private Dhis2ApiCollection() {

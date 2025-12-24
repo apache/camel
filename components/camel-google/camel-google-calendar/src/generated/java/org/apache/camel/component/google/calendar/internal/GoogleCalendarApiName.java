@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.google.calendar.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component GoogleCalendar
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum GoogleCalendarApiName implements ApiName {
 
     ACL("acl"),
