@@ -46,7 +46,7 @@ import picocli.CommandLine;
 import picocli.shell.jline3.PicocliCommands;
 
 @CommandLine.Command(name = "shell",
-                     description = "Interactive Camel JBang shell. Hit @|magenta <TAB>|@ to see available commands.",
+                     description = "Interactive Camel JBang shell.",
                      footer = "Press Ctrl-C to exit.")
 public class Shell extends CamelCommand {
 
