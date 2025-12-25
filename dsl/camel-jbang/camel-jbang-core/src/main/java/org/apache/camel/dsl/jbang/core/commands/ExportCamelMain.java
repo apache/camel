@@ -61,6 +61,7 @@ class ExportCamelMain extends Export {
         }
         if (buildTool.equals("gradle")) {
             printer().printErr("--build-tool=gradle is not support yet for camel-main runtime.");
+            return 1;
         }
 
         // the settings file has information what to export

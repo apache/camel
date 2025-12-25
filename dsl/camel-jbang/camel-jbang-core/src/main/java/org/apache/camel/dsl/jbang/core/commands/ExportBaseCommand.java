@@ -204,11 +204,13 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected boolean mavenWrapper = true;
 
     @CommandLine.Option(names = { "--gradle-wrapper" }, defaultValue = "true",
-                        description = "Include Gradle Wrapper files in exported project")
+                        description = "DEPRECATED: Include Gradle Wrapper files in exported project")
+    @Deprecated
     protected boolean gradleWrapper = true;
 
     @CommandLine.Option(names = { "--build-tool" }, defaultValue = "maven",
-                        description = "Build tool to use (maven or gradle)")
+                        description = "DEPRECATED: Build tool to use (maven or gradle) (gradle is deprecated)")
+    @Deprecated
     protected String buildTool = "maven";
 
     @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")

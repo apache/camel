@@ -45,6 +45,8 @@ The following option is no longer in use `-Dcamel-kamelets.version`.
 Removed automatic fallback to download Kamelet YAML files from GitHub. Instead, kamelets are
 now only loaded from embedded `camel-kamelets` JAR.
 
+Exporting with `--build-tools=gradle` is deprecated. Only Maven is and will be supported with camel-jbang.
+
 === camel-debezium
 
 The `camel-debezium` component has upgraded from Debezium 3.3.2 to 3.4.0.

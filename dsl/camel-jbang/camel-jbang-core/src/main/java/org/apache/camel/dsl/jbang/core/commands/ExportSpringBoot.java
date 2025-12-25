@@ -62,6 +62,9 @@ class ExportSpringBoot extends Export {
             printer().printErr("--build-tool must either be maven or gradle, was: " + buildTool);
             return 1;
         }
+        if (buildTool.equals("gradle")) {
+            printer().println("WARN: --build-tool=gradle is deprecated.");
+        }
 
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
