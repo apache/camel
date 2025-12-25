@@ -1,5 +1,6 @@
 package org.apache.camel.component.debezium.mongodb.configuration;
 
+import javax.annotation.processing.Generated;
 import io.debezium.config.Configuration;
 import io.debezium.connector.mongodb.MongoDbConnector;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
@@ -8,6 +9,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
+@Generated("org.apache.camel.maven.GenerateConnectorConfigMojo")
 @UriParams
 public class MongoDbConnectorEmbeddedDebeziumConfiguration
         extends

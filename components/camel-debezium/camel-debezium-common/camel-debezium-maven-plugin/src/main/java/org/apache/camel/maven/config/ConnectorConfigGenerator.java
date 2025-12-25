@@ -35,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.source.SourceConnector;
 
+import javax.annotation.processing.Generated;
+
 public final class ConnectorConfigGenerator {
 
     private static final String DEFAULT_PACKAGE_NAME = "org.apache.camel.component.debezium.configuration";
@@ -182,6 +184,7 @@ public final class ConnectorConfigGenerator {
     }
 
     private void setImports() {
+        javaClass.addImport(Generated.class);
         javaClass.addImport(Configuration.class);
         javaClass.addImport(connector.getClass());
         javaClass.addImport(Metadata.class);
@@ -191,6 +194,8 @@ public final class ConnectorConfigGenerator {
     }
 
     private void setClassNameAndType() {
+        javaClass.addAnnotation(Generated.class).setStringValue("value", "org.apache.camel.maven.GenerateConnectorConfigMojo");
+
         javaClass.setName(className)
                 .extendSuperType(PARENT_TYPE)
                 .addAnnotation(UriParams.class);
