@@ -39,6 +39,11 @@ public class SanityCheckGeneratedClassesMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // skip camel-api
+        if ("camel-api".equals(project.getArtifactId())) {
+            return;
+        }
+
         Path generated = project.getBasedir().toPath().resolve("src/generated/java");
         if (Files.isDirectory(generated)) {
             try (Stream<Path> stream = Files.walk(generated)) {
