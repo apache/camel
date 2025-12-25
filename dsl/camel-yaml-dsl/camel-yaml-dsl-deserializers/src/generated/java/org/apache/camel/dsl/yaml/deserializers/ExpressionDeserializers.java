@@ -20,8 +20,8 @@ import org.snakeyaml.engine.v2.nodes.NodeTuple;
  * The model automatically scan all classes, also those one deprecated. They will be dropped when removed from core model.
  * In the while we confirm this exception by suppressing the compiler warning.
  */
-@Generated("org.apache.camel.maven.dsl.yaml.GenerateYamlDeserializersMojo")
 @SuppressWarnings("deprecation")
+@Generated("org.apache.camel.maven.dsl.yaml.GenerateYamlDeserializersMojo")
 public final class ExpressionDeserializers extends YamlDeserializerSupport {
     private ExpressionDeserializers() {
     }
