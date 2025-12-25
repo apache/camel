@@ -486,7 +486,7 @@
         <slf4j-api-version>2.0.17</slf4j-api-version>
         <slf4j-version>2.0.17</slf4j-version>
         <smack-version>4.3.5</smack-version>
-        <smallrye-config-version>3.14.1</smallrye-config-version>
+        <smallrye-config-version>3.15.0</smallrye-config-version>
         <smallrye-health-version>4.3.0</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.10.0</smallrye-fault-tolerance-version>
         <smbj-version>0.14.0</smbj-version>
