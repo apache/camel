@@ -7,6 +7,9 @@ import java.io.Reader;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.component.sql.stored.template.ast.*;
 
+import javax.annotation.processing.Generated;
+
+@Generated("JavaCC")
 public class SSPTParser implements SSPTParserConstants {
    int parameterNameCounter = 0;
 

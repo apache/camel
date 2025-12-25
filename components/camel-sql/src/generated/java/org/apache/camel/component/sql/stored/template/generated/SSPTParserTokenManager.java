@@ -5,8 +5,11 @@ import java.io.Reader;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.component.sql.stored.template.ast.*;
 
+import javax.annotation.processing.Generated;
+
 /** Token Manager. */
 @SuppressWarnings ("unused")
+@Generated("JavaCC")
 public class SSPTParserTokenManager implements SSPTParserConstants {
 
   /** Debug output. */

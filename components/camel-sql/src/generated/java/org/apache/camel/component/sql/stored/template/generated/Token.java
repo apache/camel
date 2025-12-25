@@ -2,10 +2,13 @@
 /* JavaCCOptions:TOKEN_EXTENDS=,KEEP_LINE_COLUMN=true,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.apache.camel.component.sql.stored.template.generated;
 
+import javax.annotation.processing.Generated;
+
 /**
  * Describes the input token stream.
  */
 
+@Generated("JavaCC")
 public class Token implements java.io.Serializable {
 
   /**
