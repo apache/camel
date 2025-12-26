@@ -51,6 +51,13 @@ Exporting with `--build-tools=gradle` is deprecated. Only Maven is and will be s
 
 The `camel-debezium` component has upgraded from Debezium 3.3.2 to 3.4.0.
 
+=== camel-ftp
+
+Add producer health check to `camel-ftp`. Notice that producer health checks are default globally off.
+
+If you have enabled producer health checks globally, then you can turn off this on `camel-ftp` component
+to not use the newly introduced checks in `camel-ftp` to have same behavior as previously.
+
 === camel-infinispan
 
 `camel-infinispan` has been upgraded to https://infinispan.org/blog/2025/11/10/infinispan-16-0[Infinispan 16].
