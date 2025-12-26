@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileProducer.class);
     private boolean loggedIn;
+    private RemoteFileProducerHealthCheck producerHealthCheck;
+    private WritableHealthCheckRepository healthCheckRepository;
 
     private transient String remoteFileProducerToString;
 
@@ -105,11 +109,14 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     @Override
     public void preWriteCheck(Exchange exchange) throws Exception {
-        // before writing send a noop to see if the connection is alive and
-        // works
+        doPreWriteCheck(exchange, getEndpoint().getConfiguration().isSendNoop());
+    }
+
+    protected void doPreWriteCheck(Exchange exchange, boolean sendNoop) throws Exception {
+        // before writing send a noop to see if the connection is alive and works
         boolean noop = false;
         if (loggedIn) {
-            if (getEndpoint().getConfiguration().isSendNoop()) {
+            if (sendNoop) {
                 try {
                     noop = getOperations().sendNoop();
                 } catch (Exception e) {
@@ -120,8 +127,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
                 }
                 LOG.trace("preWriteCheck send noop success: {}", noop);
             } else {
-                // okay send noop is disabled then we would regard the op as
-                // success
+                // okay send noop is disabled then we would regard the op as success
                 noop = true;
                 LOG.trace("preWriteCheck send noop disabled");
             }
@@ -162,14 +168,30 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     protected void doStart() throws Exception {
         LOG.debug("Starting");
+
+        // health-check is optional so discover and resolve
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                endpoint.getCamelContext(),
+                "producers",
+                WritableHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            producerHealthCheck = new RemoteFileProducerHealthCheck(this);
+            producerHealthCheck.setEnabled(this.getEndpoint().getComponent().isHealthCheckProducerEnabled());
+            healthCheckRepository.addHealthCheck(producerHealthCheck);
+        }
+
         // do not connect when component starts, just wait until we process as
-        // we will
-        // connect at that time if needed
+        // we will connect at that time if needed
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (healthCheckRepository != null && producerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(producerHealthCheck);
+            producerHealthCheck = null;
+        }
         try {
             disconnect();
         } catch (Exception e) {

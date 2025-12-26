@@ -26,7 +26,13 @@
 
     <!-- START SNIPPET: e1 -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="myFTPComponent" class="org.apache.camel.component.file.remote.FtpComponent">
+        <property name="camelContext" ref="camel"/>
+    </bean>
+
     <bean id="myFTPEndpoint" class="org.apache.camel.component.file.remote.FtpEndpoint">
+        <property name="component" ref="myFTPComponent"/>
         <property name="camelContext" ref="camel"/>
         <property name="configuration" ref="ftpConfig"/>
         <property name="initialDelay" value="1000"/>
