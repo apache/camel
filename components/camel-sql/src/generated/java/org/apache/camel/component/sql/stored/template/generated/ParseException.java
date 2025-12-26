@@ -2,8 +2,6 @@
 /* JavaCCOptions:KEEP_LINE_COLUMN=true */
 package org.apache.camel.component.sql.stored.template.generated;
 
-import javax.annotation.processing.Generated;
-
 /**
  * This exception is thrown when parse errors are encountered.
  * You can explicitly create objects of this exception type by
@@ -13,7 +11,6 @@ import javax.annotation.processing.Generated;
  * You can modify this class to customize your error reporting
  * mechanisms so long as you retain the public fields.
  */
-@Generated("JavaCC")
 public class ParseException extends Exception {
 
   /**

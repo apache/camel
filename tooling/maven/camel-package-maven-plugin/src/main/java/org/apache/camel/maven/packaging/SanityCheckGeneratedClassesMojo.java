@@ -39,8 +39,8 @@ public class SanityCheckGeneratedClassesMojo extends AbstractGeneratorMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        // skip camel-api
-        if ("camel-api".equals(project.getArtifactId())) {
+        // skip camel-api / camel-sql
+        if ("camel-api".equals(project.getArtifactId()) || "camel-sql".equals(project.getArtifactId())) {
             return;
         }
 

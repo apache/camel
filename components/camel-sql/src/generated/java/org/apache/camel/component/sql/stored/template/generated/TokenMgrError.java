@@ -2,11 +2,8 @@
 /* JavaCCOptions: */
 package org.apache.camel.component.sql.stored.template.generated;
 
-import javax.annotation.processing.Generated;
-
 /** Token Manager Error. */
-@SuppressWarnings("all")
-@Generated("JavaCC")
+@SuppressWarnings("all") 
 public class TokenMgrError extends Error
 {
 

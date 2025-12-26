@@ -2,14 +2,11 @@
 /* JavaCCOptions:STATIC=false,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package org.apache.camel.component.sql.stored.template.generated;
 
-import javax.annotation.processing.Generated;
-
 /**
  * An implementation of interface CharStream, where the stream is assumed to
  * contain only ASCII characters (without unicode processing).
  */
 
-@Generated("JavaCC")
 public class SimpleCharStream
 {
 /** Whether parser is static. */
