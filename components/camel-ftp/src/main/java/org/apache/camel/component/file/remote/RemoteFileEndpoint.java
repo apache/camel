@@ -94,6 +94,11 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
     }
 
     @Override
+    public RemoteFileComponent getComponent() {
+        return (RemoteFileComponent) super.getComponent();
+    }
+
+    @Override
     public boolean isSingletonProducer() {
         // this producer is stateful because the remote file operations is not
         // thread safe
