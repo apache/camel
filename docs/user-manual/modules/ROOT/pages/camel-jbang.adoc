@@ -30,6 +30,11 @@ Note: It requires access to the internet, in case of using a proxy, please ensur
 If Camel JBang is not working with your current configuration,
 please look to https://www.jbang.dev/documentation/jbang/latest/configuration.html#proxy-configuration[Proxy configuration in JBang documentation].
 
+=== Installing without JBang
+
+It is also possible to install and run Camel JBang without _JBang_ using the xref:camel-jbang-launcher.adoc[Camel JBang Launcher] which essentially is
+a standard Java _fat-jar_ with launch scripts.
+
 === Installing a specific Camel JBang version
 
 By default, Camel JBang installs the latest release, which may not be the desired version.
