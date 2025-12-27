@@ -40,7 +40,6 @@ import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
-import org.apache.camel.StreamCache;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.BacklogDebugger;
@@ -1066,7 +1065,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Advice for {@link org.apache.camel.spi.StreamCachingStrategy}
      */
-    public static class StreamCachingAdvice implements CamelInternalProcessorAdvice<StreamCache>, Ordered {
+    public static class StreamCachingAdvice implements CamelInternalProcessorAdvice, Ordered {
 
         private final StreamCachingStrategy strategy;
 
@@ -1075,14 +1074,20 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
 
         @Override
-        public StreamCache before(Exchange exchange) throws Exception {
-            return StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
+        public Object before(Exchange exchange) throws Exception {
+            StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
+            return null;
         }
 
         @Override
-        public void after(Exchange exchange, StreamCache sc) throws Exception {
+        public void after(Exchange exchange, Object data) throws Exception {
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getMessage());
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
         }
 
         @Override
