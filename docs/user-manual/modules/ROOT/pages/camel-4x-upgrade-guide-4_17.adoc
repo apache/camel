@@ -36,6 +36,19 @@ from("direct:start")
     .to("mock:result");
 ----
 
+==== Custom Camel components
+
+Custom components which has a custom message implementation by extending `DefaultMessage`, which rely on the `populateInitialHeaders`
+to initialize headers must now add the following method:
+
+[source,java]
+----
+    @Override
+    protected boolean isPopulateHeadersSupported() {
+        return true;
+    }
+----
+
 === camel-jbang
 
 The `camel-kamelets-catalog` JAR is now downloaded on-demand.

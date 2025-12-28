@@ -132,6 +132,11 @@ public class IrcMessage extends DefaultMessage {
     }
 
     @Override
+    protected boolean isPopulateHeadersSupported() {
+        return true;
+    }
+
+    @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         map.put(IrcConstants.IRC_MESSAGE_TYPE, messageType);
         if (target != null) {

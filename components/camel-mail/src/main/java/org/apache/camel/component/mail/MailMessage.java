@@ -96,6 +96,11 @@ public class MailMessage extends DefaultMessage {
     }
 
     @Override
+    protected boolean isPopulateHeadersSupported() {
+        return true;
+    }
+
+    @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (mailMessage != null) {
             try {
