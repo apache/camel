@@ -270,7 +270,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (!dataField.defaultValue().isEmpty()) {
                 value = format.parse(dataField.defaultValue());
             } else {
-                value = getDefaultValueForPrimitive(field.getType());
+                value = getDefaultValueForPrimitive(field.getType(), isDefaultValueStringAsNull());
             }
         }
 
@@ -802,4 +802,5 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public boolean isTrimLine() {
         return trimLine;
     }
+
 }

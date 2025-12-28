@@ -1783,6 +1783,7 @@ public class ModelParser extends BaseParser {
         return doParse(new BindyDataFormat(), (def, key, val) -> switch (key) {
                 case "allowEmptyStream": def.setAllowEmptyStream(val); yield true;
                 case "classType": def.setClassTypeAsString(val); yield true;
+                case "defaultValueStringAsNull": def.setDefaultValueStringAsNull(val); yield true;
                 case "locale": def.setLocale(val); yield true;
                 case "type": def.setType(val); yield true;
                 case "unwrapSingleInstance": def.setUnwrapSingleInstance(val); yield true;

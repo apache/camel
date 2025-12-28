@@ -6747,6 +6747,15 @@ Name of model class to use.
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="defaultValueStringAsNull" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To change the default value for string types to be null instead of an empty string. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
         <xs:attribute name="allowEmptyStream" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">

@@ -2462,6 +2462,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("unwrapSingleInstance", def.getUnwrapSingleInstance(), "true");
+        doWriteAttribute("defaultValueStringAsNull", def.getDefaultValueStringAsNull(), null);
         doWriteAttribute("classType", def.getClassTypeAsString(), null);
         doWriteAttribute("locale", def.getLocale(), null);
         doWriteAttribute("type", def.getType(), null);

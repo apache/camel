@@ -394,6 +394,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
         BindyCsvFactory bindyCsvFactory = new BindyCsvFactory(getClassType());
         bindyCsvFactory.setFormatFactory(formatFactory);
+        bindyCsvFactory.setDefaultValueStringAsNull(isDefaultValueStringAsNull());
+        bindyCsvFactory.setLocale(getLocale());
         return bindyCsvFactory;
     }
 }
