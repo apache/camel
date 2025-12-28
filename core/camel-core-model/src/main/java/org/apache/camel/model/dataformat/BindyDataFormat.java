@@ -45,6 +45,9 @@ public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute(name = "classType")
     private String classTypeAsString;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
+    private String defaultValueStringAsNull;
+    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "false")
     private String allowEmptyStream;
     @XmlAttribute
@@ -63,6 +66,7 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.classType = source.classType;
         this.type = source.type;
         this.classTypeAsString = source.classTypeAsString;
+        this.defaultValueStringAsNull = source.defaultValueStringAsNull;
         this.allowEmptyStream = source.allowEmptyStream;
         this.unwrapSingleInstance = source.unwrapSingleInstance;
         this.locale = source.locale;
@@ -73,6 +77,7 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.classType = builder.classType;
         this.type = builder.type;
         this.classTypeAsString = builder.classTypeAsString;
+        this.defaultValueStringAsNull = builder.defaultValueStringAsNull;
         this.allowEmptyStream = builder.allowEmptyStream;
         this.unwrapSingleInstance = builder.unwrapSingleInstance;
         this.locale = builder.locale;
@@ -138,6 +143,17 @@ public class BindyDataFormat extends DataFormatDefinition {
      */
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public String getDefaultValueStringAsNull() {
+        return defaultValueStringAsNull;
+    }
+
+    /**
+     * To change the default value for string types to be null instead of an empty string.
+     */
+    public void setDefaultValueStringAsNull(String defaultValueStringAsNull) {
+        this.defaultValueStringAsNull = defaultValueStringAsNull;
     }
 
     public String getUnwrapSingleInstance() {
@@ -209,6 +225,15 @@ public class BindyDataFormat extends DataFormatDefinition {
         return this;
     }
 
+    public BindyDataFormat defaultValueStringAsNull(boolean defaultValueStringAsNull) {
+        return defaultValueStringAsNull(Boolean.toString(defaultValueStringAsNull));
+    }
+
+    public BindyDataFormat defaultValueStringAsNull(String defaultValueStringAsNull) {
+        this.defaultValueStringAsNull = defaultValueStringAsNull;
+        return this;
+    }
+
     public BindyDataFormat unwrapSingleInstance(boolean unwrapSingleInstance) {
         return unwrapSingleInstance(Boolean.toString(unwrapSingleInstance));
     }
@@ -236,6 +261,7 @@ public class BindyDataFormat extends DataFormatDefinition {
         private Class<?> classType;
         private String type;
         private String classTypeAsString;
+        private String defaultValueStringAsNull;
         private String allowEmptyStream;
         private String unwrapSingleInstance;
         private String locale;
@@ -276,6 +302,21 @@ public class BindyDataFormat extends DataFormatDefinition {
         public Builder locale(String locale) {
             this.locale = locale;
             return this;
+        }
+
+        /**
+         * To change the default value for string types to be null instead of an empty string.
+         */
+        public Builder defaultValueStringAsNull(String defaultValueStringAsNull) {
+            this.defaultValueStringAsNull = defaultValueStringAsNull;
+            return this;
+        }
+
+        /**
+         * To change the default value for string types to be null instead of an empty string.
+         */
+        public Builder defaultValueStringAsNull(boolean defaultValueStringAsNull) {
+            return defaultValueStringAsNull(Boolean.toString(defaultValueStringAsNull));
         }
 
         /**

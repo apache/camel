@@ -51,6 +51,7 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
     private CamelContext camelContext;
     private boolean unwrapSingleInstance = true;
     private boolean allowEmptyStream;
+    private boolean defaultValueStringAsNull;
 
     protected BindyAbstractDataFormat() {
     }
@@ -89,6 +90,14 @@ public abstract class BindyAbstractDataFormat extends ServiceSupport implements 
 
     public void setAllowEmptyStream(boolean allowEmptyStream) {
         this.allowEmptyStream = allowEmptyStream;
+    }
+
+    public boolean isDefaultValueStringAsNull() {
+        return defaultValueStringAsNull;
+    }
+
+    public void setDefaultValueStringAsNull(boolean defaultValueStringAsNull) {
+        this.defaultValueStringAsNull = defaultValueStringAsNull;
     }
 
     public BindyAbstractFactory getFactory() throws Exception {

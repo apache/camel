@@ -1527,6 +1527,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "allowEmptyStream", type = "boolean", defaultValue = "false", description = "Whether to allow empty streams in the unmarshal process. If true, no exception will be thrown when a body without records is provided.", displayName = "Allow Empty Stream"),
                     @YamlProperty(name = "classType", type = "string", description = "Name of model class to use.", displayName = "Class Type"),
+                    @YamlProperty(name = "defaultValueStringAsNull", type = "boolean", defaultValue = "false", description = "To change the default value for string types to be null instead of an empty string.", displayName = "Default Value String As Null"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "locale", type = "string", description = "To configure a default locale to use, such as us for united states. To use the JVM platform default locale then use the name default", displayName = "Locale"),
                     @YamlProperty(name = "type", type = "enum:Csv,Fixed,KeyValue", description = "Whether to use Csv, Fixed, or KeyValue.", displayName = "Type"),
@@ -1556,6 +1557,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "classType": {
                     String val = asText(node);
                     target.setClassTypeAsString(val);
+                    break;
+                }
+                case "defaultValueStringAsNull": {
+                    String val = asText(node);
+                    target.setDefaultValueStringAsNull(val);
                     break;
                 }
                 case "id": {

@@ -49,6 +49,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     private String locale;
     private Class<?> type;
+    private boolean defaultValueStringAsNull;
 
     protected BindyAbstractFactory(Class<?> type) throws Exception {
         this.type = type;
@@ -214,7 +215,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         return nf;
     }
 
-    public static Object getDefaultValueForPrimitive(Class<?> clazz) {
+    public static Object getDefaultValueForPrimitive(Class<?> clazz, boolean defaultValueStringAsNull) {
         if (clazz == byte.class) {
             return Byte.MIN_VALUE;
         } else if (clazz == short.class) {
@@ -232,7 +233,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         } else if (clazz == boolean.class) {
             return false;
         } else if (clazz == String.class) {
-            return "";
+            return defaultValueStringAsNull ? null : "";
         } else {
             return null;
         }
@@ -281,5 +282,13 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     public void setFormatFactory(FormatFactory formatFactory) {
         this.formatFactory = formatFactory;
+    }
+
+    public boolean isDefaultValueStringAsNull() {
+        return defaultValueStringAsNull;
+    }
+
+    public void setDefaultValueStringAsNull(boolean defaultValueStringAsNull) {
+        this.defaultValueStringAsNull = defaultValueStringAsNull;
     }
 }

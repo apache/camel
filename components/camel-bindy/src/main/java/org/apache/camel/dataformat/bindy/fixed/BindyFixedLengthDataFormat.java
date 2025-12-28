@@ -343,6 +343,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
         BindyFixedLengthFactory factory = new BindyFixedLengthFactory(getClassType());
         factory.setFormatFactory(formatFactory);
+        factory.setLocale(getLocale());
+        factory.setDefaultValueStringAsNull(isDefaultValueStringAsNull());
 
         // Optionally initialize the header factory... using header model classes
         if (factory.hasHeader()) {
