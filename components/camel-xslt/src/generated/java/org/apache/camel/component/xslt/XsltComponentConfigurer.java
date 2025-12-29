@@ -39,6 +39,8 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "uriResolver": target.setUriResolver(property(camelContext, javax.xml.transform.URIResolver.class, value)); return true;
         case "uriresolverfactory":
         case "uriResolverFactory": target.setUriResolverFactory(property(camelContext, org.apache.camel.component.xslt.XsltUriResolverFactory.class, value)); return true;
+        case "xpathtotaloplimit":
+        case "xpathTotalOpLimit": target.setXpathTotalOpLimit(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -62,6 +64,8 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "uriResolver": return javax.xml.transform.URIResolver.class;
         case "uriresolverfactory":
         case "uriResolverFactory": return org.apache.camel.component.xslt.XsltUriResolverFactory.class;
+        case "xpathtotaloplimit":
+        case "xpathTotalOpLimit": return int.class;
         default: return null;
         }
     }
@@ -86,6 +90,8 @@ public class XsltComponentConfigurer extends PropertyConfigurerSupport implement
         case "uriResolver": return target.getUriResolver();
         case "uriresolverfactory":
         case "uriResolverFactory": return target.getUriResolverFactory();
+        case "xpathtotaloplimit":
+        case "xpathTotalOpLimit": return target.getXpathTotalOpLimit();
         default: return null;
         }
     }
