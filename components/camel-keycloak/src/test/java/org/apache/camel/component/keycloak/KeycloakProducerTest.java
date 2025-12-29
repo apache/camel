@@ -115,6 +115,10 @@ public class KeycloakProducerTest extends CamelTestSupport {
                 from("direct:searchUsers")
                         .to("keycloak:test?keycloakClient=#keycloakClient&operation=searchUsers")
                         .to("mock:result");
+
+                from("direct:evaluatePermission")
+                        .to("keycloak:test?keycloakClient=#keycloakClient&operation=evaluatePermission")
+                        .to("mock:result");
             }
         };
     }
@@ -330,5 +334,17 @@ public class KeycloakProducerTest extends CamelTestSupport {
                 KeycloakConstants.SEARCH_QUERY, "testUser"));
 
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testEvaluatePermissionMissingServerUrl() throws Exception {
+        // This test verifies that evaluatePermission requires serverUrl
+        try {
+            template.sendBodyAndHeaders("direct:evaluatePermission", null, Map.of(
+                    KeycloakConstants.REALM_NAME, "testRealm",
+                    KeycloakConstants.PERMISSION_RESOURCE_NAMES, "resource1"));
+        } catch (Exception e) {
+            assertTrue(e.getCause().getMessage().contains("Server URL must be specified"));
+        }
     }
 }
