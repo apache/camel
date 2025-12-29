@@ -50,7 +50,7 @@ public class XsltComponent extends DefaultComponent {
     private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
     @Metadata(label = "advanced")
     private String transformerFactoryClass;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", defaultValue = "10000")
     private int xpathTotalOpLimit;
 
     public XsltComponent() {
