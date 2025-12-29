@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.net.SocketException;
+import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.camel.CamelExecutionException;
 import org.junit.jupiter.api.Assertions;
@@ -41,7 +41,7 @@ class MllpMutualTlsConnectionAndHeaderRequiresClientAuthenticationTest extends M
             template.sendBody(assembleEndpointUri(WITH_ONLY_TRUSTSTORE), TEST_PAYLOAD);
             Assertions.fail("Should not be able to connect without a client certificate");
         } catch (CamelExecutionException e) {
-            Assertions.assertInstanceOf(SocketException.class, e.getCause().getCause().getCause());
+            Assertions.assertInstanceOf(SSLHandshakeException.class, e.getCause().getCause().getCause());
         }
     }
 

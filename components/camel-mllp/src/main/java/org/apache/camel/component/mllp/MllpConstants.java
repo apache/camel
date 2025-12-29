@@ -32,9 +32,9 @@ public final class MllpConstants {
     public static final String MLLP_SSL_CLIENT_CERT_ISSUER_NAME = "CamelMllpSslClientCertIssuerName";
     @Metadata(description = "The SSL client certificate serial number", label = "consumer", javaType = "String")
     public static final String MLLP_SSL_CLIENT_CERT_SERIAL_NO = "CamelMllpSslClientCertSerialNo";
-    @Metadata(description = "The SSL client certificate not before.", label = "consumer", javaType = "String")
+    @Metadata(description = "The SSL client certificate not before.", label = "consumer", javaType = "java.util.Date")
     public static final String MLLP_SSL_CLIENT_CERT_NOT_BEFORE = "CamelMllpSslClientCertNotBefore";
-    @Metadata(description = "The SSL client certificate not after.", label = "consumer", javaType = "String")
+    @Metadata(description = "The SSL client certificate not after.", label = "consumer", javaType = "java.util.Date")
     public static final String MLLP_SSL_CLIENT_CERT_NOT_AFTER = "CamelMllpSslClientCertNotAfter";
 
     @Metadata(description = "The HL7 Acknowledgment received in bytes", javaType = "byte[]")

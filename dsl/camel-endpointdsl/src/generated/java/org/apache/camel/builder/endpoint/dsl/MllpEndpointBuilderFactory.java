@@ -2135,7 +2135,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * The SSL client certificate not before.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code java.util.Date} type.
          * 
          * Group: consumer
          * 
@@ -2147,7 +2147,7 @@ public interface MllpEndpointBuilderFactory {
         /**
          * The SSL client certificate not after.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code java.util.Date} type.
          * 
          * Group: consumer
          * 
