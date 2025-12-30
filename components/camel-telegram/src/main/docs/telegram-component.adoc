@@ -110,6 +110,10 @@ The following message bodies are allowed for a producer endpoint (messages of ty
 | `EditMessageLiveLocationMessage` | To send changes to a live location (editMessageLiveLocation)
 | `StopMessageLiveLocationMessage` | To stop updating a live location message sent by the bot or via the bot (for inline bots) before live_period expires (stopMessageLiveLocation)
 | `SendVenueMessage` | To send information about a venue (sendVenue)
+| `SendInvoiceMessage` | To send an invoice for payment (sendInvoice)
+| `CreateInvoiceLinkMessage` | To create a link for an invoice (createInvoiceLink)
+| `AnswerShippingQueryMessage` | To reply to shipping queries (answerShippingQuery)
+| `AnswerPreCheckoutQueryMessage` | To respond to a pre-checkout query from a payment (answerPreCheckoutQuery)
 | `byte[]` | To send any media type supported. It requires the `CamelTelegramMediaType` header to be set to the appropriate media type
 | `String` | To send a text message to a chat. It gets converted automatically into a `OutgoingTextMessage`
 

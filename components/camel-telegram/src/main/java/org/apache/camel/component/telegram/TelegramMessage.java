@@ -16,28 +16,10 @@
  */
 package org.apache.camel.component.telegram;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.component.telegram.model.UpdateResult;
+import java.io.Serializable;
 
 /**
- * Allows interacting with the Telegram server to exchange messages.
+ * Marker interface for all supported Telegram message types that can be sent via the Telegram Bot API.
  */
-public interface TelegramService {
-
-    UpdateResult getUpdates(Long offset, Integer limit, Integer timeoutSeconds);
-
-    /**
-     * Sends a message to Telegram.
-     *
-     * @param exchange the exchange
-     * @param callback the async callback
-     * @param message  the message to send
-     */
-    void sendMessage(Exchange exchange, AsyncCallback callback, TelegramMessage message);
-
-    boolean setWebhook(String url);
-
-    boolean removeWebhook();
-
+public interface TelegramMessage extends Serializable {
 }

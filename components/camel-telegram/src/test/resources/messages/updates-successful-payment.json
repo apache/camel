@@ -1,0 +1,44 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 219398826,
+            "message": {
+                "message_id": 12345,
+                "from": {
+                    "id": 1585844777,
+                    "first_name": "John",
+                    "last_name": "Doe"
+                },
+                "date": 1234567890,
+                "chat": {
+                    "id": 1585844777,
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "type": "private"
+                },
+                "successful_payment": {
+                    "currency": "USD",
+                    "total_amount": 1000,
+                    "invoice_payload": "test_payload",
+                    "shipping_option_id": "shipping_option_1",
+                    "telegram_payment_charge_id": "telegram_charge_123",
+                    "provider_payment_charge_id": "provider_charge_456",
+                    "order_info": {
+                        "name": "John Doe",
+                        "phone_number": "+15551234567",
+                        "email": "john@example.com",
+                        "shipping_address": {
+                            "country_code": "US",
+                            "state": "California",
+                            "city": "San Francisco",
+                            "street_line1": "123 Main St",
+                            "street_line2": "Apt 4",
+                            "post_code": "94102"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

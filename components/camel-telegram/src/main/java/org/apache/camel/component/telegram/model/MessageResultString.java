@@ -14,23 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.telegram.model;
 
-package org.apache.camel.component.telegram.service;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
-import org.apache.camel.component.telegram.model.MessageResult;
-import org.apache.camel.component.telegram.model.OutgoingMessage;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class MessageResultString extends MessageResult {
 
-abstract class OutgoingMessageHandler<T extends OutgoingMessage> extends TelegramMessageHandler<T> {
+    @JsonProperty("result")
+    private String result;
 
-    public OutgoingMessageHandler(TelegramApiClient apiClient, String uri, String contentType,
-                                  Class<? extends MessageResult> resultClass) {
-        super(apiClient, uri, contentType, resultClass);
+    public MessageResultString() {
     }
 
-    protected void fillCommonMediaParts(OutgoingMessage message) {
+    public String getResult() {
+        return result;
+    }
 
-        buildTextPart("chat_id", message.getChatId());
-        buildTextPart("reply_to_message_id", message.getReplyToMessageId());
-        buildTextPart("disable_notification", message.getDisableNotification());
+    @JsonSetter("result")
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MessageResultString{");
+        sb.append("result='").append(result).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }
