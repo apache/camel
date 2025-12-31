@@ -56,6 +56,10 @@ public abstract class InfinispanClusterConfiguration<C extends InfinispanConfigu
         configuration.setConfigurationUri(configurationUri);
     }
 
+    public String getConfigurationUri() {
+        return configuration.getConfigurationUri();
+    }
+
     public C getConfiguration() {
         return configuration;
     }

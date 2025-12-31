@@ -49,6 +49,18 @@ to initialize headers must now add the following method:
     }
 ----
 
+=== camel-cluster
+
+The cluster locking components has been made more tooling friendly for configuration by exposing all their options as metadata.
+
+- camel-file
+- camel-consul
+- camel-infinispan
+- camel-jgroups-kraft
+- camel-kubernetes
+- camel-master
+- camel-zookeeper
+
 === camel-jbang
 
 The `camel-kamelets-catalog` JAR is now downloaded on-demand.

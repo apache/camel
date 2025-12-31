@@ -437,7 +437,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
             configuration.setKubernetesClient(lockServer.createClient());
 
             KubernetesClusterService service = new KubernetesClusterService(configuration);
-            service.setKubernetesNamespace("test");
+            service.setNamespace("test");
             service.setPodName(name);
             service.setLeaseDurationMillis(LEASE_TIME_MILLIS);
             service.setRenewDeadlineMillis(RENEW_DEADLINE_MILLIS);

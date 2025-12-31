@@ -16,18 +16,28 @@
  */
 package org.apache.camel.component.jgroups.raft.cluster;
 
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.jgroups.raft.RaftHandle;
 
+@Metadata(label = "bean",
+          description = "JGroups Raft based cluster locking",
+          annotations = { "interfaceName=org.apache.camel.cluster.CamelClusterService" })
+@Configurer(metadataOnly = true)
 public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGroupsRaftClusterView> {
 
     private static final String DEFAULT_JGROUPS_CONFIG = "raft.xml";
     private static final String DEFAULT_JGROUPS_CLUSTERNAME = "jgroupsraft-master";
 
+    @Metadata(description = "Unique Raft id", required = true)
+    private String id;
+    @Metadata(description = "The path to the JGroups Raft configuration", defaultValue = DEFAULT_JGROUPS_CONFIG)
     private String jgroupsConfig;
+    @Metadata(description = "The name of the cluster", defaultValue = DEFAULT_JGROUPS_CLUSTERNAME)
     private String jgroupsClusterName;
+    @Metadata(label = "advanced", description = "To use a custom RaftHandler")
     private RaftHandle raftHandle;
-    private String raftId;
 
     public JGroupsRaftClusterService() {
         this.jgroupsConfig = DEFAULT_JGROUPS_CONFIG;
@@ -38,12 +48,31 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
         this.jgroupsConfig = jgroupsConfig;
         this.jgroupsClusterName = jgroupsClusterName;
         this.raftHandle = raftHandle;
-        this.raftId = raftId;
+        setId(raftId);
     }
 
     @Override
     protected JGroupsRaftClusterView createView(String namespace) throws Exception {
-        return new JGroupsRaftClusterView(this, namespace, jgroupsConfig, jgroupsClusterName, raftHandle, raftId);
+        return new JGroupsRaftClusterView(this, namespace, jgroupsConfig, jgroupsClusterName, raftHandle, getId());
+    }
+
+    @Override
+    public void setId(String id) {
+        super.setId(id);
+        this.id = id;
+    }
+
+    @Override
+    public String getId() {
+        return super.getId();
+    }
+
+    public String getRaftId() {
+        return getId();
+    }
+
+    public void setRaftId(String raftId) {
+        setId(raftId);
     }
 
     public RaftHandle getRaftHandle() {
@@ -52,14 +81,6 @@ public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGrou
 
     public void setRaftHandle(RaftHandle raftHandle) {
         this.raftHandle = raftHandle;
-    }
-
-    public String getRaftId() {
-        return raftId;
-    }
-
-    public void setRaftId(String raftId) {
-        this.raftId = raftId;
     }
 
     public String getJgroupsConfig() {

@@ -31,26 +31,25 @@ import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.cluster.CamelPreemptiveClusterService;
 import org.apache.camel.cluster.CamelPreemptiveClusterView;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link RebalancingCamelClusterService} adds rebalancing capabilities to an underlying
- * {@link CamelPreemptiveClusterService}. Each view is treated as a partition by this cluster service and it makes sure
+ * {@link CamelPreemptiveClusterService}. Each view is treated as a partition by this cluster service, and it makes sure
  * that all services belonging to the cluster own a balanced number of partitions (same number or difference at most 1
  * when not possible).
  */
-public class RebalancingCamelClusterService implements CamelPreemptiveClusterService {
+public class RebalancingCamelClusterService extends ServiceSupport implements CamelPreemptiveClusterService {
 
     private static final Logger LOG = LoggerFactory.getLogger(RebalancingCamelClusterService.class);
 
     protected ScheduledExecutorService serializedExecutor;
-
     protected CamelPreemptiveClusterService delegate;
-
     protected CamelContext camelContext;
-
     protected final long periodMillis;
 
     public RebalancingCamelClusterService(CamelPreemptiveClusterService delegate, long periodMillis) {
@@ -66,8 +65,16 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
     }
 
     @Override
-    public void start() {
-        delegate.start();
+    protected void doInit() throws Exception {
+        super.doInit();
+        ServiceHelper.initService(delegate);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
+        super.doStart();
+        ServiceHelper.startService(delegate);
         if (serializedExecutor == null) {
             serializedExecutor = getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
                     "RebalancingClusterService");
@@ -76,13 +83,13 @@ public class RebalancingCamelClusterService implements CamelPreemptiveClusterSer
     }
 
     @Override
-    public void stop() {
+    protected void doStop() throws Exception {
+        super.doStop();
         if (serializedExecutor != null) {
-            serializedExecutor.shutdownNow();
+            getCamelContext().getExecutorServiceManager().shutdown(serializedExecutor);
         }
         serializedExecutor = null;
-
-        delegate.stop();
+        ServiceHelper.stopService(delegate);
     }
 
     public CamelPreemptiveClusterService getDelegate() {
