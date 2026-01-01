@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-ai-parent</artifactId>
-        <version>4.17.0</version>
+        <version>4.17.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-ai-chat</artifactId>
