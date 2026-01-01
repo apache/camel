@@ -128,3 +128,8 @@ If you are a developer running or contributing to the Salesforce component integ
 * **Legacy directory removed**: `it/resources/salesforce/` has been removed; metadata is now in `it/resources/sfdx-project/salesforce-source/`
 
 See `components/camel-salesforce/it/resources/README.md` for detailed setup instructions.
+
+=== Maven Archetypes
+
+The `camel-archetype-spring` maven archetype is deprecated. This archetype is generating classic old-fashioned Spring XML `<beans>`
+projects. Use Spring Boot instead.
