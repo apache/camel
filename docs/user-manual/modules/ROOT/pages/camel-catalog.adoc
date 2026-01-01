@@ -34,6 +34,8 @@ The following tools uses the catalog in their editor:
 The xref:camel-report-maven-plugin.adoc[Camel Maven validation] plugin uses the catalog during validation of all the
 Camel endpoints found while scanning the source code.
 
+The xref:camel-jbang.adoc[Camel JBang] CLI uses the catalog in some of the commands and actions.
+
 === Layout of camel-catalog
 
 JAR includes the information using the following directory layout:
@@ -49,11 +51,14 @@ org
       ├── dataformats (JSON schema)
       ├── dev-consoles (JSON schema)
       ├── languages (JSON schema)
+      ├── jbang (JSON schema)
       ├── main (JSON schema)
       ├── models (JSON schema)
+      ├── models-app (JSON schema)
       ├── others (JSON schema)
       ├── releases (JSON schema)
       ├── schemas (XML schema)
+      ├── test-infra (JSON schema)
       └── transformers (JSON schema)
 ----
 
