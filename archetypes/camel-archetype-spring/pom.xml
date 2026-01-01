@@ -29,7 +29,7 @@
 
     <groupId>org.apache.camel.archetypes</groupId>
     <artifactId>camel-archetype-spring</artifactId>
-    <name>Camel :: Archetypes :: Spring XML Based Router</name>
+    <name>Camel :: Archetypes :: Spring XML Based Router (deprecated)</name>
     <description>Creates a new Camel project with added Spring DSL support.</description>
     <packaging>maven-archetype</packaging>
 
