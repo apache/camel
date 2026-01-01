@@ -51,7 +51,7 @@ public interface ConsulComponentBuilderFactory {
     interface ConsulComponentBuilder extends ComponentBuilder<ConsulComponent> {
     
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
@@ -99,7 +99,7 @@ public interface ConsulComponentBuilderFactory {
         }
     
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
@@ -162,7 +162,7 @@ public interface ConsulComponentBuilderFactory {
         }
     
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
