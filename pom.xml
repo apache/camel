@@ -508,6 +508,7 @@
                             <exclude>**/CometDReplayExtension.java</exclude>
                             <exclude>**/LICENSE-SALESFORCE.txt</exclude>
                             <exclude>**/LICENSE-ICU4J.txt</exclude>
+                            <exclude>**/sfdx-project/**</exclude>
                             <!-- camel-as2 -->
                             <exclude>**/mdnDescription.vm</exclude>
                             <!-- camel-jbpm -->
