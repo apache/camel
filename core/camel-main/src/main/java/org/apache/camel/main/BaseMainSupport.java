@@ -449,13 +449,14 @@ public abstract class BaseMainSupport extends BaseService {
         if (!osp.isEmpty()) {
             // only add observability properties if not already defined as initial
             osp.forEach((k, v) -> {
-                if (!initialProperties.containsKey(k)) {
-                    initialProperties.setProperty(k.toString(), v.toString());
+                if (!getInitialProperties().containsKey(k)) {
+                    getInitialProperties().setProperty(k.toString(), v.toString());
                 }
             });
         }
 
-        final Properties ip = tryLoadProperties(initialProperties, MainConstants.INITIAL_PROPERTIES_LOCATION, camelContext);
+        final Properties ip
+                = tryLoadProperties(getInitialProperties(), MainConstants.INITIAL_PROPERTIES_LOCATION, camelContext);
         if (ip != null) {
             pc.setInitialProperties(ip);
         }
