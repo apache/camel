@@ -64,4 +64,97 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== Producer Command Types
+
+The producer supports different command types via the `CamelIec60870CommandType` header:
+
+[cols="1,3"]
+|===
+|Command Type |Description
+
+|`value`
+|Send value command (default). Body type determines command: Boolean→Single, Integer→Scaled, Float→Float setpoint.
+
+|`interrogation`
+|Trigger interrogation (C_IC_NA_1). Use `CamelIec60870Qoi` header for group interrogation (21-36).
+
+|`read`
+|Read single data point (C_RD_NA_1).
+
+|`status`
+|Get connection state only. No protocol command sent.
+|===
+
+=== Getting Connection Status (Producer)
+
+[source,java]
+----
+from("direct:status")
+    .setHeader("CamelIec60870CommandType", constant("status"))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+
+// Usage
+Exchange result = producerTemplate.send("direct:status", e -> {});
+State state = result.getMessage().getHeader("CamelIec60870ConnectionState", State.class);
+Long uptime = result.getMessage().getHeader("CamelIec60870ConnectionUptime", Long.class);
+----
+
+=== Triggering Interrogation
+
+[source,java]
+----
+from("direct:interrogate")
+    .setHeader("CamelIec60870CommandType", constant("interrogation"))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+
+from("direct:interrogateGroup")
+    .setHeader("CamelIec60870CommandType", constant("interrogation"))
+    .setHeader("CamelIec60870Qoi", constant((short) 21))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+----
+
+=== Sending Value Commands
+
+[source,java]
+----
+from("direct:bool").setBody(constant(true))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+
+from("direct:float").setBody(constant(42.5f))
+    .to("iec60870-client:localhost:2404/00-01-00-00-01");
+----
+
+== Consumer Examples
+
+Each message received by the consumer includes connection state and quality headers.
+
+=== Getting Connection Status (Consumer)
+
+[source,java]
+----
+from("iec60870-client:localhost:2404/00-01-00-00-01")
+    .process(exchange -> {
+        // Connection state is included in every message
+        State state = exchange.getIn().getHeader("CamelIec60870ConnectionState", State.class);
+        Long uptime = exchange.getIn().getHeader("CamelIec60870ConnectionUptime", Long.class);
+
+        // Get the value and quality
+        Object value = exchange.getIn().getHeader("CamelIec60870Value");
+        Boolean valid = exchange.getIn().getHeader("CamelIec60870QualityValid", Boolean.class);
+
+        log.info("State: {}, Uptime: {} ms, Value: {}, Valid: {}", state, uptime, value, valid);
+    })
+    .to("log:values");
+----
+
+=== Filtering by Quality
+
+[source,java]
+----
+from("iec60870-client:localhost:2404/00-01-00-00-01")
+    .filter(header("CamelIec60870QualityValid").isEqualTo(true))
+    .log("Good value: ${header.CamelIec60870Value}")
+    .to("seda:process");
+----
+
 include::spring-boot:partial$starter.adoc[]
