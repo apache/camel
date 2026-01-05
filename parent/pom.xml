@@ -65,7 +65,7 @@
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
         <apache-drill-version>1.22.0</apache-drill-version>
-        <arangodb-java-version>7.24.0</arangodb-java-version>
+        <arangodb-java-version>7.24.1</arangodb-java-version>
         <as2-lib-version>5.1.7</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>9.9.1</asm-version>
