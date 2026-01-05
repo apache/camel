@@ -1,10 +1,11 @@
-= Olingo2 Component
+= Olingo2 Component (deprecated)
 :doctitle: Olingo2
 :shortname: olingo2
 :artifactid: camel-olingo2
 :description: Communicate with OData 2.0 services using Apache Olingo.
 :since: 2.14
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

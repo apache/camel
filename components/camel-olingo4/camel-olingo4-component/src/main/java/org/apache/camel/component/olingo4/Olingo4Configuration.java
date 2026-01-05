@@ -36,6 +36,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
  */
 @UriParams
 @Configurer(extended = true)
+@Deprecated(since = "4.18")
 public class Olingo4Configuration {
 
     private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();

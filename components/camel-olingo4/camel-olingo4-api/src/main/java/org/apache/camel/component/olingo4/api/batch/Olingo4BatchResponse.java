@@ -23,6 +23,7 @@ import java.util.Map;
 /**
  * Batch Response part.
  */
+@Deprecated(since = "4.18")
 public class Olingo4BatchResponse {
 
     private final int statusCode;

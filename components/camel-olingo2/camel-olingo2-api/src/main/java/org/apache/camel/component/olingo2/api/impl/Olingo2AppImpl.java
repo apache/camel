@@ -103,6 +103,7 @@ import org.apache.olingo.odata2.api.uri.UriParser;
 /**
  * Application API used by Olingo2 Component.
  */
+@Deprecated(since = "4.18")
 public final class Olingo2AppImpl implements Olingo2App {
 
     public static final String METADATA = "$metadata";

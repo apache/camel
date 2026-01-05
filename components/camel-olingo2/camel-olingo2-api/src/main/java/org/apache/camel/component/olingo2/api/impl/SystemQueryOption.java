@@ -19,6 +19,7 @@ package org.apache.camel.component.olingo2.api.impl;
 /**
  * Copied from Olingo2 core package.
  */
+@Deprecated(since = "4.18")
 public enum SystemQueryOption {
     $format,
     $filter,

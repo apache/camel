@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>camel-olingo4-api</artifactId>
-    <name>Camel :: Olingo4 :: API</name>
+    <name>Camel :: Olingo4 (Deprecated) :: API</name>
     <description>Camel Olingo4 API</description>
     <packaging>jar</packaging>
 

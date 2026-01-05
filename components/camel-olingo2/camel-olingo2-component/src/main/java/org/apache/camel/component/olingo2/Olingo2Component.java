@@ -40,6 +40,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
  * Represents the component that manages {@link Olingo2Endpoint}.
  */
 @Component("olingo2")
+@Deprecated(since = "4.18")
 public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection>
         implements SSLContextParametersAware {
 

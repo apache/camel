@@ -4,7 +4,7 @@
     "name": "olingo4",
     "title": "Olingo4",
     "description": "Communicate with OData 4.0 services using Apache Olingo OData API.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "cloud",
     "javaType": "org.apache.camel.component.olingo4.Olingo4Component",

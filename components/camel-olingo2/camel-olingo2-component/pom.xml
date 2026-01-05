@@ -29,7 +29,7 @@
 
     <artifactId>camel-olingo2</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Olingo2 :: Component</name>
+    <name>Camel :: Olingo2 (Deprecated) :: Component</name>
     <description>Camel Olingo2 component</description>
 
     <properties>
