@@ -55,6 +55,9 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
 
             clusterLeader.start();
 
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
+
             mockEndpoint.assertIsSatisfied();
 
             AtomicReference<String> leaderId = new AtomicReference<>();
@@ -120,6 +123,10 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
             mockEndpointLeader.expectedMinimumMessageCount(1);
 
             clusterLeader.start();
+
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
+
             clusterFollower.start();
 
             mockEndpointLeader.assertIsSatisfied();
@@ -198,6 +205,10 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
             mockEndpointLeader.expectedMinimumMessageCount(1);
 
             clusterLeader.start();
+
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
+
             clusterFollower.start();
 
             mockEndpointLeader.assertIsSatisfied();
@@ -276,6 +287,10 @@ class FileLockClusterServiceAdvancedFailoverTest extends FileLockClusterServiceT
             mockEndpointLeader.expectedMessageCount(5);
 
             clusterLeader.start();
+
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
+
             clusterFollower.start();
 
             mockEndpointLeader.assertIsSatisfied();

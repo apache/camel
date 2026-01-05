@@ -30,7 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -104,29 +103,13 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 fireLeadershipChangedEvent((CamelClusterMember) null);
             }
 
-            // Attempt to pre-create cluster data files & directories. On failure, it will either be attempted by another cluster member or run again within the tryLock task loop
+            // Attempt to pre-create cluster data directories. On failure, it will either be attempted by another cluster member or run again within the tryLock task loop
             try {
                 if (!Files.exists(leaderLockPath.getParent())) {
                     Files.createDirectories(leaderLockPath.getParent());
                 }
             } catch (IOException e) {
                 LOGGER.debug("Error creating directory {}", leaderLockPath.getParent(), e);
-            }
-
-            try {
-                if (!Files.exists(leaderLockPath)) {
-                    Files.createFile(leaderLockPath);
-                }
-            } catch (IOException e) {
-                LOGGER.debug("Error creating cluster leader lock file {}", leaderLockPath, e);
-            }
-
-            try {
-                if (!Files.exists(leaderDataPath)) {
-                    Files.createFile(leaderDataPath);
-                }
-            } catch (IOException e) {
-                LOGGER.debug("Error creating cluster leader data file {}", leaderDataPath, e);
             }
         } finally {
             // End critical section
@@ -141,11 +124,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
         heartbeatTimeoutMultiplier = service.getHeartbeatTimeoutMultiplier();
 
-        ScheduledExecutorService executor = service.getExecutor();
-        task = executor.scheduleWithFixedDelay(this::tryLock,
-                TimeUnit.MILLISECONDS.convert(service.getAcquireLockDelay(), service.getAcquireLockDelayUnit()),
-                TimeUnit.MILLISECONDS.convert(service.getAcquireLockInterval(), service.getAcquireLockIntervalUnit()),
-                TimeUnit.MILLISECONDS);
+        scheduleTryLock(true);
 
         localMember.setStatus(ClusterMemberStatus.STARTED);
     }
@@ -250,6 +229,10 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                 LOGGER.debug("Reading cluster leader state from {}", leaderDataPath);
                 FileLockClusterLeaderInfo latestClusterLeaderInfo = readClusterLeaderInfo();
                 FileLockClusterLeaderInfo previousClusterLeaderInfo = clusterLeaderInfoRef.getAndSet(latestClusterLeaderInfo);
+
+                // Compare the cluster leader lock interval to our own and warn if not in sync
+                validateAcquireLockInterval(latestClusterLeaderInfo);
+
                 // Check if we can attempt to take cluster leadership
                 if (isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo)
                         || canReclaimLeadership(latestClusterLeaderInfo)) {
@@ -294,8 +277,50 @@ public class FileLockClusterView extends AbstractCamelClusterView {
                             reason);
                     closeLockFiles();
                 }
+                scheduleTryLock(false);
             }
         }
+    }
+
+    void validateAcquireLockInterval(FileLockClusterLeaderInfo clusterLeaderInfo) {
+        if (clusterLeaderInfo != null
+                && clusterLeaderInfo.getHeartbeatUpdateIntervalMilliseconds() != acquireLockIntervalMilliseconds) {
+            LOGGER.warn(
+                    "This cluster member (cluster-member-id={}) acquireLockIntervalMilliseconds configuration {}ms does not match {}ms set on the cluster leader (cluster-member-id={}). This can lead to unpredictable behavior. Please ensure the configuration is set consistently for all cluster members.",
+                    localMember.getUuid(), acquireLockIntervalMilliseconds,
+                    clusterLeaderInfo.getHeartbeatUpdateIntervalMilliseconds(),
+                    clusterLeaderInfo.getId());
+        }
+    }
+
+    void scheduleTryLock(boolean isFirstRun) {
+        long offset = System.currentTimeMillis() % acquireLockIntervalMilliseconds;
+        long delay = acquireLockIntervalMilliseconds - offset;
+        if (delay <= 0) {
+            delay = acquireLockIntervalMilliseconds;
+        }
+
+        if (isFirstRun) {
+            // If it seems that other members are running, apply the user provided initial delay
+            if (Files.exists(leaderLockPath.getParent()) && Files.exists(leaderLockPath) && Files.exists(leaderDataPath)) {
+                FileLockClusterService service = getClusterService().unwrap(FileLockClusterService.class);
+                delay = TimeUnit.MILLISECONDS.convert(service.getAcquireLockDelay(), service.getAcquireLockDelayUnit());
+            }
+
+            if (delay > 30000) {
+                LOGGER.warn(
+                        "Initial acquire lock delay is high ({} ms). Consider reducing acquireLockIntervalMilliseconds or acquireLockDelay for faster leader acquisition.",
+                        delay);
+            }
+
+            LOGGER.info("Waiting {}ms to attempt initial cluster leadership acquisition", delay);
+        }
+
+        LOGGER.debug("Scheduling tryLock with delay {}ms", delay);
+
+        getClusterService().unwrap(FileLockClusterService.class)
+                .getExecutor()
+                .schedule(this::tryLock, delay, TimeUnit.MILLISECONDS);
     }
 
     boolean isLeaderStale(FileLockClusterLeaderInfo clusterLeaderInfo, FileLockClusterLeaderInfo previousClusterLeaderInfo) {

@@ -70,9 +70,14 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     }
 
     /**
-     * The time to wait before starting to try to acquire lock, default 1.
+     * The time to wait before starting to try to acquire the cluster lock. Note that if FileLockClusterService
+     * determines no cluster members are running or cannot reliably determine the cluster state, the initial delay is
+     * computed from the acquireLockInterval, default 1.
      */
     public void setAcquireLockDelay(long acquireLockDelay) {
+        if (acquireLockDelay <= 0) {
+            throw new IllegalArgumentException("acquireLockDelay must be greater than 0");
+        }
         this.acquireLockDelay = acquireLockDelay;
     }
 
@@ -97,9 +102,13 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     }
 
     /**
-     * The time to wait between attempts to try to acquire lock, default 10.
+     * The time to wait between attempts to try to acquire the cluster lock evaluated using wall-clock time. All cluster
+     * members must use the same value so leadership checks and leader liveness detection remain consistent, default 10.
      */
     public void setAcquireLockInterval(long acquireLockInterval) {
+        if (acquireLockInterval <= 0) {
+            throw new IllegalArgumentException("acquireLockInterval must be greater than 0");
+        }
         this.acquireLockInterval = acquireLockInterval;
     }
 
