@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.rekognition.RekognitionClient;
  */
 @UriEndpoint(firstVersion = "4.0.0", scheme = "aws2-rekognition", title = "AWS Rekognition",
              syntax = "aws2-rekognition:label",
-             producerOnly = true, category = { Category.CLOUD, Category.SERVERLESS },
+             producerOnly = true, category = { Category.CLOUD, Category.AI },
              headersClass = Rekognition2Constants.class)
 public class Rekognition2Endpoint extends DefaultEndpoint implements EndpointServiceLocation {
 

@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
 
     <name>Camel :: AWS Rekognition</name>
-    <description>Execute different operations on Amazon Rekognition service</description>
+    <description>Analyze images using Amazon Rekognition service</description>
 
     <properties>
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>

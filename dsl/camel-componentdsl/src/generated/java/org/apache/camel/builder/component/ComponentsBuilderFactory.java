@@ -452,6 +452,19 @@ public interface ComponentsBuilderFactory {
         return Aws2RedshiftDataComponentBuilderFactory.aws2RedshiftData();
     }
     /**
+     * AWS Rekognition (camel-aws2-rekognition)
+     * Manage and invoke AWS Rekognition.
+     * 
+     * Category: cloud,ai
+     * Since: 4.0
+     * Maven coordinates: org.apache.camel:camel-aws2-rekognition
+     * 
+     * @return the dsl builder
+     */
+    static Aws2RekognitionComponentBuilderFactory.Aws2RekognitionComponentBuilder aws2Rekognition() {
+        return Aws2RekognitionComponentBuilderFactory.aws2Rekognition();
+    }
+    /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 

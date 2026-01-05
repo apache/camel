@@ -56,6 +56,7 @@
 *** xref:aws2-msk-component.adoc[AWS Managed Streaming for Apache Kafka (MSK)]
 *** xref:aws2-mq-component.adoc[AWS MQ]
 *** xref:aws2-redshift-data-component.adoc[AWS RedshiftData]
+*** xref:aws2-rekognition-component.adoc[AWS Rekognition]
 *** xref:aws2-s3-component.adoc[AWS S3 Storage Service]
 *** xref:aws2-s3-vectors-component.adoc[AWS S3 Vectors]
 *** xref:aws-secrets-manager-component.adoc[AWS Secrets Manager]
