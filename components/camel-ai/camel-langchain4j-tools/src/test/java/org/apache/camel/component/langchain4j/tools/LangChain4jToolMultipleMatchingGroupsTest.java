@@ -103,7 +103,7 @@ public class LangChain4jToolMultipleMatchingGroupsTest extends CamelTestSupport 
         List<ChatMessage> messages = new ArrayList<>();
         messages.add(new SystemMessage(
                 """
-                        You provide the requested information using the functions you hava available. You can invoke the functions to obtain the information you need to complete the answer.
+                        You provide the requested information using the functions you have available. You can invoke the functions to obtain the information you need to complete the answer.
                         """));
         messages.add(new UserMessage("""
                 What is the name of the user 1 and what department he is part of?
