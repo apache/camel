@@ -24,6 +24,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterView;
+import org.apache.camel.component.master.MasterComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -48,6 +49,7 @@ abstract class FileLockClusterServiceTestBase {
 
     protected CamelContext createCamelContext(ClusterConfig config) throws Exception {
         CamelContext context = new DefaultCamelContext();
+        context.getComponent("master", MasterComponent.class).setBackOffDelay(1000);
         context.addService(createFileLockClusterService(config));
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -64,7 +66,7 @@ abstract class FileLockClusterServiceTestBase {
     protected FileLockClusterService createFileLockClusterService(ClusterConfig config) {
         FileLockClusterService service = new FileLockClusterService();
         service.setAcquireLockDelay(config.getAcquireLockDelay());
-        service.setAcquireLockInterval(1);
+        service.setAcquireLockInterval(config.getAcquireLockInterval());
         service.setRoot(clusterDir.toString());
         service.setHeartbeatTimeoutMultiplier(config.getHeartbeatTimeoutMultiplier());
         service.setClusterDataTaskMaxAttempts(config.getClusterDataTaskMaxAttempts());
@@ -83,6 +85,7 @@ abstract class FileLockClusterServiceTestBase {
 
     static final class ClusterConfig {
         private long acquireLockDelay = 1;
+        private long acquireLockInterval = 2;
         private long timerRepeatCount = 5;
         private int heartbeatTimeoutMultiplier = 5;
         private int clusterDataTaskMaxAttempts = 5;
@@ -94,6 +97,14 @@ abstract class FileLockClusterServiceTestBase {
 
         void setAcquireLockDelay(long acquireLockDelay) {
             this.acquireLockDelay = acquireLockDelay;
+        }
+
+        public long getAcquireLockInterval() {
+            return acquireLockInterval;
+        }
+
+        public void setAcquireLockInterval(long acquireLockInterval) {
+            this.acquireLockInterval = acquireLockInterval;
         }
 
         long getTimerRepeatCount() {
