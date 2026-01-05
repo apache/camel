@@ -11764,6 +11764,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(String path) {
         return olingo2("olingo2", path);
     }
@@ -11789,6 +11790,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(String componentName, String path) {
         return Olingo2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -11812,6 +11814,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(String path) {
         return olingo4("olingo4", path);
     }
@@ -11837,6 +11840,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(String componentName, String path) {
         return Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
     }

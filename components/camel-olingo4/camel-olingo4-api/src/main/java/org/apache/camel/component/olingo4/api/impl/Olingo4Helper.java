@@ -23,6 +23,7 @@ import org.apache.olingo.commons.api.format.ContentType;
 /**
  * Helper
  */
+@Deprecated(since = "4.18")
 public final class Olingo4Helper {
 
     private Olingo4Helper() {

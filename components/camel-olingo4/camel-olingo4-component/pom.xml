@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>camel-olingo4</artifactId>
-    <name>Camel :: Olingo4 :: Component</name>
+    <name>Camel :: Olingo4 (Deprecated) :: Component</name>
     <description>Camel Olingo4 component</description>
 
     <properties>

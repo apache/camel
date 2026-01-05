@@ -19,6 +19,7 @@ package org.apache.camel.component.olingo2.api.batch;
 /**
  * OData operation used by {@link org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest}.
  */
+@Deprecated(since = "4.18")
 public enum Operation {
 
     CREATE("POST"),

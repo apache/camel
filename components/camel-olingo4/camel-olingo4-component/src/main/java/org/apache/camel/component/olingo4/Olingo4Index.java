@@ -26,6 +26,7 @@ import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.core.domain.ClientEntitySetImpl;
 
+@Deprecated(since = "4.18")
 public class Olingo4Index {
 
     private Set<Integer> resultIndex = new HashSet<>();

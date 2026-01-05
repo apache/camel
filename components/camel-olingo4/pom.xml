@@ -29,7 +29,7 @@
 
     <artifactId>camel-olingo4-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Olingo4 :: Parent</name>
+    <name>Camel :: Olingo4 (Deprecated) :: Parent</name>
     <description>Camel Olingo4 parent</description>
 
     <modules>

@@ -43,6 +43,7 @@ import org.apache.olingo.odata2.api.uri.expression.OrderByExpression;
 /**
  * UriInfo with UriType information, determined in constructor.
  */
+@Deprecated(since = "4.18")
 public class UriInfoWithType implements UriInfo {
 
     private final UriInfo uriInfo;

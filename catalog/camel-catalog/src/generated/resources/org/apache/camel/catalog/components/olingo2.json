@@ -4,7 +4,7 @@
     "name": "olingo2",
     "title": "Olingo2",
     "description": "Communicate with OData 2.0 services using Apache Olingo.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.14.0",
     "label": "cloud",
     "javaType": "org.apache.camel.component.olingo2.Olingo2Component",

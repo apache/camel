@@ -27,6 +27,7 @@ import org.apache.olingo.commons.api.http.HttpStatusCode;
 /**
  * Olingo4 Client Api Interface.
  */
+@Deprecated(since = "4.18")
 public interface Olingo4App {
 
     /**
