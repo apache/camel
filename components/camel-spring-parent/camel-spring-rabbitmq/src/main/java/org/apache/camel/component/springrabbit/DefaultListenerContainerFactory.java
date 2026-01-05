@@ -21,7 +21,6 @@ import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
-import org.springframework.core.retry.RetryPolicy;
 
 import static org.apache.camel.component.springrabbit.SpringRabbitMQConstants.*;
 
@@ -70,9 +69,9 @@ public class DefaultListenerContainerFactory implements ListenerContainerFactory
         } else {
             RetryInterceptorBuilder<?, ?> builder = RetryInterceptorBuilder.stateless();
             if (endpoint.getMaximumRetryAttempts() <= 0) {
-                builder.retryPolicy(RetryPolicy.withMaxRetries(0));
+                builder.maxRetries(0);
             } else if (endpoint.getMaximumRetryAttempts() > 0) {
-                builder.retryPolicy(RetryPolicy.withMaxRetries(endpoint.getMaximumRetryAttempts()));
+                builder.maxRetries(endpoint.getMaximumRetryAttempts());
             }
             if (endpoint.getRetryDelay() > 0) {
                 builder.backOffOptions(endpoint.getRetryDelay(), 1, endpoint.getRetryDelay());
