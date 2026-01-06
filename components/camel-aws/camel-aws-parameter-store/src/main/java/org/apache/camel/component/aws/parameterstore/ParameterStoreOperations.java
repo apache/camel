@@ -14,38 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.aws.parameterstore;
 
-package org.apache.camel.test.infra.aws2.services;
+public enum ParameterStoreOperations {
 
-public enum Service {
-    CLOUD_WATCH("cloudwatch"),
-    CONFIG("config"),
-    DYNAMODB("dynamodb"),
-    EC2("ec2"),
-    EVENT_BRIDGE("eventbridge"),
-    IAM("iam"),
-    KINESIS("kinesis"),
-    KMS("kms"),
-    LAMBDA("lambda"),
-    S3("s3"),
-    SECRETS_MANAGER("secretsmanager"),
-    SNS("sns"),
-    SSM("ssm"),
-    SQS("sqs"),
-    STS("sts"),
-    TRANSCRIBE("transcribe");
-
-    private final String serviceName;
-
-    Service(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public static String serviceName(Service service) {
-        return service.serviceName;
-    }
+    getParameter,
+    getParameters,
+    getParametersByPath,
+    putParameter,
+    deleteParameter,
+    deleteParameters,
+    describeParameters,
+    getParameterHistory
 }

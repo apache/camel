@@ -1,0 +1,327 @@
+= AWS Parameter Store Component
+:doctitle: AWS Parameter Store
+:shortname: aws-parameter-store
+:artifactid: camel-aws-parameter-store
+:description: Manage parameters using AWS Systems Manager (SSM) Parameter Store.
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws-parameter-store
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS Parameter Store component supports https://aws.amazon.com/systems-manager/features/#Parameter_Store[AWS Systems Manager Parameter Store] service.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Systems Manager Parameter Store. More information is available at
+https://aws.amazon.com/systems-manager/features/#Parameter_Store[AWS Systems Manager Parameter Store].
+
+
+== URI Format
+
+-------------------------
+aws-parameter-store://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`.
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials.
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== Using AWS Parameter Store Property Function
+
+To use this function, you'll need to provide credentials to AWS Systems Manager Parameter Store as environment variables:
+
+[source,bash]
+----
+export CAMEL_VAULT_AWS_ACCESS_KEY=accessKey
+export CAMEL_VAULT_AWS_SECRET_KEY=secretKey
+export CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.accessKey = accessKey
+camel.vault.aws.secretKey = secretKey
+camel.vault.aws.region = region
+----
+
+NOTE: if you're running the application on a Kubernetes based cloud platform, you can initialize the environment variables from a Secret or Configmap to enhance security. You can also enhance security by xref:manual::using-propertyplaceholder.adoc#_resolving_property_placeholders_on_cloud[setting a Secret property placeholder] which will be initialized at application runtime only.
+
+If you want instead to use the https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS default credentials provider], you'll need to provide the following env variables:
+
+[source,bash]
+----
+export CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER=true
+export CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.defaultCredentialsProvider = true
+camel.vault.aws.region = region
+----
+
+It is also possible to specify a particular profile name for accessing AWS Parameter Store:
+
+[source,bash]
+----
+export CAMEL_VAULT_AWS_USE_PROFILE_CREDENTIALS_PROVIDER=true
+export CAMEL_VAULT_AWS_PROFILE_NAME=test-account
+export CAMEL_VAULT_AWS_REGION=region
+----
+
+You can also configure the credentials in the `application.properties` file such as:
+
+[source,properties]
+----
+camel.vault.aws.profileCredentialsProvider = true
+camel.vault.aws.profileName = test-account
+camel.vault.aws.region = region
+----
+
+NOTE: `camel.vault.aws` configuration only applies to the AWS Parameter Store properties function (E.g when resolving properties).
+When using the `operation` option to create, get, list parameters etc., you should provide the usual options for connecting to AWS Services.
+
+At this point, you'll be able to reference a property in the following way:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{aws-parameterstore:/myapp/config/endpoint}}"/>
+    </route>
+</camelContext>
+----
+
+Where `/myapp/config/endpoint` will be the name (path) of the parameter stored in the AWS Systems Manager Parameter Store.
+
+You could specify a default value in case the parameter is not present on AWS Parameter Store:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <to uri="{{aws-parameterstore:/myapp/config/endpoint:http://localhost:8080}}"/>
+    </route>
+</camelContext>
+----
+
+In this case, if the parameter doesn't exist, the property will fall back to "http://localhost:8080" as value.
+
+=== Parameter Store Hierarchies
+
+AWS Parameter Store supports hierarchical parameter names. You can organize parameters into hierarchies using forward slashes:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="Database host is {{aws-parameterstore:/myapp/database/host}}"/>
+        <log message="Database port is {{aws-parameterstore:/myapp/database/port}}"/>
+        <log message="Database user is {{aws-parameterstore:/myapp/database/username}}"/>
+    </route>
+</camelContext>
+----
+
+=== SecureString Parameters
+
+AWS Parameter Store supports SecureString parameters which are encrypted using AWS KMS. The Parameter Store properties function automatically decrypts SecureString parameters:
+
+[source,xml]
+----
+<camelContext>
+    <route>
+        <from uri="direct:start"/>
+        <log message="API Key is {{aws-parameterstore:/myapp/secrets/api-key}}"/>
+    </route>
+</camelContext>
+----
+
+The only requirement is adding the camel-aws-parameter-store jar to your Camel application.
+
+=== Testing AWS Parameter Store Property Function with Localstack
+
+For testing purpose you might want to test the function on Localstack. To make this easier you can use the following two properties in combination with the others:
+
+[source,properties]
+----
+camel.vault.aws.overrideEndpoint = true
+camel.vault.aws.uriEndpointOverride = <localstack_url>
+----
+
+With this you could be able to retrieve parameters with the function directly from the Localstack instance.
+
+=== Parameter Store Producer operations
+
+Camel-AWS-Parameter-Store component provides the following operation on the producer side:
+
+- getParameter
+- getParameters
+- getParametersByPath
+- putParameter
+- deleteParameter
+- deleteParameters
+- describeParameters
+- getParameterHistory
+
+==== getParameter
+
+This operation retrieves a single parameter value by name.
+
+[source,java]
+----
+from("direct:getParameter")
+    .setHeader(ParameterStoreConstants.PARAMETER_NAME, constant("/myapp/config/endpoint"))
+    .to("aws-parameter-store://test?operation=getParameter");
+----
+
+==== getParameters
+
+This operation retrieves multiple parameters by their names.
+
+[source,java]
+----
+from("direct:getParameters")
+    .setHeader(ParameterStoreConstants.PARAMETER_NAMES, constant("/myapp/config/host,/myapp/config/port"))
+    .to("aws-parameter-store://test?operation=getParameters");
+----
+
+==== getParametersByPath
+
+This operation retrieves all parameters within a hierarchy.
+
+[source,java]
+----
+from("direct:getParametersByPath")
+    .setHeader(ParameterStoreConstants.PARAMETER_PATH, constant("/myapp/config"))
+    .setHeader(ParameterStoreConstants.RECURSIVE, constant(true))
+    .to("aws-parameter-store://test?operation=getParametersByPath");
+----
+
+==== putParameter
+
+This operation creates or updates a parameter.
+
+[source,java]
+----
+from("direct:putParameter")
+    .setHeader(ParameterStoreConstants.PARAMETER_NAME, constant("/myapp/config/endpoint"))
+    .setHeader(ParameterStoreConstants.PARAMETER_TYPE, constant("String"))
+    .setBody(constant("http://localhost:8080"))
+    .to("aws-parameter-store://test?operation=putParameter");
+----
+
+For SecureString parameters:
+
+[source,java]
+----
+from("direct:putSecureParameter")
+    .setHeader(ParameterStoreConstants.PARAMETER_NAME, constant("/myapp/secrets/api-key"))
+    .setHeader(ParameterStoreConstants.PARAMETER_TYPE, constant("SecureString"))
+    .setBody(constant("my-secret-api-key"))
+    .to("aws-parameter-store://test?operation=putParameter");
+----
+
+==== deleteParameter
+
+This operation deletes a single parameter.
+
+[source,java]
+----
+from("direct:deleteParameter")
+    .setHeader(ParameterStoreConstants.PARAMETER_NAME, constant("/myapp/config/old-endpoint"))
+    .to("aws-parameter-store://test?operation=deleteParameter");
+----
+
+==== deleteParameters
+
+This operation deletes multiple parameters.
+
+[source,java]
+----
+from("direct:deleteParameters")
+    .setHeader(ParameterStoreConstants.PARAMETER_NAMES, constant("/myapp/config/old1,/myapp/config/old2"))
+    .to("aws-parameter-store://test?operation=deleteParameters");
+----
+
+==== describeParameters
+
+This operation lists parameter metadata.
+
+[source,java]
+----
+from("direct:describeParameters")
+    .setHeader(ParameterStoreConstants.MAX_RESULTS, constant(10))
+    .to("aws-parameter-store://test?operation=describeParameters");
+----
+
+==== getParameterHistory
+
+This operation retrieves the history of a parameter.
+
+[source,java]
+----
+from("direct:getParameterHistory")
+    .setHeader(ParameterStoreConstants.PARAMETER_NAME, constant("/myapp/config/endpoint"))
+    .to("aws-parameter-store://test?operation=getParameterHistory");
+----
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws-parameter-store</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version}` must be replaced by the actual version of Camel.
+
+
+include::spring-boot:partial$starter.adoc[]

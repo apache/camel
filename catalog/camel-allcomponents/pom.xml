@@ -148,6 +148,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-aws-parameter-store</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-aws-secrets-manager</artifactId>
             <version>${project.version}</version>
         </dependency>
