@@ -40,31 +40,41 @@ public class TelegramProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        final Object body = exchange.getIn().getBody();
 
-        if (exchange.getIn().getBody() == null) {
+        if (body == null) {
             // fail fast
             LOG.debug("Received exchange with empty body, skipping");
             callback.done(true);
             return true;
         }
 
-        TelegramConfiguration config = endpoint.getConfiguration();
-
-        // Tries to get a message in its OutgoingMessage format
-        // Automatic conversion applies here
-        OutgoingMessage message = exchange.getIn().getBody(OutgoingMessage.class);
-        if (message == null) {
-            throw new IllegalArgumentException("Cannot convert the content to a Telegram OutgoingMessage");
+        if (body instanceof TelegramMessage telegramMessage) {
+            // The body is a supported Telegram message; send it as is
+            return sendMessage(exchange, callback, telegramMessage);
+        } else {
+            // Tries to get a message in its OutgoingMessage format
+            // Automatic conversion applies here
+            OutgoingMessage message = exchange.getIn().getBody(OutgoingMessage.class);
+            if (message == null) {
+                throw new IllegalArgumentException("Cannot convert the content to a Telegram OutgoingMessage");
+            }
+            return sendMessage(exchange, callback, message);
         }
+    }
 
-        if (message.getChatId() == null) {
-            LOG.debug("Chat id is null on outgoing message, trying resolution");
-            String chatId = resolveChatId(config, message, exchange);
-            LOG.debug("Resolved chat id is {}", chatId);
-            message.setChatId(chatId);
-        }
-
+    private boolean sendMessage(Exchange exchange, AsyncCallback callback, TelegramMessage message) {
         final TelegramService service = endpoint.getTelegramService();
+
+        if (message instanceof OutgoingMessage outgoingMessage) {
+            if (outgoingMessage.getChatId() == null) {
+                TelegramConfiguration config = endpoint.getConfiguration();
+                LOG.debug("Chat id is null on outgoing message, trying resolution");
+                String chatId = resolveChatId(config, outgoingMessage, exchange);
+                LOG.debug("Resolved chat id is {}", chatId);
+                outgoingMessage.setChatId(chatId);
+            }
+        }
 
         LOG.debug("Message being sent is: {}", message);
         LOG.debug("Headers of message being sent are: {}", exchange.getIn().getHeaders());

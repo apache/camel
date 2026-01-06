@@ -14,23 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.telegram.service;
 
-import org.apache.camel.component.telegram.model.MessageResult;
-import org.apache.camel.component.telegram.model.OutgoingMessage;
+import java.net.http.HttpClient;
 
-abstract class OutgoingMessageHandler<T extends OutgoingMessage> extends TelegramMessageHandler<T> {
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-    public OutgoingMessageHandler(TelegramApiClient apiClient, String uri, String contentType,
-                                  Class<? extends MessageResult> resultClass) {
-        super(apiClient, uri, contentType, resultClass);
-    }
-
-    protected void fillCommonMediaParts(OutgoingMessage message) {
-
-        buildTextPart("chat_id", message.getChatId());
-        buildTextPart("reply_to_message_id", message.getReplyToMessageId());
-        buildTextPart("disable_notification", message.getDisableNotification());
-    }
+record TelegramApiClient(HttpClient client, ObjectMapper mapper, String baseUri, int bufferSize) {
 }

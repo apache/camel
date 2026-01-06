@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.camel.component.telegram.model.payments.SuccessfulPayment;
 
 /**
  * A message that is exchanged with the Telegram network.
@@ -73,6 +74,9 @@ public class IncomingMessage implements Serializable {
     private IncomingGame game;
 
     private IncomingVoice voice;
+
+    @JsonProperty("successful_payment")
+    private SuccessfulPayment successfulPayment;
 
     public IncomingMessage() {
     }
@@ -213,6 +217,14 @@ public class IncomingMessage implements Serializable {
         this.voice = voice;
     }
 
+    public SuccessfulPayment getSuccessfulPayment() {
+        return successfulPayment;
+    }
+
+    public void setSuccessfulPayment(SuccessfulPayment successfulPayment) {
+        this.successfulPayment = successfulPayment;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingMessage{");
@@ -233,6 +245,7 @@ public class IncomingMessage implements Serializable {
         sb.append(", replyMarkup=").append(replyMarkup);
         sb.append(", game=").append(game);
         sb.append(", voice=").append(voice);
+        sb.append(", successfulPayment=").append(successfulPayment);
         sb.append('}');
         return sb.toString();
     }
