@@ -16,12 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.version;
 
+import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -41,6 +45,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -51,6 +56,8 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
@@ -59,6 +66,8 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_IN
 @CommandLine.Command(name = "list", description = "Displays available Camel versions",
                      sortOptions = false, showDefaultValues = true)
 public class VersionList extends CamelCommand {
+
+    private static final String VERSION_LIST_CHECKER = ".camel-jbang-version-list.json";
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
 
@@ -127,6 +136,10 @@ public class VersionList extends CamelCommand {
                         defaultValue = "false")
     boolean fresh;
 
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    boolean download = true;
+
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format", defaultValue = "false")
     boolean jsonOutput;
 
@@ -154,7 +167,7 @@ public class VersionList extends CamelCommand {
 
         // only download if fresh, using a custom repo, or special runtime based
         List<String[]> versions = new ArrayList<>();
-        if (fresh || repositories != null || runtime != RuntimeType.main) {
+        if (download || fresh || repositories != null || runtime != RuntimeType.main) {
             downloadReleases(versions);
         }
 
@@ -203,6 +216,11 @@ public class VersionList extends CamelCommand {
             }
         }
 
+        JsonObject checker = loadCheckerFile();
+        if (fresh && download) {
+            checker = updateCheckerFile(checker, runtime.runtime(), repositories);
+        }
+
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
@@ -231,9 +249,91 @@ public class VersionList extends CamelCommand {
                             .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate),
                     new Column().header("DAYS").visible(days)
                             .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::daysAgo))));
+            String date = null;
+            if (checker != null) {
+                JsonArray arr = checker.getCollection("checker");
+                if (repositories == null) {
+                    repositories = "";
+                }
+                for (int i = 0; i < arr.size(); i++) {
+                    JsonObject e = arr.getMap(i);
+                    boolean match = e.getString("runtime").equals(runtime.runtime())
+                            && e.getStringOrDefault("repo", "").equals(repositories);
+                    if (match) {
+                        date = e.getString("lastUpdated");
+                        break;
+                    }
+                }
+            }
+            if (date != null) {
+                printer().println("Last updated: " + date + " (use --fresh to update list from internet)");
+            } else {
+                printer().println("Last updated: none (use --fresh to update list from internet)");
+            }
         }
 
         return 0;
+    }
+
+    public static JsonObject updateCheckerFile(JsonObject root, String runtime, String repositories) {
+        if (repositories == null) {
+            repositories = "";
+        }
+        if (root == null) {
+            root = new JsonObject();
+        }
+        JsonArray arr = root.getCollection("checker");
+        if (arr == null) {
+            arr = new JsonArray();
+            root.put("checker", arr);
+        }
+
+        JsonObject target = null;
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject e = arr.getMap(i);
+            boolean match = e.getString("runtime").equals(runtime)
+                    && e.getStringOrDefault("repo", "").equals(repositories);
+            if (match) {
+                target = e;
+                break;
+            }
+        }
+        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        if (target == null) {
+            target = new JsonObject();
+            target.put("runtime", runtime);
+            if (!repositories.isBlank()) {
+                target.put("repo", repositories);
+            }
+            arr.add(target);
+        }
+        target.put("lastUpdated", today);
+
+        String json = Jsoner.serialize(root);
+        try {
+            Path f = CommandLineHelper.getHomeDir().resolve(VERSION_LIST_CHECKER);
+            Files.writeString(f, json,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            // ignore
+        }
+        return root;
+    }
+
+    static JsonObject loadCheckerFile() {
+        try {
+            Path f = CommandLineHelper.getHomeDir().resolve(VERSION_LIST_CHECKER);
+            if (Files.exists(f)) {
+                String json = Files.readString(f);
+                return (JsonObject) Jsoner.deserialize(json);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return null;
     }
 
     protected Integer downloadReleases(List<String[]> answer) {
@@ -241,6 +341,7 @@ public class VersionList extends CamelCommand {
 
         try {
             main.setFresh(fresh);
+            main.setDownload(download);
             main.setRepositories(repositories);
             main.start();
 
@@ -317,7 +418,7 @@ public class VersionList extends CamelCommand {
                 // enrich with details from catalog (if we can find any)
                 String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
                 ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
-                if (rm == null) {
+                if (download && rm == null) {
                     // unknown release but if it's an Apache Camel release we can grab from online
                     int dots = StringHelper.countChar(v[0], '.');
                     if (dots == 2) {
