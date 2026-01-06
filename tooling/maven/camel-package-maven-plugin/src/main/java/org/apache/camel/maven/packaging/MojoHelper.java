@@ -116,6 +116,7 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
                         dir.resolve("camel-aws2-mq"),
                         dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-redshift"),
+                        dir.resolve("camel-aws2-rekognition"),
                         dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
                         dir.resolve("camel-aws2-sns"),
                         dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-step-functions"),
