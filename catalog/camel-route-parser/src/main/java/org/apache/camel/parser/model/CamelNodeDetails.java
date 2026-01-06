@@ -38,12 +38,14 @@ public class CamelNodeDetails {
     private final int order;
     private List<CamelNodeDetails> outputs;
     private String routeId;
+    private String nodeId;
 
     public CamelNodeDetails(CamelNodeDetails parent, String name, int order, CamelNodeDetails copy) {
         this.parent = parent;
         this.name = name;
         this.order = order;
         this.routeId = copy.getRouteId();
+        this.nodeId = copy.getNodeId();
         this.fileName = copy.getFileName();
         this.lineNumber = copy.getLineNumber();
         this.lineNumberEnd = copy.getLineNumberEnd();
@@ -97,6 +99,14 @@ public class CamelNodeDetails {
 
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
     }
 
     public String getFileName() {
