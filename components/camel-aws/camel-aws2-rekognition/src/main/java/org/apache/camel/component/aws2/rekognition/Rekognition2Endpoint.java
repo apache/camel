@@ -28,7 +28,7 @@ import software.amazon.awssdk.services.rekognition.RekognitionClient;
 /**
  * Manage and invoke AWS Rekognition.
  */
-@UriEndpoint(firstVersion = "4.0.0", scheme = "aws2-rekognition", title = "AWS Rekognition",
+@UriEndpoint(firstVersion = "4.17.0", scheme = "aws2-rekognition", title = "AWS Rekognition",
              syntax = "aws2-rekognition:label",
              producerOnly = true, category = { Category.CLOUD, Category.AI },
              headersClass = Rekognition2Constants.class)

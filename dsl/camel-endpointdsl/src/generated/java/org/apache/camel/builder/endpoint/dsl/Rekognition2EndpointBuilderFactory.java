@@ -533,7 +533,7 @@ public interface Rekognition2EndpointBuilderFactory {
          * Manage and invoke AWS Rekognition.
          * 
          * Category: cloud,ai
-         * Since: 4.0
+         * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-aws2-rekognition
          * 
          * @return the dsl builder for the headers' name.
@@ -546,7 +546,7 @@ public interface Rekognition2EndpointBuilderFactory {
          * Manage and invoke AWS Rekognition.
          * 
          * Category: cloud,ai
-         * Since: 4.0
+         * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-aws2-rekognition
          * 
          * Syntax: <code>aws2-rekognition:label</code>
@@ -565,7 +565,7 @@ public interface Rekognition2EndpointBuilderFactory {
          * Manage and invoke AWS Rekognition.
          * 
          * Category: cloud,ai
-         * Since: 4.0
+         * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-aws2-rekognition
          * 
          * Syntax: <code>aws2-rekognition:label</code>

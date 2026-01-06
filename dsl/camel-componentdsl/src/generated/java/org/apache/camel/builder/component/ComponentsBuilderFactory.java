@@ -456,7 +456,7 @@ public interface ComponentsBuilderFactory {
      * Manage and invoke AWS Rekognition.
      * 
      * Category: cloud,ai
-     * Since: 4.0
+     * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-aws2-rekognition
      * 
      * @return the dsl builder
