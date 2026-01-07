@@ -2635,6 +2635,46 @@ public class StaticEndpointBuilders {
         return ChatScriptEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Chroma (camel-chroma)
+     * Perform operations on the Chroma Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-chroma
+     * 
+     * Syntax: <code>chroma:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection name
+     * 
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static ChromaEndpointBuilderFactory.ChromaEndpointBuilder chroma(String path) {
+        return chroma("chroma", path);
+    }
+    /**
+     * Chroma (camel-chroma)
+     * Perform operations on the Chroma Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-chroma
+     * 
+     * Syntax: <code>chroma:collection</code>
+     * 
+     * Path parameter: collection (required)
+     * The collection name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collection
+     * @return the dsl builder
+     */
+    public static ChromaEndpointBuilderFactory.ChromaEndpointBuilder chroma(String componentName, String path) {
+        return ChromaEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
      * 

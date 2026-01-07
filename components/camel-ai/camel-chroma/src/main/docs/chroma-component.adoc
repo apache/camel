@@ -1,0 +1,456 @@
+= Chroma Component
+:doctitle: Chroma
+:shortname: chroma
+:artifactid: camel-chroma
+:description: Perform operations on the Chroma Vector Database.
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AI
+:camel-spring-boot-name: chroma
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Chroma Component provides support for interacting with the https://www.trychroma.com/[Chroma Vector Database].
+
+Chroma is an open-source embedding database designed for AI applications. It allows you to store, search, and retrieve embeddings along with their associated metadata and documents.
+
+== URI format
+
+----
+chroma:collection[?options]
+----
+
+Where *collection* represents a named collection in your Chroma database.
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+== Embedding Function
+
+Chroma requires an `EmbeddingFunction` to convert documents into vector embeddings. You must configure an embedding function for the component to work properly.
+
+The chromadb-java-client provides several embedding function implementations:
+
+* `DefaultEmbeddingFunction` - Uses ONNX runtime for local embeddings
+* `OpenAIEmbeddingFunction` - Uses OpenAI API
+* `CohereEmbeddingFunction` - Uses Cohere API
+* `OllamaEmbeddingFunction` - Uses Ollama for local embeddings
+* `HuggingFaceEmbeddingFunction` - Uses Hugging Face API
+
+You can also implement your own `EmbeddingFunction` interface.
+
+=== Configuring Embedding Function
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Using OpenAI embeddings
+OpenAIEmbeddingFunction embeddingFunction = new OpenAIEmbeddingFunction(
+    System.getenv("OPENAI_API_KEY"),
+    "text-embedding-ada-002"
+);
+
+ChromaComponent component = context.getComponent("chroma", ChromaComponent.class);
+component.getConfiguration().setHost("http://localhost:8000");
+component.getConfiguration().setEmbeddingFunction(embeddingFunction);
+----
+====
+
+== Examples
+
+=== Collection Examples
+
+==== Create Collection
+
+In the route below, we use the chroma component to create a collection named _myCollection_:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.CREATE_COLLECTION)
+    .to("chroma:myCollection");
+----
+====
+
+==== Get Collection
+
+In the route below, we use the chroma component to get information about a collection named _myCollection_:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.GET_COLLECTION)
+    .to("chroma:myCollection")
+    .process(exchange -> {
+        Collection collection = exchange.getMessage().getBody(Collection.class);
+        log.info("Collection name: {}", collection.getName());
+    });
+----
+====
+
+==== Delete Collection
+
+In the route below, we use the chroma component to delete a collection named _myCollection_:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.DELETE_COLLECTION)
+    .to("chroma:myCollection");
+----
+====
+
+=== Document Examples
+
+==== Add Documents
+
+In the route below, we use the chroma component to add documents to a collection. The embedding function will automatically generate embeddings for the documents:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.ADD)
+    .setHeader(ChromaHeaders.IDS)
+        .constant(Arrays.asList("doc1", "doc2", "doc3"))
+    .setBody()
+        .constant(Arrays.asList(
+            "Camel is an open source integration framework",
+            "Chroma is a vector database for AI applications",
+            "Apache Camel supports many components"
+        ))
+    .to("chroma:myCollection");
+----
+====
+
+==== Add Documents with Metadata
+
+You can also add metadata to documents for filtering during queries:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.ADD)
+    .setHeader(ChromaHeaders.IDS)
+        .constant(Arrays.asList("doc1", "doc2"))
+    .setHeader(ChromaHeaders.METADATAS)
+        .constant(Arrays.asList(
+            Map.of("source", "wiki", "category", "integration"),
+            Map.of("source", "docs", "category", "database")
+        ))
+    .setBody()
+        .constant(Arrays.asList(
+            "Camel is an open source integration framework",
+            "Chroma is a vector database"
+        ))
+    .to("chroma:myCollection");
+----
+====
+
+==== Add Documents with Pre-computed Embeddings
+
+If you have pre-computed embeddings, you can pass them directly via headers:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.ADD)
+    .setHeader(ChromaHeaders.IDS)
+        .constant(Arrays.asList("doc1"))
+    .setHeader(ChromaHeaders.EMBEDDINGS)
+        .constant(Arrays.asList(
+            Arrays.asList(0.1f, 0.2f, 0.3f, 0.4f)  // Your embedding vector
+        ))
+    .setBody()
+        .constant(Arrays.asList("Document text"))
+    .to("chroma:myCollection");
+----
+====
+
+=== Query Examples
+
+==== Query Documents
+
+In the route below, we use the chroma component to perform a semantic search query:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.QUERY)
+    .setHeader(ChromaHeaders.N_RESULTS)
+        .constant(5)
+    .setBody()
+        .constant(Collections.singletonList("integration framework"))
+    .to("chroma:myCollection")
+    .process(exchange -> {
+        Collection.QueryResponse response = exchange.getMessage()
+            .getBody(Collection.QueryResponse.class);
+        // Process query results
+    });
+----
+====
+
+==== Query with Metadata Filter
+
+You can filter query results using metadata:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.QUERY)
+    .setHeader(ChromaHeaders.N_RESULTS)
+        .constant(10)
+    .setHeader(ChromaHeaders.WHERE)
+        .constant(Map.of("category", "integration"))
+    .setBody()
+        .constant(Collections.singletonList("apache camel"))
+    .to("chroma:myCollection");
+----
+====
+
+==== Query with Include Options
+
+You can specify which fields to include in the response:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.QUERY)
+    .setHeader(ChromaHeaders.N_RESULTS)
+        .constant(5)
+    .setHeader(ChromaHeaders.INCLUDE)
+        .constant(Arrays.asList("documents", "metadatas", "distances"))
+    .setBody()
+        .constant(Collections.singletonList("search query"))
+    .to("chroma:myCollection");
+----
+====
+
+=== Get Examples
+
+==== Get Documents by IDs
+
+In the route below, we retrieve specific documents by their IDs:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.GET)
+    .setHeader(ChromaHeaders.IDS)
+        .constant(Arrays.asList("doc1", "doc2"))
+    .to("chroma:myCollection")
+    .process(exchange -> {
+        Collection.GetResult result = exchange.getMessage()
+            .getBody(Collection.GetResult.class);
+        List<String> documents = result.getDocuments();
+        List<String> ids = result.getIds();
+    });
+----
+====
+
+==== Get Documents with Filter
+
+You can filter documents using metadata:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.GET)
+    .setHeader(ChromaHeaders.WHERE)
+        .constant(Map.of("source", "wiki"))
+    .to("chroma:myCollection");
+----
+====
+
+=== Update Examples
+
+==== Update Documents
+
+In the route below, we update existing documents:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.UPDATE)
+    .setHeader(ChromaHeaders.IDS)
+        .constant(Arrays.asList("doc1"))
+    .setHeader(ChromaHeaders.METADATAS)
+        .constant(Arrays.asList(
+            Map.of("source", "wiki", "updated", "true")
+        ))
+    .setBody()
+        .constant(Arrays.asList("Updated document content"))
+    .to("chroma:myCollection");
+----
+====
+
+=== Upsert Examples
+
+==== Upsert Documents
+
+Upsert will insert new documents or update existing ones:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.UPSERT)
+    .setHeader(ChromaHeaders.IDS)
+        .constant(Arrays.asList("doc1", "doc4"))
+    .setBody()
+        .constant(Arrays.asList(
+            "Updated content for doc1",
+            "New document doc4"
+        ))
+    .to("chroma:myCollection");
+----
+====
+
+=== Delete Examples
+
+==== Delete Documents by IDs
+
+In the route below, we delete specific documents by their IDs:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.DELETE)
+    .setHeader(ChromaHeaders.IDS)
+        .constant(Arrays.asList("doc1", "doc2"))
+    .to("chroma:myCollection");
+----
+====
+
+==== Delete Documents with Filter
+
+You can delete documents matching a metadata filter:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:in")
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.DELETE)
+    .setHeader(ChromaHeaders.WHERE)
+        .constant(Map.of("source", "temporary"))
+    .to("chroma:myCollection");
+----
+====
+
+== RAG (Retrieval-Augmented Generation) Example
+
+Here's an example of using Chroma for RAG with a language model:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:ask")
+    // First, query Chroma for relevant documents
+    .setHeader(ChromaHeaders.ACTION)
+        .constant(ChromaAction.QUERY)
+    .setHeader(ChromaHeaders.N_RESULTS)
+        .constant(3)
+    .to("chroma:knowledgeBase")
+    // Build context from retrieved documents
+    .process(exchange -> {
+        Collection.QueryResponse response = exchange.getMessage()
+            .getBody(Collection.QueryResponse.class);
+        String context = String.join("\n", response.getDocuments().get(0));
+        String question = exchange.getProperty("question", String.class);
+        String prompt = "Context:\n" + context + "\n\nQuestion: " + question;
+        exchange.getMessage().setBody(prompt);
+    })
+    // Send to LLM for answer generation
+    .to("langchain4j-chat:myModel");
+----
+====
+
+
+include::spring-boot:partial$starter.adoc[]
