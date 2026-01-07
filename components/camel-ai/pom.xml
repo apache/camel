@@ -35,6 +35,7 @@
 
     <modules>
         <module>camel-chatscript</module>
+        <module>camel-chroma</module>
         <module>camel-djl</module>
         <module>camel-docling</module>
         <module>camel-kserve</module>

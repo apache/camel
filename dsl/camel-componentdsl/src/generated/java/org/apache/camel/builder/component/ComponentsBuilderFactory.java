@@ -834,6 +834,19 @@ public interface ComponentsBuilderFactory {
         return ChatscriptComponentBuilderFactory.chatscript();
     }
     /**
+     * Chroma (camel-chroma)
+     * Perform operations on the Chroma Vector Database.
+     * 
+     * Category: database,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-chroma
+     * 
+     * @return the dsl builder
+     */
+    static ChromaComponentBuilderFactory.ChromaComponentBuilder chroma() {
+        return ChromaComponentBuilderFactory.chroma();
+    }
+    /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
      * 

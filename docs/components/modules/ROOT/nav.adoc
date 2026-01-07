@@ -6,6 +6,7 @@
 ** xref:activemq6-component.adoc[ActiveMQ 6.x]
 ** xref:ai-summary.adoc[AI]
 *** xref:chatscript-component.adoc[ChatScript]
+*** xref:chroma-component.adoc[Chroma]
 *** xref:djl-component.adoc[Deep Java Library]
 *** xref:docling-component.adoc[Docling]
 *** xref:kserve-component.adoc[KServe]
