@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,6 +141,11 @@ public final class CxfConverter {
 
         // Convert the body (entity) to an InputStream
         InputStream is = toInputStream(response, exchange);
+        //If there is no entity body, provide an empty stream
+        // to ensure we return a valid StreamCache instead of null (which would be wrapped as Void.class).
+        if (is == null) {
+            is = new ByteArrayInputStream(new byte[0]);
+        }
 
         // Find the appropriate TypeConverter for StreamCache
         TypeConverterRegistry registry = exchange.getContext().getTypeConverterRegistry();
