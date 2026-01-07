@@ -26,7 +26,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.concurrent.NamedThreadLocal;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     private final LongAdder runningWorkers = new LongAdder();
     private final LongAdder pendingTasks = new LongAdder();
 
-    private final NamedThreadLocal<Worker> workers = new NamedThreadLocal<>("CamelReactiveWorker", () -> {
+    private final ContextValue<Worker> workers = ContextValue.newThreadLocal("CamelReactiveWorker", () -> {
         int number = createdWorkers.incrementAndGet();
         return new Worker(number, DefaultReactiveExecutor.this);
     });
@@ -66,10 +66,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
     @Override
     public void scheduleQueue(Runnable runnable) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("ScheduleQueue: {}", runnable);
-        }
-        workers.get().queue.add(runnable);
+        workers.get().scheduleQueue(runnable);
     }
 
     @Override
@@ -120,7 +117,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
         private final int number;
         private final DefaultReactiveExecutor executor;
-        private final boolean stats;
         private volatile Deque<Runnable> queue = new ArrayDeque<>();
         private volatile Deque<Deque<Runnable>> back;
         private volatile boolean running;
@@ -128,7 +124,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         public Worker(int number, DefaultReactiveExecutor executor) {
             this.number = number;
             this.executor = executor;
-            this.stats = executor != null && executor.isStatisticsEnabled();
         }
 
         void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
@@ -146,6 +141,14 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
 
             incrementPendingTasks();
             tryExecuteReactiveWork(runnable, sync);
+        }
+
+        void scheduleQueue(Runnable runnable) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("ScheduleQueue: {}", runnable);
+            }
+            queue.add(runnable);
+            incrementPendingTasks();
         }
 
         private void executeMainFlow() {
@@ -204,25 +207,25 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         }
 
         private void decrementRunningWorkers() {
-            if (stats) {
+            if (executor.statisticsEnabled) {
                 executor.runningWorkers.decrement();
             }
         }
 
         private void incrementRunningWorkers() {
-            if (stats) {
+            if (executor.statisticsEnabled) {
                 executor.runningWorkers.increment();
             }
         }
 
         private void incrementPendingTasks() {
-            if (stats) {
+            if (executor.statisticsEnabled) {
                 executor.pendingTasks.increment();
             }
         }
 
         private void decrementPendingTasks() {
-            if (stats) {
+            if (executor.statisticsEnabled) {
                 executor.pendingTasks.decrement();
             }
         }
