@@ -451,6 +451,15 @@
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSSMLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "ssm" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.17.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
   "implementation" : "org.apache.camel.test.infra.aws2.services.AWSIAMLocalContainerInfraService",
   "alias" : [ "aws" ],
   "aliasImplementation" : [ "iam" ],

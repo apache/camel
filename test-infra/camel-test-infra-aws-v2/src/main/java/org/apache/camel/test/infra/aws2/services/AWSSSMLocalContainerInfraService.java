@@ -17,35 +17,15 @@
 
 package org.apache.camel.test.infra.aws2.services;
 
-public enum Service {
-    CLOUD_WATCH("cloudwatch"),
-    CONFIG("config"),
-    DYNAMODB("dynamodb"),
-    EC2("ec2"),
-    EVENT_BRIDGE("eventbridge"),
-    IAM("iam"),
-    KINESIS("kinesis"),
-    KMS("kms"),
-    LAMBDA("lambda"),
-    S3("s3"),
-    SECRETS_MANAGER("secretsmanager"),
-    SNS("sns"),
-    SSM("ssm"),
-    SQS("sqs"),
-    STS("sts"),
-    TRANSCRIBE("transcribe");
+import org.apache.camel.spi.annotations.InfraService;
+import org.apache.camel.test.infra.aws.common.services.AWSInfraService;
 
-    private final String serviceName;
+@InfraService(service = AWSInfraService.class,
+              description = "Local AWS Services with LocalStack",
+              serviceAlias = "aws", serviceImplementationAlias = "ssm")
+public class AWSSSMLocalContainerInfraService extends AWSLocalContainerInfraService {
 
-    Service(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public static String serviceName(Service service) {
-        return service.serviceName;
+    public AWSSSMLocalContainerInfraService() {
+        super(Service.SSM);
     }
 }

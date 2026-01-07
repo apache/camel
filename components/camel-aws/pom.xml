@@ -56,6 +56,7 @@
         <module>camel-aws2-lambda</module>
         <module>camel-aws2-msk</module>
         <module>camel-aws2-mq</module>
+        <module>camel-aws-parameter-store</module>
         <module>camel-aws2-redshift</module>
         <module>camel-aws2-s3</module>
         <module>camel-aws2-s3-vectors</module>
