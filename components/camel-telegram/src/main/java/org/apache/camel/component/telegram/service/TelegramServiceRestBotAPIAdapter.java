@@ -53,6 +53,7 @@ import org.apache.camel.component.telegram.model.OutgoingSetGameScoreMessage;
 import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.SendChatActionMessage;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
 import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
@@ -113,6 +114,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 .register(CreateInvoiceLinkMessage.class, "createInvoiceLink", MessageResultString.class)
                 .register(AnswerPreCheckoutQueryMessage.class, "answerPreCheckoutQuery")
                 .register(AnswerShippingQueryMessage.class, "answerShippingQuery")
+                .register(SendChatActionMessage.class, "sendChatAction")
                 .build();
     }
 
