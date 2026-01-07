@@ -816,9 +816,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 ProcessorReifier.class,
                 outputId, "Create processor");
 
-        camelContext.getCamelContextExtension().createProcessor(outputId);
-        Processor processor = null;
-        try {
+        return camelContext.getCamelContextExtension().createProcessor(outputId, () -> {
+            Processor processor = null;
             // at first use custom factory
             final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
             if (processorFactory != null) {
@@ -829,10 +828,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 processor = reifier(route, output).createProcessor();
             }
             camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
-        } finally {
-            camelContext.getCamelContextExtension().createProcessor(null);
-        }
-        return processor;
+            return processor;
+        });
     }
 
     /**
@@ -841,8 +838,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Channel makeProcessor() throws Exception {
         String outputId = definition
                 .idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
-        camelContext.getCamelContextExtension().createProcessor(outputId);
-        try {
+        return camelContext.getCamelContextExtension().createProcessor(outputId, () -> {
             Processor processor = null;
 
             // allow any custom logic before we create the processor
@@ -873,9 +869,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 return null;
             }
             return wrapProcessor(processor);
-        } finally {
-            camelContext.getCamelContextExtension().createProcessor(null);
-        }
+        });
     }
 
     /**
