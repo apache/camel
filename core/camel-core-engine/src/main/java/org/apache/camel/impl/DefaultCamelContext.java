@@ -84,7 +84,7 @@ import org.apache.camel.support.scan.InvertingPackageScanFilter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
 import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.concurrent.NamedThreadLocal;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     // global options that can be set on CamelContext as part of concurrent testing
     // which means options should be isolated via thread-locals and not a static instance
     // use a HashMap to store only JDK classes in the thread-local so there will not be any Camel classes leaking
-    private static final ThreadLocal<Map<String, Object>> OPTIONS = new NamedThreadLocal<>("CamelContextOptions", HashMap::new);
+    private static final ContextValue<Map<String, Object>> OPTIONS
+            = ContextValue.newThreadLocal("CamelContextOptions", HashMap::new);
     private static final String OPTION_NO_START = "OptionNoStart";
     private static final String OPTION_DISABLE_JMX = "OptionDisableJMX";
     private static final String OPTION_EXCLUDE_ROUTES = "OptionExcludeRoutes";
@@ -760,13 +761,19 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                                 = getCamelContextReference().getCamelContextExtension().getStartupStepRecorder();
                         StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Create Route");
 
-                        getCamelContextExtension().createRoute(routeDefinition.getRouteId());
+                        getCamelContextExtension().createRoute(routeDefinition.getRouteId(), () -> {
+                            try {
+                                Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
+                                recorder.endStep(step);
 
-                        Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
-                        recorder.endStep(step);
-
-                        RouteService routeService = new RouteService(route);
-                        startRouteService(routeService, true);
+                                RouteService routeService = new RouteService(route);
+                                startRouteService(routeService, true);
+                            } catch (RuntimeException e) {
+                                throw e;
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
                     } else {
                         // Add the definition to the list of definitions to remove as the route is excluded
                         if (routeDefinitionsToRemove == null) {
@@ -790,7 +797,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             if (!alreadyStartingRoutes) {
                 setStartingRoutes(false);
             }
-            getCamelContextExtension().createRoute(null);
         }
     }
 

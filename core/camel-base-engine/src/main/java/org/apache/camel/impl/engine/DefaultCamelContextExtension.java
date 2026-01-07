@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
@@ -87,15 +88,16 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.concurrent.ContextValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     private final AbstractCamelContext camelContext;
-    private final ThreadLocal<String> isCreateRoute = new ThreadLocal<>();
-    private final ThreadLocal<String> isCreateProcessor = new ThreadLocal<>();
-    private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
+    private final ContextValue<String> isCreateRoute = ContextValue.newInstance("isCreateRoute");
+    private final ContextValue<String> isCreateProcessor = ContextValue.newInstance("isCreateProcessor");
+    private final ContextValue<Boolean> isSetupRoutes = ContextValue.newInstance("isSetupRoutes");
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
@@ -318,18 +320,17 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public boolean isSetupRoutes() {
-        Boolean answer = isSetupRoutes.get();
-        return answer != null && answer;
+        return Boolean.TRUE.equals(isSetupRoutes.orElse(false));
     }
 
     @Override
     public String getCreateRoute() {
-        return isCreateRoute.get();
+        return isCreateRoute.orElse(null);
     }
 
     @Override
     public String getCreateProcessor() {
-        return isCreateProcessor.get();
+        return isCreateProcessor.orElse(null);
     }
 
     @Override
@@ -419,15 +420,35 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    @Deprecated
     public void createRoute(String routeId) {
         if (routeId != null) {
             isCreateRoute.set(routeId);
         } else {
-            isSetupRoutes.remove();
+            isCreateRoute.remove();
         }
     }
 
     @Override
+    public void createRoute(String routeId, Runnable operation) {
+        ContextValue.where(isCreateRoute, routeId, operation);
+    }
+
+    @Override
+    public <T> T createRoute(String routeId, Callable<T> callable) throws Exception {
+        return ContextValue.where(isCreateRoute, routeId, () -> {
+            try {
+                return callable.call();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    @Deprecated
     public void createProcessor(String processorId) {
         if (processorId != null) {
             isCreateProcessor.set(processorId);
@@ -437,12 +458,49 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public void createProcessor(String processorId, Runnable operation) {
+        ContextValue.where(isCreateProcessor, processorId, operation);
+    }
+
+    @Override
+    public <T> T createProcessor(String processorId, Callable<T> callable) throws Exception {
+        return ContextValue.where(isCreateProcessor, processorId, () -> {
+            try {
+                return callable.call();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    @Deprecated
     public void setupRoutes(boolean done) {
         if (done) {
             isSetupRoutes.remove();
         } else {
             isSetupRoutes.set(true);
         }
+    }
+
+    @Override
+    public void setupRoutes(Runnable operation) {
+        ContextValue.where(isSetupRoutes, true, operation);
+    }
+
+    @Override
+    public <T> T setupRoutes(Callable<T> callable) throws Exception {
+        return ContextValue.where(isSetupRoutes, true, () -> {
+            try {
+                return callable.call();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override
