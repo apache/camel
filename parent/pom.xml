@@ -341,7 +341,7 @@
         <jte-version>3.2.1</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.13.4</junit-jupiter-version>
-        <junit6-jupiter-version>6.0.1</junit6-jupiter-version>
+        <junit6-jupiter-version>6.0.2</junit6-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
         <juniversalchardet-version>1.0.3</juniversalchardet-version>
         <jxmpp-version>1.1.0</jxmpp-version>
