@@ -50,6 +50,13 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
     private static final String CXF_RS_STATUS_TEST_URL
             = "http://localhost:" + CXFTestSupport.getPort2() + "/reststatus/customerservice/customers";
 
+    private static final String CXF_RS_EMPTY_BODY_TEST_URI
+            = "cxfrs://http://localhost:" + CXFTestSupport.getPort3()
+              + "/restempty?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+
+    private static final String CXF_RS_EMPTY_BODY_TEST_URL
+            = "http://localhost:" + CXFTestSupport.getPort3() + "/restempty/customerservice/customers";
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -75,6 +82,17 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
                         })
                         // The .log() EIP here is the one that triggered the StreamCache
                         .log("Checking if status is still 202 after logging.");
+
+                // Route for testing empty body scenario (No Entity)
+                from(CXF_RS_EMPTY_BODY_TEST_URI)
+                        .to("mock:emptyBodyResult")
+                        .process(exchange -> {
+                            // Creating a response with NO entity
+                            Response resp = Response.status(204).build();
+                            exchange.getMessage().setBody(resp);
+                        })
+                        .log("Logging to trigger conversion with empty body");
+
             }
         };
     }
@@ -123,4 +141,29 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
     }
+
+    @Test
+    public void testEmptyResponseStatusPreservedAfterConversion() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:emptyBodyResult");
+        mock.expectedMessageCount(1);
+
+        HttpPut put = new HttpPut(CXF_RS_EMPTY_BODY_TEST_URL);
+        StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
+        put.setEntity(entity);
+
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+             CloseableHttpResponse response = httpclient.execute(put)) {
+
+            // Verify status 204 is preserved even with no entity body
+            assertEquals(204, response.getCode(), "Status 204 should be preserved for empty response");
+
+            // Entity should be null or empty
+            if (response.getEntity() != null) {
+                assertEquals("", EntityUtils.toString(response.getEntity()));
+            }
+        }
+
+        mock.assertIsSatisfied();
+    }
+
 }
