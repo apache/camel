@@ -88,6 +88,10 @@ public interface Ddb2Constants {
                                                   "the previous result set.",
               javaType = "Key")
     String LAST_EVALUATED_KEY = "CamelAwsDdbLastEvaluatedKey";
+    @Metadata(label = "Query Scan",
+              description = "Whether the response has more results (is truncated). If true, use LAST_EVALUATED_KEY as START_KEY for the next page.",
+              javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsDdbIsTruncated";
     @Metadata(description = "The maximum number of items to return.", javaType = "Integer")
     String LIMIT = "CamelAwsDdbLimit";
     @Metadata(description = "The operation to perform.", javaType = "org.apache.camel.component.aws2.ddb.Ddb2Operations")
