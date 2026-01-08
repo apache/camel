@@ -114,10 +114,10 @@ public interface SqlStoredComponentBuilderFactory {
     
         
         /**
-         * Whether to detect the network address location of the JMS broker on
+         * Whether to detect the network address location of the database on
          * startup. This information is gathered via reflection on the
-         * ConnectionFactory, and is vendor specific. This option can be used to
-         * turn this off.
+         * DataSource, and is vendor specific. This option can be used to turn
+         * this off.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
