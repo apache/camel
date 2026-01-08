@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "stripe",
     "title": "Stripe",
-    "description": "Camel Stripe component",
+    "description": "Interact with the Stripe payment platform.",
     "deprecated": false,
     "firstVersion": "4.17.0",
     "label": "saas,finance",

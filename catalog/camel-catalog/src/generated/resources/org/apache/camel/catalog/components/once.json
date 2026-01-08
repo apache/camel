@@ -3,7 +3,7 @@
     "kind": "component",
     "name": "once",
     "title": "Once",
-    "description": "Camel Once component",
+    "description": "Trigger a single message only once at startup (useful for development and testing purposes).",
     "deprecated": false,
     "firstVersion": "4.17.0",
     "label": "core,scheduling",

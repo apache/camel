@@ -2,7 +2,7 @@
 :doctitle: Stripe
 :shortname: stripe
 :artifactid: camel-stripe
-:description: Camel Stripe component
+:description: Interact with the Stripe payment platform.
 :since: 4.17
 :supportlevel: Preview
 :tabs-sync-option:

@@ -25,6 +25,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
+/**
+ * Interact with the Stripe payment platform.
+ */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "stripe", title = "Stripe", syntax = "stripe:operation",
              category = { Category.SAAS, Category.FINANCE }, producerOnly = true, headersClass = StripeConstants.class)
 public class StripeEndpoint extends DefaultEndpoint implements EndpointServiceLocation {

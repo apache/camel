@@ -30,6 +30,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
+/**
+ * Trigger a single message only once at startup (useful for development and testing purposes).
+ */
 @UriEndpoint(firstVersion = "4.17.0", scheme = "once", title = "Once", syntax = "once:name", consumerOnly = true,
              remote = false, category = { Category.CORE, Category.SCHEDULING })
 public class OnceEndpoint extends DefaultEndpoint {
