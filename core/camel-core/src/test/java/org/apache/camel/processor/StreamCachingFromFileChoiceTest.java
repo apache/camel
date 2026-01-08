@@ -16,51 +16,29 @@
  */
 package org.apache.camel.processor;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.junit.jupiter.api.Test;
 
-public class StreamCachingChoiceTest extends ContextTestSupport {
+public class StreamCachingFromFileChoiceTest extends ContextTestSupport {
+
+    private static final String TEST_FILE = "src/test/resources/org/apache/camel/converter/stream/test.xml";
 
     @Test
     public void testStreamCaching() throws Exception {
-        getMockEndpoint("mock:1").expectedMessageCount(0);
-        getMockEndpoint("mock:2").expectedMessageCount(1);
-        getMockEndpoint("mock:other").expectedMessageCount(0);
+        getMockEndpoint("mock:paris").expectedMessageCount(0);
+        getMockEndpoint("mock:madrid").expectedMessageCount(0);
+        getMockEndpoint("mock:london").expectedMessageCount(1);
+        getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        MyInputStream bos = new MyInputStream("2".getBytes());
-
-        template.sendBody("direct:start", bos);
+        File file = new File(TEST_FILE);
+        FileInputStreamCache cache = new FileInputStreamCache(file);
+        template.sendBody("direct:start", cache);
 
         assertMockEndpointsSatisfied();
-    }
-
-    private class MyInputStream extends InputStream {
-
-        private final ByteArrayInputStream bos;
-
-        public MyInputStream(byte[] buf) {
-            this.bos = new ByteArrayInputStream(buf);
-        }
-
-        @Override
-        public boolean markSupported() {
-            return false;
-        }
-
-        @Override
-        public int read() throws IOException {
-            return bos.read();
-        }
-
-        @Override
-        public synchronized void reset() {
-            bos.reset();
-        }
     }
 
     @Override
@@ -69,10 +47,18 @@ public class StreamCachingChoiceTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                         .choice()
-                            .when().simple("${bodyAs(String)} == '1'")
-                                .to("mock:1")
-                            .when().simple("${bodyAs(String)} == '2'")
-                                .to("mock:2")
+                            .when().simple("${body} contains 'Paris'")
+                                .to("mock:paris")
+                            .when().simple("${body} contains 'London'")
+                                .to("mock:london")
+                            .otherwise()
+                                .to("mock:other")
+                        .end()
+                        .choice()
+                            .when().simple("${body} contains 'Paris'")
+                                .to("mock:paris")
+                            .when().simple("${body} contains 'Madrid'")
+                                .to("mock:madrid")
                             .otherwise()
                                 .to("mock:other")
                         .end();
