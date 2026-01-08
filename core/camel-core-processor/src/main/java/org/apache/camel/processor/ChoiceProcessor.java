@@ -30,6 +30,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,8 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
             // if we did not match then continue to next filter
             if (!matches) {
+                // prepare for re-read from next filter
+                MessageHelper.resetStreamCache(exchange.getIn());
                 continue;
             }
 
