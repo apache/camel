@@ -33,6 +33,8 @@ public class Cw2Configuration implements Cloneable, AwsCommonConfiguration {
     @UriPath
     @Metadata(required = true)
     private String namespace;
+    @UriParam(defaultValue = "putMetricData")
+    private Cw2Operations operation = Cw2Operations.putMetricData;
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private CloudWatchClient amazonCwClient;
@@ -148,6 +150,17 @@ public class Cw2Configuration implements Cloneable, AwsCommonConfiguration {
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public Cw2Operations getOperation() {
+        return operation;
+    }
+
+    /**
+     * The operation to perform. Defaults to putMetricData.
+     */
+    public void setOperation(Cw2Operations operation) {
+        this.operation = operation;
     }
 
     /**

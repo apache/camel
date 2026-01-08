@@ -23,12 +23,13 @@ public class Cw2EndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(21);
+        Set<String> props = new HashSet<>(22);
         props.add("accessKey");
         props.add("amazonCwClient");
         props.add("lazyStartProducer");
         props.add("name");
         props.add("namespace");
+        props.add("operation");
         props.add("overrideEndpoint");
         props.add("profileCredentialsName");
         props.add("proxyHost");

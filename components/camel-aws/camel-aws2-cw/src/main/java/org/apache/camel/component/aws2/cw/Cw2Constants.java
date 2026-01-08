@@ -22,6 +22,11 @@ import org.apache.camel.spi.Metadata;
  * Constants used in Camel AWS CloudWatch module SDK v2
  */
 public interface Cw2Constants {
+    // Operation
+    @Metadata(description = "The operation to perform.", javaType = "String")
+    String OPERATION = "CamelAwsCwOperation";
+
+    // Metric data constants
     @Metadata(description = "The Amazon CW metric namespace.", javaType = "String")
     String METRIC_NAMESPACE = "CamelAwsCwMetricNamespace";
     @Metadata(description = "The Amazon CW metric name.", javaType = "String")
@@ -38,4 +43,18 @@ public interface Cw2Constants {
     String METRIC_DIMENSION_NAME = "CamelAwsCwMetricDimensionName";
     @Metadata(description = "The Amazon CW metric dimension value.", javaType = "String")
     String METRIC_DIMENSION_VALUE = "CamelAwsCwMetricDimensionValue";
+
+    // Alarm constants
+    @Metadata(description = "The name of the alarm.", javaType = "String")
+    String ALARM_NAME = "CamelAwsCwAlarmName";
+    @Metadata(description = "The state value for the alarm (OK, ALARM, INSUFFICIENT_DATA).", javaType = "String")
+    String ALARM_STATE = "CamelAwsCwAlarmState";
+
+    // Pagination constants
+    @Metadata(description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsCwNextToken";
+    @Metadata(description = "The maximum number of results to return.", javaType = "Integer")
+    String MAX_RESULTS = "CamelAwsCwMaxResults";
+    @Metadata(description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsCwIsTruncated";
 }
