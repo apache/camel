@@ -1095,6 +1095,19 @@ public interface Athena2EndpointBuilderFactory {
             return "CamelAwsAthenaMaxResults";
         }
         /**
+         * Whether the response has more results (i.e., is truncated). If true,
+         * use the NEXT_TOKEN header to fetch the next page.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: getQueryResults listQueryExecutions
+         * 
+         * @return the name of the header {@code AwsAthenaIsTruncated}.
+         */
+        public String awsAthenaIsTruncated() {
+            return "CamelAwsAthenaIsTruncated";
+        }
+        /**
          * Include useful trace information at the beginning of queries as an
          * SQL comment (prefixed with --).
          * 
