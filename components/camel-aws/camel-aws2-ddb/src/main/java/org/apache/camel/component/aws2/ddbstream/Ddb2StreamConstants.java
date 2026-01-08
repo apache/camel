@@ -30,4 +30,20 @@ public interface Ddb2StreamConstants {
               description = "A globally unique identifier for the event that was recorded in this stream record.",
               javaType = "String")
     String EVENT_ID = "CamelAwsDdbStreamEventId";
+    @Metadata(label = "consumer",
+              description = "The type of data modification that was performed on the DynamoDB table (INSERT, MODIFY, REMOVE).",
+              javaType = "String")
+    String EVENT_NAME = "CamelAwsDdbStreamEventName";
+    @Metadata(label = "consumer",
+              description = "The sequence number of the stream record.",
+              javaType = "String")
+    String SEQUENCE_NUMBER = "CamelAwsDdbStreamSequenceNumber";
+    @Metadata(label = "consumer",
+              description = "The approximate date and time when the stream record was created.",
+              javaType = "java.time.Instant")
+    String APPROXIMATE_CREATION_DATE_TIME = "CamelAwsDdbStreamApproximateCreationDateTime";
+    @Metadata(label = "consumer",
+              description = "The size of the stream record, in bytes.",
+              javaType = "Long")
+    String SIZE_BYTES = "CamelAwsDdbStreamSizeBytes";
 }

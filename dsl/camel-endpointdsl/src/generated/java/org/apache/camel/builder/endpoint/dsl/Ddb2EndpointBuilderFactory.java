@@ -934,6 +934,19 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbLastEvaluatedKey";
         }
         /**
+         * Whether the response has more results (is truncated). If true, use
+         * LAST_EVALUATED_KEY as START_KEY for the next page.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: Query Scan
+         * 
+         * @return the name of the header {@code AwsDdbIsTruncated}.
+         */
+        public String awsDdbIsTruncated() {
+            return "CamelAwsDdbIsTruncated";
+        }
+        /**
          * The maximum number of items to return.
          * 
          * The option is a: {@code Integer} type.

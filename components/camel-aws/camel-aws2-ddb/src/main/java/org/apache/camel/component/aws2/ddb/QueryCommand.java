@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -35,39 +34,39 @@ public class QueryCommand extends AbstractDdbCommand {
 
     @Override
     public void execute() {
-        QueryRequest.Builder query = QueryRequest.builder().tableName(determineTableName())
-                .attributesToGet(determineAttributeNames()).consistentRead(determineConsistentRead())
-                .keyConditions(determineKeyConditions()).exclusiveStartKey(determineExclusiveStartKey())
-                .limit(determineLimit()).scanIndexForward(determineScanIndexForward());
+        QueryRequest.Builder query = QueryRequest.builder()
+                .tableName(determineTableName())
+                .consistentRead(determineConsistentRead())
+                .keyConditions(determineKeyConditions())
+                .exclusiveStartKey(determineExclusiveStartKey())
+                .limit(determineLimit())
+                .scanIndexForward(determineScanIndexForward());
 
         // Check if we have set an Index Name
-        if (exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class) != null) {
-            query.indexName(exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class));
+        String indexName = determineIndexName();
+        if (indexName != null) {
+            query.indexName(indexName);
         }
 
-        //skip adding attribute-to-get from 'CamelAwsDdbAttributeNames' if the header is null or empty list.
-        if (exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.ATTRIBUTE_NAMES, Collection.class).isEmpty()) {
-            query.attributesToGet(determineAttributeNames());
+        // Skip adding attribute-to-get from 'CamelAwsDdbAttributeNames' if the header is null or empty list.
+        Collection<String> attributeNames = determineAttributeNames();
+        if (attributeNames != null && !attributeNames.isEmpty()) {
+            query.attributesToGet(attributeNames);
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class).isEmpty()) {
+        if (hasFilterExpression()) {
             query.filterExpression(determineFilterExpression());
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class).isEmpty()) {
+        if (hasFilterExpressionAttributeNames()) {
             query.expressionAttributeNames(determineFilterExpressionAttributeNames());
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class).isEmpty()) {
+        if (hasFilterExpressionAttributeValues()) {
             query.expressionAttributeValues(determineFilterExpressionAttributeValues());
         }
 
-        if (exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION) != null &&
-                !exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, Map.class).isEmpty()) {
+        if (hasProjectExpression()) {
             query.projectionExpression(determineProjectExpression());
         }
 
@@ -76,6 +75,7 @@ public class QueryCommand extends AbstractDdbCommand {
         Map<Object, Object> tmp = new HashMap<>();
         tmp.put(Ddb2Constants.ITEMS, result.items());
         tmp.put(Ddb2Constants.LAST_EVALUATED_KEY, result.hasLastEvaluatedKey() ? result.lastEvaluatedKey() : null);
+        tmp.put(Ddb2Constants.IS_TRUNCATED, result.hasLastEvaluatedKey());
         tmp.put(Ddb2Constants.CONSUMED_CAPACITY, result.consumedCapacity());
         tmp.put(Ddb2Constants.COUNT, result.count());
         addToResults(tmp);
@@ -88,25 +88,5 @@ public class QueryCommand extends AbstractDdbCommand {
     @SuppressWarnings("unchecked")
     private Map<String, Condition> determineKeyConditions() {
         return exchange.getIn().getHeader(Ddb2Constants.KEY_CONDITIONS, Map.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private String determineFilterExpression() {
-        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, String> determineFilterExpressionAttributeNames() {
-        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, AttributeValue> determineFilterExpressionAttributeValues() {
-        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private String determineProjectExpression() {
-        return exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, String.class);
     }
 }
