@@ -44,6 +44,7 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "name": getOrCreateConfiguration(target).setName(property(camelContext, java.lang.String.class, value)); return true;
+        case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.cw.Cw2Operations.class, value)); return true;
         case "overrideendpoint":
         case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "profilecredentialsname":
@@ -98,6 +99,7 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "name": return java.lang.String.class;
+        case "operation": return org.apache.camel.component.aws2.cw.Cw2Operations.class;
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
         case "profilecredentialsname":
@@ -148,6 +150,7 @@ public class Cw2ComponentConfigurer extends PropertyConfigurerSupport implements
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "name": return getOrCreateConfiguration(target).getName();
+        case "operation": return getOrCreateConfiguration(target).getOperation();
         case "overrideendpoint":
         case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "profilecredentialsname":
