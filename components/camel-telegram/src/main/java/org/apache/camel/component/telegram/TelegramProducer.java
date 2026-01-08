@@ -18,6 +18,7 @@ package org.apache.camel.component.telegram;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.telegram.model.NoChatIdRequired;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -66,7 +67,7 @@ public class TelegramProducer extends DefaultAsyncProducer {
     private boolean sendMessage(Exchange exchange, AsyncCallback callback, TelegramMessage message) {
         final TelegramService service = endpoint.getTelegramService();
 
-        if (message instanceof OutgoingMessage outgoingMessage) {
+        if (message instanceof OutgoingMessage outgoingMessage && !(message instanceof NoChatIdRequired)) {
             if (outgoingMessage.getChatId() == null) {
                 TelegramConfiguration config = endpoint.getConfiguration();
                 LOG.debug("Chat id is null on outgoing message, trying resolution");
