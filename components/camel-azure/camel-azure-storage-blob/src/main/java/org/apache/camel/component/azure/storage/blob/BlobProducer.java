@@ -88,6 +88,9 @@ public class BlobProducer extends DefaultProducer {
             case uploadBlockBlob:
                 setResponse(exchange, getBlobOperations(exchange).uploadBlockBlob(exchange));
                 break;
+            case uploadBlockBlobChunked:
+                setResponse(exchange, getBlobOperations(exchange).uploadBlockBlobChunked(exchange));
+                break;
             case stageBlockBlobList:
                 setResponse(exchange, getBlobOperations(exchange).stageBlockBlobList(exchange));
                 break;

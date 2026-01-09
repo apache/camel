@@ -23,7 +23,7 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(54);
+        Set<String> props = new HashSet<>(57);
         props.add("accessKey");
         props.add("accountName");
         props.add("backoffErrorThreshold");
@@ -35,6 +35,7 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("blobServiceClient");
         props.add("blobType");
         props.add("blockListType");
+        props.add("blockSize");
         props.add("bridgeErrorHandler");
         props.add("changeFeedContext");
         props.add("changeFeedEndTime");
@@ -58,8 +59,10 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("lazyStartProducer");
         props.add("leaseBlob");
         props.add("leaseDurationInSeconds");
+        props.add("maxConcurrency");
         props.add("maxResultsPerPage");
         props.add("maxRetryRequests");
+        props.add("maxSingleUploadSize");
         props.add("operation");
         props.add("pageBlobSize");
         props.add("pollStrategy");
