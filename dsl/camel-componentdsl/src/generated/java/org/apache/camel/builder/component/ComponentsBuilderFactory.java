@@ -3581,7 +3581,8 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Once (camel-once)
-     * Camel Once component
+     * Trigger a single message only once at startup (useful for development and
+     * testing purposes).
      * 
      * Category: core,scheduling
      * Since: 4.17
@@ -4642,7 +4643,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Stripe (camel-stripe)
-     * Camel Stripe component
+     * Interact with the Stripe payment platform.
      * 
      * Category: saas,finance
      * Since: 4.17
