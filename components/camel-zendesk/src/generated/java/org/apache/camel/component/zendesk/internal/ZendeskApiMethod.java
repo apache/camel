@@ -1256,6 +1256,17 @@ public enum ZendeskApiMethod implements ApiMethod {
         java.util.List.class,
         "getTicketForms"),
 
+    GET_TICKET_FROM_SEARCH_WITH_EXPORT(
+        Iterable.class,
+        "getTicketFromSearchWithExport",
+        arg("searchTerm", String.class)),
+
+    GET_TICKET_FROM_SEARCH_WITH_EXPORT_1(
+        Iterable.class,
+        "getTicketFromSearchWithExport",
+        arg("searchTerm", String.class),
+        arg("pageSize", int.class)),
+
     GET_TICKET_INCIDENTS(
         Iterable.class,
         "getTicketIncidents",
