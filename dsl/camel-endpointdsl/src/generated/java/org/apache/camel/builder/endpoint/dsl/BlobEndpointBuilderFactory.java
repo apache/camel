@@ -1904,6 +1904,38 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * The block size in bytes to use for chunked uploads with
+         * uploadBlockBlobChunked operation. Default is 4MB (4194304). Maximum
+         * is 4000MB. Must be greater than 0.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param blockSize the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder blockSize(Long blockSize) {
+            doSetProperty("blockSize", blockSize);
+            return this;
+        }
+        /**
+         * The block size in bytes to use for chunked uploads with
+         * uploadBlockBlobChunked operation. Default is 4MB (4194304). Maximum
+         * is 4000MB. Must be greater than 0.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param blockSize the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder blockSize(String blockSize) {
+            doSetProperty("blockSize", blockSize);
+            return this;
+        }
+        /**
          * When using getChangeFeed producer operation, this gives additional
          * context that is passed through the Http pipeline during the service
          * call.
@@ -2162,6 +2194,73 @@ public interface BlobEndpointBuilderFactory {
          */
         default BlobEndpointProducerBuilder downloadLinkExpiration(String downloadLinkExpiration) {
             doSetProperty("downloadLinkExpiration", downloadLinkExpiration);
+            return this;
+        }
+        /**
+         * The maximum number of parallel requests to use during upload with
+         * uploadBlockBlobChunked operation. Default is determined by the Azure
+         * SDK based on available processors.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param maxConcurrency the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder maxConcurrency(Integer maxConcurrency) {
+            doSetProperty("maxConcurrency", maxConcurrency);
+            return this;
+        }
+        /**
+         * The maximum number of parallel requests to use during upload with
+         * uploadBlockBlobChunked operation. Default is determined by the Azure
+         * SDK based on available processors.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param maxConcurrency the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder maxConcurrency(String maxConcurrency) {
+            doSetProperty("maxConcurrency", maxConcurrency);
+            return this;
+        }
+        /**
+         * The maximum size in bytes for a single upload request with
+         * uploadBlockBlobChunked operation. Files smaller than this will be
+         * uploaded in a single request. Files larger will use chunked upload
+         * with blocks of size blockSize. Default is 256MB.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param maxSingleUploadSize the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder maxSingleUploadSize(Long maxSingleUploadSize) {
+            doSetProperty("maxSingleUploadSize", maxSingleUploadSize);
+            return this;
+        }
+        /**
+         * The maximum size in bytes for a single upload request with
+         * uploadBlockBlobChunked operation. Files smaller than this will be
+         * uploaded in a single request. Files larger will use chunked upload
+         * with blocks of size blockSize. Default is 256MB.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param maxSingleUploadSize the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointProducerBuilder maxSingleUploadSize(String maxSingleUploadSize) {
+            doSetProperty("maxSingleUploadSize", maxSingleUploadSize);
             return this;
         }
         /**
@@ -3842,8 +3941,9 @@ public interface BlobEndpointBuilderFactory {
             return "CamelAzureStorageBlobListBlobContainersOptions";
         }
         /**
-         * (downloadBlobToFile) ParallelTransferOptions to use to download to
-         * file. Number of parallel transfers parameter is ignored.
+         * (downloadBlobToFile, uploadBlockBlobChunked) ParallelTransferOptions
+         * to use to download to file or upload from file. Number of parallel
+         * transfers parameter is ignored for downloads.
          * 
          * The option is a: {@code ParallelTransferOptions} type.
          * 
@@ -3854,6 +3954,65 @@ public interface BlobEndpointBuilderFactory {
          */
         public String azureStorageBlobParallelTransferOptions() {
             return "CamelAzureStorageBlobParallelTransferOptions";
+        }
+        /**
+         * (uploadBlockBlobChunked) The local file path to upload. Can be
+         * provided as a File, Path, or String in the message body, or via this
+         * header.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobFilePath}.
+         */
+        public String azureStorageBlobFilePath() {
+            return "CamelAzureStorageBlobFilePath";
+        }
+        /**
+         * (uploadBlockBlobChunked) The block size in bytes to use for chunked
+         * uploads. Default is 4MB (4194304). Maximum is 4000MB. Must be greater
+         * than 0.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AzureStorageBlobBlockSize}.
+         */
+        public String azureStorageBlobBlockSize() {
+            return "CamelAzureStorageBlobBlockSize";
+        }
+        /**
+         * (uploadBlockBlobChunked) The maximum number of parallel requests to
+         * use during upload. Default is determined by the Azure SDK based on
+         * available processors.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobMaxConcurrency}.
+         */
+        public String azureStorageBlobMaxConcurrency() {
+            return "CamelAzureStorageBlobMaxConcurrency";
+        }
+        /**
+         * (uploadBlockBlobChunked) The maximum size in bytes for a single
+         * upload request. Files smaller than this will be uploaded in a single
+         * request. Files larger will use chunked upload with blocks of size
+         * blockSize. Default is 256MB.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AzureStorageBlobMaxSingleUploadSize}.
+         */
+        public String azureStorageBlobMaxSingleUploadSize() {
+            return "CamelAzureStorageBlobMaxSingleUploadSize";
         }
         /**
          * (downloadLink) Override the default expiration (millis) of URL

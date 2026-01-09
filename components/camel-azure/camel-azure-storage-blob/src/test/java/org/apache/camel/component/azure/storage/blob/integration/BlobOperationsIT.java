@@ -290,6 +290,64 @@ class BlobOperationsIT extends Base {
     }
 
     @Test
+    void testuploadBlockBlobChunkedWithStream(@TempDir Path testDir) throws Exception {
+        // Create a test file larger than 256KB to test chunked upload
+        final Path testFile = testDir.resolve("large_upload_test.txt");
+        final String content = RandomStringUtils.randomAlphanumeric(512 * 1024); // 512KB of random content
+        java.nio.file.Files.writeString(testFile, content);
+
+        final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper("large_upload_test.txt");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        // Test with InputStream (simulates stream caching scenario)
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(new FileInputStream(testFile.toFile()));
+        exchange.getIn().setHeader(BlobConstants.BLOB_UPLOAD_SIZE, testFile.toFile().length());
+        exchange.getIn().setHeader(BlobConstants.BLOCK_SIZE, 128 * 1024L);
+        exchange.getIn().setHeader(BlobConstants.MAX_CONCURRENCY, 4);
+
+        final BlobOperationResponse response = operations.uploadBlockBlobChunked(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
+
+        // Verify content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+        assertEquals(content, IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
+    void testuploadBlockBlobChunkedWithFilePath(@TempDir Path testDir) throws Exception {
+        // Create a test file
+        final Path testFile = testDir.resolve("file_path_upload_test.txt");
+        final String content = "Test content for file-based upload";
+        java.nio.file.Files.writeString(testFile, content);
+
+        final BlobClientWrapper blobClientWrapper
+                = blobContainerClientWrapper.getBlobClientWrapper("file_path_upload_test.txt");
+        final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);
+
+        // Test with File object (uses memory-mapped I/O)
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(testFile.toFile());
+
+        final BlobOperationResponse response = operations.uploadBlockBlobChunked(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders().get(BlobConstants.E_TAG));
+
+        // Verify content
+        final BlobOperationResponse getBlobResponse = operations.getBlob(null);
+        assertEquals(content, IOUtils.toString((InputStream) getBlobResponse.getBody(), Charset.defaultCharset()));
+
+        blobClientWrapper.delete(null, null, null);
+    }
+
+    @Test
     void testGetBlobBlockList() {
         final BlobClientWrapper blobClientWrapper = blobContainerClientWrapper.getBlobClientWrapper(randomBlobName);
         final BlobOperations operations = new BlobOperations(configuration, blobClientWrapper);

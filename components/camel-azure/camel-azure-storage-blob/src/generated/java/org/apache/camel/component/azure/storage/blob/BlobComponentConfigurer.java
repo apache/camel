@@ -50,6 +50,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": getOrCreateConfiguration(target).setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
         case "blocklisttype":
         case "blockListType": getOrCreateConfiguration(target).setBlockListType(property(camelContext, com.azure.storage.blob.models.BlockListType.class, value)); return true;
+        case "blocksize":
+        case "blockSize": getOrCreateConfiguration(target).setBlockSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "changefeedcontext":
@@ -88,10 +90,14 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "leaseBlob": getOrCreateConfiguration(target).setLeaseBlob(property(camelContext, boolean.class, value)); return true;
         case "leasedurationinseconds":
         case "leaseDurationInSeconds": getOrCreateConfiguration(target).setLeaseDurationInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxconcurrency":
+        case "maxConcurrency": getOrCreateConfiguration(target).setMaxConcurrency(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxresultsperpage":
         case "maxResultsPerPage": getOrCreateConfiguration(target).setMaxResultsPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxretryrequests":
         case "maxRetryRequests": getOrCreateConfiguration(target).setMaxRetryRequests(property(camelContext, int.class, value)); return true;
+        case "maxsingleuploadsize":
+        case "maxSingleUploadSize": getOrCreateConfiguration(target).setMaxSingleUploadSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
         case "pageblobsize":
         case "pageBlobSize": getOrCreateConfiguration(target).setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
@@ -136,6 +142,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": return org.apache.camel.component.azure.storage.blob.BlobType.class;
         case "blocklisttype":
         case "blockListType": return com.azure.storage.blob.models.BlockListType.class;
+        case "blocksize":
+        case "blockSize": return java.lang.Long.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "changefeedcontext":
@@ -174,10 +182,14 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "leaseBlob": return boolean.class;
         case "leasedurationinseconds":
         case "leaseDurationInSeconds": return java.lang.Integer.class;
+        case "maxconcurrency":
+        case "maxConcurrency": return java.lang.Integer.class;
         case "maxresultsperpage":
         case "maxResultsPerPage": return java.lang.Integer.class;
         case "maxretryrequests":
         case "maxRetryRequests": return int.class;
+        case "maxsingleuploadsize":
+        case "maxSingleUploadSize": return java.lang.Long.class;
         case "operation": return org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class;
         case "pageblobsize":
         case "pageBlobSize": return java.lang.Long.class;
@@ -218,6 +230,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": return getOrCreateConfiguration(target).getBlobType();
         case "blocklisttype":
         case "blockListType": return getOrCreateConfiguration(target).getBlockListType();
+        case "blocksize":
+        case "blockSize": return getOrCreateConfiguration(target).getBlockSize();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "changefeedcontext":
@@ -256,10 +270,14 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "leaseBlob": return getOrCreateConfiguration(target).isLeaseBlob();
         case "leasedurationinseconds":
         case "leaseDurationInSeconds": return getOrCreateConfiguration(target).getLeaseDurationInSeconds();
+        case "maxconcurrency":
+        case "maxConcurrency": return getOrCreateConfiguration(target).getMaxConcurrency();
         case "maxresultsperpage":
         case "maxResultsPerPage": return getOrCreateConfiguration(target).getMaxResultsPerPage();
         case "maxretryrequests":
         case "maxRetryRequests": return getOrCreateConfiguration(target).getMaxRetryRequests();
+        case "maxsingleuploadsize":
+        case "maxSingleUploadSize": return getOrCreateConfiguration(target).getMaxSingleUploadSize();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "pageblobsize":
         case "pageBlobSize": return getOrCreateConfiguration(target).getPageBlobSize();

@@ -233,9 +233,27 @@ public final class BlobConstants {
               javaType = "ListBlobContainersOptions")
     public static final String LIST_BLOB_CONTAINERS_OPTIONS = HEADER_PREFIX + "ListBlobContainersOptions";
     @Metadata(label = "producer",
-              description = "(downloadBlobToFile) `ParallelTransferOptions` to use to download to file. Number of parallel transfers parameter is ignored.",
+              description = "(downloadBlobToFile, uploadBlockBlobChunked) `ParallelTransferOptions` to use to download to file or upload from file. Number of parallel transfers parameter is ignored for downloads.",
               javaType = "ParallelTransferOptions")
     public static final String PARALLEL_TRANSFER_OPTIONS = HEADER_PREFIX + "ParallelTransferOptions";
+    @Metadata(label = "producer",
+              description = "(uploadBlockBlobChunked) The local file path to upload. Can be provided as a File, Path, or String in the message body, or via this header.",
+              javaType = "String")
+    public static final String FILE_PATH = HEADER_PREFIX + "FilePath";
+    @Metadata(label = "producer",
+              description = "(uploadBlockBlobChunked) The block size in bytes to use for chunked uploads. Default is 4MB (4194304). Maximum is 4000MB. Must be greater than 0.",
+              javaType = "Long")
+    public static final String BLOCK_SIZE = HEADER_PREFIX + "BlockSize";
+    @Metadata(label = "producer",
+              description = "(uploadBlockBlobChunked) The maximum number of parallel requests to use during upload. Default is determined by the Azure SDK based on available processors.",
+              javaType = "Integer")
+    public static final String MAX_CONCURRENCY = HEADER_PREFIX + "MaxConcurrency";
+    @Metadata(label = "producer",
+              description = "(uploadBlockBlobChunked) The maximum size in bytes for a single upload request. Files smaller than this will be uploaded in a single request. "
+                            +
+                            "Files larger will use chunked upload with blocks of size blockSize. Default is 256MB.",
+              javaType = "Long")
+    public static final String MAX_SINGLE_UPLOAD_SIZE = HEADER_PREFIX + "MaxSingleUploadSize";
     @Metadata(label = "producer", description = "(downloadLink) Override the default expiration (millis) of URL download link.",
               javaType = "Long")
     public static final String DOWNLOAD_LINK_EXPIRATION = HEADER_PREFIX + "DownloadLinkExpiration";

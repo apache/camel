@@ -50,7 +50,7 @@ public class BlobConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "producer",
               enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
-                      + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
+                      + "uploadBlockBlob,uploadBlockBlobChunked,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
                       + "clearPageBlob,getPageBlobRanges",
               defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
@@ -96,6 +96,12 @@ public class BlobConfiguration implements Cloneable {
     private OffsetDateTime changeFeedEndTime;
     @UriParam(label = "producer")
     private Context changeFeedContext;
+    @UriParam(label = "producer")
+    private Long blockSize;
+    @UriParam(label = "producer")
+    private Integer maxConcurrency;
+    @UriParam(label = "producer")
+    private Long maxSingleUploadSize;
     @UriParam(label = "common")
     private String regex;
     @UriParam(label = "security", secret = true)
@@ -427,6 +433,43 @@ public class BlobConfiguration implements Cloneable {
 
     public void setChangeFeedContext(Context changeFeedContext) {
         this.changeFeedContext = changeFeedContext;
+    }
+
+    /**
+     * The block size in bytes to use for chunked uploads with `uploadBlockBlobChunked` operation. Default is 4MB
+     * (4194304). Maximum is 4000MB. Must be greater than 0.
+     */
+    public Long getBlockSize() {
+        return blockSize;
+    }
+
+    public void setBlockSize(Long blockSize) {
+        this.blockSize = blockSize;
+    }
+
+    /**
+     * The maximum number of parallel requests to use during upload with `uploadBlockBlobChunked` operation. Default is
+     * determined by the Azure SDK based on available processors.
+     */
+    public Integer getMaxConcurrency() {
+        return maxConcurrency;
+    }
+
+    public void setMaxConcurrency(Integer maxConcurrency) {
+        this.maxConcurrency = maxConcurrency;
+    }
+
+    /**
+     * The maximum size in bytes for a single upload request with `uploadBlockBlobChunked` operation. Files smaller than
+     * this will be uploaded in a single request. Files larger will use chunked upload with blocks of size blockSize.
+     * Default is 256MB.
+     */
+    public Long getMaxSingleUploadSize() {
+        return maxSingleUploadSize;
+    }
+
+    public void setMaxSingleUploadSize(Long maxSingleUploadSize) {
+        this.maxSingleUploadSize = maxSingleUploadSize;
     }
 
     /**
