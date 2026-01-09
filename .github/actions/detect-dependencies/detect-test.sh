@@ -52,11 +52,7 @@ find_affected_modules() {
 
   for pom in "${affected[@]}"; do
     if [[ -f "$pom" ]]; then
-      # artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
-      # NOTE: as we use mvnd, we must be aware of certain open issues
-      # - https://github.com/apache/maven-mvnd/issues/1463
-      # - https://github.com/apache/maven-mvnd/issues/1465
-      artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId | grep -v '\[' | grep -v ' ')
+      artifactId=$($mavenBinary -f "$pom" help:evaluate -Dexpression=project.artifactId -q --raw-streams -DforceStdout)
       if [ ! -z "$artifactId" ]; then
         affected_transformed+=":$artifactId,"
       fi
