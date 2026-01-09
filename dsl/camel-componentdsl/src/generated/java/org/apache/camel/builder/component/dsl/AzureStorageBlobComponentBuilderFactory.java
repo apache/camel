@@ -428,6 +428,23 @@ public interface AzureStorageBlobComponentBuilderFactory {
         }
     
         /**
+         * The block size in bytes to use for chunked uploads with
+         * uploadBlockBlobChunked operation. Default is 4MB (4194304). Maximum
+         * is 4000MB. Must be greater than 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param blockSize the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder blockSize(java.lang.Long blockSize) {
+            doSetProperty("blockSize", blockSize);
+            return this;
+        }
+    
+        /**
          * When using getChangeFeed producer operation, this gives additional
          * context that is passed through the Http pipeline during the service
          * call.
@@ -593,6 +610,41 @@ public interface AzureStorageBlobComponentBuilderFactory {
          */
         default AzureStorageBlobComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        /**
+         * The maximum number of parallel requests to use during upload with
+         * uploadBlockBlobChunked operation. Default is determined by the Azure
+         * SDK based on available processors.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param maxConcurrency the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder maxConcurrency(java.lang.Integer maxConcurrency) {
+            doSetProperty("maxConcurrency", maxConcurrency);
+            return this;
+        }
+    
+        /**
+         * The maximum size in bytes for a single upload request with
+         * uploadBlockBlobChunked operation. Files smaller than this will be
+         * uploaded in a single request. Files larger will use chunked upload
+         * with blocks of size blockSize. Default is 256MB.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param maxSingleUploadSize the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder maxSingleUploadSize(java.lang.Long maxSingleUploadSize) {
+            doSetProperty("maxSingleUploadSize", maxSingleUploadSize);
             return this;
         }
     
@@ -767,6 +819,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "blobSequenceNumber": getOrCreateConfiguration((BlobComponent) component).setBlobSequenceNumber((java.lang.Long) value); return true;
             case "blockListType": getOrCreateConfiguration((BlobComponent) component).setBlockListType((com.azure.storage.blob.models.BlockListType) value); return true;
+            case "blockSize": getOrCreateConfiguration((BlobComponent) component).setBlockSize((java.lang.Long) value); return true;
             case "changeFeedContext": getOrCreateConfiguration((BlobComponent) component).setChangeFeedContext((com.azure.core.util.Context) value); return true;
             case "changeFeedEndTime": getOrCreateConfiguration((BlobComponent) component).setChangeFeedEndTime((java.time.OffsetDateTime) value); return true;
             case "changeFeedStartTime": getOrCreateConfiguration((BlobComponent) component).setChangeFeedStartTime((java.time.OffsetDateTime) value); return true;
@@ -776,6 +829,8 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "createPageBlob": getOrCreateConfiguration((BlobComponent) component).setCreatePageBlob((boolean) value); return true;
             case "downloadLinkExpiration": getOrCreateConfiguration((BlobComponent) component).setDownloadLinkExpiration((java.lang.Long) value); return true;
             case "lazyStartProducer": ((BlobComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxConcurrency": getOrCreateConfiguration((BlobComponent) component).setMaxConcurrency((java.lang.Integer) value); return true;
+            case "maxSingleUploadSize": getOrCreateConfiguration((BlobComponent) component).setMaxSingleUploadSize((java.lang.Long) value); return true;
             case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition) value); return true;
             case "pageBlobSize": getOrCreateConfiguration((BlobComponent) component).setPageBlobSize((java.lang.Long) value); return true;
             case "autowiredEnabled": ((BlobComponent) component).setAutowiredEnabled((boolean) value); return true;
