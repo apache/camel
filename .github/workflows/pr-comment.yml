@@ -20,7 +20,7 @@ name: PR Comment Build
 on:
   issue_comment:
     types: [created]
-permissions:  
+permissions:
   contents: read
 
 jobs:
@@ -74,11 +74,13 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - id: test
+        env:
+          comment_body: ${{ github.event.comment.body }}
         name: Component test execution
         uses: ./.github/actions/component-test
         with:
           run-id: ${{ github.run_id }}
           pr-id: ${{ github.event.issue.number }}
           comment-id: ${{ github.event.comment.id }}
-          comment-body: ${{ github.event.comment.body }}
+          comment-body: ${{ env.comment_body }}
           artifact-upload-suffix: java-${{ matrix.java }}
