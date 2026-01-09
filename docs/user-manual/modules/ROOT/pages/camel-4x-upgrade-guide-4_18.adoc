@@ -15,4 +15,5 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 === Component deprecation
 
-The `camel-olingo2` and `camel-olingo4` component are deprecated. This is due to the project Apache Olingo that has moved to the Apache Attic and is no more maintained.
+The `camel-olingo2` and `camel-olingo4` component are deprecated.
+This is due the Apache Olingo project is EOL and has been moved to the attic and is no longer maintained.
