@@ -2,9 +2,9 @@
 :doctitle: Iggy
 :shortname: iggy
 :artifactid: camel-iggy
-:description: Camel Iggy component
-:since: 4.14
-:supportlevel: Stable
+:description: Send and receive message to Apache Iggy streaming platform.
+:since: 4.17
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

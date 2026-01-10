@@ -2306,10 +2306,10 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * Iggy (camel-iggy)
-     * Camel Iggy component
+     * Send and receive message to Apache Iggy streaming platform.
      * 
      * Category: messaging
-     * Since: 4.14
+     * Since: 4.17
      * Maven coordinates: org.apache.camel:camel-iggy
      * 
      * @return the dsl builder

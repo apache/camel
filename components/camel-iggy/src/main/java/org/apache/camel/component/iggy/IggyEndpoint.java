@@ -40,9 +40,13 @@ import org.apache.iggy.topic.TopicDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(firstVersion = "4.14.0", scheme = "iggy", title = "Iggy", syntax = "iggy:topicName",
+/**
+ * Send and receive message to Apache Iggy streaming platform.
+ */
+@UriEndpoint(firstVersion = "4.17.0", scheme = "iggy", title = "Iggy", syntax = "iggy:topicName",
              category = { Category.MESSAGING }, headersClass = IggyConstants.class)
 public class IggyEndpoint extends DefaultEndpoint {
+
     private static final Logger LOG = LoggerFactory.getLogger(IggyEndpoint.class);
 
     @UriParam
