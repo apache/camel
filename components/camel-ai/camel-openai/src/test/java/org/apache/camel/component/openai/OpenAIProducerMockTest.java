@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.openai;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.openai.mock.OpenAIMock;
@@ -29,9 +31,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OpenAIProducerMockTest extends CamelTestSupport {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @RegisterExtension
     public OpenAIMock openAIMock = new OpenAIMock().builder()
             .when("hello")
+            .replyWith("Hi from mock")
+            .end()
+            .when("hello-extra")
+            .assertRequest(request -> {
+                try {
+                    JsonNode root = OBJECT_MAPPER.readTree(request);
+                    assertTrue(root.has("traceId"), "Expected traceId in request body");
+                    assertEquals(123, root.get("traceId").asInt());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            })
             .replyWith("Hi from mock")
             .end()
             .when("json please")
@@ -48,6 +64,10 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
                 from("direct:chat")
                         .to("openai:chat-completion?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl()
                             + "/v1");
+
+                from("direct:chat-extra")
+                        .to("openai:chat-completion?model=gpt-5&apiKey=dummy&baseUrl=" + openAIMock.getBaseUrl()
+                            + "/v1&additionalBodyProperty.traceId=123");
 
                 // Streaming chat route using the mock server
                 from("direct:chat-stream")
@@ -84,6 +104,12 @@ public class OpenAIProducerMockTest extends CamelTestSupport {
         Object body = result.getMessage().getBody();
         assertNotNull(body);
         assertTrue(body instanceof java.util.Iterator);
+    }
+
+    @Test
+    void additionalBodyPropertyIsIncludedInRequestBody() {
+        Exchange result = template.request("direct:chat-extra", e -> e.getIn().setBody("hello-extra"));
+        assertEquals("Hi from mock", result.getMessage().getBody(String.class));
     }
 
 }
