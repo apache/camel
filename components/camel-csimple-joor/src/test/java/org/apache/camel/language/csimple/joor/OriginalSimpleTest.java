@@ -2240,6 +2240,28 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${uuid(mygen)}", "1234");
     }
 
+    @Test
+    public void testTrim() {
+        exchange.getMessage().setBody("   Hello World ");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${trim()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${trim(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${trim(' Hi  ')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hi", s);
+
+        exchange.getMessage().setHeader("beer", "  Carlsberg");
+        expression = context.resolveLanguage("csimple").createExpression("${trim(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Carlsberg", s);
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";

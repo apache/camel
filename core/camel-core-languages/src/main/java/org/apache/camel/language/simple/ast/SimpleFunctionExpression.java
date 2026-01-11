@@ -848,6 +848,17 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.joinExpression(exp, separator, prefix);
         }
 
+        // trim function
+        remainder = ifStartsWithReturnRemainder("trim(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.before(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.trimExpression(exp);
+        }
+
         // messageHistory function
         remainder = ifStartsWithReturnRemainder("messageHistory", function);
         if (remainder != null) {
@@ -1170,7 +1181,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
-        String misc = createCodeExpressionMisc(function);
+        String misc = createCodeExpressionMisc(camelContext, function);
         if (misc != null) {
             return misc;
         }
@@ -1800,7 +1811,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return factory.get().createCode(camelContext, function, token.getIndex());
     }
 
-    private String createCodeExpressionMisc(String function) {
+    private String createCodeExpressionMisc(CamelContext camelContext, String function) {
         String remainder;
 
         // substring function
@@ -1889,6 +1900,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
             }
             return "skip(exchange, " + values.trim() + ")";
+        }
+
+        // trim function
+        remainder = ifStartsWithReturnRemainder("trim(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${trim(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return trim(exchange, o);";
         }
 
         // collate function

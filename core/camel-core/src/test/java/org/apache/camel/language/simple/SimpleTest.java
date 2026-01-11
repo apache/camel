@@ -2398,6 +2398,28 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testTrim() {
+        exchange.getMessage().setBody("   Hello World ");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${trim()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(' Hi  '')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hi", s);
+
+        exchange.getMessage().setHeader("beer", "  Carlsberg");
+        expression = context.resolveLanguage("simple").createExpression("${trim(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Carlsberg", s);
+    }
+
+    @Test
     public void testNewEmpty() {
         assertExpressionCreateNewEmpty("list", List.class, v -> ((List) v).isEmpty());
         assertExpressionCreateNewEmpty("LIST", List.class, v -> ((List) v).isEmpty());

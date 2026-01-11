@@ -290,6 +290,8 @@ the error handler logs in case of an unhandled exception.
 includes the route stack-trace). This can be used if you do not want to
 log sensitive data from the message itself.
 
+|trim(exp) |String |The trim function trims the message body (or expression) by removing all leading and trailing white spaces.
+
 |uuid(type) |String |Returns a UUID using the Camel `UuidGenerator`.
 You can choose between `default`, `classic`, `short`, `simple` and `random` as the type.
 If no type is given, the default is used. It is also possible to use a custom `UuidGenerator`
