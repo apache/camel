@@ -1181,7 +1181,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
-        String misc = createCodeExpressionMisc(camelContext, function);
+        String misc = createCodeExpressionMisc(function);
         if (misc != null) {
             return misc;
         }
@@ -1811,7 +1811,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return factory.get().createCode(camelContext, function, token.getIndex());
     }
 
-    private String createCodeExpressionMisc(CamelContext camelContext, String function) {
+    private String createCodeExpressionMisc(String function) {
         String remainder;
 
         // substring function
