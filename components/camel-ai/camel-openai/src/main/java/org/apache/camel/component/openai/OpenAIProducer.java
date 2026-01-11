@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonValue;
@@ -164,6 +165,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
                 throw new IllegalArgumentException("Invalid JSON schema content provided in header/option", e);
             }
         }
+
+        applyAdditionalBodyProperties(paramsBuilder, config);
 
         ChatCompletionCreateParams params = paramsBuilder.build();
 
@@ -446,6 +449,33 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             sb.putAdditionalProperty(e.getKey(), JsonValue.from(e.getValue()));
         }
         return sb.build();
+    }
+
+    private void applyAdditionalBodyProperties(ChatCompletionCreateParams.Builder paramsBuilder, OpenAIConfiguration config) {
+        Map<String, Object> additional = config.getAdditionalBodyProperty();
+        if (additional == null || additional.isEmpty()) {
+            return;
+        }
+
+        for (Map.Entry<String, Object> e : additional.entrySet()) {
+            String key = e.getKey();
+            Object rawValue = e.getValue();
+            Object valueToUse = rawValue;
+            if (rawValue instanceof String s) {
+                valueToUse = parseJsonOrString(s);
+            }
+
+            paramsBuilder.putAdditionalBodyProperty(key, JsonValue.from((Object) valueToUse));
+        }
+    }
+
+    private Object parseJsonOrString(String value) {
+        try {
+            return OBJECT_MAPPER.readValue(value, Object.class);
+        } catch (Exception e) {
+            // treat as literal string
+            return value;
+        }
     }
 
     private <T> T resolveParameter(Message message, String headerName, T defaultValue, Class<T> type) {
