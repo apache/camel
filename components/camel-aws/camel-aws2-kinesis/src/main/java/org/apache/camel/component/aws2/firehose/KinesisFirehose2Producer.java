@@ -18,19 +18,23 @@ package org.apache.camel.component.aws2.firehose;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamRequest;
 import software.amazon.awssdk.services.firehose.model.CreateDeliveryStreamResponse;
 import software.amazon.awssdk.services.firehose.model.DeleteDeliveryStreamRequest;
-import software.amazon.awssdk.services.firehose.model.DeleteDeliveryStreamResponse;
 import software.amazon.awssdk.services.firehose.model.DescribeDeliveryStreamRequest;
 import software.amazon.awssdk.services.firehose.model.DescribeDeliveryStreamResponse;
 import software.amazon.awssdk.services.firehose.model.PutRecordBatchRequest;
@@ -39,7 +43,6 @@ import software.amazon.awssdk.services.firehose.model.PutRecordRequest;
 import software.amazon.awssdk.services.firehose.model.PutRecordResponse;
 import software.amazon.awssdk.services.firehose.model.Record;
 import software.amazon.awssdk.services.firehose.model.UpdateDestinationRequest;
-import software.amazon.awssdk.services.firehose.model.UpdateDestinationResponse;
 
 public class KinesisFirehose2Producer extends DefaultProducer {
 
@@ -82,89 +85,88 @@ public class KinesisFirehose2Producer extends DefaultProducer {
         }
     }
 
-    private void createDeliveryStream(FirehoseClient client, Exchange exchange) {
-        if (exchange.getIn().getBody() instanceof CreateDeliveryStreamRequest) {
-            CreateDeliveryStreamRequest req = exchange.getIn().getBody(CreateDeliveryStreamRequest.class);
-            CreateDeliveryStreamResponse result = client.createDeliveryStream(req);
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        } else {
-            throw new IllegalArgumentException(
-                    "The createDeliveryStream operation expects a CreateDeliveryStream instance as body");
-        }
+    private void createDeliveryStream(FirehoseClient client, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                CreateDeliveryStreamRequest.class,
+                client::createDeliveryStream,
+                null,
+                "createDeliveryStream",
+                (CreateDeliveryStreamResponse response, Message message) -> {
+                    message.setHeader(KinesisFirehose2Constants.DELIVERY_STREAM_ARN, response.deliveryStreamARN());
+                });
     }
 
-    private void deleteDeliveryStream(FirehoseClient client, Exchange exchange) {
-        if (exchange.getIn().getBody() instanceof DeleteDeliveryStreamRequest) {
-            DeleteDeliveryStreamRequest req = exchange.getIn().getBody(DeleteDeliveryStreamRequest.class);
-            DeleteDeliveryStreamResponse result = client.deleteDeliveryStream(req);
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        } else {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
-                DeleteDeliveryStreamRequest req = DeleteDeliveryStreamRequest.builder()
-                        .deliveryStreamName(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME,
-                                String.class))
-                        .build();
-                DeleteDeliveryStreamResponse result = client.deleteDeliveryStream(req);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            } else {
-                throw new IllegalArgumentException(
-                        "The deleteDeliveryStream operation expects at least an delivery stream name header or a DeleteDeliveryStreamRequest instance");
-            }
-        }
+    private void deleteDeliveryStream(FirehoseClient client, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DeleteDeliveryStreamRequest.class,
+                client::deleteDeliveryStream,
+                () -> {
+                    String streamName = getOptionalHeader(exchange, KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME,
+                            String.class);
+                    if (streamName == null) {
+                        throw new IllegalArgumentException(
+                                "The deleteDeliveryStream operation expects at least a delivery stream name header or a DeleteDeliveryStreamRequest instance");
+                    }
+                    return client.deleteDeliveryStream(
+                            DeleteDeliveryStreamRequest.builder().deliveryStreamName(streamName).build());
+                },
+                "deleteDeliveryStream");
     }
 
-    private void updateDestination(FirehoseClient client, Exchange exchange) {
-        if (exchange.getIn().getBody() instanceof CreateDeliveryStreamRequest) {
-            UpdateDestinationRequest req = exchange.getIn().getBody(UpdateDestinationRequest.class);
-            UpdateDestinationResponse result = client.updateDestination(req);
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        } else {
-            throw new IllegalArgumentException(
-                    "The updateDestination operation expects an UpdateDestinationRequest instance as body");
-        }
+    private void updateDestination(FirehoseClient client, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                UpdateDestinationRequest.class,
+                client::updateDestination,
+                null,
+                "updateDestination");
     }
 
-    private void describeDeliveryStream(FirehoseClient client, Exchange exchange) {
-        if (exchange.getIn().getBody() instanceof DescribeDeliveryStreamRequest) {
-            DescribeDeliveryStreamRequest req = exchange.getIn().getBody(DescribeDeliveryStreamRequest.class);
-            DescribeDeliveryStreamResponse result = client.describeDeliveryStream(req);
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        } else {
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME))) {
-                DescribeDeliveryStreamRequest req = DescribeDeliveryStreamRequest.builder()
-                        .deliveryStreamName(exchange.getIn().getHeader(KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME,
-                                String.class))
-                        .build();
-                DescribeDeliveryStreamResponse result = client.describeDeliveryStream(req);
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            } else {
-                throw new IllegalArgumentException(
-                        "The describeDeliveryStream operation expects at least an delivery stream name header or a DeleteDeliveryStreamRequest instance");
-            }
-        }
+    private void describeDeliveryStream(FirehoseClient client, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DescribeDeliveryStreamRequest.class,
+                client::describeDeliveryStream,
+                () -> {
+                    String streamName = getOptionalHeader(exchange, KinesisFirehose2Constants.KINESIS_FIREHOSE_STREAM_NAME,
+                            String.class);
+                    if (streamName == null) {
+                        throw new IllegalArgumentException(
+                                "The describeDeliveryStream operation expects at least a delivery stream name header or a DescribeDeliveryStreamRequest instance");
+                    }
+                    return client.describeDeliveryStream(
+                            DescribeDeliveryStreamRequest.builder().deliveryStreamName(streamName).build());
+                },
+                "describeDeliveryStream",
+                (DescribeDeliveryStreamResponse response, Message message) -> {
+                    if (response.deliveryStreamDescription() != null) {
+                        message.setHeader(KinesisFirehose2Constants.DELIVERY_STREAM_ARN,
+                                response.deliveryStreamDescription().deliveryStreamARN());
+                        message.setHeader(KinesisFirehose2Constants.DELIVERY_STREAM_STATUS,
+                                response.deliveryStreamDescription().deliveryStreamStatusAsString());
+                    }
+                });
     }
 
+    @SuppressWarnings("unchecked")
     private void sendBatchRecord(FirehoseClient client, Exchange exchange) {
+        PutRecordBatchResponse result;
         if (exchange.getIn().getBody() instanceof Iterable) {
-            Iterable c = exchange.getIn().getBody(Iterable.class);
+            Iterable<Record> c = exchange.getIn().getBody(Iterable.class);
             PutRecordBatchRequest.Builder batchRequest = PutRecordBatchRequest.builder();
             batchRequest.deliveryStreamName(getEndpoint().getConfiguration().getStreamName());
             batchRequest.records((Collection<Record>) c);
-            PutRecordBatchResponse result = client.putRecordBatch(batchRequest.build());
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            result = client.putRecordBatch(batchRequest.build());
         } else {
             PutRecordBatchRequest req = exchange.getIn().getBody(PutRecordBatchRequest.class);
-            PutRecordBatchResponse result = client.putRecordBatch(req);
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
+            result = client.putRecordBatch(req);
         }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        message.setHeader(KinesisFirehose2Constants.FAILED_RECORD_COUNT, result.failedPutCount());
+        message.setHeader(KinesisFirehose2Constants.ENCRYPTED, result.encrypted());
     }
 
     public void processSingleRecord(final Exchange exchange) {
@@ -206,5 +208,65 @@ public class KinesisFirehose2Producer extends DefaultProducer {
             operation = getConfiguration().getOperation();
         }
         return operation;
+    }
+
+    /**
+     * Executes a Firehose operation with POJO request support.
+     */
+    private <REQ, RES> void executeOperation(
+            Exchange exchange,
+            Class<REQ> requestClass,
+            Function<REQ, RES> pojoExecutor,
+            Supplier<RES> headerExecutor,
+            String operationName)
+            throws InvalidPayloadException {
+        executeOperation(exchange, requestClass, pojoExecutor, headerExecutor, operationName, null);
+    }
+
+    /**
+     * Executes a Firehose operation with POJO request support and optional response post-processing.
+     */
+    private <REQ, RES> void executeOperation(
+            Exchange exchange,
+            Class<REQ> requestClass,
+            Function<REQ, RES> pojoExecutor,
+            Supplier<RES> headerExecutor,
+            String operationName,
+            BiConsumer<RES, Message> responseProcessor)
+            throws InvalidPayloadException {
+
+        RES result;
+        Object payload = exchange.getIn().getBody();
+        if (requestClass.isInstance(payload)) {
+            try {
+                result = pojoExecutor.apply(requestClass.cast(payload));
+            } catch (AwsServiceException ase) {
+                LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+        } else if (headerExecutor != null) {
+            try {
+                result = headerExecutor.get();
+            } catch (AwsServiceException ase) {
+                LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("The %s operation expects a %s instance as body",
+                            operationName, requestClass.getSimpleName()));
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        if (responseProcessor != null) {
+            responseProcessor.accept(result, message);
+        }
+    }
+
+    /**
+     * Gets an optional header value.
+     */
+    private <T> T getOptionalHeader(Exchange exchange, String headerName, Class<T> headerType) {
+        return exchange.getIn().getHeader(headerName, headerType);
     }
 }
