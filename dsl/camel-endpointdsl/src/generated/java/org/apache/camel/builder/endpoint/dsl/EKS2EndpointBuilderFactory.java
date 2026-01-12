@@ -665,6 +665,42 @@ public interface EKS2EndpointBuilderFactory {
         public String awsEKSVPCConfig() {
             return "CamelAwsEKSVPCConfig";
         }
+        /**
+         * The token for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listClusters
+         * 
+         * @return the name of the header {@code AwsEKSNextToken}.
+         */
+        public String awsEKSNextToken() {
+            return "CamelAwsEKSNextToken";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: listClusters
+         * 
+         * @return the name of the header {@code AwsEKSIsTruncated}.
+         */
+        public String awsEKSIsTruncated() {
+            return "CamelAwsEKSIsTruncated";
+        }
+        /**
+         * The ARN of the cluster.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createCluster describeCluster deleteCluster
+         * 
+         * @return the name of the header {@code AwsEKSClusterArn}.
+         */
+        public String awsEKSClusterArn() {
+            return "CamelAwsEKSClusterArn";
+        }
     }
     static EKS2EndpointBuilder endpointBuilder(String componentName, String path) {
         class EKS2EndpointBuilderImpl extends AbstractEndpointBuilder implements EKS2EndpointBuilder, AdvancedEKS2EndpointBuilder {
