@@ -180,6 +180,9 @@ public final class SimpleConstants {
                             + " This can be used with the Splitter EIP to split a message body and skip the first N number of items.",
               label = "function", javaType = "java.util.Iterator", displayName = "Skip First Items from the Message Body")
     public static final String SKIP = "skip(num)";
+    @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
+              label = "function", displayName = "Trims the message body (or expression)")
+    public static final String TRIM = "trim(exp)";
     @Metadata(description = "The collate function iterates the message body and groups the data into sub lists of specified size."
                             + " This can be used with the Splitter EIP to split a message body and group/batch"
                             + " the split sub message into a group of N sub lists.",

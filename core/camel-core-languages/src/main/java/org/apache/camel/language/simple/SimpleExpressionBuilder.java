@@ -181,6 +181,46 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Trims the given expressions (uses message body if expression is null)
+     */
+    public static Expression trimExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = value.trim();
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "trim(" + expression + ")";
+                } else {
+                    return "trim()";
+                }
+            }
+        };
+    }
+
+    /**
      * A ternary condition expression
      */
     public static Expression iifExpression(final String predicate, final String trueValue, final String falseValue) {
