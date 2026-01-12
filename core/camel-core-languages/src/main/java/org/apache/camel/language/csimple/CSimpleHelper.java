@@ -788,6 +788,18 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static String concat(Exchange exchange, Object right, Object left, Object separator) {
+        String val1 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, right);
+        String val2 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, left);
+        String sep = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, separator);
+
+        if (val1 != null && val2 != null) {
+            return val1 + (sep != null ? sep : "") + val2;
+        } else {
+            return val1 != null ? val1 : val2;
+        }
+    }
+
     public static String uppercase(Exchange exchange, Object value) {
         String body;
         if (value != null) {

@@ -189,6 +189,9 @@ public final class SimpleConstants {
     @Metadata(description = "Lowercases the message body (or expression)",
               label = "function", javaType = "String", displayName = "Lowercase")
     public static final String LOWERCASE = "lowercase(exp)";
+    @Metadata(description = "Performs a string concat using two expressions (message body as default) with optional separator",
+              label = "function", javaType = "String", displayName = "Concat")
+    public static final String CONCAT = "concat(exp,exp,separator)";
     @Metadata(description = "The collate function iterates the message body and groups the data into sub lists of specified size."
                             + " This can be used with the Splitter EIP to split a message body and group/batch"
                             + " the split sub message into a group of N sub lists.",

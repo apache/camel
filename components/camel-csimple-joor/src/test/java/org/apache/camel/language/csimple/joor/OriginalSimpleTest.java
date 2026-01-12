@@ -2263,6 +2263,36 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testConcat() {
+        exchange.getMessage().setBody("Hello");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${concat(' World')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${concat(${body}, ' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${concat(${body}, 'World', '_')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello_World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${concat('World ', ${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("World Hello", s);
+
+        exchange.getMessage().setHeader("beer", "Carlsberg");
+        expression = context.resolveLanguage("csimple").createExpression("${concat(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("HelloCarlsberg", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${concat(${body}, ${header.beer}, ' ')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello Carlsberg", s);
+    }
+
+    @Test
     public void testUppercase() {
         exchange.getMessage().setBody("Hello World");
 
