@@ -1,0 +1,13 @@
+{
+    "id": "gift_simple_001",
+    "sticker": {
+        "file_id": "CAACAgIAAxkBAAISimpleGift",
+        "file_unique_id": "AgADSimpleGift",
+        "type": "regular",
+        "width": 512,
+        "height": 512,
+        "is_animated": false,
+        "is_video": false
+    },
+    "star_count": 50
+}

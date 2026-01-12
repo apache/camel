@@ -1,0 +1,36 @@
+{
+    "ok": true,
+    "result": {
+        "transactions": [
+            {
+                "id": "txn_001",
+                "amount": 100,
+                "nanostar_amount": 0,
+                "date": 1704067200,
+                "source": {
+                    "type": "user",
+                    "user": {
+                        "id": 1585844777,
+                        "is_bot": false,
+                        "first_name": "John",
+                        "last_name": "Doe"
+                    }
+                }
+            },
+            {
+                "id": "txn_002",
+                "amount": 50,
+                "nanostar_amount": 250000000,
+                "date": 1704153600,
+                "receiver": {
+                    "type": "fragment",
+                    "withdrawal_state": {
+                        "type": "succeeded",
+                        "date": 1704153700,
+                        "url": "https://fragment.com/withdrawal/abc123"
+                    }
+                }
+            }
+        ]
+    }
+}

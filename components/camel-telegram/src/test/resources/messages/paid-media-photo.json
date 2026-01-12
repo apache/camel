@@ -1,0 +1,19 @@
+{
+    "type": "photo",
+    "photo": [
+        {
+            "file_id": "AgACAgIAAx0CXX1XXXXXAQI",
+            "file_unique_id": "AQADAgATXXXXXX",
+            "file_size": 15234,
+            "width": 320,
+            "height": 240
+        },
+        {
+            "file_id": "AgACAgIAAx0CXX1XXXXXAQJ",
+            "file_unique_id": "AQADAgATXXXXXY",
+            "file_size": 45678,
+            "width": 800,
+            "height": 600
+        }
+    ]
+}

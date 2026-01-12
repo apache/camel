@@ -1,0 +1,20 @@
+{
+    "type": "video",
+    "video": {
+        "file_id": "BAADBAADAgADyzvwCC7_premium_video",
+        "file_unique_id": "AgADyzvwCC7_unique",
+        "width": 1920,
+        "height": 1080,
+        "duration": 180,
+        "thumbnail": {
+            "file_id": "AAQEABMlaUQZAAT1video_thumb",
+            "file_unique_id": "thumb_unique",
+            "file_size": 2048,
+            "width": 320,
+            "height": 180
+        },
+        "file_name": "premium_video.mp4",
+        "mime_type": "video/mp4",
+        "file_size": 52428800
+    }
+}
