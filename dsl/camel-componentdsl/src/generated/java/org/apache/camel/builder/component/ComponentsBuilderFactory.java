@@ -3594,6 +3594,19 @@ public interface ComponentsBuilderFactory {
         return OnceComponentBuilderFactory.once();
     }
     /**
+     * OpenAI (camel-openai)
+     * OpenAI endpoint for chat completion.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * @return the dsl builder
+     */
+    static OpenaiComponentBuilderFactory.OpenaiComponentBuilder openai() {
+        return OpenaiComponentBuilderFactory.openai();
+    }
+    /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
      * 
