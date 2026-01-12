@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -783,6 +784,32 @@ public final class CSimpleHelper {
         }
         if (body != null) {
             body = body.trim();
+        }
+        return body;
+    }
+
+    public static String uppercase(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = body.toUpperCase(Locale.ENGLISH);
+        }
+        return body;
+    }
+
+    public static String lowercase(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = body.toLowerCase(Locale.ENGLISH);
         }
         return body;
     }

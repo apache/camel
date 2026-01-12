@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
@@ -215,6 +216,86 @@ public final class SimpleExpressionBuilder {
                     return "trim(" + expression + ")";
                 } else {
                     return "trim()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Uppercases the given expressions (uses message body if expression is null)
+     */
+    public static Expression uppercaseExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = value.toUpperCase(Locale.ENGLISH);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "uppercase(" + expression + ")";
+                } else {
+                    return "uppercase()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Lowercases the given expressions (uses message body if expression is null)
+     */
+    public static Expression lowercaseExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = value.toLowerCase(Locale.ENGLISH);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "lowercase(" + expression + ")";
+                } else {
+                    return "lowercase()";
                 }
             }
         };

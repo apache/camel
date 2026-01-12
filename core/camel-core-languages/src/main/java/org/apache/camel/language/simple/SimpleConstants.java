@@ -181,8 +181,14 @@ public final class SimpleConstants {
               label = "function", javaType = "java.util.Iterator", displayName = "Skip First Items from the Message Body")
     public static final String SKIP = "skip(num)";
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
-              label = "function", displayName = "Trims the message body (or expression)")
+              label = "function", javaType = "String", displayName = "Trim")
     public static final String TRIM = "trim(exp)";
+    @Metadata(description = "Uppercases the message body (or expression)",
+              label = "function", javaType = "String", displayName = "Uppercase")
+    public static final String UPPERCASE = "uppercase(exp)";
+    @Metadata(description = "Lowercases the message body (or expression)",
+              label = "function", javaType = "String", displayName = "Lowercase")
+    public static final String LOWERCASE = "lowercase(exp)";
     @Metadata(description = "The collate function iterates the message body and groups the data into sub lists of specified size."
                             + " This can be used with the Splitter EIP to split a message body and group/batch"
                             + " the split sub message into a group of N sub lists.",

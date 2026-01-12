@@ -292,6 +292,10 @@ log sensitive data from the message itself.
 
 |trim(exp) |String |The trim function trims the message body (or expression) by removing all leading and trailing white spaces.
 
+|uppercase(exp) |String |Uppercases the message body (or expression)
+
+|lowercase(exp) |String |Lowercases the message body (or expression)
+
 |uuid(type) |String |Returns a UUID using the Camel `UuidGenerator`.
 You can choose between `default`, `classic`, `short`, `simple` and `random` as the type.
 If no type is given, the default is used. It is also possible to use a custom `UuidGenerator`
