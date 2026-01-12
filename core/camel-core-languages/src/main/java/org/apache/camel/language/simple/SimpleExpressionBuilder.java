@@ -222,6 +222,40 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * String concats the two expressions.
+     */
+    public static Expression concatExpression(final String right, final String left, String separator) {
+        return new ExpressionAdapter() {
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                exp1 = context.resolveLanguage("simple").createExpression(right);
+                exp1.init(context);
+                exp2 = context.resolveLanguage("simple").createExpression(left);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value1 = exp1.evaluate(exchange, String.class);
+                String value2 = exp2.evaluate(exchange, String.class);
+                if (value1 != null && value2 != null) {
+                    return value1 + (separator != null ? separator : "") + value2;
+                } else {
+                    return value1 != null ? value1 : value2;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "concat(" + right + "," + left + ")";
+            }
+        };
+    }
+
+    /**
      * Uppercases the given expressions (uses message body if expression is null)
      */
     public static Expression uppercaseExpression(final String expression) {

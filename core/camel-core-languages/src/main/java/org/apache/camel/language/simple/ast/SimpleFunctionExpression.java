@@ -859,6 +859,37 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.trimExpression(exp);
         }
 
+        // concat function
+        remainder = ifStartsWithReturnRemainder("concat(", function);
+        if (remainder != null) {
+            String separator = null;
+            String exp1 = "${body}";
+            String exp2;
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+                if (tokens.length > 3) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: "
+                                                    + function,
+                            token.getIndex());
+                }
+                exp1 = StringHelper.removeQuotes(tokens[0]);
+                exp2 = StringHelper.removeQuotes(tokens[1]);
+                if (tokens.length == 3) {
+                    separator = StringHelper.removeQuotes(tokens[2]);
+                }
+            } else {
+                exp2 = StringHelper.removeQuotes(values.trim());
+            }
+            return SimpleExpressionBuilder.concatExpression(exp1, exp2, separator);
+        }
+
         // uppercase function
         remainder = ifStartsWithReturnRemainder("uppercase(", function);
         if (remainder != null) {
@@ -1946,6 +1977,54 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 exp = "null";
             }
             return "Object o = " + exp + ";\n        return trim(exchange, o);";
+        }
+
+        // concat function
+        remainder = ifStartsWithReturnRemainder("concat(", function);
+        if (remainder != null) {
+            String separator = "null";
+            String exp1 = "body";
+            String exp2;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length > 3) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: "
+                                                    + function,
+                            token.getIndex());
+                }
+                // single quotes should be double quotes
+                for (int i = 0; i < tokens.length; i++) {
+                    String s = tokens[i];
+                    if (StringHelper.isSingleQuoted(s)) {
+                        s = StringHelper.removeLeadingAndEndingQuotes(s);
+                        s = StringQuoteHelper.doubleQuote(s);
+                        tokens[i] = s;
+                    }
+                }
+                if (tokens.length == 1) {
+                    exp2 = tokens[0];
+                } else {
+                    exp1 = tokens[0];
+                    exp2 = tokens[1];
+                }
+                if (tokens.length == 3) {
+                    separator = tokens[2];
+                }
+            } else {
+                String s = values.trim();
+                s = StringHelper.removeLeadingAndEndingQuotes(s);
+                s = StringQuoteHelper.doubleQuote(s);
+                exp2 = s;
+            }
+            return "Object right = " + exp2 + ";\n        Object left = " + exp1 + ";\n        " + "Object separator = "
+                   + separator + ";\n        return concat(exchange, left, right, separator);";
         }
 
         // uppercase function
