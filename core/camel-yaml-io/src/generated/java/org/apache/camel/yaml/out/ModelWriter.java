@@ -3096,6 +3096,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCSimpleExpression(String name, CSimpleExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("pretty", def.getPretty(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3242,6 +3243,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSimpleExpression(String name, SimpleExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("pretty", def.getPretty(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }

@@ -34,9 +34,10 @@ public class SimpleExpressionReifier extends TypedExpressionReifier<SimpleExpres
 
     @Override
     protected Object[] createProperties() {
-        Object[] properties = new Object[2];
+        Object[] properties = new Object[3];
         properties[0] = asResultType();
         properties[1] = parseBoolean(definition.getTrim());
+        properties[2] = parseBoolean(definition.getPretty());
         return properties;
     }
 

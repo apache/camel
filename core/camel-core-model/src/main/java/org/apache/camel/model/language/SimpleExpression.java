@@ -18,6 +18,7 @@ package org.apache.camel.model.language;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
@@ -32,11 +33,16 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends TypedExpressionDefinition {
 
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String pretty;
+
     public SimpleExpression() {
     }
 
     protected SimpleExpression(SimpleExpression source) {
         super(source);
+        this.pretty = source.pretty;
     }
 
     public SimpleExpression(String expression) {
@@ -49,6 +55,7 @@ public class SimpleExpression extends TypedExpressionDefinition {
 
     private SimpleExpression(Builder builder) {
         super(builder);
+        this.pretty = builder.pretty;
     }
 
     @Override
@@ -61,11 +68,40 @@ public class SimpleExpression extends TypedExpressionDefinition {
         return "simple";
     }
 
+    public String getPretty() {
+        return pretty;
+    }
+
+    /**
+     * To pretty format the output (only JSon or XML supported)
+     */
+    public void setPretty(String pretty) {
+        this.pretty = pretty;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link SimpleExpression}.
      */
     @XmlTransient
     public static class Builder extends AbstractBuilder<Builder, SimpleExpression> {
+
+        private String pretty;
+
+        /**
+         * To pretty format the output (only JSon or XML supported)
+         */
+        public Builder pretty(String pretty) {
+            this.pretty = pretty;
+            return this;
+        }
+
+        /**
+         * To pretty format the output (only JSon or XML supported)
+         */
+        public Builder pretty(boolean pretty) {
+            this.pretty = Boolean.toString(pretty);
+            return this;
+        }
 
         @Override
         public SimpleExpression end() {
