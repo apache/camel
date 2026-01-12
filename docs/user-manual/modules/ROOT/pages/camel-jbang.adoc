@@ -1548,6 +1548,32 @@ for components like Kafka or AWS. So for these you may want to use a kamelet ins
 $ camel cmd send --body=file:payload.json --uri='kamelet:mqtt-sink?brokerUrl=tcp://mybroker:1883&topic=temperature'
 ----
 
+==== Sending messages to infrastructure services
+
+*Available since Camel 4.17*
+
+In Camel 4.17, you can use `camel cmd send` to send messages directly to infrastructure services that are started with `camel infra run`.
+This eliminates the need to manually specify server connection details, as the command automatically reads connection information from JSON files created by infrastructure services.
+
+This is done by using the `--infra` option to specify which infrastructure service to send to:
+
+[source,bash]
+----
+$ camel infra run nats
+$ camel cmd send --body=file:payload.json --infra=nats
+----
+
+The command automatically discovers the running NATS service, reads its connection details from the JSON file (e.g., `~/.camel/infra-nats-{pid}.json`), and constructs the appropriate endpoint URI with the server information.
+
+You can also combine the `--infra` option with a specific endpoint:
+
+[source,bash]
+----
+$ camel cmd send --endpoint='nats:subject:test' --body=file:payload.json --infra=nats
+----
+
+This allows you to send messages to infrastructure services without needing to know or specify the server addresses manually.
+
 ==== Poll messages via Camel
 
 *Available since Camel 4.8*

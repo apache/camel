@@ -22,13 +22,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StringHelper;
@@ -115,6 +120,10 @@ public class CamelSendAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
+    @CommandLine.Option(names = { "--infra" },
+                        description = "Send to infrastructure service (e.g., nats, kafka)")
+    String infra;
+
     private volatile long pid;
 
     private MessageTableHelper tableHelper;
@@ -134,7 +143,9 @@ public class CamelSendAction extends ActionBaseCommand {
             }
         }
 
-        if (name != null) {
+        if (infra != null) {
+            return doCallInfra(infra);
+        } else if (name != null) {
             return doCall(name);
         } else {
             return doCallLocal();
@@ -386,4 +397,122 @@ public class CamelSendAction extends ActionBaseCommand {
         }
     }
 
+    private Integer doCallInfra(String infraService) throws Exception {
+        Map<Long, Path> infraPids = findInfraPids(infraService);
+
+        if (infraPids.isEmpty()) {
+            printer().println("No running infrastructure service found for: " + infraService);
+            return 1;
+        }
+
+        if (infraPids.size() > 1) {
+            printer().println("Multiple running infrastructure services found for: " + infraService +
+                              ". Found " + infraPids.size() + " services.");
+            return 1;
+        }
+
+        Map.Entry<Long, Path> entry = infraPids.entrySet().iterator().next();
+        this.pid = entry.getKey();
+        Path jsonFile = entry.getValue();
+
+        JsonObject connectionDetails = readConnectionDetails(jsonFile);
+
+        if (connectionDetails == null) {
+            printer().println("Could not read connection details from: " + jsonFile);
+            return 1;
+        }
+
+        String updatedEndpoint = updateEndpointWithServerInfo(endpoint, infraService, connectionDetails);
+
+        String originalEndpoint = this.endpoint;
+        this.endpoint = updatedEndpoint;
+
+        try {
+            Path outputFile = writeSendData();
+            showStatus(outputFile);
+            return 0;
+        } finally {
+            this.endpoint = originalEndpoint;
+        }
+    }
+
+    private Map<Long, Path> findInfraPids(String serviceName) throws Exception {
+        Map<Long, Path> pids = new HashMap<>();
+
+        Path camelDir = CommandLineHelper.getCamelDir();
+
+        try (Stream<Path> files = Files.list(camelDir)) {
+            List<Path> pidFiles = files
+                    .filter(p -> {
+                        String fileName = p.getFileName().toString();
+                        return fileName.startsWith("infra-") && fileName.endsWith(".json");
+                    })
+                    .collect(Collectors.toList());
+
+            for (Path pidFile : pidFiles) {
+                String fileName = pidFile.getFileName().toString();
+                // Format: infra-{service}-{pid}.json
+                String withoutPrefix = fileName.substring("infra-".length());
+                String withoutExtension = withoutPrefix.substring(0, withoutPrefix.lastIndexOf(".json"));
+
+                int lastDashIndex = withoutExtension.lastIndexOf('-');
+                if (lastDashIndex > 0) {
+                    String service = withoutExtension.substring(0, lastDashIndex);
+                    String pidStr = withoutExtension.substring(lastDashIndex + 1);
+
+                    if (service.equals(serviceName)) {
+                        try {
+                            long pid = Long.parseLong(pidStr);
+                            pids.put(pid, pidFile);
+                        } catch (NumberFormatException e) {
+                            // Skip invalid PID
+                        }
+                    }
+                }
+            }
+        }
+
+        return pids;
+    }
+
+    private JsonObject readConnectionDetails(Path jsonFile) throws Exception {
+        String content = Files.readString(jsonFile);
+        return (JsonObject) Jsoner.deserialize(content);
+    }
+
+    private String updateEndpointWithServerInfo(String originalEndpoint, String infraService, JsonObject connectionDetails) {
+        if (originalEndpoint == null) {
+            if ("nats".equals(infraService)) {
+                return infraService + ":subject:test";
+            } else {
+                return infraService + ":default";
+            }
+        }
+
+        if (originalEndpoint.startsWith(infraService + ":")) {
+            String remainingPart = originalEndpoint.substring(infraService.length() + 1);
+
+            if (remainingPart.contains("?")) {
+                return originalEndpoint;
+            } else {
+                String serverAddress = (String) connectionDetails.get("getServiceAddress");
+                if (serverAddress != null) {
+                    return originalEndpoint + "?servers=" + serverAddress;
+                } else {
+                    Object addr = connectionDetails.get("address");
+                    if (addr instanceof String) {
+                        return originalEndpoint + "?servers=" + addr;
+                    }
+
+                    Object host = connectionDetails.get("host");
+                    Object port = connectionDetails.get("port");
+                    if (host instanceof String && port instanceof Number) {
+                        return originalEndpoint + "?servers=" + host + ":" + port;
+                    }
+                }
+            }
+        }
+
+        return originalEndpoint;
+    }
 }
