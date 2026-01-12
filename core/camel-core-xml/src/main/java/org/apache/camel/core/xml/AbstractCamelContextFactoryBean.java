@@ -670,6 +670,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             findRouteBuilders();
             installRoutes();
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
