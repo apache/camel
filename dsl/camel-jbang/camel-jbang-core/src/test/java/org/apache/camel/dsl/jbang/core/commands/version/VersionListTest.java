@@ -36,10 +36,12 @@ class VersionListTest extends CamelCommandBaseTestSupport {
         versionList.doCall();
 
         List<String> lines = printer.getLines();
+        // normalize multiple spaces to single space to avoid failures due to column width changes
+        String output = normalizeSpaces(lines.stream().collect(Collectors.joining("\n")));
         // there was a change where the information is stored in 4.15, thus the test on 4.14.1 and 4.15.0
-        Assertions.assertThat(lines.stream().collect(Collectors.joining("\n")))
-                .contains("4.14.1         3.5.6     17,21   LTS")
-                .contains("4.15.0         3.5.6     17,21");
+        Assertions.assertThat(output)
+                .contains("4.14.1 3.5.6 17,21 LTS")
+                .contains("4.15.0 3.5.6 17,21");
     }
 
     @Test
@@ -51,8 +53,14 @@ class VersionListTest extends CamelCommandBaseTestSupport {
         versionList.doCall();
 
         List<String> lines = printer.getLines();
-        Assertions.assertThat(lines.stream().collect(Collectors.joining("\n")))
-                .contains("4.14.0       3.27.0    17,21   LTS");
+        // normalize multiple spaces to single space to avoid failures due to column width changes
+        String output = normalizeSpaces(lines.stream().collect(Collectors.joining("\n")));
+        Assertions.assertThat(output)
+                .contains("4.14.0 3.27.0 17,21 LTS");
+    }
+
+    private static String normalizeSpaces(String input) {
+        return input.replaceAll("\\s+", " ");
     }
 
 }
