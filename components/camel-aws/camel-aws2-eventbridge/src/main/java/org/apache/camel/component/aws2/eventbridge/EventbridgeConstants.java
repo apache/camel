@@ -43,4 +43,23 @@ public interface EventbridgeConstants {
     String EVENT_SOURCE = "CamelAwsEventbridgeSource";
     @Metadata(description = "The detail type related to Event", javaType = "String")
     String EVENT_DETAIL_TYPE = "CamelAwsEventbridgeDetailType";
+
+    // Pagination constants
+    @Metadata(label = "listRules listTargetsByRule listRuleNamesByTarget",
+              description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsEventbridgeNextToken";
+    @Metadata(label = "listRules listTargetsByRule listRuleNamesByTarget",
+              description = "The maximum number of results to return.", javaType = "Integer")
+    String LIMIT = "CamelAwsEventbridgeLimit";
+    @Metadata(label = "listRules listTargetsByRule listRuleNamesByTarget",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsEventbridgeIsTruncated";
+
+    // Response metadata
+    @Metadata(label = "putRule describeRule",
+              description = "The Amazon Resource Name (ARN) of the rule.", javaType = "String")
+    String RULE_ARN = "CamelAwsEventbridgeRuleArn";
+    @Metadata(label = "putEvent putTargets removeTargets",
+              description = "The number of failed entries in the response.", javaType = "Integer")
+    String FAILED_ENTRY_COUNT = "CamelAwsEventbridgeFailedEntryCount";
 }
