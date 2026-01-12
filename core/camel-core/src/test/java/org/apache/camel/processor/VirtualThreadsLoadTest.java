@@ -49,6 +49,12 @@ import org.slf4j.LoggerFactory;
  * <pre>
  * mvn test -Dtest=VirtualThreadsLoadTest -pl core/camel-core -Dcamel.threads.virtual.enabled=true
  * </pre>
+ * <p>
+ * Run with virtual threads and thread-per-task mode (optimal for virtual threads):
+ *
+ * <pre>
+ * mvn test -Dtest=VirtualThreadsLoadTest -pl core/camel-core -Dcamel.threads.virtual.enabled=true -Dloadtest.virtualThreadPerTask=true
+ * </pre>
  */
 @Disabled("Manual load test - run explicitly for benchmarking")
 public class VirtualThreadsLoadTest extends ContextTestSupport {
@@ -61,6 +67,9 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
     private static final int CONCURRENT_PRODUCERS = Integer.getInteger("loadtest.producers", 50);
     private static final int CONCURRENT_CONSUMERS = Integer.getInteger("loadtest.consumers", 100);
     private static final int SIMULATED_IO_DELAY_MS = Integer.getInteger("loadtest.delay", 5);
+    // When true, uses virtualThreadPerTask mode which spawns a new thread per message
+    // This is optimal for virtual threads where thread creation is cheap
+    private static final boolean VIRTUAL_THREAD_PER_TASK = Boolean.getBoolean("loadtest.virtualThreadPerTask");
 
     private final LongAdder processedCount = new LongAdder();
     private CountDownLatch completionLatch;
@@ -82,7 +91,8 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
 
         System.out.println("Starting load test: " + TOTAL_MESSAGES + " messages, "
                            + CONCURRENT_PRODUCERS + " producers, " + CONCURRENT_CONSUMERS + " consumers, "
-                           + SIMULATED_IO_DELAY_MS + "ms I/O delay");
+                           + SIMULATED_IO_DELAY_MS + "ms I/O delay"
+                           + (VIRTUAL_THREAD_PER_TASK ? ", virtualThreadPerTask=true" : ""));
 
         StopWatch watch = new StopWatch();
 
@@ -128,6 +138,7 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
         System.out.println("Throughput: " + String.format("%.2f", throughput) + " msg/sec");
         System.out.println("Average latency: " + String.format("%.2f", avgLatency) + " ms/msg");
         System.out.println("Virtual threads: " + System.getProperty("camel.threads.virtual.enabled", "false"));
+        System.out.println("Thread-per-task mode: " + VIRTUAL_THREAD_PER_TASK);
         System.out.println();
     }
 
@@ -138,7 +149,14 @@ public class VirtualThreadsLoadTest extends ContextTestSupport {
             public void configure() {
                 // Route with concurrent consumers and simulated I/O delay
                 // Use larger queue size to avoid blocking
-                from("seda:start?concurrentConsumers=" + CONCURRENT_CONSUMERS + "&size=" + (TOTAL_MESSAGES + 1000))
+                String sedaOptions = "concurrentConsumers=" + CONCURRENT_CONSUMERS
+                                     + "&size=" + (TOTAL_MESSAGES + 1000);
+                if (VIRTUAL_THREAD_PER_TASK) {
+                    // Use thread-per-task mode - optimal for virtual threads
+                    // concurrentConsumers becomes a concurrency limit
+                    sedaOptions += "&virtualThreadPerTask=true";
+                }
+                from("seda:start?" + sedaOptions)
                         .routeId("loadTestRoute")
                         .process(new SimulatedIOProcessor())
                         .process(exchange -> {

@@ -56,6 +56,8 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "queue": target.setQueue(property(camelContext, java.util.concurrent.BlockingQueue.class, value)); return true;
         case "size": target.setSize(property(camelContext, int.class, value)); return true;
         case "timeout": target.setTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "virtualthreadpertask":
+        case "virtualThreadPerTask": target.setVirtualThreadPerTask(property(camelContext, boolean.class, value)); return true;
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": target.setWaitForTaskToComplete(property(camelContext, org.apache.camel.WaitForTaskToComplete.class, value)); return true;
         default: return false;
@@ -98,6 +100,8 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "queue": return java.util.concurrent.BlockingQueue.class;
         case "size": return int.class;
         case "timeout": return long.class;
+        case "virtualthreadpertask":
+        case "virtualThreadPerTask": return boolean.class;
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": return org.apache.camel.WaitForTaskToComplete.class;
         default: return null;
@@ -141,6 +145,8 @@ public class SedaEndpointConfigurer extends PropertyConfigurerSupport implements
         case "queue": return target.getQueue();
         case "size": return target.getSize();
         case "timeout": return target.getTimeout();
+        case "virtualthreadpertask":
+        case "virtualThreadPerTask": return target.isVirtualThreadPerTask();
         case "waitfortasktocomplete":
         case "waitForTaskToComplete": return target.getWaitForTaskToComplete();
         default: return null;
