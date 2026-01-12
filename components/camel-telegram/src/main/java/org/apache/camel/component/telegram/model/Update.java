@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.camel.component.telegram.model.payments.PaidMediaPurchased;
 import org.apache.camel.component.telegram.model.payments.PreCheckoutQuery;
 import org.apache.camel.component.telegram.model.payments.ShippingQuery;
 
@@ -50,6 +51,9 @@ public class Update implements Serializable {
 
     @JsonProperty("shipping_query")
     private ShippingQuery shippingQuery;
+
+    @JsonProperty("purchased_paid_media")
+    private PaidMediaPurchased purchasedPaidMedia;
 
     public Update() {
     }
@@ -110,6 +114,14 @@ public class Update implements Serializable {
         this.shippingQuery = shippingQuery;
     }
 
+    public PaidMediaPurchased getPurchasedPaidMedia() {
+        return purchasedPaidMedia;
+    }
+
+    public void setPurchasedPaidMedia(PaidMediaPurchased purchasedPaidMedia) {
+        this.purchasedPaidMedia = purchasedPaidMedia;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Update{");
@@ -120,6 +132,7 @@ public class Update implements Serializable {
         sb.append(", inlineQuery=").append(inlineQuery);
         sb.append(", preCheckoutQuery=").append(preCheckoutQuery);
         sb.append(", shippingQuery=").append(shippingQuery);
+        sb.append(", purchasedPaidMedia=").append(purchasedPaidMedia);
         sb.append('}');
         return sb.toString();
     }

@@ -1,0 +1,30 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 219398831,
+            "message": {
+                "message_id": 12346,
+                "from": {
+                    "id": 1585844777,
+                    "first_name": "John",
+                    "last_name": "Doe"
+                },
+                "date": 1234567890,
+                "chat": {
+                    "id": 1585844777,
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "type": "private"
+                },
+                "refunded_payment": {
+                    "currency": "XTR",
+                    "total_amount": 500,
+                    "invoice_payload": "star_purchase_payload",
+                    "telegram_payment_charge_id": "telegram_refund_charge_789",
+                    "provider_payment_charge_id": "provider_refund_charge_012"
+                }
+            }
+        }
+    ]
+}
