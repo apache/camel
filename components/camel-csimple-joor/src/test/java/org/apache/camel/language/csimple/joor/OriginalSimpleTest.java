@@ -2262,6 +2262,50 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertEquals("Carlsberg", s);
     }
 
+    @Test
+    public void testUppercase() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${uppercase()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("HELLO WORLD", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uppercase(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("HELLO WORLD", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${uppercase('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("HI", s);
+
+        exchange.getMessage().setHeader("beer", "Carlsberg");
+        expression = context.resolveLanguage("csimple").createExpression("${uppercase(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("CARLSBERG", s);
+    }
+
+    @Test
+    public void testLowercase() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${lowercase()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("hello world", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${lowercase(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("hello world", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${lowercase('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("hi", s);
+
+        exchange.getMessage().setHeader("beer", "Carlsberg");
+        expression = context.resolveLanguage("csimple").createExpression("${lowercase(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("carlsberg", s);
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";

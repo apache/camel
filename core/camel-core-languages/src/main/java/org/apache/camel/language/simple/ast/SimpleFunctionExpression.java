@@ -859,6 +859,27 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.trimExpression(exp);
         }
 
+        // uppercase function
+        remainder = ifStartsWithReturnRemainder("uppercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.before(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.uppercaseExpression(exp);
+        }
+        // lowercase function
+        remainder = ifStartsWithReturnRemainder("lowercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.before(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.lowercaseExpression(exp);
+        }
+
         // messageHistory function
         remainder = ifStartsWithReturnRemainder("messageHistory", function);
         if (remainder != null) {
@@ -1925,6 +1946,55 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 exp = "null";
             }
             return "Object o = " + exp + ";\n        return trim(exchange, o);";
+        }
+
+        // uppercase function
+        remainder = ifStartsWithReturnRemainder("uppercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${uppercase(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return uppercase(exchange, o);";
+        }
+        // lowercase
+        remainder = ifStartsWithReturnRemainder("lowercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${lowercase(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return lowercase(exchange, o);";
         }
 
         // collate function
