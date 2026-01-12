@@ -4,7 +4,7 @@
 :artifactid: camel-ibm-watson-language
 :description: Perform natural language processing using IBM Watson Natural Language Understanding
 :since: 4.16
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
