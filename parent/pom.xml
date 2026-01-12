@@ -454,7 +454,7 @@
         <pooled-jms-version>3.2.1</pooled-jms-version>
         <properties-maven-plugin-version>1.2.1</properties-maven-plugin-version>
         <proto-google-common-protos-version>2.22.0</proto-google-common-protos-version>
-        <protobuf-version>3.25.5</protobuf-version>
+        <protobuf-version>4.33.3</protobuf-version>
         <protobuf-maven-plugin-version>4.1.2</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <prowide-version>SRU2025-10.3.3</prowide-version>
