@@ -28,4 +28,17 @@ public interface ECS2Constants {
     String MAX_RESULTS = "CamelAwsECSMaxResults";
     @Metadata(description = "The cluster name", javaType = "String")
     String CLUSTER_NAME = "CamelAwsECSClusterName";
+
+    // Pagination constants
+    @Metadata(label = "listClusters",
+              description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsECSNextToken";
+    @Metadata(label = "listClusters",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsECSIsTruncated";
+
+    // Response metadata
+    @Metadata(label = "createCluster describeCluster deleteCluster",
+              description = "The ARN of the cluster.", javaType = "String")
+    String CLUSTER_ARN = "CamelAwsECSClusterArn";
 }
