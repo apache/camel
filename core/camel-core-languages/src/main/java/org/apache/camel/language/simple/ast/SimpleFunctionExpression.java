@@ -868,7 +868,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp) or ${concat(exp,exp,separator)} was: " + function,
+                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: " + function,
                         token.getIndex());
             }
             if (values.contains(",")) {
@@ -1988,7 +1988,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp) or ${concat(exp,exp,separator)} was: " + function,
+                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: " + function,
                         token.getIndex());
             }
             if (values.contains(",")) {
@@ -2023,8 +2023,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 s = StringQuoteHelper.doubleQuote(s);
                 exp2 = s;
             }
-            return "Object right = " + exp1 + ";\n        Object left = " + exp2 + ";\n        " + "Object separator = "
-                   + separator + ";\n        return concat(exchange, right, left, separator);";
+            return "Object right = " + exp2 + ";\n        Object left = " + exp1 + ";\n        " + "Object separator = "
+                   + separator + ";\n        return concat(exchange, left, right, separator);";
         }
 
         // uppercase function

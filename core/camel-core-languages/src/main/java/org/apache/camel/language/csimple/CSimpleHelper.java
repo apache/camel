@@ -788,9 +788,9 @@ public final class CSimpleHelper {
         return body;
     }
 
-    public static String concat(Exchange exchange, Object right, Object left, Object separator) {
-        String val1 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, right);
-        String val2 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, left);
+    public static String concat(Exchange exchange, Object left, Object right, Object separator) {
+        String val1 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, left);
+        String val2 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, right);
         String sep = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, separator);
 
         if (val1 != null && val2 != null) {
