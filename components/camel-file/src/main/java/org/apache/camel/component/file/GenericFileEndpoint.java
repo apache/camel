@@ -1745,6 +1745,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (readLockIdempotentReleaseExecutorService != null) {
             params.put("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
         }
+        if (checksumFileAlgorithm != null) {
+            params.put("checksumFileAlgorithm", checksumFileAlgorithm);
+        }
         return params;
     }
 
