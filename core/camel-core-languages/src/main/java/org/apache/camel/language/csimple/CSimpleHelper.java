@@ -16,9 +16,11 @@
  */
 package org.apache.camel.language.csimple;
 
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -39,6 +41,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
@@ -824,6 +827,70 @@ public final class CSimpleHelper {
             body = body.toLowerCase(Locale.ENGLISH);
         }
         return body;
+    }
+
+    public static int length(Exchange exchange, Object value) {
+        try {
+            if (value instanceof byte[] arr) {
+                return arr.length;
+            } else if (value instanceof char[] arr) {
+                return arr.length;
+            } else if (value instanceof int[] arr) {
+                return arr.length;
+            } else if (value instanceof long[] arr) {
+                return arr.length;
+            } else if (value instanceof double[] arr) {
+                return arr.length;
+            }
+
+            String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+            if (data != null) {
+                return data.length();
+            }
+        } finally {
+            if (value instanceof StreamCache streamCache) {
+                streamCache.reset();
+            }
+        }
+        return 0;
+    }
+
+    public static int size(Exchange exchange, Object value) {
+        try {
+            // calculate length
+            if (value instanceof byte[] arr) {
+                return arr.length;
+            } else if (value instanceof char[] arr) {
+                return arr.length;
+            } else if (value instanceof int[] arr) {
+                return arr.length;
+            } else if (value instanceof long[] arr) {
+                return arr.length;
+            } else if (value instanceof double[] arr) {
+                return arr.length;
+            } else if (value instanceof String s) {
+                return s.length();
+            } else if (value instanceof Collection<?> c) {
+                return c.size();
+            } else if (value instanceof Map<?, ?> m) {
+                return m.size();
+            } else {
+                // fall back to stream to read
+                InputStream is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, value);
+                int len = 0;
+                while (is.read() != -1) {
+                    len++;
+                }
+                return len;
+            }
+        } catch (Exception e) {
+            // ignore
+        } finally {
+            if (value instanceof StreamCache streamCache) {
+                streamCache.reset();
+            }
+        }
+        return 0;
     }
 
 }

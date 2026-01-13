@@ -2420,6 +2420,56 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSize() {
+        exchange.getMessage().setBody(new int[] { 4, 7, 9 });
+        Expression expression = context.resolveLanguage("simple").createExpression("${size()}");
+        int len = expression.evaluate(exchange, int.class);
+        assertEquals(3, len);
+
+        exchange.getMessage().setBody("Hello World");
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(11, len);
+
+        exchange.getMessage().setBody(List.of("A", "B", "C", "D"));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(4, len);
+
+        exchange.getMessage().setBody(Map.of("A", 1, "B", 2, "C", 3));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(3, len);
+
+        File f = new File("src/test/resources/log4j2.properties");
+        exchange.getMessage().setBody(f);
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(f.length(), len);
+    }
+
+    @Test
+    public void testLength() {
+        exchange.getMessage().setBody(new int[] { 4, 7, 9 });
+        Expression expression = context.resolveLanguage("simple").createExpression("${length()}");
+        int len = expression.evaluate(exchange, int.class);
+        assertEquals(3, len);
+
+        exchange.getMessage().setBody("Hello World");
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(11, len);
+
+        exchange.getMessage().setBody(List.of("A", "BB", "CCC", "DDDD"));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(18, len);
+
+        exchange.getMessage().setBody(Map.of("A", 1, "BB", 22, "CC", 333));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(20, len);
+
+        File f = new File("src/test/resources/log4j2.properties");
+        exchange.getMessage().setBody(f);
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(f.length(), len);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 
