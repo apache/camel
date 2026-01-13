@@ -183,6 +183,12 @@ public final class SimpleConstants {
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
               label = "function", javaType = "String", displayName = "Trim")
     public static final String TRIM = "trim(exp)";
+    @Metadata(description = "The payload length (number of bytes) of the message body (or expression).",
+              label = "function", javaType = "int", displayName = "Length")
+    public static final String LENGTH = "length(exp)";
+    @Metadata(description = "The size of the message body (or expression). If the payload is java.util.Collection or java.util.Map based then the size is the number of elements; otherwise the payload size in bytes.",
+              label = "function", javaType = "int", displayName = "Size")
+    public static final String SIZE = "size(exp)";
     @Metadata(description = "Uppercases the message body (or expression)",
               label = "function", javaType = "String", displayName = "Uppercase")
     public static final String UPPERCASE = "uppercase(exp)";

@@ -23,6 +23,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -40,6 +41,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Predicate;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
@@ -335,6 +337,138 @@ public final class SimpleExpressionBuilder {
                     return "lowercase(" + expression + ")";
                 } else {
                     return "lowercase()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns the size of the expression (number of elements in collection/map; otherwise size of payload in bytes)
+     */
+    public static Expression sizeExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, Object.class);
+                } else {
+                    body = exchange.getMessage().getBody(Object.class);
+                }
+                if (body != null) {
+                    try {
+                        // calculate length
+                        if (body instanceof byte[] arr) {
+                            return arr.length;
+                        } else if (body instanceof char[] arr) {
+                            return arr.length;
+                        } else if (body instanceof int[] arr) {
+                            return arr.length;
+                        } else if (body instanceof long[] arr) {
+                            return arr.length;
+                        } else if (body instanceof double[] arr) {
+                            return arr.length;
+                        } else if (body instanceof String s) {
+                            return s.length();
+                        } else if (body instanceof Collection<?> c) {
+                            return c.size();
+                        } else if (body instanceof Map<?, ?> m) {
+                            return m.size();
+                        } else {
+                            // fall back to stream to read
+                            InputStream is
+                                    = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+                            int len = 0;
+                            while (is.read() != -1) {
+                                len++;
+                            }
+                            return len;
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        if (body instanceof StreamCache streamCache) {
+                            streamCache.reset();
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "size(" + expression + ")";
+                } else {
+                    return "size()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns the length of the expression (length of payload in bytes)
+     */
+    public static Expression lengthExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, Object.class);
+                } else {
+                    body = exchange.getMessage().getBody(Object.class);
+                }
+                try {
+                    if (body instanceof byte[] arr) {
+                        return arr.length;
+                    } else if (body instanceof char[] arr) {
+                        return arr.length;
+                    } else if (body instanceof int[] arr) {
+                        return arr.length;
+                    } else if (body instanceof long[] arr) {
+                        return arr.length;
+                    } else if (body instanceof double[] arr) {
+                        return arr.length;
+                    }
+                    String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
+                    if (data != null) {
+                        return data.length();
+                    }
+                } finally {
+                    if (body instanceof StreamCache streamCache) {
+                        streamCache.reset();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "length(" + expression + ")";
+                } else {
+                    return "length()";
                 }
             }
         };
