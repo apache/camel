@@ -1752,6 +1752,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "pretty", type = "boolean", defaultValue = "false", description = "To pretty format the output (only JSon or XML supported)", displayName = "Pretty"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
             }
@@ -1784,6 +1785,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "pretty": {
+                    String val = asText(node);
+                    target.setPretty(val);
                     break;
                 }
                 case "resultType": {
@@ -17654,6 +17660,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
+                    @YamlProperty(name = "pretty", type = "boolean", defaultValue = "false", description = "To pretty format the output (only JSon or XML supported)", displayName = "Pretty"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
             }
@@ -17686,6 +17693,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "id": {
                     String val = asText(node);
                     target.setId(val);
+                    break;
+                }
+                case "pretty": {
+                    String val = asText(node);
+                    target.setPretty(val);
                     break;
                 }
                 case "resultType": {

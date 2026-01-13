@@ -13866,6 +13866,12 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
+            "pretty" : {
+              "type" : "boolean",
+              "title" : "Pretty",
+              "description" : "To pretty format the output (only JSon or XML supported)",
+              "default" : false
+            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
@@ -14819,6 +14825,12 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "pretty" : {
+              "type" : "boolean",
+              "title" : "Pretty",
+              "description" : "To pretty format the output (only JSon or XML supported)",
+              "default" : false
             },
             "resultType" : {
               "type" : "string",

@@ -17336,7 +17336,17 @@ Refers to a custom KeyGenerator to lookup from the register for KEM operations.
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition"/>
+      <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="pretty" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To pretty format the output (only JSon or XML supported). Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="typedExpressionDefinition">
@@ -17643,7 +17653,17 @@ Whether to validate the bean has the configured method. Default value: true
   </xs:complexType>
   <xs:complexType name="simpleExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition"/>
+      <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="pretty" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To pretty format the output (only JSon or XML supported). Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="spELExpression">

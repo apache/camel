@@ -630,12 +630,35 @@ public class ExpressionClause<T> implements Expression, Predicate {
     /**
      * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
      *
+     * @param  text   the expression to be evaluated
+     * @param  pretty format pretty (only XML or JSon output supported)
+     * @return        the builder to continue processing the DSL
+     */
+    public T simple(String text, boolean pretty) {
+        return delegate.simple(text, pretty);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
+     *
      * @param  text       the expression to be evaluated
      * @param  resultType the result type
      * @return            the builder to continue processing the DSL
      */
     public T simple(String text, Class<?> resultType) {
         return delegate.simple(text, resultType);
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the result type
+     * @param  pretty     format pretty (only XML or JSon output supported)
+     * @return            the builder to continue processing the DSL
+     */
+    public T simple(String text, Class<?> resultType, boolean pretty) {
+        return delegate.simple(text, resultType, pretty);
     }
 
     /**

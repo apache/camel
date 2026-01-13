@@ -158,13 +158,14 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     public Expression createExpression(String expression, Object[] properties) {
         Class<?> resultType = property(Class.class, properties, 0, null);
         boolean trim = property(boolean.class, properties, 1, true);
+        boolean pretty = property(boolean.class, properties, 2, false);
         if (trim && expression != null) {
             expression = expression.trim();
         }
         if (expression == null) {
             expression = "${null}";
         }
-        return createExpression(expression, resultType);
+        return createExpression(expression, resultType, pretty);
     }
 
     @Override
@@ -202,7 +203,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         return answer;
     }
 
-    public Expression createExpression(String expression, Class<?> resultType) {
+    public Expression createExpression(String expression, Class<?> resultType, boolean pretty) {
         if (resultType == Boolean.class || resultType == boolean.class) {
             // if its a boolean as result then its a predicate
             Predicate predicate = createPredicate(expression);
@@ -211,6 +212,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             Expression exp = createExpression(expression);
             if (resultType != null) {
                 exp = ExpressionBuilder.convertToExpression(exp, resultType);
+            }
+            if (pretty) {
+                exp = ExpressionBuilder.prettyExpression(exp);
             }
             return exp;
         }
