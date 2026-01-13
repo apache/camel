@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -37,7 +38,9 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.bean.MethodNotFoundException;
+import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.myconverter.MyCustomDate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -2395,6 +2398,25 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${hash(${header.unknown})}");
         s = expression.evaluate(exchange, String.class);
         assertNull(s);
+    }
+
+    @Test
+    public void testHashStreamCache() throws Exception {
+        File f = new File("src/test/resources/log4j2.properties");
+        StreamCache sc = new FileInputStreamCache(f);
+        assertEquals(-1, sc.position());
+        exchange.getMessage().setBody(sc);
+        Expression expression = context.resolveLanguage("simple").createExpression("${hash(${body})}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        // should reset so we can read it again
+        assertEquals(-1, sc.position());
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] arr = context.getTypeConverter().convertTo(byte[].class, f);
+        byte[] bytes = digest.digest(arr);
+        String expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
     }
 
     @Test
