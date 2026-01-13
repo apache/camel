@@ -274,7 +274,7 @@ public final class IOHelper {
      *
      * @param  input       the input stream buffer
      * @param  output      the output stream buffer
-     * @throws IOException
+     * @throws IOException for I/O errors
      */
     public static void copyAndCloseInput(InputStream input, OutputStream output) throws IOException {
         copy(input, output);
@@ -289,7 +289,7 @@ public final class IOHelper {
      * @param  input       the input stream buffer
      * @param  output      the output stream buffer
      * @param  bufferSize  the size of the buffer used for the copies
-     * @throws IOException
+     * @throws IOException for I/O errors
      */
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
         copy(input, output, bufferSize);

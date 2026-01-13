@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -559,14 +560,21 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                byte[] data = exp.evaluate(exchange, byte[].class);
-                if (data != null && data.length > 0) {
+                InputStream is = exp.evaluate(exchange, InputStream.class);
+                if (is != null) {
                     try {
+                        // calculate the hash in chunks in case the payload is big
                         MessageDigest digest = MessageDigest.getInstance(algorithm);
-                        byte[] bytes = digest.digest(data);
-                        return StringHelper.bytesToHex(bytes);
+                        byte[] buffer = new byte[1024];
+                        for (int n = is.read(buffer, 0, 1024); n > -1; n = is.read(buffer, 0, 1024)) {
+                            digest.update(buffer, 0, n);
+                        }
+                        return StringHelper.bytesToHex(digest.digest());
                     } catch (Exception e) {
                         throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    } finally {
+                        // reset cached streams so they can be read again
+                        MessageHelper.resetStreamCache(exchange.getMessage());
                     }
                 }
                 return null;
