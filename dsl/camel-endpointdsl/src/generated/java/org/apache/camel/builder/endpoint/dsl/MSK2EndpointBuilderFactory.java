@@ -677,6 +677,54 @@ public interface MSK2EndpointBuilderFactory {
         public String awsMSKBrokerNodesGroupInfo() {
             return "CamelAwsMSKBrokerNodesGroupInfo";
         }
+        /**
+         * The token for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listClusters
+         * 
+         * @return the name of the header {@code AwsMSKNextToken}.
+         */
+        public String awsMSKNextToken() {
+            return "CamelAwsMSKNextToken";
+        }
+        /**
+         * The maximum number of results to return.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: listClusters
+         * 
+         * @return the name of the header {@code AwsMSKMaxResults}.
+         */
+        public String awsMSKMaxResults() {
+            return "CamelAwsMSKMaxResults";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: listClusters
+         * 
+         * @return the name of the header {@code AwsMSKIsTruncated}.
+         */
+        public String awsMSKIsTruncated() {
+            return "CamelAwsMSKIsTruncated";
+        }
+        /**
+         * The state of the cluster.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createCluster describeCluster
+         * 
+         * @return the name of the header {@code AwsMSKClusterState}.
+         */
+        public String awsMSKClusterState() {
+            return "CamelAwsMSKClusterState";
+        }
     }
     static MSK2EndpointBuilder endpointBuilder(String componentName, String path) {
         class MSK2EndpointBuilderImpl extends AbstractEndpointBuilder implements MSK2EndpointBuilder, AdvancedMSK2EndpointBuilder {

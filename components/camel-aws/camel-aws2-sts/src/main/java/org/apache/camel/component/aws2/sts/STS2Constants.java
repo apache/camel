@@ -34,6 +34,19 @@ public interface STS2Constants {
               javaType = "Integer")
     String ASSUME_ROLE_DURATION_SECONDS = "CamelAwsStsAssumeRoleDurationSeconds";
 
+    @Metadata(label = "assumeRole getSessionToken getFederationToken",
+              description = "The temporary access key ID.", javaType = "String")
     String ACCESS_KEY_ID = "CamelAwsStsAccessKeyId";
+    @Metadata(label = "assumeRole getSessionToken getFederationToken",
+              description = "The temporary secret access key.", javaType = "String")
     String SECRET_KEY_ID = "CamelAwsStsSecretKey";
+    @Metadata(label = "assumeRole getSessionToken getFederationToken",
+              description = "The temporary session token.", javaType = "String")
+    String SESSION_TOKEN = "CamelAwsStsSessionToken";
+    @Metadata(label = "assumeRole getSessionToken getFederationToken",
+              description = "The expiration date and time of the credentials.", javaType = "java.time.Instant")
+    String EXPIRATION = "CamelAwsStsExpiration";
+    @Metadata(label = "assumeRole",
+              description = "The Amazon Resource Name (ARN) of the assumed role.", javaType = "String")
+    String ASSUMED_ROLE_ARN = "CamelAwsStsAssumedRoleArn";
 }
