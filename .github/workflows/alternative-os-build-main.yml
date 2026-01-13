@@ -19,10 +19,8 @@ name: Alternative OS Build (Camel 4)
 
 on:
   schedule:
-    # Every 45th minute every 3 hours during working days
-    - cron: '45 */3 * * 1-5'
-    # Every 6 hours during weekends ... we don't want to be flooded with emails
-    - cron: '30 */6 * * 6,0'
+    # Run nightly at 2 AM
+    - cron: '0 2 * * *'
 
 permissions:
   contents: read
