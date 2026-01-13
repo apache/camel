@@ -16,7 +16,10 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +56,7 @@ import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
@@ -565,10 +569,13 @@ public final class SimpleExpressionBuilder {
                     try {
                         // calculate the hash in chunks in case the payload is big
                         MessageDigest digest = MessageDigest.getInstance(algorithm);
-                        byte[] buffer = new byte[1024];
-                        for (int n = is.read(buffer, 0, 1024); n > -1; n = is.read(buffer, 0, 1024)) {
-                            digest.update(buffer, 0, n);
-                        }
+                        DigestInputStream dis = new DigestInputStream(is, digest);
+                        IOHelper.copy(dis, new OutputStream() {
+                            @Override
+                            public void write(int b) throws IOException {
+                                // ignore
+                            }
+                        });
                         return StringHelper.bytesToHex(digest.digest());
                     } catch (Exception e) {
                         throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
