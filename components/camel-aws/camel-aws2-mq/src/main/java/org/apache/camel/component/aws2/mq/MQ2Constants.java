@@ -47,4 +47,20 @@ public interface MQ2Constants {
     @Metadata(description = "If the MQ instance must be publicly available or not.", javaType = "Boolean",
               defaultValue = "false")
     String BROKER_PUBLICLY_ACCESSIBLE = "CamelAwsMQBrokerPubliclyAccessible";
+
+    // Pagination constants
+    @Metadata(label = "listBrokers",
+              description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsMQNextToken";
+    @Metadata(label = "listBrokers",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsMQIsTruncated";
+
+    // Response metadata
+    @Metadata(label = "createBroker",
+              description = "The Amazon Resource Name (ARN) of the broker.", javaType = "String")
+    String BROKER_ARN = "CamelAwsMQBrokerArn";
+    @Metadata(label = "describeBroker",
+              description = "The state of the broker.", javaType = "String")
+    String BROKER_STATE = "CamelAwsMQBrokerState";
 }

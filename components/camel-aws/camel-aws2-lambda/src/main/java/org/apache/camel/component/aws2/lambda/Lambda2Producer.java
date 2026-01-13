@@ -207,6 +207,14 @@ public class Lambda2Producer extends DefaultProducer {
             request = exchange.getIn().getMandatoryBody(ListFunctionsRequest.class);
         } else {
             ListFunctionsRequest.Builder builder = ListFunctionsRequest.builder();
+            String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
+            if (marker != null) {
+                builder.marker(marker);
+            }
+            Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
+            if (maxItems != null) {
+                builder.maxItems(maxItems);
+            }
             request = builder.build();
         }
         try {
@@ -217,6 +225,8 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, result.nextMarker() != null);
     }
 
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
@@ -237,6 +247,9 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result.payload().asUtf8String());
+        message.setHeader(Lambda2Constants.STATUS_CODE, result.statusCode());
+        message.setHeader(Lambda2Constants.FUNCTION_ERROR, result.functionError());
+        message.setHeader(Lambda2Constants.LOG_RESULT, result.logResult());
     }
 
     @SuppressWarnings("unchecked")
@@ -374,6 +387,7 @@ public class Lambda2Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.FUNCTION_ARN, result.functionArn());
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
@@ -609,16 +623,26 @@ public class Lambda2Producer extends DefaultProducer {
         } else {
             ListVersionsByFunctionRequest.Builder builder = ListVersionsByFunctionRequest.builder();
             builder.functionName(getEndpoint().getFunction());
+            String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
+            if (marker != null) {
+                builder.marker(marker);
+            }
+            Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
+            if (maxItems != null) {
+                builder.maxItems(maxItems);
+            }
             request = builder.build();
         }
         try {
             result = lambdaClient.listVersionsByFunction(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listVersions command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, result.nextMarker() != null);
     }
 
     private void createAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
@@ -711,9 +735,17 @@ public class Lambda2Producer extends DefaultProducer {
         } else {
             ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
             builder.functionName(getEndpoint().getFunction());
-            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-            if (!ObjectHelper.isEmpty(version)) {
+            String version = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_VERSION, String.class);
+            if (version != null) {
                 builder.functionVersion(version);
+            }
+            String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
+            if (marker != null) {
+                builder.marker(marker);
+            }
+            Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
+            if (maxItems != null) {
+                builder.maxItems(maxItems);
             }
             request = builder.build();
         }
@@ -725,6 +757,8 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, result.nextMarker() != null);
     }
 
     private Lambda2Operations determineOperation(Exchange exchange) {
@@ -747,6 +781,13 @@ public class Lambda2Producer extends DefaultProducer {
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    /**
+     * Gets an optional header value.
+     */
+    private <T> T getOptionalHeader(Exchange exchange, String headerName, Class<T> headerType) {
+        return exchange.getIn().getHeader(headerName, headerType);
     }
 
     @Override

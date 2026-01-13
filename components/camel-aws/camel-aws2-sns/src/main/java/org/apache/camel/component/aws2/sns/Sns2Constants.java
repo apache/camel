@@ -32,4 +32,17 @@ public interface Sns2Constants {
     @Metadata(description = "The message structure to use such as json.", javaType = "String")
     String MESSAGE_STRUCTURE = "CamelAwsSnsMessageStructure";
     String MESSAGE_GROUP_ID_PROPERTY = "CamelAwsSnsMessageGroupId";
+
+    // Response metadata for FIFO topics
+    @Metadata(label = "producer",
+              description = "The sequence number for FIFO topics.", javaType = "String")
+    String SEQUENCE_NUMBER = "CamelAwsSnsSequenceNumber";
+
+    // Batch operation response metadata
+    @Metadata(label = "producer",
+              description = "The number of failed messages in a batch publish operation.", javaType = "Integer")
+    String FAILED_MESSAGE_COUNT = "CamelAwsSnsFailedMessageCount";
+    @Metadata(label = "producer",
+              description = "The number of successful messages in a batch publish operation.", javaType = "Integer")
+    String SUCCESSFUL_MESSAGE_COUNT = "CamelAwsSnsSuccessfulMessageCount";
 }

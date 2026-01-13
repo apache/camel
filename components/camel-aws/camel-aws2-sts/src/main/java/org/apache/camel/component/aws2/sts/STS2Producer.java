@@ -133,6 +133,15 @@ public class STS2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (result.credentials() != null) {
+                message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
+                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
+                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
+                message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
+            }
+            if (result.assumedRoleUser() != null) {
+                message.setHeader(STS2Constants.ASSUMED_ROLE_ARN, result.assumedRoleUser().arn());
+            }
         }
     }
 
@@ -162,6 +171,12 @@ public class STS2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (result.credentials() != null) {
+                message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
+                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
+                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
+                message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
+            }
         }
     }
 
@@ -197,6 +212,12 @@ public class STS2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (result.credentials() != null) {
+                message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
+                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
+                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
+                message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
+            }
         }
     }
 

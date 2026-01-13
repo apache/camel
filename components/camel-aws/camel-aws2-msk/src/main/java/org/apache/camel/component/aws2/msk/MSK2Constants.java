@@ -37,4 +37,20 @@ public interface MSK2Constants {
     @Metadata(description = "The Broker nodes group info to provide during the create operation",
               javaType = "software.amazon.awssdk.services.kafka.model.BrokerNodeGroupInfo")
     String BROKER_NODES_GROUP_INFO = "CamelAwsMSKBrokerNodesGroupInfo";
+
+    // Pagination constants
+    @Metadata(label = "listClusters",
+              description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsMSKNextToken";
+    @Metadata(label = "listClusters",
+              description = "The maximum number of results to return.", javaType = "Integer")
+    String MAX_RESULTS = "CamelAwsMSKMaxResults";
+    @Metadata(label = "listClusters",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsMSKIsTruncated";
+
+    // Response metadata
+    @Metadata(label = "createCluster describeCluster",
+              description = "The state of the cluster.", javaType = "String")
+    String CLUSTER_STATE = "CamelAwsMSKClusterState";
 }
