@@ -2017,7 +2017,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringBefore(before)}, ${substringBefore(exp,before)} was: "
-                        + function,
+                                                + function,
                         token.getIndex());
             }
             // single quotes should be double quotes
@@ -2046,14 +2046,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringAfter(before)}, ${substringAfter(exp,before)} was: "
-                        + function,
+                                                + function,
                         token.getIndex());
             }
             String[] tokens = codeSplitSafe(values, ',', true, true);
             if (tokens.length > 2) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringAfter(before)}, ${substringAfter(exp,before)} was: "
-                        + function,
+                                                + function,
                         token.getIndex());
             }
             // single quotes should be double quotes
