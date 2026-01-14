@@ -312,10 +312,10 @@
                                     <exclude>**/README</exclude>
                                     <exclude>**/TestImpl*</exclude>
                                     <exclude>**/archetype-resources/**</exclude>
-				    <exclude>**/ca-openssl.cnf</exclude>
-				    <exclude>**/openssl-ca.cnf</exclude>
-				    <exclude>**/openssl-server.cnf</exclude>
-				    <exclude>**/keystore</exclude>
+                                    <exclude>**/ca-openssl.cnf</exclude>
+                                    <exclude>**/openssl-ca.cnf</exclude>
+                                    <exclude>**/openssl-server.cnf</exclude>
+                                    <exclude>**/keystore</exclude>
                                     <exclude>**/cacerts</exclude>
                                     <exclude>**/cxf.extension</exclude>
                                     <exclude>**/dhis.conf</exclude>

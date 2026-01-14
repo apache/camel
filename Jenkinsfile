@@ -19,7 +19,7 @@ def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dkafka.instance.type=local-st
 def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 /*
 Below parameters are required for camel/core/camel-core module's test cases to pass on ppc64 and s390x
-- xpathExprGrpLimit: limits the number of groups an Xpath expression can contain 
+- xpathExprGrpLimit: limits the number of groups an Xpath expression can contain
 - xpathExprOpLimit: limits the number of operators an Xpath expression can contain
 */
 def MAVEN_TEST_PARAMS_ALT_ARCHS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000"
@@ -146,7 +146,7 @@ pipeline {
                                     if ("${JDK_NAME}" == "jdk_17_latest") {
                                         withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                             echo "Code quality review ENABLED for ${PLATFORM}"
-                                            sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
+                                            sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage"
                                         }
                                     } else {
                                         echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
@@ -156,7 +156,7 @@ pipeline {
                                 }
                             }
                         }
-                    }   
+                    }
 
                     stage('Test') {
                         steps {
