@@ -261,7 +261,7 @@
         <infinispan-version>16.0.3</infinispan-version>
         <infinispan-protostream-version>6.0.2</infinispan-protostream-version>
         <influx-java-driver-version>2.25</influx-java-driver-version>
-        <influx-client-java-driver-version>7.4.0</influx-client-java-driver-version>
+        <influx-client-java-driver-version>7.5.0</influx-client-java-driver-version>
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.3</ivy-version>
