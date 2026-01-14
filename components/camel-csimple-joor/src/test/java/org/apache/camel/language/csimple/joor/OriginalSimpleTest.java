@@ -2242,6 +2242,41 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testConvertTo() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${convertTo(byte[])}");
+        Object s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(byte[].class, s);
+
+        // ognl
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(String).repeat(2)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(String.class, s);
+        assertEquals("Hello WorldHello World", s);
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(${body},String).substring(2)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(String.class, s);
+        assertEquals("llo World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(${body},byte[])}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(byte[].class, s);
+
+        exchange.getMessage().setBody("987");
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(int)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, s);
+        assertEquals(987, s);
+
+        exchange.getMessage().setBody("true");
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(boolean)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Boolean.class, s);
+        assertEquals(Boolean.TRUE, s);
+    }
+
+    @Test
     public void testSize() {
         exchange.getMessage().setBody(new int[] { 4, 7, 9 });
         Expression expression = context.resolveLanguage("csimple").createExpression("${size()}");

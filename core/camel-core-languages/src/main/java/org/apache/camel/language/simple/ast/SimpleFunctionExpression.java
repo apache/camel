@@ -890,6 +890,43 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.concatExpression(exp1, exp2, separator);
         }
 
+        // convertTo function
+        remainder = ifStartsWithReturnRemainder("convertTo(", function);
+        if (remainder != null) {
+            String exp = "${body}";
+            String type;
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                            token.getIndex());
+                }
+                exp = StringHelper.removeQuotes(tokens[0]);
+                type = StringHelper.removeQuotes(tokens[1]);
+            } else {
+                type = StringHelper.removeQuotes(values.trim());
+            }
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${convertTo(type).OGNL} or ${convertTo(exp,type).OGNL} was: " + function,
+                            token.getIndex());
+                }
+                return SimpleExpressionBuilder.convertToOgnlExpression(exp, type, remainder);
+            } else {
+                return SimpleExpressionBuilder.convertToExpression(exp, type);
+            }
+        }
+
         // uppercase function
         remainder = ifStartsWithReturnRemainder("uppercase(", function);
         if (remainder != null) {
@@ -2046,6 +2083,42 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return "Object right = " + exp2 + ";\n        Object left = " + exp1 + ";\n        " + "Object separator = "
                    + separator + ";\n        return concat(exchange, left, right, separator);";
+        }
+
+        // convertTo function
+        // TODO: ongl
+        remainder = ifStartsWithReturnRemainder("convertTo(", function);
+        if (remainder != null) {
+            String exp = "body";
+            String type;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                            token.getIndex());
+                }
+                String s = tokens[0].trim();
+                s = StringHelper.removeLeadingAndEndingQuotes(s);
+                s = StringQuoteHelper.doubleQuote(s);
+                exp = s;
+                type = tokens[1];
+            } else {
+                type = values.trim();
+            }
+            type = appendClass(type);
+            type = type.replace('$', '.');
+
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object value = " + exp + ";\n        return convertTo(exchange, " + type + ", value);";
         }
 
         // uppercase function
