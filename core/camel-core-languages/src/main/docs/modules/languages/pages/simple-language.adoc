@@ -295,6 +295,7 @@ log sensitive data from the message itself.
 |concat(exp,exp,separator) |String |Performs a string concat using two expressions (message body as default) with optional separator
 
 |convertTo(exp,type) |Object |Converts the message body (or expression) to the specified type.
+|convertTo(exp,type).*OGNL* |Object |Converts the message body (or expression) to the specified type and then invoke methods using a Camel OGNL expression.
 
 |length(exp) |int |The payload length (number of bytes) of the message body (or expression).
 

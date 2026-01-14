@@ -2505,6 +2505,24 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testConvertToOGNL() {
+        exchange.getIn().setBody(new OrderLine(123, "Camel in Action"));
+
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getId}", 123);
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getName}",
+                "Camel in Action");
+    }
+
+    @Test
+    public void testConvertToOGNLArray() {
+        exchange.getIn().setBody(new SimpleTest.OrderLine(123, "Camel in Action"));
+
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getId}", 123);
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getName}",
+                "Camel in Action");
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 

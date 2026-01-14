@@ -42,6 +42,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.csimple.CSimpleLanguage;
+import org.apache.camel.language.simple.SimpleTest;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
@@ -2274,6 +2275,15 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         s = expression.evaluate(exchange, Object.class);
         assertIsInstanceOf(Boolean.class, s);
         assertEquals(Boolean.TRUE, s);
+    }
+
+    @Test
+    public void testConvertToOGNL() {
+        exchange.getIn().setBody(new SimpleTest.OrderLine(123, "Camel in Action"));
+
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getId}", 123);
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getName}",
+                "Camel in Action");
     }
 
     @Test

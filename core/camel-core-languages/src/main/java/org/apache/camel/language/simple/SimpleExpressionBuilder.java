@@ -322,6 +322,9 @@ public final class SimpleExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object body = exp.evaluate(exchange, clazz);
+                if (body == null) {
+                    return null;
+                }
                 Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
                 ognlExp.init(exchange.getContext());
                 return ognlExp.evaluate(exchange, Object.class);
