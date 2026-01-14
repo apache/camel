@@ -145,7 +145,8 @@ public final class MojoHelper {
                         dir.resolve("camel-ibm-watson-language"),
                         dir.resolve("camel-ibm-watson-discovery"),
                         dir.resolve("camel-ibm-watson-text-to-speech"),
-                        dir.resolve("camel-ibm-watson-speech-to-text"));
+                        dir.resolve("camel-ibm-watson-speech-to-text"),
+                        dir.resolve("camel-ibm-watsonx-ai"));
             case "camel-knative":
                 return Collections.singletonList(dir.resolve("camel-knative-component"));
             case "camel-yaml-dsl":

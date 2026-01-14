@@ -1109,6 +1109,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ibm-watsonx-ai</artifactId>
+        <version>4.18.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ical</artifactId>
         <version>4.18.0-SNAPSHOT</version>
       </dependency>
