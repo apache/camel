@@ -763,6 +763,72 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns the substring from the given expression that comes before
+     */
+    public static Expression substringBeforeExpression(final String expression, final String before) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression expBefore;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                expBefore = ExpressionBuilder.simpleExpression(before);
+                expBefore.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exp.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                }
+                String bef = expBefore.evaluate(exchange, String.class);
+                return StringHelper.before(body, bef);
+            }
+
+            @Override
+            public String toString() {
+                return "substringBefore(" + expression + "," + before + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the substring from the given expression that comes after
+     */
+    public static Expression substringAfterExpression(final String expression, final String after) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression expAfter;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                expAfter = ExpressionBuilder.simpleExpression(after);
+                expAfter.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exp.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                }
+                String aft = expAfter.evaluate(exchange, String.class);
+                return StringHelper.after(body, aft);
+            }
+
+            @Override
+            public String toString() {
+                return "substringAfter(" + expression + "," + after + ")";
+            }
+        };
+    }
+
+    /**
      * Hashes the value using the given algorithm
      */
     public static Expression hashExpression(final String expression, final String algorithm) {

@@ -554,6 +554,24 @@ public final class CSimpleHelper {
         return between(text, head, tail);
     }
 
+    public static String substringBefore(Exchange exchange, Object value, Object text) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        String before = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, text);
+        return StringHelper.before(body, before);
+    }
+
+    public static String substringAfter(Exchange exchange, Object value, Object text) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        String after = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, text);
+        return StringHelper.after(body, after);
+    }
+
     public static int random(Exchange exchange, Object min, Object max) {
         int num1 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, min);
         int num2 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, max);
