@@ -23,6 +23,8 @@ public final class SimpleConstants {
 
     @Metadata(description = "The message body", javaType = "Object", label = "function,ognl")
     public static final String BODY = "body";
+    @Metadata(description = "The message body class type", javaType = "Class", label = "function")
+    public static final String BODY_TYPE = "bodyType";
     @Metadata(description = "Converts the body to a String, and attempts to pretty print if JSon or XML; otherwise the body is returned as the String value.",
               javaType = "String", label = "function")
     public static final String PRETTY_BODY = "prettyBody";

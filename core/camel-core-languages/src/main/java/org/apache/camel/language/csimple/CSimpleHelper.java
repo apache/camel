@@ -213,6 +213,14 @@ public final class CSimpleHelper {
         return exchange.getVariables().size();
     }
 
+    public static Class<?> bodyType(Exchange exchange) {
+        Object body = exchange.getIn().getBody(Object.class);
+        if (body == null) {
+            return null;
+        }
+        return body.getClass();
+    }
+
     public static String bodyOneLine(Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
         if (body == null) {

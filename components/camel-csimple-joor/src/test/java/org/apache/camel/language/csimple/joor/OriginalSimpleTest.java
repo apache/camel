@@ -1952,6 +1952,14 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testBodyType() {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${bodyType}", String.class);
+        exchange.getIn().setBody(123);
+        assertExpression("${bodyType}", Integer.class);
+    }
+
+    @Test
     public void testBodyAsOneLine() {
         exchange.getIn().setBody("Hello" + System.lineSeparator() + "Great" + System.lineSeparator() + "World");
         assertExpression("${bodyOneLine}", "HelloGreatWorld");

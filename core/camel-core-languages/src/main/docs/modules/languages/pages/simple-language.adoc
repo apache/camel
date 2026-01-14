@@ -96,6 +96,8 @@ classname. The converted body can be null.
 classname and then invoke methods using a Camel OGNL expression. The
 converted body can be null.
 
+|bodyType |Class |The message body class type
+
 |bodyOneLine | String | Converts the body to a String and removes all line-breaks, so the string is in one line.
 
 |prettyBody | String | Converts the body to a String, and attempts to pretty print if JSon or XML; otherwise the body is returned as the String value.

@@ -2191,6 +2191,14 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testBodyType() {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${bodyType}", String.class);
+        exchange.getIn().setBody(123);
+        assertExpression("${bodyType}", Integer.class);
+    }
+
+    @Test
     public void testJsonPrettyPrint() {
 
         StringBuilder expectedJson = new StringBuilder();
