@@ -18,11 +18,13 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -31,6 +33,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -127,6 +131,8 @@ public class CamelSendAction extends ActionBaseCommand {
     private volatile long pid;
 
     private MessageTableHelper tableHelper;
+
+    private final CamelCatalog catalog = new DefaultCamelCatalog();
 
     public CamelSendAction(CamelJBangMain main) {
         super(main);
@@ -372,7 +378,7 @@ public class CamelSendAction extends ActionBaseCommand {
             c = Ansi.Color.RED;
         } else if (replyFile != null) {
             if (poll) {
-                status = "Poll save to fill (success)";
+                status = "Poll save to file (success)";
             } else {
                 status = "Reply save to file (success)";
             }
@@ -412,7 +418,6 @@ public class CamelSendAction extends ActionBaseCommand {
         }
 
         Map.Entry<Long, Path> entry = infraPids.entrySet().iterator().next();
-        this.pid = entry.getKey();
         Path jsonFile = entry.getValue();
 
         JsonObject connectionDetails = readConnectionDetails(jsonFile);
@@ -422,18 +427,9 @@ public class CamelSendAction extends ActionBaseCommand {
             return 1;
         }
 
-        String updatedEndpoint = updateEndpointWithServerInfo(endpoint, infraService, connectionDetails);
+        this.endpoint = updateEndpointWithConnectionDetails(endpoint, infraService, connectionDetails);
 
-        String originalEndpoint = this.endpoint;
-        this.endpoint = updatedEndpoint;
-
-        try {
-            Path outputFile = writeSendData();
-            showStatus(outputFile);
-            return 0;
-        } finally {
-            this.endpoint = originalEndpoint;
-        }
+        return doCallLocal();
     }
 
     private Map<Long, Path> findInfraPids(String serviceName) throws Exception {
@@ -480,39 +476,260 @@ public class CamelSendAction extends ActionBaseCommand {
         return (JsonObject) Jsoner.deserialize(content);
     }
 
-    private String updateEndpointWithServerInfo(String originalEndpoint, String infraService, JsonObject connectionDetails) {
+    String updateEndpointWithConnectionDetails(
+            String originalEndpoint, String infraService, JsonObject connectionDetails) {
+
         if (originalEndpoint == null) {
-            if ("nats".equals(infraService)) {
-                return infraService + ":subject:test";
-            } else {
-                return infraService + ":default";
-            }
+            originalEndpoint = infraService + ":default";
         }
 
-        if (originalEndpoint.startsWith(infraService + ":")) {
-            String remainingPart = originalEndpoint.substring(infraService.length() + 1);
+        if (originalEndpoint.contains("?")) {
+            return originalEndpoint;
+        }
 
-            if (remainingPart.contains("?")) {
-                return originalEndpoint;
-            } else {
-                String serverAddress = (String) connectionDetails.get("getServiceAddress");
-                if (serverAddress != null) {
-                    return originalEndpoint + "?servers=" + serverAddress;
+        String scheme = StringHelper.before(originalEndpoint, ":");
+        String path = StringHelper.after(originalEndpoint, ":");
+
+        String pathBasedEndpoint = buildPathBasedEndpoint(infraService, scheme, path, connectionDetails);
+        if (pathBasedEndpoint != null) {
+            return pathBasedEndpoint;
+        }
+
+        Map<String, String> properties = buildPropertiesMap(infraService, connectionDetails);
+
+        try {
+            String uri = catalog.asEndpointUri(scheme, properties, true);
+            if (uri != null && !uri.isEmpty()) {
+                String queryPart = "";
+                if (uri.contains("?")) {
+                    queryPart = "?" + StringHelper.after(uri, "?");
+                }
+
+                if (path != null && !path.isEmpty()) {
+                    return scheme + ":" + path + queryPart;
                 } else {
-                    Object addr = connectionDetails.get("address");
-                    if (addr instanceof String) {
-                        return originalEndpoint + "?servers=" + addr;
-                    }
+                    return uri;
+                }
+            }
+        } catch (URISyntaxException e) {
+            // Fall back to manual construction if catalog fails
+        }
 
-                    Object host = connectionDetails.get("host");
-                    Object port = connectionDetails.get("port");
-                    if (host instanceof String && port instanceof Number) {
-                        return originalEndpoint + "?servers=" + host + ":" + port;
-                    }
+        return buildEndpointManually(originalEndpoint, properties);
+    }
+
+    // Build properties map from infrastructure connection details.
+    private Map<String, String> buildPropertiesMap(String infraService, JsonObject connectionDetails) {
+        Map<String, String> properties = new LinkedHashMap<>();
+
+        addServiceSpecificProperties(infraService, connectionDetails, properties);
+
+        for (Map.Entry<String, Object> entry : connectionDetails.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (key.startsWith("get") || key.startsWith("is")) {
+                continue;
+            }
+
+            if (value == null || value instanceof Map) {
+                continue;
+            }
+
+            if (properties.containsKey(key)) {
+                continue;
+            }
+
+            properties.put(key, String.valueOf(value));
+        }
+
+        if (properties.isEmpty()) {
+            for (Map.Entry<String, Object> entry : connectionDetails.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                if (value == null || value instanceof Map) {
+                    continue;
+                }
+
+                String mappedName = mapDeprecatedPropertyName(key);
+                if (mappedName != null) {
+                    properties.put(mappedName, String.valueOf(value));
                 }
             }
         }
 
-        return originalEndpoint;
+        return properties;
+    }
+
+    // Add service-specific property mappings that require special handling.
+    private void addServiceSpecificProperties(
+            String infraService, JsonObject connectionDetails, Map<String, String> properties) {
+        switch (infraService) {
+            case "mosquitto" -> {
+                Object port = connectionDetails.get("getPort");
+                if (port != null) {
+                    properties.put("brokerUrl", "tcp://localhost:" + port);
+                }
+            }
+            case "hive-mq" -> {
+                Object hostAddr = connectionDetails.get("getMqttHostAddress");
+                if (hostAddr != null) {
+                    properties.put("brokerUrl", String.valueOf(hostAddr));
+                } else {
+                    Object host = connectionDetails.get("getMqttHost");
+                    Object port = connectionDetails.get("getMqttPort");
+                    if (host != null && port != null) {
+                        properties.put("brokerUrl", "tcp://" + host + ":" + port);
+                    }
+                }
+            }
+            case "artemis" -> {
+                Object uri = connectionDetails.get("remoteURI");
+                if (uri == null) {
+                    uri = connectionDetails.get("serviceAddress");
+                }
+                if (uri != null) {
+                    properties.put("brokerURL", String.valueOf(uri));
+                }
+                Object user = connectionDetails.get("userName");
+                if (user != null) {
+                    properties.put("username", String.valueOf(user));
+                }
+                Object pass = connectionDetails.get("password");
+                if (pass != null) {
+                    properties.put("password", String.valueOf(pass));
+                }
+            }
+            case "rabbitmq" -> {
+                Object uri = connectionDetails.get("uri");
+                if (uri != null) {
+                    properties.put("addresses", String.valueOf(uri));
+                }
+            }
+            case "couchbase" -> {
+                Object connStr = connectionDetails.get("getConnectionString");
+                if (connStr != null) {
+                    properties.put("connectionString", String.valueOf(connStr));
+                }
+            }
+
+            case "aws" -> {
+                Object host = connectionDetails.get("amazonAWSHost");
+                if (host != null) {
+                    properties.put("overrideEndpoint", "true");
+                    properties.put("uriEndpointOverride", "http://" + host);
+                }
+                Object region = connectionDetails.get("region");
+                if (region != null) {
+                    properties.put("region", String.valueOf(region));
+                }
+                Object accessKey = connectionDetails.get("accessKey");
+                if (accessKey != null) {
+                    properties.put("accessKey", String.valueOf(accessKey));
+                }
+                Object secretKey = connectionDetails.get("secretKey");
+                if (secretKey != null) {
+                    properties.put("secretKey", String.valueOf(secretKey));
+                }
+            }
+            case "azure" -> {
+                Object accountName = connectionDetails.get("accountName");
+                if (accountName != null) {
+                    properties.put("accountName", String.valueOf(accountName));
+                }
+                Object accessKey = connectionDetails.get("accessKey");
+                if (accessKey != null) {
+                    properties.put("accessKey", String.valueOf(accessKey));
+                }
+                Object hostProp = connectionDetails.get("host");
+                Object portProp = connectionDetails.get("port");
+                if (hostProp != null && portProp != null) {
+                    properties.put("serviceEndpoint", "http://" + hostProp + ":" + portProp);
+                }
+            }
+            case "google" -> {
+                Object addr = connectionDetails.get("getServiceAddress");
+                if (addr != null) {
+                    properties.put("endpoint", String.valueOf(addr));
+                }
+            }
+            default -> {
+                // No special handling needed
+            }
+        }
+    }
+
+    private String mapDeprecatedPropertyName(String propertyName) {
+        return switch (propertyName) {
+            case "getServiceAddress" -> "servers";           // NATS
+            case "getBootstrapServers" -> "brokers";         // Kafka
+            case "getPulsarBrokerUrl" -> "serviceUrl";       // Pulsar
+            case "getMqttHostAddress" -> "brokerUrl";        // HiveMQ
+            case "getReplicaSetUrl", "getConnectionAddress" -> "hosts"; // MongoDB
+            case "getHttpHostAddress" -> "hostAddresses";    // Elasticsearch
+            case "getConnectionString" -> "servers";         // ZooKeeper
+            case "getKeycloakServerUrl" -> "serverUrl";      // Keycloak
+            case "getKeycloakRealm" -> "realm";              // Keycloak
+            case "getWeaviateEndpointUrl" -> "endpointUrl";  // Weaviate
+            case "getWeaviateHost" -> "host";                // Weaviate
+            case "getWeaviatePort" -> "port";                // Weaviate
+            case "getHost" -> "ldapServerUrl";               // OpenLDAP
+            case "getPort" -> "port";                        // Generic
+            case "getServiceBaseURL" -> "serverUrl";         // FHIR
+            default -> null;
+        };
+    }
+
+    private String buildPathBasedEndpoint(
+            String infraService, String scheme, String path, JsonObject connectionDetails) {
+        return switch (infraService) {
+            case "redis" -> {
+                Object host = connectionDetails.get("host");
+                Object port = connectionDetails.get("port");
+                if (host != null && port != null) {
+                    yield scheme + ":" + host + ":" + port;
+                } else if (host != null) {
+                    yield scheme + ":" + host;
+                }
+                yield null;
+            }
+            case "xmpp" -> {
+                Object host = connectionDetails.get("host");
+                Object port = connectionDetails.get("port");
+                String participant = path.contains("/") ? StringHelper.after(path, "/") : "room";
+                if (host != null && port != null) {
+                    yield scheme + ":" + host + ":" + port + "/" + participant;
+                } else if (host != null) {
+                    yield scheme + ":" + host + "/" + participant;
+                }
+                yield null;
+            }
+            case "chat-script" -> {
+                Object serviceAddress = connectionDetails.get("serviceAddress");
+                String botName = path.contains("/") ? StringHelper.after(path, "/") : "Harry";
+                if (serviceAddress != null) {
+                    yield scheme + ":" + serviceAddress + "/" + botName;
+                }
+                yield null;
+            }
+            default -> null;
+        };
+    }
+
+    private String buildEndpointManually(String endpoint, Map<String, String> properties) {
+        if (properties.isEmpty()) {
+            return endpoint;
+        }
+
+        StringBuilder queryParams = new StringBuilder();
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            if (queryParams.length() > 0) {
+                queryParams.append("&");
+            }
+            queryParams.append(entry.getKey()).append("=").append(entry.getValue());
+        }
+
+        return endpoint + "?" + queryParams;
     }
 }
