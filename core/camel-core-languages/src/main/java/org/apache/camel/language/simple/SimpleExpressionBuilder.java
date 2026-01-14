@@ -263,6 +263,85 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Converts the result of the expression to the given type
+     */
+    public static Expression convertToExpression(final String expression, final String type) {
+        return new ExpressionAdapter() {
+            private Class<?> clazz;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                try {
+                    clazz = context.getClassResolver().resolveMandatoryClass(type);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapRuntimeException(e);
+                }
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exp.evaluate(exchange, clazz);
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "convertTo(" + expression + ", " + type + ")";
+                } else {
+                    return "convertTo(" + type + ")";
+                }
+            }
+        };
+    }
+
+    /**
+     * Converts the result of the expression to the given type and invoking methods on the converted object defined in a
+     * simple OGNL notation
+     */
+    public static Expression convertToOgnlExpression(final String expression, final String type, final String ognl) {
+        return new ExpressionAdapter() {
+            private Class<?> clazz;
+            private Expression exp;
+            private Language bean;
+
+            @Override
+            public void init(CamelContext context) {
+                try {
+                    clazz = context.getClassResolver().resolveMandatoryClass(type);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapRuntimeException(e);
+                }
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                bean = context.resolveLanguage("bean");
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body = exp.evaluate(exchange, clazz);
+                if (body == null) {
+                    return null;
+                }
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
+                ognlExp.init(exchange.getContext());
+                return ognlExp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "convertToOgnl(" + expression + ", " + type + ")." + ognl;
+                } else {
+                    return "convertToOgnl(" + type + ")." + ognl;
+                }
+            }
+        };
+    }
+
+    /**
      * Uppercases the given expressions (uses message body if expression is null)
      */
     public static Expression uppercaseExpression(final String expression) {

@@ -42,6 +42,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.csimple.CSimpleLanguage;
+import org.apache.camel.language.simple.SimpleTest;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
@@ -2239,6 +2240,50 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         // custom generator
         context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
         assertExpression("${uuid(mygen)}", "1234");
+    }
+
+    @Test
+    public void testConvertTo() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${convertTo(byte[])}");
+        Object s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(byte[].class, s);
+
+        // ognl
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(String).repeat(2)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(String.class, s);
+        assertEquals("Hello WorldHello World", s);
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(${body},String).substring(2)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(String.class, s);
+        assertEquals("llo World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(${body},byte[])}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(byte[].class, s);
+
+        exchange.getMessage().setBody("987");
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(int)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, s);
+        assertEquals(987, s);
+
+        exchange.getMessage().setBody("true");
+        expression = context.resolveLanguage("csimple").createExpression("${convertTo(boolean)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Boolean.class, s);
+        assertEquals(Boolean.TRUE, s);
+    }
+
+    @Test
+    public void testConvertToOGNL() {
+        exchange.getIn().setBody(new SimpleTest.OrderLine(123, "Camel in Action"));
+
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getId}", 123);
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getName}",
+                "Camel in Action");
     }
 
     @Test
