@@ -7383,6 +7383,48 @@ public class StaticEndpointBuilders {
         return WatsonTextToSpeechEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM watsonx.ai (camel-ibm-watsonx-ai)
+     * Interact with IBM watsonx.ai foundation models for text generation, chat,
+     * embeddings, and more.
+     * 
+     * Category: ai,cloud
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
+     * 
+     * Syntax: <code>ibm-watsonx-ai:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String path) {
+        return ibmWatsonxAi("ibm-watsonx-ai", path);
+    }
+    /**
+     * IBM watsonx.ai (camel-ibm-watsonx-ai)
+     * Interact with IBM watsonx.ai foundation models for text generation, chat,
+     * embeddings, and more.
+     * 
+     * Category: ai,cloud
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
+     * 
+     * Syntax: <code>ibm-watsonx-ai:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String componentName, String path) {
+        return WatsonxAiEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.

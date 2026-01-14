@@ -39,6 +39,7 @@
         <module>camel-ibm-watson-discovery</module>
         <module>camel-ibm-watson-text-to-speech</module>
         <module>camel-ibm-watson-speech-to-text</module>
+        <module>camel-ibm-watsonx-ai</module>
     </modules>
 
 </project>
