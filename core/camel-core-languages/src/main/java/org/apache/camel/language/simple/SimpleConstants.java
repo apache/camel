@@ -175,6 +175,12 @@ public final class SimpleConstants {
                             + " Otherwise the returned string is clipped between the head and tail positions.",
               label = "function", javaType = "String")
     public static final String SUBSTRING = "substring(head,tail)";
+    @Metadata(description = "Returns a substring of the message body/expression that comes before. Returns null if nothing comes before.",
+              label = "function", javaType = "String")
+    public static final String SUBSTRING_BEFORE = "substringBefore(exp,before)";
+    @Metadata(description = "Returns a substring of the message body/expression that comes after. Returns null if nothing comes after.",
+              label = "function", javaType = "String")
+    public static final String SUBSTRING_AFTER = "substringAfter(exp,before)";
     @Metadata(description = "Returns a random number between min (included) and max (excluded).", label = "function",
               javaType = "int", displayName = "Generate Random Number")
     public static final String RANDOM = "random(min,max)";

@@ -2345,6 +2345,58 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSubstringBefore() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${substringBefore('World')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello ", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${substringBefore(' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${substringBefore(${body},'World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello ", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${substringBefore('Unknown')}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+
+        exchange.getMessage().setHeader("place", "World");
+        expression = context.resolveLanguage("csimple").createExpression("${substringBefore(${body},${header.place})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello ", s);
+    }
+
+    @Test
+    public void testSubstringAfter() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${substringAfter('Hello')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals(" World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${substringAfter('Hello ')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${substringAfter(${body},'Hello')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals(" World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${substringAfter('Unknown')}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+
+        exchange.getMessage().setHeader("place", "Hello");
+        expression = context.resolveLanguage("csimple").createExpression("${substringAfter(${body},${header.place})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals(" World", s);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 
