@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.keycloak.security;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateProcessor;
 import org.apache.camel.util.ObjectHelper;
+import org.keycloak.common.VerificationException;
 import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,7 +160,8 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         if (storedSubject != null) {
             try {
                 // Parse token to extract subject (without full validation - just for binding check)
-                AccessToken accessToken = KeycloakSecurityHelper.parseAccessToken(headerToken);
+                // Full verification happens later in validateRoles/validatePermissions
+                AccessToken accessToken = org.keycloak.TokenVerifier.create(headerToken, AccessToken.class).getToken();
                 String currentSubject = accessToken.getSubject();
 
                 if (!storedSubject.equals(currentSubject)) {
@@ -226,16 +230,16 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                     throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
                 }
 
+                // Validate issuer from introspection result if enabled
+                if (policy.isValidateIssuer()) {
+                    validateIssuerFromIntrospection(introspectionResult, exchange);
+                }
+
                 userRoles = KeycloakSecurityHelper.extractRolesFromIntrospection(
                         introspectionResult, policy.getRealm(), policy.getClientId());
             } else {
-                // Use local JWT parsing
-                AccessToken token;
-                if (ObjectHelper.isEmpty(policy.getPublicKey())) {
-                    token = KeycloakSecurityHelper.parseAccessToken(accessToken);
-                } else {
-                    token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
-                }
+                // Use local JWT parsing with secure verification
+                AccessToken token = parseAndVerifyToken(accessToken, exchange);
                 userRoles = KeycloakSecurityHelper.extractRoles(token, policy.getRealm(), policy.getClientId());
             }
 
@@ -260,6 +264,72 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
         }
     }
 
+    /**
+     * Parses and verifies the access token with full signature and issuer validation. Requires either auto-fetch public
+     * key or a manually configured public key.
+     */
+    private AccessToken parseAndVerifyToken(String accessToken, Exchange exchange) throws Exception {
+        KeycloakPublicKeyResolver resolver = policy.getPublicKeyResolver();
+        String expectedIssuer = policy.getExpectedIssuer();
+        PublicKey publicKey = null;
+
+        // Get public key from auto-fetch resolver or manual configuration
+        if (policy.isAutoFetchPublicKey() && resolver != null) {
+            try {
+                publicKey = resolver.getPublicKey(null);
+            } catch (IOException e) {
+                LOG.error("Failed to fetch public key from JWKS endpoint: {}", e.getMessage());
+                throw new CamelAuthorizationException("Failed to fetch public key for token verification", exchange, e);
+            }
+        } else if (!ObjectHelper.isEmpty(policy.getPublicKey())) {
+            publicKey = policy.getPublicKey();
+        }
+
+        // Verify token with public key and issuer validation
+        if (publicKey != null) {
+            try {
+                return KeycloakSecurityHelper.parseAndVerifyAccessToken(accessToken, publicKey, expectedIssuer);
+            } catch (VerificationException e) {
+                LOG.error("Token verification failed: {}", e.getMessage());
+                throw new CamelAuthorizationException("Token verification failed: " + e.getMessage(), exchange, e);
+            }
+        }
+
+        // No public key available - this is a configuration error
+        LOG.error("SECURITY: No public key available for token verification. "
+                  + "Enable autoFetchPublicKey or configure a publicKey manually.");
+        throw new CamelAuthorizationException(
+                "Token verification failed: no public key available. "
+                                              + "Enable autoFetchPublicKey or configure a publicKey.",
+                exchange);
+    }
+
+    /**
+     * Validates the issuer from an introspection result.
+     */
+    private void validateIssuerFromIntrospection(
+            KeycloakTokenIntrospector.IntrospectionResult introspectionResult, Exchange exchange)
+            throws CamelAuthorizationException {
+        String expectedIssuer = policy.getExpectedIssuer();
+        Object issuerClaim = introspectionResult.getClaim("iss");
+
+        if (issuerClaim == null) {
+            LOG.warn("Token introspection result does not contain issuer claim");
+            return;
+        }
+
+        String actualIssuer = issuerClaim.toString();
+        if (!expectedIssuer.equals(actualIssuer)) {
+            LOG.error("SECURITY: Token issuer mismatch from introspection - expected '{}' but got '{}'",
+                    expectedIssuer, actualIssuer);
+            throw new CamelAuthorizationException(
+                    String.format("Token issuer mismatch: expected '%s' but got '%s'", expectedIssuer, actualIssuer),
+                    exchange);
+        }
+
+        LOG.debug("Issuer validation from introspection successful: {}", expectedIssuer);
+    }
+
     private void validatePermissions(String accessToken, Exchange exchange) throws Exception {
         try {
             Set<String> userPermissions;
@@ -274,15 +344,15 @@ public class KeycloakSecurityProcessor extends DelegateProcessor {
                     throw new CamelAuthorizationException("Token is not active (may be revoked or expired)", exchange);
                 }
 
+                // Validate issuer from introspection result if enabled
+                if (policy.isValidateIssuer()) {
+                    validateIssuerFromIntrospection(introspectionResult, exchange);
+                }
+
                 userPermissions = KeycloakSecurityHelper.extractPermissionsFromIntrospection(introspectionResult);
             } else {
-                // Use local JWT parsing
-                AccessToken token;
-                if (ObjectHelper.isEmpty(policy.getPublicKey())) {
-                    token = KeycloakSecurityHelper.parseAccessToken(accessToken);
-                } else {
-                    token = KeycloakSecurityHelper.parseAccessToken(accessToken, policy.getPublicKey());
-                }
+                // Use local JWT parsing with secure verification
+                AccessToken token = parseAndVerifyToken(accessToken, exchange);
                 userPermissions = KeycloakSecurityHelper.extractPermissions(token);
             }
 
