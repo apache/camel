@@ -27,3 +27,4 @@ camel get route-dump [options]
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
+

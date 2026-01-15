@@ -1,0 +1,29 @@
+== Examples
+
+Run a simple Java DSL route:
+
+[source,bash]
+----
+camel run hello.java
+----
+
+Run with live reload enabled (dev mode):
+
+[source,bash]
+----
+camel run hello.java --dev
+----
+
+Run a YAML route:
+
+[source,bash]
+----
+camel run my-route.yaml
+----
+
+Run with additional dependencies:
+
+[source,bash]
+----
+camel run hello.java --dep=camel-jackson
+----

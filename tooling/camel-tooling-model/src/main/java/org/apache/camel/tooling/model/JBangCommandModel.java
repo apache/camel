@@ -45,6 +45,7 @@ public class JBangCommandModel {
         private boolean deprecated;
         private String deprecationNote;
         private String sourceClass;
+        private String examples;
         private final List<JBangCommandOption> options = new ArrayList<>();
         private final List<JBangCommand> subcommands = new ArrayList<>();
 
@@ -102,6 +103,18 @@ public class JBangCommandModel {
 
         public void setSourceClass(String sourceClass) {
             this.sourceClass = sourceClass;
+        }
+
+        public String getExamples() {
+            return examples;
+        }
+
+        public void setExamples(String examples) {
+            this.examples = examples;
+        }
+
+        public boolean hasExamples() {
+            return examples != null && !examples.isBlank();
         }
 
         public List<JBangCommandOption> getOptions() {

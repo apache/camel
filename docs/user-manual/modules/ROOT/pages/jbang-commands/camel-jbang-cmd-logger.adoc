@@ -25,3 +25,4 @@ camel cmd logger [options]
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
+

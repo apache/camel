@@ -38,7 +38,7 @@ camel debug [options]
 | `--ignore-loading-error` | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
 | `--jfr` | Enables Java Flight Recorder saving recording to disk on exit | false | boolean
 | `--jfr-profile` | Java Flight Recorder profile to use (such as default or profile) |  | String
-| `--jvm-debug` | To enable JVM remote debugging on port 4004 by default. The supported values are true to + enable the remote debugging, false to disable the remote debugging or a number to use a custom port |  | int
+| `--jvm-debug` | To enable JVM remote debugging on port 4004 by default. The supported values are true to enable the remote debugging, false to disable the remote debugging or a number to use a custom port |  | int
 | `--kamelets-version` | Apache Camel Kamelets version |  | String
 | `--lazy-bean` | Whether to use lazy bean initialization (can help with complex classloading issues) | false | boolean
 | `--local-kamelet-dir` | Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma. |  | String
@@ -53,7 +53,7 @@ camel debug [options]
 | `--mask` | Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys |  | boolean
 | `--maven-apache-snapshot-enabled` | Whether downloading JARs from ASF Maven Snapshot repository is enabled | true | boolean
 | `--maven-central-enabled` | Whether downloading JARs from Maven Central repository is enabled | true | boolean
-| `--maven-settings` | Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies. + If set to false, not even the default ~/.m2/settings.xml will be used. |  | String
+| `--maven-settings` | Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies. If set to false, not even the default ~/.m2/settings.xml will be used. |  | String
 | `--maven-settings-security` | Optional location of Maven settings-security.xml file to decrypt settings.xml |  | String
 | `--max-idle-seconds` | For how long time in seconds Camel can be idle before stopping | 0 | int
 | `--max-messages` | Max number of messages to process before stopping | 0 | int
@@ -70,7 +70,7 @@ camel debug [options]
 | `--profile` | Profile to run (dev, test, or prod). | dev | String
 | `--prompt` | Allow user to type in required parameters in prompt if not present in application | false | boolean
 | `--prop,--property` | Additional properties (override existing) |  | String
-| `--properties` | comma separated list of properties file + (ex. /path/to/file.properties,/path/to/other.properties |  | String
+| `--properties` | comma separated list of properties file (ex. /path/to/file.properties,/path/to/other.properties |  | String
 | `--quarkus-artifact-id` | Quarkus Platform Maven artifactId | quarkus-bom | String
 | `--quarkus-group-id` | Quarkus Platform Maven groupId | io.quarkus.platform | String
 | `--quarkus-version` | Quarkus Platform version | RuntimeType.QUARKUS_VERSION | String
@@ -88,10 +88,11 @@ camel debug [options]
 | `--source-dir` | Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time. |  | String
 | `--spring-boot-version` | Spring Boot version | RuntimeType.SPRING_BOOT_VERSION | String
 | `--stop-on-exit` | Whether to stop the running Camel on exit | true | boolean
-| `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. + Multiple names can be separated by comma. (all = stub all endpoints). |  | String
+| `--stub` | Stubs all the matching endpoint uri with the given component name or pattern. Multiple names can be separated by comma. (all = stub all endpoints). |  | String
 | `--timestamp` | Print timestamp. | true | boolean
 | `--trace` | Enables trace logging of the routed messages | false | boolean
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
+
 
