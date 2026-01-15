@@ -184,11 +184,20 @@
                 <artifactId>camel-package-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>prepare-jbang</id>
                         <goals>
                             <goal>prepare-jbang</goal>
                             <goal>prepare-jbang-doc</goal>
                         </goals>
                         <phase>generate-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>prepare-jbang-commands</id>
+                        <goals>
+                            <goal>prepare-jbang-commands</goal>
+                            <goal>prepare-jbang-commands-doc</goal>
+                        </goals>
+                        <phase>process-classes</phase>
                     </execution>
                 </executions>
             </plugin>

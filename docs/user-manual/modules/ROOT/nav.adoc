@@ -6,6 +6,7 @@
 ** xref:building.adoc[Building]
 ** xref:camel-console.adoc[Camel Developer Console]
 ** xref:camel-jbang.adoc[Camel JBang]
+*** xref:jbang-commands/camel-jbang-commands.adoc[Camel JBang Command Reference]
 *** xref:camel-jbang-launcher.adoc[Camel JBang Launcher]
 *** xref:camel-jbang-kubernetes.adoc[Camel JBang Kubernetes plugin]
 *** xref:camel-jbang-test.adoc[Camel JBang Testing plugin]
