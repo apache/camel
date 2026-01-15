@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch.core.BulkRequest;
@@ -37,6 +36,7 @@ import org.opensearch.client.opensearch.core.bulk.CreateOperation;
 import org.opensearch.client.opensearch.core.bulk.DeleteOperation;
 import org.opensearch.client.opensearch.core.bulk.IndexOperation;
 import org.opensearch.client.opensearch.core.bulk.UpdateOperation;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
 import static org.hamcrest.CoreMatchers.equalTo;

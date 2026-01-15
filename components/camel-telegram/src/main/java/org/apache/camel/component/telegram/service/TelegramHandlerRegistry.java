@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.TelegramMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
+import tools.jackson.core.JacksonException;
 
 final class TelegramHandlerRegistry {
     private final Map<Class<?>, TelegramMessageHandler<?>> handlers;
@@ -86,7 +86,7 @@ final class TelegramHandlerRegistry {
             try {
                 final String body = mapper.writeValueAsString(message);
                 bodyPublisher.addBodyPart(new TelegramBodyPublisher.SingleBodyPart(body));
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeCamelException("Could not serialize " + message);
             }
         }

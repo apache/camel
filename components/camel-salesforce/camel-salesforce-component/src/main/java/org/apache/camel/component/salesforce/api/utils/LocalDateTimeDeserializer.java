@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.deser.std.StdDeserializer;
 
 final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
@@ -36,8 +35,7 @@ final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException {
+    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toLocalDateTime();

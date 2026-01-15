@@ -19,9 +19,6 @@ package org.apache.camel.component.aws2.bedrock.runtime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -45,6 +42,9 @@ import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamRequest;
 import software.amazon.awssdk.services.bedrockruntime.model.SystemContentBlock;
 import software.amazon.awssdk.services.bedrockruntime.model.ToolConfiguration;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A Producer which sends messages to the Amazon Bedrock Service <a href="http://aws.amazon.com/bedrock/">AWS
@@ -205,7 +205,7 @@ public class BedrockProducer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             try {
                 setBase64Image(result, message);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -256,7 +256,7 @@ public class BedrockProducer extends DefaultProducer {
         }
     }
 
-    private static void setBase64Image(InvokeModelResponse result, Message message) throws JsonProcessingException {
+    private static void setBase64Image(InvokeModelResponse result, Message message) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("images"));
@@ -280,7 +280,7 @@ public class BedrockProducer extends DefaultProducer {
             case "ai21.jamba-1-5-mini-v1:0":
                 try {
                     setAi21Text(result, message);
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -291,7 +291,7 @@ public class BedrockProducer extends DefaultProducer {
             case "anthropic.claude-v2:1":
                 try {
                     setAnthropicText(result, message);
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -308,7 +308,7 @@ public class BedrockProducer extends DefaultProducer {
             case "anthropic.claude-sonnet-4-20250514-v1:0":
                 try {
                     setAnthropicV3Text(result, message);
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -322,7 +322,7 @@ public class BedrockProducer extends DefaultProducer {
             case "mistral.pixtral-large-2502-v1:0":
                 try {
                     setMistralText(result, message);
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -334,7 +334,7 @@ public class BedrockProducer extends DefaultProducer {
             case "amazon.nova-pro-v1:0":
                 try {
                     setAnthropicV3Text(result, message);
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -344,7 +344,7 @@ public class BedrockProducer extends DefaultProducer {
             case "cohere.command-r-v1:0":
                 try {
                     setCohereText(result, message);
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -364,7 +364,7 @@ public class BedrockProducer extends DefaultProducer {
             case "meta.llama4-scout-17b-instruct-v1:0":
                 try {
                     setLlamaText(result, message);
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeException(e);
                 }
                 break;
@@ -378,37 +378,37 @@ public class BedrockProducer extends DefaultProducer {
         message.setBody(result.body().asUtf8String());
     }
 
-    private void setAi21Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
+    private void setAi21Text(InvokeModelResponse result, Message message) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("completions"));
     }
 
-    private void setAnthropicText(InvokeModelResponse result, Message message) throws JsonProcessingException {
+    private void setAnthropicText(InvokeModelResponse result, Message message) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("completion"));
     }
 
-    private void setAnthropicV3Text(InvokeModelResponse result, Message message) throws JsonProcessingException {
+    private void setAnthropicV3Text(InvokeModelResponse result, Message message) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString);
     }
 
-    private void setMistralText(InvokeModelResponse result, Message message) throws JsonProcessingException {
+    private void setMistralText(InvokeModelResponse result, Message message) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString);
     }
 
-    private void setCohereText(InvokeModelResponse result, Message message) throws JsonProcessingException {
+    private void setCohereText(InvokeModelResponse result, Message message) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("text"));
     }
 
-    private void setLlamaText(InvokeModelResponse result, Message message) throws JsonProcessingException {
+    private void setLlamaText(InvokeModelResponse result, Message message) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonString = mapper.readTree(result.body().asUtf8String());
         message.setBody(jsonString.get("generation"));

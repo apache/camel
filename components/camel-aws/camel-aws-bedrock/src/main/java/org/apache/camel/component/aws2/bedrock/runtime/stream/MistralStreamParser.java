@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Parser for Mistral AI model streaming responses
@@ -32,7 +32,7 @@ public class MistralStreamParser implements StreamResponseParser {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
-    public String extractText(String chunk) throws JsonProcessingException {
+    public String extractText(String chunk) throws JacksonException {
         if (chunk == null || chunk.trim().isEmpty()) {
             return "";
         }
@@ -47,7 +47,7 @@ public class MistralStreamParser implements StreamResponseParser {
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JsonProcessingException {
+    public String extractCompletionReason(String chunk) throws JacksonException {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
@@ -62,14 +62,14 @@ public class MistralStreamParser implements StreamResponseParser {
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JsonProcessingException {
+    public Integer extractTokenCount(String chunk) throws JacksonException {
         // Mistral doesn't provide token count in streaming responses
         // Could be added if Mistral adds this feature
         return null;
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JsonProcessingException {
+    public boolean isFinalChunk(String chunk) throws JacksonException {
         String stopReason = extractCompletionReason(chunk);
         return ObjectHelper.isNotEmpty(stopReason);
     }

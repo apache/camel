@@ -38,22 +38,21 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.xml.LwModelToXMLDumper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.dataformat.yaml.YAMLWriteFeature;
 
 public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator> {
 
@@ -162,10 +161,10 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         if (generateRoutes) {
             for (Map.Entry<String, String> entry : toTagData.entrySet()) {
                 ObjectNode from = JsonNodeFactory.instance.objectNode();
-                from.set("uri", new TextNode(entry.getKey()));
+                from.set("uri", JsonNodeFactory.instance.textNode(entry.getKey()));
                 String description = entry.getValue();
                 if (description != null && !description.isBlank()) {
-                    from.set("description", new TextNode(description));
+                    from.set("description", JsonNodeFactory.instance.textNode(description));
                 }
                 ObjectNode route = JsonNodeFactory.instance.objectNode();
                 route.set("from", from);
@@ -173,7 +172,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
             }
         }
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+        ObjectMapper mapper = YAMLMapper.builder().disable(YAMLWriteFeature.WRITE_DOC_START_MARKER).build();
         return mapper.writeValueAsString(node);
     }
 
@@ -206,7 +205,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
             if (n.isObject()) {
                 ObjectNode on = (ObjectNode) n;
                 // sort the elements: id, path, description, consumes, produces, type, outType, param
-                Iterator<String> it = on.fieldNames();
+                Iterator<String> it = on.propertyNames().iterator();
                 while (it.hasNext()) {
                     names.add(it.next());
                 }

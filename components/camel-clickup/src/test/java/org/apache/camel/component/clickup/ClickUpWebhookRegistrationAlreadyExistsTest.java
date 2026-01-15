@@ -29,8 +29,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickup.model.Webhook;
@@ -44,6 +42,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit6.TestExecutionConfiguration;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -115,7 +115,7 @@ public class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupp
                     WebhookCreationCommand command = MAPPER.readValue(webhookCreationMessage, WebhookCreationCommand.class);
 
                     assertInstanceOf(WebhookCreationCommand.class, command);
-                } catch (IOException e) {
+                } catch (JacksonException e) {
                     fail(e);
                 }
 
@@ -197,7 +197,7 @@ public class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupp
                     String readWebhooksResponseBody;
                     try {
                         readWebhooksResponseBody = MAPPER.writeValueAsString(webhooksReadResult);
-                    } catch (JsonProcessingException e) {
+                    } catch (JacksonException e) {
                         throw new RuntimeException(e);
                     }
 

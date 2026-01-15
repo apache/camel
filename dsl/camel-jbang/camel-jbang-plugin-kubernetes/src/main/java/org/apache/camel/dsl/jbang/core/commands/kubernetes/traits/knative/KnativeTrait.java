@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JsonProcessingException;
 import io.fabric8.knative.duck.v1.DestinationBuilder;
 import io.fabric8.knative.duck.v1.KReference;
 import io.fabric8.knative.duck.v1.KReferenceBuilder;

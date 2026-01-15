@@ -21,13 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.DoubleNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.LongNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
@@ -49,6 +42,13 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.BooleanNode;
+import tools.jackson.databind.node.DoubleNode;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.LongNode;
+import tools.jackson.databind.node.StringNode;
 
 public class LangChain4jToolsProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(LangChain4jToolsProducer.class);
@@ -175,29 +175,30 @@ public class LangChain4jToolsProducer extends DefaultProducer {
 
                 // Map Json to Header
                 JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
-                jsonNode.fieldNames()
-                        .forEachRemaining(name -> {
-                            final JsonNode value = jsonNode.get(name);
-                            Object headerValue;
 
-                            // Try to get values for the known tool parameter types
-                            if (value instanceof TextNode) {
-                                headerValue = typeConverter.convertTo(String.class, value);
-                            } else if (value instanceof IntNode) {
-                                headerValue = typeConverter.convertTo(Integer.class, value);
-                            } else if (value instanceof LongNode) {
-                                headerValue = typeConverter.convertTo(Long.class, value);
-                            } else if (value instanceof DoubleNode) {
-                                headerValue = typeConverter.convertTo(Double.class, value);
-                            } else if (value instanceof BooleanNode) {
-                                headerValue = typeConverter.convertTo(Boolean.class, value);
-                            } else {
-                                // Fallback to JsonNode to enable the value to be extracted elsewhere
-                                headerValue = value;
-                            }
+                jsonNode.propertyStream().forEach(entry -> {
+                    String name = entry.getKey();
+                    final JsonNode value = entry.getValue();
+                    Object headerValue;
 
-                            exchange.getMessage().setHeader(name, headerValue);
-                        });
+                    // Try to get values for the known tool parameter types
+                    if (value instanceof StringNode) {
+                        headerValue = typeConverter.convertTo(String.class, value);
+                    } else if (value instanceof IntNode) {
+                        headerValue = typeConverter.convertTo(Integer.class, value);
+                    } else if (value instanceof LongNode) {
+                        headerValue = typeConverter.convertTo(Long.class, value);
+                    } else if (value instanceof DoubleNode) {
+                        headerValue = typeConverter.convertTo(Double.class, value);
+                    } else if (value instanceof BooleanNode) {
+                        headerValue = typeConverter.convertTo(Boolean.class, value);
+                    } else {
+                        // Fallback to JsonNode to enable the value to be extracted elsewhere
+                        headerValue = value;
+                    }
+
+                    exchange.getMessage().setHeader(name, headerValue);
+                });
 
                 // Execute the consumer route
 

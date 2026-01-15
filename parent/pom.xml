@@ -173,7 +173,7 @@
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
         <flink-version>1.20.3</flink-version>
-        <flowable-version>7.2.0</flowable-version>
+        <flowable-version>8.0.0</flowable-version>
         <fop-version>2.11</fop-version>
         <formatter-maven-plugin-version>2.29.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
@@ -274,6 +274,7 @@
         <jackson2-version>2.20.2</jackson2-version>
         <jackson2-annotations-version>2.20</jackson2-annotations-version>
         <jackson3-version>3.0.3</jackson3-version>
+        <jackson-datatype-version>3.0.0-rc2</jackson-datatype-version>
         <jackrabbit-version>2.22.3</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.5.3</jandex-version>
@@ -3278,13 +3279,17 @@
             </dependency>
 
             <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
+                <groupId>tools.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
-                <version>${jackson2-version}</version>
+                <version>${jackson-version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-annotations-version}</version>
+            </dependency>
 
             <!--
             If we import the grpc-bom, we get a lot of duplicate dependencies

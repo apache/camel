@@ -20,9 +20,9 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageResult implements Serializable {
@@ -55,7 +55,7 @@ public class MessageResult implements Serializable {
     }
 
     @JsonSetter("result")
-    public void setResult(JsonNode result) throws JsonProcessingException {
+    public void setResult(JsonNode result) throws JacksonException {
         if (result != null) {
             if (result.isBoolean()) {
                 this.result = result.asBoolean();

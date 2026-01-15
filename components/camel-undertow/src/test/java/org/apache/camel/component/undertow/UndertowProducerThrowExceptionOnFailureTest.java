@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.undertow;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
@@ -25,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,7 +75,7 @@ public class UndertowProducerThrowExceptionOnFailureTest extends BaseUndertowTes
                         .component("undertow").port(getPort2())
                         .bindingMode(RestBindingMode.json);
 
-                onException(JsonParseException.class)
+                onException(JacksonException.class)
                         .handled(true)
                         .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
                         .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))

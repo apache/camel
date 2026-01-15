@@ -17,13 +17,13 @@
 
 package org.apache.camel.component.zeebe.processor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.zeebe.ZeebeEndpoint;
 import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.MessageRequest;
 import org.apache.camel.component.zeebe.model.MessageResponse;
+import tools.jackson.core.JacksonException;
 
 public class MessageProcessor extends AbstractBaseProcessor {
 
@@ -42,8 +42,8 @@ public class MessageProcessor extends AbstractBaseProcessor {
                 String bodyString = exchange.getMessage().getBody(String.class);
 
                 message = objectMapper.readValue(bodyString, MessageRequest.class);
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert body to MessageMessage", jsonProcessingException);
+            } catch (JacksonException JacksonException) {
+                throw new IllegalArgumentException("Cannot convert body to MessageMessage", JacksonException);
             }
         } else {
             throw new CamelException("Message data missing");

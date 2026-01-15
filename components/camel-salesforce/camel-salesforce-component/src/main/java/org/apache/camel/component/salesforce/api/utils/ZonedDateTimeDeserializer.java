@@ -18,8 +18,8 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
+import tools.jackson.databind.JsonDeserializer;
+import tools.jackson.datatype.jsr310.deser.InstantDeserializer;
 
 import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 

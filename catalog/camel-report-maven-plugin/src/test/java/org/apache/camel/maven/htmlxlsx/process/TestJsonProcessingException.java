@@ -16,7 +16,7 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JsonProcessingException;
 
 public class TestJsonProcessingException extends JsonProcessingException {
 

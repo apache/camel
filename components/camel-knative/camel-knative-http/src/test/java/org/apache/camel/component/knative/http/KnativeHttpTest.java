@@ -364,7 +364,7 @@ public class KnativeHttpTest {
                                     "source", "/somewhere",
                                     "datacontenttype", "text/plain",
                                     "data", "test"),
-                            ObjectMapperType.JACKSON_2)
+                            ObjectMapperType.JACKSON_3)
                     .when()
                     .post()
                     .then()

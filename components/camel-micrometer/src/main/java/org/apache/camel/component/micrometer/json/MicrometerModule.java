@@ -25,12 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleSerializers;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.micrometer.core.instrument.AbstractDistributionSummary;
 import io.micrometer.core.instrument.AbstractTimer;
 import io.micrometer.core.instrument.Counter;
@@ -48,8 +42,14 @@ import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import io.micrometer.core.instrument.distribution.HistogramSnapshot;
 import io.micrometer.core.instrument.distribution.ValueAtPercentile;
 import io.micrometer.core.instrument.search.Search;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.Version;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.module.SimpleSerializers;
+import tools.jackson.databind.ser.std.StdSerializer;
 
-public class MicrometerModule extends Module {
+public class MicrometerModule extends JacksonModule {
 
     static final Version VERSION = new Version(1, 0, 5, "", "io.micrometer", "micrometer-core");
 
@@ -83,10 +83,10 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        public void serialize(Meter.Id id, JsonGenerator json, SerializerProvider provider) throws IOException {
+        public void serialize(Meter.Id id, JsonGenerator json, SerializationContext provider) {
             json.writeStartObject();
-            json.writeStringField("name", id.getName());
-            json.writeObjectField("tags", id.getTags());
+            json.writeStringProperty("name", id.getName());
+            json.writePOJOProperty("tags", id.getTags());
             json.writeEndObject();
         }
     }
@@ -97,9 +97,9 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        public void serialize(Tag tag, JsonGenerator json, SerializerProvider provider) throws IOException {
+        public void serialize(Tag tag, JsonGenerator json, SerializationContext provider) {
             json.writeStartObject();
-            json.writeStringField(tag.getKey(), tag.getValue());
+            json.writeStringProperty(tag.getKey(), tag.getValue());
             json.writeEndObject();
         }
     }
@@ -111,26 +111,30 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        public final void serialize(T meter, JsonGenerator json, SerializerProvider provider) throws IOException {
+        public final void serialize(T meter, JsonGenerator json, SerializationContext provider) {
             json.writeStartObject();
-            json.writeObjectField("id", meter.getId());
-            serializeStatistics(meter, json, provider);
+            json.writePOJOProperty("id", meter.getId());
+            try {
+                serializeStatistics(meter, json, provider);
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
             json.writeEndObject();
         }
 
-        protected abstract void serializeStatistics(T meter, JsonGenerator json, SerializerProvider provider)
+        protected abstract void serializeStatistics(T meter, JsonGenerator json, SerializationContext provider)
                 throws IOException;
 
         protected static void serializeSnapshot(JsonGenerator json, HistogramSnapshot snapshot, TimeUnit timeUnit)
                 throws IOException {
-            json.writeNumberField("count", snapshot.count());
-            json.writeNumberField("max", snapshot.max(timeUnit));
-            json.writeNumberField("mean", snapshot.mean(timeUnit));
-            json.writeNumberField("total", snapshot.total(timeUnit));
+            json.writeNumberProperty("count", snapshot.count());
+            json.writeNumberProperty("max", snapshot.max(timeUnit));
+            json.writeNumberProperty("mean", snapshot.mean(timeUnit));
+            json.writeNumberProperty("total", snapshot.total(timeUnit));
             ValueAtPercentile[] percentiles = snapshot.percentileValues();
             for (ValueAtPercentile percentile : percentiles) {
                 int p = (int) percentile.percentile() * 100;
-                json.writeNumberField("p" + p, percentile.value(timeUnit));
+                json.writeNumberProperty("p" + p, percentile.value(timeUnit));
             }
         }
     }
@@ -141,8 +145,8 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(Gauge gauge, JsonGenerator json, SerializerProvider provider) throws IOException {
-            json.writeNumberField("value", gauge.value());
+        protected void serializeStatistics(Gauge gauge, JsonGenerator json, SerializationContext provider) throws IOException {
+            json.writeNumberProperty("value", gauge.value());
         }
     }
 
@@ -152,9 +156,9 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(Counter counter, JsonGenerator json, SerializerProvider provider)
+        protected void serializeStatistics(Counter counter, JsonGenerator json, SerializationContext provider)
                 throws IOException {
-            json.writeNumberField("count", counter.count());
+            json.writeNumberProperty("count", counter.count());
         }
     }
 
@@ -164,9 +168,9 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(FunctionCounter counter, JsonGenerator json, SerializerProvider provider)
+        protected void serializeStatistics(FunctionCounter counter, JsonGenerator json, SerializationContext provider)
                 throws IOException {
-            json.writeNumberField("count", counter.count());
+            json.writeNumberProperty("count", counter.count());
         }
     }
 
@@ -180,7 +184,7 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(AbstractTimer timer, JsonGenerator json, SerializerProvider provider)
+        protected void serializeStatistics(AbstractTimer timer, JsonGenerator json, SerializationContext provider)
                 throws IOException {
             serializeSnapshot(json, timer.takeSnapshot(), timeUnit);
         }
@@ -197,11 +201,11 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(FunctionTimer timer, JsonGenerator json, SerializerProvider provider)
+        protected void serializeStatistics(FunctionTimer timer, JsonGenerator json, SerializationContext provider)
                 throws IOException {
-            json.writeNumberField("count", timer.count());
-            json.writeNumberField("mean", timer.mean(timeUnit));
-            json.writeNumberField("total", timer.totalTime(timeUnit));
+            json.writeNumberProperty("count", timer.count());
+            json.writeNumberProperty("mean", timer.mean(timeUnit));
+            json.writeNumberProperty("total", timer.totalTime(timeUnit));
         }
     }
 
@@ -215,10 +219,10 @@ public class MicrometerModule extends Module {
         }
 
         @Override
-        protected void serializeStatistics(LongTaskTimer timer, JsonGenerator json, SerializerProvider provider)
+        protected void serializeStatistics(LongTaskTimer timer, JsonGenerator json, SerializationContext provider)
                 throws IOException {
-            json.writeNumberField("activeTasks", timer.activeTasks());
-            json.writeNumberField("duration", timer.duration(timeUnit));
+            json.writeNumberProperty("activeTasks", timer.activeTasks());
+            json.writeNumberProperty("duration", timer.duration(timeUnit));
         }
     }
 
@@ -233,9 +237,8 @@ public class MicrometerModule extends Module {
 
         @Override
         protected void serializeStatistics(
-                AbstractDistributionSummary distributionSummary,
-                JsonGenerator json,
-                SerializerProvider provider)
+                AbstractDistributionSummary distributionSummary, JsonGenerator json,
+                SerializationContext provider)
                 throws IOException {
             serializeSnapshot(json, distributionSummary.takeSnapshot(), timeUnit);
         }
@@ -256,18 +259,17 @@ public class MicrometerModule extends Module {
         public void serialize(
                 MeterRegistry registry,
                 JsonGenerator json,
-                SerializerProvider provider)
-                throws IOException {
+                SerializationContext provider) {
 
             json.writeStartObject();
-            json.writeStringField("version", VERSION.toString());
-            json.writeObjectField("gauges", meters(registry, Gauge.class, matchingNames, matchingTags));
-            json.writeObjectField("counters", meters(registry, Counter.class, matchingNames, matchingTags));
-            json.writeObjectField("functionCounters", meters(registry, FunctionCounter.class, matchingNames, matchingTags));
-            json.writeObjectField("timers", meters(registry, Timer.class, matchingNames, matchingTags));
-            json.writeObjectField("functionTimers", meters(registry, FunctionTimer.class, matchingNames, matchingTags));
-            json.writeObjectField("longTaskTimers", meters(registry, LongTaskTimer.class, matchingNames, matchingTags));
-            json.writeObjectField("distributionSummaries",
+            json.writeStringProperty("version", VERSION.toString());
+            json.writePOJOProperty("gauges", meters(registry, Gauge.class, matchingNames, matchingTags));
+            json.writePOJOProperty("counters", meters(registry, Counter.class, matchingNames, matchingTags));
+            json.writePOJOProperty("functionCounters", meters(registry, FunctionCounter.class, matchingNames, matchingTags));
+            json.writePOJOProperty("timers", meters(registry, Timer.class, matchingNames, matchingTags));
+            json.writePOJOProperty("functionTimers", meters(registry, FunctionTimer.class, matchingNames, matchingTags));
+            json.writePOJOProperty("longTaskTimers", meters(registry, LongTaskTimer.class, matchingNames, matchingTags));
+            json.writePOJOProperty("distributionSummaries",
                     meters(registry, DistributionSummary.class, matchingNames, matchingTags));
             json.writeEndObject();
         }

@@ -18,11 +18,11 @@ package org.apache.camel.component.salesforce.api.dto.approval;
 
 import java.util.Collections;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -72,7 +72,7 @@ public class ApprovalRequestTest {
     }
 
     @Test
-    public void shouldSerializeAsJson() throws JsonProcessingException {
+    public void shouldSerializeAsJson() throws JacksonException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final String json = mapper.writerFor(ApprovalRequest.class).writeValueAsString(sampleRequest);

@@ -18,7 +18,6 @@ package org.apache.kafka.clients.producer;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -34,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.databind.node.StringNode;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
@@ -69,7 +69,7 @@ public class KafkaProducerTest {
     public void testSendOverrideTopic() throws Exception {
         when(message.removeHeader("kafka.OVERRIDE_TOPIC")).thenReturn("overridden-topic");
         camelProducer.process(exchange);
-        when(message.removeHeader("kafka.OVERRIDE_TOPIC")).thenReturn(new TextNode("overridden-topic-jackson"));
+        when(message.removeHeader("kafka.OVERRIDE_TOPIC")).thenReturn(new StringNode("overridden-topic-jackson"));
         camelProducer.process(exchange);
         List<ProducerRecord<Object, Object>> records = kafkaProducer.history();
         assertThat(records.get(0).topic(), Is.is("overridden-topic"));

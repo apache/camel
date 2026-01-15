@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
@@ -40,6 +36,10 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.dataformat.yaml.YAMLWriteFeature;
 
 /**
  * YAML writer which uses Jackson to dump to yaml format.
@@ -421,10 +421,11 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
             // load into jackson
             JsonNode jsonNodeTree = new ObjectMapper().readTree(arr.toJson());
             // map to yaml via jackson
-            YAMLMapper mapper = new YAMLMapper();
-            mapper.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-            mapper.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
-            mapper.enable(YAMLGenerator.Feature.INDENT_ARRAYS_WITH_INDICATOR);
+            YAMLMapper mapper = YAMLMapper.builder()
+                    .disable(YAMLWriteFeature.WRITE_DOC_START_MARKER)
+                    .enable(YAMLWriteFeature.MINIMIZE_QUOTES)
+                    .enable(YAMLWriteFeature.INDENT_ARRAYS_WITH_INDICATOR)
+                    .build();
             String jsonAsYaml = mapper.writeValueAsString(jsonNodeTree);
             // strip leading yaml indent of 2 spaces (because INDENT_ARRAYS_WITH_INDICATOR is enabled)
             StringJoiner sj = new StringJoiner("\n");

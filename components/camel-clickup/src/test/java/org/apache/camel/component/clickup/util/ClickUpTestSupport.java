@@ -19,12 +19,12 @@ package org.apache.camel.component.clickup.util;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.clickup.ClickUpComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A support test class for ClickUp tests.

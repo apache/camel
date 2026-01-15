@@ -19,9 +19,6 @@ package org.apache.camel.component.cyberark.vault;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -32,6 +29,9 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.CyberArkVaultConfiguration;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from CyberArk Conjur Vault service.
@@ -216,7 +216,7 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
 
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            throws JacksonException {
 
         // capture name of secret
         secrets.add(key);

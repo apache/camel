@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.huaweicloud.iam;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.huaweicloud.sdk.iam.v3.IamClient;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsRequest;
@@ -44,6 +42,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public class IAMProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(IAMProducer.class);
@@ -149,7 +149,7 @@ public class IAMProducer extends DefaultProducer {
             String strBody = (String) body;
             try {
                 userOption = new ObjectMapper().readValue(strBody, UpdateUserOption.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalArgumentException("String request body must be a valid JSON");
             }
         } else {
@@ -225,7 +225,7 @@ public class IAMProducer extends DefaultProducer {
             String strBody = (String) body;
             try {
                 groupOption = new ObjectMapper().readValue(strBody, KeystoneUpdateGroupOption.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalArgumentException("String request body must be a valid JSON with the proper keys");
             }
         } else {

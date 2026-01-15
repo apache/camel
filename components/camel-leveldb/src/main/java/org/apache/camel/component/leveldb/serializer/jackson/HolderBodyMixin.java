@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.leveldb.serializer.jackson;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 /**
  * DefaultExchangeHolder uses type Object for inBody and outBody. Which caused during deserialization, that Jackson

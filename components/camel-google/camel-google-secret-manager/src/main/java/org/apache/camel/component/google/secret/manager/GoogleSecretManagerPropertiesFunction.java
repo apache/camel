@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.rpc.ApiException;
 import com.google.auth.Credentials;
@@ -40,6 +37,9 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.GcpVaultConfiguration;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from GCP Secrets Manager service.
@@ -182,7 +182,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
         if (key != null) {
             try {
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeCamelException(
                         "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
             }
@@ -193,7 +193,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
 
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            throws JacksonException {
 
         // capture name of secret
         secrets.add(key);

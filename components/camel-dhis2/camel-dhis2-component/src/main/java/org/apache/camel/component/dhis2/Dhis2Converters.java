@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.dhis2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dhis2.api.Dhis2Resource;
 import org.apache.camel.spi.TypeConverterRegistry;
+import tools.jackson.databind.ObjectMapper;
 
 @Converter(generateLoader = true)
 public final class Dhis2Converters {

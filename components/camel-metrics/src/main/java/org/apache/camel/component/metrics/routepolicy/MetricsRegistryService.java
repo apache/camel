@@ -23,9 +23,6 @@ import javax.management.MBeanServer;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jmx.JmxReporter;
 import com.codahale.metrics.json.MetricsModule;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -35,6 +32,10 @@ import org.apache.camel.component.metrics.MetricsComponent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Service holding the {@link MetricRegistry} which registers all metrics.
@@ -124,13 +125,13 @@ public final class MetricsRegistryService extends ServiceSupport
         }
 
         // json mapper
-        this.mapper = new ObjectMapper().registerModule(new MetricsModule(getRateUnit(), getDurationUnit(), false));
+        this.mapper = JsonMapper.builder().addModule(new MetricsModule(getRateUnit(), getDurationUnit(), false)).build();
         if (getRateUnit() == TimeUnit.SECONDS && getDurationUnit() == TimeUnit.SECONDS) {
             // they both use same units so reuse
             this.secondsMapper = this.mapper;
         } else {
             this.secondsMapper
-                    = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
+                    = JsonMapper.builder().addModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false)).build();
         }
     }
 
@@ -166,7 +167,7 @@ public final class MetricsRegistryService extends ServiceSupport
         }
         try {
             return writer.writeValueAsString(getMetricsRegistry());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
@@ -179,7 +180,7 @@ public final class MetricsRegistryService extends ServiceSupport
         }
         try {
             return writer.writeValueAsString(getMetricsRegistry());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }

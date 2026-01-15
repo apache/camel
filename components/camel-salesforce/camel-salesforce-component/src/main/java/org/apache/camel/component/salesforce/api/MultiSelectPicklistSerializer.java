@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.StreamWriteException;
+import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
  * Jackson Serializer for generating ';' separated strings for MultiSelect pick-lists.
@@ -60,7 +60,7 @@ public class MultiSelectPicklistSerializer extends StdSerializer<Object> {
             jgen.writeString(buffer.toString());
 
         } catch (Exception e) {
-            throw new JsonGenerationException(
+            throw new StreamWriteException(
                     String.format("Exception writing pick list value %s of type %s: %s", value, value.getClass().getName(),
                             e.getMessage()),
                     jgen);

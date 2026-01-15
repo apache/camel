@@ -16,12 +16,12 @@
  */
 package org.apache.camel.language.jq;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.TextNode;
 
 public class JqExpressionFromPropertyTest extends JqTestSupport {
     @Override

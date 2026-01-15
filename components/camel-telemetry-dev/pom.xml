@@ -44,9 +44,9 @@
             <artifactId>camel-telemetry</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson2-version}</version>
+            <version>${jackson-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

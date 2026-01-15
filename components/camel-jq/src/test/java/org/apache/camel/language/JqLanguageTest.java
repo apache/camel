@@ -16,13 +16,13 @@
  */
 package org.apache.camel.language;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.LanguageBuilderFactory;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.model.language.JqExpression;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.TextNode;
 
 /**
  * Ensures that the "jq" language is compliant with the single input / typed language expectations.

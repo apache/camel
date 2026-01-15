@@ -33,9 +33,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -53,6 +50,9 @@ import org.apache.camel.component.whatsapp.util.FileUploadStreamSupplier;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Java11 Http Client implementation
@@ -71,8 +71,9 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
     public WhatsAppServiceRestAPIAdapter(HttpClient client, String baseUri, String apiVersion, String phoneNumberId,
                                          String authorizationToken) {
         this.baseUri = baseUri + "/" + apiVersion + "/" + phoneNumberId;
-        this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.mapper = JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                .build();
         this.authorizationToken = authorizationToken;
 
         final Map<Class<?>, WhatsAppServiceRestAPIAdapter.OutgoingMessageHandler<?>> m = new HashMap<>();
@@ -158,7 +159,7 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
                 final String body = mapper.writeValueAsString(message);
                 BodyPublisher bodyPublisher = BodyPublishers.ofString(body);
                 builder.POST(bodyPublisher);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeCamelException("Could not serialize " + message, e);
             }
         }
@@ -213,7 +214,7 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
                         exchange.setException(exception);
                         throw exception;
                     }
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     exchange.setException(e);
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 } finally {

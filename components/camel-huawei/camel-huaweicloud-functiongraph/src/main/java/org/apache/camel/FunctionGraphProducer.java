@@ -19,8 +19,6 @@ package org.apache.camel;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
 import com.huaweicloud.sdk.functiongraph.v2.model.InvokeFunctionRequest;
 import com.huaweicloud.sdk.functiongraph.v2.model.InvokeFunctionResponse;
@@ -32,6 +30,8 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public class FunctionGraphProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionGraphProducer.class);
@@ -81,7 +81,7 @@ public class FunctionGraphProducer extends DefaultProducer {
             String strBody = exchange.getMessage().getBody(String.class);
             try {
                 request = new ObjectMapper().readValue(strBody, HashMap.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalArgumentException("Request body must be a JSON or a HashMap");
             }
         } else {

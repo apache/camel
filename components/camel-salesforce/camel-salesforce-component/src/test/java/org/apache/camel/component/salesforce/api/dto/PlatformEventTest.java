@@ -19,9 +19,9 @@ package org.apache.camel.component.salesforce.api.dto;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;

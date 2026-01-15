@@ -23,10 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -43,6 +39,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.InputStreamRequestContent;
 import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.type.CollectionType;
 
 public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientBase
         implements CompositeSObjectCollectionsApiClient {
@@ -223,7 +223,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         byte[] jsonBytes;
         try {
             jsonBytes = jsonWriterFor(obj).writeValueAsBytes(obj);
-        } catch (final JsonProcessingException e) {
+        } catch (final JacksonException e) {
             throw new SalesforceException("Unable to serialize given SObjectTree to JSON", e);
         }
 

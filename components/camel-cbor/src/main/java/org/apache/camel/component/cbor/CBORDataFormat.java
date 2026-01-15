@@ -29,14 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -49,6 +41,16 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.type.CollectionType;
+import tools.jackson.dataformat.cbor.CBORFactory;
+import tools.jackson.dataformat.cbor.CBORMapper;
 
 @Dataformat("cbor")
 public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
@@ -358,10 +360,12 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
             if (useDefaultObjectMapper && camelContext != null) {
-                Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
-                set = set.stream().filter(om -> om.getFactory() instanceof CBORFactory).collect(Collectors.toSet());
+                Set<TokenStreamFactory> set = camelContext.getRegistry().findByType(TokenStreamFactory.class);
+                set = set.stream().filter(om -> om instanceof CBORFactory).collect(Collectors.toSet());
                 if (set.size() == 1) {
-                    objectMapper = set.iterator().next();
+                    CBORFactory cborf = (CBORFactory) set.iterator().next();
+                    objectMapper = CBORMapper.builder(cborf)
+                            .build();
                     LOG.info(
                             "Found a single ObjectMapper with a CBORFactory in the registry, so promoting it as the default ObjectMapper: {}",
                             objectMapper);
@@ -384,7 +388,9 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
 
         if (prettyPrint) {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            objectMapper.rebuild()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .build();
         }
 
         if (enableFeatures != null) {
@@ -394,18 +400,24 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
                 // it can be different kind
                 SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
                 if (sf != null) {
-                    objectMapper.enable(sf);
+                    objectMapper = objectMapper.rebuild()
+                            .enable(sf)
+                            .build();
                     continue;
                 }
                 DeserializationFeature df
                         = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
                 if (df != null) {
-                    objectMapper.enable(df);
+                    objectMapper = objectMapper.rebuild()
+                            .enable(df)
+                            .build();
                     continue;
                 }
                 MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, enable);
                 if (mf != null) {
-                    objectMapper.enable(mf);
+                    objectMapper = objectMapper.rebuild()
+                            .enable(mf)
+                            .build();
                     continue;
                 }
                 throw new IllegalArgumentException(
@@ -421,18 +433,18 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
                 SerializationFeature sf
                         = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
                 if (sf != null) {
-                    objectMapper.disable(sf);
+                    objectMapper = objectMapper.rebuild().disable(sf).build();
                     continue;
                 }
                 DeserializationFeature df
                         = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
                 if (df != null) {
-                    objectMapper.disable(df);
+                    objectMapper = objectMapper.rebuild().disable(df).build();
                     continue;
                 }
                 MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, disable);
                 if (mf != null) {
-                    objectMapper.disable(mf);
+                    objectMapper = objectMapper.rebuild().disable(mf).build();
                     continue;
                 }
                 throw new IllegalArgumentException(
