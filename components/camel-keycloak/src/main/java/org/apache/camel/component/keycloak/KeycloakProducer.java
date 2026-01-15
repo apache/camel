@@ -51,15 +51,12 @@ import org.keycloak.representations.idm.authorization.Permission;
 import org.keycloak.representations.idm.authorization.PolicyRepresentation;
 import org.keycloak.representations.idm.authorization.ResourcePermissionRepresentation;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to Keycloak Admin API
  */
 public class KeycloakProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KeycloakProducer.class);
     public static final String MISSING_REALM_NAME = "Realm name must be specified";
     public static final String MISSING_USER_NAME = "Username must be specified";
     public static final String MISSING_ROLE_NAME = "Role name must be specified";

@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.keycloak.services.KeycloakService;
 import org.apache.camel.test.infra.keycloak.services.KeycloakServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -69,15 +70,17 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     private static final String TEST_IDP_ALIAS = "testinfra-idp-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String TEST_RESOURCE_NAME = "testinfra-resource-" + UUID.randomUUID().toString().substring(0, 8);
     private static final String TEST_POLICY_NAME = "testinfra-policy-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TEST_AUTHZ_CLIENT_ID = "testinfra-authz-client-" + UUID.randomUUID().toString().substring(0, 8);
+    // NOTE: not yet used
+    // private static final String TEST_AUTHZ_CLIENT_ID = "testinfra-authz-client-" + UUID.randomUUID().toString().substring(0, 8);
 
     private static String testUserId;
     private static String testGroupId;
     private static String testClientUuid;
     private static String testResourceId;
     private static String testPolicyId;
-    private static String testAuthzClientUuid;
-    private static String testAuthzClientSecret;
+    // NOTE: not yet used
+    // private static String testAuthzClientUuid;
+    // private static String testAuthzClientSecret;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -277,7 +280,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(2)
     void testCreateRealm() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:createRealm", exchange);
@@ -293,7 +296,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(3)
     void testGetRealm() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:getRealm", exchange);
@@ -306,7 +309,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(4)
     void testCreateUser() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USERNAME, TEST_USER_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_EMAIL, TEST_USER_NAME + "@testinfra.com");
@@ -323,7 +326,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(5)
     void testCreateRole() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.ROLE_NAME, TEST_ROLE_NAME);
         exchange.getIn().setHeader(KeycloakConstants.ROLE_DESCRIPTION, "Test role for test-infra demonstration");
@@ -341,7 +344,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(6)
     void testGetRole() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.ROLE_NAME, TEST_ROLE_NAME);
 
@@ -355,7 +358,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(7)
     void testCreateGroup() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.GROUP_NAME, TEST_GROUP_NAME);
 
@@ -377,7 +380,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(8)
     void testListGroups() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:listGroups", exchange);
@@ -396,7 +399,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Order(9)
     void testAddUserToGroup() {
         // First, get the user ID from the created user
-        Exchange listExchange = createExchangeWithBody(null);
+        Exchange listExchange = TestSupport.createExchangeWithBody(this.context, null);
         listExchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         Exchange listResult = template.send("direct:listUsers", listExchange);
 
@@ -407,7 +410,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         testUserId = users.get(0).getId();
 
         // Now add user to group
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
         exchange.getIn().setHeader(KeycloakConstants.GROUP_ID, testGroupId);
@@ -425,7 +428,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(10)
     void testListUserGroups() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
 
@@ -444,7 +447,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(11)
     void testCreateClient() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_ID, TEST_CLIENT_ID);
 
@@ -466,14 +469,13 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(12)
     void testListClients() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:listClients", exchange);
         assertNotNull(result);
         assertNull(result.getException());
 
-        @SuppressWarnings("unchecked")
         List<?> clients = result.getIn().getBody(List.class);
         assertNotNull(clients);
         assertTrue(clients.size() >= 1);
@@ -486,7 +488,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testResetUserPassword() {
         assertNotNull(testUserId, "testUserId should be set by testAddUserToGroup");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
         exchange.getIn().setHeader(KeycloakConstants.USER_PASSWORD, "newTestPassword123");
@@ -507,7 +509,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testGetUserRoles() {
         assertNotNull(testUserId, "testUserId should be set by testAddUserToGroup");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
 
@@ -525,7 +527,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(15)
     void testSearchUsers() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.SEARCH_QUERY, TEST_USER_NAME);
 
@@ -551,7 +553,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         idp.setEnabled(true);
         idp.setDisplayName("Test OIDC Provider");
 
-        Exchange exchange = createExchangeWithBody(idp);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, idp);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:createIdentityProvider", exchange);
@@ -567,7 +569,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(17)
     void testGetIdentityProvider() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.IDP_ALIAS, TEST_IDP_ALIAS);
 
@@ -585,7 +587,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(18)
     void testListIdentityProviders() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:listIdentityProviders", exchange);
@@ -606,7 +608,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testSetUserAttribute() {
         assertNotNull(testUserId, "testUserId should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
         exchange.getIn().setHeader(KeycloakConstants.ATTRIBUTE_NAME, "department");
@@ -627,7 +629,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testGetUserAttributes() {
         assertNotNull(testUserId, "testUserId should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
 
@@ -660,7 +662,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testDeleteUserAttribute() {
         assertNotNull(testUserId, "testUserId should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
         exchange.getIn().setHeader(KeycloakConstants.ATTRIBUTE_NAME, "department");
@@ -681,7 +683,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testGetUserCredentials() {
         assertNotNull(testUserId, "testUserId should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
 
@@ -702,7 +704,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testAddRequiredAction() {
         assertNotNull(testUserId, "testUserId should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
         exchange.getIn().setHeader(KeycloakConstants.REQUIRED_ACTION, "VERIFY_EMAIL");
@@ -722,7 +724,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testRemoveRequiredAction() {
         assertNotNull(testUserId, "testUserId should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_ID, testUserId);
         exchange.getIn().setHeader(KeycloakConstants.REQUIRED_ACTION, "VERIFY_EMAIL");
@@ -743,7 +745,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testGetClientSecret() {
         assertNotNull(testClientUuid, "testClientUuid should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -762,7 +764,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testRegenerateClientSecret() {
         assertNotNull(testClientUuid, "testClientUuid should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -788,7 +790,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         resource.setType("urn:test:resources:document");
         resource.setOwnerManagedAccess(false);
 
-        Exchange exchange = createExchangeWithBody(resource);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, resource);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -822,7 +824,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
 
         assertNotNull(testClientUuid, "testClientUuid should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -852,7 +854,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
 
         assertNotNull(testClientUuid, "testClientUuid should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
         exchange.getIn().setHeader(KeycloakConstants.RESOURCE_ID, testResourceId);
@@ -883,7 +885,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         policy.setType("role");
         policy.setDescription("Test policy for integration tests");
 
-        Exchange exchange = createExchangeWithBody(policy);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, policy);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -915,7 +917,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
 
         assertNotNull(testClientUuid, "testClientUuid should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -945,7 +947,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
 
         assertNotNull(testClientUuid, "testClientUuid should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
         exchange.getIn().setHeader(KeycloakConstants.POLICY_ID, testPolicyId);
@@ -980,7 +982,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         permission.addResource(testResourceId);
         permission.addPolicy(testPolicyId);
 
-        Exchange exchange = createExchangeWithBody(permission);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, permission);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -1007,7 +1009,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
 
         assertNotNull(testClientUuid, "testClientUuid should be set");
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -1036,7 +1038,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         // This test evaluates permissions using client credentials
         // The evaluatePermission operation uses AuthzClient which requires serverUrl, realm, clientId, and clientSecret
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         // Note: The evaluatePermission operation uses the component's configuration
         // which includes serverUrl, realm, username, and password set in createCamelContext()
         // We need to configure a client with authorization enabled for this test
@@ -1083,7 +1085,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         // Since the component is configured with serverUrl in createCamelContext,
         // this test verifies the operation works with the configured values
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.PERMISSION_RESOURCE_NAMES, "test-resource");
         exchange.getIn().setHeader(KeycloakConstants.PERMISSIONS_ONLY, true);
 
@@ -1115,7 +1117,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testEvaluatePermissionWithResourceAndScopes() {
         // Test permission evaluation with specific resources and scopes
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.PERMISSION_RESOURCE_NAMES, "document1,document2");
         exchange.getIn().setHeader(KeycloakConstants.PERMISSION_SCOPES, "read,write");
         exchange.getIn().setHeader(KeycloakConstants.PERMISSIONS_ONLY, true);
@@ -1154,7 +1156,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testEvaluatePermissionRPTMode() {
         // Test permission evaluation in RPT mode (default, without permissionsOnly flag)
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         // Don't set PERMISSIONS_ONLY - should return RPT token
         exchange.getIn().setHeader(KeycloakConstants.PERMISSION_RESOURCE_NAMES, "test-resource");
 
@@ -1192,7 +1194,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
         // Cleanup is automatic when client is deleted, but we can try explicit cleanup
         if (testResourceId != null && testClientUuid != null) {
             try {
-                Exchange exchange = createExchangeWithBody(null);
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
                 exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
                 exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
                 exchange.getIn().setHeader(KeycloakConstants.RESOURCE_ID, testResourceId);
@@ -1206,7 +1208,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
 
         if (testPolicyId != null && testClientUuid != null) {
             try {
-                Exchange exchange = createExchangeWithBody(null);
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
                 exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
                 exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
                 exchange.getIn().setHeader(KeycloakConstants.POLICY_ID, testPolicyId);
@@ -1223,7 +1225,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Order(95)
     void testCleanupIdentityProvider() {
         try {
-            Exchange exchange = createExchangeWithBody(null);
+            Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
             exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
             exchange.getIn().setHeader(KeycloakConstants.IDP_ALIAS, TEST_IDP_ALIAS);
 
@@ -1243,7 +1245,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testCleanupClient() {
         if (testClientUuid != null) {
             try {
-                Exchange exchange = createExchangeWithBody(null);
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
                 exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
                 exchange.getIn().setHeader(KeycloakConstants.CLIENT_UUID, testClientUuid);
 
@@ -1264,7 +1266,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     void testCleanupGroup() {
         if (testGroupId != null) {
             try {
-                Exchange exchange = createExchangeWithBody(null);
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
                 exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
                 exchange.getIn().setHeader(KeycloakConstants.GROUP_ID, testGroupId);
 
@@ -1283,7 +1285,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Test
     @Order(98)
     void testCleanupRole() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.ROLE_NAME, TEST_ROLE_NAME);
 
@@ -1299,7 +1301,7 @@ public class KeycloakTestInfraIT extends CamelTestSupport {
     @Order(99)
     void testCleanupRealm() {
         // Delete the test realm (this will also delete all users and roles in it)
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:deleteRealm", exchange);
