@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -29,6 +30,7 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.impl.engine.DefaultChannel;
 import org.apache.camel.impl.engine.SharedCamelInternalProcessor;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.InternalProcessorFactory;
@@ -43,6 +45,11 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
         return internal;
+    }
+
+    @Override
+    public CamelInternalProcessorAdvice<?> createAggregateBacklogTracerAdvice(CamelContext camelContext, NamedNode definition) {
+        return new CamelInternalProcessor.BacklogTracerAggregateAdvice(camelContext, definition);
     }
 
     @Override

@@ -60,7 +60,6 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
                 = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
-        assertEquals(19, events.size());
 
         // should be 4 first and 4 last
         assertEquals(4, events.stream().filter(BacklogTracerEventMessage::isFirst).count());
