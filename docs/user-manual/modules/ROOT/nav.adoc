@@ -93,6 +93,7 @@
 ** xref:template-engines.adoc[Template Engines]
 ** xref:transformer.adoc[Transformer]
 ** xref:threading-model.adoc[Threading Model]
+** xref:virtual-threads.adoc[Virtual Threads]
 ** xref:tracer.adoc[Tracer]
 ** xref:type-converter.adoc[Type Converter]
 ** xref:uris.adoc[URIs]
