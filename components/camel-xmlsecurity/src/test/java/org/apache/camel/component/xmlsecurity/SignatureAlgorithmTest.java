@@ -300,42 +300,42 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     @Test
     public void testHMACSHA1() throws Exception {
         setupMock();
-        sendBody("direct:hmacsha1", payload);
+        TestSupport.sendBody(this.template, "direct:hmacsha1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testHMACSHA224() throws Exception {
         setupMock();
-        sendBody("direct:hmacsha224", payload);
+        TestSupport.sendBody(this.template, "direct:hmacsha224", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testHMACSHA256() throws Exception {
         setupMock();
-        sendBody("direct:hmacsha256", payload);
+        TestSupport.sendBody(this.template, "direct:hmacsha256", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testHMACSHA384() throws Exception {
         setupMock();
-        sendBody("direct:hmacsha384", payload);
+        TestSupport.sendBody(this.template, "direct:hmacsha384", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testHMACSHA512() throws Exception {
         setupMock();
-        sendBody("direct:hmacsha512", payload);
+        TestSupport.sendBody(this.template, "direct:hmacsha512", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testHMACRIPEMD160() throws Exception {
         setupMock();
-        sendBody("direct:hmacripemd160", payload);
+        TestSupport.sendBody(this.template, "direct:hmacripemd160", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -345,77 +345,77 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     @Test
     public void testRSASHA1() throws Exception {
         setupMock();
-        sendBody("direct:rsasha1", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA224() throws Exception {
         setupMock();
-        sendBody("direct:rsasha224", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha224", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA256() throws Exception {
         setupMock();
-        sendBody("direct:rsasha256", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha256", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA384() throws Exception {
         setupMock();
-        sendBody("direct:rsasha384", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha384", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA512() throws Exception {
         setupMock();
-        sendBody("direct:rsasha512", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha512", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSARIPEMD160() throws Exception {
         setupMock();
-        sendBody("direct:rsaripemd160", payload);
+        TestSupport.sendBody(this.template, "direct:rsaripemd160", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA1MGF1() throws Exception {
         setupMock();
-        sendBody("direct:rsasha1_mgf1", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha1_mgf1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA224MGF1() throws Exception {
         setupMock();
-        sendBody("direct:rsasha224_mgf1", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha224_mgf1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA256MGF1() throws Exception {
         setupMock();
-        sendBody("direct:rsasha256_mgf1", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha256_mgf1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA384MGF1() throws Exception {
         setupMock();
-        sendBody("direct:rsasha384_mgf1", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha384_mgf1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testRSASHA512MGF1() throws Exception {
         setupMock();
-        sendBody("direct:rsasha512_mgf1", payload);
+        TestSupport.sendBody(this.template, "direct:rsasha512_mgf1", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -442,8 +442,7 @@ public class SignatureAlgorithmTest extends CamelTestSupport {
     }
 
     public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        try {
+        try (CamelContext context = new DefaultCamelContext()) {
             context.addRoutes(builder);
             context.start();
 
