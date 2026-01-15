@@ -43,9 +43,9 @@ public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List body1 = line.getExchanges().get(0).getIn().getBody(List.class);
-        List body2 = line.getExchanges().get(1).getIn().getBody(List.class);
-        List body3 = line.getExchanges().get(2).getIn().getBody(List.class);
+        List<?> body1 = line.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> body2 = line.getExchanges().get(1).getIn().getBody(List.class);
+        List<?> body3 = line.getExchanges().get(2).getIn().getBody(List.class);
         assertEquals(Arrays.asList("A", "B", "C"), body1);
         assertEquals(Arrays.asList("1", "2", "3"), body2);
         assertEquals(Arrays.asList("one", "two", "three"), body3);
