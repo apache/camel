@@ -275,6 +275,7 @@
                                     <exclude>**/*.keystore</exclude>
                                     <exclude>**/*.mar</exclude>
                                     <exclude>**/*.model</exclude>
+                                    <exclude>**/*.mvel</exclude>
                                     <exclude>**/*.mp3</exclude>
                                     <exclude>**/*.mp4</exclude>
                                     <exclude>**/*.p12</exclude>

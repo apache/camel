@@ -30,6 +30,8 @@ import org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
 import org.apache.camel.tooling.model.ComponentModel.EndpointOptionModel;
 import org.apache.camel.tooling.model.DataFormatModel.DataFormatOptionModel;
 import org.apache.camel.tooling.model.EipModel.EipOptionModel;
+import org.apache.camel.tooling.model.JBangCommandModel.JBangCommand;
+import org.apache.camel.tooling.model.JBangCommandModel.JBangCommandOption;
 import org.apache.camel.tooling.model.JBangModel.JBangGroupModel;
 import org.apache.camel.tooling.model.JBangModel.JBangOptionModel;
 import org.apache.camel.tooling.model.LanguageModel.LanguageOptionModel;
@@ -946,6 +948,161 @@ public final class JsonMapper {
     }
 
     public static String createJsonSchema(JBangModel model) {
+        JsonObject wrapper = asJsonObject(model);
+        return serialize(wrapper);
+    }
+
+    // JBangCommandModel serialization/deserialization
+
+    public static JBangCommandModel generateJBangCommandModel(String json) {
+        JsonObject obj = deserialize(json);
+        return generateJBangCommandModel(obj);
+    }
+
+    public static JBangCommandModel generateJBangCommandModel(JsonObject obj) {
+        JBangCommandModel model = new JBangCommandModel();
+        JsonArray commands = (JsonArray) obj.get("commands");
+        if (commands != null) {
+            for (Object entry : commands) {
+                JsonObject cmdObj = (JsonObject) entry;
+                JBangCommand command = parseJBangCommand(cmdObj);
+                model.addCommand(command);
+            }
+        }
+        return model;
+    }
+
+    private static JBangCommand parseJBangCommand(JsonObject obj) {
+        JBangCommand command = new JBangCommand();
+        command.setName(obj.getString("name"));
+        command.setFullName(obj.getString("fullName"));
+        command.setDescription(obj.getString("description"));
+        command.setDeprecated(obj.getBooleanOrDefault("deprecated", false));
+        command.setDeprecationNote(obj.getString("deprecationNote"));
+        command.setSourceClass(obj.getString("sourceClass"));
+
+        JsonArray options = (JsonArray) obj.get("options");
+        if (options != null) {
+            for (Object optEntry : options) {
+                JsonObject optObj = (JsonObject) optEntry;
+                JBangCommandOption option = parseJBangCommandOption(optObj);
+                command.addOption(option);
+            }
+        }
+
+        JsonArray subcommands = (JsonArray) obj.get("subcommands");
+        if (subcommands != null) {
+            for (Object subEntry : subcommands) {
+                JsonObject subObj = (JsonObject) subEntry;
+                JBangCommand subcommand = parseJBangCommand(subObj);
+                command.addSubcommand(subcommand);
+            }
+        }
+
+        return command;
+    }
+
+    private static JBangCommandOption parseJBangCommandOption(JsonObject obj) {
+        JBangCommandOption option = new JBangCommandOption();
+        option.setNames(obj.getString("names"));
+        option.setDescription(obj.getString("description"));
+        option.setDefaultValue(obj.get("defaultValue"));
+        option.setJavaType(obj.getString("javaType"));
+        option.setType(obj.getString("type"));
+        option.setRequired(obj.getBooleanOrDefault("required", false));
+        option.setDeprecated(obj.getBooleanOrDefault("deprecated", false));
+        option.setDeprecationNote(obj.getString("deprecationNote"));
+        option.setHidden(obj.getBooleanOrDefault("hidden", false));
+        option.setParamLabel(obj.getString("paramLabel"));
+        option.setEnums(asStringList(obj.getCollection("enum")));
+        return option;
+    }
+
+    public static JsonObject asJsonObject(JBangCommandModel model) {
+        JsonObject json = new JsonObject();
+        JsonArray commands = new JsonArray();
+        for (JBangCommand cmd : model.getCommands()) {
+            commands.add(asJsonObject(cmd));
+        }
+        json.put("commands", commands);
+        return json;
+    }
+
+    private static JsonObject asJsonObject(JBangCommand cmd) {
+        JsonObject json = new JsonObject();
+        json.put("name", cmd.getName());
+        if (cmd.getFullName() != null) {
+            json.put("fullName", cmd.getFullName());
+        }
+        if (cmd.getDescription() != null) {
+            json.put("description", cmd.getDescription());
+        }
+        if (cmd.isDeprecated()) {
+            json.put("deprecated", true);
+        }
+        if (cmd.getDeprecationNote() != null) {
+            json.put("deprecationNote", cmd.getDeprecationNote());
+        }
+        if (cmd.getSourceClass() != null) {
+            json.put("sourceClass", cmd.getSourceClass());
+        }
+
+        if (cmd.hasOptions()) {
+            JsonArray options = new JsonArray();
+            for (JBangCommandOption opt : cmd.getOptions()) {
+                options.add(asJsonObject(opt));
+            }
+            json.put("options", options);
+        }
+
+        if (cmd.hasSubcommands()) {
+            JsonArray subcommands = new JsonArray();
+            for (JBangCommand sub : cmd.getSubcommands()) {
+                subcommands.add(asJsonObject(sub));
+            }
+            json.put("subcommands", subcommands);
+        }
+
+        return json;
+    }
+
+    private static JsonObject asJsonObject(JBangCommandOption opt) {
+        JsonObject json = new JsonObject();
+        json.put("names", opt.getNames());
+        if (opt.getDescription() != null) {
+            json.put("description", opt.getDescription());
+        }
+        if (opt.getDefaultValue() != null) {
+            json.put("defaultValue", opt.getDefaultValue());
+        }
+        if (opt.getJavaType() != null) {
+            json.put("javaType", opt.getJavaType());
+        }
+        if (opt.getType() != null) {
+            json.put("type", opt.getType());
+        }
+        if (opt.isRequired()) {
+            json.put("required", true);
+        }
+        if (opt.isDeprecated()) {
+            json.put("deprecated", true);
+        }
+        if (opt.getDeprecationNote() != null) {
+            json.put("deprecationNote", opt.getDeprecationNote());
+        }
+        if (opt.isHidden()) {
+            json.put("hidden", true);
+        }
+        if (opt.getParamLabel() != null) {
+            json.put("paramLabel", opt.getParamLabel());
+        }
+        if (opt.getEnums() != null && !opt.getEnums().isEmpty()) {
+            json.put("enum", opt.getEnums());
+        }
+        return json;
+    }
+
+    public static String createJsonSchema(JBangCommandModel model) {
         JsonObject wrapper = asJsonObject(model);
         return serialize(wrapper);
     }
