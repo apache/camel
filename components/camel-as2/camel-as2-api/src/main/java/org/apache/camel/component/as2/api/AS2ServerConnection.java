@@ -160,13 +160,78 @@ public class AS2ServerConnection {
     }
 
     /**
-     * Retrieves the specific AS2 consumer configuration associated with the given request path.
+     * Retrieves the specific AS2 consumer configuration associated with the given request path. Supports wildcard
+     * patterns (e.g., "/consumer/*") in addition to exact matches.
      *
      * @param  path The canonical request URI path (e.g., "/consumerA").
      * @return      An Optional containing the configuration if a match is found, otherwise empty.
      */
     public Optional<AS2ConsumerConfiguration> getConfigurationForPath(String path) {
-        return Optional.ofNullable(consumerConfigurations.get(path));
+        // First try exact match for performance
+        AS2ConsumerConfiguration exactMatch = consumerConfigurations.get(path);
+        if (exactMatch != null) {
+            return Optional.of(exactMatch);
+        }
+
+        // Then try pattern matching for wildcards
+        String bestMatchPattern = null;
+        int bestMatchLength = -1;
+
+        for (String pattern : consumerConfigurations.keySet()) {
+            if (matchesPattern(path, pattern)) {
+                // Prefer longer (more specific) patterns
+                int patternLength = pattern.replace("*", "").length();
+                if (patternLength > bestMatchLength) {
+                    bestMatchPattern = pattern;
+                    bestMatchLength = patternLength;
+                }
+            }
+        }
+
+        if (bestMatchPattern != null) {
+            return Optional.ofNullable(consumerConfigurations.get(bestMatchPattern));
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Checks if a request path matches a pattern that may contain wildcards. Supports wildcard '*' which matches any
+     * sequence of characters.
+     *
+     * @param  requestPath the incoming request path
+     * @param  pattern     the pattern to match against (may contain wildcards)
+     * @return             true if the path matches the pattern, false otherwise
+     */
+    private boolean matchesPattern(String requestPath, String pattern) {
+        // Exact match
+        if (requestPath.equals(pattern)) {
+            return true;
+        }
+
+        // No wildcard in pattern, and not exact match
+        if (!pattern.contains("*")) {
+            return false;
+        }
+
+        // Handle wildcard matching
+        // Convert pattern to regex: escape special chars except *, then replace * with .*
+        String regex = pattern
+                .replace(".", "\\.")
+                .replace("?", "\\?")
+                .replace("+", "\\+")
+                .replace("(", "\\(")
+                .replace(")", "\\)")
+                .replace("[", "\\[")
+                .replace("]", "\\]")
+                .replace("{", "\\{")
+                .replace("}", "\\}")
+                .replace("^", "\\^")
+                .replace("$", "\\$")
+                .replace("|", "\\|")
+                .replace("*", ".*");
+
+        return requestPath.matches(regex);
     }
 
     /**
