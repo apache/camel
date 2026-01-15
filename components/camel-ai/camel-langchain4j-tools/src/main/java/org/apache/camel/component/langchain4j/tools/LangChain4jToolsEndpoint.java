@@ -77,6 +77,11 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     @UriParam(description = "Tool's Camel Parameters, programmatically define Tool description and parameters")
     private CamelSimpleToolParameter camelToolParameter;
 
+    @Metadata(label = "consumer", defaultValue = "true")
+    @UriParam(description = "Whether the tool is automatically exposed to the LLM. When false, the tool is added to a searchable list and can be discovered via the tool-search-tool",
+              defaultValue = "true")
+    private boolean exposed = true;
+
     public LangChain4jToolsEndpoint(String uri, LangChain4jToolsComponent component, String toolId, String tags,
                                     LangChain4jToolsConfiguration configuration) {
         super(uri, component);
@@ -144,12 +149,16 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
         configureConsumer(langChain4jToolsConsumer);
 
         CamelToolSpecification camelToolSpecification
-                = new CamelToolSpecification(toolSpecification, langChain4jToolsConsumer);
+                = new CamelToolSpecification(toolSpecification, langChain4jToolsConsumer, exposed);
         final CamelToolExecutorCache executorCache = CamelToolExecutorCache.getInstance();
 
         String[] splitTags = TagsHelper.splitTags(tags);
         for (String tag : splitTags) {
-            executorCache.put(tag, camelToolSpecification);
+            if (exposed) {
+                executorCache.put(tag, camelToolSpecification);
+            } else {
+                executorCache.putSearchable(tag, camelToolSpecification);
+            }
         }
 
         return camelToolSpecification.getConsumer();
@@ -233,11 +242,25 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
         return tags;
     }
 
+    /**
+     * Whether the tool is automatically exposed to the LLM
+     *
+     * @return
+     */
+    public boolean isExposed() {
+        return exposed;
+    }
+
+    public void setExposed(boolean exposed) {
+        this.exposed = exposed;
+    }
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
         CamelToolExecutorCache.getInstance().getTools().clear();
+        CamelToolExecutorCache.getInstance().getSearchableTools().clear();
     }
 
     /**

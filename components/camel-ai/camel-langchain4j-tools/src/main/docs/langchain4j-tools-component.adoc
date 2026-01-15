@@ -181,3 +181,64 @@ To switch to another Large Language Model and its corresponding dependency, repl
 In some circumstances, the LLM may decide not to call a tool.
 This is a valid scenario that needs to be handled by application developers.
 To do so, developers can get the `LangChain4jTools.NO_TOOLS_CALLED_HEADER` from the exchange.
+
+=== Tool Search Tool
+
+The Tool Search Tool is a native feature that allows LLMs to discover and access tools dynamically without consuming the entire context window with tool definitions.
+
+==== Overview
+
+When you have many tools available, exposing all of them to the LLM in every request can:
+
+* Consume significant context window space
+* Reduce the space available for actual conversation
+* Potentially confuse the LLM with too many options
+
+The Tool Search Tool solves this by allowing you to mark certain tools as "searchable" (non-exposed). These tools are not automatically sent to the LLM but can be discovered when needed.
+
+==== Using the `exposed` Parameter
+
+By default, all tools are exposed to the LLM (`exposed=true`). To make a tool searchable instead:
+
+[source, java]
+----
+from("langchain4j-tools:queryBySSN?tags=users&description=Query user database by social security number&parameter.ssn=string&exposed=false")
+    .to("sql:SELECT name FROM users WHERE ssn = :#ssn");
+----
+
+==== How It Works
+
+1. When you define tools with `exposed=false`, they are added to a searchable tool registry
+2. A native `toolSearchTool` is automatically exposed to the LLM when searchable tools exist
+3. The LLM can invoke `toolSearchTool` with tags to discover available tools
+4. The search results are returned to the LLM, which can then decide which tools to use
+
+==== Example: Mixed Exposed and Searchable Tools
+
+[source, java]
+----
+// This tool is immediately available to the LLM
+from("langchain4j-tools:queryById?tags=users&description=Query user database by user ID&parameter.userId=integer")
+    .to("sql:SELECT name FROM users WHERE id = :#userId");
+
+// This tool is searchable but not immediately exposed
+from("langchain4j-tools:queryBySSN?tags=users&description=Query user database by social security number&parameter.ssn=string&exposed=false")
+    .to("sql:SELECT name FROM users WHERE ssn = :#ssn");
+
+// Another searchable tool with different tags
+from("langchain4j-tools:sendEmail?tags=users,email&description=Send email to a user&parameter.email=string&parameter.message=string&exposed=false")
+    .to("smtp://mailserver");
+----
+
+In this example:
+
+* The `queryById` tool is immediately available to the LLM
+* The `queryBySSN` and `sendEmail` tools can be discovered by searching for tags like "users" or "email"
+* The LLM can use the `toolSearchTool` to find these additional capabilities when needed
+
+==== Benefits
+
+* *Reduced Context Usage*: Only expose the most commonly used tools initially
+* *Scalability*: Support hundreds or thousands of tools without overwhelming the LLM
+* *Dynamic Discovery*: Let the LLM discover tools as needed based on the conversation
+* *Better Organization*: Group related tools by tags for easier discovery

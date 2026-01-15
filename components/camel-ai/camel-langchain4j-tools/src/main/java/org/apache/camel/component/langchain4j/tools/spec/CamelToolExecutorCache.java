@@ -23,14 +23,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Caches Tools Specification and Consumer route reference by the chatId, so that different chats can have different
- * Tool implementation
+ * Tool implementation. Also maintains a separate cache for searchable (non-exposed) tools.
  */
 public final class CamelToolExecutorCache {
 
     private Map<String, Set<CamelToolSpecification>> tools;
+    private Map<String, Set<CamelToolSpecification>> searchableTools;
 
     private CamelToolExecutorCache() {
         tools = new ConcurrentHashMap<>();
+        searchableTools = new ConcurrentHashMap<>();
     }
 
     private static final class SingletonHolder {
@@ -51,7 +53,25 @@ public final class CamelToolExecutorCache {
         }
     }
 
+    public void putSearchable(String chatId, CamelToolSpecification specification) {
+        if (searchableTools.get(chatId) != null) {
+            searchableTools.get(chatId).add(specification);
+        } else {
+            Set<CamelToolSpecification> camelToolSpecifications = new LinkedHashSet<>();
+            camelToolSpecifications.add(specification);
+            searchableTools.put(chatId, camelToolSpecifications);
+        }
+    }
+
     public Map<String, Set<CamelToolSpecification>> getTools() {
         return tools;
+    }
+
+    public Map<String, Set<CamelToolSpecification>> getSearchableTools() {
+        return searchableTools;
+    }
+
+    public boolean hasSearchableTools() {
+        return !searchableTools.isEmpty();
     }
 }
