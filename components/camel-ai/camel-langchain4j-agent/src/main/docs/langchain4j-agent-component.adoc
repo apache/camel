@@ -993,6 +993,71 @@ public class SecureAgentRoute extends RouteBuilder {
 
 ==== Spring Boot Configuration Example
 
+===== Using LangChain4j Spring Boot Starters (Recommended)
+
+When using Camel with Spring Boot, leverage LangChain4j's Spring Boot starters for automatic configuration of the ChatModel.
+
+Add the dependency for LangChain4j OpenAI Spring Boot starter:
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+Configure the OpenAI Chat Model in `application.properties`:
+
+.application.properties
+[source,properties]
+----
+langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
+langchain4j.open-ai.chat-model.model-name=gpt-4o
+langchain4j.open-ai.chat-model.temperature=0.7
+----
+
+Create the Agent bean using the auto-configured ChatModel:
+
+[source,java]
+----
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+
+@Configuration
+public class AgentConfig {
+
+    @Bean("secureAgent")
+    public Agent secureAgent(ChatLanguageModel chatModel) {
+        AgentConfiguration config = new AgentConfiguration()
+            .withChatModel(chatModel)
+            .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
+            .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
+
+        return new AgentWithoutMemory(config);
+    }
+}
+----
+
+[NOTE]
+====
+The `ChatLanguageModel` bean is automatically configured by the LangChain4j Spring Boot starter and injected into your configuration. You can also use other auto-configured beans such as:
+
+* `StreamingChatLanguageModel` - For streaming responses
+* `EmbeddingModel` - For generating embeddings
+* `ImageModel` - For image generation
+* `ModerationModel` - For content moderation
+
+Refer to the https://docs.langchain4j.dev/tutorials/spring-boot-integration[LangChain4j Spring Boot Integration documentation] for complete configuration options.
+====
+
+===== Manual Configuration (Alternative)
+
+Alternatively, you can manually configure the ChatModel bean:
+
 [source,java]
 ----
 import org.springframework.context.annotation.Bean;

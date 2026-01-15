@@ -33,3 +33,102 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 include::spring-boot:partial$starter.adoc[]
+
+== Usage
+
+=== Using Embedding Models
+
+The Camel LangChain4j embeddings component provides support for generating embeddings using various embedding models supported by https://docs.langchain4j.dev/[LangChain4j].
+
+==== Integrating with specific Embedding Model
+
+===== Using LangChain4j Spring Boot Starters (Recommended for Spring Boot)
+
+When using Camel with Spring Boot, you can leverage LangChain4j's Spring Boot starters for automatic configuration of embedding models.
+
+Add the dependency for LangChain4j OpenAI Spring Boot starter:
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+Configure the OpenAI Embedding Model in `application.properties` or `application.yml`:
+
+.application.properties
+[source,properties]
+----
+langchain4j.open-ai.embedding-model.api-key=${OPENAI_API_KEY}
+langchain4j.open-ai.embedding-model.model-name=text-embedding-ada-002
+----
+
+.application.yml
+[source,yaml]
+----
+langchain4j:
+  open-ai:
+    embedding-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: text-embedding-ada-002
+----
+
+The `EmbeddingModel` bean will be automatically configured and available in the Spring context. Use it in your Camel routes:
+
+[source, java]
+----
+from("direct:embeddings")
+    .to("langchain4j-embeddings:test?embeddingModel=#embeddingModel")
+----
+
+[NOTE]
+====
+LangChain4j Spring Boot starters provide auto-configuration for various embedding model providers including:
+
+* `langchain4j-open-ai-spring-boot-starter` - OpenAI embeddings
+* `langchain4j-azure-open-ai-spring-boot-starter` - Azure OpenAI embeddings
+* `langchain4j-ollama-spring-boot-starter` - Ollama embeddings
+* `langchain4j-hugging-face-spring-boot-starter` - Hugging Face embeddings
+* `langchain4j-vertex-ai-spring-boot-starter` - Google Vertex AI embeddings
+
+For a complete list of available starters and their configuration options, refer to the https://docs.langchain4j.dev/tutorials/spring-boot-integration[LangChain4j Spring Boot Integration documentation].
+====
+
+===== Manual Configuration (Alternative)
+
+Alternatively, you can manually initialize the Embedding Model and add it to the Camel Registry:
+
+Add the dependency for LangChain4j OpenAI support:
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+Initialize the OpenAI Embedding Model:
+
+[source, java]
+----
+EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
+    .apiKey(openApiKey)
+    .modelName("text-embedding-ada-002")
+    .build();
+context.getRegistry().bind("embeddingModel", embeddingModel);
+----
+
+Use the model in the Camel LangChain4j Embeddings Producer:
+
+[source, java]
+----
+from("direct:embeddings")
+    .to("langchain4j-embeddings:test?embeddingModel=#embeddingModel")
+----
