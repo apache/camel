@@ -20,10 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
@@ -34,6 +30,11 @@ import org.apache.camel.component.google.sheets.MockGoogleSheetsClientFactory;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.MAJOR_DIMENSION;
 import static org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants.RANGE;
@@ -45,12 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SheetsStreamConsumerIT {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .setDefaultPropertyInclusion(
-                    JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY))
+    private static final ObjectMapper MAPPER = JsonMapper.builder()
+            .changeDefaultPropertyInclusion(incl -> incl.withValueInclusion(JsonInclude.Include.NON_EMPTY))
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-            .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING).disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+            .enable(EnumFeature.READ_ENUMS_USING_TO_STRING)
+            .enable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+            .disable(StreamReadFeature.AUTO_CLOSE_SOURCE)
+            .build();
     private static final List<List<Object>> TEST_DATA = Arrays.asList(
             Arrays.asList("a1", "b1"),
             Arrays.asList("a2", "b2"));

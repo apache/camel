@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -38,6 +37,7 @@ import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.entity.EntityTemplate;
 import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * The Splunk HEC producer.

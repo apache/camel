@@ -18,11 +18,11 @@ package org.apache.camel.component.salesforce.api.dto.approval;
 
 import java.util.Arrays;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -55,7 +55,7 @@ public class ApprovalRequestsTest {
     }
 
     @Test
-    public void shouldSerializeAsJson() throws JsonProcessingException {
+    public void shouldSerializeAsJson() throws JacksonException {
         final String json = "{\"requests\":["//
                             + "{"//
                             + "\"actionType\":\"Submit\","//

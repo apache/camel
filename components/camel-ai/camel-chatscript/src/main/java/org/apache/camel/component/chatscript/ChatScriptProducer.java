@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.chatscript;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * The ChatScript producer.

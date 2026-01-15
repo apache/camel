@@ -29,8 +29,6 @@ import java.util.jar.JarFile;
 
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.tooling.util.FileUtil;
@@ -47,6 +45,9 @@ import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.DotName;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Gather all classes annotated with @InfraService and create a JSON file containing all the metadata.
@@ -111,8 +112,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            ObjectMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
             String modelsAsJson = mapper.writeValueAsString(models);
 
             if (generatedResourcesOutputDir == null) {

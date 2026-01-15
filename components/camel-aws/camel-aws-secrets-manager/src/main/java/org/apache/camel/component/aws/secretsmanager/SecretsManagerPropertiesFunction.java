@@ -21,9 +21,6 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -41,6 +38,9 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilde
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
 import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from AWS Secrets Manager service.
@@ -263,7 +263,7 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
 
     private String getSecretFromSource(
             String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            throws JacksonException {
 
         // capture name of secret
         secrets.add(key);

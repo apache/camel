@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.infra.openai.mock;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Context object that parses and provides easy access to request information.

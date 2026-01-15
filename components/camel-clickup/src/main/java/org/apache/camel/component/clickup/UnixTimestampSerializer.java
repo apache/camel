@@ -17,20 +17,20 @@
 
 package org.apache.camel.component.clickup;
 
-import java.io.IOException;
 import java.time.Instant;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 /**
  * A serializer for {@link java.time.Instant} compatible with {@link UnixTimestampDeserializer}.
  */
-public class UnixTimestampSerializer extends JsonSerializer<Instant> {
+public class UnixTimestampSerializer extends ValueSerializer<Instant> {
 
     @Override
-    public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(Instant value, JsonGenerator gen, SerializationContext serializers) throws JacksonException {
         gen.writeNumber(value.toEpochMilli());
     }
 

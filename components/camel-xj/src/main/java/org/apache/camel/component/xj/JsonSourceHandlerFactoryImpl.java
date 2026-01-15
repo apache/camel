@@ -24,12 +24,12 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.stax.StAXSource;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Expression;
 import org.apache.camel.component.xslt.SourceHandlerFactory;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * Handler for json sources

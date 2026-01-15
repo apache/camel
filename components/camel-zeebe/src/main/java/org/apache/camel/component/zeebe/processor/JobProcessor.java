@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.zeebe.processor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.zeebe.ZeebeConstants;
@@ -26,6 +25,7 @@ import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.JobRequest;
 import org.apache.camel.component.zeebe.model.JobResponse;
 import org.apache.camel.component.zeebe.model.JobWorkerMessage;
+import tools.jackson.core.JacksonException;
 
 public class JobProcessor extends AbstractBaseProcessor {
     public JobProcessor(ZeebeEndpoint endpoint) {
@@ -44,8 +44,8 @@ public class JobProcessor extends AbstractBaseProcessor {
                 String bodyString = exchange.getMessage().getBody(String.class);
 
                 message = objectMapper.readValue(bodyString, JobRequest.class);
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert body to JobMessage", jsonProcessingException);
+            } catch (JacksonException JacksonException) {
+                throw new IllegalArgumentException("Cannot convert body to JobMessage", JacksonException);
             }
         } else if (exchange.getMessage().getBody() instanceof JobWorkerMessage) {
             JobWorkerMessage jobWorkerMessage = exchange.getMessage().getBody(JobWorkerMessage.class);

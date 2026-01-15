@@ -21,12 +21,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeResource;
 import org.apache.camel.component.knative.spi.KnativeSinkBinding;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.type.TypeReference;
 
 public class KnativeSupport {
     private KnativeSupport() {

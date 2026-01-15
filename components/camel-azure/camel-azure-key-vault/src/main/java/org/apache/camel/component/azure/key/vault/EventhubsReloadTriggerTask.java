@@ -33,9 +33,6 @@ import com.azure.messaging.eventhubs.models.EventContext;
 import com.azure.storage.blob.BlobContainerAsyncClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -49,6 +46,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.vault.AzureVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Period task which checks if Azure Key Vaults secrets has been updated and can trigger Camel to be reloaded.
@@ -245,7 +245,7 @@ public class EventhubsReloadTriggerTask extends ServiceSupport implements CamelC
     private static JsonNode retrieveEventData(EventContext eventContext, ObjectMapper mapper) {
         try {
             return mapper.readTree(eventContext.getEventData().getBodyAsString());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             LOG.warn("Unable to process event data body: {}", e.getMessage(), e);
             throw new RuntimeCamelException(e);
         }

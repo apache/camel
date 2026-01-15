@@ -17,13 +17,13 @@
 
 package org.apache.camel.component.zeebe.processor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.zeebe.ZeebeConstants;
 import org.apache.camel.component.zeebe.ZeebeEndpoint;
 import org.apache.camel.component.zeebe.model.ZeebeMessage;
 import org.apache.camel.support.service.BaseService;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public abstract class AbstractBaseProcessor extends BaseService implements ZeebeProcessor {
     protected final ZeebeEndpoint endpoint;
@@ -37,8 +37,8 @@ public abstract class AbstractBaseProcessor extends BaseService implements Zeebe
         if (endpoint.isFormatJSON()) {
             try {
                 exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert result", jsonProcessingException);
+            } catch (JacksonException JacksonException) {
+                throw new IllegalArgumentException("Cannot convert result", JacksonException);
             }
         } else {
             exchange.getMessage().setBody(message);

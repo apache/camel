@@ -95,6 +95,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-salesforce-codegen</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.victools</groupId>
+            <artifactId>jsonschema-generator</artifactId>
+            <version>4.38.0</version>
+        </dependency>
+
 
         <!-- testing -->
         <dependency>

@@ -35,8 +35,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;

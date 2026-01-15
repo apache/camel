@@ -18,7 +18,7 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.Instant;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.JsonDeserializer;
 
 import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 

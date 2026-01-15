@@ -19,7 +19,7 @@ package org.apache.camel.component.mongodb.converters;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;

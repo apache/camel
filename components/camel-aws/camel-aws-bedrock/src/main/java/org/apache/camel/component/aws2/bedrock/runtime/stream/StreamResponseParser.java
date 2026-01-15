@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 /**
  * Parser interface for extracting text and metadata from streaming responses of different Bedrock models
@@ -29,7 +29,7 @@ public interface StreamResponseParser {
      * @param  chunk the JSON chunk from the stream
      * @return       the extracted text content, or empty string if no text in this chunk
      */
-    String extractText(String chunk) throws JsonProcessingException;
+    String extractText(String chunk) throws JacksonException;
 
     /**
      * Extract the completion reason from a streaming chunk (if present)
@@ -37,7 +37,7 @@ public interface StreamResponseParser {
      * @param  chunk the JSON chunk from the stream
      * @return       the completion reason, or null if not present in this chunk
      */
-    String extractCompletionReason(String chunk) throws JsonProcessingException;
+    String extractCompletionReason(String chunk) throws JacksonException;
 
     /**
      * Extract the token count from a streaming chunk (if present)
@@ -45,7 +45,7 @@ public interface StreamResponseParser {
      * @param  chunk the JSON chunk from the stream
      * @return       the token count, or null if not present in this chunk
      */
-    Integer extractTokenCount(String chunk) throws JsonProcessingException;
+    Integer extractTokenCount(String chunk) throws JacksonException;
 
     /**
      * Check if this chunk represents the end of the stream
@@ -53,5 +53,5 @@ public interface StreamResponseParser {
      * @param  chunk the JSON chunk from the stream
      * @return       true if this is the final chunk
      */
-    boolean isFinalChunk(String chunk) throws JsonProcessingException;
+    boolean isFinalChunk(String chunk) throws JacksonException;
 }

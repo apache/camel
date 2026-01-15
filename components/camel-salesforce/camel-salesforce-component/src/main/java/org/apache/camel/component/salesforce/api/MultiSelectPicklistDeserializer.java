@@ -16,23 +16,21 @@
  */
 package org.apache.camel.component.salesforce.api;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.std.StdDeserializer;
 
 /**
  * Jackson deserializer base class for reading ';' separated strings for MultiSelect pick-lists.
  */
-public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> implements ContextualDeserializer {
+public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> implements ValueDeserializer {
 
     private static final long serialVersionUID = -4568286926393043366L;
 
@@ -47,22 +45,22 @@ public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> imp
         this.enumClass = null;
     }
 
-    public MultiSelectPicklistDeserializer(JsonParser jp, Class<? extends Enum<?>> enumClass) throws JsonMappingException {
+    public MultiSelectPicklistDeserializer(JsonParser jp, Class<? extends Enum<?>> enumClass) throws DatabindException {
         super(enumClass);
         this.enumClass = enumClass;
         try {
             this.factoryMethod = enumClass.getMethod(FACTORY_METHOD, String.class);
         } catch (NoSuchMethodException e) {
-            throw new JsonMappingException(jp, "Invalid pick-list enum class " + enumClass.getName(), e);
+            throw DatabindException.from(jp, "Invalid pick-list enum class " + enumClass.getName(), e);
         }
     }
 
     @Override
-    public Object deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public Object deserialize(JsonParser jp, DeserializationContext ctxt) {
 
         // validate enum class
         if (enumClass == null) {
-            throw new JsonMappingException(jp, "Unable to parse unknown pick-list type");
+            throw DatabindException.from(jp, "Unable to parse unknown pick-list type");
         }
 
         final String listValue = jp.getText();
@@ -79,18 +77,18 @@ public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> imp
 
             return resultArray;
         } catch (Exception e) {
-            throw new JsonParseException(jp, "Exception reading multi-select pick list value", jp.currentLocation());
+            throw new StreamReadException(jp, "Exception reading multi-select pick list value", jp.currentLocation());
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext context, BeanProperty property)
-            throws JsonMappingException {
+    public ValueDeserializer<?> createContextual(DeserializationContext context, BeanProperty property)
+            throws DatabindException {
         final Class<?> rawClass = property.getType().getRawClass();
         final Class<?> componentType = rawClass.getComponentType();
         if (componentType == null || !componentType.isEnum()) {
-            throw new JsonMappingException(context.getParser(), "Pick list Enum array expected for " + rawClass);
+            throw DatabindException.from(context.getParser(), "Pick list Enum array expected for " + rawClass);
         }
         return new MultiSelectPicklistDeserializer(context.getParser(), (Class<? extends Enum<?>>) componentType);
     }

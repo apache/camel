@@ -18,7 +18,6 @@ package org.apache.camel.component.tahu.handlers;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.tahu.SparkplugParsingException;
@@ -42,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 class TahuEdgeClientCallback implements ClientCallback {
 

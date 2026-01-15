@@ -18,7 +18,7 @@ package org.apache.camel.component.telegram.service;
 
 import java.net.http.HttpClient;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 record TelegramApiClient(HttpClient client, ObjectMapper mapper, String baseUri, int bufferSize) {
 }

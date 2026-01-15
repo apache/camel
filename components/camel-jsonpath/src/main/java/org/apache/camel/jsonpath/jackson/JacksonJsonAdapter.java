@@ -19,12 +19,13 @@ package org.apache.camel.jsonpath.jackson;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.jsonpath.JsonPathAdapter;
 import org.apache.camel.spi.Registry;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A Jackson {@link JsonPathAdapter} which is using Jackson to convert the message body to {@link Map}. This allows us
@@ -32,12 +33,12 @@ import org.apache.camel.spi.Registry;
  */
 public class JacksonJsonAdapter implements JsonPathAdapter {
 
-    private static final String JACKSON_JAXB_MODULE = "com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule";
+    private static final String JACKSON_JAXB_MODULE = "tools.jackson.module.jaxb.JaxbAnnotationModule";
 
-    private final ObjectMapper defaultMapper;
+    private ObjectMapper defaultMapper;
 
     public JacksonJsonAdapter() {
-        defaultMapper = new ObjectMapper();
+        defaultMapper = JsonMapper.builder().build();
     }
 
     @Override
@@ -48,8 +49,8 @@ public class JacksonJsonAdapter implements JsonPathAdapter {
         if (clazz != null) {
             Object obj = camelContext.getInjector().newInstance(clazz);
             if (obj instanceof Module) {
-                Module module = (Module) obj;
-                defaultMapper.registerModule(module);
+                JacksonModule module = (JacksonModule) obj;
+                defaultMapper = defaultMapper.rebuild().addModule(module).build();
             }
         }
     }

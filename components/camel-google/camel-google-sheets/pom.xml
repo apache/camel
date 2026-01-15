@@ -134,6 +134,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- provided -->
         <dependency>
             <groupId>org.apache.camel</groupId>

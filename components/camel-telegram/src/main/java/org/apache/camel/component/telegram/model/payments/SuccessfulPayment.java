@@ -45,10 +45,10 @@ public class SuccessfulPayment implements Serializable {
     private Integer subscriptionExpirationDate;
 
     @JsonProperty("is_recurring")
-    private boolean isRecurring;
+    private Boolean isRecurring;
 
     @JsonProperty("is_first_recurring")
-    private boolean isFirstRecurring;
+    private Boolean isFirstRecurring;
 
     @JsonProperty("shipping_option_id")
     private String shippingOptionId;
@@ -63,7 +63,7 @@ public class SuccessfulPayment implements Serializable {
     private String providerPaymentChargeId;
 
     public SuccessfulPayment(String currency, Integer totalAmount, String invoicePayload,
-                             Integer subscriptionExpirationDate, boolean isRecurring, boolean isFirstRecurring,
+                             Integer subscriptionExpirationDate, Boolean isRecurring, Boolean isFirstRecurring,
                              String shippingOptionId, OrderInfo orderInfo, String telegramPaymentChargeId,
                              String providerPaymentChargeId) {
         this.currency = currency;
@@ -113,19 +113,19 @@ public class SuccessfulPayment implements Serializable {
         this.subscriptionExpirationDate = subscriptionExpirationDate;
     }
 
-    public boolean isRecurring() {
+    public Boolean isRecurring() {
         return isRecurring;
     }
 
-    public void setRecurring(boolean recurring) {
+    public void setRecurring(Boolean recurring) {
         isRecurring = recurring;
     }
 
-    public boolean isFirstRecurring() {
+    public Boolean isFirstRecurring() {
         return isFirstRecurring;
     }
 
-    public void setFirstRecurring(boolean firstRecurring) {
+    public void setFirstRecurring(Boolean firstRecurring) {
         isFirstRecurring = firstRecurring;
     }
 

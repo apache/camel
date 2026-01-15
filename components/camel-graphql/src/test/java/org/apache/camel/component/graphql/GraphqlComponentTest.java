@@ -19,7 +19,6 @@ package org.apache.camel.component.graphql;
 import java.io.IOException;
 import java.net.URI;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +32,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

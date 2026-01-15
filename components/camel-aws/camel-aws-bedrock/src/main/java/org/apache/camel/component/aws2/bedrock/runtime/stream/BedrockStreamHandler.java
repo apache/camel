@@ -19,11 +19,10 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamResponseHandler;
+import tools.jackson.core.JacksonException;
 
 /**
  * Utility class for handling streaming responses from Bedrock models
@@ -75,7 +74,7 @@ public final class BedrockStreamHandler {
                                     }
                                 }
                                 chunkCount[0]++;
-                            } catch (JsonProcessingException e) {
+                            } catch (JacksonException e) {
                                 LOG.warn("Error parsing streaming chunk: {}", e.getMessage(), e);
                             }
                         })
@@ -132,7 +131,7 @@ public final class BedrockStreamHandler {
                                     }
                                 }
                                 chunkCount[0]++;
-                            } catch (JsonProcessingException e) {
+                            } catch (JacksonException e) {
                                 LOG.warn("Error parsing streaming chunk: {}", e.getMessage(), e);
                             }
                         })

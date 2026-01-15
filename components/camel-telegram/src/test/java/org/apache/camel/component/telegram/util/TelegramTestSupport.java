@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.telegram.TelegramComponent;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
@@ -29,6 +28,7 @@ import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A support test class for Telegram tests.

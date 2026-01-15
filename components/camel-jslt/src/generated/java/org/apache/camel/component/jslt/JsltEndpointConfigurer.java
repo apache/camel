@@ -34,7 +34,7 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "mapbigdecimalasfloats":
         case "mapBigDecimalAsFloats": target.setMapBigDecimalAsFloats(property(camelContext, boolean.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": target.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -55,7 +55,7 @@ public class JsltEndpointConfigurer extends PropertyConfigurerSupport implements
         case "mapbigdecimalasfloats":
         case "mapBigDecimalAsFloats": return boolean.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "prettyprint":
         case "prettyPrint": return boolean.class;
         default: return null;

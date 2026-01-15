@@ -18,12 +18,12 @@ package org.apache.camel.component.es;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.http.HttpHost;
+import tools.jackson.databind.node.ObjectNode;
 
 @UriParams
 public class ElasticsearchConfiguration {

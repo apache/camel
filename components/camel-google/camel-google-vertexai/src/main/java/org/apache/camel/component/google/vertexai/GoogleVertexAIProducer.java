@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.HttpBody;
 import com.google.cloud.aiplatform.v1.PredictionServiceClient;
 import com.google.genai.Client;
@@ -33,6 +32,7 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 public class GoogleVertexAIProducer extends DefaultProducer {
 

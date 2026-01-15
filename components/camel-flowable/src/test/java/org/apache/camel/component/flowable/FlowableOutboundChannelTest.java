@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.flowable;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

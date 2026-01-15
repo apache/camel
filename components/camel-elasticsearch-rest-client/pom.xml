@@ -57,7 +57,7 @@
     <!-- Managing JSON requests and responses -->
     <!-- Client library for JSON responses -->
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
+      <groupId>tools.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
 

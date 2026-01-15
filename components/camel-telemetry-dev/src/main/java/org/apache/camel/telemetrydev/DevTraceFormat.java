@@ -20,11 +20,12 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.telemetry.Op;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /*
  * An interface used to represent a trace in a given format.
@@ -55,15 +56,14 @@ class DevTraceFormatJson implements DevTraceFormat {
     ObjectMapper mapper;
 
     DevTraceFormatJson() {
-        mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper = JsonMapper.builder().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).build();
     }
 
     @Override
     public String format(DevTrace trace) {
         try {
             return mapper.writeValueAsString(trace);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeCamelException(e);
         }
     }

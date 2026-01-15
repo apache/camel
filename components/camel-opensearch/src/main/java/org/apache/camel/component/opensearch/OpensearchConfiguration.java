@@ -20,12 +20,12 @@ import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.hc.core5.http.HttpHost;
+import tools.jackson.databind.node.ObjectNode;
 
 @UriParams
 public class OpensearchConfiguration {

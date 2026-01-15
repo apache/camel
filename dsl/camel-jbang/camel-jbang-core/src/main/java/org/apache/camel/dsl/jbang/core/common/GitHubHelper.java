@@ -23,8 +23,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.StringJoiner;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 

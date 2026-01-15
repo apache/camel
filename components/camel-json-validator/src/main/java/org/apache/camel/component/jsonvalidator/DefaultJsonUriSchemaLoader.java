@@ -19,8 +19,6 @@ package org.apache.camel.component.jsonvalidator;
 import java.io.*;
 import java.net.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaException;
 import com.networknt.schema.JsonSchemaFactory;
@@ -29,6 +27,8 @@ import com.networknt.schema.SpecVersion;
 import com.networknt.schema.SpecVersionDetector;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class DefaultJsonUriSchemaLoader implements JsonUriSchemaLoader {
 

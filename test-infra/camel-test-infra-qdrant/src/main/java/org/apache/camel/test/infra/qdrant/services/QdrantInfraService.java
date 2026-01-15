@@ -22,8 +22,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.test.infra.common.services.InfrastructureService;
+import tools.jackson.databind.ObjectMapper;
 
 public interface QdrantInfraService extends InfrastructureService {
     String getHttpHost();

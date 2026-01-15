@@ -46,6 +46,16 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+
         <!-- HuaweiCloud SDK v3 -->
         <dependency>
             <groupId>com.huaweicloud.sdk</groupId>

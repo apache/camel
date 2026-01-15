@@ -33,8 +33,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonToken;
 
 /**
  * XML Json bridge. Explicitly using StreamWriter and not XMLEventWriter because saxon wants that.
@@ -115,20 +115,12 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
     @Override
     public void close() throws XMLStreamException {
-        try {
-            jsonGenerator.close();
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
+        jsonGenerator.close();
     }
 
     @Override
     public void flush() throws XMLStreamException {
-        try {
-            jsonGenerator.flush();
-        } catch (IOException e) {
-            throw new XMLStreamException(e);
-        }
+        jsonGenerator.flush();
     }
 
     @Override
@@ -354,7 +346,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                     if (this.parent.jsonToken == JsonToken.NOT_AVAILABLE) {
                         jsonToken = JsonToken.START_OBJECT;
                     } else {
-                        jsonToken = JsonToken.FIELD_NAME;
+                        jsonToken = JsonToken.PROPERTY_NAME;
 
                         final TreeElement treeElement = new TreeElement(this, -1, JsonToken.VALUE_STRING);
                         treeElement.setValue("");
@@ -373,13 +365,13 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                         } else {
                             // create new intermediary element
                             final TreeElement treeElement = new TreeElement(
-                                    this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                                    this, -1, JsonToken.PROPERTY_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                             treeElement.addChild(child);
                             childs.set(childs.indexOf(child), treeElement);
                             child.parent = treeElement;
                         }
                     } else {
-                        jsonToken = JsonToken.FIELD_NAME;
+                        jsonToken = JsonToken.PROPERTY_NAME;
                     }
                 } else {
                     // mixed content fixup.
@@ -393,7 +385,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                             } else {
                                 // create new intermediary element
                                 final TreeElement treeElement = new TreeElement(
-                                        this, -1, JsonToken.FIELD_NAME,
+                                        this, -1, JsonToken.PROPERTY_NAME,
                                         element.name != null ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                 treeElement.addChild(element);
                                 childs.set(childs.indexOf(element), treeElement);
@@ -425,10 +417,10 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                         treeElement.setValue("");
                         this.addChild(treeElement);
 
-                        jsonToken = JsonToken.FIELD_NAME;
+                        jsonToken = JsonToken.PROPERTY_NAME;
                     } else if (childs.size() == 1) {
                         childs.get(0).jsonToken = jsonToken;
-                        jsonToken = JsonToken.FIELD_NAME;
+                        jsonToken = JsonToken.PROPERTY_NAME;
                     } else {
                         // create FIELD childs if element contains text and attributes.
                         final Iterator<TreeElement> iterator = childs.iterator();
@@ -441,7 +433,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                                 } else {
                                     // create new intermediary element
                                     final TreeElement treeElement = new TreeElement(
-                                            this, -1, JsonToken.FIELD_NAME,
+                                            this, -1, JsonToken.PROPERTY_NAME,
                                             element.name != null
                                                     ? element.name : XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                     treeElement.addChild(element);
@@ -472,7 +464,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                             } else {
                                 // create new intermediary element
                                 final TreeElement treeElement = new TreeElement(
-                                        this, -1, JsonToken.FIELD_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
+                                        this, -1, JsonToken.PROPERTY_NAME, XJConstants.JSON_WRITER_MIXED_CONTENT_TEXT_KEY);
                                 treeElement.addChild(element);
                                 childs.set(childs.indexOf(element), treeElement);
                                 element.parent = treeElement;
@@ -546,7 +538,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                     break;
                 case START_OBJECT:
                     if (parent.jsonToken == JsonToken.START_OBJECT) {
-                        jsonGenerator.writeObjectFieldStart(name);
+                        jsonGenerator.writeObjectPropertyStart(name);
                     } else {
                         jsonGenerator.writeStartObject();
                     }
@@ -554,15 +546,15 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                     break;
                 case START_ARRAY:
                     if (parent.jsonToken == JsonToken.START_OBJECT) {
-                        jsonGenerator.writeArrayFieldStart(name);
+                        jsonGenerator.writeArrayPropertyStart(name);
                     } else {
                         jsonGenerator.writeStartArray();
                     }
 
                     break;
-                case FIELD_NAME:
+                case PROPERTY_NAME:
                     if (parent.jsonToken != JsonToken.START_ARRAY) {
-                        jsonGenerator.writeFieldName(name);
+                        jsonGenerator.writeName(name);
                     }
 
                     break;
@@ -602,7 +594,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
                     break;
                 case VALUE_NULL:
                 case NOT_AVAILABLE:
-                case FIELD_NAME:
+                case PROPERTY_NAME:
                 case VALUE_STRING:
                 case VALUE_NUMBER_INT:
                 case VALUE_NUMBER_FLOAT:

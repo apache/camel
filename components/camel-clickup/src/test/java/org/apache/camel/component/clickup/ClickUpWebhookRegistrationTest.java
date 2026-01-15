@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickup.model.WebhookCreationCommand;
 import org.apache.camel.component.clickup.util.ClickUpMockRoutes;
@@ -36,6 +35,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit6.TestExecutionConfiguration;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,8 +81,8 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
                 WebhookCreationCommand command = MAPPER.readValue(recordedMessage, WebhookCreationCommand.class);
 
                 assertInstanceOf(WebhookCreationCommand.class, command);
-            } catch (IOException e) {
-                throw new AssertionError("Failed to parse recorded message", e);
+            } catch (JacksonException e) {
+                fail(e);
             }
 
             mockProcessor.clearRecordedMessages();

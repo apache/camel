@@ -18,7 +18,7 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.OffsetTime;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.JsonDeserializer;
 
 final class OffsetTimeDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.OffsetTimeDeserializer {
 

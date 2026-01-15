@@ -23,14 +23,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -40,6 +32,14 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -184,7 +184,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         }
 
         @Override
-        public void serialize(ObjectWithBinaryField value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        public void serialize(ObjectWithBinaryField value, JsonGenerator gen, SerializationContext provider) {
             gen.writeString(value.a + "+:" + new String(value.b));
         }
     }
@@ -195,9 +195,8 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
         }
 
         @Override
-        public ObjectWithBinaryField deserialize(JsonParser p, DeserializationContext ctxt)
-                throws IOException {
-            JsonNode treeNode = p.getCodec().readTree(p);
+        public ObjectWithBinaryField deserialize(JsonParser p, DeserializationContext ctxt) {
+            JsonNode treeNode = ctxt.readTree(p);
 
             String s = treeNode.textValue();
 

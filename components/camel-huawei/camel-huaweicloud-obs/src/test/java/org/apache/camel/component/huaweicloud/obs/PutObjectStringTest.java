@@ -18,7 +18,6 @@ package org.apache.camel.component.huaweicloud.obs;
 
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obs.services.ObsClient;
 import com.obs.services.model.PutObjectResult;
 import com.obs.services.model.StorageClassEnum;
@@ -33,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

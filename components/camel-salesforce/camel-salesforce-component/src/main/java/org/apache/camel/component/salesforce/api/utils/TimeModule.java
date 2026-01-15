@@ -24,11 +24,11 @@ import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import tools.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import tools.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 
 import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
