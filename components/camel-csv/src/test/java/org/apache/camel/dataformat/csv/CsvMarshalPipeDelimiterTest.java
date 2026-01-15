@@ -72,6 +72,8 @@ public class CsvMarshalPipeDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                @SuppressWarnings("resource")
+                // Resource lifecycle will be managed by the framework
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|').setHeaderDisabled(true);
 
                 from("direct:start").marshal(csv).convertBodyTo(String.class).to("mock:result");

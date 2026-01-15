@@ -49,15 +49,15 @@ abstract class CsvUnmarshaller {
     public static CsvUnmarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
         // If we want to capture the header record, thus the header must be either fixed or automatic
         if (dataFormat.isCaptureHeaderRecord() && format.getHeader() == null) {
-            format = format.withHeader();
+            format = format.builder().setHeader().get();
         }
         // If we want to use maps, thus the header must be either fixed or automatic
         if ((dataFormat.isUseMaps() || dataFormat.isUseOrderedMaps()) && format.getHeader() == null) {
-            format = format.withHeader();
+            format = format.builder().setHeader().get();
         }
         // If we want to skip the header record it must automatic otherwise it's not working
         if (format.getSkipHeaderRecord() && format.getHeader() == null) {
-            format = format.withHeader();
+            format = format.builder().setHeader().get();
         }
 
         if (dataFormat.isLazyLoad()) {
@@ -106,8 +106,7 @@ abstract class CsvUnmarshaller {
                 InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
                 reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             }
-            CSVParser parser
-                    = new CSVParser(reader, format);
+            CSVParser parser = CSVParser.builder().setReader(reader).setFormat(format).get();
             try {
                 if (dataFormat.isCaptureHeaderRecord()) {
                     exchange.getMessage().setHeader(CsvConstants.HEADER_RECORD, parser.getHeaderNames());
@@ -130,7 +129,6 @@ abstract class CsvUnmarshaller {
     /**
      * This class streams the content of the CSV
      */
-    @SuppressWarnings("unchecked")
     private static final class StreamCsvUnmarshaller extends CsvUnmarshaller {
 
         private StreamCsvUnmarshaller(CSVFormat format, CsvDataFormat dataFormat) {
@@ -146,7 +144,7 @@ abstract class CsvUnmarshaller {
                 reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             }
             try {
-                CSVParser parser = new CSVParser(reader, format);
+                CSVParser parser = CSVParser.builder().setReader(reader).setFormat(format).get();
                 CsvIterator<?> answer = new CsvIterator<>(parser, converter);
                 // add to UoW, so we can close the iterator, so it can release any resources
                 exchange.getExchangeExtension().addOnCompletion(new CsvUnmarshalOnCompletion(answer));

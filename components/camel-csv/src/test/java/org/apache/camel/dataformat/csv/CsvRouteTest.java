@@ -26,6 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class CsvRouteTest extends CamelTestSupport {
 
     @Test
     void testSendMessage() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint resultEndpoint = TestSupport.resolveMandatoryEndpoint(this.context, "mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
 
         // START SNIPPET: marshalInput
@@ -66,7 +67,7 @@ public class CsvRouteTest extends CamelTestSupport {
 
     @Test
     void testMultipleMessages() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti",
+        MockEndpoint resultEndpoint = TestSupport.resolveMandatoryEndpoint(this.context, "mock:resultMulti",
                 MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
         Map<String, Object> body1 = new LinkedHashMap<>();
@@ -104,7 +105,7 @@ public class CsvRouteTest extends CamelTestSupport {
 
     @Test
     void testPresetConfig() {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
+        MockEndpoint resultEndpoint = TestSupport.resolveMandatoryEndpoint(this.context, "mock:resultMultiCustom",
                 MockEndpoint.class);
         resultEndpoint.expectedMessageCount(2);
         Map<String, Object> body1 = new LinkedHashMap<>();
@@ -161,6 +162,8 @@ public class CsvRouteTest extends CamelTestSupport {
 
                 from("direct:startMulti").marshal().csv().to("mock:resultMulti");
 
+                @SuppressWarnings("resource")
+                // resource will be managed by framework lifecyle
                 CsvDataFormat customCsv = new CsvDataFormat()
                         .setDelimiter(';')
                         .setHeader(new String[] { "foo", "baz", "bar" })

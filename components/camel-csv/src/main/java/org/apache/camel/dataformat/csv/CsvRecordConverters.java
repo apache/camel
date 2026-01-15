@@ -85,7 +85,6 @@ final class CsvRecordConverters {
         private static final OrderedMapCsvRecordConverter SINGLETON = new OrderedMapCsvRecordConverter();
 
         @Override
-        @SuppressWarnings("unchecked")
         public Map<String, String> convertRecord(CSVRecord csvRecord) {
             return csvRecord.toMap();
         }
