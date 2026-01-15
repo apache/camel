@@ -31,7 +31,6 @@ import org.junit.jupiter.api.condition.OS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledOnOs(OS.AIX)
@@ -95,27 +94,54 @@ public class BacklogTracerMessageHistoryTest extends ManagementTestSupport {
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpLatestMessageHistory", null, null);
         assertNotNull(events);
-        assertEquals(4, events.size());
+        assertEquals(8, events.size());
 
         assertTrue(events.get(0).isFirst());
         assertEquals("direct://start", events.get(0).getEndpointUri());
         assertEquals("from", events.get(0).getToNodeShortName());
-
+        assertEquals("myRoute", events.get(0).getRouteId());
+        assertEquals("myRoute", events.get(0).getFromRouteId());
         assertFalse(events.get(1).isFirst());
         assertFalse(events.get(1).isLast());
         assertEquals("foo", events.get(1).getToNode());
         assertEquals("to", events.get(1).getToNodeShortName());
         assertEquals("to[mock:foo]", events.get(1).getToNodeLabel());
+        assertEquals("myRoute", events.get(1).getRouteId());
+        assertEquals("myRoute", events.get(1).getFromRouteId());
 
-        assertFalse(events.get(2).isFirst());
-        assertFalse(events.get(2).isLast());
-        assertEquals("bar", events.get(2).getToNode());
-        assertEquals("to", events.get(2).getToNodeShortName());
-        assertEquals("to[mock:bar]", events.get(2).getToNodeLabel());
+        // sub-route
+        assertTrue(events.get(3).isFirst());
+        assertFalse(events.get(3).isLast());
+        assertEquals("direct://sub", events.get(3).getEndpointUri());
+        assertEquals("from", events.get(3).getToNodeShortName());
+        assertEquals("mySub", events.get(3).getRouteId());
+        assertEquals("myRoute", events.get(3).getFromRouteId());
+        assertFalse(events.get(4).isFirst());
+        assertFalse(events.get(4).isLast());
+        assertEquals("sub", events.get(4).getToNode());
+        assertEquals("to", events.get(4).getToNodeShortName());
+        assertEquals("to[mock:sub]", events.get(4).getToNodeLabel());
+        assertEquals("mySub", events.get(4).getRouteId());
+        assertEquals("myRoute", events.get(4).getFromRouteId());
+        assertFalse(events.get(5).isFirst());
+        assertTrue(events.get(5).isLast());
+        assertEquals("direct://sub", events.get(5).getEndpointUri());
+        assertEquals("from", events.get(5).getToNodeShortName());
+        assertEquals("mySub", events.get(5).getRouteId());
+        assertEquals("myRoute", events.get(5).getFromRouteId());
 
-        assertTrue(events.get(3).isLast());
-        assertEquals("direct://start", events.get(3).getEndpointUri());
-        assertNull(events.get(3).getToNode());
+        assertFalse(events.get(6).isFirst());
+        assertFalse(events.get(6).isLast());
+        assertEquals("bar", events.get(6).getToNode());
+        assertEquals("to", events.get(6).getToNodeShortName());
+        assertEquals("to[mock:bar]", events.get(6).getToNodeLabel());
+        assertEquals("myRoute", events.get(6).getRouteId());
+        assertEquals("myRoute", events.get(6).getFromRouteId());
+        assertTrue(events.get(7).isLast());
+        assertEquals("direct://start", events.get(7).getEndpointUri());
+        assertEquals("from1", events.get(7).getToNode());
+        assertEquals("myRoute", events.get(7).getRouteId());
+        assertEquals("myRoute", events.get(7).getFromRouteId());
     }
 
     @Override
@@ -127,10 +153,13 @@ public class BacklogTracerMessageHistoryTest extends ManagementTestSupport {
                 context.setBacklogTracing(true);
                 context.setMessageHistory(true);
 
-                from("direct:start")
+                from("direct:start").routeId("myRoute")
                         .to("mock:foo").id("foo")
+                        .to("direct:sub")
                         .to("mock:bar").id("bar");
 
+                from("direct:sub").routeId("mySub")
+                        .to("mock:sub").id("sub");
             }
         };
     }

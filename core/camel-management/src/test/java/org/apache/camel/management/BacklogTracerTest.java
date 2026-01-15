@@ -395,18 +395,19 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
         assertEquals(100, size.intValue(), "Should be 100");
-        // change size to 2 x 10 (as we need for first as well)
-        mbeanServer.setAttribute(on, new Attribute("BacklogSize", 20));
+        // change size to 10
+        mbeanServer.setAttribute(on, new Attribute("BacklogSize", 10));
         // set the pattern to match only foo
         mbeanServer.setAttribute(on, new Attribute("TracePattern", "foo"));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals(Boolean.TRUE, enabled, "Should not be enabled");
 
-        getMockEndpoint("mock:foo").expectedMessageCount(10);
-        getMockEndpoint("mock:bar").expectedMessageCount(10);
+        getMockEndpoint("mock:foo").expectedMessageCount(13);
+        getMockEndpoint("mock:bar").expectedMessageCount(13);
 
-        for (int i = 0; i < 10; i++) {
+        // send 10 + 3 extra
+        for (int i = 0; i < 13; i++) {
             template.sendBody("direct:start", "###" + i + "###");
         }
 
@@ -414,20 +415,22 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[] { "foo" }, new String[] { "java.lang.String" });
-        assertEquals(7, events.size());
+        assertEquals(10, events.size());
 
         // the first should be 3 and the last 9
         String xml = events.get(0).getMessageAsXml();
         assertTrue(xml.contains("###3###"));
         xml = events.get(6).getMessageAsXml();
         assertTrue(xml.contains("###9###"));
+        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###12###"));
 
         // send in another message
         template.sendBody("direct:start", "###" + 10 + "###");
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[] { "foo" }, new String[] { "java.lang.String" });
-        assertEquals(7, events.size());
+        assertEquals(10, events.size());
 
         // and we are shifted one now
         xml = events.get(0).getMessageAsXml();
@@ -436,20 +439,20 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertTrue(xml.contains("###10###"));
 
         // send in 4 messages
-        template.sendBody("direct:start", "###" + 11 + "###");
-        template.sendBody("direct:start", "###" + 12 + "###");
-        template.sendBody("direct:start", "###" + 13 + "###");
         template.sendBody("direct:start", "###" + 14 + "###");
+        template.sendBody("direct:start", "###" + 15 + "###");
+        template.sendBody("direct:start", "###" + 16 + "###");
+        template.sendBody("direct:start", "###" + 17 + "###");
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[] { "foo" }, new String[] { "java.lang.String" });
-        assertEquals(7, events.size());
+        assertEquals(10, events.size());
 
         // and we are shifted +4 now
         xml = events.get(0).getMessageAsXml();
         assertTrue(xml.contains("###8###"));
-        xml = events.get(6).getMessageAsXml();
-        assertTrue(xml.contains("###14###"));
+        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###17###"));
     }
 
     @Override

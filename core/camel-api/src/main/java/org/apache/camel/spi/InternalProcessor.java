@@ -19,6 +19,8 @@ package org.apache.camel.spi;
 import java.util.List;
 
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 
@@ -74,7 +76,7 @@ public interface InternalProcessor extends AsyncProcessor {
     /**
      * Add advice for setting up {@link UnitOfWork} with the lifecycle of the route.
      */
-    void addRouteLifecycleAdvice();
+    void addRouteLifecycleAdvice(CamelContext camelContext, Route route, NamedRoute node);
 
     /**
      * Add advice for JMX management for the route

@@ -533,16 +533,18 @@ public class CamelHistoryAction extends ActionWatchCommand {
 
     private String getStatus(Row r) {
         boolean remote = r.endpoint != null && r.endpoint.getBooleanOrDefault("remote", false);
+        boolean original = r.fromRouteId != null && r.fromRouteId.equals(r.routeId);
 
         if (r.first) {
-            String s = "Created";
+            String s = original ? "Created" : remote ? "Sent" : "Processed";
             if (loggingColor) {
                 return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
             } else {
                 return s;
             }
         } else if (r.last) {
-            String done = r.exception != null ? "Completed (exception)" : "Completed (success)";
+            String s = original ? "Completed" : remote ? "Sent" : "Processed";
+            String done = r.exception != null ? s + " (exception)" : s + " (success)";
             if (loggingColor) {
                 return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(done).reset().toString();
             } else {
@@ -610,7 +612,9 @@ public class CamelHistoryAction extends ActionWatchCommand {
         if (source && r.location != null) {
             answer = r.location;
         } else {
-            if (r.nodeId == null) {
+            if (r.routeId != null && r.nodeId != null) {
+                answer = r.routeId + "/" + r.nodeId;
+            } else if (r.nodeId == null) {
                 answer = r.routeId;
             } else {
                 answer = r.nodeId;
@@ -630,10 +634,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private String getDirection(Row r) {
+        boolean original = r.routeId != null && r.routeId.equals(r.fromRouteId);
         if (r.first) {
-            return "*-->";
+            return original ? "*-->" : " -->";
         } else if (r.last) {
-            return "*<--";
+            return original ? "*<--" : " <--";
         } else {
             return null;
         }
@@ -654,10 +659,11 @@ public class CamelHistoryAction extends ActionWatchCommand {
     }
 
     private String getMessage(Row r) {
+        boolean original = r.routeId != null && r.routeId.equals(r.fromRouteId);
         if (r.failed && !r.last) {
             return "Exception: " + r.exception.getString("message");
         }
-        if (r.last) {
+        if (r.last && original) {
             return r.failed ? "Failed" : "Success";
         }
         return r.summary;
@@ -714,6 +720,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
                     row.first = jo.getBoolean("first");
                     row.last = jo.getBoolean("last");
                     row.location = jo.getString("location");
+                    row.fromRouteId = jo.getString("fromRouteId");
                     row.routeId = jo.getString("routeId");
                     row.nodeId = jo.getString("nodeId");
                     row.nodeParentId = jo.getString("nodeParentId");
@@ -919,6 +926,7 @@ public class CamelHistoryAction extends ActionWatchCommand {
         String exchangePattern;
         String threadName;
         String location;
+        String fromRouteId;
         String routeId;
         String nodeId;
         String nodeParentId;
