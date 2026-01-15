@@ -164,6 +164,37 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns an iterator to collate (iterate) the given expression
+     */
+    public static Expression collateExpression(final String expression, final String group) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression num;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                num = context.resolveLanguage("simple").createExpression(group);
+                num.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Integer n = num.evaluate(exchange, Integer.class);
+                exp = ExpressionBuilder.groupIteratorExpression(exp, null, Integer.toString(n), false);
+                exp.init(exchange.getContext());
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "collate(" + expression + "," + group + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an iterator to skip (iterate) the given expression
      */
     public static Expression skipExpression(final String expression, final int number) {
@@ -179,6 +210,35 @@ public final class SimpleExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 return skipIteratorExpression(exp, number).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "skip(" + expression + "," + number + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an iterator to skip (iterate) the given expression
+     */
+    public static Expression skipExpression(final String expression, final String number) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression num;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                num = context.resolveLanguage("simple").createExpression(number);
+                num.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                int n = num.evaluate(exchange, Integer.class);
+                return skipIteratorExpression(exp, n).evaluate(exchange, Object.class);
             }
 
             @Override

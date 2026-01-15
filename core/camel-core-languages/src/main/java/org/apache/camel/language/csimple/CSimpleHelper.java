@@ -572,6 +572,16 @@ public final class CSimpleHelper {
         return StringHelper.after(body, after);
     }
 
+    public static String substringBetween(Exchange exchange, Object value, Object after, Object before) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        String strAfter = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, after);
+        String strBefore = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, before);
+        return StringHelper.between(body, strAfter, strBefore);
+    }
+
     public static int random(Exchange exchange, Object min, Object max) {
         int num1 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, min);
         int num2 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, max);

@@ -728,7 +728,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // replace function
         remainder = ifStartsWithReturnRemainder("replace(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function,
@@ -755,7 +755,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // substring function
         remainder = ifStartsWithReturnRemainder("substring(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substring(num)}, ${substring(num,num)}, or ${substring(num,num,expression)} was: "
@@ -780,7 +780,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
         remainder = ifStartsWithReturnRemainder("substringBefore(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringBefore(exp)} or ${substringBefore(exp,exp)} was: "
@@ -806,7 +806,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
         remainder = ifStartsWithReturnRemainder("substringAfter(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substringAfter(exp)} or ${substringAfter(exp,exp)} was: "
@@ -832,18 +832,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
         remainder = ifStartsWithReturnRemainder("substringBetween(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${substringBetween(before,after)} or ${substringAfter(exp,before,after)} was: "
+                        "Valid syntax: ${substringBetween(after,before)} or ${substringAfter(exp,after,before)} was: "
                                                 + function,
                         token.getIndex());
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
             if (tokens.length < 2 || tokens.length > 3) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${substringBetween(before,after)} or ${substringAfter(exp,before,after)} was: "
-                        + function,
+                        "Valid syntax: ${substringBetween(after,before)} or ${substringAfter(exp,after,before)} was: "
+                                                + function,
                         token.getIndex());
             }
             String exp1 = "${body}";
@@ -863,7 +863,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // random function
         remainder = ifStartsWithReturnRemainder("random(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
@@ -888,26 +888,24 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
             }
             String exp = "${body}";
-            int num = Integer.parseInt(values.trim());
-            return SimpleExpressionBuilder.skipExpression(exp, num);
+            return SimpleExpressionBuilder.skipExpression(exp, values.trim());
         }
 
         // collate function
         remainder = ifStartsWithReturnRemainder("collate(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
             }
             String exp = "${body}";
-            int num = Integer.parseInt(values.trim());
-            return SimpleExpressionBuilder.collateExpression(exp, num);
+            return SimpleExpressionBuilder.collateExpression(exp, values.trim());
         }
 
         // join function
         remainder = ifStartsWithReturnRemainder("join(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             String separator = ",";
             String prefix = null;
             String exp = "${body}";
@@ -948,7 +946,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String separator = null;
             String exp1 = "${body}";
             String exp2;
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: " + function,
@@ -978,6 +976,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (remainder != null) {
             String exp = "${body}";
             String type;
+            // do not use beforeLast as this supports OGNL
             String values = StringHelper.before(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
@@ -1014,7 +1013,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("uppercase(", function);
         if (remainder != null) {
             String exp = null;
-            String value = StringHelper.before(remainder, ")");
+            String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
@@ -1024,7 +1023,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("lowercase(", function);
         if (remainder != null) {
             String exp = null;
-            String value = StringHelper.before(remainder, ")");
+            String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
@@ -1035,7 +1034,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("length(", function);
         if (remainder != null) {
             String exp = null;
-            String value = StringHelper.before(remainder, ")");
+            String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
@@ -1045,7 +1044,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("size(", function);
         if (remainder != null) {
             String exp = null;
-            String value = StringHelper.before(remainder, ")");
+            String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }
@@ -1079,7 +1078,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // hash function
         remainder = ifStartsWithReturnRemainder("hash(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, token.getIndex());
@@ -2104,6 +2103,46 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return "Object value = " + body + ";\n        Object after = " + before
                    + ";\n        return substringAfter(exchange, value, after);";
+        }
+        remainder = ifStartsWithReturnRemainder("substringBetween(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(after,before)}, ${substringBetween(exp,after,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(after,before)}, ${substringBetween(exp,after,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            String body = "body";
+            String after;
+            String before;
+            if (tokens.length == 3) {
+                body = tokens[0];
+                after = tokens[1];
+                before = tokens[2];
+            } else {
+                after = tokens[0];
+                before = tokens[1];
+            }
+            return "Object value = " + body + ";\n        Object after = " + after
+                   + ";\n        Object before = " + before
+                   + ";\n        return substringBetween(exchange, value, after, before);";
         }
 
         // random function
