@@ -1,0 +1,852 @@
+= Virtual Threads in Apache Camel
+
+This guide covers using virtual threads (Project Loom) with Apache Camel for improved performance in I/O-bound integration workloads.
+
+== Introduction
+
+=== What Are Virtual Threads?
+
+Virtual threads, introduced as a preview in JDK 19 and finalized in JDK 21 (https://openjdk.org/jeps/444[JEP 444]), are lightweight threads managed by the JVM rather than the operating system. They enable writing concurrent code in the familiar thread-per-request style while achieving the scalability of asynchronous programming.
+
+==== Key Characteristics
+
+[cols="1,1,1"]
+|===
+| Aspect | Platform Threads | Virtual Threads
+
+| *Managed by*
+| Operating system
+| JVM
+
+| *Memory footprint*
+| ~1 MB stack
+| ~1 KB (grows as needed)
+
+| *Creation cost*
+| Expensive (kernel call)
+| Cheap (object allocation)
+
+| *Max practical count*
+| Thousands
+| Millions
+
+| *Blocking behavior*
+| Blocks OS thread
+| Parks, frees carrier thread
+|===
+
+==== Why Virtual Threads Matter for Integration
+
+Integration workloads are typically *I/O-bound* - waiting for HTTP responses, database queries, message broker acknowledgments, or file operations. With platform threads, each blocked operation holds an expensive OS thread hostage. With virtual threads:
+
+* *I/O waits don't waste resources* - When a virtual thread blocks on I/O, it "parks" and its carrier thread can run other virtual threads
+* *Massive concurrency becomes practical* - Handle thousands of concurrent requests without thread pool exhaustion
+* *Simple programming model* - Write straightforward blocking code instead of complex reactive chains
+
+=== Requirements
+
+* *JDK 21+* for virtual threads
+* *JDK 25+* for ScopedValue optimizations (optional, provides better performance with context propagation)
+
+== Enabling Virtual Threads in Camel
+
+Virtual threads are *opt-in* in Apache Camel. When enabled, Camel's thread pool factory automatically creates virtual threads instead of platform threads for compatible operations.
+
+=== Global Configuration
+
+==== System Property
+
+[source,bash]
+----
+java -Dcamel.threads.virtual.enabled=true -jar myapp.jar
+----
+
+==== Application Properties (Spring Boot / Quarkus)
+
+[source,properties]
+----
+camel.threads.virtual.enabled=true
+----
+
+==== Programmatic Configuration
+
+For custom setups, the thread type is determined at JVM startup based on the system property. Camel's `ThreadType.current()` returns either `PLATFORM` or `VIRTUAL`.
+
+=== What Changes When Enabled
+
+When virtual threads are enabled, Camel's `DefaultThreadPoolFactory` (JDK 21+ variant) changes behavior:
+
+[cols="1,1,1"]
+|===
+| Thread Pool Type | Platform Mode | Virtual Mode
+
+| `newCachedThreadPool()`
+| `Executors.newCachedThreadPool()`
+| `Executors.newThreadPerTaskExecutor()`
+
+| `newThreadPool()` (poolSize > 1)
+| `ThreadPoolExecutor`
+| `Executors.newThreadPerTaskExecutor()`
+
+| `newScheduledThreadPool()`
+| `ScheduledThreadPoolExecutor`
+| `Executors.newScheduledThreadPool(0, factory)`
+|===
+
+[NOTE]
+====
+Single-threaded executors and scheduled tasks still use platform threads, as virtual threads are optimized for concurrent I/O-bound work, not scheduled or sequential tasks.
+====
+
+== Components with Virtual Thread Support
+
+Camel components benefit from virtual threads in different ways depending on their architecture.
+
+=== Automatic Support (Thread Pool Based)
+
+These components use Camel's `ExecutorServiceManager` and automatically benefit from virtual threads when enabled:
+
+[cols="1,2"]
+|===
+| Component | How It Benefits
+
+| *SEDA / VM*
+| Consumer threads become virtual; with `virtualThreadPerTask=true`, each message gets its own virtual thread
+
+| *Direct-VM*
+| Cross-context calls use virtual threads for async processing
+
+| *Threads DSL*
+| `.threads()` EIP uses virtual thread pools
+
+| *Async Processors*
+| Components using `AsyncProcessor` with thread pools
+|===
+
+=== HTTP Server Components
+
+HTTP server components can be configured to use virtual threads for request handling:
+
+==== Jetty
+
+Jetty 12+ supports virtual threads via `VirtualThreadPool`. Configure a custom thread pool:
+
+[source,java]
+----
+import org.eclipse.jetty.util.thread.VirtualThreadPool;
+
+JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);
+
+// Create Jetty's VirtualThreadPool for request handling
+VirtualThreadPool virtualThreadPool = new VirtualThreadPool();
+virtualThreadPool.setName("CamelJettyVirtual");
+jetty.setThreadPool(virtualThreadPool);
+----
+
+Or in Spring configuration:
+
+[source,xml]
+----
+<bean id="jettyThreadPool" class="org.eclipse.jetty.util.thread.VirtualThreadPool">
+    <property name="name" value="CamelJettyVirtual"/>
+</bean>
+
+<bean id="jetty" class="org.apache.camel.component.jetty.JettyHttpComponent">
+    <property name="threadPool" ref="jettyThreadPool"/>
+</bean>
+----
+
+==== Platform HTTP (Vert.x)
+
+The camel-platform-http-vertx component uses Vert.x's event loop model. Virtual threads aren't directly applicable, but you can offload blocking work:
+
+[source,java]
+----
+from("platform-http:/api/orders")
+    .threads()  // Offload to virtual thread pool
+    .to("jpa:Order");  // Blocking JPA operation
+----
+
+==== Undertow
+
+Undertow can use virtual threads via XNIO worker configuration. Check Undertow documentation for JDK 21+ virtual thread support.
+
+=== Messaging Components
+
+[cols="1,2"]
+|===
+| Component | Virtual Thread Usage
+
+| *Kafka*
+| Consumer thread pools benefit from virtual threads for high-concurrency scenarios
+
+| *JMS*
+| Session handling and message listeners can use virtual thread pools
+
+| *AMQP*
+| Connection handling benefits from virtual threads
+|===
+
+=== Database Components
+
+Virtual threads shine with blocking database operations:
+
+[source,java]
+----
+// With virtual threads, these blocking calls don't waste platform threads
+from("seda:process?virtualThreadPerTask=true&concurrentConsumers=500")
+    .to("jpa:Order")           // Blocking JDBC under the hood
+    .to("sql:SELECT * FROM inventory WHERE id = :#${body.itemId}")
+    .to("mongodb:orders");
+----
+
+== SEDA Deep Dive: Two Execution Models
+
+The SEDA (Staged Event-Driven Architecture) component in Apache Camel provides asynchronous, in-memory messaging between routes. With the introduction of virtual threads, SEDA now supports two distinct execution models, each optimized for different scenarios.
+
+=== Traditional Model: Fixed Consumer Pool
+
+The default SEDA consumer model uses a *fixed pool of long-running consumer threads* that continuously poll the queue for messages.
+
+==== How It Works
+
+1. When the consumer starts, it creates `concurrentConsumers` threads (default: 1)
+2. Each thread runs in an infinite loop, polling the queue with a configurable timeout
+3. When a message arrives, the thread processes it and then polls again
+4. Threads are reused across many messages
+
+==== Configuration
+
+[source,java]
+----
+from("seda:orders?concurrentConsumers=10")
+    .process(this::processOrder)
+    .to("direct:fulfillment");
+----
+
+==== Best For
+
+* CPU-bound processing where thread creation overhead matters
+* Scenarios with predictable, steady throughput
+* When you need precise control over thread pool sizing
+* Platform threads (JDK < 21 or virtual threads disabled)
+
+=== Virtual Thread Per Task Model
+
+The `virtualThreadPerTask` mode uses a fundamentally different approach: *spawn a new thread for each message*.
+
+==== How It Works
+
+1. A single coordinator thread polls the queue
+2. For each message, a new task is submitted to a cached thread pool
+3. When virtual threads are enabled, `Executors.newThreadPerTaskExecutor()` is used
+4. Each message gets its own lightweight virtual thread
+5. The `concurrentConsumers` option becomes a *concurrency limit* (0 = unlimited)
+
+==== Configuration
+
+[source,java]
+----
+from("seda:orders?virtualThreadPerTask=true&concurrentConsumers=100")
+    .process(this::processOrder)  // I/O-bound operation
+    .to("direct:fulfillment");
+----
+
+==== Best For
+
+* I/O-bound workloads (database calls, HTTP requests, file operations)
+* Highly variable throughput with bursty traffic
+* Scenarios requiring massive concurrency (thousands of concurrent messages)
+* Virtual threads (JDK 21+ with `camel.threads.virtual.enabled=true`)
+
+=== Architecture Comparison
+
+[cols="1,1,1"]
+|===
+| Aspect | Traditional (Fixed Pool) | Virtual Thread Per Task
+
+| *Thread creation*
+| Once at startup
+| Per message
+
+| *Thread count*
+| Fixed (`concurrentConsumers`)
+| Dynamic (bounded by limit)
+
+| *Queue polling*
+| All threads poll
+| Single coordinator polls
+
+| *Message dispatch*
+| Direct in polling thread
+| Submitted to task executor
+
+| *Optimal for*
+| CPU-bound, platform threads
+| I/O-bound, virtual threads
+
+| *Memory overhead*
+| Higher (platform threads ~1MB)
+| Lower (virtual threads ~1KB)
+|===
+
+==== Visual Comparison
+
+[mermaid]
+----
+flowchart TB
+    subgraph traditional["Traditional Model (Fixed Pool)"]
+        direction TB
+        Q1[("SEDA Queue")]
+        C1["Consumer Thread 1"]
+        C2["Consumer Thread 2"]
+        C3["Consumer Thread N"]
+        P1["Process Message"]
+
+        Q1 -->|"poll()"| C1
+        Q1 -->|"poll()"| C2
+        Q1 -->|"poll()"| C3
+        C1 --> P1
+        C2 --> P1
+        C3 --> P1
+    end
+
+    subgraph virtual["Virtual Thread Per Task Model"]
+        direction TB
+        Q2[("SEDA Queue")]
+        COORD["Coordinator Thread"]
+        SEM{{"Semaphore (concurrency limit)"}}
+        VT1["Virtual Thread 1"]
+        VT2["Virtual Thread 2"]
+        VTN["Virtual Thread N"]
+        P2["Process Message"]
+
+        Q2 -->|"poll()"| COORD
+        COORD -->|"acquire"| SEM
+        SEM -->|"spawn"| VT1
+        SEM -->|"spawn"| VT2
+        SEM -->|"spawn"| VTN
+        VT1 --> P2
+        VT2 --> P2
+        VTN --> P2
+    end
+----
+
+=== Enabling Virtual Threads
+
+To use virtual threads in Camel, you need JDK 21+ and must enable them via configuration:
+
+==== Application Properties
+
+[source,properties]
+----
+camel.threads.virtual.enabled=true
+----
+
+==== System Property
+
+[source,bash]
+----
+java -Dcamel.threads.virtual.enabled=true -jar myapp.jar
+----
+
+When enabled, Camel's `DefaultThreadPoolFactory` automatically uses `Executors.newThreadPerTaskExecutor()` for cached thread pools, creating virtual threads instead of platform threads.
+
+=== Backpressure and Flow Control
+
+When using virtual threads with high concurrency, proper backpressure is essential to prevent overwhelming downstream systems. SEDA provides multiple layers of backpressure control.
+
+==== Layer 1: Queue-Based Backpressure (Producer Side)
+
+The SEDA queue itself acts as a buffer with configurable size:
+
+[source,java]
+----
+// Queue holds up to 10,000 messages
+from("seda:orders?size=10000")
+----
+
+When the queue is full, producers can be configured to:
+
+[cols="1,2,1"]
+|===
+| Option | Behavior | Use Case
+
+| `blockWhenFull=true`
+| Producer blocks until space available
+| Synchronous callers that can wait
+
+| `blockWhenFull=true&offerTimeout=5000`
+| Block up to 5 seconds, then fail
+| Timeout-based flow control
+
+| `discardWhenFull=true`
+| Silently drop the message
+| Fire-and-forget, lossy acceptable
+
+| (default)
+| Throw `IllegalStateException`
+| Fail-fast, caller handles retry
+|===
+
+Example with blocking and timeout:
+
+[source,java]
+----
+// Producer blocks up to 10 seconds when queue is full
+from("direct:incoming")
+    .to("seda:processing?size=5000&blockWhenFull=true&offerTimeout=10000");
+----
+
+==== Layer 2: Concurrency Limiting (Consumer Side)
+
+In `virtualThreadPerTask` mode, the `concurrentConsumers` parameter controls maximum concurrent processing tasks:
+
+[source,java]
+----
+// Max 200 concurrent virtual threads processing messages
+from("seda:orders?virtualThreadPerTask=true&concurrentConsumers=200")
+    .to("http://downstream-service/api");
+----
+
+This uses a `Semaphore` internally to gate message dispatch, ensuring you don't overwhelm downstream services even with thousands of queued messages.
+
+==== Layer 3: Combination Strategy
+
+For robust production systems, combine both:
+
+[source,java]
+----
+// Producer side: buffer up to 10,000, block if full (with timeout)
+from("rest:post:/orders")
+    .to("seda:order-queue?size=10000&blockWhenFull=true&offerTimeout=30000");
+
+// Consumer side: process with virtual threads, max 500 concurrent
+from("seda:order-queue?virtualThreadPerTask=true&concurrentConsumers=500")
+    .to("http://inventory-service/check")
+    .to("http://payment-service/process")
+    .to("jpa:Order");
+----
+
+This configuration:
+
+* Buffers up to 10,000 orders in memory
+* Blocks REST callers for up to 30 seconds if buffer is full
+* Processes with up to 500 concurrent virtual threads
+* Protects downstream HTTP services from overload
+
+==== Backpressure Comparison
+
+[cols="1,1,1"]
+|===
+| Mechanism | Controls | Location
+
+| `size`
+| Queue capacity (message buffer)
+| Between producer and consumer
+
+| `blockWhenFull` / `offerTimeout`
+| Producer blocking behavior
+| Producer side
+
+| `concurrentConsumers` (traditional)
+| Fixed thread pool size
+| Consumer side
+
+| `concurrentConsumers` (virtualThreadPerTask)
+| Max concurrent tasks (semaphore)
+| Consumer side
+|===
+
+=== Example: High-Throughput Order Processing
+
+[source,java]
+----
+public class OrderProcessingRoute extends RouteBuilder {
+    @Override
+    public void configure() {
+        // Receive orders via REST, queue them for async processing
+        // Block callers if queue is full (with 30s timeout)
+        rest("/orders")
+            .post()
+            .to("seda:incoming-orders?size=10000&blockWhenFull=true&offerTimeout=30000");
+
+        // Process with virtual threads - each order gets its own thread
+        // Limit to 500 concurrent to protect downstream services
+        from("seda:incoming-orders?virtualThreadPerTask=true&concurrentConsumers=500")
+            .routeId("order-processor")
+            .log("Processing order ${body.orderId} on ${threadName}")
+            .to("http://inventory-service/check")      // I/O - virtual thread parks
+            .to("http://payment-service/process")      // I/O - virtual thread parks
+            .to("jpa:Order")                           // I/O - virtual thread parks
+            .to("direct:send-confirmation");
+    }
+}
+----
+
+=== Performance Characteristics
+
+With virtual threads and I/O-bound workloads, you can expect:
+
+* *Higher throughput*: Virtual threads don't block OS threads during I/O waits
+* *Better resource utilization*: Thousands of concurrent operations with minimal memory
+* *Lower latency under load*: No thread pool exhaustion or queuing delays
+* *Simpler scaling*: Just increase concurrency limit, no thread pool tuning
+
+==== Benchmark
+
+Run the included load test to compare models:
+
+[source,bash]
+----
+# Platform threads, fixed pool
+mvn test -Dtest=VirtualThreadsLoadTest -pl core/camel-core
+
+# Virtual threads, fixed pool
+mvn test -Dtest=VirtualThreadsLoadTest -pl core/camel-core \
+    -Dcamel.threads.virtual.enabled=true
+
+# Virtual threads, thread-per-task (optimal)
+mvn test -Dtest=VirtualThreadsLoadTest -pl core/camel-core \
+    -Dcamel.threads.virtual.enabled=true \
+    -Dloadtest.virtualThreadPerTask=true
+----
+
+== Context Propagation with ContextValue
+
+One challenge with virtual threads is *context propagation* - passing contextual data (like transaction IDs, tenant info, or user credentials) through the call chain. Traditional `ThreadLocal` works but has limitations with virtual threads.
+
+=== The Problem with ThreadLocal
+
+`ThreadLocal` has issues in virtual thread environments:
+
+* *Memory overhead*: Each virtual thread needs its own copy
+* *Inheritance complexity*: Values must be explicitly inherited to child threads
+* *No automatic cleanup*: Risk of leaks if values aren't removed
+* *No scoping*: Values persist until explicitly removed
+
+=== Introducing ContextValue
+
+Apache Camel provides the `ContextValue` abstraction that automatically chooses the optimal implementation based on JDK version and configuration:
+
+[cols="1,1,1"]
+|===
+| JDK Version | Virtual Threads Enabled | Implementation
+
+| JDK 17-24
+| N/A
+| ThreadLocal
+
+| JDK 21-24
+| Yes
+| ThreadLocal (ScopedValue not yet stable)
+
+| JDK 25+
+| Yes
+| *ScopedValue*
+
+| JDK 25+
+| No
+| ThreadLocal
+|===
+
+=== ScopedValue Benefits (JDK 25+)
+
+https://openjdk.org/jeps/487[JEP 487: Scoped Values] provides:
+
+* *Immutability*: Values cannot be changed within a scope (safer)
+* *Automatic inheritance*: Child virtual threads inherit values automatically
+* *Automatic cleanup*: Values are unbound when leaving scope (no leaks)
+* *Better performance*: Optimized for the structured concurrency model
+
+=== Using ContextValue
+
+==== Basic Usage
+
+[source,java]
+----
+import org.apache.camel.util.concurrent.ContextValue;
+
+// Create a context value (picks ScopedValue or ThreadLocal automatically)
+private static final ContextValue<String> TENANT_ID = ContextValue.newInstance("tenantId");
+
+// Bind a value for a scope
+ContextValue.where(TENANT_ID, "acme-corp", () -> {
+    // Code here can access TENANT_ID.get()
+    processRequest();
+    return result;
+});
+
+// Inside processRequest(), on any thread in the scope:
+public void processRequest() {
+    String tenant = TENANT_ID.get();  // Returns "acme-corp"
+    // ... process with tenant context
+}
+----
+
+==== When to Use ThreadLocal vs ContextValue
+
+[source,java]
+----
+// Use ContextValue.newInstance() for READ-ONLY context passing
+private static final ContextValue<RequestContext> REQUEST_CTX = ContextValue.newInstance("requestCtx");
+
+// Use ContextValue.newThreadLocal() when you need MUTABLE state
+private static final ContextValue<Counter> COUNTER = ContextValue.newThreadLocal("counter", Counter::new);
+----
+
+==== Integration with Camel Internals
+
+Camel uses `ContextValue` internally for various purposes:
+
+[source,java]
+----
+// Example: Passing context during route creation
+private static final ContextValue<ProcessorDefinition<?>> CREATE_PROCESSOR
+    = ContextValue.newInstance("CreateProcessor");
+
+// When creating processors, bind the context
+ContextValue.where(CREATE_PROCESSOR, this, () -> {
+    return createOutputsProcessor(routeContext);
+});
+
+// Child code can access the current processor being created
+ProcessorDefinition<?> current = CREATE_PROCESSOR.orElse(null);
+----
+
+=== Migration from ThreadLocal
+
+If you have existing code using `ThreadLocal`, migration is straightforward:
+
+[source,java]
+----
+// Before: ThreadLocal
+private static final ThreadLocal<User> CURRENT_USER = new ThreadLocal<>();
+
+public void handleRequest(User user) {
+    CURRENT_USER.set(user);
+    try {
+        processRequest();
+    } finally {
+        CURRENT_USER.remove();
+    }
+}
+
+// After: ContextValue
+private static final ContextValue<User> CURRENT_USER = ContextValue.newInstance("currentUser");
+
+public void handleRequest(User user) {
+    ContextValue.where(CURRENT_USER, user, this::processRequest);
+}
+----
+
+The `ContextValue` version is cleaner and automatically handles cleanup.
+
+== Best Practices and Performance Considerations
+
+=== When to Use Virtual Threads
+
+[cols="1,1"]
+|===
+| Good Fit ✓ | Poor Fit ✗
+
+| HTTP client calls
+| CPU-intensive computation
+
+| Database queries (JDBC)
+| Tight loops with no I/O
+
+| File I/O operations
+| Real-time/low-latency systems
+
+| Message broker operations
+| Native code (JNI) that blocks
+
+| Calling external services
+| Code holding locks for long periods
+|===
+
+=== Configuration Guidelines
+
+==== Start Conservative
+
+[source,properties]
+----
+# Start with virtual threads disabled, benchmark, then enable
+camel.threads.virtual.enabled=false
+
+# When enabling, test thoroughly
+camel.threads.virtual.enabled=true
+----
+
+==== SEDA Tuning
+
+[source,java]
+----
+// For I/O-bound: use virtualThreadPerTask with high concurrency limit
+from("seda:io-bound?virtualThreadPerTask=true&concurrentConsumers=1000")
+
+// For CPU-bound: stick with traditional model, tune pool size
+from("seda:cpu-bound?concurrentConsumers=4")  // ~number of CPU cores
+----
+
+==== Avoid Pinning
+
+Virtual threads "pin" to carrier threads when:
+
+* Inside `synchronized` blocks
+* During native method calls
+
+Prefer `ReentrantLock` over `synchronized`:
+
+[source,java]
+----
+// Avoid: can pin virtual thread
+synchronized (lock) {
+    doBlockingOperation();
+}
+
+// Prefer: virtual thread can unmount
+lock.lock();
+try {
+    doBlockingOperation();
+} finally {
+    lock.unlock();
+}
+----
+
+=== Monitoring and Debugging
+
+==== Thread Names
+
+Virtual threads created by Camel have descriptive names:
+
+[source,text]
+----
+VirtualThread[#123]/Camel (camel-1) thread #5 - seda://orders
+----
+
+==== JFR Events
+
+JDK Flight Recorder captures virtual thread events:
+
+[source,bash]
+----
+# Record virtual thread events
+java -XX:StartFlightRecording=filename=recording.jfr,settings=default \
+     -Dcamel.threads.virtual.enabled=true \
+     -jar myapp.jar
+----
+
+==== Detecting Pinning
+
+[source,bash]
+----
+# Log when virtual threads pin (JDK 21+)
+java -Djdk.tracePinnedThreads=short \
+     -Dcamel.threads.virtual.enabled=true \
+     -jar myapp.jar
+----
+
+== Complete Examples
+
+=== Example 1: High-Concurrency REST API
+
+[source,java]
+----
+public class RestApiRoute extends RouteBuilder {
+    @Override
+    public void configure() {
+        // REST endpoint receives requests
+        rest("/api")
+            .post("/orders")
+            .to("seda:process-order");
+
+        // Process with virtual threads - handle 1000s of concurrent requests
+        from("seda:process-order?virtualThreadPerTask=true&concurrentConsumers=2000")
+            .routeId("order-processor")
+            // Each step may block on I/O - virtual threads park efficiently
+            .to("http://inventory-service/reserve")
+            .to("http://payment-service/charge")
+            .to("jpa:Order?persistenceUnit=orders")
+            .to("kafka:order-events");
+    }
+}
+----
+
+=== Example 2: Parallel Enrichment with Virtual Threads
+
+[source,java]
+----
+public class ParallelEnrichmentRoute extends RouteBuilder {
+    @Override
+    public void configure() {
+        from("direct:enrich")
+            .multicast()
+                .parallelProcessing()
+                .executorService(virtualThreadExecutor())  // Use virtual threads
+                .to("direct:enrichFromUserService",
+                    "direct:enrichFromOrderHistory",
+                    "direct:enrichFromRecommendations")
+            .end()
+            .to("direct:aggregate");
+    }
+
+    private ExecutorService virtualThreadExecutor() {
+        return getCamelContext()
+            .getExecutorServiceManager()
+            .newCachedThreadPool(this, "enrichment");
+        // When camel.threads.virtual.enabled=true, this returns a virtual thread executor
+    }
+}
+----
+
+=== Example 3: Context Propagation Across Routes
+
+[source,java]
+----
+public class TenantAwareRoute extends RouteBuilder {
+
+    private static final ContextValue<String> TENANT_ID = ContextValue.newInstance("tenantId");
+
+    @Override
+    public void configure() {
+        from("platform-http:/api/{tenant}/orders")
+            .process(exchange -> {
+                String tenant = exchange.getMessage().getHeader("tenant", String.class);
+                // Bind tenant for the entire processing scope
+                ContextValue.where(TENANT_ID, tenant, () -> {
+                    exchange.setProperty("tenantId", tenant);
+                    return null;
+                });
+            })
+            .to("seda:process?virtualThreadPerTask=true");
+
+        from("seda:process?virtualThreadPerTask=true&concurrentConsumers=500")
+            .process(exchange -> {
+                // Access tenant ID in any processor
+                String tenant = TENANT_ID.orElse("default");
+                log.info("Processing for tenant: {}", tenant);
+            })
+            .toD("jpa:Order?persistenceUnit=${exchangeProperty.tenantId}");
+    }
+}
+----
+
+== Summary
+
+Virtual threads in Apache Camel provide:
+
+* *Simplified concurrency* - Write blocking code without callback hell
+* *Improved scalability* - Handle thousands of concurrent I/O operations
+* *Reduced resource consumption* - Lightweight threads use less memory
+* *Better throughput* - No thread pool exhaustion under load
+
+To get started:
+
+1. Upgrade to JDK 21+
+2. Add `camel.threads.virtual.enabled=true` to your configuration
+3. For SEDA components, consider `virtualThreadPerTask=true` for I/O-bound workloads
+4. Monitor with `-Djdk.tracePinnedThreads=short` to detect issues
+
+For advanced context propagation needs, especially on JDK 25+, use `ContextValue` instead of raw `ThreadLocal`.
