@@ -829,6 +829,43 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns the substring from the given expression that are between after and before
+     */
+    public static Expression substringBetweenExpression(final String expression, final String after, final String before) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression expAfter;
+            private Expression expBefore;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                expAfter = ExpressionBuilder.simpleExpression(after);
+                expAfter.init(context);
+                expBefore = ExpressionBuilder.simpleExpression(before);
+                expBefore.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exp.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                }
+                String aft = expAfter.evaluate(exchange, String.class);
+                String bef = expBefore.evaluate(exchange, String.class);
+                return StringHelper.between(body, aft, bef);
+            }
+
+            @Override
+            public String toString() {
+                return "substringBetween(" + expression + "," + after + "," + before + ")";
+            }
+        };
+    }
+
+    /**
      * Hashes the value using the given algorithm
      */
     public static Expression hashExpression(final String expression, final String algorithm) {

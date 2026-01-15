@@ -830,6 +830,35 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return SimpleExpressionBuilder.substringAfterExpression(exp1, after);
         }
+        remainder = ifStartsWithReturnRemainder("substringBetween(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(before,after)} or ${substringAfter(exp,before,after)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(before,after)} or ${substringAfter(exp,before,after)} was: "
+                        + function,
+                        token.getIndex());
+            }
+            String exp1 = "${body}";
+            String after;
+            String before;
+            if (tokens.length == 3) {
+                exp1 = tokens[0];
+                after = tokens[1];
+                before = tokens[2];
+            } else {
+                after = tokens[0];
+                before = tokens[1];
+            }
+            return SimpleExpressionBuilder.substringBetweenExpression(exp1, after, before);
+        }
 
         // random function
         remainder = ifStartsWithReturnRemainder("random(", function);
@@ -906,7 +935,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("trim(", function);
         if (remainder != null) {
             String exp = null;
-            String value = StringHelper.before(remainder, ")");
+            String value = StringHelper.beforeLast(remainder, ")");
             if (ObjectHelper.isNotEmpty(value)) {
                 exp = StringHelper.removeQuotes(value);
             }

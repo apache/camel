@@ -2605,6 +2605,37 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSubstringBetween() {
+        exchange.getMessage().setBody("Hello big great World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${substringBetween('Hello','World')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals(" big great ", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBetween('Hello ',' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("big great", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBetween(${body},'big ',' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("great", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(${substringBetween(${body},'big','World')})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("great", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBetween('Hello','Unknown')}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+
+        exchange.getMessage().setHeader("place", "Hello");
+        exchange.getMessage().setHeader("place2", "great");
+        expression = context.resolveLanguage("simple").createExpression("${substringBetween(${body},${header.place},${header.place2})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals(" big ", s);
+    }
+
+    @Test
     public void testConcat() {
         exchange.getMessage().setBody("Hello");
 

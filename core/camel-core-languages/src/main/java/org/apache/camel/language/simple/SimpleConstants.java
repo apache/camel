@@ -183,6 +183,9 @@ public final class SimpleConstants {
     public static final String SUBSTRING_AFTER = "substringAfter(exp,before)";
     @Metadata(description = "Returns a random number between min (included) and max (excluded).", label = "function",
               javaType = "int", displayName = "Generate Random Number")
+    public static final String SUBSTRING_BETWEEN = "substringBetween(exp,before,after)";
+    @Metadata(description = "Returns a substring of the message body/expression that are between before and after. Returns null if nothing comes between.",
+            label = "function", javaType = "String")
     public static final String RANDOM = "random(min,max)";
     @Metadata(description = "The skip function iterates the message body and skips the first number of items."
                             + " This can be used with the Splitter EIP to split a message body and skip the first N number of items.",
