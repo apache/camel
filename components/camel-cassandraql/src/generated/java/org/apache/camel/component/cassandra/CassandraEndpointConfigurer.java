@@ -56,6 +56,8 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "prepareStatements": target.setPrepareStatements(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
+        case "requesttimeout":
+        case "requestTimeout": target.setRequestTimeout(property(camelContext, int.class, value)); return true;
         case "resultsetconversionstrategy":
         case "resultSetConversionStrategy": target.setResultSetConversionStrategy(property(camelContext, org.apache.camel.component.cassandra.ResultSetConversionStrategy.class, value)); return true;
         case "runlogginglevel":
@@ -115,6 +117,8 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "prepareStatements": return boolean.class;
         case "repeatcount":
         case "repeatCount": return long.class;
+        case "requesttimeout":
+        case "requestTimeout": return int.class;
         case "resultsetconversionstrategy":
         case "resultSetConversionStrategy": return org.apache.camel.component.cassandra.ResultSetConversionStrategy.class;
         case "runlogginglevel":
@@ -175,6 +179,8 @@ public class CassandraEndpointConfigurer extends PropertyConfigurerSupport imple
         case "prepareStatements": return target.isPrepareStatements();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
+        case "requesttimeout":
+        case "requestTimeout": return target.getRequestTimeout();
         case "resultsetconversionstrategy":
         case "resultSetConversionStrategy": return target.getResultSetConversionStrategy();
         case "runlogginglevel":

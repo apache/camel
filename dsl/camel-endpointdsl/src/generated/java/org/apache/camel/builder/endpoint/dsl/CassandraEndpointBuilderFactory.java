@@ -835,6 +835,36 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
+         * Request timeout in milliseconds. The timeout is applied to each
+         * individual query execution.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder requestTimeout(int requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Request timeout in milliseconds. The timeout is applied to each
+         * individual query execution.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointConsumerBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
@@ -1102,6 +1132,36 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
+         * Request timeout in milliseconds. The timeout is applied to each
+         * individual query execution.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder requestTimeout(int requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Request timeout in milliseconds. The timeout is applied to each
+         * individual query execution.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointProducerBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
          * To use a custom class that implements logic for converting ResultSet
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
@@ -1324,6 +1384,36 @@ public interface CassandraEndpointBuilderFactory {
          */
         default AdvancedCassandraEndpointBuilder loadBalancingPolicyClass(String loadBalancingPolicyClass) {
             doSetProperty("loadBalancingPolicyClass", loadBalancingPolicyClass);
+            return this;
+        }
+        /**
+         * Request timeout in milliseconds. The timeout is applied to each
+         * individual query execution.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder requestTimeout(int requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
+            return this;
+        }
+        /**
+         * Request timeout in milliseconds. The timeout is applied to each
+         * individual query execution.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCassandraEndpointBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
