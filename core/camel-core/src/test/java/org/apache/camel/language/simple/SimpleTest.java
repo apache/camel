@@ -59,6 +59,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -2598,6 +2599,32 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getId}", 123);
         assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getName}",
                 "Camel in Action");
+    }
+
+    @Test
+    public void testSplit() {
+        String body = "A,B,C,D,E";
+        String[] arr = body.split(",");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${split()}");
+        String[] s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals(arr, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${split(',')}");
+        s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals(arr, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${split(';')}");
+        s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals("A,B,C,D,E".split(";"), s);
+
+        String head = "1;2;3;4";
+        String[] arr2 = head.split(";");
+        exchange.getIn().setHeader("myHead", head);
+        expression = context.resolveLanguage("simple").createExpression("${split(${header.myHead},;)}");
+        s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals(arr2, s);
     }
 
     @Test

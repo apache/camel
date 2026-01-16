@@ -756,6 +756,35 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Split the String values from the expression using the given separator
+     */
+    public static Expression splitStringExpression(final String expression, final String separator) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String text = exp.evaluate(exchange, String.class);
+                if (text == null) {
+                    return null;
+                }
+                return text.split(separator);
+            }
+
+            @Override
+            public String toString() {
+                return "split(" + expression + "," + separator + ")";
+            }
+        };
+    }
+
+    /**
      * Replaces string values from the expression
      */
     public static Expression replaceExpression(final String expression, final String from, final String to) {

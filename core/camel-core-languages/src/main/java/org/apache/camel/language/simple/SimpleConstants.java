@@ -176,14 +176,18 @@ public final class SimpleConstants {
               label = "function", javaType = "String")
     public static final String SUBSTRING = "substring(head,tail)";
     @Metadata(description = "Returns a substring of the message body/expression that comes before. Returns null if nothing comes before.",
-              label = "function", javaType = "String")
+              label = "function", javaType = "String", displayName = "Substring Before")
     public static final String SUBSTRING_BEFORE = "substringBefore(exp,before)";
     @Metadata(description = "Returns a substring of the message body/expression that comes after. Returns null if nothing comes after.",
-              label = "function", javaType = "String")
+              label = "function", javaType = "String", displayName = "Substring After")
     public static final String SUBSTRING_AFTER = "substringAfter(exp,before)";
     @Metadata(description = "Returns a random number between min (included) and max (excluded).", label = "function",
-              javaType = "int", displayName = "Generate Random Number")
+              javaType = "int", displayName = "Substring Between")
     public static final String SUBSTRING_BETWEEN = "substringBetween(exp,after,before)";
+    @Metadata(description = "Splits the message body/expression as a String value using the separator into a String array",
+              label = "function",
+              javaType = "String[]", displayName = "Split String Values")
+    public static final String SPLIT = "split(exp,separator)";
     @Metadata(description = "Returns a substring of the message body/expression that are between after and before. Returns null if nothing comes between.",
               label = "function", javaType = "String")
     public static final String RANDOM = "random(min,max)";

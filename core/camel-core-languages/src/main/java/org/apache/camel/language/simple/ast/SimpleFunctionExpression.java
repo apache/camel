@@ -928,6 +928,27 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return SimpleExpressionBuilder.joinExpression(exp, separator, prefix);
         }
+        // split function
+        remainder = ifStartsWithReturnRemainder("split(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String exp = "${body}";
+            String separator = ",";
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${split(separator)} or ${split(exp,separator)} was: " + function, token.getIndex());
+                }
+                if (tokens.length == 2) {
+                    exp = tokens[0];
+                    separator = tokens[1];
+                } else {
+                    separator = tokens[0];
+                }
+            }
+            return SimpleExpressionBuilder.splitStringExpression(exp, separator);
+        }
 
         // trim function
         remainder = ifStartsWithReturnRemainder("trim(", function);
@@ -2144,6 +2165,40 @@ public class SimpleFunctionExpression extends LiteralExpression {
                    + ";\n        Object before = " + before
                    + ";\n        return substringBetween(exchange, value, after, before);";
         }
+        // split function
+        remainder = ifStartsWithReturnRemainder("split(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String exp = "body";
+            String separator = ",";
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${split(separator)} or ${split(exp,separator)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                for (int i = 0; i < tokens.length; i++) {
+                    String s = tokens[i];
+                    if (StringHelper.isSingleQuoted(s)) {
+                        s = StringHelper.removeLeadingAndEndingQuotes(s);
+                        s = StringQuoteHelper.doubleQuote(s);
+                        tokens[i] = s;
+                    }
+                }
+                if (tokens.length == 2) {
+                    exp = tokens[0];
+                    separator = tokens[1];
+                } else {
+                    separator = tokens[0];
+                }
+            }
+            // separator must be in double quotes
+            separator = StringHelper.removeLeadingAndEndingQuotes(separator);
+            separator = StringQuoteHelper.doubleQuote(separator);
+            return "Object value = " + exp + ";\n        String separator = " + separator
+                   + ";\n        return stringSplit(exchange, value, separator);";
+        }
 
         // random function
         remainder = ifStartsWithReturnRemainder("random(", function);
@@ -2456,7 +2511,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "messageHistory(exchange, true)";
         }
 
-        // join
+        // join function
         remainder = ifStartsWithReturnRemainder("join(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");

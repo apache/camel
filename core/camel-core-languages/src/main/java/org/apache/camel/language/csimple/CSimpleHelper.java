@@ -865,6 +865,14 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static String[] stringSplit(Exchange exchange, Object value, String separator) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        return body.split(separator);
+    }
+
     public static int length(Exchange exchange, Object value) {
         try {
             if (value instanceof byte[] arr) {
