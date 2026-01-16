@@ -82,5 +82,5 @@ camel run [options]
 
 
 
-include::examples/run.adoc[]
+include::partial$jbang-commands/examples/run.adoc[]
 

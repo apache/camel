@@ -173,7 +173,7 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
 
             // Check if an examples file exists for this command
             String examplesFileName = getExamplesFileName(cmd);
-            Path examplesFile = docDir.toPath().resolve("jbang-commands/examples/" + examplesFileName);
+            Path examplesFile = docDir.toPath().getParent().resolve("partials/jbang-commands/examples/" + examplesFileName);
             ctx.put("hasExamplesFile", Files.exists(examplesFile));
             ctx.put("examplesFileName", examplesFileName);
 
