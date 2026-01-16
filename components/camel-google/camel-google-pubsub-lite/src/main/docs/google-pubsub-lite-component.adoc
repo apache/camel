@@ -18,7 +18,7 @@
 
 [NOTE]
 ====
-This component is deprecated. Google Cloud Pub/Sub Lite will be shut down on March 18, 2026.
+This component is deprecated since Camel 4.10. Google Cloud Pub/Sub Lite will be shut down on March 18, 2026.
 Please migrate to xref:google-pubsub-component.adoc[Google Pub/Sub] or Google Cloud Managed Service for Apache Kafka.
 ====
 
