@@ -146,7 +146,7 @@ pipeline {
                                     if ("${JDK_NAME}" == "jdk_17_latest") {
                                         withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                             echo "Code quality review ENABLED for ${PLATFORM}"
-                                            sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage"
+                                            sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME clean test org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage"
                                         }
                                     } else {
                                         echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
