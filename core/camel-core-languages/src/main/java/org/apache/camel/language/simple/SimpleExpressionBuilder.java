@@ -164,6 +164,37 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns an iterator to collate (iterate) the given expression
+     */
+    public static Expression collateExpression(final String expression, final String group) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression num;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                num = context.resolveLanguage("simple").createExpression(group);
+                num.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Integer n = num.evaluate(exchange, Integer.class);
+                exp = ExpressionBuilder.groupIteratorExpression(exp, null, Integer.toString(n), false);
+                exp.init(exchange.getContext());
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "collate(" + expression + "," + group + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an iterator to skip (iterate) the given expression
      */
     public static Expression skipExpression(final String expression, final int number) {
@@ -179,6 +210,35 @@ public final class SimpleExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 return skipIteratorExpression(exp, number).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "skip(" + expression + "," + number + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an iterator to skip (iterate) the given expression
+     */
+    public static Expression skipExpression(final String expression, final String number) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression num;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                num = context.resolveLanguage("simple").createExpression(number);
+                num.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                int n = num.evaluate(exchange, Integer.class);
+                return skipIteratorExpression(exp, n).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -824,6 +884,43 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "substringAfter(" + expression + "," + after + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the substring from the given expression that are between after and before
+     */
+    public static Expression substringBetweenExpression(final String expression, final String after, final String before) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression expAfter;
+            private Expression expBefore;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                expAfter = ExpressionBuilder.simpleExpression(after);
+                expAfter.init(context);
+                expBefore = ExpressionBuilder.simpleExpression(before);
+                expBefore.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exp.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                }
+                String aft = expAfter.evaluate(exchange, String.class);
+                String bef = expBefore.evaluate(exchange, String.class);
+                return StringHelper.between(body, aft, bef);
+            }
+
+            @Override
+            public String toString() {
+                return "substringBetween(" + expression + "," + after + "," + before + ")";
             }
         };
     }

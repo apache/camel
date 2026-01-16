@@ -270,6 +270,7 @@ If the number is negative, then the returned string is clipped from the ending.
 
 |substringBefore(exp,before) |String |Returns a substring of the message body/expression that comes before. Returns null if nothing comes before.
 |substringAfter(exp,before) |String |Returns a substring of the message body/expression that comes after. Returns null if nothing comes after.
+|substringBetween(exp,after,before) |String |Returns a substring of the message body/expression that are between before and after. Returns null if nothing comes between.
 
 |collate(group) |List |The collate function iterates the message body and groups
 the data into sub lists of specified size. This can be used with the
