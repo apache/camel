@@ -17,6 +17,7 @@
 package org.apache.camel.component.cassandra;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.cql.SimpleStatementBuilder;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -87,6 +89,9 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
     @UriParam(label = "advanced")
     private String extraTypeCodecs;
+    @UriParam(label = "advanced", javaType = "java.time.Duration",
+              description = "Request timeout in milliseconds. The timeout is applied to each individual query execution.")
+    private int requestTimeout;
 
     public CassandraEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -212,9 +217,12 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
      * Create and configure a Prepared CQL statement
      */
     protected PreparedStatement prepareStatement(String cql) {
-        SimpleStatement statement = SimpleStatement.builder(cql)
-                .setConsistencyLevel(consistencyLevel).build();
-        return getSessionHolder().getSession().prepare(statement);
+        SimpleStatementBuilder builder = SimpleStatement.builder(cql)
+                .setConsistencyLevel(consistencyLevel);
+        if (requestTimeout > 0) {
+            builder.setTimeout(Duration.ofMillis(requestTimeout));
+        }
+        return getSessionHolder().getSession().prepare(builder.build());
     }
 
     /**
@@ -414,5 +422,16 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
 
     public void setExtraTypeCodecs(String extraTypeCodecs) {
         this.extraTypeCodecs = extraTypeCodecs;
+    }
+
+    public int getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    /**
+     * Request timeout in milliseconds. The timeout is applied to each individual query execution.
+     */
+    public void setRequestTimeout(int requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 }

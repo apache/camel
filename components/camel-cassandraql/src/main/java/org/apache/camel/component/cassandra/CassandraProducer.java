@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cassandra;
 
+import java.time.Duration;
 import java.util.Collection;
 
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -153,14 +154,29 @@ public class CassandraProducer extends DefaultProducer {
             throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
         if (statement != null) {
+            statement = applyRequestTimeout(statement);
             resultSet = session.execute(statement);
         } else if (isEmpty(cqlParams)) {
-            resultSet = session.execute(cql);
+            SimpleStatement simpleStatement = SimpleStatement.newInstance(cql);
+            simpleStatement = applyRequestTimeout(simpleStatement);
+            resultSet = session.execute(simpleStatement);
         } else {
-            resultSet = session.execute(
-                    SimpleStatement.builder(cql).addPositionalValues(cqlParams).build());
+            SimpleStatement simpleStatement = SimpleStatement.builder(cql).addPositionalValues(cqlParams).build();
+            simpleStatement = applyRequestTimeout(simpleStatement);
+            resultSet = session.execute(simpleStatement);
         }
         return resultSet;
+    }
+
+    /**
+     * Apply request timeout to a SimpleStatement if configured
+     */
+    private SimpleStatement applyRequestTimeout(SimpleStatement statement) {
+        int requestTimeout = getEndpoint().getRequestTimeout();
+        if (requestTimeout > 0) {
+            return statement.setTimeout(Duration.ofMillis(requestTimeout));
+        }
+        return statement;
     }
 
     @Override

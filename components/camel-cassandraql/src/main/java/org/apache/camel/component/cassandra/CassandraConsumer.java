@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.cassandra;
 
+import java.time.Duration;
+
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -58,7 +61,12 @@ public class CassandraConsumer extends ScheduledPollConsumer implements ResumeAw
         if (isPrepareStatements()) {
             resultSet = session.execute(preparedStatement.bind());
         } else {
-            resultSet = session.execute(getEndpoint().getCql());
+            SimpleStatement statement = SimpleStatement.newInstance(getEndpoint().getCql());
+            int requestTimeout = getEndpoint().getRequestTimeout();
+            if (requestTimeout > 0) {
+                statement = statement.setTimeout(Duration.ofMillis(requestTimeout));
+            }
+            resultSet = session.execute(statement);
         }
 
         // Create message from ResultSet
