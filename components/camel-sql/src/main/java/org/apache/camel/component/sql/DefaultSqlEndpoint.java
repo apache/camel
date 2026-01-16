@@ -503,7 +503,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
         this.rowMapperFactory = rowMapperFactory;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<?> queryForList(ResultSet rs, boolean allowMapToClass) throws SQLException {
         if (allowMapToClass && outputClass != null) {
             Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
@@ -517,6 +517,7 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object queryForObject(ResultSet rs) throws SQLException {
         Object result = null;
         if (outputClass == null) {

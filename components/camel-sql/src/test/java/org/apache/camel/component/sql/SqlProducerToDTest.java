@@ -53,6 +53,7 @@ public class SqlProducerToDTest extends CamelTestSupport {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testToD() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -62,9 +63,9 @@ public class SqlProducerToDTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(1, list.size());
-        Map row = (Map) list.get(0);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("AMQ", row.get("PROJECT"));
     }
 

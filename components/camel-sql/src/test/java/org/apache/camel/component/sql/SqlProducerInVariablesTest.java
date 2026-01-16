@@ -52,6 +52,7 @@ public class SqlProducerInVariablesTest extends CamelTestSupport {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testQueryInArray() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -62,14 +63,15 @@ public class SqlProducerInVariablesTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, list.size());
-        Map row = (Map) list.get(0);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("Camel", row.get("PROJECT"));
         row = (Map) list.get(1);
         assertEquals("AMQ", row.get("PROJECT"));
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testQueryInList() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -83,14 +85,15 @@ public class SqlProducerInVariablesTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, list.size());
-        Map row = (Map) list.get(0);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("Camel", row.get("PROJECT"));
         row = (Map) list.get(1);
         assertEquals("AMQ", row.get("PROJECT"));
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testQueryInString() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -100,9 +103,9 @@ public class SqlProducerInVariablesTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(2, list.size());
-        Map row = (Map) list.get(0);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("Camel", row.get("PROJECT"));
         row = (Map) list.get(1);
         assertEquals("AMQ", row.get("PROJECT"));

@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataAccessException;
@@ -64,7 +65,7 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
                                                                         + "(INTEGER ${header.v1},INTEGER ${header.v2},OUT INTEGER resultofsub)",
                 factory);
 
-        final Exchange exchange = createExchangeWithBody(null);
+        final Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader("v1", 1);
         exchange.getIn().setHeader("v2", 2);
 
@@ -88,7 +89,7 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
                                                                         + "(OUT INTEGER resultofsub, INTEGER ${header.v1},INTEGER ${header.v2})",
                 factory);
 
-        final Exchange exchange = createExchangeWithBody(null);
+        final Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader("v1", 1);
         exchange.getIn().setHeader("v2", 2);
 

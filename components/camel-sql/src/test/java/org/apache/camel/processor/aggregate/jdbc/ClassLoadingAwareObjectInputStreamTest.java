@@ -56,16 +56,17 @@ public class ClassLoadingAwareObjectInputStreamTest {
         oos.flush();
         final byte[] serialized = baos.toByteArray();
 
-        final ObjectInputStream bis = new ClassLoadingAwareObjectInputStream(
-                context.getApplicationContextClassLoader(), new ByteArrayInputStream(serialized));
-        final DefaultExchangeHolder deserialized = (DefaultExchangeHolder) bis.readObject();
+        try (final ObjectInputStream bis = new ClassLoadingAwareObjectInputStream(
+                context.getApplicationContextClassLoader(), new ByteArrayInputStream(serialized))) {
+            final DefaultExchangeHolder deserialized = (DefaultExchangeHolder) bis.readObject();
+            final DefaultExchange exchange2 = new DefaultExchange(context);
+            DefaultExchangeHolder.unmarshal(exchange2, deserialized);
 
-        final DefaultExchange exchange2 = new DefaultExchange(context);
-        DefaultExchangeHolder.unmarshal(exchange2, deserialized);
-
-        List<MyObject> receivedObjects = exchange2.getIn().getBody(List.class);
-        assertEquals(1, receivedObjects.size());
-        assertEquals(o, receivedObjects.get(0));
+            @SuppressWarnings("unchecked")
+            List<MyObject> receivedObjects = exchange2.getIn().getBody(List.class);
+            assertEquals(1, receivedObjects.size());
+            assertEquals(o, receivedObjects.get(0));
+        }
     }
 
 }

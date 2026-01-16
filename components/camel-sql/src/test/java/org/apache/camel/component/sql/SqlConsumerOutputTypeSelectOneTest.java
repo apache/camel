@@ -85,6 +85,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
         assertThat(result.getLicense(), CoreMatchers.is("XXX"));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testSelectOneWithoutClass() throws Exception {
         camel1.addRoutes(new RouteBuilder() {

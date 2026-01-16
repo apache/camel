@@ -97,6 +97,7 @@ public class JdbcAggregateStoreAsTextTest extends CamelSpringTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void testStoreBodyAsTextAndNoHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");

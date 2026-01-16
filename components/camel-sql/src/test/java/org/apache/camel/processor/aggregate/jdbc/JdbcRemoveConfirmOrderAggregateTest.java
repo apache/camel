@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -56,7 +55,7 @@ public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregation
         }
     }
 
-    public static class MyAggregationStrategyWithDelay extends MyAggregationStrategy implements AggregationStrategy {
+    public static class MyAggregationStrategyWithDelay extends MyAggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

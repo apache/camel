@@ -52,6 +52,7 @@ public class SqlProducerOutputTypeSelectListTest extends CamelTestSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testOutputType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
