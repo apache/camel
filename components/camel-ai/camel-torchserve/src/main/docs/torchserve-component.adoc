@@ -16,6 +16,12 @@
 
 *{component-header}*
 
+[NOTE]
+====
+This component is deprecated since Camel 4.14 and will be removed in a future release.
+Please use the xref:langchain4j-chat-component.adoc[LangChain4j] component instead.
+====
+
 The TorchServe component provides support for invoking the https://pytorch.org/serve/rest_api.html[TorchServe REST API]. It enables Camel to access PyTorch TorchServe servers to run inference with PyTorch models remotely.
 
 To use the TorchServe component, Maven users will need to add the following dependency to their `pom.xml`:
