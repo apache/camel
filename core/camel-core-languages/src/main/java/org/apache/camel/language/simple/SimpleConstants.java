@@ -205,6 +205,9 @@ public final class SimpleConstants {
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
               label = "function", javaType = "String", displayName = "Trim")
     public static final String TRIM = "trim(exp)";
+    @Metadata(description = "Normalizes the whitespace in the message body (or expression) by cleaning up excess whitespaces.",
+              label = "function", javaType = "String", displayName = "Normalize Whitspace")
+    public static final String NORMALIZE_WHITESPACE = "normalizeWhitespace(exp)";
     @Metadata(description = "The payload length (number of bytes) of the message body (or expression).",
               label = "function", javaType = "int", displayName = "Length")
     public static final String LENGTH = "length(exp)";

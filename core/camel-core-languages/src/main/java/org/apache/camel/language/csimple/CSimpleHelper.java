@@ -840,6 +840,19 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static String normalizeWhitespace(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = StringHelper.normalizeWhitespace(body);
+        }
+        return body;
+    }
+
     public static String concat(Exchange exchange, Object left, Object right, Object separator) {
         String val1 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, left);
         String val2 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, right);

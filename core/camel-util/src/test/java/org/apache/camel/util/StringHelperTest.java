@@ -618,6 +618,24 @@ public class StringHelperTest {
     }
 
     @Test
+    public void testNormalizeWhitespace() {
+        assertNull(StringHelper.normalizeWhitespace(null));
+        assertEquals("", StringHelper.normalizeWhitespace(""));
+        assertEquals("", StringHelper.normalizeWhitespace(" "));
+        assertEquals("", StringHelper.normalizeWhitespace("  "));
+        assertEquals("", StringHelper.normalizeWhitespace("                        "));
+        assertEquals("A", StringHelper.normalizeWhitespace("            A            "));
+        assertEquals("Hello World How Are You", StringHelper.normalizeWhitespace("Hello World How Are You"));
+        assertEquals("Hello World", StringHelper.normalizeWhitespace(" Hello World "));
+        assertEquals("Hello World", StringHelper.normalizeWhitespace("   Hello World   "));
+        assertEquals("Hello World", StringHelper.normalizeWhitespace("   Hello   World   "));
+        assertEquals("Hello Big World", StringHelper.normalizeWhitespace("   Hello   Big   World   "));
+        assertEquals("Hello Big World", StringHelper.normalizeWhitespace("Hello   Big   World"));
+        assertEquals("Hello Big World", StringHelper.normalizeWhitespace(" Hello   Big   World"));
+        assertEquals("Hello Big World", StringHelper.normalizeWhitespace(" Hello   Big   World "));
+    }
+
+    @Test
     public void testStartsWithIgnoreCase() {
         assertTrue(StringHelper.startsWithIgnoreCase(null, null));
         assertFalse(StringHelper.startsWithIgnoreCase("foo", null));
