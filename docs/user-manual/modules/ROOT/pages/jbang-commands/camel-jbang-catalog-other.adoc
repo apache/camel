@@ -34,3 +34,4 @@ camel catalog other [options]
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
+

@@ -980,6 +980,7 @@ public final class JsonMapper {
         command.setDeprecated(obj.getBooleanOrDefault("deprecated", false));
         command.setDeprecationNote(obj.getString("deprecationNote"));
         command.setSourceClass(obj.getString("sourceClass"));
+        command.setExamples(obj.getString("examples"));
 
         JsonArray options = (JsonArray) obj.get("options");
         if (options != null) {
@@ -1045,6 +1046,9 @@ public final class JsonMapper {
         }
         if (cmd.getSourceClass() != null) {
             json.put("sourceClass", cmd.getSourceClass());
+        }
+        if (cmd.getExamples() != null) {
+            json.put("examples", cmd.getExamples());
         }
 
         if (cmd.hasOptions()) {

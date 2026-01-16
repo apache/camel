@@ -171,6 +171,12 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
             Map<String, Object> ctx = new HashMap<>();
             ctx.put("command", cmd);
 
+            // Check if an examples file exists for this command
+            String examplesFileName = getExamplesFileName(cmd);
+            Path examplesFile = docDir.toPath().resolve("jbang-commands/examples/" + examplesFileName);
+            ctx.put("hasExamplesFile", Files.exists(examplesFile));
+            ctx.put("examplesFileName", examplesFileName);
+
             String content
                     = (String) TemplateRuntime.eval(template, ctx, Collections.singletonMap("util", MvelHelper.INSTANCE));
 
@@ -180,5 +186,14 @@ public class PrepareCamelJBangCommandsDocMojo extends AbstractGeneratorMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Error generating command page for " + cmd.getName(), e);
         }
+    }
+
+    /**
+     * Gets the examples file name for a command. For example, "run" -> "run.adoc", "catalog component" ->
+     * "catalog-component.adoc"
+     */
+    private String getExamplesFileName(JBangCommand cmd) {
+        String fullName = cmd.getFullName() != null ? cmd.getFullName() : cmd.getName();
+        return fullName.replace(" ", "-") + ".adoc";
     }
 }

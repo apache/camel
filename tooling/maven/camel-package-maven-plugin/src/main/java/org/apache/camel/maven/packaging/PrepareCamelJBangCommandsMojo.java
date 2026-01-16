@@ -528,6 +528,8 @@ public class PrepareCamelJBangCommandsMojo extends AbstractGeneratorMojo {
         description = description.replace("(${COMPLETION-CANDIDATES})", "");
         // Remove ${camel-version} and similar version placeholders
         description = description.replaceAll("\\$\\{[^}]+\\}", "");
+        // Remove Java string concatenation artifacts (+ at end of line from multi-line strings)
+        description = description.replaceAll("\\s*\\+\\s*", " ");
         // Clean up any resulting double spaces
         description = description.replaceAll("\\s+", " ").trim();
         return description;

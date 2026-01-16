@@ -46,14 +46,14 @@ camel dependency update [options]
 | `--management-port` | To use a dedicated port for HTTP management |  | int
 | `--maven-apache-snapshot-enabled` | Whether downloading JARs from ASF Maven Snapshot repository is enabled | true | boolean
 | `--maven-central-enabled` | Whether downloading JARs from Maven Central repository is enabled | true | boolean
-| `--maven-settings` | Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies. + If set to false, not even the default ~/.m2/settings.xml will be used. |  | String
+| `--maven-settings` | Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies. If set to false, not even the default ~/.m2/settings.xml will be used. |  | String
 | `--maven-settings-security` | Optional location of Maven settings-security.xml file to decrypt settings.xml |  | String
 | `--maven-wrapper` | Include Maven Wrapper files in exported project | true | boolean
 | `--name` | The integration name. Use this when the name should not get derived otherwise. |  | String
 | `--observe` | Enable observability services | false | boolean
 | `--open-api` | Adds an OpenAPI spec from the given file (json or yaml file) |  | String
 | `--output` | Output format (gav, maven, jbang) | gav | String
-| `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. + Use false to turn off and not include package name in the Java source files. |  | String
+| `--package-name` | For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. Use false to turn off and not include package name in the Java source files. |  | String
 | `--package-scan-jars` | Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel JBang | false | boolean
 | `--port` | Embeds a local HTTP server on this port |  | int
 | `--profile` | Profile to export (dev, test, or prod). |  | String
@@ -69,4 +69,5 @@ camel dependency update [options]
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
+
 

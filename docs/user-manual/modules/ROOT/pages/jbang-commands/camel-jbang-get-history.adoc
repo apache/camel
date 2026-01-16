@@ -20,7 +20,7 @@ camel get history [options]
 |===
 | Option | Description | Default | Type
 | `--ago` | Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp. |  | boolean
-| `--depth` | Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth. | 9 | int
+| `--depth` | Depth of tracing. 0=Created Completed. 1=All events on 1st route, 2=All events on 1st 2nd depth, and so on. 9 = all events on every depth. | 9 | int
 | `--it` | Interactive mode for enhanced history information |  | boolean
 | `--limit-split` | Limit Split to a maximum number of entries to be displayed |  | int
 | `--logging-color` | Use colored logging | true | boolean
@@ -36,4 +36,5 @@ camel get history [options]
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
+
 

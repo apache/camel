@@ -30,3 +30,4 @@ camel plugin add [options]
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
+

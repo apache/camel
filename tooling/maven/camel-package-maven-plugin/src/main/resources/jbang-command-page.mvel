@@ -49,3 +49,7 @@ camel @{command.fullName} [options]
 @foreach{opt : command.options}| `@{opt.names}`@if{opt.deprecated} _(deprecated)_@end{} | @if{opt.description != null}@{util.escape(opt.description)}@end{} | @{opt.shortDefaultValue} | @{opt.shortJavaType}
 @end{}|===
 @end{}
+@if{hasExamplesFile}
+
+include::examples/@{examplesFileName}[]
+@end{}
