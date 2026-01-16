@@ -15,6 +15,11 @@
 
 *{component-header}*
 
+[NOTE]
+====
+This component is deprecated since Camel 4.10 and will be removed in a future release.
+====
+
 The
 https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] allows publish-subscribe-style communication between
