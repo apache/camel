@@ -113,6 +113,7 @@ public class SqlProducerOutputTypeSelectOneTest {
         List<Exchange> exchanges = mock.getReceivedExchanges();
         assertThat(exchanges.size(), CoreMatchers.is(1));
 
+        @SuppressWarnings("unchecked")
         Map<String, Object> result = exchanges.get(0).getIn().getBody(Map.class);
         assertThat((Integer) result.get("ID"), CoreMatchers.is(3));
         assertThat((String) result.get("PROJECT"), CoreMatchers.is("Linux"));

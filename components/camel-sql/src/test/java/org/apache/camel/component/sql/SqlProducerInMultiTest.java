@@ -53,6 +53,7 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testQueryInArray() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -65,9 +66,9 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(6, list.size());
-        Map row = (Map) list.get(0);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("Camel", row.get("PROJECT"));
         assertEquals("ASF", row.get("license"));
         row = (Map) list.get(1);
@@ -87,6 +88,7 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
         assertEquals("YYY", row.get("license"));
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testQueryInList() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -100,9 +102,9 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(6, list.size());
-        Map row = (Map) list.get(0);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("Camel", row.get("PROJECT"));
         assertEquals("ASF", row.get("license"));
         row = (Map) list.get(1);
@@ -122,6 +124,7 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
         assertEquals("YYY", row.get("license"));
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testQueryInString() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -134,9 +137,9 @@ public class SqlProducerInMultiTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(6, list.size());
-        Map row = (Map) list.get(0);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("Camel", row.get("PROJECT"));
         assertEquals("ASF", row.get("license"));
         row = (Map) list.get(1);

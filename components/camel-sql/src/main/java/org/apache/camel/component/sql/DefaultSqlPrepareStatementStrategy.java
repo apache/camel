@@ -264,7 +264,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected static CompositeIterator<?> createInParameterIterator(Object value) {
         Iterator<?> it;
         // if the body is a String then honor quotes etc.

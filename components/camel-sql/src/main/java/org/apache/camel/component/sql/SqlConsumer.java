@@ -215,6 +215,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         return messagePolled;
     }
 
+    @SuppressWarnings("rawtypes")
     private void addListToQueue(Object data, Queue<DataHolder> answer) {
         if (data instanceof List) {
             // create a list of exchange objects with the data

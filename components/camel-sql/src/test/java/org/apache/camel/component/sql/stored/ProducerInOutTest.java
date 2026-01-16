@@ -66,6 +66,7 @@ public class ProducerInOutTest extends CamelTestSupport {
 
         Exchange exchange = mock.getExchanges().get(0);
 
+        @SuppressWarnings("rawtypes")
         Map results = exchange.getIn().getBody(Map.class);
         assertEquals(1, results.get("out1"));
         assertEquals(2, results.get("out2"));

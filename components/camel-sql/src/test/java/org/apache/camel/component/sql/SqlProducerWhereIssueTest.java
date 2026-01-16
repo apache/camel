@@ -49,6 +49,7 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testQueryWhereIssue() throws InterruptedException {
         MockEndpoint mock = getMockEndpoint("mock:query");
@@ -58,8 +59,8 @@ public class SqlProducerWhereIssueTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
-        Map row = (Map) list.get(0);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        Map<?, ?> row = (Map) list.get(0);
         assertEquals("ASF", row.get("LICENSE"));
         assertEquals(2L, row.get("ROWCOUNT"));
         row = (Map) list.get(1);

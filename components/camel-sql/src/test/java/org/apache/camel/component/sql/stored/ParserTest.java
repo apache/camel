@@ -33,6 +33,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +57,7 @@ public class ParserTest extends CamelTestSupport {
         assertEquals("addnumbers", template.getProcedureName());
         assertEquals(5, template.getParameterList().size());
 
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader("header1", 1);
         exchange.setProperty("property1", "constant string");
         exchange.getIn().setHeader("header2", BigInteger.valueOf(2));
@@ -103,7 +104,7 @@ public class ParserTest extends CamelTestSupport {
 
     @Test
     public void nestedSimpleExpression() {
-        Exchange exchange = createExchangeWithBody(1);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, 1);
         exchange.getIn().setHeader("foo", 1);
         exchange.getIn().setHeader("bar", 3);
         Template template = parser.parseTemplate("ADDNUMBERS2(INTEGER ${header.foo},INTEGER ${header.bar})");
@@ -127,7 +128,7 @@ public class ParserTest extends CamelTestSupport {
     public void colonInSimple() {
         PropertiesComponent pc = context.getPropertiesComponent();
         pc.setLocation("classpath:jndi.properties");
-        Exchange exchange = createExchangeWithBody(1);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, 1);
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${properties:java.naming.factory.initial})");
         assertEquals("org.apache.camel.support.jndi.CamelInitialContextFactory",
                 ((InParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
@@ -136,9 +137,9 @@ public class ParserTest extends CamelTestSupport {
     @Test
     public void colonInLocation() {
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 :#a:)");
-        Exchange exchange = createExchangeWithBody(1);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, 1);
 
-        Map container = new HashMap();
+        Map<String, Integer> container = new HashMap<>();
         container.put("a:", 1);
         assertEquals(1, ((InParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, container));
     }
