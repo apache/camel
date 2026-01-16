@@ -15,6 +15,11 @@
 
 *{component-header}*
 
+[NOTE]
+====
+This component is deprecated since Camel 4.17 and will be removed in a future release.
+====
+
 The Stomp component is used for communicating with
 http://stomp.github.io/[Stomp] compliant message brokers, like
 http://activemq.apache.org[Apache ActiveMQ] or
