@@ -280,6 +280,8 @@ Splitter EIP to split a message body and group/batch
 the split sub message into a group of N sub lists. This method works
 similar to the collate method in Groovy.
 
+|capitalize(exp) |String |Capitalizes the message body/expression as a String value (upper case every words)
+
 |skip(number) |Iterator |The skip function iterates the message body and skips
 the first number of items. This can be used with the
 Splitter EIP to split a message body and skip the first N number of items.

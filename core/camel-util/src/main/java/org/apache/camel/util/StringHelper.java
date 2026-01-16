@@ -512,13 +512,23 @@ public final class StringHelper {
     }
 
     /**
-     * Capitalize the string (upper case first character)
+     * Capitalize the string (upper case only first character)
      *
      * @param  text the string
-     * @return      the string capitalized (upper case first character)
+     * @return      the string capitalized (upper case only first character)
      */
     public static String capitalize(String text) {
         return capitalize(text, false);
+    }
+
+    /**
+     * Capitalize the string (upper case first character in every word)
+     *
+     * @param  text the string
+     * @return      the string capitalized (upper case first character in every world)
+     */
+    public static String capitalizeAll(String text) {
+        return doCapitalize(text, true);
     }
 
     /**
@@ -534,10 +544,10 @@ public final class StringHelper {
         if (dashToCamelCase) {
             ret = dashToCamelCase(text);
         }
-        return doCapitalize(ret);
+        return doCapitalize(ret, false);
     }
 
-    private static String doCapitalize(String ret) {
+    private static String doCapitalize(String ret, boolean all) {
         if (ret == null) {
             return null;
         }
@@ -548,6 +558,14 @@ public final class StringHelper {
         // for which it does not return the capitalized value should not be used here (this is
         // mostly used to capitalize setters/getters)
         chars[0] = Character.toUpperCase(chars[0]);
+        if (all && chars.length > 2) {
+            for (int i = 2; i < chars.length; i++) {
+                char prev = chars[i - 1];
+                if (prev == ' ') {
+                    chars[i] = Character.toUpperCase(chars[i]);
+                }
+            }
+        }
         return new String(chars);
     }
 

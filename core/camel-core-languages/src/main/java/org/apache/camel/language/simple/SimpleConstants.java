@@ -188,6 +188,10 @@ public final class SimpleConstants {
               label = "function",
               javaType = "String[]", displayName = "Split String Values")
     public static final String SPLIT = "split(exp,separator)";
+    @Metadata(description = "Capitalizes the message body/expression as a String value (upper case every words)",
+              label = "function",
+              javaType = "String", displayName = "Capitalize String Values")
+    public static final String CAPITALIZE = "capitalize(exp)";
     @Metadata(description = "Returns a substring of the message body/expression that are between after and before. Returns null if nothing comes between.",
               label = "function", javaType = "String")
     public static final String RANDOM = "random(min,max)";

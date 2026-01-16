@@ -961,6 +961,17 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.trimExpression(exp);
         }
 
+        // capitalize
+        remainder = ifStartsWithReturnRemainder("capitalize(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.capitalizeExpression(exp);
+        }
+
         // concat function
         remainder = ifStartsWithReturnRemainder("concat(", function);
         if (remainder != null) {
@@ -2286,6 +2297,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 exp = "null";
             }
             return "Object o = " + exp + ";\n        return trim(exchange, o);";
+        }
+
+        // capitalize function
+        remainder = ifStartsWithReturnRemainder("capitalize(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${capitalize(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return capitalize(exchange, o);";
         }
 
         // concat function

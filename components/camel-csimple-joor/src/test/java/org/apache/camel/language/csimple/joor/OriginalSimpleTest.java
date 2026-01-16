@@ -2478,6 +2478,24 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testCapitalize() {
+        exchange.getMessage().setBody("hello world how are you");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${capitalize()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World How Are You", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${capitalize(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World How Are You", s);
+
+        exchange.getMessage().setHeader("beer", "carlsberg is a Beer");
+        expression = context.resolveLanguage("csimple").createExpression("${capitalize(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Carlsberg Is A Beer", s);
+    }
+
+    @Test
     public void testSplit() {
         String body = "A,B,C,D,E";
         String[] arr = body.split(",");

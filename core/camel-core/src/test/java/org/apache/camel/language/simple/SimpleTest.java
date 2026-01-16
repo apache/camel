@@ -2628,6 +2628,24 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testCapitalize() {
+        exchange.getMessage().setBody("hello world how are you");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${capitalize()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World How Are You", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${capitalize(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World How Are You", s);
+
+        exchange.getMessage().setHeader("beer", "carlsberg is a Beer");
+        expression = context.resolveLanguage("simple").createExpression("${capitalize(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Carlsberg Is A Beer", s);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 

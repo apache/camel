@@ -289,6 +289,46 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Capitalizes the given expressions (uses message body if expression is null)
+     */
+    public static Expression capitalizeExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = StringHelper.capitalizeAll(value);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "capitalize(" + expression + ")";
+                } else {
+                    return "capitalize()";
+                }
+            }
+        };
+    }
+
+    /**
      * String concats the two expressions.
      */
     public static Expression concatExpression(final String right, final String left, String separator) {
