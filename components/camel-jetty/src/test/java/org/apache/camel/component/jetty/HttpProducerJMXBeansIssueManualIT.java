@@ -36,7 +36,7 @@ public final class HttpProducerJMXBeansIssueManualIT extends BaseJettyTest {
     @BeforeEach
     public void doPreSetup() throws Exception {
         // to enable the JMX connector
-        enableJMX();
+        this.testConfigurationBuilder.withEnableJMX();
         System.setProperty("org.apache.camel.jmx.createRmiConnector", "True");
     }
 
