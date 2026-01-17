@@ -762,6 +762,20 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testNotStartsWith() {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} !startsWith 'Bye'", true);
+        assertPredicate("${in.body} !startsWith 'Hello'", false);
+        assertPredicate("${in.body} !startsWith 'B'", true);
+        assertPredicate("${in.body} !startsWith 'H'", false);
+        assertPredicate("${in.body} !startsWith 'Bye there'", true);
+        assertPredicate("${in.body} !startsWith 'Hello there'", false);
+        assertPredicate("${in.body} !startsWith 'Hello ther'", false);
+        assertPredicate("${in.body} !startsWith 'ello there'", true);
+        assertPredicate("${in.body} !startsWith 'Hi'", true);
+    }
+
+    @Test
     public void testEndsWith() {
         exchange.getIn().setBody("Hello there");
         assertPredicate("${in.body} ends with 'there'", true);
@@ -776,6 +790,19 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.body} endsWith 'Hello there'", true);
         assertPredicate("${in.body} endsWith 'Hello ther'", false);
         assertPredicate("${in.body} endsWith 'Hi'", false);
+    }
+
+    @Test
+    public void testNotEndsWith() {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} !endsWith 'B'", true);
+        assertPredicate("${in.body} !endsWith 'world'", true);
+        assertPredicate("${in.body} !endsWith 'there'", false);
+        assertPredicate("${in.body} !endsWith 're'", false);
+        assertPredicate("${in.body} !endsWith ' there'", false);
+        assertPredicate("${in.body} !endsWith 'Hello there'", false);
+        assertPredicate("${in.body} !endsWith 'Hello ther'", true);
+        assertPredicate("${in.body} !endsWith 'Hi'", true);
     }
 
     @Override
