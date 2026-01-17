@@ -345,7 +345,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
         // base64
-        if ("base64Encode".equals(function) || "base64Decode".equals(function) || ifStartsWithReturnRemainder("base64Encode", function) != null || ifStartsWithReturnRemainder("base64Decode", function) != null) {
+        if ("base64Encode".equals(function) || "base64Decode".equals(function)
+                || ifStartsWithReturnRemainder("base64Encode", function) != null
+                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
             Expression exp = createSimpleBase64(camelContext, function);
             if (exp != null) {
                 return exp;
@@ -1450,7 +1452,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
         // base64
-        if ("base64Encode".equals(function) || "base64Decode".equals(function) || ifStartsWithReturnRemainder("base64Encode", function) != null || ifStartsWithReturnRemainder("base64Decode", function) != null) {
+        if ("base64Encode".equals(function) || "base64Decode".equals(function)
+                || ifStartsWithReturnRemainder("base64Encode", function) != null
+                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
             String code = createCodeBase64(camelContext, function);
             if (code != null) {
                 return code;
