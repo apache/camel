@@ -45,7 +45,9 @@ public enum BinaryOperatorType {
     RANGE,
     NOT_RANGE,
     STARTS_WITH,
-    ENDS_WITH;
+    NOT_STARTS_WITH,
+    ENDS_WITH,
+    NOT_ENDS_WITH;
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryOperatorType.class);
 
@@ -115,6 +117,10 @@ public enum BinaryOperatorType {
         } else if ("ends with".equals(text)) {
             LOG.warn("Simple operator `ends with` is deprecated, use `endsWith` instead");
             return ENDS_WITH;
+        } else if ("!startsWith".equals(text)) {
+            return NOT_STARTS_WITH;
+        } else if ("!endsWith".equals(text)) {
+            return NOT_ENDS_WITH;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -162,8 +168,12 @@ public enum BinaryOperatorType {
             return "!range";
         } else if (operator == STARTS_WITH) {
             return "startsWith";
+        } else if (operator == NOT_STARTS_WITH) {
+            return "!startsWith";
         } else if (operator == ENDS_WITH) {
             return "endsWith";
+        } else if (operator == NOT_ENDS_WITH) {
+            return "!endsWith";
         }
         return "";
     }
@@ -264,9 +274,9 @@ public enum BinaryOperatorType {
             return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
         } else if (operator == NOT_RANGE) {
             return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
-        } else if (operator == STARTS_WITH) {
+        } else if (operator == STARTS_WITH || operator == NOT_STARTS_WITH) {
             return null;
-        } else if (operator == ENDS_WITH) {
+        } else if (operator == ENDS_WITH || operator == NOT_ENDS_WITH) {
             return null;
         }
         return null;
