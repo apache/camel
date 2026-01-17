@@ -635,12 +635,8 @@ defined as numbers: `from..to`. .
 |startsWith |For testing if the left-hand side string starts
 with the right-hand string.
 
-|starts with |Same as the startsWith operator.
-
 |endsWith |For testing if the left-hand side string ends with
 the right-hand string.
-
-|ends with |Same as the endsWith operator.
 |===
 
 And the following unary operators can be used:
