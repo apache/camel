@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * Types of binary operators supported
  */
 public enum BinaryOperatorType {
-    
+
     EQ,
     EQ_IGNORE,
     GT,
