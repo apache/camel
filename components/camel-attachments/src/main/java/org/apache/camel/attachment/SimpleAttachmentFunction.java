@@ -26,6 +26,8 @@ import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
+import static org.apache.camel.language.simple.ast.SimpleFunctionExpression.ifStartsWithReturnRemainder;
+
 @JdkService(SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments")
 public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
 
@@ -40,7 +42,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
 
         String remainder = ifStartsWithReturnRemainder("attachmentContent(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContent(key)} was: "
@@ -51,7 +53,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentContentAs(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContentAs(key,type)} was: "
@@ -69,7 +71,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentContentAsText(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContentAsText(key)}} was: "
@@ -81,7 +83,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
 
         remainder = ifStartsWithReturnRemainder("attachmentHeaderAs(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentHeaderAs(key,name,type)} was: " + function, index);
@@ -99,7 +101,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentHeader(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentHeader(key,name)} was: "
@@ -119,7 +121,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
 
         remainder = ifStartsWithReturnRemainder("attachmentContentType(", function);
         if (remainder != null) {
-            String key = StringHelper.before(remainder, ")");
+            String key = StringHelper.beforeLast(remainder, ")");
             if (key == null || ObjectHelper.isEmpty(key)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContentType(key)} was: "
@@ -168,7 +170,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
 
         String remainder = ifStartsWithReturnRemainder("attachmentContent(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContent(key)} was: "
@@ -181,7 +183,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentContentAs(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContentAs(key,type)} was: "
@@ -204,7 +206,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentContentAsText(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContentAsText(key)}} was: "
@@ -217,7 +219,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentContentType(", function);
         if (remainder != null) {
-            String key = StringHelper.before(remainder, ")");
+            String key = StringHelper.beforeLast(remainder, ")");
             if (key == null || ObjectHelper.isEmpty(key)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentContentType(key)} was: "
@@ -230,7 +232,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentHeader(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentHeader(key,name)} was: "
@@ -252,7 +254,7 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
         }
         remainder = ifStartsWithReturnRemainder("attachmentHeaderAs(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${attachmentHeaderAs(key,name,type)} was: "
@@ -277,16 +279,6 @@ public class SimpleAttachmentFunction implements SimpleLanguageFunctionFactory {
             return "attachmentHeaderAs(exchange, \"" + key + "\", \"" + name + "\", " + type + ")";
         }
 
-        return null;
-    }
-
-    private String ifStartsWithReturnRemainder(String prefix, String text) {
-        if (text.startsWith(prefix)) {
-            String remainder = text.substring(prefix.length());
-            if (!remainder.isEmpty()) {
-                return remainder;
-            }
-        }
         return null;
     }
 
