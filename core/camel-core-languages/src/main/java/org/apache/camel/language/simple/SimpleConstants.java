@@ -281,5 +281,11 @@ public final class SimpleConstants {
     @Metadata(description = "The DataHandler for the given attachment.", javaType = "jakarta.activation.DataHandler",
               label = "function,ognl")
     public static final String ATTACHMENT = "attachment(key)";
+    @Metadata(description = "Base64 encodes the message body (or expression)", javaType = "String",
+              label = "function")
+    public static final String BASE64_ENCODE = "base64Encode(exp)";
+    @Metadata(description = "Base64 decodes the message body (or expression)", javaType = "byte[]",
+              label = "function")
+    public static final String BASE64_DECODE = "base64Decode(exp)";
 
 }

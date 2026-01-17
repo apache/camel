@@ -344,6 +344,15 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return exp;
             }
         }
+        // base64
+        if ("base64Encode".equals(function) || "base64Decode".equals(function)
+                || ifStartsWithReturnRemainder("base64Encode", function) != null
+                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
+            Expression exp = createSimpleBase64(camelContext, function);
+            if (exp != null) {
+                return exp;
+            }
+        }
 
         if (strict) {
             throw new SimpleParserException("Unknown function: " + function, token.getIndex());
@@ -362,6 +371,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (factory.isEmpty()) {
             throw new IllegalArgumentException(
                     "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-attachments to classpath.");
+        }
+        return factory.get().createFunction(camelContext, function, token.getIndex());
+    }
+
+    private Expression createSimpleBase64(CamelContext camelContext, String function) {
+        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+                camelContext,
+                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
+                SimpleLanguageFunctionFactory.class);
+
+        if (factory.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-base64 to classpath.");
         }
         return factory.get().createFunction(camelContext, function, token.getIndex());
     }
@@ -1194,7 +1217,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
-    private String ifStartsWithReturnRemainder(String prefix, String text) {
+    public static String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {
             String remainder = text.substring(prefix.length());
             if (!remainder.isEmpty()) {
@@ -1424,6 +1447,15 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // attachments
         if ("attachments".equals(function) || ifStartsWithReturnRemainder("attachment", function) != null) {
             String code = createCodeAttachments(camelContext, function);
+            if (code != null) {
+                return code;
+            }
+        }
+        // base64
+        if ("base64Encode".equals(function) || "base64Decode".equals(function)
+                || ifStartsWithReturnRemainder("base64Encode", function) != null
+                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
+            String code = createCodeBase64(camelContext, function);
             if (code != null) {
                 return code;
             }
@@ -2044,6 +2076,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (factory.isEmpty()) {
             throw new IllegalArgumentException(
                     "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-attachments to classpath.");
+        }
+        return factory.get().createCode(camelContext, function, token.getIndex());
+    }
+
+    private String createCodeBase64(CamelContext camelContext, String function) {
+        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+                camelContext,
+                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
+                SimpleLanguageFunctionFactory.class);
+
+        if (factory.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-base64 to classpath.");
         }
         return factory.get().createCode(camelContext, function, token.getIndex());
     }
@@ -2801,7 +2847,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return answer;
     }
 
-    private static String ognlCodeMethods(String remainder, String type) {
+    public static String ognlCodeMethods(String remainder, String type) {
         StringBuilder sb = new StringBuilder(256);
 
         if (remainder != null) {
@@ -2880,7 +2926,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
     }
 
-    private static String[] codeSplitSafe(String input, char separator, boolean trim, boolean keepQuotes) {
+    public static String[] codeSplitSafe(String input, char separator, boolean trim, boolean keepQuotes) {
         if (input == null) {
             return null;
         }
