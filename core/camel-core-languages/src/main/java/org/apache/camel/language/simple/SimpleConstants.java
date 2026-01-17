@@ -56,7 +56,7 @@ public final class SimpleConstants {
     public static final String EXCEPTION_MESSAGE = "exception.message";
     @Metadata(description = "The exception stacktrace (also from caught exceptions), is null if no exception present.",
               javaType = "String", label = "function", displayName = "Exception Stacktrace")
-    public static final String EXCEPTION_STACKTRACE = "exception.stackTrace";
+    public static final String EXCEPTION_STACKTRACE = "exception.stacktrace";
     @Metadata(description = "Returns the id of the current thread. Can be used for logging.", javaType = "long",
               label = "function")
     public static final String THREAD_ID = "threadId";
@@ -202,7 +202,7 @@ public final class SimpleConstants {
     @Metadata(description = "Converts the message body (or expression) to the specified type.",
               label = "function,ognl", displayName = "Convert To")
     public static final String CONVERT_TO = "convertTo(exp,type)";
-    @Metadata(description = "Whether the message body (or expression) is null or empty (list/map types are tested if they have 0 elements).)",
+    @Metadata(description = "Whether the message body (or expression) is null or empty (list/map types are tested if they have 0 elements).",
               label = "function", javaType = "boolean", displayName = "Is Empty")
     public static final String IS_EMPTY = "isEmpty(exp)";
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",

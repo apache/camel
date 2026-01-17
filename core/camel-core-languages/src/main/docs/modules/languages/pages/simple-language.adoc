@@ -14,18 +14,14 @@
 
 The Simple Expression Language was a really simple language when it was
 created, but has since grown more powerful. It is primarily intended for
-being a very small and simple language for evaluating
-`Expression` or `Predicate` without requiring any new dependencies
-or knowledge of other scripting languages such as Groovy.
+being a very small and Camel specific scripting language used anywhere in Camel
+such as with xref:components:eips:enterprise-integration-patterns.adoc[EIPs] and
+xref:manual::routes.adoc[Route].
 
 The simple language is designed with intent to cover almost all the common use cases
 when little need for scripting in your Camel routes.
 
-However, for much more complex use cases, then a more powerful language is recommended such as:
-
-* xref:groovy-language.adoc[Groovy]
-* xref:mvel-language.adoc[MVEL]
-* xref:ognl-language.adoc[OGNL]
+However, for much more complex use cases, then a more powerful language is recommended such as: xref:groovy-language.adoc[Groovy].
 
 [NOTE]
 ====
@@ -34,12 +30,7 @@ language uses OGNL expressions, such as calling a method named `myMethod` on the
 At runtime the simple language will then us its built-in OGNL support which requires the `camel-bean` component.
 ====
 
-The simple language uses `$\{body}` placeholders for complex expressions or functions.
-
-[NOTE]
-====
-See also the xref:csimple-language.adoc[CSimple] language which is *compiled*.
-====
+The simple language uses `$\{body}` placeholders for dynamic expressions and functions.
 
 [TIP]
 ====
@@ -50,311 +41,141 @@ uses `$simple{ }` as placeholders. This can be used in situations to avoid clash
 Spring property placeholder together with Camel.
 ====
 
+[NOTE]
+====
+See also the xref:csimple-language.adoc[CSimple] language which is *pre compiled*.
+====
+
 == Simple Language options
 
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END
 
-== Variables
+== Built-in Functions
+
+The Simple language has many built-in functions which allows access to various part of Camel and the current `Exchange`, the message payload such as body and headers, and much more.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Variable |Type |Description
-
-|camelId |String |the CamelContext name
-
-|camelContext.*OGNL* |Object |the CamelContext invoked using a Camel OGNL expression.
-
-|exchange |Exchange |the Exchange
-
-|exchange.*OGNL* |Object |the Exchange invoked using a Camel
-OGNL expression.
-
-|exchangeId |String |the exchange id
-
-|id |String |the message id
-
-|logExchange |String | Dumps the exchange for logging purpose (uses `ExchangeFormatter` to format the output).
-
-|messageTimestamp |long |the message timestamp (millis since epoc) that this message originates from.
-Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel received. This method returns
-the timestamp if a timestamp exists.
-The message timestamp and exchange created are different. An exchange always has a created timestamp which is the
-local timestamp when Camel created the exchange. The message timestamp is only available in some Camel components
-when the consumer is able to extract the timestamp from the source event.
-If the message has no timestamp, then 0 is returned.
-
-|body |Object |the body
-
-|body.*OGNL* |Object |the body invoked using a Camel OGNL expression.
-
-|bodyAs(_type_) |Type |Converts the body to the given type determined by its
-classname. The converted body can be null.
-
-|bodyAs(_type_).*OGNL* |Object |Converts the body to the given type determined by its
-classname and then invoke methods using a Camel OGNL expression. The
-converted body can be null.
-
-|bodyType |Class |The message body class type
-
-|bodyOneLine | String | Converts the body to a String and removes all line-breaks, so the string is in one line.
-
-|prettyBody | String | Converts the body to a String, and attempts to pretty print if JSon or XML; otherwise the body is returned as the String value.
-
-|originalBody | Object | The original incoming body (only available if allowUseOriginalMessage=true).
-
-|mandatoryBodyAs(_type_) |Type |Converts the body to the given type determined by its
-classname, and expects the body to be not null.
-
-|mandatoryBodyAs(_type_).*OGNL* |Object |Converts the body to the given type determined by its
-classname and then invoke methods using a Camel OGNL expression.
-
-|header.foo |Object |refer to the foo header
-
-|header[foo] |Object |refer to the foo header
-
-|headers.foo |Object |refer to the foo header
-
-|headers:foo |Object |refer to the foo header
-
-|headers[foo] |Object |refer to the foo header
-
-|header.foo[bar] |Object |regard foo header as a map and perform lookup on the
-map with bar as the key
-
-|header.foo.*OGNL* |Object |refer to the foo header and invoke its value using a
-Camel OGNL expression.
-
-|headerAs(_key_,_type_) |Type |converts the header to the given type determined by its
-classname
-
-|headers |Map |refer to the headers
-|headers.size |int |The number of headers
-
-|variable.foo |Object |refer to the foo variable
-
-|variable[foo] |Object |refer to the foo variable
-
-|variable.foo.*OGNL* |Object |refer to the foo variable and invoke its
-value using a Camel OGNL expression.
-
-|variableAs(_key_,_type_) |Type |converts the variable to the given type determined by its
-classname
-
-|variables |Map |refer to the variables
-|variables.size |int |The number of variables
-
-|exchangeProperty.foo |Object |refer to the foo property on the exchange
-
-|exchangeProperty[foo] |Object |refer to the foo property on the exchange
-
-|exchangeProperty.foo.*OGNL* |Object |refer to the foo property on the exchange and invoke its
-value using a Camel OGNL expression.
-
-|messageAs(_type_) |Type |Converts the message to the given type determined by its
-classname. The converted message can be null.
-
-|messageAs(_type_).*OGNL* |Object |Converts the message to the given type determined by its
-classname and then invoke methods using a Camel OGNL expression. The
-converted message can be null.
-
-|sys.foo |String |refer to the JVM system property
-
-|sysenv.foo |String |refer to the system environment variable
-
-|env.foo |String |refer to the system environment variable
-
-|exception |Object |refer to the exception object on the exchange, is *null* if
-no exception set on exchange. Will fall back and grab caught exceptions
-(`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
-
-|exception.*OGNL* |Object |refer to the exchange exception invoked using a Camel OGNL
-expression object
-
-|exception.message |String |refer to the `exception.message` on the exchange, is *null* if no
-exception set on exchange. Will fall back and grab caught exceptions
-(`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
-
-|exception.stacktrace |String |refer to the exception.stracktrace on the exchange, is
-*null* if no exception set on exchange. Will fall back and grab caught
-exceptions (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
-
-|date:_command_ |Date |evaluates to a Date object.
-Supported commands are: `now` for current timestamp,
-`exchangeCreated` for the timestamp when the current exchange was created,
-`header.xxx` to use the Long/Date object in the header with the key xxx.
-`variable.xxx` to use the Long/Date in the variable with the key xxx.
-`exchangeProperty.xxx` to use the Long/Date object in the exchange property with the key xxx.
-`file` for the last modified timestamp of the file (available with a File consumer).
-Command accepts offsets such as: `now-24h` or `header.xxx+1h` or even `now+1h30m-100`.
-
-|date:_command:pattern_ |String |Date formatting using `java.text.SimpleDateFormat` patterns.
-
-|date-with-timezone:_command:timezone:pattern_ |String |Date formatting using `java.text.SimpleDateFormat` timezones and patterns.
-
-|bean:_bean expression_ |Object |Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language.
-Specifying a method name, you must use dot as the separator. We also support
-the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean]
-component. Camel will by default lookup a bean by the given name. However, if you need to refer
-to a bean class (such as calling a static method), then you can prefix with the type, such as `bean:type:fqnClassName`.
-
-|properties:key:default |String |Lookup a property with the given key. If the key does
-not exist nor has a value, then an optional default value can be
-specified.
-
-|propertiesExist:key |boolean |Checks whether a property placeholder with the given key exists or not.
-The result can be negated by prefixing the key with `!`.
-
-|fromRouteId |String |Returns the original route id where this exchange was created.
-
-|routeId |String |Returns the route id of the current route the
-Exchange is being routed.
-
-|routeGroup |String |Returns the route group of the current route the
-Exchange is being routed. Not all routes have a group assigned, so this may be null.
-
-|stepId |String |Returns the id of the current step the
-Exchange is being routed.
-
-|threadId |String |Returns the id of the current thread. Can be used for
-logging.
-
-|threadName |String |Returns the name of the current thread. Can be used for
-logging.
-
-|hostname |String |Returns the local hostname (may be empty if not possible to resolve).
-
-|ref:xxx |Object |To look up a bean from the Registry with
-the given id.
-
-|type:name.field |Object |To refer to a type or field by its FQN name. To refer to a
- field, you can append .FIELD_NAME. For example, you can refer to the
-constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
-
-|empty(type) |depends on parameter |Creates a new empty object of the type given as parameter. The type-parameter-Strings are case-insensitive. +
-
-`string` -> empty String +
-`list`   -> empty ArrayList +
-`map`    -> empty LinkedHashMap +
-
-|list(val1,val2,...) | java.util.ArrayList | The list function creates an ArrayList with the given set of values.
-
-|map(key1,value1,...) | java.util.LinkedHashMap | The map function creates a LinkedHashMap with the given set of pairs.
-
-|null |null |represents a *null*
-
-|random(value) |Integer |returns a random Integer between 0 (included) and _value_
-(excluded)
-
-|random(min,max) |Integer |returns a random Integer between _min_ (included) and
-_max_ (excluded)
-
-|replace(from,to) |String |replace all the string values in the message body.
-To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
-
-|replace(from,to,exp) |String |replace all the string values in the given expression.
-To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
-
-|substring(num1) |String |returns a substring of the message body.
-If the number is positive, then the returned string is clipped from the beginning.
-If the number is negative, then the returned string is clipped from the ending.
-
-|substring(num1,num2) |String |returns a substring of the message body.
-If the number is positive, then the returned string is clipped from the beginning.
-If the number is negative, then the returned string is clipped from the ending.
-
-|substring(num1,num2,exp) |String |returns a substring of the given expression.
-If the number is positive, then the returned string is clipped from the beginning.
-If the number is negative, then the returned string is clipped from the ending.
-
-|substringBefore(exp,before) |String |Returns a substring of the message body/expression that comes before. Returns null if nothing comes before.
-|substringAfter(exp,before) |String |Returns a substring of the message body/expression that comes after. Returns null if nothing comes after.
-|substringBetween(exp,after,before) |String |Returns a substring of the message body/expression that are between before and after. Returns null if nothing comes between.
-
-|split(exp,separator)|String[] |Splits the message body/expression as a String value using the separator into a String array
-
-|collate(group) |List |The collate function iterates the message body and groups
-the data into sub lists of specified size. This can be used with the
-Splitter EIP to split a message body and group/batch
-the split sub message into a group of N sub lists. This method works
-similar to the collate method in Groovy.
-
-|capitalize(exp) |String |Capitalizes the message body/expression as a String value (upper case every words)
-
-|normalizeWhitespace(exp) |String |Normalizes the whitespace in the message body (or expression) by cleaning up excess whitespaces.
-
-|skip(number) |Iterator |The skip function iterates the message body and skips
-the first number of items. This can be used with the
-Splitter EIP to split a message body and skip the first N number of items.
-
-|join(separator,prefix,exp) | String | The join function iterates the message body (by default) and joins
-the data into a string. The separator is by default a comma. The prefix is optional.
-
-The join uses the message body as source by default. It is possible to refer to another
-source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`.
-
-|messageHistory |String |The message history of the current exchange - how it has
-been routed. This is similar to the route stack-trace message history
-the error handler logs in case of an unhandled exception.
-
-|messageHistory(false) |String |As messageHistory but without the exchange details (only
-includes the route stack-trace). This can be used if you do not want to
-log sensitive data from the message itself.
-
-|trim(exp) |String |The trim function trims the message body (or expression) by removing all leading and trailing white spaces.
-
-|concat(exp,exp,separator) |String |Performs a string concat using two expressions (message body as default) with optional separator
-
-|convertTo(exp,type) |Object |Converts the message body (or expression) to the specified type.
-|convertTo(exp,type).*OGNL* |Object |Converts the message body (or expression) to the specified type and then invoke methods using a Camel OGNL expression.
-
-|length(exp) |int |The payload length (number of bytes) of the message body (or expression).
-
-|size(exp) |int |The size of the message body (or expression). If the payload is java.util.Collection or java.util.Map based then the size is the number of elements; otherwise the payload size in bytes.
-
-|uppercase(exp) |String |Uppercases the message body (or expression)
-
-|lowercase(exp) |String |Lowercases the message body (or expression)
-
-|uuid(type) |String |Returns a UUID using the Camel `UuidGenerator`.
-You can choose between `default`, `classic`, `short`, `simple` and `random` as the type.
-If no type is given, the default is used. It is also possible to use a custom `UuidGenerator`
-and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}`
-where the ID is _myGenerator_.
-
-|hash(exp,algorithm) |String |Returns a hashed value (string in hex decimal) using JDK MessageDigest.
-The algorithm can be SHA-256 (default) or SHA3-256.
-
-|jsonpath(exp) | Object | When working with JSon data, then this allows using the JsonPath language,
-for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
-
-|jsonpath(input,exp) | Object | When working with JSon data, then this allows using the JsonPath language,
-for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
-For _input_, you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
-
-|jq(exp) | Object | When working with JSon data, then this allows using the JQ language,
-for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
-
-|jq(input,exp) | Object | When working with JSon data, then this allows using the JQ language,
-for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
-For _input_, you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
-
-|xpath(exp) | Object | When working with XML data, then this allows using the XPath language,
-for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
-
-|xpath(input,exp) | Object | When working with XML data, then this allows using the XPath language,
-for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
-For _input_ you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
-
-|pretty(exp) | String | Converts the inlined expression to a String, and attempts to pretty print if JSon or XML, otherwise the expression is returned as the String value.
-
-|iif(predicate, trueExp, falseExp) | Object | Evaluates the `predicate` expression and returns the value of `trueExp` if the predicate is
-true, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
-
-|=======================================================================
-
-== Attachment functions
+|====
+|Function |Response Type |Description
+|`bean(name.method)` | `Object` | Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language. Specifying a method name, you must use dot as the separator. We also support the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean] component. Camel will by default lookup a bean by the given name. However, if you need to refer to a bean class (such as calling a static method), then you can prefix with the type, such as `bean:type:fqnClassName`.
+|`body._OGNL_` | `Object` | The body invoked using a Camel _OGNL syntax_. For example to invoke the `getCountryCode` on the message body, you can use `${body.getCountryCode()}`. In the message body is a POJO then you can use a short-hand syntax `${body.countryCode}`.
+|`bodyAs(type)._OGNL_` | `Object` | Converts the body to the given type determined by its classname and then invoke methods using a Camel _OGNL syntax_.
+|`bodyAs(type)` | `<T>` | Converts the body to the given type determined by its classname.
+|`bodyOneLine` | `String` | Converts the body to a String and removes all line-breaks, so the string is in one line.
+|`bodyType` | `Class` | The message body class.
+|`body` | `Object` | The message body
+|`camelContext._OGNL_` | `Object` | The CamelContext invoked using Camel _OGNL syntax_.
+|`camelId` | `String` | The name of the Camel application (ie `CamelContext`).
+|`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
+|`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
+|`collate(size)` | `List` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
+|`concat(exp,exp,separator` | `String` | Performs a string concat using two expressions (message body as default) with optional separator (uses comma by default).
+|`convertTo(exp,type)._OGNL_` | `Object` | Converts the expression to the specified type and then invoke methods using a Camel _OGNL syntax_.
+|`convertTo(exp,type)` | `<T>` | Converts the expression to the specified type.
+|`convertTo(type)` | `<T>` | Converts the message body to the specified type.
+|`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `data:command` function for additional documentation on the commands.
+|`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `data:command` function for additional documentation on the commands.
+|`date:command` | `Date` | Evaluates to a `java.util.Date` object. Supported commands are: `now` for current timestamp, `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the `Long/Date` object in the header with the key xxx. `variable.xxx` to use the `Long/Date` in the variable with the key xxx. `exchangeProperty.xxx` to use the `Long/Date` object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (only available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or `now+1h30m-100`.
+|`empty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object.
+|`env._key_` | `String` | Refers to the OS system environment variable with the given key. For example `env.HOME` to refer to the home directory.
+|`exception._OGNL_` | `Object` | Same as `exception` and then invoke Camel _OGNL syntax_.
+|`exception.message` | `String` | The message from the `Exchange` object. See `exception` for more details.
+|`exception.stacktrace` | `String` | The stacktrace from the `Exchange` object. See `exception` for more details.
+|`exception` | `Throwable` | The `Exception` object on the exchange, is `null` if no exception is set on the `Exchange`. Will fallback and grab any caught exceptions stored as exchange property (`Exchange.EXCEPTION_CAUGHT`)
+|`exchange._OGNL_` | `Object` | The current `Exchange` invoked using Camel _OGNL syntax_.
+|`exchangeId` | `String` | The id of the current `Exchange`.
+|`exchangeProperty._key_._OGNL_` | `Object` | Same as `exchangeProperty._key_` and then invoke Camel _OGNL syntax_.
+|`exchangeProperty._key_` | `Object` | Returns the value of the exchange property with the given key. Returns `null` if the property does not exists.
+|`exchange` | `Exchange` | The current `Exchange` object.
+|`fromRouteId` | `String` | Returns the original route id where this `Exchange` was created.
+|`hash(exp,algorithm)` | `String` | Returns a hashed value (string in hex decimal) of the given expression. The algorithm can be `SHA-256` (default) or `SHA3-256`.
+|`header._key_._OGNL_` | `Object` | Same as `header._key_` and then invoke Camel _OGNL syntax_.
+|`header._key_` | `Object` | The message header with the given key.
+|`headerAs(_key_,type)` | `<T>` | The message header with the given key, converted to the given type.
+|`header[_key_]._OGNL_` | `Object` | *Deprecated* Same as `header[_key_]` and then invoke Camel _OGNL syntax_.
+|`header[_key_]` | `Object` | *Deprecated* The message header with the given key.
+|`headers._key_` | `Object` | *Deprecated* The message header with the given key.
+|`headers.size` | `int` | The number of headers
+|`headers:_key_` | `Object` | *Deprecated* The message header with the given key.
+|`headers[_key_]` | `Object` | *Deprecated* The message header with the given key.
+|`headers` | `Map` | All the message headers as a `java.util.Map`.
+|`hostname` | `String` | Returns the local hostname (may be `null` if not possible to resolve).
+|`id` | `String` | The message id
+|`iif(predicate,trueExp,falseExp`) | `Object` | Evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
+|`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
+|`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
+|`join(separator,prefix,exp` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
+|`jq(exp)` | `Object` | When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
+|`jq(input,exp)` | `Object` | Same as `jp(exp)` but to use the _input_ expression as the source of the JSon document.
+|`jsonpath(exp)` | `Object` | "When working with JSon data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
+|`jsonpath(input,exp)` | `Object` | Same as `jsonpath(exp)` but to use the _input_ expression as the source of the JSon document.
+|`length()` | `int` | The payload length (number of bytes) of the message body
+|`length(exp)` | `int` | The payload length (number of bytes) of the expression.
+|`list(val1,val2,...)` | `List` | The list function creates an `java.util.ArrayList` with the given set of values.
+|`logExchange` | `String` | Dumps the exchange for logging purpose (uses `ExchangeFormatter` to format the output).
+|`lowercase()` | `String` | Lowercases the message body
+|`lowercase(exp)` | `String` | Lowercases the expression
+|`mandatoryBodyAs(type)._OGNL_` | `Object` | Same as `mandatoryBodyAs(type)` and then invoke Camel _OGNL syntax_.
+|`mandatoryBodyAs(type)` | `<T>` | Converts the message body to the given type determined by its classname. If the body is `null` then an exception is thrown.
+|`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
+|`messageAs(type)._OGNL_` | `Object` | Same as `messageAs(type)` and then invoke Camel _OGNL syntax_.
+|`messageAs(type)` | `<T>` | Converts the message to the given type determined by its classname.
+|`messageHistory(false)` | `String` | Same as `messageHistory` but without the exchange details (only includes the route stack-trace). This can be used if you do not want to log sensitive data from the message itself.
+|`messageHistory` | `String` | The message history of the current exchange (how it has been routed). This is similar to the route stack-trace message history the error handler logs in case of an unhandled exception.
+|`messageTimestamp` | `long` | The message timestamp (millis since epoc) that this message originates from. Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel received. This method returns the timestamp if a timestamp exists. The message timestamp and exchange created are different. An exchange always has a created timestamp which is the local timestamp when Camel created the exchange. The message timestamp is only available in some Camel components when the consumer is able to extract the timestamp from the source event. If the message has no timestamp, then 0 is returned.
+|`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.
+|`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
+|`null` | `null` | Returns a `null` value.
+|`originalBody` | `Object` | The original incoming message body (only available if Camel has been configured with `allowUseOriginalMessage=true`).
+|`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
+|`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
+|`properties:key:default` | `String` | Lookup a property placeholder with the given key. If the key does not exist nor has a value, then an optional default value can be specified.
+|`propertiesExist:key` | `boolean` | Checks whether a property placeholder with the given key exists or not. The result can be negated by prefixing the key with `!`.
+|`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).
+|`random(min,max)` | `int` | Returns a random `Integer` between min (included) and max (excluded),
+|`ref:_key_` | `Object` | To look up a bean from the Camel xref:manual::registry.adoc[Registry] with the given key.
+|`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
+|`replace(from,to,ex[])` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
+|`routeGroup` | `String` | Returns the route group of the current route the `Exchange` is being routed. Not all routes have a group assigned, so this may be `null`.
+|`routeId` | `String` | Returns the route id of the current route the `Exchange` is being routed.
+|`size()` | `int` | The size of the message body. If the payload is `java.util.Collection` or `java.util.Map` based then the size is the number of elements; otherwise the payload size in bytes.
+|`size(exp)` | `int` | The size of the expression. If the payload is `java.util.Collection` or `java.util.Map` based then the size is the number of elements; otherwise the payload size in bytes.
+|`skip(number)` | `Iterator` | The skip function iterates the message body and skips the first number of items. This can be used with the Splitter EIP to split a message body and skip the first N number of items.
+|`split(exp,separator)` | `String[]` | Splits the expression as a `String` value using the separator into a `String` array. The separator is comma by default.
+|`split(separator)` | `String[]` | Splits the message body as a `String` value using the separator into a `String` array. The separator is comma by default.
+|`stepId` | `String` | Returns the id of the current step the `Exchange` is being routed. Returns `null` if there are no steps.
+|`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
+|`substring(num1,num2)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
+|`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
+|`substringAfter(after)` | `String` | Returns a substring of the message body that comes after. Returns `null` if nothing comes after.
+|`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
+|`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
+|`substringBefore(exp,before)` | `String` | Returns a substring of the expression that comes before. Returns `null` if nothing comes before.
+|`substringBetween(after,before` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
+|`sys._key_` | `String` | *Deprecated* To lookup the JVM system property with the given key.
+|`sysenv._key_` | `String` | To lookup the JVM system property with the given key.
+|`threadId` | `String` | Returns the id of the current thread.
+|`threadName` | `String` | Returns the name of the current thread.
+|`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
+|`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
+|`type:name.field` | `Object` | To refer to a type or field by its fully qualified classname. For example: `type:org.apache.camel.Exchange.FILE_NAME`.
+|`uppercase()` | `String` | Uppercases the message body
+|`uppercase(exp)` | `String` | Uppercases the expression
+|`uuid(kind)` | `String` | Returns a UUID using the Camel `UuidGenerator`. You can choose kind between `default`, `classic`, `short`, `simple` and `random` as the kind. If no kind is given, then `default` is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}` where the id is `myGenerator`.
+|`variable._key_._OGNL_` | `Object` | To look up the variable with the given key and then invoke Camel _OGNL syntax_.
+|`variable._key_` | `Object` | To look up the variable with the given key.
+|`variableAs(_key_,type)` | `<T>` | To look up the variable with the given key, and convert the value to the given type determined by its classname
+|`variable[_key_]` | `Object` | *Deprecated* To look up the variable with the given key.
+|`variables.size` | `int` | The number of `Exchange` variables
+|`variables` | `Map` | All the variables from the current `Exchange` as a `java.util.Map`.
+|`xpath(exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
+|`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
+|====
+
+=== Attachment functions
 
 From *Camel 4.10* onwards then Camel has built-in attachment functions making it easy to obtain
 details from attachments stored on the Camel Message such as from HTTP file uploads, email with file attachments etc.
@@ -362,38 +183,37 @@ details from attachments stored on the Camel Message such as from HTTP file uplo
 This requires having `camel-attachments` JAR on the classpath.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Function |Type |Description
+|====
+|Function |Response Type |Description
+|`attachment._key_._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange` and invoke its value using a Camel _OGNL syntax_.
+|`attachmentContent(_key_)` | `Object` | The content of the attachment.
+|`attachmentContentAs(_key_,type)` | `Object` | The content of the attachment, converted to the given type.
+|`attachmentContentAsText(_key_)` | `String` | The content of the attachment as text (ie `String`).
+|`attachmentHeader(key,name)` | `Object` | The attachment header with the given name.
+|`attachmentHeaderAs(_key_,name,type)` | `<T>` | The attachment header with the given name, converted to the given type.
+|`attachment[key]` | `DataHandler` | The `jakarta.activation.DataHandler` for the given attachment.
+|`attachments.size` | `int` | The number of attachments. Is 0 if there are no attachments.
+|`attachments` | `Map` | All the attachments as a `Map<String,jakarta.activation.DataHandler>`.
+|====
 
-|attachments |Map | All the attachments as a `Map<String,DataHandler>`.
-|attachments.size | int | The number of attachments. Is 0 if there are no attachments.
-|attachmentContentAsText(key) | String | The content of the attachment as text (ie `String`).
-|attachmentContent(key) | Object | The content of the attachment.
-|attachmentContentAs(key,_type_) | Object | The content of the attachment, converted to the given type.
-|attachmentHeader(key,name) | Object | The attachment header with the given name.
-|attachmentHeaderAs(key,name,_type_) | Object | The attachment header with the given name, converted to the given type.
-|attachment[key] | DataHandler | The `DataHandler` for the given attachment.
-|attachment.*OGNL* | Object | refer to the foo attachment on the exchange and invoke its value using a Camel OGNL expression.
-|=======================================================================
-
-== Base64 functions
+=== Base64 functions
 
 From *Camel 4.18* onwards then Camel has built-in base64 functions to make it easy to encode/decode.
 
 This requires having `camel-base64` JAR on the classpath.
 
 [width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Function |Type |Description
-
-|base64Encode(exp) |String |Base64 encodes the message body (or expression)
-|base64Decode(exp) |byte[] |Base64 decodes the message body (or expression)
-|=======================================================================
-
+|====
+|Function |Response Type |Description
+|`base64Decode()` | `byte[]` |Base64 decodes the message body
+|`base64Decode(exp)` | `byte[]` |Base64 decodes the expression
+|`base64Encode()` | `String` |Base64 encodes the message body
+|`base64Encode(exp)` | `String` |Base64 encodes the expression
+|====
 
 == OGNL expression support
 
-The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages support a Camel xref:ognl-language.adoc[OGNL] notation for invoking beans in a chain like fashion.
+The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages support a _OGNL like_ notation for invoking methods (using reflection) in a fluent builder like style.
 
 https://en.wikipedia.org/wiki/OGNL[OGNL] (Object-Graph Navigation Language) is a powerful expression language used in Java. In Camel you can use OGNL dot notation to invoke methods. If you for instance have a body that contains a POJO that has a `getFamilyName` method then
 you can construct the Simple syntax as follows:
@@ -417,64 +237,67 @@ Camel's OGNL support is for invoking methods only. You cannot access fields. Cam
 When using *OGNL* then `camel-bean` JAR is required to be on the classpath.
 ====
 
-=== OGNL Variables
+=== Functions supporting OGNL
 
-The following variables support OGNL:
+The following functions support _OGNL syntax_:
 
 [width="100%",options="header",]
-|=======================================================================
-|Variable
-|camelContext
-|exchange
-|exception
-|body
-|bodyAs(type)
-|messageAs(type)
-|header.foo
-|exchangeProperty.foo
-|variable.foo
-|=======================================================================
-
+|====
+|Variable | Response Type | Description
+|`attachment._key_._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange`. This requires having camel-attachments JAR on classpath.
+|`bodyAs(type)` | `<T>` | The message body converted to the given type
+|`body` | `Object` | The message body
+|`camelContext` | `CamelContext` | The `CamelContext`
+|`convertTo(exp,type)` | `<T>` | Converts the expression to the specified type
+|`exception` | `Throwable` | If the exchange failed due to an exception
+|`exchangeProperty._key_` | `Object` | The value from the exchange property with the given key
+|`exchange` | `Exchange` | The current `Exchange`
+|`header._key_` | `Object` | The value from the message header with the given key
+|`mandatoryBodyAs(type)` | `<T>` | The message body converted to the given type
+|`messageAs(type)` | `<T>` | The `org.apache.camel.Message` as a specialized instance
+|`variable._key_` | `Object` | The value from the variable with the given key
+|====
 
 === Basic OGNL examples
 
-Suppose the Message IN body contains a POJO which has a `getAddress()`
+Suppose the Message body contains a POJO which has a `getAddress()`
 method. Then you can use Camel OGNL notation to access the address object:
 
 [source,java]
---------------------------------
+----
 simple("${body.address}")
 simple("${body.address.street}")
 simple("${body.address.zip}")
---------------------------------
+----
 
 Camel understands the shorthand names for getters, but you can invoke
 any method or use the real name such as:
 
 [source,java]
---------------------------------------
+----
 simple("${body.address}")
 simple("${body.getAddress.getStreet}")
+simple("${body.getAddress().getStreet()}")
 simple("${body.address.getZip}")
 simple("${body.doSomething}")
---------------------------------------
+----
 
-You can also use the null safe operator (`?.`) to avoid NPE if, for
-example, the body does NOT have an address
+You can also use the null safe operator (`?.`) to avoid `NullPointerException` if, for example,
+the body does NOT have an address:
 
 [source,java]
-----------------------------------
+----
 simple("${body?.address?.street}")
-----------------------------------
+----
 
 === Advanced OGNL examples
 
 It is also possible to index in `Map` or `List` types, so you can do:
 
 [source,java]
----------------------------
+----
 simple("${body[foo].name}")
----------------------------
+----
 
 To assume the body is `Map` based and look up the value with `foo` as
 key, and invoke the `getName` method on that value.
@@ -483,95 +306,102 @@ If the key has space, then you *must* enclose the key with quotes, for
  example, 'foo bar':
 
 [source,java]
----------------------------------
+----
 simple("${body['foo bar'].name}")
----------------------------------
+----
 
 You can access the `Map` or `List` objects directly using their key name
 (with or without dots) :
 
 [source,java]
-------------------------------
+----
 simple("${body[foo]}")
 simple("${body[this.is.foo]}")
-------------------------------
+----
 
 Suppose there was no value with the key `foo` then you can use the null
 safe operator to avoid the NPE as shown:
 
 [source,java]
-----------------------------
+----
 simple("${body[foo]?.name}")
-----------------------------
+----
 
 You can also access `List` types, for example, to get lines from the
 address you can do:
 
 [source,java]
-----------------------------------
+----
 simple("${body.address.lines[0]}")
 simple("${body.address.lines[1]}")
 simple("${body.address.lines[2]}")
-----------------------------------
+----
 
 There is a special `last` keyword which can be used to get the last
 value from a list.
 
 [source,java]
--------------------------------------
+----
 simple("${body.address.lines[last]}")
--------------------------------------
+----
 
 And to get the 2nd last you can subtract a number, so we can use
 `last-1` to indicate this:
 
 [source,java]
----------------------------------------
+----
 simple("${body.address.lines[last-1]}")
----------------------------------------
+----
 
 And the third last is, of course:
 
 [source,java]
----------------------------------------
+----
 simple("${body.address.lines[last-2]}")
----------------------------------------
+----
 
 And you can call the size method on the list with
 
 [source,java]
-------------------------------------
+----
 simple("${body.address.lines.size}")
-------------------------------------
+----
 
 Camel supports the length field for Java arrays as well, e.g.:
 
 [source,java]
----------------------------------------------------
+----
 String[] lines = new String[]{"foo", "bar", "cat"};
-exchange.getIn().setBody(lines);
+exchange.getMessage().setBody(lines);
 
 simple("There are ${body.length} lines")
----------------------------------------------------
+----
 
-And yes, you can combine this with the operator support as shown below:
+[TIP]
+====
+You can also use the *length* function from *Camel 4.18*: `simple("There are ${length()} lines")`
+====
+
+And yes, you can combine this with the Simple operators such as checking if a zip code is larger than 1000:
 
 [source,java]
-------------------------------------
+----
 simple("${body.address.zip} > 1000")
-------------------------------------
+----
 
 == Operator support
 
-The parser is limited to only support a single operator.
+The simple language has limited support for operators that are used in predicates to evaluate whether a condition is either _true_ or _false_.
 
-To enable it, the left value must be enclosed in `${ }`. The syntax is:
+Camel operators require the left value must be enclosed in `${ }`.
+The syntax is:
 
---------------------------
+[source,text]
+----
 ${leftValue} OP rightValue
---------------------------
+----
 
-Where the `rightValue` can be a String literal enclosed in `' '`,
+Where the `rightValue` can be a string literal enclosed in `' '`,
 `null`, a constant value or another expression enclosed in `${ }`.
 
 IMPORTANT: There *must* be spaces around the operator.
@@ -583,110 +413,76 @@ you can use `>` comparison for numeric values.
 The following operators are supported:
 
 [width="100%",cols="50%,50%",options="header",]
-|===
+|====
 |Operator |Description
-
-|== |equals
-
-|=~ |equals ignore case (will ignore case when comparing String values)
-
-|> |greater than
-
-|>= |greater than or equals
-
-|< |less than
-
-|+<=+ |less than or equals
-
-|!= |not equals
-
-|!=~ |not equals ignore case (will ignore case when comparing String values)
-
-|contains |For testing if contains in a string-based value
-
-|!contains |For testing if it does not contain in a string-based value
-
-|~~ |For testing if contains by ignoring case sensitivity in a string-based value
-
-|!~~ |For testing if it does not contain by ignoring case sensitivity in a string-based value
-
-|regex |For matching against a given regular expression pattern defined as a
-String value
-
-|!regex |For not matching against a given regular expression pattern defined as a
-String value
-
-|in |For matching if in a set of values, each element must be separated by
-comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',, bronze,silver,gold'`, which
-is a set of four values with an empty value and then the three medals.
-
-|!in |For matching if not in a set of values, each element must be separated
-by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',,bronze,silver,gold'`, which
-is a set of four values with an empty value and then the three medals.
-
-|is |For matching if the left-hand side type is an instance of the value.
-
-|!is |For matching if the left-hand side type is not an instance of the value.
-
-|range |For matching if the left-hand side is within a range of values defined
-as numbers: `from..to`.
-
-|!range |For matching if the left-hand side is not within a range of values
-defined as numbers: `from..to`.
-
-|startsWith |For testing if the left-hand side string starts with the right-hand string.
-|!startsWith |For testing if the left-hand side string does not start with the right-hand string.
-
-|endsWith |For testing if the left-hand side string ends with the right-hand string.
-|!endsWith |For testing if the left-hand side string does not end with the right-hand string.
-
-|===
+|`==` | equals
+|`=~` | equals ignore case (will ignore case when comparing String values)
+|`>` | greater than
+|`>=` | greater than or equals
+|`<` | less than
+|`+<=+` | less than or equals
+|`!=` | not equals
+|`!=~` | not equals ignore case (will ignore case when comparing String values)
+|`~~` | For testing if contains by ignoring case sensitivity in a string-based value
+|`!~~` | For testing if it does not contain by ignoring case sensitivity in a string-based value
+|`contains` | For testing if contains in a string-based value
+|`!contains` | For testing if it does not contain in a string-based value
+|`endsWith` | For testing if the left-hand side string ends with the right-hand string.
+|`!endsWith` | For testing if the left-hand side string does not end with the right-hand string.
+|`in` | For matching if in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',, bronze,silver,gold'`, which is a set of four values with an empty value and then the three medals.
+|`!in` | For matching if not in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',,bronze,silver,gold'`, which is a set of four values with an empty value and then the three medals.
+|`is` | For matching if the left-hand side type is an instance of the value.
+|`!is` | For matching if the left-hand side type is not an instance of the value.
+|`range` | For matching if the left-hand side is within a range of values defined as numbers: `from..to`.
+|`!range` | For matching if the left-hand side is not within a range of values defined as numbers: `from..to`.
+|`regex` | For matching against a given regular expression pattern defined as a String value
+|`!regex` | For not matching against a given regular expression pattern defined as a String value
+|`startsWith` | For testing if the left-hand side string starts with the right-hand string.
+|`!startsWith` | For testing if the left-hand side string does not start with the right-hand string.
+|====
 
 And the following unary operators can be used:
 
 [width="100%",cols="50%,50%",options="header",]
-|===
+|====
 |Operator |Description
+|`++` | To increment a number by one. The left-hand side must be a function, otherwise parsed as literal.
+|`--` | To decrement a number by one. The left-hand side must be a function, otherwise parsed as literal.
+|====
 
-|++ |To increment a number by one. The left-hand side must be a
-function, otherwise parsed as literal.
+And the following special symbols:
 
-|-- |To decrement a number by one. The left-hand side must be a
-function, otherwise parsed as literal.
-
-|\n |To use newline character.
-
-|\t |To use tab character.
-
-|\r |To use carriage return character.
-
-|\} |To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
-|===
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Symbol |Description
+|`\n` | To use newline character.
+|`\t` | To use tab character.
+|`\r` | To use carriage return character.
+|`\}` | To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
+|====
 
 And the following logical operators can be used to group expressions:
 
 [width="100%",cols="50%,50%",options="header",]
-|===
+|====
 |Operator |Description
-
-|&& |The logical and operator is used to group two expressions.
-
-| \|\| |The logical or operator is used to group two expressions.
-|===
+|`&&` | The logical and operator is used to group two expressions.
+|`\|\|` | The logical or operator is used to group two expressions.
+|====
 
 The syntax for AND is:
 
 [source,text]
-----------------------------------------------------------
+----
 ${leftValue} OP rightValue && ${leftValue} OP rightValue
-----------------------------------------------------------
+----
 
 And the syntax for OR is:
 
 [source,text]
----------------------------------------------------------
+----
 ${leftValue} OP rightValue || ${leftValue} OP rightValue
----------------------------------------------------------
+----
 
 Some examples:
 
@@ -715,9 +511,10 @@ simple("${header.bar}++")
 When you compare with different types such as String and int, then you
 have to take a bit of care. Camel will use the type from the left-hand side
 as first priority. And fallback to the right-hand side type if both values
-couldn't be compared based on that type. +
- This means you can flip the values to enforce a specific type. Suppose
-the bar value above is a String. Then you can flip the equation:
+couldn't be compared based on that type. This means you can flip the values
+to enforce a specific type. Suppose the bar value above is a String.
+
+Then you can flip the equation:
 
 [source,java]
 ----
@@ -750,16 +547,14 @@ simple("${header.date} == ${date:now:yyyyMMdd}")
 simple("${header.type} == ${bean:orderService?method=getOrderType}")
 ----
 
-And an example with `contains`, testing if the title contains the word
-Camel
+And an example with `contains`, testing if the title contains the word Camel
 
 [source,java]
 ----
 simple("${header.title} contains 'Camel'")
 ----
 
-And an example with regex, testing if the number header is a 4-digit
-value:
+And an example with regex, testing if the number header is a 4-digit value:
 
 [source,java]
 ----
@@ -767,8 +562,8 @@ simple("${header.number} regex '\\d{4}'")
 ----
 
 And finally an example if the header equals any of the values in the
-list. Each element must be separated by comma, and no space around. +
- This also works for numbers etc., as Camel will convert each element
+list. Each element must be separated by comma, and no space around.
+This also works for numbers etc., as Camel will convert each element
 into the type of the left-hand side.
 
 [source,java]
@@ -791,8 +586,7 @@ String
 simple("${header.type} is 'java.lang.String'")
 ----
 
-We have added a shorthand for all `java.lang` types, so you can write it
-as:
+We have added a shorthand for all `java.lang` types, so you can write it as:
 
 [source,java]
 ----
@@ -832,10 +626,9 @@ order:
 </from>
 ----
 
-=== Using and / or
+=== Combining multiple expression using AND / OR
 
-If you have two expressions you can combine them with the `&&` or `||`
-operator.
+If you have two expressions you can combine them with the `&&` (and) or `||` (or) operator.
 
 For instance:
 
@@ -851,19 +644,19 @@ And of course the `||` is also supported. The sample would be:
 simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
 -----
 
-== Examples
+== EIP Examples
 
 In the XML DSL sample below, we filter based on a header value:
 
 [source,xml]
---------------------------------------------
+----
 <from uri="seda:orders">
    <filter>
        <simple>${header.foo}</simple>
        <to uri="mock:fooOrders"/>
    </filter>
 </from>
---------------------------------------------
+----
 
 The Simple language can be used for the predicate test above in the
 Message Filter pattern, where we test if the
@@ -880,8 +673,7 @@ from("seda:orders")
         .to("seda:fooOrders");
 ----
 
-You can also use the simple language for simple text concatenations such
-as:
+You can also use the simple language for simple text concatenations such as:
 
 [source,java]
 ----
@@ -1003,6 +795,35 @@ Instead of the message body then a simple expression can be nested as input, for
 </setBody>
 ----
 
+=== Substring Before, After, or Between
+
+In *Camel 4.18* there are additional substring methods to make it easier to select a part of a string.
+
+For example suppose the message body contains 'Hello great big World how are you', then you select different parts:
+
+[source,java]
+----
+// select text before `World` -> `Hello great big `
+.setHeader("foo", simple("${substringBefore('World'}"))
+
+// select text after `World` -> ` how are you`
+.setHeader("foo2", simple("${substringAfter('World'}"))
+
+// select text between `great` ... `how` -> ` big World `
+.setHeader("foo2", simple("${substringBetween('great', 'how'}"))
+
+// NOTE: and you can wrap this with trim to remove spaces:
+
+// select text before `World` -> `Hello great big`
+.setHeader("foo", simple("$trim{${substringBefore('World'}}")})
+
+// select text after `World` -> `how are you`
+.setHeader("foo2", simple("$trim{${substringAfter('World'}}"))
+
+// select text between `great` ... `how` -> `big World`
+.setHeader("foo2", simple("$trim{${substringBetween('great', 'how'}}"))
+----
+
 === Replacing double and single quotes
 
 You can use the `replace` function to more easily replace all single or double quotes in the message body,
@@ -1097,6 +918,56 @@ e.g., to refer to a file on the classpath you can do:
 [source,java]
 ----
 .setHeader("myHeader").simple("resource:classpath:mysimple.txt")
+----
+
+== Pretty XML or JSon
+
+From *Camel 4.18* onwards then the Simple language can _pretty format_ the output.
+
+In Java DSL you turn this on via the `boolean` parameter that is set as `true` below:
+
+[source,java]
+----
+from("direct:xml")
+    .setBody().simple("<person><name>Jack</name></person>", true)
+    .to("mock:result");
+
+from("direct:json")
+    .setBody().simple("{ \"name\": \"Jack\", \"age\": 44 }", true)
+    .to("mock:result");
+
+from("direct:text")
+    .setBody().simple("Hello ${body}", true)
+    .to("mock:result");
+----
+
+In YAML DSL you specific `pretty: true` as follows:
+
+[source,yaml]
+----
+route:
+  from:
+    uri: direct:xml
+    steps:
+      - setBody:
+          simple:
+            expression: "<person><name>Jack</name></person>"
+            pretty: true
+      - to:
+          uri: mock:result
+----
+
+And in XML DSL you use the pretty attribute to true as show below:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:json"/>
+  <setBody>
+    <simple pretty="true">{ "name": "Jack", "age": 44 }</simple>
+  </setBody>
+  <to uri="mock:result"/>
+</route>
 ----
 
 include::spring-boot:partial$starter.adoc[]
