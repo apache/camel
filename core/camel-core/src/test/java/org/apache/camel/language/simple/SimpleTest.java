@@ -16,11 +16,13 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,6 +42,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.bean.MethodNotFoundException;
+import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.myconverter.MyCustomDate;
@@ -2643,6 +2646,50 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${capitalize(${header.beer})}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("Carlsberg Is A Beer", s);
+    }
+
+    @Test
+    public void testIsEmpty() {
+        exchange.getMessage().setBody(null);
+        assertExpression("${isEmpty()}", true);
+        assertExpression("${isEmpty(${body})}", true);
+        exchange.getMessage().setBody("");
+        assertExpression("${isEmpty()}", true);
+        assertExpression("${isEmpty(${body})}", true);
+        exchange.getMessage().setBody(" ");
+        assertExpression("${isEmpty()}", true);
+        assertExpression("${isEmpty(${body})}", true);
+        exchange.getMessage().setBody("        ");
+        assertExpression("${isEmpty()}", true);
+        assertExpression("${isEmpty(${body})}", true);
+
+        exchange.getMessage().setBody("Hello");
+        assertExpression("${isEmpty()}", false);
+        assertExpression("${isEmpty(${body})}", false);
+        exchange.getMessage().setBody(0);
+        assertExpression("${isEmpty()}", false);
+        assertExpression("${isEmpty(${body})}", false);
+        exchange.getMessage().setBody(123);
+        assertExpression("${isEmpty()}", false);
+        assertExpression("${isEmpty(${body})}", false);
+        exchange.getMessage().setBody(true);
+        assertExpression("${isEmpty()}", false);
+        assertExpression("${isEmpty(${body})}", false);
+        exchange.getMessage().setBody(false);
+        assertExpression("${isEmpty()}", false);
+        assertExpression("${isEmpty(${body})}", false);
+        exchange.getMessage().setBody(Collections.EMPTY_LIST);
+        assertExpression("${isEmpty()}", true);
+        assertExpression("${isEmpty(${body})}", true);
+        exchange.getMessage().setBody(List.of("A", "B", "C"));
+        assertExpression("${isEmpty()}", false);
+        assertExpression("${isEmpty(${body})}", false);
+        exchange.getMessage().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream("ABC".getBytes())));
+        assertExpression("${isEmpty()}", false);
+        assertExpression("${isEmpty(${body})}", false);
+        exchange.getMessage().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream("".getBytes())));
+        assertExpression("${isEmpty()}", true);
+        assertExpression("${isEmpty(${body})}", true);
     }
 
     @Test

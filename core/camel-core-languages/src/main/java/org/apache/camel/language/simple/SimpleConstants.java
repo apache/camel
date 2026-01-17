@@ -202,6 +202,9 @@ public final class SimpleConstants {
     @Metadata(description = "Converts the message body (or expression) to the specified type.",
               label = "function,ognl", displayName = "Convert To")
     public static final String CONVERT_TO = "convertTo(exp,type)";
+    @Metadata(description = "Whether the message body (or expression) is null or empty (list/map types are tested if they have 0 elements).)",
+              label = "function", javaType = "boolean", displayName = "Is Empty")
+    public static final String IS_EMPTY = "isEmpty(exp)";
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
               label = "function", javaType = "String", displayName = "Trim")
     public static final String TRIM = "trim(exp)";
