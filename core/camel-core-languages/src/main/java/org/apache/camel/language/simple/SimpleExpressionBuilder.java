@@ -289,6 +289,55 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Checks whether the expression is null or empty
+     */
+    public static Expression nullOrEmptyPredicate(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Object.class);
+                } else {
+                    value = exchange.getMessage().getBody();
+                }
+                if (value == null) {
+                    return true;
+                }
+                if (ObjectHelper.isEmpty(value)) {
+                    return true;
+                }
+                if (value instanceof byte[] arr) {
+                    return arr.length == 0;
+                }
+                if (value instanceof StreamCache sc) {
+                    return sc.length() <= 0;
+                }
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isEmpty(" + expression + ")";
+                } else {
+                    return "isEmpty()";
+                }
+            }
+        };
+    }
+
+    /**
      * Normalizes the whitespaces in the given expressions (uses message body if expression is null)
      */
     public static Expression normalizeWhitespaceExpression(final String expression) {

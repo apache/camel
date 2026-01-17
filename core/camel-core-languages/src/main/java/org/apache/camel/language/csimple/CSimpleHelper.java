@@ -814,6 +814,22 @@ public final class CSimpleHelper {
         return CamelContextHelper.mandatoryLookup(exchange.getContext(), generator, UuidGenerator.class);
     }
 
+    public static boolean isEmpty(Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (ObjectHelper.isEmpty(value)) {
+            return true;
+        }
+        if (value instanceof byte[] arr) {
+            return arr.length == 0;
+        }
+        if (value instanceof StreamCache sc) {
+            return sc.length() <= 0;
+        }
+        return false;
+    }
+
     public static String trim(Exchange exchange, Object value) {
         String body;
         if (value != null) {

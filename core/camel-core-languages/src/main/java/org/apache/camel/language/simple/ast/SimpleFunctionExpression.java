@@ -973,6 +973,17 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.splitStringExpression(exp, separator);
         }
 
+        // isEmpty function
+        remainder = ifStartsWithReturnRemainder("isEmpty(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.nullOrEmptyPredicate(exp);
+        }
+
         // trim function
         remainder = ifStartsWithReturnRemainder("trim(", function);
         if (remainder != null) {
@@ -2329,6 +2340,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
             }
             return "skip(exchange, " + values.trim() + ")";
+        }
+
+        // isEmpty function
+        remainder = ifStartsWithReturnRemainder("isEmpty(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${isEmpty(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return org.apache.camel.language.csimple.CSimpleHelper.isEmpty(o);";
         }
 
         // trim function
