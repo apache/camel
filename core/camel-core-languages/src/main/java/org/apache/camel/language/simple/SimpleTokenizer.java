@@ -64,24 +64,24 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[21] = new SimpleTokenType(TokenType.binaryOperator, "not is");
         KNOWN_TOKENS[22] = new SimpleTokenType(TokenType.binaryOperator, "!is");
         KNOWN_TOKENS[23] = new SimpleTokenType(TokenType.binaryOperator, "is");
-        KNOWN_TOKENS[24] = new SimpleTokenType(TokenType.binaryOperator, "not contains");
+        KNOWN_TOKENS[24] = new SimpleTokenType(TokenType.binaryOperator, "not contains"); // deprecated
         KNOWN_TOKENS[25] = new SimpleTokenType(TokenType.binaryOperator, "!contains");
         KNOWN_TOKENS[26] = new SimpleTokenType(TokenType.binaryOperator, "contains");
         KNOWN_TOKENS[27] = new SimpleTokenType(TokenType.binaryOperator, "!~~");
         KNOWN_TOKENS[28] = new SimpleTokenType(TokenType.binaryOperator, "~~");
-        KNOWN_TOKENS[29] = new SimpleTokenType(TokenType.binaryOperator, "not regex");
+        KNOWN_TOKENS[29] = new SimpleTokenType(TokenType.binaryOperator, "not regex"); // deprecated
         KNOWN_TOKENS[30] = new SimpleTokenType(TokenType.binaryOperator, "!regex");
         KNOWN_TOKENS[31] = new SimpleTokenType(TokenType.binaryOperator, "regex");
         KNOWN_TOKENS[32] = new SimpleTokenType(TokenType.binaryOperator, "not in");
         KNOWN_TOKENS[33] = new SimpleTokenType(TokenType.binaryOperator, "!in");
         KNOWN_TOKENS[34] = new SimpleTokenType(TokenType.binaryOperator, "in");
-        KNOWN_TOKENS[35] = new SimpleTokenType(TokenType.binaryOperator, "not range");
+        KNOWN_TOKENS[35] = new SimpleTokenType(TokenType.binaryOperator, "not range"); // deprecated
         KNOWN_TOKENS[36] = new SimpleTokenType(TokenType.binaryOperator, "!range");
         KNOWN_TOKENS[37] = new SimpleTokenType(TokenType.binaryOperator, "range");
         KNOWN_TOKENS[38] = new SimpleTokenType(TokenType.binaryOperator, "startsWith");
-        KNOWN_TOKENS[39] = new SimpleTokenType(TokenType.binaryOperator, "starts with");
+        KNOWN_TOKENS[39] = new SimpleTokenType(TokenType.binaryOperator, "starts with"); // deprecated
         KNOWN_TOKENS[40] = new SimpleTokenType(TokenType.binaryOperator, "endsWith");
-        KNOWN_TOKENS[41] = new SimpleTokenType(TokenType.binaryOperator, "ends with");
+        KNOWN_TOKENS[41] = new SimpleTokenType(TokenType.binaryOperator, "ends with"); // deprecated
 
         // unary operators
         KNOWN_TOKENS[42] = new SimpleTokenType(TokenType.unaryOperator, "++");
