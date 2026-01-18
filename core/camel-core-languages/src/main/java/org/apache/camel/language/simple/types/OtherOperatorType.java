@@ -17,25 +17,29 @@
 package org.apache.camel.language.simple.types;
 
 /**
- * Classifications of known token types.
+ * Types of other operators supported
  */
-public enum TokenType {
+public enum OtherOperatorType {
 
-    whiteSpace,
-    character,
-    booleanValue,
-    numericValue,
-    nullValue,
-    singleQuote,
-    doubleQuote,
-    minusValue,
-    escape,
-    functionStart,
-    functionEnd,
-    binaryOperator,
-    otherOperator,
-    unaryOperator,
-    logicalOperator,
-    eol
+    ELVIS;
+
+    public static OtherOperatorType asOperator(String text) {
+        if ("?:".equals(text)) {
+            return ELVIS;
+        }
+        throw new IllegalArgumentException("Operator not supported: " + text);
+    }
+
+    public static String getOperatorText(OtherOperatorType operator) {
+        if (operator == ELVIS) {
+            return "?:";
+        }
+        return "";
+    }
+
+    @Override
+    public String toString() {
+        return getOperatorText(this);
+    }
 
 }
