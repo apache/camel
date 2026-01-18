@@ -23,13 +23,6 @@ when little need for scripting in your Camel routes.
 
 However, for much more complex use cases, then a more powerful language is recommended such as: xref:groovy-language.adoc[Groovy].
 
-[NOTE]
-====
-The simple language requires `camel-bean` JAR as classpath dependency if the simple
-language uses OGNL expressions, such as calling a method named `myMethod` on the message body: `${body.myMethod()}`.
-At runtime the simple language will then us its built-in OGNL support which requires the `camel-bean` component.
-====
-
 The simple language uses `$\{body}` placeholders for dynamic expressions and functions.
 
 [TIP]
@@ -46,13 +39,84 @@ Spring property placeholder together with Camel.
 See also the xref:csimple-language.adoc[CSimple] language which is *pre compiled*.
 ====
 
+== A quick Simple Language example
+
+You often use Simple together with xref:components:eips:enterprise-integration-patterns.adoc[EIPs] such as xref:eips:choice-eip.adoc[Content-Based Router] EIP.
+
+In the example below we want to route the message depending on whether a message header with key `foo` is equal to different values:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:a")
+    .choice()
+        .when(simple("${header.foo} == 'bar'"))
+            .to("direct:b")
+        .when(simple("${header.foo} == 'cheese'"))
+            .to("direct:c")
+        .otherwise()
+            .to("direct:d");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:a"/>
+    <choice>
+        <when>
+            <simple>${header.foo} == 'bar'</simple>
+            <to uri="direct:b"/>
+        </when>
+        <when>
+            <simple>${header.foo} == 'cheese'</simple>
+            <to uri="direct:c"/>
+        </when>
+        <otherwise>
+            <to uri="direct:d"/>
+        </otherwise>
+    </choice>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:a
+    steps:
+      - choice:
+          when:
+            - simple: "${header.foo} == 'bar'"
+              steps:
+                - to:
+                    uri: direct:b
+            - simple: "${header.foo} == 'cheese'"
+              steps:
+                - to:
+                    uri: direct:c
+          otherwise:
+            steps:
+              - to:
+                  uri: direct:d
+----
+====
+
+
 == Simple Language options
+
+The Simple Language can be configured globally. However, its seldom needed.
 
 // language options: START
 include::partial$language-options.adoc[]
 // language options: END
 
-== Built-in Functions
+== Built-in Simple Functions
 
 The Simple language has many built-in functions which allows access to various part of Camel and the current `Exchange`, the message payload such as body and headers, and much more.
 
@@ -175,7 +239,7 @@ The Simple language has many built-in functions which allows access to various p
 |`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
 |====
 
-=== Attachment functions
+=== Attachment Functions
 
 From *Camel 4.10* onwards then Camel has built-in attachment functions making it easy to obtain
 details from attachments stored on the Camel Message such as from HTTP file uploads, email with file attachments etc.
@@ -196,7 +260,7 @@ This requires having `camel-attachments` JAR on the classpath.
 |`attachments` | `Map` | All the attachments as a `Map<String,jakarta.activation.DataHandler>`.
 |====
 
-=== Base64 functions
+=== Base64 Functions
 
 From *Camel 4.18* onwards then Camel has built-in base64 functions to make it easy to encode/decode.
 
@@ -211,185 +275,7 @@ This requires having `camel-base64` JAR on the classpath.
 |`base64Encode(exp)` | `String` |Base64 encodes the expression
 |====
 
-== OGNL expression support
-
-The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages support a _OGNL like_ notation for invoking methods (using reflection) in a fluent builder like style.
-
-https://en.wikipedia.org/wiki/OGNL[OGNL] (Object-Graph Navigation Language) is a powerful expression language used in Java. In Camel you can use OGNL dot notation to invoke methods. If you for instance have a body that contains a POJO that has a `getFamilyName` method then
-you can construct the Simple syntax as follows:
-
-[source,java]
-----
-simple("${body.familyName}")
-----
-
-Or use similar syntax as in Java:
-
-[source,java]
-----
-simple("${body.getFamilyName()}")
-----
-
-Camel's OGNL support is for invoking methods only. You cannot access fields. Camel support accessing the length field of Java arrays.
-
-[NOTE]
-====
-When using *OGNL* then `camel-bean` JAR is required to be on the classpath.
-====
-
-=== Functions supporting OGNL
-
-The following functions support _OGNL syntax_:
-
-[width="100%",options="header",]
-|====
-|Variable | Response Type | Description
-|`attachment._key_._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange`. This requires having camel-attachments JAR on classpath.
-|`bodyAs(type)` | `<T>` | The message body converted to the given type
-|`body` | `Object` | The message body
-|`camelContext` | `CamelContext` | The `CamelContext`
-|`convertTo(exp,type)` | `<T>` | Converts the expression to the specified type
-|`exception` | `Throwable` | If the exchange failed due to an exception
-|`exchangeProperty._key_` | `Object` | The value from the exchange property with the given key
-|`exchange` | `Exchange` | The current `Exchange`
-|`header._key_` | `Object` | The value from the message header with the given key
-|`mandatoryBodyAs(type)` | `<T>` | The message body converted to the given type
-|`messageAs(type)` | `<T>` | The `org.apache.camel.Message` as a specialized instance
-|`variable._key_` | `Object` | The value from the variable with the given key
-|====
-
-=== Basic OGNL examples
-
-Suppose the Message body contains a POJO which has a `getAddress()`
-method. Then you can use Camel OGNL notation to access the address object:
-
-[source,java]
-----
-simple("${body.address}")
-simple("${body.address.street}")
-simple("${body.address.zip}")
-----
-
-Camel understands the shorthand names for getters, but you can invoke
-any method or use the real name such as:
-
-[source,java]
-----
-simple("${body.address}")
-simple("${body.getAddress.getStreet}")
-simple("${body.getAddress().getStreet()}")
-simple("${body.address.getZip}")
-simple("${body.doSomething}")
-----
-
-You can also use the null safe operator (`?.`) to avoid `NullPointerException` if, for example,
-the body does NOT have an address:
-
-[source,java]
-----
-simple("${body?.address?.street}")
-----
-
-=== Advanced OGNL examples
-
-It is also possible to index in `Map` or `List` types, so you can do:
-
-[source,java]
-----
-simple("${body[foo].name}")
-----
-
-To assume the body is `Map` based and look up the value with `foo` as
-key, and invoke the `getName` method on that value.
-
-If the key has space, then you *must* enclose the key with quotes, for
- example, 'foo bar':
-
-[source,java]
-----
-simple("${body['foo bar'].name}")
-----
-
-You can access the `Map` or `List` objects directly using their key name
-(with or without dots) :
-
-[source,java]
-----
-simple("${body[foo]}")
-simple("${body[this.is.foo]}")
-----
-
-Suppose there was no value with the key `foo` then you can use the null
-safe operator to avoid the NPE as shown:
-
-[source,java]
-----
-simple("${body[foo]?.name}")
-----
-
-You can also access `List` types, for example, to get lines from the
-address you can do:
-
-[source,java]
-----
-simple("${body.address.lines[0]}")
-simple("${body.address.lines[1]}")
-simple("${body.address.lines[2]}")
-----
-
-There is a special `last` keyword which can be used to get the last
-value from a list.
-
-[source,java]
-----
-simple("${body.address.lines[last]}")
-----
-
-And to get the 2nd last you can subtract a number, so we can use
-`last-1` to indicate this:
-
-[source,java]
-----
-simple("${body.address.lines[last-1]}")
-----
-
-And the third last is, of course:
-
-[source,java]
-----
-simple("${body.address.lines[last-2]}")
-----
-
-And you can call the size method on the list with
-
-[source,java]
-----
-simple("${body.address.lines.size}")
-----
-
-Camel supports the length field for Java arrays as well, e.g.:
-
-[source,java]
-----
-String[] lines = new String[]{"foo", "bar", "cat"};
-exchange.getMessage().setBody(lines);
-
-simple("There are ${body.length} lines")
-----
-
-[TIP]
-====
-You can also use the *length* function from *Camel 4.18*: `simple("There are ${length()} lines")`
-====
-
-And yes, you can combine this with the Simple operators such as checking if a zip code is larger than 1000:
-
-[source,java]
-----
-simple("${body.address.zip} > 1000")
-----
-
-== Operator support
+== Built-in Operators
 
 The simple language has limited support for operators that are used in predicates to evaluate whether a condition is either _true_ or _false_.
 
@@ -506,7 +392,7 @@ simple("${header.bar} > 100")
 simple("${header.bar}++")
 ----
 
-=== Comparing with different types
+=== Using Operators with different Java Object types
 
 When you compare with different types such as String and int, then you
 have to take a bit of care. Camel will use the type from the left-hand side
@@ -644,6 +530,185 @@ And of course the `||` is also supported. The sample would be:
 simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
 -----
 
+== OGNL Expression Support
+
+The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages support a _OGNL like_ notation for invoking methods (using reflection) in a fluent builder like style.
+
+https://en.wikipedia.org/wiki/OGNL[OGNL] (Object-Graph Navigation Language) is a powerful expression language used in Java. In Camel you can use OGNL dot notation to invoke methods. If you for instance have a body that contains a POJO that has a `getFamilyName` method then
+you can construct the Simple syntax as follows:
+
+[source,java]
+----
+simple("${body.familyName}")
+----
+
+Or use similar syntax as in Java:
+
+[source,java]
+----
+simple("${body.getFamilyName()}")
+----
+
+Camel's OGNL support is for invoking methods only. You cannot access fields. Camel support accessing the length field of Java arrays.
+
+[IMPORTANT]
+====
+When using *OGNL* then `camel-bean` JAR is required to be on the classpath.
+====
+
+=== Built-in Functions supporting OGNL
+
+The following functions support _OGNL syntax_:
+
+[width="100%",options="header",]
+|====
+|Variable | Response Type | Description
+|`attachment._key_._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange`. This requires having camel-attachments JAR on classpath.
+|`bodyAs(type)` | `<T>` | The message body converted to the given type
+|`body` | `Object` | The message body
+|`camelContext` | `CamelContext` | The `CamelContext`
+|`convertTo(exp,type)` | `<T>` | Converts the expression to the specified type
+|`exception` | `Throwable` | If the exchange failed due to an exception
+|`exchangeProperty._key_` | `Object` | The value from the exchange property with the given key
+|`exchange` | `Exchange` | The current `Exchange`
+|`header._key_` | `Object` | The value from the message header with the given key
+|`mandatoryBodyAs(type)` | `<T>` | The message body converted to the given type
+|`messageAs(type)` | `<T>` | The `org.apache.camel.Message` as a specialized instance
+|`variable._key_` | `Object` | The value from the variable with the given key
+|====
+
+=== Basic OGNL examples
+
+Suppose the Message body contains a POJO which has a `getAddress()`
+method. Then you can use Camel OGNL notation to access the address object:
+
+[source,java]
+----
+simple("${body.address}")
+simple("${body.address.street}")
+simple("${body.address.zip}")
+----
+
+Camel understands the shorthand names for getters, but you can invoke
+any method or use the real name such as:
+
+[source,java]
+----
+simple("${body.address}")
+simple("${body.getAddress.getStreet}")
+simple("${body.getAddress().getStreet()}")
+simple("${body.address.getZip}")
+simple("${body.doSomething}")
+----
+
+You can also use the null safe operator (`?.`) to avoid `NullPointerException` if, for example,
+the body does NOT have an address:
+
+[source,java]
+----
+simple("${body?.address?.street}")
+----
+
+=== Advanced OGNL examples
+
+It is also possible to index in `Map` or `List` types, so you can do:
+
+[source,java]
+----
+simple("${body[foo].name}")
+----
+
+To assume the body is `Map` based and look up the value with `foo` as
+key, and invoke the `getName` method on that value.
+
+If the key has space, then you *must* enclose the key with quotes, for
+example, 'foo bar':
+
+[source,java]
+----
+simple("${body['foo bar'].name}")
+----
+
+You can access the `Map` or `List` objects directly using their key name
+(with or without dots) :
+
+[source,java]
+----
+simple("${body[foo]}")
+simple("${body[this.is.foo]}")
+----
+
+Suppose there was no value with the key `foo` then you can use the null
+safe operator to avoid the NPE as shown:
+
+[source,java]
+----
+simple("${body[foo]?.name}")
+----
+
+You can also access `List` types, for example, to get lines from the
+address you can do:
+
+[source,java]
+----
+simple("${body.address.lines[0]}")
+simple("${body.address.lines[1]}")
+simple("${body.address.lines[2]}")
+----
+
+There is a special `last` keyword which can be used to get the last
+value from a list.
+
+[source,java]
+----
+simple("${body.address.lines[last]}")
+----
+
+And to get the 2nd last you can subtract a number, so we can use
+`last-1` to indicate this:
+
+[source,java]
+----
+simple("${body.address.lines[last-1]}")
+----
+
+And the third last is, of course:
+
+[source,java]
+----
+simple("${body.address.lines[last-2]}")
+----
+
+And you can call the size method on the list with
+
+[source,java]
+----
+simple("${body.address.lines.size}")
+----
+
+Camel supports the length field for Java arrays as well, e.g.:
+
+[source,java]
+----
+String[] lines = new String[]{"foo", "bar", "cat"};
+exchange.getMessage().setBody(lines);
+
+simple("There are ${body.length} lines")
+----
+
+[TIP]
+====
+You can also use the *length* function from *Camel 4.18*: `simple("There are ${length()} lines")`
+====
+
+And yes, you can combine this with the Simple operators such as checking if a zip code is larger than 1000:
+
+[source,java]
+----
+simple("${body.address.zip} > 1000")
+----
+
+
 == EIP Examples
 
 In the XML DSL sample below, we filter based on a header value:
@@ -767,7 +832,7 @@ You can nest functions, such as shown below:
 </setHeader>
 ----
 
-=== Substring
+== Using Substring Function
 
 You can use the `substring` function to more easily clip the message body.
 For example if the message body contains the following 10 letters `ABCDEFGHIJ` then:
@@ -824,7 +889,7 @@ For example suppose the message body contains 'Hello great big World how are you
 .setHeader("foo2", simple("$trim{${substringBetween('great', 'how'}}"))
 ----
 
-=== Replacing double and single quotes
+== Replacing double and single quotes
 
 You can use the `replace` function to more easily replace all single or double quotes in the message body,
 using the XML escape syntax. This avoids to fiddle with enclosing a double quote or single quotes with outer quotes,
