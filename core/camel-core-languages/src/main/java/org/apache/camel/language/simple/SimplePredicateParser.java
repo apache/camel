@@ -37,6 +37,7 @@ import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.LogicalExpression;
 import org.apache.camel.language.simple.ast.NullExpression;
 import org.apache.camel.language.simple.ast.NumericExpression;
+import org.apache.camel.language.simple.ast.OtherExpression;
 import org.apache.camel.language.simple.ast.SimpleFunctionEnd;
 import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
@@ -45,6 +46,7 @@ import org.apache.camel.language.simple.ast.SingleQuoteStart;
 import org.apache.camel.language.simple.ast.UnaryExpression;
 import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
+import org.apache.camel.language.simple.types.OtherOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -120,6 +122,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     && !functionText()
                     && !unaryOperator()
                     && !binaryOperator()
+                    && !otherOperator()
                     && !logicalOperator()
                     && !isBooleanValue()
                     && !token.getType().isWhitespace()
@@ -146,6 +149,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
         prepareUnaryExpressions();
         // compact and stack binary expressions
         prepareBinaryExpressions();
+        // compact and stack other expressions
+        prepareOtherExpressions();
         // compact and stack logical expressions
         prepareLogicalExpressions();
 
@@ -335,6 +340,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
             return new UnaryExpression(token);
         } else if (token.getType().isBinary()) {
             return new BinaryExpression(token);
+        } else if (token.getType().isOther()) {
+            return new OtherExpression(token);
         } else if (token.getType().isLogical()) {
             return new LogicalExpression(token);
         } else if (token.getType().isNullValue()) {
@@ -560,6 +567,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
     // - null = null value
     // - unary operator = operator attached to the left hand side node
     // - binary operator = operator attached to both the left and right hand side nodes
+    // - other operator = operator attached to both the left and right hand side nodes
     // - logical operator = operator attached to both the left and right hand side nodes
 
     protected boolean isBooleanValue() {
@@ -718,6 +726,36 @@ public class SimplePredicateParser extends BaseSimpleParser {
             } else {
                 throw new SimpleParserException(
                         "Binary operator " + operatorType + " does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean otherOperator() {
+        if (accept(TokenType.otherOperator)) {
+            // remember the other operator
+            OtherOperatorType operatorType = OtherOperatorType.asOperator(token.getText());
+
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expect(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Other operator " + operatorType + " does not support token " + token, token.getIndex());
             }
             return true;
         }
