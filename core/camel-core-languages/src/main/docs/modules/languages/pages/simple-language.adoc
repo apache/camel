@@ -143,33 +143,33 @@ The Simple language has many built-in functions which allows access to various p
 |`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `data:command` function for additional documentation on the commands.
 |`date:command` | `Date` | Evaluates to a `java.util.Date` object. Supported commands are: `now` for current timestamp, `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the `Long/Date` object in the header with the key xxx. `variable.xxx` to use the `Long/Date` in the variable with the key xxx. `exchangeProperty.xxx` to use the `Long/Date` object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (only available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or `now+1h30m-100`.
 |`empty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object.
-|`env._key_` | `String` | Refers to the OS system environment variable with the given key. For example `env.HOME` to refer to the home directory.
+|`env.key` | `String` | Refers to the OS system environment variable with the given key. For example `env.HOME` to refer to the home directory.
 |`exception._OGNL_` | `Object` | Same as `exception` and then invoke Camel _OGNL syntax_.
 |`exception.message` | `String` | The message from the `Exchange` object. See `exception` for more details.
 |`exception.stacktrace` | `String` | The stacktrace from the `Exchange` object. See `exception` for more details.
 |`exception` | `Throwable` | The `Exception` object on the exchange, is `null` if no exception is set on the `Exchange`. Will fallback and grab any caught exceptions stored as exchange property (`Exchange.EXCEPTION_CAUGHT`)
 |`exchange._OGNL_` | `Object` | The current `Exchange` invoked using Camel _OGNL syntax_.
 |`exchangeId` | `String` | The id of the current `Exchange`.
-|`exchangeProperty._key_._OGNL_` | `Object` | Same as `exchangeProperty._key_` and then invoke Camel _OGNL syntax_.
-|`exchangeProperty._key_` | `Object` | Returns the value of the exchange property with the given key. Returns `null` if the property does not exists.
+|`exchangeProperty.key._OGNL_` | `Object` | Same as `exchangeProperty.key` and then invoke Camel _OGNL syntax_.
+|`exchangeProperty.key` | `Object` | Returns the value of the exchange property with the given key. Returns `null` if the property does not exists.
 |`exchange` | `Exchange` | The current `Exchange` object.
 |`fromRouteId` | `String` | Returns the original route id where this `Exchange` was created.
 |`hash(exp,algorithm)` | `String` | Returns a hashed value (string in hex decimal) of the given expression. The algorithm can be `SHA-256` (default) or `SHA3-256`.
-|`header._key_._OGNL_` | `Object` | Same as `header._key_` and then invoke Camel _OGNL syntax_.
-|`header._key_` | `Object` | The message header with the given key.
-|`headerAs(_key_,type)` | `<T>` | The message header with the given key, converted to the given type.
-|`header[_key_]._OGNL_` | `Object` | *Deprecated* Same as `header[_key_]` and then invoke Camel _OGNL syntax_.
-|`header[_key_]` | `Object` | *Deprecated* The message header with the given key.
-|`headers._key_` | `Object` | *Deprecated* The message header with the given key.
+|`header.key._OGNL_` | `Object` | Same as `header.key` and then invoke Camel _OGNL syntax_.
+|`header.key` | `Object` | The message header with the given key.
+|`headerAs(key,type)` | `<T>` | The message header with the given key, converted to the given type.
+|`header[key]._OGNL_` | `Object` | *Deprecated* Same as `header[key]` and then invoke Camel _OGNL syntax_.
+|`header[key]` | `Object` | *Deprecated* The message header with the given key.
+|`headers.key` | `Object` | *Deprecated* The message header with the given key.
 |`headers.size` | `int` | The number of headers
-|`headers:_key_` | `Object` | *Deprecated* The message header with the given key.
-|`headers[_key_]` | `Object` | *Deprecated* The message header with the given key.
+|`headers:key` | `Object` | *Deprecated* The message header with the given key.
+|`headers[key]` | `Object` | *Deprecated* The message header with the given key.
 |`headers` | `Map` | All the message headers as a `java.util.Map`.
 |`hostname` | `String` | Returns the local hostname (may be `null` if not possible to resolve).
 |`id` | `String` | The message id
 |`iif(predicate,trueExp,falseExp`) | `Object` | Evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 |`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
-|`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
+|`isEmpty()` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
 |`join(separator,prefix,exp` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
 |`jq(exp)` | `Object` | When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
 |`jq(input,exp)` | `Object` | Same as `jp(exp)` but to use the _input_ expression as the source of the JSon document.
@@ -186,8 +186,8 @@ The Simple language has many built-in functions which allows access to various p
 |`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
 |`messageAs(type)._OGNL_` | `Object` | Same as `messageAs(type)` and then invoke Camel _OGNL syntax_.
 |`messageAs(type)` | `<T>` | Converts the message to the given type determined by its classname.
-|`messageHistory(false)` | `String` | Same as `messageHistory` but without the exchange details (only includes the route stack-trace). This can be used if you do not want to log sensitive data from the message itself.
 |`messageHistory` | `String` | The message history of the current exchange (how it has been routed). This is similar to the route stack-trace message history the error handler logs in case of an unhandled exception.
+|`messageHistory(false)` | `String` | Same as `messageHistory` but without the exchange details (only includes the route stack-trace). This can be used if you do not want to log sensitive data from the message itself.
 |`messageTimestamp` | `long` | The message timestamp (millis since epoc) that this message originates from. Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel received. This method returns the timestamp if a timestamp exists. The message timestamp and exchange created are different. An exchange always has a created timestamp which is the local timestamp when Camel created the exchange. The message timestamp is only available in some Camel components when the consumer is able to extract the timestamp from the source event. If the message has no timestamp, then 0 is returned.
 |`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.
 |`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
@@ -199,7 +199,7 @@ The Simple language has many built-in functions which allows access to various p
 |`propertiesExist:key` | `boolean` | Checks whether a property placeholder with the given key exists or not. The result can be negated by prefixing the key with `!`.
 |`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).
 |`random(min,max)` | `int` | Returns a random `Integer` between min (included) and max (excluded),
-|`ref:_key_` | `Object` | To look up a bean from the Camel xref:manual::registry.adoc[Registry] with the given key.
+|`ref:key` | `Object` | To look up a bean from the Camel xref:manual::registry.adoc[Registry] with the given key.
 |`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`replace(from,to,ex[])` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`routeGroup` | `String` | Returns the route group of the current route the `Exchange` is being routed. Not all routes have a group assigned, so this may be `null`.
@@ -217,10 +217,10 @@ The Simple language has many built-in functions which allows access to various p
 |`substringAfter(exp,after)` | `String` | Returns a substring of the expression that comes after. Returns `null` if nothing comes after.
 |`substringBefore(before)` | `String` | Returns a substring of the message body that comes before. Returns `null` if nothing comes before.
 |`substringBefore(exp,before)` | `String` | Returns a substring of the expression that comes before. Returns `null` if nothing comes before.
-|`substringBetween(after,before` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
-|`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
-|`sys._key_` | `String` | *Deprecated* To lookup the JVM system property with the given key.
-|`sysenv._key_` | `String` | To lookup the JVM system property with the given key.
+|`substringBetween(after,before)` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
+|`substringBetween(exp,after,before)` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
+|`sys.key` | `String` | *Deprecated* To lookup the JVM system property with the given key.
+|`sysenv.key` | `String` | To lookup the JVM system property with the given key.
 |`threadId` | `String` | Returns the id of the current thread.
 |`threadName` | `String` | Returns the name of the current thread.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
@@ -229,10 +229,10 @@ The Simple language has many built-in functions which allows access to various p
 |`uppercase()` | `String` | Uppercases the message body
 |`uppercase(exp)` | `String` | Uppercases the expression
 |`uuid(kind)` | `String` | Returns a UUID using the Camel `UuidGenerator`. You can choose kind between `default`, `classic`, `short`, `simple` and `random` as the kind. If no kind is given, then `default` is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}` where the id is `myGenerator`.
-|`variable._key_._OGNL_` | `Object` | To look up the variable with the given key and then invoke Camel _OGNL syntax_.
-|`variable._key_` | `Object` | To look up the variable with the given key.
-|`variableAs(_key_,type)` | `<T>` | To look up the variable with the given key, and convert the value to the given type determined by its classname
-|`variable[_key_]` | `Object` | *Deprecated* To look up the variable with the given key.
+|`variable.key._OGNL_` | `Object` | To look up the variable with the given key and then invoke Camel _OGNL syntax_.
+|`variable.key` | `Object` | To look up the variable with the given key.
+|`variableAs(key,type)` | `<T>` | To look up the variable with the given key, and convert the value to the given type determined by its classname
+|`variable[key]` | `Object` | *Deprecated* To look up the variable with the given key.
 |`variables.size` | `int` | The number of `Exchange` variables
 |`variables` | `Map` | All the variables from the current `Exchange` as a `java.util.Map`.
 |`xpath(exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath.
@@ -249,12 +249,12 @@ This requires having `camel-attachments` JAR on the classpath.
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
-|`attachment._key_._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange` and invoke its value using a Camel _OGNL syntax_.
-|`attachmentContent(_key_)` | `Object` | The content of the attachment.
-|`attachmentContentAs(_key_,type)` | `Object` | The content of the attachment, converted to the given type.
-|`attachmentContentAsText(_key_)` | `String` | The content of the attachment as text (ie `String`).
+|`attachment.key._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange` and invoke its value using a Camel _OGNL syntax_.
+|`attachmentContent(key)` | `Object` | The content of the attachment.
+|`attachmentContentAs(key,type)` | `Object` | The content of the attachment, converted to the given type.
+|`attachmentContentAsText(key)` | `String` | The content of the attachment as text (ie `String`).
 |`attachmentHeader(key,name)` | `Object` | The attachment header with the given name.
-|`attachmentHeaderAs(_key_,name,type)` | `<T>` | The attachment header with the given name, converted to the given type.
+|`attachmentHeaderAs(key,name,type)` | `<T>` | The attachment header with the given name, converted to the given type.
 |`attachment[key]` | `DataHandler` | The `jakarta.activation.DataHandler` for the given attachment.
 |`attachments.size` | `int` | The number of attachments. Is 0 if there are no attachments.
 |`attachments` | `Map` | All the attachments as a `Map<String,jakarta.activation.DataHandler>`.
@@ -579,18 +579,18 @@ The following functions support _OGNL syntax_:
 [width="100%",options="header",]
 |====
 |Variable | Response Type | Description
-|`attachment._key_._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange`. This requires having camel-attachments JAR on classpath.
+|`attachment.key._OGNL_` | `Object` | Refer to the attachment with the given key on the `Exchange`. This requires having camel-attachments JAR on classpath.
 |`bodyAs(type)` | `<T>` | The message body converted to the given type
 |`body` | `Object` | The message body
 |`camelContext` | `CamelContext` | The `CamelContext`
 |`convertTo(exp,type)` | `<T>` | Converts the expression to the specified type
 |`exception` | `Throwable` | If the exchange failed due to an exception
-|`exchangeProperty._key_` | `Object` | The value from the exchange property with the given key
+|`exchangeProperty.key` | `Object` | The value from the exchange property with the given key
 |`exchange` | `Exchange` | The current `Exchange`
-|`header._key_` | `Object` | The value from the message header with the given key
+|`header.key` | `Object` | The value from the message header with the given key
 |`mandatoryBodyAs(type)` | `<T>` | The message body converted to the given type
 |`messageAs(type)` | `<T>` | The `org.apache.camel.Message` as a specialized instance
-|`variable._key_` | `Object` | The value from the variable with the given key
+|`variable.key` | `Object` | The value from the variable with the given key
 |====
 
 === Basic OGNL examples
