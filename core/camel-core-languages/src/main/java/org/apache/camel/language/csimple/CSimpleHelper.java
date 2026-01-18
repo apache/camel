@@ -979,4 +979,12 @@ public final class CSimpleHelper {
         return 0;
     }
 
+    public static Object elvis(Exchange exchange, Object left, Object right) {
+        if (left == null || Boolean.FALSE == left || ObjectHelper.isEmpty(left) || ObjectHelper.equal(0, left)) {
+            return right;
+        } else {
+            return left;
+        }
+    }
+
 }

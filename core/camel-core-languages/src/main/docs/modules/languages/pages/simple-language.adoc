@@ -336,6 +336,22 @@ And the following unary operators can be used:
 |`--` | To decrement a number by one. The left-hand side must be a function, otherwise parsed as literal.
 |====
 
+And the following other operators can be used:
+
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Operator |Description
+|`?:` | The elvis operator returns the left-hand side if it has an effective Boolean value of true, otherwise it returns the right-hand side. This is useful for providing fallback values when an expression may evaluate to a value with an effective Boolean value of false (such as `null`, `false`, `0`, empty/blank string).
+|====
+
+For example the following elvis operator will return the username header unless its null or empty, which
+then the default value of `Guest` is returned.
+
+[source,java]
+----
+simple("${header.username} ?: 'Guest'");
+----
+
 And the following special symbols:
 
 [width="100%",cols="50%,50%",options="header",]

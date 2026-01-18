@@ -21,10 +21,12 @@ import java.util.List;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.ast.BinaryExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
+import org.apache.camel.language.simple.ast.OtherExpression;
 import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.ast.SingleQuoteStart;
 import org.apache.camel.language.simple.types.BinaryOperatorType;
+import org.apache.camel.language.simple.types.OtherOperatorType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -68,6 +70,26 @@ public class SimplePredicateParserNodesTest extends ExchangeTestSupport {
         SimpleFunctionStart fe = (SimpleFunctionStart) qe.getBlock().getChildren().get(1);
         ln = (LiteralNode) fe.getBlock().getChildren().get(0);
         Assertions.assertEquals("header.bar", ln.toString());
+    }
+
+    @Test
+    public void testParserNodesElvis() {
+        exchange.getIn().setBody("Hello");
+
+        SimplePredicateParser parser = new SimplePredicateParser(null, "${body} ?: 'Bye'", true, null);
+        List<SimpleNode> nodes = parser.parseTokens();
+        Assertions.assertEquals(1, nodes.size());
+        OtherExpression be = (OtherExpression) nodes.get(0);
+
+        Assertions.assertEquals(OtherOperatorType.ELVIS, be.getOperator());
+
+        SingleQuoteStart qe = (SingleQuoteStart) be.getRight();
+        LiteralNode ln = (LiteralNode) qe.getBlock().getChildren().get(0);
+        Assertions.assertEquals("Bye", ln.getText());
+
+        SimpleFunctionStart fe = (SimpleFunctionStart) be.getLeft();
+        ln = (LiteralNode) fe.getBlock().getChildren().get(0);
+        Assertions.assertEquals("body", ln.toString());
     }
 
 }
