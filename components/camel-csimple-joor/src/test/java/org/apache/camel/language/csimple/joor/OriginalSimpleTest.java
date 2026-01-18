@@ -2686,6 +2686,57 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertEquals("carlsberg", s);
     }
 
+    @Test
+    public void testSetHeader() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${setHeader(foo,${body})}");
+        Object s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertEquals("Hello World", exchange.getMessage().getHeader("foo"));
+
+        exchange.getMessage().setBody("123");
+        expression = context.resolveLanguage("csimple").createExpression("${setHeader(bar,int,${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertIsInstanceOf(Integer.class, exchange.getMessage().getHeader("bar"));
+        assertEquals(123, exchange.getMessage().getHeader("bar"));
+
+        // null should remove the variable
+        expression = context.resolveLanguage("csimple").createExpression("${setHeader(bar,${null})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertNull(exchange.getMessage().getHeader("bar"));
+    }
+
+    @Test
+    public void testSetVariable() {
+        exchange.getVariables().clear();
+        assertEquals(0, exchange.getVariables().size());
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${setVariable(foo,${body})}");
+        Object s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertEquals("Hello World", exchange.getVariable("foo"));
+        assertEquals(1, exchange.getVariables().size());
+
+        exchange.getMessage().setBody("123");
+        expression = context.resolveLanguage("csimple").createExpression("${setVariable(bar,int,${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertIsInstanceOf(Integer.class, exchange.getVariable("bar"));
+        assertEquals(123, exchange.getVariable("bar"));
+        assertEquals(2, exchange.getVariables().size());
+
+        // null should remove the variable
+        expression = context.resolveLanguage("csimple").createExpression("${setVariable(bar,${null})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertNull(exchange.getVariable("bar"));
+        assertEquals(1, exchange.getVariables().size());
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";

@@ -748,6 +748,61 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private Expression createSimpleExpressionMisc(String function) {
         String remainder;
 
+        // setHeader function
+        remainder = ifStartsWithReturnRemainder("setHeader(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String name = tokens[0];
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            type = StringHelper.removeQuotes(type);
+            return SimpleExpressionBuilder.setHeaderExpression(name, type, exp);
+        }
+        // setVariable function
+        remainder = ifStartsWithReturnRemainder("setVariable(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String name = tokens[0];
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            type = StringHelper.removeQuotes(type);
+            return SimpleExpressionBuilder.setVariableExpression(name, type, exp);
+        }
+
         // replace function
         remainder = ifStartsWithReturnRemainder("replace(", function);
         if (remainder != null) {
@@ -2107,6 +2162,97 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
     private String createCodeExpressionMisc(String function) {
         String remainder;
+
+        // setHeader function
+        remainder = ifStartsWithReturnRemainder("setHeader(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 1; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            // name must be in double quote as its a string value
+            String name = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+            name = StringQuoteHelper.doubleQuote(name);
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            if (type != null) {
+                type = StringHelper.removeQuotes(type);
+                type = type.trim();
+                type = appendClass(type);
+                type = type.replace('$', '.');
+            } else {
+                type = "null";
+            }
+            return "Object value = " + exp + ";\n        return setHeader(exchange, " + name + ", " + type + ", value);";
+        }
+        // setVariable function
+        remainder = ifStartsWithReturnRemainder("setVariable(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 1; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            // name must be in double quote as its a string value
+            String name = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+            name = StringQuoteHelper.doubleQuote(name);
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            if (type != null) {
+                type = StringHelper.removeQuotes(type);
+                type = type.trim();
+                type = appendClass(type);
+                type = type.replace('$', '.');
+            } else {
+                type = "null";
+            }
+            return "Object value = " + exp + ";\n        return setVariable(exchange, " + name + ", " + type + ", value);";
+        }
 
         // substring function
         remainder = ifStartsWithReturnRemainder("substring(", function);
