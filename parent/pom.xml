@@ -441,7 +441,7 @@
         <parquet-common-version>1.17.0</parquet-common-version>
         <parquet-avro-version>1.16.0</parquet-avro-version>
         <pdfbox-version>3.0.6</pdfbox-version>
-        <pgjdbc-driver-version>42.7.8</pgjdbc-driver-version>
+        <pgjdbc-driver-version>42.7.9</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
