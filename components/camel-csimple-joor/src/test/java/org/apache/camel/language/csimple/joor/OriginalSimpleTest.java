@@ -2522,6 +2522,32 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testPad() {
+        exchange.getMessage().setBody("foo");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${pad(${body},5)}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("foo  ", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${pad(${body},-5)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("  foo", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${pad(${body},5,#)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("foo##", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${pad(${body},-5,#)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("##foo", s);
+
+        exchange.getMessage().setBody("Hello World");
+        expression = context.resolveLanguage("csimple").createExpression("${pad(${body},5)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 

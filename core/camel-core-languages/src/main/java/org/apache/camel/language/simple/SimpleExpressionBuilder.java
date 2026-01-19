@@ -329,6 +329,49 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Pad the expression
+     */
+    public static Expression padExpression(final String expression, final String length, final String separator) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression len;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                len = context.resolveLanguage("simple").createExpression(length);
+                len.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String answer = exp.evaluate(exchange, String.class);
+                Integer width = len.evaluate(exchange, Integer.class);
+                String sep = separator;
+                if (sep == null || sep.isEmpty()) {
+                    sep = " ";
+                }
+
+                int max = Math.abs(width);
+                while (max > answer.length()) {
+                    if (width > 0) {
+                        answer = answer + sep;
+                    } else {
+                        answer = sep + answer;
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "pad(" + exp + "," + length + ")";
+            }
+        };
+    }
+
+    /**
      * String concats the two expressions.
      */
     public static Expression concatExpression(final String right, final String left, String separator) {

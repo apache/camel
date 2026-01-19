@@ -606,6 +606,24 @@ public final class CSimpleHelper {
         return MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, detailed);
     }
 
+    public static String pad(Exchange exchange, Object value, Object length, String separator) {
+        String answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        int width = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, length);
+        if (separator == null || separator.isEmpty()) {
+            separator = " ";
+        }
+
+        int max = Math.abs(width);
+        while (max > answer.length()) {
+            if (width > 0) {
+                answer = answer + separator;
+            } else {
+                answer = separator + answer;
+            }
+        }
+        return answer;
+    }
+
     public static String sys(String name) {
         return System.getProperty(name);
     }

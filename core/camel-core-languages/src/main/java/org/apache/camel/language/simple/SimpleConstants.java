@@ -211,6 +211,10 @@ public final class SimpleConstants {
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
               label = "function", javaType = "String", displayName = "Trim")
     public static final String TRIM = "trim(exp)";
+    @Metadata(description = "Pads the expression with extra padding if necessary, according the the total width."
+                            + " The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.",
+              label = "function", javaType = "String", displayName = "Pad String")
+    public static final String PAD = "pad(exp,width,separator)";
     @Metadata(description = "The payload length (number of bytes) of the message body (or expression).",
               label = "function", javaType = "int", displayName = "Length")
     public static final String LENGTH = "length(exp)";

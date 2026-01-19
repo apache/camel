@@ -1050,6 +1050,32 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.capitalizeExpression(exp);
         }
 
+        // pad function
+        remainder = ifStartsWithReturnRemainder("pad(", function);
+        if (remainder != null) {
+            String exp;
+            String len;
+            String separator = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(len)} or ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            exp = StringHelper.removeQuotes(tokens[0]);
+            len = StringHelper.removeQuotes(tokens[1]);
+            if (tokens.length == 3) {
+                separator = StringHelper.removeQuotes(tokens[2]);
+            }
+            return SimpleExpressionBuilder.padExpression(exp, len, separator);
+        }
+
         // concat function
         remainder = ifStartsWithReturnRemainder("concat(", function);
         if (remainder != null) {
@@ -2464,6 +2490,43 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
             }
             return "skip(exchange, " + values.trim() + ")";
+        }
+
+        // pad function
+        remainder = ifStartsWithReturnRemainder("pad(", function);
+        if (remainder != null) {
+            String exp;
+            String len;
+            String separator = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(len)} or ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            if (tokens.length == 3) {
+                separator = tokens[2];
+            }
+            // separator must be in double quotes
+            separator = StringHelper.removeLeadingAndEndingQuotes(separator);
+            separator = separator != null ? StringQuoteHelper.doubleQuote(separator) : "null";
+            return "Object value = " + tokens[0] + ";\n        " + "Object width = " + tokens[1] + ";\n        String separator = " + separator
+                   + ";\n        return pad(exchange, value, width, separator);";
         }
 
         // trim function

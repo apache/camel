@@ -196,6 +196,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
 |`null` | `null` | Returns a `null` value.
 |`originalBody` | `Object` | The original incoming message body (only available if Camel has been configured with `allowUseOriginalMessage=true`).
+|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
 |`pretty(exp)` | `String` | Converts the expression to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
 |`prettyBody` | `String` | Converts the message body to a `String`, and attempts to pretty print (if JSon or XML) otherwise return the value as-is.
 |`properties:key:default` | `String` | Lookup a property placeholder with the given key. If the key does not exist nor has a value, then an optional default value can be specified.
