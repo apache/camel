@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.FileUtil;
@@ -305,12 +306,7 @@ public final class RunHelper {
      * Adds camel to the start of the list of commands to make it possible to run camel-jbang using a spawned process
      * (to run in background).
      */
-    public static void addCamelJBangCommand(List<String> cmds) {
-        if (FileUtil.isWindows()) {
-            String jbangDir = System.getenv().getOrDefault("JBANG_DIR", System.getProperty("user.home") + "\\.jbang");
-            cmds.add(0, jbangDir + "\\bin\\camel.cmd");
-        } else {
-            cmds.add(0, "camel");
-        }
+    public static void addCamelCLICommand(List<String> cmds) {
+        cmds.addAll(0, LauncherHelper.getCamelCommand());
     }
 }
