@@ -85,6 +85,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HomeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -506,7 +507,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     jo.put("version", String.format("%s", System.getProperty("java.version")));
                     jo.put("user", System.getProperty("user.name"));
                     jo.put("dir", System.getProperty("user.dir"));
-                    jo.put("home", System.getProperty("user.home"));
+                    jo.put("home", HomeHelper.resolveHomeDir());
                 }
 
                 jo = new JsonObject();

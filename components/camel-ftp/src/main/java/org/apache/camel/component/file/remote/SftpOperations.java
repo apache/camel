@@ -62,6 +62,7 @@ import org.apache.camel.support.task.BlockingTask;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HomeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -313,7 +314,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         String knownHostsFile = sftpConfig.getKnownHostsFile();
         if (knownHostsFile == null && sftpConfig.isUseUserKnownHostsFile()) {
-            knownHostsFile = System.getProperty("user.home") + "/.ssh/known_hosts";
+            knownHostsFile = HomeHelper.resolveHomeDir() + "/.ssh/known_hosts";
             LOG.info("Known host file not configured, using user known host file: {}", knownHostsFile);
         }
         if (ObjectHelper.isNotEmpty(knownHostsFile)) {

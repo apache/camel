@@ -83,6 +83,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HomeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
@@ -1532,7 +1533,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private static File createLockFile(String name) {
         File answer = null;
         if (name != null) {
-            File dir = new File(System.getProperty("user.home"), ".camel");
+            File dir = new File(HomeHelper.resolveHomeDir(), ".camel");
             try {
                 dir.mkdirs();
                 answer = new File(dir, name);
