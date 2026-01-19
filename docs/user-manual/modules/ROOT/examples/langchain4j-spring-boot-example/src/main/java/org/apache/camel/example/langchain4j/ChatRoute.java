@@ -30,28 +30,28 @@ public class ChatRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        
+
         // Simple chat endpoint using auto-configured ChatLanguageModel
         from("direct:chat")
             .routeId("simple-chat-route")
             .log("Sending message to LLM: ${body}")
             .to("langchain4j-chat:openai?chatModel=#chatLanguageModel")
             .log("Received response from LLM: ${body}");
-        
+
         // Chat with prompt template
         from("direct:chat-with-template")
             .routeId("chat-with-template-route")
             .log("Processing chat with template")
             .to("langchain4j-chat:openai?chatModel=#chatLanguageModel&chatOperation=CHAT_SINGLE_MESSAGE_WITH_PROMPT")
             .log("Template response: ${body}");
-        
-        // REST endpoint for chat
+
+        // REST endpoint for chat using REST DSL
         rest("/api/chat")
             .post("/message")
             .consumes("application/json")
             .produces("application/json")
             .to("direct:process-chat-message");
-        
+
         from("direct:process-chat-message")
             .routeId("rest-chat-route")
             .log("Received chat request: ${body}")

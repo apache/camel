@@ -54,7 +54,8 @@ Add the dependency for LangChain4j OpenAI Spring Boot starter:
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
-    <version>x.x.x</version>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
 
@@ -79,11 +80,40 @@ langchain4j:
 
 The `EmbeddingModel` bean will be automatically configured and available in the Spring context. Use it in your Camel routes:
 
-[source, java]
+[tabs]
+====
+Java::
++
+[source,java]
 ----
 from("direct:embeddings")
-    .to("langchain4j-embeddings:test?embeddingModel=#embeddingModel")
+    .to("langchain4j-embeddings:test?embeddingModel=#embeddingModel");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:embeddings"
+    steps:
+      - to:
+          uri: "langchain4j-embeddings:test"
+          parameters:
+            embeddingModel: "#embeddingModel"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:embeddings"/>
+  <to uri="langchain4j-embeddings:test?embeddingModel=#embeddingModel"/>
+</route>
+----
+====
 
 [NOTE]
 ====
@@ -110,25 +140,45 @@ Add the dependency for LangChain4j OpenAI support:
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai</artifactId>
-    <version>x.x.x</version>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
 
 Initialize the OpenAI Embedding Model:
 
-[source, java]
+[source,java]
 ----
 EmbeddingModel embeddingModel = OpenAiEmbeddingModel.builder()
     .apiKey(openApiKey)
     .modelName("text-embedding-ada-002")
     .build();
-context.getRegistry().bind("embeddingModel", embeddingModel);
+context.getRegistry().bind("myEmbeddingModel", embeddingModel);
 ----
 
 Use the model in the Camel LangChain4j Embeddings Producer:
 
-[source, java]
+[tabs]
+====
+Java::
++
+[source,java]
 ----
 from("direct:embeddings")
-    .to("langchain4j-embeddings:test?embeddingModel=#embeddingModel")
+    .to("langchain4j-embeddings:test?embeddingModel=#myEmbeddingModel");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:embeddings"
+    steps:
+      - to:
+          uri: "langchain4j-embeddings:test"
+          parameters:
+            embeddingModel: "#myEmbeddingModel"
+----
+====

@@ -1005,7 +1005,8 @@ Add the dependency for LangChain4j OpenAI Spring Boot starter:
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
-    <version>x.x.x</version>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
 
@@ -1019,21 +1020,25 @@ langchain4j.open-ai.chat-model.model-name=gpt-4o
 langchain4j.open-ai.chat-model.temperature=0.7
 ----
 
-Create the Agent bean using the auto-configured ChatModel:
+Create the Agent bean using the auto-configured ChatLanguageModel:
 
 [source,java]
 ----
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
+import org.apache.camel.component.langchain4j.agent.api.Guardrails;
 
 @Configuration
 public class AgentConfig {
 
     @Bean("secureAgent")
-    public Agent secureAgent(ChatLanguageModel chatModel) {
+    public Agent secureAgent(ChatLanguageModel chatLanguageModel) {
         AgentConfiguration config = new AgentConfiguration()
-            .withChatModel(chatModel)
+            .withChatModel(chatLanguageModel)
             .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
             .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
 

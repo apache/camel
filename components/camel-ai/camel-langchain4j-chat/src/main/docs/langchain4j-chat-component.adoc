@@ -64,13 +64,14 @@ When using Camel with Spring Boot, you can leverage LangChain4j's Spring Boot st
 
 Add the dependency for LangChain4j OpenAI Spring Boot starter:
 
-.Example
+.pom.xml
 [source,xml]
 ----
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
-    <version>x.x.x</version>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
 
@@ -97,13 +98,42 @@ langchain4j:
       timeout: 3000s
 ----
 
-The `ChatModel` bean will be automatically configured and available in the Spring context. Use it in your Camel routes:
+The `ChatLanguageModel` bean will be automatically configured and available in the Spring context. Use it in your Camel routes:
 
-[source, java]
+[tabs]
+====
+Java::
++
+[source,java]
 ----
 from("direct:chat")
-    .to("langchain4j-chat:test?chatModel=#chatModel")
+    .to("langchain4j-chat:test?chatModel=#chatLanguageModel");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:chat"
+    steps:
+      - to:
+          uri: "langchain4j-chat:test"
+          parameters:
+            chatModel: "#chatLanguageModel"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-chat:test?chatModel=#chatLanguageModel"/>
+</route>
+----
+====
 
 [NOTE]
 ====
@@ -126,36 +156,56 @@ Alternatively, you can manually initialize the Chat Model and add it to the Came
 
 Add the dependency for LangChain4j OpenAI support:
 
-.Example
+.pom.xml
 [source,xml]
 ----
 <dependency>
     <groupId>dev.langchain4j</groupId>
     <artifactId>langchain4j-open-ai</artifactId>
-    <version>x.x.x</version>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
 
 Initialize the OpenAI Chat Model, and add it to the Camel Registry:
 
-[source, java]
+[source,java]
 ----
-ChatModel model = OpenAiChatModel.builder()
-                .apiKey(openApiKey)
-                .modelName(GPT_3_5_TURBO)
-                .temperature(0.3)
-                .timeout(ofSeconds(3000))
-                .build();
-context.getRegistry().bind("chatModel", model);
+ChatLanguageModel model = OpenAiChatModel.builder()
+    .apiKey(openApiKey)
+    .modelName(GPT_3_5_TURBO)
+    .temperature(0.3)
+    .timeout(ofSeconds(3000))
+    .build();
+context.getRegistry().bind("myChatModel", model);
 ----
 
-Use the model in the Camel LangChain4j Chat Producer
+Use the model in the Camel LangChain4j Chat Producer:
 
-[source, java]
+[tabs]
+====
+Java::
++
+[source,java]
 ----
 from("direct:chat")
-    .to("langchain4j-chat:test?chatModel=#chatModel")
+    .to("langchain4j-chat:test?chatModel=#myChatModel");
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:chat"
+    steps:
+      - to:
+          uri: "langchain4j-chat:test"
+          parameters:
+            chatModel: "#myChatModel"
+----
+====
 
 [NOTE]
 ====
