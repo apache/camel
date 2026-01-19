@@ -318,7 +318,7 @@ This pattern enables building real-time chat applications where:
 * Each token from the LLM is streamed back immediately
 * Clients receive a `[DONE]` marker when the response is complete
 
-NOTE: Requires the `camel-vertx-websocket` dependency. See the https://camel.apache.org/components/latest/vertx-websocket-component.html[Vert.x WebSocket component documentation] for more details.
+NOTE: Requires the `camel-vertx-websocket` dependency. See the xref:vertx-websocket-component.adoc[Vert.x WebSocket component documentation] for more details.
 
 === Chat with Tool Calling
 
@@ -509,7 +509,7 @@ from("direct:embedAndStore")
   .log("Embedding stored with ID: ${header.CamelQdrantOperationID}");
 --------------------------------------------------------------------------------
 
-NOTE: This example requires the `camel-qdrant` dependency. See the https://camel.apache.org/components/latest/qdrant-component.html[Qdrant component documentation] for more details.
+NOTE: This example requires the `camel-qdrant` dependency. See the xref:qdrant-component.adoc[Qdrant component documentation] for more details.
 
 === Rerank Documents
 
