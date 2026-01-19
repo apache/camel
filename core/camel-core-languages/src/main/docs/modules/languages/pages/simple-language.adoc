@@ -374,6 +374,20 @@ This requires having `camel-attachments` JAR on the classpath.
 |attachment.*OGNL* | Object | refer to the foo attachment on the exchange and invoke its value using a Camel OGNL expression.
 |=======================================================================
 
+== Base64 functions
+
+From *Camel 4.18* onwards then Camel has built-in base64 functions to make it easy to encode/decode.
+
+This requires having `camel-base64` JAR on the classpath.
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Function |Type |Description
+
+|base64Encode(exp) |String |Base64 encodes the message body (or expression)
+|base64Decode(exp) |byte[] |Base64 decodes the message body (or expression)
+|=======================================================================
+
 
 == OGNL expression support
 
