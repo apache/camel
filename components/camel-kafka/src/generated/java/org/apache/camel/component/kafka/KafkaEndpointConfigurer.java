@@ -134,6 +134,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "metricsSampleWindowMs": target.getConfiguration().setMetricsSampleWindowMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "noofmetricssample":
         case "noOfMetricsSample": target.getConfiguration().setNoOfMetricsSample(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "oauthclientid":
+        case "oauthClientId": target.getConfiguration().setOauthClientId(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthclientsecret":
+        case "oauthClientSecret": target.getConfiguration().setOauthClientSecret(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthscope":
+        case "oauthScope": target.getConfiguration().setOauthScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthtokenendpointuri":
+        case "oauthTokenEndpointUri": target.getConfiguration().setOauthTokenEndpointUri(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetrepository":
         case "offsetRepository": target.getConfiguration().setOffsetRepository(property(camelContext, org.apache.camel.spi.StateRepository.class, value)); return true;
         case "partitionassignor":
@@ -170,12 +178,18 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "retryBackoffMaxMs": target.getConfiguration().setRetryBackoffMaxMs(property(camelContext, java.lang.Integer.class, value)); return true;
         case "retrybackoffms":
         case "retryBackoffMs": target.getConfiguration().setRetryBackoffMs(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "saslauthtype":
+        case "saslAuthType": target.getConfiguration().setSaslAuthType(property(camelContext, org.apache.camel.component.kafka.security.KafkaAuthType.class, value)); return true;
         case "sasljaasconfig":
         case "saslJaasConfig": target.getConfiguration().setSaslJaasConfig(property(camelContext, java.lang.String.class, value)); return true;
         case "saslkerberosservicename":
         case "saslKerberosServiceName": target.getConfiguration().setSaslKerberosServiceName(property(camelContext, java.lang.String.class, value)); return true;
         case "saslmechanism":
         case "saslMechanism": target.getConfiguration().setSaslMechanism(property(camelContext, java.lang.String.class, value)); return true;
+        case "saslpassword":
+        case "saslPassword": target.getConfiguration().setSaslPassword(property(camelContext, java.lang.String.class, value)); return true;
+        case "saslusername":
+        case "saslUsername": target.getConfiguration().setSaslUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaregistryurl":
         case "schemaRegistryURL": target.getConfiguration().setSchemaRegistryURL(property(camelContext, java.lang.String.class, value)); return true;
         case "securityprotocol":
@@ -356,6 +370,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "metricsSampleWindowMs": return java.lang.Integer.class;
         case "noofmetricssample":
         case "noOfMetricsSample": return java.lang.Integer.class;
+        case "oauthclientid":
+        case "oauthClientId": return java.lang.String.class;
+        case "oauthclientsecret":
+        case "oauthClientSecret": return java.lang.String.class;
+        case "oauthscope":
+        case "oauthScope": return java.lang.String.class;
+        case "oauthtokenendpointuri":
+        case "oauthTokenEndpointUri": return java.lang.String.class;
         case "offsetrepository":
         case "offsetRepository": return org.apache.camel.spi.StateRepository.class;
         case "partitionassignor":
@@ -392,12 +414,18 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "retryBackoffMaxMs": return java.lang.Integer.class;
         case "retrybackoffms":
         case "retryBackoffMs": return java.lang.Integer.class;
+        case "saslauthtype":
+        case "saslAuthType": return org.apache.camel.component.kafka.security.KafkaAuthType.class;
         case "sasljaasconfig":
         case "saslJaasConfig": return java.lang.String.class;
         case "saslkerberosservicename":
         case "saslKerberosServiceName": return java.lang.String.class;
         case "saslmechanism":
         case "saslMechanism": return java.lang.String.class;
+        case "saslpassword":
+        case "saslPassword": return java.lang.String.class;
+        case "saslusername":
+        case "saslUsername": return java.lang.String.class;
         case "schemaregistryurl":
         case "schemaRegistryURL": return java.lang.String.class;
         case "securityprotocol":
@@ -579,6 +607,14 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "metricsSampleWindowMs": return target.getConfiguration().getMetricsSampleWindowMs();
         case "noofmetricssample":
         case "noOfMetricsSample": return target.getConfiguration().getNoOfMetricsSample();
+        case "oauthclientid":
+        case "oauthClientId": return target.getConfiguration().getOauthClientId();
+        case "oauthclientsecret":
+        case "oauthClientSecret": return target.getConfiguration().getOauthClientSecret();
+        case "oauthscope":
+        case "oauthScope": return target.getConfiguration().getOauthScope();
+        case "oauthtokenendpointuri":
+        case "oauthTokenEndpointUri": return target.getConfiguration().getOauthTokenEndpointUri();
         case "offsetrepository":
         case "offsetRepository": return target.getConfiguration().getOffsetRepository();
         case "partitionassignor":
@@ -615,12 +651,18 @@ public class KafkaEndpointConfigurer extends PropertyConfigurerSupport implement
         case "retryBackoffMaxMs": return target.getConfiguration().getRetryBackoffMaxMs();
         case "retrybackoffms":
         case "retryBackoffMs": return target.getConfiguration().getRetryBackoffMs();
+        case "saslauthtype":
+        case "saslAuthType": return target.getConfiguration().getSaslAuthType();
         case "sasljaasconfig":
         case "saslJaasConfig": return target.getConfiguration().getSaslJaasConfig();
         case "saslkerberosservicename":
         case "saslKerberosServiceName": return target.getConfiguration().getSaslKerberosServiceName();
         case "saslmechanism":
         case "saslMechanism": return target.getConfiguration().getSaslMechanism();
+        case "saslpassword":
+        case "saslPassword": return target.getConfiguration().getSaslPassword();
+        case "saslusername":
+        case "saslUsername": return target.getConfiguration().getSaslUsername();
         case "schemaregistryurl":
         case "schemaRegistryURL": return target.getConfiguration().getSchemaRegistryURL();
         case "securityprotocol":
