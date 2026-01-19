@@ -40,6 +40,7 @@ import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.HomeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -281,7 +282,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             String knownHostsFile = config.getKnownHostsFile();
             if (knownHostsFile == null && config.isUseUserKnownHostsFile()) {
                 if (userKnownHostFile == null) {
-                    userKnownHostFile = System.getProperty("user.home") + "/.ssh/known_hosts";
+                    userKnownHostFile = HomeHelper.resolveHomeDir() + "/.ssh/known_hosts";
                     LOG.info("Known host file not configured, using user known host file: {}", userKnownHostFile);
                 }
                 knownHostsFile = userKnownHostFile;

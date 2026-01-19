@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HomeHelper;
 
 /**
  * Helper class for detecting and working with the camel-launcher runtime.
@@ -106,7 +107,7 @@ public final class LauncherHelper {
         // Fall back to JBang-style command
         if (FileUtil.isWindows()) {
             String jbangDir = System.getenv().getOrDefault("JBANG_DIR",
-                    System.getProperty("user.home") + "\\.jbang");
+                    HomeHelper.resolveHomeDir() + "\\.jbang");
             cmds.add(jbangDir + "\\bin\\camel.cmd");
         } else {
             cmds.add("camel");
