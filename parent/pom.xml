@@ -368,7 +368,7 @@
         <logback-version>1.5.24</logback-version>
         <lucene-version>9.12.0</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <littleproxy-version>2.5.0</littleproxy-version>
+        <littleproxy-version>2.6.0</littleproxy-version>
         <lz4-java-version>1.10.2</lz4-java-version>
         <mapstruct-version>1.6.3</mapstruct-version>
         <!-- needed from tooling/archetypes -->
