@@ -2930,6 +2930,79 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression(exchange, "${pretty(${body})}", "{\n\t\"name\": \"Jack\",\n\t\"id\": 123\n}\n");
     }
 
+    @Test
+    public void testSetHeader() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${setHeader(foo,${body})}");
+        Object s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertEquals("Hello World", exchange.getMessage().getHeader("foo"));
+
+        exchange.getMessage().setBody("123");
+        expression = context.resolveLanguage("simple").createExpression("${setHeader(bar,int,${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertIsInstanceOf(Integer.class, exchange.getMessage().getHeader("bar"));
+        assertEquals(123, exchange.getMessage().getHeader("bar"));
+
+        // null should remove the variable
+        expression = context.resolveLanguage("simple").createExpression("${setHeader(bar,${null})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertNull(exchange.getMessage().getHeader("bar"));
+    }
+
+    @Test
+    public void testSetVariable() {
+        exchange.getVariables().clear();
+        assertEquals(0, exchange.getVariables().size());
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${setVariable(foo,${body})}");
+        Object s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertEquals("Hello World", exchange.getVariable("foo"));
+        assertEquals(1, exchange.getVariables().size());
+
+        exchange.getMessage().setBody("123");
+        expression = context.resolveLanguage("simple").createExpression("${setVariable(bar,int,${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertIsInstanceOf(Integer.class, exchange.getVariable("bar"));
+        assertEquals(123, exchange.getVariable("bar"));
+        assertEquals(2, exchange.getVariables().size());
+
+        // null should remove the variable
+        expression = context.resolveLanguage("simple").createExpression("${setVariable(bar,${null})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertNull(exchange.getVariable("bar"));
+        assertEquals(1, exchange.getVariables().size());
+    }
+
+    @Test
+    public void testSetVariableMapping() {
+        exchange.getVariables().clear();
+        assertEquals(0, exchange.getVariables().size());
+        exchange.getMessage().setBody("Hello World");
+
+        String map = """
+                ${setVariable(count,${body.length})}
+                Input: ${body}
+                Bytes: ${variable.count}
+                """;
+        String exp = """
+
+                Input: Hello World
+                Bytes: 11
+                """;
+
+        Expression expression = context.resolveLanguage("simple").createExpression(map);
+        String out = expression.evaluate(exchange, String.class);
+        assertEquals(exp, out);
+    }
+
     private void assertExpressionCreateNewEmpty(
             String type, Class<?> expectedClass, java.util.function.Predicate<Object> isEmptyAssertion) {
         Object value = evaluateExpression("${empty(%s)}".formatted(type), null);

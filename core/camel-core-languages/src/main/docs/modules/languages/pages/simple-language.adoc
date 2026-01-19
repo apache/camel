@@ -204,6 +204,8 @@ The Simple language has many built-in functions which allows access to various p
 |`replace(from,to,ex[])` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`routeGroup` | `String` | Returns the route group of the current route the `Exchange` is being routed. Not all routes have a group assigned, so this may be `null`.
 |`routeId` | `String` | Returns the route id of the current route the `Exchange` is being routed.
+|`setHeader(name,type,exp)` | `null` | Sets a message header with the given expression (optional converting to the given type).
+|`setVariable(name,type,exp)` | `null` | Sets a variable with the given expression (optional converting to the given type).
 |`size()` | `int` | The size of the message body. If the payload is `java.util.Collection` or `java.util.Map` based then the size is the number of elements; otherwise the payload size in bytes.
 |`size(exp)` | `int` | The size of the expression. If the payload is `java.util.Collection` or `java.util.Map` based then the size is the number of elements; otherwise the payload size in bytes.
 |`skip(number)` | `Iterator` | The skip function iterates the message body and skips the first number of items. This can be used with the Splitter EIP to split a message body and skip the first N number of items.
