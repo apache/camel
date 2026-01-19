@@ -958,4 +958,28 @@ public final class CSimpleHelper {
         }
     }
 
+    public static Object setHeader(Exchange exchange, String name, Class<?> type, Object value) {
+        if (type != null && value != null) {
+            value = convertTo(exchange, type, value);
+        }
+        if (value != null) {
+            exchange.getMessage().setHeader(name, value);
+        } else {
+            exchange.getMessage().removeHeader(name);
+        }
+        return null;
+    }
+
+    public static Object setVariable(Exchange exchange, String name, Class<?> type, Object value) {
+        if (type != null && value != null) {
+            value = convertTo(exchange, type, value);
+        }
+        if (value != null) {
+            exchange.setVariable(name, value);
+        } else {
+            exchange.removeVariable(name);
+        }
+        return null;
+    }
+
 }

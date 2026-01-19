@@ -192,6 +192,12 @@ public final class SimpleConstants {
               label = "function",
               javaType = "String", displayName = "Capitalize String Values")
     public static final String CAPITALIZE = "capitalize(exp)";
+    @Metadata(description = "Sets a message header with the given expression (optional converting to the given type)",
+              label = "function", javaType = "Object")
+    public static final String SET_HEADER = "setHeader(name,type,exp)";
+    @Metadata(description = "Sets a variable with the given expression (optional converting to the given type)",
+              label = "function", javaType = "Object")
+    public static final String SET_VARIABLE = "setVariable(name,type,exp)";
     @Metadata(description = "Returns a substring of the message body/expression that are between after and before. Returns null if nothing comes between.",
               label = "function", javaType = "String")
     public static final String RANDOM = "random(min,max)";
