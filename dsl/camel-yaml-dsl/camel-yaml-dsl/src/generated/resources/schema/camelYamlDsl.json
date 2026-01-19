@@ -3910,6 +3910,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
+                "description" : "The predicate to use",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
@@ -18103,6 +18104,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
+                "description" : "The predicate to use for validation.",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
