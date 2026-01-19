@@ -108,7 +108,7 @@
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>4.9.1</citrus-version>
         <classgraph-version>4.8.184</classgraph-version>
-        <cloudant-version>0.10.13</cloudant-version>
+        <cloudant-version>0.10.14</cloudant-version>
         <com-ibm-mq-jakarta-client-version>9.4.4.1</com-ibm-mq-jakarta-client-version>
         <cometd-java-client-version>9.0.0</cometd-java-client-version>
         <cometd-java-server-version>9.0.0</cometd-java-server-version>
