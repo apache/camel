@@ -87,6 +87,7 @@ public final class SensitiveUtils {
                     "refreshtoken",
                     "sascredential",
                     "sasljaasconfig",
+                    "saslpassword",
                     "sassignature",
                     "secret",
                     "secretkey",
@@ -176,6 +177,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qrefreshtoken\\E"
                                                     + "|\\Qsascredential\\E"
                                                     + "|\\Qsasljaasconfig\\E"
+                                                    + "|\\Qsaslpassword\\E"
                                                     + "|\\Qsassignature\\E"
                                                     + "|\\Qsecret\\E"
                                                     + "|\\Qsecretkey\\E"

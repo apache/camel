@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
+import org.apache.camel.component.kafka.security.KafkaAuthType;
+import org.apache.camel.component.kafka.security.KafkaSecurityConfigurer;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
 import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
@@ -336,6 +338,40 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // sasl.jaas.config
     private String saslJaasConfig;
 
+    // Simplified authentication configuration
+    @UriParam(label = "common,security",
+              enums = "NONE,PLAIN,SCRAM_SHA_256,SCRAM_SHA_512,SSL,OAUTH,AWS_MSK_IAM,KERBEROS",
+              description = "Simplified authentication type to use. This provides an easier way to configure Kafka "
+                            + "authentication without manually setting securityProtocol, saslMechanism, and saslJaasConfig. "
+                            + "When set, the appropriate security settings are automatically derived. "
+                            + "Note: This is optional. You can still use the traditional approach with explicit "
+                            + "securityProtocol, saslMechanism, and saslJaasConfig properties.")
+    private KafkaAuthType saslAuthType;
+
+    @UriParam(label = "common,security",
+              description = "Username for SASL authentication. Used when saslAuthType is set to PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.")
+    private String saslUsername;
+
+    @UriParam(label = "common,security", secret = true,
+              description = "Password for SASL authentication. Used when saslAuthType is set to PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.")
+    private String saslPassword;
+
+    @UriParam(label = "common,security",
+              description = "OAuth client ID. Used when saslAuthType is set to OAUTH.")
+    private String oauthClientId;
+
+    @UriParam(label = "common,security", secret = true,
+              description = "OAuth client secret. Used when saslAuthType is set to OAUTH.")
+    private String oauthClientSecret;
+
+    @UriParam(label = "common,security",
+              description = "OAuth token endpoint URI. Used when saslAuthType is set to OAUTH.")
+    private String oauthTokenEndpointUri;
+
+    @UriParam(label = "common,security",
+              description = "OAuth scope. Used when saslAuthType is set to OAUTH.")
+    private String oauthScope;
+
     // Schema registry only options
     @UriParam(label = "schema")
     private String schemaRegistryURL;
@@ -382,7 +418,51 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         }
     }
 
+    /**
+     * Applies the simplified saslAuthType configuration if set and traditional JAAS config is not explicitly provided.
+     * <p>
+     * This method ensures backward compatibility: if the user has explicitly set saslJaasConfig, it takes precedence
+     * over the saslAuthType-based configuration.
+     * </p>
+     */
+    private void applyAuthTypeConfiguration() {
+        // Only apply if saslAuthType is set and saslJaasConfig is NOT explicitly set
+        if (saslAuthType != null && ObjectHelper.isEmpty(saslJaasConfig)) {
+            KafkaSecurityConfigurer configurer = KafkaSecurityConfigurer.forAuthType(saslAuthType);
+
+            // Configure based on auth type
+            if (saslAuthType.requiresCredentials()) {
+                configurer.withCredentials(saslUsername, saslPassword);
+            } else if (saslAuthType.requiresOAuth()) {
+                configurer.withOAuth(oauthClientId, oauthClientSecret, oauthTokenEndpointUri);
+                if (ObjectHelper.isNotEmpty(oauthScope)) {
+                    configurer.withOAuthScope(oauthScope);
+                }
+            } else if (saslAuthType.requiresKerberos()) {
+                // For Kerberos, we still use the existing kerberos properties
+                // The saslAuthType just helps set the mechanism and protocol
+            }
+
+            // Determine if we should use SSL (check if any SSL properties are set)
+            boolean hasSslConfig = ObjectHelper.isNotEmpty(sslTruststoreLocation)
+                    || ObjectHelper.isNotEmpty(sslKeystoreLocation)
+                    || sslContextParameters != null;
+
+            // For SASL types, default to SSL unless explicitly using SASL_PLAINTEXT
+            if (saslAuthType.isSasl()) {
+                boolean useSsl = !securityProtocol.equals("SASL_PLAINTEXT") && !securityProtocol.equals("PLAINTEXT");
+                configurer.withSsl(useSsl || hasSslConfig || saslAuthType != KafkaAuthType.NONE);
+            }
+
+            // Apply the configuration
+            configurer.configure(this);
+        }
+    }
+
     public Properties createProducerProperties() {
+        // Apply saslAuthType configuration if set (before creating properties)
+        applyAuthTypeConfiguration();
+
         Properties props = new Properties();
         addPropertyIfNotEmpty(props, ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, getKeySerializer());
         addPropertyIfNotEmpty(props, ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getValueSerializer());
@@ -472,6 +552,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     public Properties createConsumerProperties() {
+        // Apply saslAuthType configuration if set (before creating properties)
+        applyAuthTypeConfiguration();
+
         Properties props = new Properties();
         addPropertyIfNotEmpty(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializer());
         addPropertyIfNotEmpty(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializer());
@@ -1269,6 +1352,106 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setSaslJaasConfig(String saslJaasConfig) {
         this.saslJaasConfig = saslJaasConfig;
+    }
+
+    public KafkaAuthType getSaslAuthType() {
+        return saslAuthType;
+    }
+
+    /**
+     * Simplified authentication type to use. This provides an easier way to configure Kafka authentication without
+     * manually setting securityProtocol, saslMechanism, and saslJaasConfig.
+     * <p>
+     * When set, the appropriate security settings are automatically derived based on the authentication type. This is
+     * optional - you can still use the traditional approach with explicit securityProtocol, saslMechanism, and
+     * saslJaasConfig properties.
+     * </p>
+     * <p>
+     * Supported values: NONE, PLAIN, SCRAM_SHA_256, SCRAM_SHA_512, SSL, OAUTH, AWS_MSK_IAM, KERBEROS
+     * </p>
+     *
+     * @param saslAuthType the authentication type to use
+     */
+    public void setSaslAuthType(KafkaAuthType saslAuthType) {
+        this.saslAuthType = saslAuthType;
+    }
+
+    public String getSaslUsername() {
+        return saslUsername;
+    }
+
+    /**
+     * Username for SASL authentication. Used when saslAuthType is set to PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+     *
+     * @param saslUsername the SASL username
+     */
+    public void setSaslUsername(String saslUsername) {
+        this.saslUsername = saslUsername;
+    }
+
+    public String getSaslPassword() {
+        return saslPassword;
+    }
+
+    /**
+     * Password for SASL authentication. Used when saslAuthType is set to PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+     *
+     * @param saslPassword the SASL password
+     */
+    public void setSaslPassword(String saslPassword) {
+        this.saslPassword = saslPassword;
+    }
+
+    public String getOauthClientId() {
+        return oauthClientId;
+    }
+
+    /**
+     * OAuth client ID. Used when saslAuthType is set to OAUTH.
+     *
+     * @param oauthClientId the OAuth client ID
+     */
+    public void setOauthClientId(String oauthClientId) {
+        this.oauthClientId = oauthClientId;
+    }
+
+    public String getOauthClientSecret() {
+        return oauthClientSecret;
+    }
+
+    /**
+     * OAuth client secret. Used when saslAuthType is set to OAUTH.
+     *
+     * @param oauthClientSecret the OAuth client secret
+     */
+    public void setOauthClientSecret(String oauthClientSecret) {
+        this.oauthClientSecret = oauthClientSecret;
+    }
+
+    public String getOauthTokenEndpointUri() {
+        return oauthTokenEndpointUri;
+    }
+
+    /**
+     * OAuth token endpoint URI. Used when saslAuthType is set to OAUTH.
+     *
+     * @param oauthTokenEndpointUri the OAuth token endpoint URI
+     */
+    public void setOauthTokenEndpointUri(String oauthTokenEndpointUri) {
+        this.oauthTokenEndpointUri = oauthTokenEndpointUri;
+    }
+
+    public String getOauthScope() {
+        return oauthScope;
+    }
+
+    /**
+     * OAuth scope. Used when saslAuthType is set to OAUTH.
+     *
+     * @param oauthScope the OAuth scope
+     */
+    public void setOauthScope(String oauthScope) {
+        this.oauthScope = oauthScope;
     }
 
     public String getSecurityProtocol() {
