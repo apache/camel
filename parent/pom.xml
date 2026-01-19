@@ -457,7 +457,7 @@
         <protobuf-version>3.25.5</protobuf-version>
         <protobuf-maven-plugin-version>4.1.2</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
-        <prowide-version>SRU2025-10.3.3</prowide-version>
+        <prowide-version>SRU2025-10.3.4</prowide-version>
         <pubnub-version>12.1.1</pubnub-version>
         <pulsar-version>4.1.2</pulsar-version>
         <qdrant-client-version>1.16.2</qdrant-client-version>
