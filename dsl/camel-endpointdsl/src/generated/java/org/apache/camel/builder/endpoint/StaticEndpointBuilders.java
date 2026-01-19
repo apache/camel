@@ -1297,6 +1297,46 @@ public class StaticEndpointBuilders {
         return MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Polly (camel-aws2-polly)
+     * Synthesize speech using AWS Polly and AWS SDK version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-polly
+     * 
+     * Syntax: <code>aws2-polly:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Polly2EndpointBuilderFactory.Polly2EndpointBuilder aws2Polly(String path) {
+        return aws2Polly("aws2-polly", path);
+    }
+    /**
+     * AWS Polly (camel-aws2-polly)
+     * Synthesize speech using AWS Polly and AWS SDK version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-polly
+     * 
+     * Syntax: <code>aws2-polly:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Polly2EndpointBuilderFactory.Polly2EndpointBuilder aws2Polly(String componentName, String path) {
+        return Polly2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
      * 

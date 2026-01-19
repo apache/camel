@@ -228,6 +228,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws2-polly</artifactId>
+        <version>4.18.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws2-redshift</artifactId>
         <version>4.18.0-SNAPSHOT</version>
       </dependency>

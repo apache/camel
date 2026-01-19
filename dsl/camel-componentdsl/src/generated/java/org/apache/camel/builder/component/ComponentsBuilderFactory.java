@@ -439,6 +439,19 @@ public interface ComponentsBuilderFactory {
         return Aws2MskComponentBuilderFactory.aws2Msk();
     }
     /**
+     * AWS Polly (camel-aws2-polly)
+     * Synthesize speech using AWS Polly and AWS SDK version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-polly
+     * 
+     * @return the dsl builder
+     */
+    static Aws2PollyComponentBuilderFactory.Aws2PollyComponentBuilder aws2Polly() {
+        return Aws2PollyComponentBuilderFactory.aws2Polly();
+    }
+    /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
      * 
