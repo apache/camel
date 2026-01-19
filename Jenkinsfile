@@ -139,26 +139,7 @@ pipeline {
                         }
                     }
 
-                    stage('Code Quality Review') {
-                        steps {
-                            script {
-                                if ("${PLATFORM}" == "ubuntu-avx") {
-                                    if ("${JDK_NAME}" == "jdk_17_latest") {
-                                        withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
-                                            echo "Code quality review ENABLED for ${PLATFORM}"
-                                            sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME clean test org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage"
-                                        }
-                                    } else {
-                                        echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
-                                    }
-                                } else {
-                                    echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
-                                }
-                            }
-                        }
-                    }
-
-                    stage('Test') {
+                    stage('Test and Quality') {
                         steps {
                             echo "Do Test for ${PLATFORM}-${JDK_NAME}"
                             timeout(unit: 'HOURS', time: 7) {
@@ -166,12 +147,20 @@ pipeline {
                                     if ("${PLATFORM}" == "ubuntu-avx") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD}"
+                                            echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
+                                        } else if ("${JDK_NAME}" == "jdk_17_latest") {
+                                            withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
+                                                echo "Code quality review ENABLED for ${PLATFORM} with ${JDK_NAME}"
+                                                sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage"
+                                            }
                                         } else {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify"
+                                            echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
                                         }
                                     } else {
                                         // Skip the test case execution of modules which are either not supported on ppc64le or vendor images are not available for ppc64le.
                                         sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_PARAMS_ALT_ARCHS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs'"
+                                        echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
                                     }
                                 }
                             }
