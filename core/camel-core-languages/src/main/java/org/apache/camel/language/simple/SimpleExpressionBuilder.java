@@ -825,6 +825,90 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Sets the message header with the given expression value
+     */
+    public static Expression setHeaderExpression(final String name, final String type, final String expression) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                classResolver = context.getClassResolver();
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Class<?> clazz = Object.class;
+                if (type != null) {
+                    try {
+                        clazz = classResolver.resolveMandatoryClass(type);
+                    } catch (ClassNotFoundException e) {
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+                Object value = exp.evaluate(exchange, clazz);
+                if (value != null) {
+                    exchange.getMessage().setHeader(name, value);
+                } else {
+                    exchange.getMessage().removeHeader(name);
+                }
+                // does not return anything
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "setHeader(" + name + "," + expression + ")";
+            }
+        };
+    }
+
+    /**
+     * Sets the variable with the given expression value
+     */
+    public static Expression setVariableExpression(final String name, final String type, final String expression) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                classResolver = context.getClassResolver();
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Class<?> clazz = Object.class;
+                if (type != null) {
+                    try {
+                        clazz = classResolver.resolveMandatoryClass(type);
+                    } catch (ClassNotFoundException e) {
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+                Object value = exp.evaluate(exchange, clazz);
+                if (value != null) {
+                    exchange.setVariable(name, value);
+                } else {
+                    exchange.removeVariable(name);
+                }
+                // does not return anything
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "setVariable(" + name + "," + expression + ")";
+            }
+        };
+    }
+
+    /**
      * Replaces string values from the expression
      */
     public static Expression replaceExpression(final String expression, final String from, final String to) {
