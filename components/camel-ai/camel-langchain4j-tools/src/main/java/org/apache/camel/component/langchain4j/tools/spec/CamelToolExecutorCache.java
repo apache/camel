@@ -63,6 +63,38 @@ public final class CamelToolExecutorCache {
         }
     }
 
+    /**
+     * Removes a specific tool specification from the exposed tools cache
+     *
+     * @param chatId        the chat/tag identifier
+     * @param specification the tool specification to remove
+     */
+    public void remove(String chatId, CamelToolSpecification specification) {
+        Set<CamelToolSpecification> toolsForTag = tools.get(chatId);
+        if (toolsForTag != null) {
+            toolsForTag.remove(specification);
+            if (toolsForTag.isEmpty()) {
+                tools.remove(chatId);
+            }
+        }
+    }
+
+    /**
+     * Removes a specific tool specification from the searchable tools cache
+     *
+     * @param chatId        the chat/tag identifier
+     * @param specification the tool specification to remove
+     */
+    public void removeSearchable(String chatId, CamelToolSpecification specification) {
+        Set<CamelToolSpecification> toolsForTag = searchableTools.get(chatId);
+        if (toolsForTag != null) {
+            toolsForTag.remove(specification);
+            if (toolsForTag.isEmpty()) {
+                searchableTools.remove(chatId);
+            }
+        }
+    }
+
     public Map<String, Set<CamelToolSpecification>> getTools() {
         return tools;
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.langchain4j.tools;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,13 +45,15 @@ public class ToolSearchTool {
     }
 
     /**
-     * Searches for tools matching the given tags
+     * Searches for tools matching the given tags. The search looks for tools in the searchable registry that match any
+     * of the provided tags.
      *
      * @param  tags comma-separated list of tags to search for
-     * @return      list of matching tool specifications
+     * @return      list of matching tool specifications (without duplicates)
      */
     public List<CamelToolSpecification> searchTools(String tags) {
-        List<CamelToolSpecification> matchingTools = new ArrayList<>();
+        // Use LinkedHashSet to maintain insertion order while preventing duplicates
+        Set<CamelToolSpecification> matchingTools = new LinkedHashSet<>();
 
         if (tags == null || tags.trim().isEmpty()) {
             // Return all searchable tools if no tags specified
@@ -60,18 +63,17 @@ public class ToolSearchTool {
         String[] searchTags = TagsHelper.splitTags(tags);
         Map<String, Set<CamelToolSpecification>> searchableTools = toolCache.getSearchableTools();
 
+        // Search for tools matching any of the search tags
+        // Note: We don't filter by producer tags here - the search should find all tools
+        // with matching tags in the searchable registry, regardless of producer tags
         for (String searchTag : searchTags) {
-            for (String producerTag : producerTags) {
-                if (searchTag.equals(producerTag)) {
-                    Set<CamelToolSpecification> toolsForTag = searchableTools.get(searchTag);
-                    if (toolsForTag != null) {
-                        matchingTools.addAll(toolsForTag);
-                    }
-                }
+            Set<CamelToolSpecification> toolsForTag = searchableTools.get(searchTag);
+            if (toolsForTag != null) {
+                matchingTools.addAll(toolsForTag);
             }
         }
 
-        return matchingTools;
+        return new ArrayList<>(matchingTools);
     }
 
     /**

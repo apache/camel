@@ -242,3 +242,21 @@ In this example:
 * *Scalability*: Support hundreds or thousands of tools without overwhelming the LLM
 * *Dynamic Discovery*: Let the LLM discover tools as needed based on the conversation
 * *Better Organization*: Group related tools by tags for easier discovery
+
+==== Best Practices
+
+When using the Tool Search Tool feature, consider the following best practices:
+
+* *Tag Strategy*: Use meaningful, hierarchical tags (e.g., "users", "users.admin", "database.users") to organize tools logically
+* *Expose Common Tools*: Keep frequently used tools exposed (`exposed=true`) and make specialized tools searchable (`exposed=false`)
+* *Performance Considerations*: While the search is efficient, having thousands of searchable tools may impact search performance. Consider grouping tools by functional area
+* *LLM Guidance*: In your system message, inform the LLM about the availability of the `toolSearchTool` and when to use it
+* *Tag Naming*: Use consistent, lowercase tag names without special characters for best compatibility
+* *Tool Descriptions*: Write clear, descriptive tool descriptions as they are returned in search results to help the LLM choose the right tool
+* *Testing*: Test your tool organization with real queries to ensure the LLM can discover and use tools effectively
+
+==== Limitations
+
+* The LLM must be instructed to use the `toolSearchTool` - it won't automatically know to search for tools
+* Search is based on exact tag matching - fuzzy matching or semantic search is not currently supported
+* The feature requires an LLM with good function-calling capabilities to work effectively

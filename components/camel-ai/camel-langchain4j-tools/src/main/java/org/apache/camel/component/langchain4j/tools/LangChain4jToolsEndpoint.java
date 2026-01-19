@@ -40,6 +40,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHEME;
 
@@ -48,6 +50,8 @@ import static org.apache.camel.component.langchain4j.tools.LangChain4jTools.SCHE
              syntax = "langchain4j-tools:toolId",
              category = { Category.AI })
 public class LangChain4jToolsEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LangChain4jToolsEndpoint.class);
 
     @Metadata(required = true)
     @UriPath(description = "The tool id")
@@ -81,6 +85,9 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     @UriParam(description = "Whether the tool is automatically exposed to the LLM. When false, the tool is added to a searchable list and can be discovered via the tool-search-tool",
               defaultValue = "true")
     private boolean exposed = true;
+
+    // Track the tool specification created by this endpoint for proper cleanup
+    private CamelToolSpecification camelToolSpecification;
 
     public LangChain4jToolsEndpoint(String uri, LangChain4jToolsComponent component, String toolId, String tags,
                                     LangChain4jToolsConfiguration configuration) {
@@ -148,15 +155,16 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
         final LangChain4jToolsConsumer langChain4jToolsConsumer = new LangChain4jToolsConsumer(this, processor);
         configureConsumer(langChain4jToolsConsumer);
 
-        CamelToolSpecification camelToolSpecification
-                = new CamelToolSpecification(toolSpecification, langChain4jToolsConsumer, exposed);
+        camelToolSpecification = new CamelToolSpecification(toolSpecification, langChain4jToolsConsumer, exposed);
         final CamelToolExecutorCache executorCache = CamelToolExecutorCache.getInstance();
 
         String[] splitTags = TagsHelper.splitTags(tags);
         for (String tag : splitTags) {
             if (exposed) {
+                LOG.debug("Registering exposed tool: {} with tag: {}", toolSpecification.name(), tag);
                 executorCache.put(tag, camelToolSpecification);
             } else {
+                LOG.debug("Registering searchable tool: {} with tag: {}", toolSpecification.name(), tag);
                 executorCache.putSearchable(tag, camelToolSpecification);
             }
         }
@@ -245,7 +253,7 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     /**
      * Whether the tool is automatically exposed to the LLM
      *
-     * @return
+     * @return true if the tool is exposed, false if searchable only
      */
     public boolean isExposed() {
         return exposed;
@@ -259,8 +267,23 @@ public class LangChain4jToolsEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         super.doStop();
 
-        CamelToolExecutorCache.getInstance().getTools().clear();
-        CamelToolExecutorCache.getInstance().getSearchableTools().clear();
+        // Only remove tools registered by this endpoint, not all tools
+        if (camelToolSpecification != null) {
+            final CamelToolExecutorCache executorCache = CamelToolExecutorCache.getInstance();
+            String[] splitTags = TagsHelper.splitTags(tags);
+
+            for (String tag : splitTags) {
+                if (exposed) {
+                    LOG.debug("Removing exposed tool: {} with tag: {}",
+                            camelToolSpecification.getToolSpecification().name(), tag);
+                    executorCache.remove(tag, camelToolSpecification);
+                } else {
+                    LOG.debug("Removing searchable tool: {} with tag: {}",
+                            camelToolSpecification.getToolSpecification().name(), tag);
+                    executorCache.removeSearchable(tag, camelToolSpecification);
+                }
+            }
+        }
     }
 
     /**

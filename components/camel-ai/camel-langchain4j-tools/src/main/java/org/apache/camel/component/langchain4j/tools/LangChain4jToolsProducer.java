@@ -225,9 +225,22 @@ public class LangChain4jToolsProducer extends DefaultProducer {
     private void handleToolSearchToolInvocation(
             ToolExecutionRequest toolExecutionRequest, List<ChatMessage> chatMessages, Exchange exchange) {
         try {
+            // Validate arguments
+            String arguments = toolExecutionRequest.arguments();
+            if (arguments == null || arguments.trim().isEmpty()) {
+                LOG.warn("ToolSearchTool invoked with null or empty arguments");
+                chatMessages.add(new ToolExecutionResultMessage(
+                        toolExecutionRequest.id(),
+                        toolExecutionRequest.name(),
+                        "No search criteria provided. Please specify tags to search for tools."));
+                return;
+            }
+
             // Parse the arguments
-            JsonNode jsonNode = objectMapper.readValue(toolExecutionRequest.arguments(), JsonNode.class);
+            JsonNode jsonNode = objectMapper.readValue(arguments, JsonNode.class);
             String tags = jsonNode.has("tags") ? jsonNode.get("tags").asText() : "";
+
+            LOG.debug("ToolSearchTool searching for tags: {}", tags);
 
             // Search for tools
             List<CamelToolSpecification> matchingTools = toolSearchTool.searchTools(tags);
@@ -341,7 +354,8 @@ public class LangChain4jToolsProducer extends DefaultProducer {
                 .description(ToolSearchTool.TOOL_DESCRIPTION)
                 .parameters(JsonObjectSchema.builder()
                         .addProperty("tags", JsonStringSchema.builder()
-                                .description("Comma-separated list of tags to search for tools")
+                                .description(
+                                        "Comma-separated list of tags to search for tools. Examples: 'users', 'email,users', 'database'. Leave empty to see all available searchable tools.")
                                 .build())
                         .build())
                 .build();
