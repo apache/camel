@@ -249,6 +249,47 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Converts the given expressions to a number and return the absolute value (uses message body if expression is
+     * null)
+     */
+    public static Expression absExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Long.class);
+                } else {
+                    value = exchange.getMessage().getBody(Long.class);
+                }
+                if (value != null) {
+                    value = Math.abs(value);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "abs(" + expression + ")";
+                } else {
+                    return "abs()";
+                }
+            }
+        };
+    }
+
+    /**
      * Trims the given expressions (uses message body if expression is null)
      */
     public static Expression trimExpression(final String expression) {

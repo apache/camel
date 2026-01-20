@@ -126,6 +126,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
+|`abs(exp)` | `Long` | Converts the message body (or expression) to a long number and return the absolute value.
 |`bean(name.method)` | `Object` | Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language. Specifying a method name, you must use dot as the separator. We also support the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean] component. Camel will by default lookup a bean by the given name. However, if you need to refer to a bean class (such as calling a static method), then you can prefix with the type, such as `bean:type:fqnClassName`.
 |`body._OGNL_` | `Object` | The body invoked using a Camel _OGNL syntax_. For example to invoke the `getCountryCode` on the message body, you can use `${body.getCountryCode()}`. In the message body is a POJO then you can use a short-hand syntax `${body.countryCode}`.
 |`bodyAs(type)` | `<T>` | Converts the body to the given type determined by its classname.

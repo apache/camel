@@ -832,6 +832,19 @@ public final class CSimpleHelper {
         return CamelContextHelper.mandatoryLookup(exchange.getContext(), generator, UuidGenerator.class);
     }
 
+    public static Long abs(Exchange exchange, Object value) {
+        Long body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(Long.class);
+        }
+        if (body != null) {
+            body = Math.abs(body);
+        }
+        return body;
+    }
+
     public static String trim(Exchange exchange, Object value) {
         String body;
         if (value != null) {

@@ -2694,6 +2694,33 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertEquals(1, exchange.getVariables().size());
     }
 
+    @Test
+    public void testAbs() {
+        exchange.getMessage().setBody("-987");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${abs()}");
+        Long l = expression.evaluate(exchange, Long.class);
+        assertEquals(987L, l);
+
+        expression = context.resolveLanguage("csimple").createExpression("${abs()}");
+        Integer i = expression.evaluate(exchange, Integer.class);
+        assertEquals(987, i);
+
+        expression = context.resolveLanguage("csimple").createExpression("${abs(${body})}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("987", s);
+
+        exchange.getMessage().setHeader("myVal", "0");
+        expression = context.resolveLanguage("csimple").createExpression("${abs(${header.myVal})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("0", s);
+
+        exchange.getMessage().setHeader("myVal", -222);
+        expression = context.resolveLanguage("csimple").createExpression("${abs(${header.myVal})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("222", s);
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";

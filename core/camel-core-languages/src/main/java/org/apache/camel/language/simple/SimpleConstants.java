@@ -268,6 +268,9 @@ public final class SimpleConstants {
     @Metadata(description = "The map function creates a LinkedHashMap with the given set of pairs.",
               label = "function", javaType = "java.util.LinkedHashMap", displayName = "Create Map of pairs")
     public static final String MAP = "map(key1,value1,...)";
+    @Metadata(description = "Converts the message body (or expression) to a long number and return the absolute value.",
+              label = "function", javaType = "Long", displayName = "Absolute Number")
+    public static final String ABS = "abs(exp)";
     @Metadata(description = "All the attachments as a Map<String,DataHandler.", javaType = "java.util.Map", label = "function")
     public static final String ATTACHMENTS = "attachments";
     @Metadata(description = "The number of attachments. Is 0 if there are no attachments.", javaType = "int",
