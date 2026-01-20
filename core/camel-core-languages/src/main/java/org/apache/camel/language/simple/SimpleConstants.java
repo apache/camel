@@ -115,6 +115,10 @@ public final class SimpleConstants {
               label = "function", javaType = "String", displayName = "Date Formatter")
     public static final String DATE_WITH_TIMEZONE = "date-with-timezone(command:timezone:pattern)";
 
+    @Metadata(description = "Returns a set of all the values with duplicates removed",
+              label = "function", javaType = "long", displayName = "Distinct Values")
+    public static final String DISTINCT = "distinct(val...)";
+
     @Metadata(description = "Creates a new empty object (decided by type). Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.LinkedHashMap`.",
               label = "function", javaType = "Object", displayName = "Create Empty Object")
     public static final String EMPTY = "empty(type)";
