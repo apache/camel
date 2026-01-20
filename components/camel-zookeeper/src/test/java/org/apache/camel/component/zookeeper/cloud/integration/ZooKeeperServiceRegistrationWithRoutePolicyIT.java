@@ -20,6 +20,8 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 
+@Deprecated(since = "4.7.0")
+// NOTE: we should remove this test when removing the source code deprecation on cloud.
 public class ZooKeeperServiceRegistrationWithRoutePolicyIT extends ZooKeeperServiceRegistrationITBase {
     @Override
     protected RoutesBuilder createRouteBuilder() {
