@@ -36,6 +36,14 @@ public class EchoService {
         if (fooCookie != null && "bar".equals(fooCookie.getValue())) {
             return Response.ok("Old " + string).build();
         }
-        return Response.ok("New " + string).cookie(new NewCookie("foo", "bar", "/", null, 1, null, -1, false)).build();
+        return Response.ok("New " + string).cookie(
+                new NewCookie.Builder("foo")
+                        .value("bar")
+                        .path("/")
+                        .version(1)
+                        .maxAge(-1)
+                        .secure(false)
+                        .build())
+                .build();
     }
 }
