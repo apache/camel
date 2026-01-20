@@ -79,7 +79,7 @@ public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceL
         super.doStart();
         awsLambdaClient = configuration.getAwsLambdaClient() != null
                 ? configuration.getAwsLambdaClient()
-                : Lambda2ClientFactory.getLambdaClient(configuration).getLambdaClient();
+                : Lambda2ClientFactory.getLambdaClient(configuration);
     }
 
     @Override

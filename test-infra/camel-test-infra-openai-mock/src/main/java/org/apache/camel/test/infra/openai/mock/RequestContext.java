@@ -51,8 +51,34 @@ public class RequestContext {
 
             String role = messageNode.path("role").asText();
             if ("user".equals(role)) {
-                return messageNode.path("content").asText();
+                return extractContentText(messageNode.path("content"));
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extracts text content from either a plain string or an array of content parts. Supports formats: - Simple string:
+     * "Hello" - Array of content parts: [{"type": "text", "text": "Hello"}]
+     */
+    private String extractContentText(JsonNode contentNode) {
+        if (contentNode.isTextual()) {
+            return contentNode.asText();
+        }
+
+        if (contentNode.isArray()) {
+            StringBuilder textBuilder = new StringBuilder();
+            for (JsonNode part : contentNode) {
+                String type = part.path("type").asText();
+                if ("text".equals(type)) {
+                    if (textBuilder.length() > 0) {
+                        textBuilder.append(" ");
+                    }
+                    textBuilder.append(part.path("text").asText());
+                }
+            }
+            return textBuilder.length() > 0 ? textBuilder.toString() : null;
         }
 
         return null;

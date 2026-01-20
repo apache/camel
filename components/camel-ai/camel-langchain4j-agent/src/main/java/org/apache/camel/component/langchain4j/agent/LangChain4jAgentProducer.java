@@ -43,10 +43,22 @@ public class LangChain4jAgentProducer extends DefaultProducer {
     private final LangChain4jAgentEndpoint endpoint;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private AgentFactory agentFactory;
+    private Agent agent;
 
     public LangChain4jAgentProducer(LangChain4jAgentEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (endpoint.getConfiguration().getAgent() != null) {
+            agent = endpoint.getConfiguration().getAgent();
+        } else {
+            agent = endpoint.getCamelContext().getRegistry().lookupByNameAndType(endpoint.getAgentId(), Agent.class);
+        }
     }
 
     @Override
@@ -57,11 +69,8 @@ public class LangChain4jAgentProducer extends DefaultProducer {
         // tags for Camel Routes as Tools
         String tags = endpoint.getConfiguration().getTags();
 
-        Agent agent;
         if (agentFactory != null) {
             agent = agentFactory.createAgent(exchange);
-        } else {
-            agent = endpoint.getConfiguration().getAgent();
         }
 
         AiAgentBody<?> aiAgentBody = agent.processBody(messagePayload, exchange);

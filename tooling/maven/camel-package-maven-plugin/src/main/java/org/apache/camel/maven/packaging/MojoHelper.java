@@ -44,7 +44,8 @@ public final class MojoHelper {
                         dir.resolve("camel-langchain4j-tokenizer"), dir.resolve("camel-langchain4j-tools"),
                         dir.resolve("camel-langchain4j-web-search"),
                         dir.resolve("camel-qdrant"), dir.resolve("camel-milvus"), dir.resolve("camel-neo4j"),
-                        dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"),
+                        dir.resolve("camel-openai"),
+                        dir.resolve("camel-pinecone"), dir.resolve("camel-kserve"), dir.resolve("camel-chroma"),
                         dir.resolve("camel-torchserve"), dir.resolve("camel-tensorflow-serving"),
                         dir.resolve("camel-weaviate"), dir.resolve("camel-docling"));
             case "camel-as2":
@@ -80,7 +81,7 @@ public final class MojoHelper {
                         dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
                         dir.resolve("camel-google-pubsub-lite"), dir.resolve("camel-google-sheets"),
                         dir.resolve("camel-google-storage"), dir.resolve("camel-google-functions"),
-                        dir.resolve("camel-google-secret-manager"));
+                        dir.resolve("camel-google-secret-manager"), dir.resolve("camel-google-vertexai"));
             case "camel-debezium":
                 return Arrays.asList(dir.resolve("camel-debezium-mongodb"), dir.resolve("camel-debezium-mysql"),
                         dir.resolve("camel-debezium-postgres"), dir.resolve("camel-debezium-sqlserver"),
@@ -105,7 +106,9 @@ public final class MojoHelper {
                 return Arrays.asList(dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-junit6"),
                         dir.resolve("camel-test-spring-junit5"),
-                        dir.resolve("camel-test-main-junit5"));
+                        dir.resolve("camel-test-spring-junit6"),
+                        dir.resolve("camel-test-main-junit5"),
+                        dir.resolve("camel-test-main-junit6"));
             case "camel-aws":
                 return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
                         dir.resolve("camel-aws2-ddb"), dir.resolve("camel-aws2-ec2"),
@@ -114,6 +117,7 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-kinesis"), dir.resolve("camel-aws2-kms"), dir.resolve("camel-aws2-lambda"),
                         dir.resolve("camel-aws2-mq"),
                         dir.resolve("camel-aws2-msk"), dir.resolve("camel-aws2-redshift"),
+                        dir.resolve("camel-aws2-rekognition"),
                         dir.resolve("camel-aws2-s3"), dir.resolve("camel-aws2-ses"),
                         dir.resolve("camel-aws2-sns"),
                         dir.resolve("camel-aws2-sqs"), dir.resolve("camel-aws2-step-functions"),
@@ -121,7 +125,8 @@ public final class MojoHelper {
                         dir.resolve("camel-aws2-timestream"), dir.resolve("camel-aws2-translate"),
                         dir.resolve("camel-aws-xray"), dir.resolve("camel-aws-secrets-manager"),
                         dir.resolve("camel-aws-cloudtrail"), dir.resolve("camel-aws-config"), dir.resolve("camel-aws-bedrock"),
-                        dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"));
+                        dir.resolve("camel-aws2-textract"), dir.resolve("camel-aws2-transcribe"),
+                        dir.resolve("camel-aws2-s3-vectors"));
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),
@@ -140,7 +145,8 @@ public final class MojoHelper {
                         dir.resolve("camel-ibm-watson-language"),
                         dir.resolve("camel-ibm-watson-discovery"),
                         dir.resolve("camel-ibm-watson-text-to-speech"),
-                        dir.resolve("camel-ibm-watson-speech-to-text"));
+                        dir.resolve("camel-ibm-watson-speech-to-text"),
+                        dir.resolve("camel-ibm-watsonx-ai"));
             case "camel-knative":
                 return Collections.singletonList(dir.resolve("camel-knative-component"));
             case "camel-yaml-dsl":

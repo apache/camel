@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -173,7 +174,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Test
     @Order(2)
     void testCreateRealmWithHeaders() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:createRealm", exchange);
@@ -189,7 +190,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Test
     @Order(4)
     void testGetRealm() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:getRealm", exchange);
@@ -207,7 +208,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Test
     @Order(5)
     void testCreateUserWithHeaders() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USERNAME, TEST_USER_NAME);
         exchange.getIn().setHeader(KeycloakConstants.USER_EMAIL, TEST_USER_NAME + "@test.com");
@@ -238,7 +239,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
         user.setLastName("User POJO");
         user.setEnabled(true);
 
-        Exchange exchange = createExchangeWithBody(user);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, user);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:createUserPojo", exchange);
@@ -255,7 +256,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Test
     @Order(7)
     void testListUsers() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:listUsers", exchange);
@@ -273,7 +274,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Test
     @Order(8)
     void testCreateRoleWithHeaders() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.ROLE_NAME, TEST_ROLE_NAME);
         exchange.getIn().setHeader(KeycloakConstants.ROLE_DESCRIPTION, "Test role for integration testing");
@@ -297,7 +298,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
         role.setName(pojoRoleName);
         role.setDescription("Test role created via POJO");
 
-        Exchange exchange = createExchangeWithBody(role);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, role);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:createRolePojo", exchange);
@@ -313,7 +314,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Test
     @Order(10)
     void testGetRole() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
         exchange.getIn().setHeader(KeycloakConstants.ROLE_NAME, TEST_ROLE_NAME);
 
@@ -332,7 +333,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Test
     @Order(11)
     void testListRoles() {
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:listRoles", exchange);
@@ -357,7 +358,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
         assertTrue(ex.getCause().getMessage().contains("Realm name must be specified"));
 
         // Test with non-existent realm
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, "non-existent-realm");
         exchange.getIn().setHeader(KeycloakConstants.USERNAME, "testuser");
 
@@ -372,7 +373,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
 
         for (String roleName : rolesToDelete) {
             try {
-                Exchange exchange = createExchangeWithBody(null);
+                Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
                 exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
                 exchange.getIn().setHeader(KeycloakConstants.ROLE_NAME, roleName);
 
@@ -392,7 +393,7 @@ public class KeycloakProducerIT extends CamelTestSupport {
     @Order(99)
     void testCleanupRealm() {
         // Delete the test realm (this will also delete all users and roles in it)
-        Exchange exchange = createExchangeWithBody(null);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, null);
         exchange.getIn().setHeader(KeycloakConstants.REALM_NAME, TEST_REALM_NAME);
 
         Exchange result = template.send("direct:deleteRealm", exchange);

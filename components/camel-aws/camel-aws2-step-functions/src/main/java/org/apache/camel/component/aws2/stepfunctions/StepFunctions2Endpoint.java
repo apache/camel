@@ -64,7 +64,7 @@ public class StepFunctions2Endpoint extends DefaultEndpoint implements EndpointS
         super.doStart();
         awsSfnClient = configuration.getAwsSfnClient() != null
                 ? configuration.getAwsSfnClient()
-                : StepFunctions2ClientFactory.getSfnClient(configuration).getSfnClient();
+                : StepFunctions2ClientFactory.getSfnClient(configuration);
     }
 
     @Override

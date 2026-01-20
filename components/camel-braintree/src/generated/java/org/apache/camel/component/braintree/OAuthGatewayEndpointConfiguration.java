@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "connectUrl", signatures={"String connectUrl(com.braintreegateway.OAuthConnectUrlRequest request)"}), @ApiMethod(methodName = "createTokenFromCode", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthCredentials> createTokenFromCode(com.braintreegateway.OAuthCredentialsRequest request)"}), @ApiMethod(methodName = "createTokenFromRefreshToken", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthCredentials> createTokenFromRefreshToken(com.braintreegateway.OAuthCredentialsRequest request)"}), @ApiMethod(methodName = "revokeAccessToken", signatures={"com.braintreegateway.Result<com.braintreegateway.OAuthResult> revokeAccessToken(String accessToken)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class OAuthGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "revokeAccessToken")})

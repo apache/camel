@@ -16,60 +16,66 @@
  */
 package org.apache.camel.component.aws2.kinesis;
 
-import org.apache.camel.component.aws2.kinesis.client.KinesisAsyncInternalClient;
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
-import org.apache.camel.component.aws2.kinesis.client.KinesisInternalClient;
-import org.apache.camel.component.aws2.kinesis.client.impl.*;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
+import software.amazon.awssdk.services.kinesis.KinesisClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class KinesisClientFactoryTest {
 
     @Test
-    void getStandardKinesisClientDefault() {
-        Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
-        KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
-        assertTrue(kinesisClient instanceof KinesisClientStandardImpl);
-    }
-
-    @Test
-    void getStandardKinesisClient() {
-        Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
-        kinesis2Configuration.setUseDefaultCredentialsProvider(false);
-        KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
-        assertTrue(kinesisClient instanceof KinesisClientStandardImpl);
-    }
-
-    @Test
-    void getIAMOptimizedKinesisClient() {
+    void getKinesisClientWithDefaultCredentials() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
         kinesis2Configuration.setUseDefaultCredentialsProvider(true);
-        KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
-        assertTrue(kinesisClient instanceof KinesisClientIAMOptimizedImpl);
+        kinesis2Configuration.setRegion("eu-west-1");
+        KinesisClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
+        assertNotNull(kinesisClient);
+        kinesisClient.close();
     }
 
     @Test
-    void getSessionTokenKinesisClient() {
+    void getKinesisClientWithStaticCredentials() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
-        kinesis2Configuration.setUseSessionCredentials(true);
-        KinesisInternalClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
-        assertTrue(kinesisClient instanceof KinesisClientSessionTokenImpl);
+        kinesis2Configuration.setAccessKey("testAccessKey");
+        kinesis2Configuration.setSecretKey("testSecretKey");
+        kinesis2Configuration.setRegion("eu-west-1");
+        KinesisClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
+        assertNotNull(kinesisClient);
+        kinesisClient.close();
     }
 
     @Test
-    void getSessionTokenAsyncKinesisClient() {
+    void getKinesisAsyncClientWithDefaultCredentials() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
-        kinesis2Configuration.setUseSessionCredentials(true);
-        KinesisAsyncInternalClient kinesisClient = KinesisClientFactory.getKinesisAsyncClient(kinesis2Configuration);
-        assertTrue(kinesisClient instanceof KinesisAsyncClientSessionTokenImpl);
+        kinesis2Configuration.setUseDefaultCredentialsProvider(true);
+        kinesis2Configuration.setRegion("eu-west-1");
+        KinesisAsyncClient kinesisAsyncClient = KinesisClientFactory.getKinesisAsyncClient(kinesis2Configuration);
+        assertNotNull(kinesisAsyncClient);
+        kinesisAsyncClient.close();
     }
 
     @Test
-    void getStandardKinesisAsyncClient() {
+    void getKinesisAsyncClientWithStaticCredentials() {
         Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
-        kinesis2Configuration.setAsyncClient(true);
-        KinesisAsyncInternalClient kinesisClient = KinesisClientFactory.getKinesisAsyncClient(kinesis2Configuration);
-        assertTrue(kinesisClient instanceof KinesisAsyncClientStandardImpl);
+        kinesis2Configuration.setAccessKey("testAccessKey");
+        kinesis2Configuration.setSecretKey("testSecretKey");
+        kinesis2Configuration.setRegion("eu-west-1");
+        KinesisAsyncClient kinesisAsyncClient = KinesisClientFactory.getKinesisAsyncClient(kinesis2Configuration);
+        assertNotNull(kinesisAsyncClient);
+        kinesisAsyncClient.close();
+    }
+
+    @Test
+    void getKinesisClientWithEndpointOverride() {
+        Kinesis2Configuration kinesis2Configuration = new Kinesis2Configuration();
+        kinesis2Configuration.setUseDefaultCredentialsProvider(true);
+        kinesis2Configuration.setRegion("eu-west-1");
+        kinesis2Configuration.setOverrideEndpoint(true);
+        kinesis2Configuration.setUriEndpointOverride("http://localhost:4566");
+        KinesisClient kinesisClient = KinesisClientFactory.getKinesisClient(kinesis2Configuration);
+        assertNotNull(kinesisClient);
+        kinesisClient.close();
     }
 }

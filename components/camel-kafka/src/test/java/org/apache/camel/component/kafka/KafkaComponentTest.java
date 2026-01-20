@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.kafka.security.KafkaAuthType;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
@@ -35,7 +36,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaComponentTest {
 
@@ -369,6 +372,149 @@ public class KafkaComponentTest {
         final Properties consumerProperties = endpoint.getConfiguration().createConsumerProperties();
         assertEquals("123", consumerProperties.getProperty("extra.1"));
         assertEquals("test", consumerProperties.getProperty("extra.2"));
+    }
+
+    // ========================================================================
+    // saslAuthType simplified authentication tests
+    // ========================================================================
+
+    @Test
+    public void testSaslAuthTypeScramSha512() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=SCRAM_SHA_512&saslUsername=myuser&saslPassword=mypass";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.SCRAM_SHA_512, endpoint.getConfiguration().getSaslAuthType());
+        assertEquals("myuser", endpoint.getConfiguration().getSaslUsername());
+        assertEquals("mypass", endpoint.getConfiguration().getSaslPassword());
+
+        // Create properties and verify security is configured
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("SCRAM-SHA-512", props.getProperty(SaslConfigs.SASL_MECHANISM));
+        assertNotNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("ScramLoginModule"));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("username=\"myuser\""));
+    }
+
+    @Test
+    public void testSaslAuthTypePlain() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=PLAIN&saslUsername=user&saslPassword=pass";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.PLAIN, endpoint.getConfiguration().getSaslAuthType());
+
+        Properties props = endpoint.getConfiguration().createConsumerProperties();
+        assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("PLAIN", props.getProperty(SaslConfigs.SASL_MECHANISM));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("PlainLoginModule"));
+    }
+
+    @Test
+    public void testSaslAuthTypeAwsMskIam() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=AWS_MSK_IAM";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.AWS_MSK_IAM, endpoint.getConfiguration().getSaslAuthType());
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("AWS_MSK_IAM", props.getProperty(SaslConfigs.SASL_MECHANISM));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("IAMLoginModule"));
+    }
+
+    @Test
+    public void testSaslAuthTypeNone() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=NONE";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.NONE, endpoint.getConfiguration().getSaslAuthType());
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("PLAINTEXT", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+    }
+
+    @Test
+    public void testSaslAuthTypeSsl() {
+        String uri = "kafka:mytopic?brokers=broker1:12345&saslAuthType=SSL";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals(KafkaAuthType.SSL, endpoint.getConfiguration().getSaslAuthType());
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+    }
+
+    // ========================================================================
+    // Backward compatibility tests - existing security options should still work
+    // ========================================================================
+
+    @Test
+    public void testBackwardCompatibilityExplicitSaslJaasConfig() {
+        // When saslJaasConfig is explicitly set, it should take precedence over saslAuthType
+        String customJaasConfig
+                = "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"explicit\" password=\"explicit\";";
+        String uri = "kafka:mytopic?brokers=broker1:12345"
+                     + "&securityProtocol=SASL_SSL"
+                     + "&saslMechanism=PLAIN"
+                     + "&saslJaasConfig=" + customJaasConfig;
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("PLAIN", props.getProperty(SaslConfigs.SASL_MECHANISM));
+        assertEquals(customJaasConfig, props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+    }
+
+    @Test
+    public void testBackwardCompatibilityExplicitSecurityProtocol() {
+        // Traditional approach should still work
+        String uri = "kafka:mytopic?brokers=broker1:12345&securityProtocol=SASL_PLAINTEXT&saslMechanism=PLAIN";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+
+        Properties props = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("SASL_PLAINTEXT", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("PLAIN", props.getProperty(SaslConfigs.SASL_MECHANISM));
+    }
+
+    @Test
+    public void testExplicitSaslJaasConfigTakesPrecedenceOverAuthType() {
+        // If user sets both saslAuthType AND saslJaasConfig, the explicit saslJaasConfig should win
+        String customJaasConfig = "org.custom.LoginModule required;";
+
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setSaslAuthType(KafkaAuthType.SCRAM_SHA_512);
+        config.setSaslUsername("user");
+        config.setSaslPassword("pass");
+        config.setSaslJaasConfig(customJaasConfig);
+        config.setSecurityProtocol("SASL_SSL");
+        config.setSaslMechanism("SCRAM-SHA-512");
+
+        Properties props = config.createProducerProperties();
+
+        // The explicit saslJaasConfig should be used, not the generated one
+        assertEquals(customJaasConfig, props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+    }
+
+    @Test
+    public void testProgrammaticSaslAuthType() {
+        // Test programmatic configuration with saslAuthType
+        KafkaConfiguration config = new KafkaConfiguration();
+        config.setBrokers("localhost:9092");
+        config.setTopic("test-topic");
+        config.setSaslAuthType(KafkaAuthType.SCRAM_SHA_512);
+        config.setSaslUsername("testuser");
+        config.setSaslPassword("testpass");
+
+        Properties props = config.createProducerProperties();
+
+        assertEquals("SASL_SSL", props.getProperty(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG));
+        assertEquals("SCRAM-SHA-512", props.getProperty(SaslConfigs.SASL_MECHANISM));
+        assertNotNull(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG));
+        assertTrue(props.getProperty(SaslConfigs.SASL_JAAS_CONFIG).contains("testuser"));
     }
 
 }

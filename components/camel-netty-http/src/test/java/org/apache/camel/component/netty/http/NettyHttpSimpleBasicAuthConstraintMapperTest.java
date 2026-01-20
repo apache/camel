@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest {
+public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTestSupport {
 
     @Override
     public void doPreSetup() {

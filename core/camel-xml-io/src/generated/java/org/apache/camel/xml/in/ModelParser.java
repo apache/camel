@@ -1301,12 +1301,15 @@ public class ModelParser extends BaseParser {
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, outputDefinitionElementHandler(), noValueHandler());
     }
-    protected TransformDefinition doParseTransformDefinition() throws IOException, XmlPullParserException {
-        return doParse(new TransformDefinition(), (def, key, val) -> switch (key) {
+    protected TransformDataTypeDefinition doParseTransformDataTypeDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TransformDataTypeDefinition(), (def, key, val) -> switch (key) {
                 case "fromType": def.setFromType(val); yield true;
                 case "toType": def.setToType(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, expressionNodeElementHandler(), noValueHandler());
+            }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    protected TransformDefinition doParseTransformDefinition() throws IOException, XmlPullParserException {
+        return doParse(new TransformDefinition(), processorDefinitionAttributeHandler(), expressionNodeElementHandler(), noValueHandler());
     }
     protected TryDefinition doParseTryDefinition() throws IOException, XmlPullParserException {
         return doParse(new TryDefinition(), processorDefinitionAttributeHandler(), outputDefinitionElementHandler(), noValueHandler());
@@ -1780,6 +1783,7 @@ public class ModelParser extends BaseParser {
         return doParse(new BindyDataFormat(), (def, key, val) -> switch (key) {
                 case "allowEmptyStream": def.setAllowEmptyStream(val); yield true;
                 case "classType": def.setClassTypeAsString(val); yield true;
+                case "defaultValueStringAsNull": def.setDefaultValueStringAsNull(val); yield true;
                 case "locale": def.setLocale(val); yield true;
                 case "type": def.setType(val); yield true;
                 case "unwrapSingleInstance": def.setUnwrapSingleInstance(val); yield true;
@@ -2361,7 +2365,10 @@ public class ModelParser extends BaseParser {
         return doParse(new SpringTransactionErrorHandlerDefinition(), transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
     }
     protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new CSimpleExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+        return doParse(new CSimpleExpression(), (def, key, val) -> switch (key) {
+                case "pretty": def.setPretty(val); yield true;
+                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected <T extends TypedExpressionDefinition> AttributeHandler<T> typedExpressionDefinitionAttributeHandler() {
         return (def, key, val) -> switch (key) {
@@ -2457,7 +2464,10 @@ public class ModelParser extends BaseParser {
         return doParse(new RefExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected SimpleExpression doParseSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new SimpleExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+        return doParse(new SimpleExpression(), (def, key, val) -> switch (key) {
+                case "pretty": def.setPretty(val); yield true;
+                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected SpELExpression doParseSpELExpression() throws IOException, XmlPullParserException {
         return doParse(new SpELExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
@@ -2941,6 +2951,7 @@ public class ModelParser extends BaseParser {
             case "toD": return doParseToDynamicDefinition();
             case "tokenizer": return doParseTokenizerDefinition();
             case "transacted": return doParseTransactedDefinition();
+            case "transformDataType": return doParseTransformDataTypeDefinition();
             case "transform": return doParseTransformDefinition();
             case "doTry": return doParseTryDefinition();
             case "unmarshal": return doParseUnmarshalDefinition();

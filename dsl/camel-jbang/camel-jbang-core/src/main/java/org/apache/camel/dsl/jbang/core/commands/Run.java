@@ -43,6 +43,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.Printer;
 import org.apache.camel.dsl.jbang.core.common.PropertyResolver;
@@ -102,6 +103,18 @@ public class Run extends CamelCommand {
 
     private static final Set<String> ACCEPTED_XML_ROOT_ELEMENTS
             = new HashSet<>(Arrays.asList(ACCEPTED_XML_ROOT_ELEMENT_NAMES));
+
+    private static final String[] ACCEPTED_YAML_ROOT_ELEMENT_NAMES = new String[] {
+            "- from:", "- route:",
+            "- routeTemplate:", "- route-template:",
+            "- templatedRoute:", "templated-route:",
+            "- routeConfiguration:", "- route-configuration:",
+            "- rest:", "- beans:",
+            "Pipe" // special for camel-k pipe
+    };
+
+    private static final Set<String> ACCEPTED_YAML_ROOT_ELEMENTS
+            = new HashSet<>(Arrays.asList(ACCEPTED_YAML_ROOT_ELEMENT_NAMES));
 
     private static final String OPENAPI_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-openapi.yaml";
     private static final String CLIPBOARD_GENERATED_FILE = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/generated-clipboard";
@@ -297,8 +310,7 @@ public class Run extends CamelCommand {
     String localKameletDir;
 
     @Option(names = { "--port" },
-            description = "Embeds a local HTTP server on this port (use 0 to dynamic assign a free random port number)",
-            defaultValue = "8080")
+            description = "Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number)")
     int port = -1;
 
     @Option(names = { "--management-port" },
@@ -480,10 +492,12 @@ public class Run extends CamelCommand {
         // special if user type: camel run . or camel run dirName
         if (sourceDir == null && files != null && files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(files.get(0));
-            Path first = Path.of(name);
-            if (Files.isDirectory(first)) {
-                baseDir = first;
-                RunHelper.dirToFiles(name, files);
+            if (getScheme(name) == null) {
+                Path first = Path.of(name);
+                if (Files.isDirectory(first)) {
+                    baseDir = first;
+                    RunHelper.dirToFiles(name, files);
+                }
             }
         }
 
@@ -980,6 +994,15 @@ public class Run extends CamelCommand {
             var joined = String.join(",", dependencies);
             main.addInitialProperty(DEPENDENCIES, joined);
             writeSettings(DEPENDENCIES, joined);
+        }
+
+        // Block --camel-version when running from camel-launcher
+        if (camelVersion != null && LauncherHelper.isRunningFromLauncher()) {
+            printer().printErr("The --camel-version option is not supported when running from camel-launcher.");
+            printer().printErr("To use a different Camel version, either:");
+            printer().printErr("  1. Use a different camel-launcher JAR version");
+            printer().printErr("  2. Install Camel CLI via JBang: jbang app install camel@apache/camel");
+            return 1;
         }
 
         // if we have a specific camel version then make sure we really need to switch
@@ -1516,7 +1539,7 @@ public class Run extends CamelCommand {
         cmds.remove("--background-wait=true");
         cmds.remove("--background-wait");
 
-        RunHelper.addCamelJBangCommand(cmds);
+        RunHelper.addCamelCLICommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
@@ -1531,7 +1554,7 @@ public class Run extends CamelCommand {
         Path logPath = null;
         if (backgroundWait) {
             // store background output in a log file to capture any error on startup
-            logPath = getRunBackgroundLogFile("" + new Random().nextLong());
+            logPath = getRunBackgroundLogFile("" + new Random().nextLong()); // NOSONAR
             try {
                 Path logDir = CommandLineHelper.getCamelDir();
                 Files.createDirectories(logDir); //make sure the parent dir exists
@@ -1929,17 +1952,7 @@ public class Run extends CamelCommand {
                     }
                     return ACCEPTED_XML_ROOT_ELEMENTS.contains(info.getRootElementName());
                 } else {
-                    // TODO: we probably need a way to parse the content and match against the YAML DSL expected by Camel
-                    // This check looks very fragile
-                    return source.content().contains("- from:")
-                            || source.content().contains("- route:")
-                            || source.content().contains("- routeTemplate") || source.content().contains("- route-template:")
-                            || source.content().contains("- routeConfiguration:")
-                            || source.content().contains("- route-configuration:")
-                            || source.content().contains("- rest:")
-                            || source.content().contains("- beans:")
-                            // also support Pipes.
-                            || source.content().contains("Pipe");
+                    return ACCEPTED_YAML_ROOT_ELEMENTS.stream().anyMatch(tag -> source.content().contains(tag));
                 }
             }
             // if the ext is an accepted file then we include it as a potential route

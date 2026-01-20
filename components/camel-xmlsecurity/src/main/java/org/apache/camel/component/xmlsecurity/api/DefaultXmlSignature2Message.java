@@ -417,7 +417,6 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
                             sb.toString()));
         }
 
-        @SuppressWarnings("unchecked")
         List<XMLStructure> structures = referencedObjects.get(0).getContent();
         if (structures.isEmpty()) {
             throw new XmlSignatureException(
@@ -453,7 +452,6 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         return referencedObjects;
     }
 
-    @SuppressWarnings("unchecked")
     protected void addManifestReferencedObjects(
             List<XMLObject> allObjects, List<XMLObject> referencedObjects, String manifestId) {
         Manifest manifest = getReferencedManifest(allObjects, manifestId);
@@ -487,7 +485,6 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     protected Manifest getReferencedManifest(List<XMLObject> objects, String id) {
         for (XMLObject xo : objects) {
-            @SuppressWarnings("unchecked")
             List<XMLStructure> content = xo.getContent();
             for (XMLStructure xs : content) {
                 if (xs instanceof Manifest) {

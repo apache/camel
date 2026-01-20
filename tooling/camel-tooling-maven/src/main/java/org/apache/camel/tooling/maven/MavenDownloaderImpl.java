@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.support.DIRegistry;
+import org.apache.camel.util.HomeHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
@@ -610,7 +611,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             skip = true;
         } else if (mavenSettings == null) {
             // implicit settings
-            String m2settings = System.getProperty("user.home") + File.separator + ".m2"
+            String m2settings = HomeHelper.resolveHomeDir() + File.separator + ".m2"
                                 + File.separator + "settings.xml";
             if (new File(m2settings).isFile()) {
                 mavenSettings = m2settings;
@@ -625,7 +626,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         if (!skip) {
             if (mavenSettingsSecurity == null) {
                 // implicit security settings
-                String m2settingsSecurity = System.getProperty("user.home") + File.separator + ".m2"
+                String m2settingsSecurity = HomeHelper.resolveHomeDir() + File.separator + ".m2"
                                             + File.separator + "settings-security.xml";
                 if (new File(m2settingsSecurity).isFile()) {
                     mavenSettingsSecurity = m2settingsSecurity;
@@ -724,6 +725,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         registry.bind(NamedLockFactory.class, LocalReadWriteLockNamedLockFactory.class);
         registry.bind(NamedLockFactory.class, NoopNamedLockFactory.class);
         registry.bind(NamedLockFactory.class, LocalSemaphoreNamedLockFactory.class);
+        registry.bind(NameMappers.GAECV_NAME, NameMapper.class, NameMappers.gaecvNameMapper());
         registry.bind(NameMappers.GAV_NAME, NameMapper.class, NameMappers.gavNameMapper());
         registry.bind(NameMappers.STATIC_NAME, NameMapper.class, NameMappers.staticNameMapper());
         registry.bind(NameMappers.DISCRIMINATING_NAME, NameMapper.class, NameMappers.discriminatingNameMapper());
@@ -857,7 +859,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             localRepository = settings.getLocalRepository();
         }
         if (localRepository == null || localRepository.isBlank()) {
-            Path m2Repository = Paths.get(System.getProperty("user.home"), ".m2/repository");
+            Path m2Repository = Paths.get(HomeHelper.resolveHomeDir(), ".m2/repository");
             if (!m2Repository.toFile().isDirectory()) {
                 m2Repository = Paths.get(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
                 m2Repository.toFile().mkdirs();

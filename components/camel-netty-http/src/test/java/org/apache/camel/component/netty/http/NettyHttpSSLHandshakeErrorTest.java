@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisabledIfSystemProperty(named = "java.vendor", matches = ".*ibm.*")
 @DisabledOnOs(architectures = { "s390x" },
               disabledReason = "This test does not run reliably on s390x (see CAMEL-21438)")
-public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
+public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {

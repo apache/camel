@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
+public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttp500Error() throws Exception {

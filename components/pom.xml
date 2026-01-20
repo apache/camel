@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -163,6 +163,7 @@
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
+        <module>camel-iggy</module>
         <module>camel-infinispan</module>
         <module>camel-influxdb</module>
         <module>camel-influxdb2</module>
@@ -241,6 +242,7 @@
         <module>camel-ognl</module>
         <module>camel-olingo2</module>
         <module>camel-olingo4</module>
+        <module>camel-once</module>
         <module>camel-openstack</module>
         <module>camel-opentelemetry</module>
         <module>camel-opentelemetry2</module>
@@ -304,6 +306,7 @@
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>
+        <module>camel-stripe</module>
         <module>camel-swift</module>
         <module>camel-openapi-java</module>
         <module>camel-openapi-validator</module>

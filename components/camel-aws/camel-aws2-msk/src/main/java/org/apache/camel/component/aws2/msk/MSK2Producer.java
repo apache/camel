@@ -113,12 +113,22 @@ public class MSK2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                message.setHeader(MSK2Constants.NEXT_TOKEN, result.nextToken());
+                message.setHeader(MSK2Constants.IS_TRUNCATED, result.nextToken() != null);
             }
         } else {
             ListClustersRequest.Builder builder = ListClustersRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSK2Constants.CLUSTERS_FILTER))) {
-                String filter = exchange.getIn().getHeader(MSK2Constants.CLUSTERS_FILTER, String.class);
+            String filter = getOptionalHeader(exchange, MSK2Constants.CLUSTERS_FILTER, String.class);
+            if (filter != null) {
                 builder.clusterNameFilter(filter);
+            }
+            String nextToken = getOptionalHeader(exchange, MSK2Constants.NEXT_TOKEN, String.class);
+            if (nextToken != null) {
+                builder.nextToken(nextToken);
+            }
+            Integer maxResults = getOptionalHeader(exchange, MSK2Constants.MAX_RESULTS, Integer.class);
+            if (maxResults != null) {
+                builder.maxResults(maxResults);
             }
             ListClustersResponse result;
             try {
@@ -129,6 +139,8 @@ public class MSK2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(MSK2Constants.NEXT_TOKEN, result.nextToken());
+            message.setHeader(MSK2Constants.IS_TRUNCATED, result.nextToken() != null);
         }
     }
 
@@ -182,6 +194,8 @@ public class MSK2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(response);
+            message.setHeader(MSK2Constants.CLUSTER_ARN, response.clusterArn());
+            message.setHeader(MSK2Constants.CLUSTER_STATE, response.stateAsString());
         }
     }
 
@@ -245,16 +259,27 @@ public class MSK2Producer extends DefaultProducer {
             try {
                 result = mskClient.describeCluster(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (result.clusterInfo() != null) {
+                message.setHeader(MSK2Constants.CLUSTER_ARN, result.clusterInfo().clusterArn());
+                message.setHeader(MSK2Constants.CLUSTER_STATE, result.clusterInfo().stateAsString());
+            }
         }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    /**
+     * Gets an optional header value.
+     */
+    private <T> T getOptionalHeader(Exchange exchange, String headerName, Class<T> headerType) {
+        return exchange.getIn().getHeader(headerName, headerType);
     }
 
     @Override

@@ -5,6 +5,7 @@ package org.apache.camel.component.braintree.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import javax.annotation.processing.Generated;
 
 import com.braintreegateway.PaymentMethodNonceGateway;
 
@@ -18,6 +19,7 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 /**
  * Camel {@link ApiMethod} Enumeration for com.braintreegateway.PaymentMethodNonceGateway
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum PaymentMethodNonceGatewayApiMethod implements ApiMethod {
 
     CREATE(

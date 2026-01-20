@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.iam.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.iam.IAM2Configuration;
-import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientProfileOptimizedImpl;
-import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientStandardImpl;
+import software.amazon.awssdk.services.iam.IamClient;
 
 /**
- * Factory class to return the correct type of AWS IAM client.
+ * Factory class to create AWS IAM clients using common configuration.
  */
 public final class IAM2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class IAM2ClientFactory {
     }
 
     /**
-     * Return the correct AWS IAM client (based on remote vs local).
+     * Create an IAM client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               IamClient
+     * @param  configuration The IAM configuration
+     * @return               Configured IamClient
      */
-    public static IAM2InternalClient getIamClient(IAM2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new IAM2ClientOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new IAM2ClientProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new IAM2ClientSessionTokenImpl(configuration);
-        } else {
-            return new IAM2ClientStandardImpl(configuration);
-        }
+    public static IamClient getIamClient(IAM2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                IamClient::builder);
     }
 }

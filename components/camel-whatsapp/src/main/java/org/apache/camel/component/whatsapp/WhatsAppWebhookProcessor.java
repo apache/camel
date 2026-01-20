@@ -30,7 +30,7 @@ import org.apache.camel.support.AsyncProcessorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WhatsAppWebhookProcessor extends AsyncProcessorSupport implements AsyncProcessor {
+public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
     private static final Logger LOG = LoggerFactory.getLogger(WhatsAppWebhookProcessor.class);
 
     private static final String MODE_QUERY_PARAM = "hub.mode";

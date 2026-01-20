@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.AggregationStrategy;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -33,6 +32,7 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +54,13 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the aggregate route in a unit of work processor
-        AsyncProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
+        InternalProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
+        // if backlog tracing then add special advice to handle this
+        if (camelContext.isBacklogTracingStandby() || route.isBacklogTracing()) {
+            target.addAdvice(PluginHelper.getInternalProcessorFactory(camelContext)
+                    .createAggregateBacklogTracerAdvice(camelContext, definition));
+        }
 
         // correlation expression is required
         if (definition.getExpression() == null) {

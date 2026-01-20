@@ -24,7 +24,7 @@ import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ConfigListTest extends BaseConfigTest {
+class ConfigListTest extends BaseConfigTestSupport {
 
     @Test
     public void shouldHandleEmptyConfig() throws Exception {

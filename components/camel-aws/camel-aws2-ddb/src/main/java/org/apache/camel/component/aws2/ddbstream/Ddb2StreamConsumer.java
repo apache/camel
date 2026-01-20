@@ -58,7 +58,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
 
         Map<String, String> shardIterators = shardIteratorHandler.getShardIterators();
 
-        // okay we have some response from azure so lets mark the consumer as ready
+        // okay we have some response from DynamoDB Streams so lets mark the consumer as ready
         forceConsumerAsReady();
 
         for (Entry<String, String> shardIteratorEntry : shardIterators.entrySet()) {
@@ -129,6 +129,13 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         ex.getMessage().setBody(record, Record.class);
         ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_SOURCE, record.eventSource());
         ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_ID, record.eventID());
+        ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_NAME, record.eventNameAsString());
+        if (record.dynamodb() != null) {
+            ex.getMessage().setHeader(Ddb2StreamConstants.SEQUENCE_NUMBER, record.dynamodb().sequenceNumber());
+            ex.getMessage().setHeader(Ddb2StreamConstants.APPROXIMATE_CREATION_DATE_TIME,
+                    record.dynamodb().approximateCreationDateTime());
+            ex.getMessage().setHeader(Ddb2StreamConstants.SIZE_BYTES, record.dynamodb().sizeBytes());
+        }
         return ex;
     }
 

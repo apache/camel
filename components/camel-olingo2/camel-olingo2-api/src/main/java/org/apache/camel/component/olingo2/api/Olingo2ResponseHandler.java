@@ -21,6 +21,7 @@ import java.util.Map;
 /**
  * Callback interface to asynchronously process Olingo2 response.
  */
+@Deprecated(since = "4.18")
 public interface Olingo2ResponseHandler<T> {
 
     /**

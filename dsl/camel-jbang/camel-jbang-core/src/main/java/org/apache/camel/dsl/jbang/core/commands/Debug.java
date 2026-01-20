@@ -42,8 +42,11 @@ import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
+import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -73,6 +76,10 @@ import static org.apache.camel.util.IOHelper.buffered;
 
 @Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true)
 public class Debug extends Run {
+
+    @CommandLine.Option(names = { "--remote-attach" },
+                        description = "Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger)")
+    boolean remoteAttach;
 
     @CommandLine.Option(names = { "--breakpoint" },
                         description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
@@ -151,7 +158,12 @@ public class Debug extends Run {
             printConfigurationValues("Debugging integration with the following configuration:");
         }
 
-        Integer exit = runDebug();
+        Integer exit;
+        if (remoteAttach) {
+            exit = runRemoteAttach();
+        } else {
+            exit = runDebug();
+        }
         if (exit != null && exit != 0) {
             return exit;
         }
@@ -170,10 +182,12 @@ public class Debug extends Run {
         // read log input
         final AtomicBoolean quit = new AtomicBoolean();
         final Console c = System.console();
-        Thread t = new Thread(() -> {
-            doReadLog(quit);
-        }, "ReadLog");
-        t.start();
+        if (logLines > 0) {
+            Thread t = new Thread(() -> {
+                doReadLog(quit);
+            }, "ReadLog");
+            t.start();
+        }
 
         // read CLI input from user
         Thread t2 = new Thread(() -> doRead(c, quit), "ReadCommand");
@@ -201,6 +215,41 @@ public class Debug extends Run {
                 return -1;
             }
         } while (exit == 0 && !quit.get());
+
+        return 0;
+    }
+
+    private Integer runRemoteAttach() {
+        // find PID of running apps (if there are multiple then filter by name)
+        List<Long> pids = findPids(name);
+        if (pids.isEmpty()) {
+            return -1;
+        } else if (pids.size() > 1) {
+            printer().println("Name or pid " + name + " matches " + pids.size()
+                              + " running Camel integrations. Specify a name or PID that matches exactly one.");
+            return -1;
+        }
+        long pid = pids.get(0);
+
+        Path outputFile = getOutputFile(Long.toString(pid));
+        PathUtils.deleteFile(outputFile);
+
+        try {
+            JsonObject root = new JsonObject();
+            root.put("action", "cli-debug");
+            root.put("command", "attach");
+            if (breakpoint != null) {
+                root.put("breakpoint", breakpoint);
+            }
+            Path f = getActionFile(Long.toString(pid));
+            Files.writeString(f, root.toJson());
+        } catch (Exception e) {
+            return -1;
+        }
+
+        // attach to this pid
+        spawnPid = pid;
+        logLines = 0; // no logging possible
 
         return 0;
     }
@@ -535,7 +584,7 @@ public class Debug extends Run {
         cmds.add("--prop=camel.debug.loggingLevel=DEBUG");
         cmds.add("--prop=camel.debug.singleStepIncludeStartEnd=true");
 
-        RunHelper.addCamelJBangCommand(cmds);
+        RunHelper.addCamelCLICommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
@@ -730,6 +779,9 @@ public class Debug extends Run {
                                     history.index = line.getIntegerOrDefault("index", 0);
                                     history.routeId = line.getString("routeId");
                                     history.nodeId = line.getString("nodeId");
+                                    history.nodeShortName = line.getString("nodeShortName");
+                                    history.nodeLabel = line.getString("nodeLabel");
+                                    history.level = line.getIntegerOrDefault("level", 0);
                                     history.elapsed = line.getLongOrDefault("elapsed", 0);
                                     history.skipOver = line.getBooleanOrDefault("skipOver", false);
                                     history.location = line.getString("location");
@@ -907,10 +959,16 @@ public class Debug extends Run {
                     }
 
                     String c = "";
-                    if (h.code != null) {
+                    if (source && h.code != null) {
                         c = Jsoner.unescape(h.code);
                         c = c.trim();
+                    } else {
+                        c = Jsoner.escape(h.nodeLabel);
+                        c = c.trim();
                     }
+                    // pad with level
+                    String pad = StringHelper.padString(h.level);
+                    c = pad + c;
 
                     String fids = String.format("%-30.30s", ids);
                     String msg;
@@ -1028,8 +1086,8 @@ public class Debug extends Run {
     }
 
     private static String locationAndLine(String loc, int line) {
-        // shorten path as there is no much space
-        loc = FileUtil.stripPath(loc);
+        // shorten path as there is no much space (there are no scheme as add fake)
+        loc = LoggerHelper.sourceNameOnly("file:" + FileUtil.stripPath(loc));
         return line == -1 ? loc : loc + ":" + line;
     }
 
@@ -1173,6 +1231,9 @@ public class Debug extends Run {
         int index;
         String routeId;
         String nodeId;
+        String nodeShortName;
+        String nodeLabel;
+        int level;
         long elapsed;
         boolean skipOver;
         String location;
@@ -1207,6 +1268,67 @@ public class Debug extends Run {
             return this;
         }
 
+    }
+
+    List<Long> findPids(String name) {
+        List<Long> pids = new ArrayList<>();
+
+        // we need to know the pids of the running camel integrations
+        if (name.matches("\\d+")) {
+            return List.of(Long.parseLong(name));
+        } else {
+            if (name.endsWith("!")) {
+                // exclusive this name only
+                name = name.substring(0, name.length() - 1);
+            } else if (!name.endsWith("*")) {
+                // lets be open and match all that starts with this pattern
+                name = name + "*";
+            }
+        }
+
+        final long cur = ProcessHandle.current().pid();
+        final String pattern = name;
+        ProcessHandle.allProcesses()
+                .filter(ph -> ph.pid() != cur)
+                .forEach(ph -> {
+                    JsonObject root = loadStatus(ph.pid());
+                    // there must be a status file for the running Camel integration
+                    if (root != null) {
+                        String pName = ProcessHelper.extractName(root, ph);
+                        // ignore file extension, so it is easier to match by name
+                        pName = FileUtil.onlyName(pName);
+                        if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                            pids.add(ph.pid());
+                        } else {
+                            // try camel context name
+                            JsonObject context = (JsonObject) root.get("context");
+                            if (context != null) {
+                                pName = context.getString("name");
+                                if ("CamelJBang".equals(pName)) {
+                                    pName = null;
+                                }
+                                if (pName != null && !pName.isEmpty() && PatternHelper.matchPattern(pName, pattern)) {
+                                    pids.add(ph.pid());
+                                }
+                            }
+                        }
+                    }
+                });
+
+        return pids;
+    }
+
+    JsonObject loadStatus(long pid) {
+        try {
+            Path f = getStatusFile(Long.toString(pid));
+            if (f != null && Files.exists(f)) {
+                String text = Files.readString(f);
+                return (JsonObject) Jsoner.deserialize(text);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
 
 }

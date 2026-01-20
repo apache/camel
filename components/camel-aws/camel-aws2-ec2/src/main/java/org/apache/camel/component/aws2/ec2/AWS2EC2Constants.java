@@ -57,4 +57,15 @@ public interface AWS2EC2Constants {
     String INSTANCES_TAGS = "CamelAwsEC2InstancesTags";
     @Metadata(description = "The ID of the subnet to launch the instance into.", javaType = "String")
     String SUBNET_ID = "CamelAwsEC2SubnetId";
+
+    // Pagination constants
+    @Metadata(label = "describeInstances describeInstancesStatus",
+              description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsEC2NextToken";
+    @Metadata(label = "describeInstances describeInstancesStatus",
+              description = "The maximum number of results to return.", javaType = "Integer")
+    String MAX_RESULTS = "CamelAwsEC2MaxResults";
+    @Metadata(label = "describeInstances describeInstancesStatus",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsEC2IsTruncated";
 }

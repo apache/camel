@@ -44,6 +44,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final long timestamp;
     private final String location;
     private final String routeId;
+    private final String fromRouteId;
     private final String toNode;
     private final String toNodeParentId;
     private final String toNodeParentWhenId;
@@ -72,7 +73,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private boolean done;
 
     public DefaultBacklogTracerEventMessage(CamelContext camelContext, boolean first, boolean last, long uid, long timestamp,
-                                            String location, String routeId, String toNode, String toNodeParentId,
+                                            String location, String fromRouteId, String routeId, String toNode,
+                                            String toNodeParentId,
                                             String toNodeParentWhenId, String toNodeParentWhenLabel,
                                             String toNodeShortName, String toNodeLabel, int toNodeLevel, String exchangeId,
                                             String correlationExchangeId,
@@ -84,6 +86,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.uid = uid;
         this.timestamp = timestamp;
         this.location = location;
+        this.fromRouteId = fromRouteId;
         this.routeId = routeId;
         this.toNode = toNode;
         this.toNodeParentId = toNodeParentId;
@@ -136,6 +139,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getRouteId() {
         return routeId;
+    }
+
+    @Override
+    public String getFromRouteId() {
+        return fromRouteId;
     }
 
     @Override
@@ -351,6 +359,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         // route id is optional and we then use an empty value for no route id
         sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
+        sb.append(prefix).append("  <fromRouteId>").append(fromRouteId != null ? fromRouteId : "").append("</fromRouteId>\n");
         if (endpointUri != null) {
             sb.append(prefix).append("  <endpointUri>").append(endpointUri).append("</endpointUri>\n");
             sb.append(prefix).append("  <remoteEndpoint>").append(remoteEndpoint).append("</remoteEndpoint>\n");
@@ -549,6 +558,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         if (routeId != null) {
             jo.put("routeId", routeId);
+        }
+        if (fromRouteId != null) {
+            jo.put("fromRouteId", fromRouteId);
         }
         if (toNode != null) {
             jo.put("nodeId", toNode);

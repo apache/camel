@@ -65,7 +65,7 @@ import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 public class SubscriptionHelper extends ServiceSupport {
 
-    static final ReplayExtension REPLAY_EXTENSION = new ReplayExtension();
+    private final ReplayExtension replayExtension = new ReplayExtension();
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
@@ -231,7 +231,7 @@ public class SubscriptionHelper extends ServiceSupport {
                     = firstConsumer.getEndpoint().getConfiguration().getFallBackReplayId();
             LOG.warn(error);
             LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
-            REPLAY_EXTENSION.setReplayId(channelName, fallBackReplayId);
+            replayExtension.setReplayId(channelName, fallBackReplayId);
             for (var consumer : consumers) {
                 subscribe(consumer);
             }
@@ -408,7 +408,7 @@ public class SubscriptionHelper extends ServiceSupport {
         BayeuxClient client = new BayeuxClient(getEndpointUrl(component), transport);
 
         // added eagerly to check for support during handshake
-        client.addExtension(REPLAY_EXTENSION);
+        client.addExtension(component.getSubscriptionHelper().getReplayExtension());
 
         return client;
     }
@@ -439,6 +439,10 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
+    ReplayExtension getReplayExtension() {
+        return replayExtension;
+    }
+
     private static boolean isTemporaryError(Message message) {
         String failureReason = getFailureReason(message);
         return failureReason != null && failureReason.startsWith(SERVER_TOO_BUSY_ERROR);
@@ -465,7 +469,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
             final Long replayIdValue = replayId.get();
 
-            REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, replayIdValue);
+            replayExtension.setReplayIdIfAbsent(channelName, replayIdValue);
         }
     }
 

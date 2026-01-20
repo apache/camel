@@ -119,6 +119,30 @@ public interface PlatformHttpComponentBuilderFactory {
     
         
         /**
+         * Whether HTTP server should do preliminary validation of incoming
+         * requests, validating if Content-Type/Accept header, matches what is
+         * allowed according to consumes/produces configuration (if set). If
+         * validation fails HTTP Status 415/406 is returned. The HTTP server
+         * performs this validation before Camel is involved, and as such if
+         * validation fails then Camel is never activated. Setting this option
+         * to false, allows Camel to process any incoming requests such as to do
+         * custom validation or all requests must be handled by Camel.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param serverRequestValidation the value to set
+         * @return the dsl builder
+         */
+        default PlatformHttpComponentBuilder serverRequestValidation(boolean serverRequestValidation) {
+            doSetProperty("serverRequestValidation", serverRequestValidation);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -190,6 +214,7 @@ public interface PlatformHttpComponentBuilderFactory {
             case "bridgeErrorHandler": ((PlatformHttpComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "handleWriteResponseError": ((PlatformHttpComponent) component).setHandleWriteResponseError((boolean) value); return true;
             case "requestTimeout": ((PlatformHttpComponent) component).setRequestTimeout((long) value); return true;
+            case "serverRequestValidation": ((PlatformHttpComponent) component).setServerRequestValidation((boolean) value); return true;
             case "autowiredEnabled": ((PlatformHttpComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "engine": ((PlatformHttpComponent) component).setEngine((org.apache.camel.component.platform.http.spi.PlatformHttpEngine) value); return true;
             case "headerFilterStrategy": ((PlatformHttpComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;

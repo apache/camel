@@ -40,15 +40,15 @@
     <property name="location" value="classpath:org/apache/camel/component/jasypt/myproperties.properties"/>
     <property name="parser" ref="jasyptParser"/>
   </bean>
-  
-  <bean id="test" class="org.apache.camel.component.jasypt.Test">
+
+  <bean id="testBean" class="org.apache.camel.component.jasypt.TestBean">
      <property name="data" value="${cool.password}" />
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <to uri="bean:test" />
+      <to uri="bean:testBean" />
       <to uri="{{cool.result}}"/>
     </route>
   </camelContext>

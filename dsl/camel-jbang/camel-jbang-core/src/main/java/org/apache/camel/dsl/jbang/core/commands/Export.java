@@ -88,10 +88,12 @@ public class Export extends ExportBaseCommand {
         // special if user type: camel run . or camel run dirName
         if (files != null && files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(files.get(0));
-            Path first = Path.of(name);
-            if (Files.isDirectory(first)) {
-                baseDir = first;
-                RunHelper.dirToFiles(name, files);
+            if (getScheme(name) == null) {
+                Path first = Path.of(name);
+                if (Files.isDirectory(first)) {
+                    baseDir = first;
+                    RunHelper.dirToFiles(name, files);
+                }
             }
         }
 
@@ -259,6 +261,8 @@ public class Export extends ExportBaseCommand {
         cmd.verbose = this.verbose;
         cmd.applicationProperties = this.applicationProperties;
         cmd.groovyPrecompiled = this.groovyPrecompiled;
+        cmd.hawtio = this.hawtio;
+        cmd.hawtioVersion = this.hawtioVersion;
         // run export
         return cmd.export();
     }

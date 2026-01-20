@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * Base part in a multipart Batch request.
  */
+@Deprecated(since = "4.18")
 public abstract class Olingo4BatchRequest {
 
     protected String resourceUri;

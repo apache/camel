@@ -44,23 +44,14 @@ import org.apache.camel.util.ObjectHelper;
 public class KubernetesClusterView extends AbstractCamelClusterView implements CamelPreemptiveClusterView {
 
     private CamelContext camelContext;
-
     private KubernetesClient kubernetesClient;
-
     private KubernetesConfiguration configuration;
-
     private KubernetesLockConfiguration lockConfiguration;
-
     private KubernetesClusterMember localMember;
-
     private Map<String, KubernetesClusterMember> memberCache;
-
     private volatile CamelClusterMember currentLeader = null;
-
     private volatile List<CamelClusterMember> currentMembers = Collections.emptyList();
-
     private KubernetesLeadershipController controller;
-
     private boolean disabled;
 
     public KubernetesClusterView(CamelContext camelContext, KubernetesClusterService cluster,

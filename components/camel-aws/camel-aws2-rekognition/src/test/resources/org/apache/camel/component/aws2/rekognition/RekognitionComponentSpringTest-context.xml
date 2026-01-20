@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:associateFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=associateFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:compareFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=compareFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:createCollection"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=createCollection"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:createUser"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=createUser"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:deleteCollection"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=deleteCollection"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:deleteFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=deleteFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:deleteUser"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=deleteUser"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:describeCollection"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=describeCollection"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:detectFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=detectFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:detectLabels"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=detectLabels"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:detectModerationLabels"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=detectModerationLabels"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:detectProtectiveEquipment"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=detectProtectiveEquipment"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:detectText"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=detectText"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:disassociateFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=disassociateFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:getCelebrityInfo"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=getCelebrityInfo"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:getMediaAnalysisJob"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=getMediaAnalysisJob"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:indexFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=indexFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listCollections"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=listCollections"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=listFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listMediaAnalysisJobs"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=listMediaAnalysisJobs"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:listUsers"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=listUsers"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:recognizeCelebrities"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=recognizeCelebrities"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:searchFaces"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=searchFaces"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:searchFacesByImage"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=searchFacesByImage"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:searchUsers"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=searchUsers"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:searchUsersByImage"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=searchUsersByImage"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:startMediaAnalysisJob"/>
+            <to uri="aws2-rekognition://test?awsRekognitionClient=#awsRekognitionClient&amp;operation=startMediaAnalysisJob"/>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+
+    <bean id="awsRekognitionClient" class="org.apache.camel.component.aws2.rekognition.AmazonRekognitionClientMock"/>
+</beans>

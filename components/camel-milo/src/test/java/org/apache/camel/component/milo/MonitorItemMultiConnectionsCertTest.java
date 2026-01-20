@@ -30,6 +30,8 @@ import org.apache.camel.component.milo.server.MiloServerComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 /**
  * Testing monitoring items over multiple connections
  */
+@Disabled("due to Milo 1.0.5 API migration - certificate-based authentication needs further investigation")
 public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest {
 
     private static final String DIRECT_START_1 = "direct:start1";
@@ -121,26 +124,25 @@ public class MonitorItemMultiConnectionsCertTest extends AbstractMiloServerTest 
         };
     }
 
-    // Disabled due to Milo 1.0.5 API migration - certificate-based authentication needs further investigation
-    // @Test
-    // public void testMonitorItem1() throws Exception {
-    //
-    //     // item 1 ... only this one receives
-    //     this.test1Endpoint.setExpectedCount(1);
-    //     this.test1Endpoint.setSleepForEmptyTest(5_000);
-    //
-    //     // item 2
-    //     this.test2Endpoint.setExpectedCount(0);
-    //     this.test2Endpoint.setSleepForEmptyTest(5_000);
-    //
-    //     // item 3
-    //     this.test3Endpoint.setExpectedCount(0);
-    //     this.test3Endpoint.setSleepForEmptyTest(5_000);
-    //
-    //     // set server value
-    //     this.producer1.sendBody("Foo");
-    //
-    //     // assert
-    //     MockEndpoint.assertIsSatisfied(context);
-    // }
+    @Test
+    public void testMonitorItem1() throws Exception {
+
+        // item 1 ... only this one receives
+        this.test1Endpoint.setExpectedCount(1);
+        this.test1Endpoint.setSleepForEmptyTest(5_000);
+
+        // item 2
+        this.test2Endpoint.setExpectedCount(0);
+        this.test2Endpoint.setSleepForEmptyTest(5_000);
+
+        // item 3
+        this.test3Endpoint.setExpectedCount(0);
+        this.test3Endpoint.setSleepForEmptyTest(5_000);
+
+        // set server value
+        this.producer1.sendBody("Foo");
+
+        // assert
+        MockEndpoint.assertIsSatisfied(context);
+    }
 }

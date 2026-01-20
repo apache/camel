@@ -229,7 +229,24 @@ public interface Transcribe2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Transcribe client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
+         * type.
+         * 
+         * Default: HTTPS
+         * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
+         */
+        default Transcribe2EndpointBuilder proxyProtocol(software.amazon.awssdk.core.Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Transcribe client.
+         * 
+         * The option will be converted to a
+         * <code>software.amazon.awssdk.core.Protocol</code> type.
          * 
          * Default: HTTPS
          * Group: producer

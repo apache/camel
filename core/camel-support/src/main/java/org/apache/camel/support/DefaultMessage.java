@@ -287,11 +287,11 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public boolean hasHeaders() {
-        if (headers == null) {
+        if (headers == null && isPopulateHeadersSupported()) {
             // force creating headers
             headers = createHeaders();
         }
-        return !headers.isEmpty();
+        return headers != null && !headers.isEmpty();
     }
 
     @Override
@@ -326,6 +326,13 @@ public class DefaultMessage extends MessageSupport {
      */
     protected void populateInitialHeaders(Map<String, Object> map) {
         // do nothing by default
+    }
+
+    /**
+     * Whether subclasses need to populate headers when creating message.
+     */
+    protected boolean isPopulateHeadersSupported() {
+        return false;
     }
 
     /**

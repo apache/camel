@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Shipping_Location__c</fullName>
+    <displayLocationInDecimal>false</displayLocationInDecimal>
+    <externalId>false</externalId>
+    <label>Shipping_Location</label>
+    <required>false</required>
+    <scale>3</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Location</type>
+</CustomField>

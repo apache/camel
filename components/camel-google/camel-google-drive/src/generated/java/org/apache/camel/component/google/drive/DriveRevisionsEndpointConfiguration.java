@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.drive;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "delete", description="Permanently deletes a file version", signatures={"com.google.api.services.drive.Drive$Revisions$Delete delete(String fileId, String revisionId)"}), @ApiMethod(methodName = "get", description="Gets a revision's metadata or content by ID", signatures={"com.google.api.services.drive.Drive$Revisions$Get get(String fileId, String revisionId)"}), @ApiMethod(methodName = "list", description="Lists a file's revisions", signatures={"com.google.api.services.drive.Drive$Revisions$List list(String fileId)"}), @ApiMethod(methodName = "update", description="Updates a revision with patch semantics", signatures={"com.google.api.services.drive.Drive$Revisions$Update update(String fileId, String revisionId, com.google.api.services.drive.model.Revision content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DriveRevisionsEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "get", description="Whether the user is acknowledging the risk of downloading known malware or other abusive files")})

@@ -68,7 +68,6 @@ public abstract class SingleInputTypedLanguageSupport extends TypedLanguageSuppo
             expression = loadResource(expression);
         }
 
-        Class<?> type = property(Class.class, properties, 0, null);
         String source = property(String.class, properties, 1, null);
         Expression input = ExpressionBuilder.singleInputExpression(source);
         if (getCamelContext() != null) {

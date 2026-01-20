@@ -71,7 +71,7 @@ public class KinesisFirehose2Endpoint extends DefaultEndpoint implements Endpoin
         }
         kinesisFirehoseClient = configuration.getAmazonKinesisFirehoseClient() != null
                 ? configuration.getAmazonKinesisFirehoseClient()
-                : KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration).getKinesisFirehoseClient();
+                : KinesisFirehoseClientFactory.getKinesisFirehoseClient(configuration);
 
     }
 

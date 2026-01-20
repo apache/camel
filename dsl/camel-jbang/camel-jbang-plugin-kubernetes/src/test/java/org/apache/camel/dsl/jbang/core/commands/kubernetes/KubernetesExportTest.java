@@ -45,7 +45,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-class KubernetesExportTest extends KubernetesExportBaseTest {
+class KubernetesExportTest extends KubernetesExportBaseTestSupport {
 
     private static Stream<Arguments> runtimeProvider() {
         return Stream.of(
@@ -57,7 +57,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
     @ParameterizedTest
     @MethodSource("runtimeProvider")
     public void shouldGenerateProject(RuntimeType rt) throws Exception {
-        KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
+        // the backslash is to simulate the windows file separator, related to CAMEL-22776
+        // as the ExportBaseCommand uses Paths.get to read the file it also sets the backslash
+        KubernetesExport command = createCommand(new String[] { "classpath:myapp\\route.yaml" },
                 "--gav=examples:route:1.0.0", "--runtime=" + rt.runtime());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
@@ -77,6 +79,9 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertNull(props.get("jkube.container-image.platforms"));
 
         Properties applicationProperties = getApplicationProperties(workingDir);
+        String scriptContent = readResource(workingDir, "src/main/scripts/run-java.sh");
+        Assertions.assertNotNull(scriptContent);
+        Assertions.assertTrue(scriptContent.length() > 0);
 
         if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertEquals("9876", applicationProperties.get("quarkus.management.port"));
@@ -596,11 +601,13 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("pvc-foo",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
         Assertions.assertEquals("/container/path/foo",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath()
+                        .replace('\\', '/'));
         Assertions.assertEquals("pvc-bar",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getName());
         Assertions.assertEquals("/container/path/bar",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getMountPath());
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(1).getMountPath()
+                        .replace('\\', '/'));
         Assertions.assertEquals(2, deployment.getSpec().getTemplate().getSpec().getVolumes().size());
         Assertions.assertEquals("pvc-foo", deployment.getSpec().getTemplate().getSpec().getVolumes().get(0).getName());
         Assertions.assertEquals("pvc-foo",
@@ -686,27 +693,30 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals(5, volumeMounts.size());
         // secret:foo
         Assertions.assertEquals("foo", volumeMounts.get(0).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo", volumeMounts.get(0).getMountPath());
+        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo", volumeMounts.get(0).getMountPath().replace('\\', '/'));
         Assertions.assertTrue(volumeMounts.get(0).getReadOnly());
         // secret:foo/key-foo
         Assertions.assertEquals("foo", volumeMounts.get(1).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo/key-foo", volumeMounts.get(1).getMountPath());
+        Assertions.assertEquals("/etc/camel/conf.d/_secrets/foo/key-foo",
+                volumeMounts.get(1).getMountPath().replace('\\', '/'));
         Assertions.assertTrue(volumeMounts.get(1).getReadOnly());
         Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getKey());
         Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getPath());
         // configmap:bar
         Assertions.assertEquals("bar", volumeMounts.get(2).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar", volumeMounts.get(2).getMountPath());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar", volumeMounts.get(2).getMountPath().replace('\\', '/'));
         Assertions.assertTrue(volumeMounts.get(2).getReadOnly());
         // configmap:bar/key-bar
         Assertions.assertEquals("bar", volumeMounts.get(3).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar/key-bar", volumeMounts.get(3).getMountPath());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar/key-bar",
+                volumeMounts.get(3).getMountPath().replace('\\', '/'));
         Assertions.assertTrue(volumeMounts.get(3).getReadOnly());
         Assertions.assertEquals("key-bar", volumes.get(3).getConfigMap().getItems().get(0).getKey());
         Assertions.assertEquals("key-bar", volumes.get(3).getConfigMap().getItems().get(0).getPath());
         // configmap:bar2/my.properties
         Assertions.assertEquals("bar2", volumeMounts.get(4).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar2/my.properties", volumeMounts.get(4).getMountPath());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar2/my.properties",
+                volumeMounts.get(4).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("my.properties", volumes.get(4).getConfigMap().getItems().get(0).getKey());
         Assertions.assertEquals("my.properties", volumes.get(4).getConfigMap().getItems().get(0).getPath());
     }
@@ -729,30 +739,33 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals(6, volumeMounts.size());
         // secret:foo
         Assertions.assertEquals("foo", volumeMounts.get(0).getName());
-        Assertions.assertEquals("/etc/camel/resources.d/_secrets/foo", volumeMounts.get(0).getMountPath());
+        Assertions.assertEquals("/etc/camel/resources.d/_secrets/foo", volumeMounts.get(0).getMountPath().replace('\\', '/'));
         Assertions.assertTrue(volumeMounts.get(0).getReadOnly());
         // secret:foo/key-foo
         Assertions.assertEquals("foo", volumeMounts.get(1).getName());
-        Assertions.assertEquals("/etc/camel/resources.d/_secrets/foo/key-foo", volumeMounts.get(1).getMountPath());
+        Assertions.assertEquals("/etc/camel/resources.d/_secrets/foo/key-foo",
+                volumeMounts.get(1).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getKey());
         Assertions.assertEquals("key-foo", volumes.get(1).getSecret().getItems().get(0).getPath());
         // secret:foo/key-foo@/etc/foodir/my-file.txt
         Assertions.assertEquals("foo", volumeMounts.get(2).getName());
-        Assertions.assertEquals("/etc/foodir/my-file.txt", volumeMounts.get(2).getMountPath());
+        Assertions.assertEquals("/etc/foodir/my-file.txt", volumeMounts.get(2).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("my-file.txt", volumeMounts.get(2).getSubPath());
         Assertions.assertEquals("key-foo", volumes.get(2).getSecret().getItems().get(0).getKey());
         Assertions.assertEquals("my-file.txt", volumes.get(2).getSecret().getItems().get(0).getPath());
         // configmap:bar
         Assertions.assertEquals("bar", volumeMounts.get(3).getName());
-        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar", volumeMounts.get(3).getMountPath());
+        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar",
+                volumeMounts.get(3).getMountPath().replace('\\', '/'));
         // configmap:bar/key-bar
         Assertions.assertEquals("bar", volumeMounts.get(4).getName());
-        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar/key-bar", volumeMounts.get(4).getMountPath());
+        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar/key-bar",
+                volumeMounts.get(4).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("key-bar", volumes.get(4).getConfigMap().getItems().get(0).getKey());
         Assertions.assertEquals("key-bar", volumes.get(4).getConfigMap().getItems().get(0).getPath());
         // configmap:bar2/my.properties@/var/dir1/bar.bin
         Assertions.assertEquals("bar2", volumeMounts.get(5).getName());
-        Assertions.assertEquals("/var/dir1/bar.bin", volumeMounts.get(5).getMountPath());
+        Assertions.assertEquals("/var/dir1/bar.bin", volumeMounts.get(5).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("bar.bin", volumeMounts.get(5).getSubPath());
         Assertions.assertEquals("my.properties", volumes.get(5).getConfigMap().getItems().get(0).getKey());
         Assertions.assertEquals("bar.bin", volumes.get(5).getConfigMap().getItems().get(0).getPath());
@@ -772,19 +785,21 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
 
         // config configmap:bar1a/my.key1
         Assertions.assertEquals("bar1a", volumeMounts.get(0).getName());
-        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar1a/my.key1", volumeMounts.get(0).getMountPath());
+        Assertions.assertEquals("/etc/camel/conf.d/_configmaps/bar1a/my.key1",
+                volumeMounts.get(0).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("my.key1", volumeMounts.get(0).getSubPath());
         Assertions.assertEquals("my.key1", volumes.get(0).getConfigMap().getItems().get(0).getKey());
         Assertions.assertEquals("my.key1", volumes.get(0).getConfigMap().getItems().get(0).getPath());
         // resources configmap:bar2/key-bar2
         Assertions.assertEquals("bar2", volumeMounts.get(1).getName());
-        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar2/key-bar2", volumeMounts.get(1).getMountPath());
+        Assertions.assertEquals("/etc/camel/resources.d/_configmaps/bar2/key-bar2",
+                volumeMounts.get(1).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("key-bar2", volumeMounts.get(1).getSubPath());
         Assertions.assertEquals("key-bar2", volumes.get(1).getConfigMap().getItems().get(0).getKey());
         Assertions.assertEquals("key-bar2", volumes.get(1).getConfigMap().getItems().get(0).getPath());
         // resources configmap:bar2a/my.key2@/var/dir2/bar.bin
         Assertions.assertEquals("bar2a", volumeMounts.get(2).getName());
-        Assertions.assertEquals("/var/dir2/bar.bin", volumeMounts.get(2).getMountPath());
+        Assertions.assertEquals("/var/dir2/bar.bin", volumeMounts.get(2).getMountPath().replace('\\', '/'));
         Assertions.assertEquals("bar.bin", volumeMounts.get(2).getSubPath());
         Assertions.assertEquals("my.key2", volumes.get(2).getConfigMap().getItems().get(0).getKey());
         Assertions.assertEquals("bar.bin", volumes.get(2).getConfigMap().getItems().get(0).getPath());
@@ -807,7 +822,8 @@ class KubernetesExportTest extends KubernetesExportBaseTest {
         Assertions.assertEquals("openapi",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getName());
         Assertions.assertEquals("/etc/camel/resources.d/_configmaps/openapi/spec.yaml",
-                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath());
+                deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getMountPath()
+                        .replace('\\', '/'));
         Assertions.assertEquals("spec.yaml",
                 deployment.getSpec().getTemplate().getSpec().getContainers().get(0).getVolumeMounts().get(0).getSubPath());
     }

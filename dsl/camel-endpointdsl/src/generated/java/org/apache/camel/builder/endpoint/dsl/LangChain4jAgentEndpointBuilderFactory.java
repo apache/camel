@@ -270,6 +270,32 @@ public interface LangChain4jAgentEndpointBuilderFactory {
         public String langChain4jAgentMemoryId() {
             return "CamelLangChain4jAgentMemoryId";
         }
+        /**
+         * The user message to accompany file content when using WrappedFile as
+         * input.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentUserMessage}.
+         */
+        public String langChain4jAgentUserMessage() {
+            return "CamelLangChain4jAgentUserMessage";
+        }
+        /**
+         * The media type (MIME type) of the file content. Overrides
+         * auto-detection from file extension.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code LangChain4jAgentMediaType}.
+         */
+        public String langChain4jAgentMediaType() {
+            return "CamelLangChain4jAgentMediaType";
+        }
     }
     static LangChain4jAgentEndpointBuilder endpointBuilder(String componentName, String path) {
         class LangChain4jAgentEndpointBuilderImpl extends AbstractEndpointBuilder implements LangChain4jAgentEndpointBuilder, AdvancedLangChain4jAgentEndpointBuilder {

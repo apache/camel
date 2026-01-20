@@ -41,9 +41,11 @@ import software.amazon.awssdk.services.iam.model.DeleteUserResponse;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.iam.model.GetUserResponse;
 import software.amazon.awssdk.services.iam.model.Group;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
 import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
+import software.amazon.awssdk.services.iam.model.ListUsersRequest;
 import software.amazon.awssdk.services.iam.model.ListUsersResponse;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupResponse;
@@ -115,6 +117,11 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public ListAccessKeysResponse listAccessKeys() {
+        return listAccessKeys(ListAccessKeysRequest.builder().build());
+    }
+
+    @Override
+    public ListAccessKeysResponse listAccessKeys(ListAccessKeysRequest listAccessKeysRequest) {
         ListAccessKeysResponse.Builder result = ListAccessKeysResponse.builder();
         Collection<AccessKeyMetadata> accessKeyMetadata = new ArrayList<>();
         AccessKeyMetadata.Builder meta = AccessKeyMetadata.builder();
@@ -124,6 +131,7 @@ public class AmazonIAMClientMock implements IamClient {
         meta.userName("test");
         accessKeyMetadata.add(meta.build());
         result.accessKeyMetadata(accessKeyMetadata);
+        result.isTruncated(false);
         return result.build();
     }
 
@@ -134,17 +142,24 @@ public class AmazonIAMClientMock implements IamClient {
         group.groupName("Test");
         ListGroupsResponse.Builder res = ListGroupsResponse.builder();
         res.groups(Collections.singleton(group.build()));
+        res.isTruncated(false);
         return res.build();
     }
 
     @Override
     public ListUsersResponse listUsers() {
+        return listUsers(ListUsersRequest.builder().build());
+    }
+
+    @Override
+    public ListUsersResponse listUsers(ListUsersRequest listUsersRequest) {
         ListUsersResponse.Builder res = ListUsersResponse.builder();
         List<User> list = new ArrayList<>();
         User.Builder user = User.builder();
         user.userName("test");
         list.add(user.build());
         res.users(list);
+        res.isTruncated(false);
         return res.build();
     }
 

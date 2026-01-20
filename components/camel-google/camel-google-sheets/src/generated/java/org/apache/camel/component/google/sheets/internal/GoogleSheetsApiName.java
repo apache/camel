@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.google.sheets.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component GoogleSheets
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum GoogleSheetsApiName implements ApiName {
 
     SPREADSHEETS("spreadsheets"),

@@ -39,6 +39,18 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     /* Prefix for camel component tag */
     static String CAMEL_COMPONENT = "camel-";
 
+    static final int MAX_LENGTH = 250;
+
+    /**
+     * Clips the name to be at most 250 chars in length so it's valid according to micrometer/otel libraries.
+     */
+    public static String clipMaxLength(String name) {
+        if (name != null && name.length() > MAX_LENGTH) {
+            name = name.substring(0, MAX_LENGTH);
+        }
+        return name;
+    }
+
     /**
      * This method removes the scheme, any leading slash characters and options from the supplied URI. This is intended
      * to extract a meaningful name from the URI that can be used in situations, such as the operation name.

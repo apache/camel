@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2-parent</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-olingo2</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Olingo2 :: Component</name>
+    <name>Camel :: Olingo2 (Deprecated) :: Component</name>
     <description>Camel Olingo2 component</description>
 
     <properties>

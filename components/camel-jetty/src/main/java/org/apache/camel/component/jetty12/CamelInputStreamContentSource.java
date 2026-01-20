@@ -25,7 +25,7 @@ public class CamelInputStreamContentSource extends InputStreamContentSource {
     private final int length;
 
     public CamelInputStreamContentSource(InputStream stream, int length) {
-        super(stream);
+        super(stream, null);
         this.length = length;
     }
 

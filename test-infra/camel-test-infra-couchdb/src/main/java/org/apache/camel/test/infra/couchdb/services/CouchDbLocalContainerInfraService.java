@@ -60,6 +60,8 @@ public class CouchDbLocalContainerInfraService implements CouchDbInfraService, C
             public CouchDBContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName));
                 withNetworkAliases(containerName);
+                withEnv("COUCHDB_USER", "admin");
+                withEnv("COUCHDB_PASSWORD", "password");
                 waitingFor(Wait.forListeningPort());
 
                 if (fixedPort) {

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.WINDOWS)
-public class NettyHttpSuspendResume503Test extends BaseNettyTest {
+public class NettyHttpSuspendResume503Test extends BaseNettyTestSupport {
 
     private final String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true";
 

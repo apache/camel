@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
+public class NettyHttpSwitchingStatus204Test extends BaseNettyTestSupport {
 
     @Test
     public void testSwitchNoBodyTo204ViaHttp() throws Exception {

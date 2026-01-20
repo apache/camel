@@ -23,6 +23,8 @@ public final class SimpleConstants {
 
     @Metadata(description = "The message body", javaType = "Object", label = "function,ognl")
     public static final String BODY = "body";
+    @Metadata(description = "The message body class type", javaType = "Class", label = "function")
+    public static final String BODY_TYPE = "bodyType";
     @Metadata(description = "Converts the body to a String, and attempts to pretty print if JSon or XML; otherwise the body is returned as the String value.",
               javaType = "String", label = "function")
     public static final String PRETTY_BODY = "prettyBody";
@@ -173,13 +175,61 @@ public final class SimpleConstants {
                             + " Otherwise the returned string is clipped between the head and tail positions.",
               label = "function", javaType = "String")
     public static final String SUBSTRING = "substring(head,tail)";
+    @Metadata(description = "Returns a substring of the message body/expression that comes before. Returns null if nothing comes before.",
+              label = "function", javaType = "String", displayName = "Substring Before")
+    public static final String SUBSTRING_BEFORE = "substringBefore(exp,before)";
+    @Metadata(description = "Returns a substring of the message body/expression that comes after. Returns null if nothing comes after.",
+              label = "function", javaType = "String", displayName = "Substring After")
+    public static final String SUBSTRING_AFTER = "substringAfter(exp,before)";
     @Metadata(description = "Returns a random number between min (included) and max (excluded).", label = "function",
-              javaType = "int", displayName = "Generate Random Number")
+              javaType = "int", displayName = "Substring Between")
+    public static final String SUBSTRING_BETWEEN = "substringBetween(exp,after,before)";
+    @Metadata(description = "Splits the message body/expression as a String value using the separator into a String array",
+              label = "function",
+              javaType = "String[]", displayName = "Split String Values")
+    public static final String SPLIT = "split(exp,separator)";
+    @Metadata(description = "Capitalizes the message body/expression as a String value (upper case every words)",
+              label = "function",
+              javaType = "String", displayName = "Capitalize String Values")
+    public static final String CAPITALIZE = "capitalize(exp)";
+    @Metadata(description = "Sets a message header with the given expression (optional converting to the given type)",
+              label = "function", javaType = "Object")
+    public static final String SET_HEADER = "setHeader(name,type,exp)";
+    @Metadata(description = "Sets a variable with the given expression (optional converting to the given type)",
+              label = "function", javaType = "Object")
+    public static final String SET_VARIABLE = "setVariable(name,type,exp)";
+    @Metadata(description = "Returns a substring of the message body/expression that are between after and before. Returns null if nothing comes between.",
+              label = "function", javaType = "String")
     public static final String RANDOM = "random(min,max)";
     @Metadata(description = "The skip function iterates the message body and skips the first number of items."
                             + " This can be used with the Splitter EIP to split a message body and skip the first N number of items.",
               label = "function", javaType = "java.util.Iterator", displayName = "Skip First Items from the Message Body")
     public static final String SKIP = "skip(num)";
+    @Metadata(description = "Converts the message body (or expression) to the specified type.",
+              label = "function,ognl", displayName = "Convert To")
+    public static final String CONVERT_TO = "convertTo(exp,type)";
+    @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
+              label = "function", javaType = "String", displayName = "Trim")
+    public static final String TRIM = "trim(exp)";
+    @Metadata(description = "Pads the expression with extra padding if necessary, according the the total width."
+                            + " The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.",
+              label = "function", javaType = "String", displayName = "Pad String")
+    public static final String PAD = "pad(exp,width,separator)";
+    @Metadata(description = "The payload length (number of bytes) of the message body (or expression).",
+              label = "function", javaType = "int", displayName = "Length")
+    public static final String LENGTH = "length(exp)";
+    @Metadata(description = "The size of the message body (or expression). If the payload is java.util.Collection or java.util.Map based then the size is the number of elements; otherwise the payload size in bytes.",
+              label = "function", javaType = "int", displayName = "Size")
+    public static final String SIZE = "size(exp)";
+    @Metadata(description = "Uppercases the message body (or expression)",
+              label = "function", javaType = "String", displayName = "Uppercase")
+    public static final String UPPERCASE = "uppercase(exp)";
+    @Metadata(description = "Lowercases the message body (or expression)",
+              label = "function", javaType = "String", displayName = "Lowercase")
+    public static final String LOWERCASE = "lowercase(exp)";
+    @Metadata(description = "Performs a string concat using two expressions (message body as default) with optional separator",
+              label = "function", javaType = "String", displayName = "Concat")
+    public static final String CONCAT = "concat(exp,exp,separator)";
     @Metadata(description = "The collate function iterates the message body and groups the data into sub lists of specified size."
                             + " This can be used with the Splitter EIP to split a message body and group/batch"
                             + " the split sub message into a group of N sub lists.",
@@ -218,6 +268,18 @@ public final class SimpleConstants {
     @Metadata(description = "The map function creates a LinkedHashMap with the given set of pairs.",
               label = "function", javaType = "java.util.LinkedHashMap", displayName = "Create Map of pairs")
     public static final String MAP = "map(key1,value1,...)";
+    @Metadata(description = "Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.",
+              label = "function", javaType = "long", displayName = "Calculate Sum Number")
+    public static final String SUM = "sum(val...)";
+    @Metadata(description = "Converts the message body (or expression) to a long number and return the absolute value.",
+              label = "function", javaType = "Long", displayName = "Absolute Number")
+    public static final String ABS = "abs(exp)";
+    @Metadata(description = "Converts the message body (or expression) to a floating number and return the ceil value (rounded up to nearest integer).",
+              label = "function", javaType = "Integer", displayName = "Ceil Number")
+    public static final String CEIL = "ceil(exp)";
+    @Metadata(description = "Converts the message body (or expression) to a floating number and return the floor value (rounded down to nearest integer).",
+              label = "function", javaType = "Integer", displayName = "Floor Number")
+    public static final String FLOOR = "floor(exp)";
     @Metadata(description = "All the attachments as a Map<String,DataHandler.", javaType = "java.util.Map", label = "function")
     public static final String ATTACHMENTS = "attachments";
     @Metadata(description = "The number of attachments. Is 0 if there are no attachments.", javaType = "int",
@@ -238,5 +300,11 @@ public final class SimpleConstants {
     @Metadata(description = "The DataHandler for the given attachment.", javaType = "jakarta.activation.DataHandler",
               label = "function,ognl")
     public static final String ATTACHMENT = "attachment(key)";
+    @Metadata(description = "Base64 encodes the message body (or expression)", javaType = "String",
+              label = "function")
+    public static final String BASE64_ENCODE = "base64Encode(exp)";
+    @Metadata(description = "Base64 decodes the message body (or expression)", javaType = "byte[]",
+              label = "function")
+    public static final String BASE64_DECODE = "base64Decode(exp)";
 
 }

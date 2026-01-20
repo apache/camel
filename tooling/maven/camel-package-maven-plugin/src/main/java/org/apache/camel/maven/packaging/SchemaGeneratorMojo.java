@@ -468,7 +468,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
                 // special for eips which has outputs or requires an expressions
                 XmlElementRef elementRef = methodElement.getAnnotation(XmlElementRef.class);
                 if (elementRef != null) {
-                    if ("RouteDefinition".equals(classElement.getSimpleName())) {
+                    // NOTE: class not available at compilation time.
+                    if ("RouteDefinition".equals(classElement.getSimpleName())) { // NOSONAR
                         // special for route as we handle this specially
                         continue;
                     }
@@ -479,11 +480,12 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
             // special when we process these nodes as they do not use JAXB
             // annotations on fields, but on methods
-            if ("OptionalIdentifiedDefinition".equals(classElement.getSimpleName())) {
+            // NOTE: classes not available at compilation time.
+            if ("OptionalIdentifiedDefinition".equals(classElement.getSimpleName())) { // NOSONAR
                 processIdentified(classElement, eipOptions);
-            } else if ("RouteDefinition".equals(classElement.getSimpleName())) {
+            } else if ("RouteDefinition".equals(classElement.getSimpleName())) { // NOSONAR
                 processRoute(classElement, eipOptions);
-            } else if ("TryDefinition".equals(classElement.getSimpleName())) {
+            } else if ("TryDefinition".equals(classElement.getSimpleName())) { // NOSONAR
                 // special-case for doTry
                 processDoTry(classElement, eipOptions);
             }

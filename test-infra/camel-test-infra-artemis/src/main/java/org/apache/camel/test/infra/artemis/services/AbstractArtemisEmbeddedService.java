@@ -112,7 +112,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     private static String getRandomSubPath() {
         final int size = 12;
 
-        return ThreadLocalRandom.current().ints(97, 122)
+        return ThreadLocalRandom.current().ints(97, 122) // NOSONAR
                 .limit(size)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();

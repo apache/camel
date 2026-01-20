@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,11 +37,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTestBase {
     @Test
     void singleClusterMemberLeaderElection() throws Exception {
+        ClusterConfig leaderConfig = new ClusterConfig();
+        leaderConfig.setAcquireLockInterval(10);
         try (CamelContext clusterLeader = createCamelContext()) {
             MockEndpoint mockEndpoint = clusterLeader.getEndpoint("mock:result", MockEndpoint.class);
             mockEndpoint.expectedMessageCount(5);
 
             clusterLeader.start();
+
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
 
             mockEndpoint.assertIsSatisfied();
 
@@ -64,10 +68,13 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
 
     @Test
     void multiClusterMemberLeaderElection() throws Exception {
-        CamelContext clusterLeader = createCamelContext();
+        ClusterConfig leaderConfig = new ClusterConfig();
+        leaderConfig.setAcquireLockInterval(10);
+        CamelContext clusterLeader = createCamelContext(leaderConfig);
 
         ClusterConfig followerConfig = new ClusterConfig();
         followerConfig.setAcquireLockDelay(2);
+        followerConfig.setAcquireLockInterval(10);
         CamelContext clusterFollower = createCamelContext(followerConfig);
 
         try {
@@ -75,6 +82,10 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
             mockEndpointClustered.expectedMessageCount(5);
 
             clusterLeader.start();
+
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
+
             clusterFollower.start();
 
             mockEndpointClustered.assertIsSatisfied();
@@ -119,6 +130,10 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
             mockEndpointClustered.expectedMessageCount(5);
 
             clusterLeader.start();
+
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
+
             clusterFollower.start();
 
             mockEndpointClustered.assertIsSatisfied();
@@ -175,6 +190,9 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
 
             clusterLeader.start();
 
+            Awaitility.await().atMost(Duration.ofSeconds(30))
+                    .until(() -> getClusterView(clusterLeader).getLocalMember().isLeader());
+
             mockEndpoint.assertIsSatisfied();
 
             AtomicReference<String> leaderId = new AtomicReference<>();
@@ -221,28 +239,112 @@ class FileLockClusterServiceBasicFailoverTest extends FileLockClusterServiceTest
     }
 
     @Test
-    void negativeHeartbeatTimeoutMultiplierThrowsException() throws Exception {
+    void negativeAcquireLockDelayThrowsException() {
         ClusterConfig config = new ClusterConfig();
-        config.setHeartbeatTimeoutMultiplier(-1);
-
-        Exception exception = assertThrows(Exception.class, () -> {
+        config.setAcquireLockDelay(-1);
+        assertThrows(IllegalArgumentException.class, () -> {
             try (CamelContext camelContext = createCamelContext(config)) {
                 camelContext.start();
             }
         });
-        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
 
     @Test
-    void zeroHeartbeatTimeoutMultiplierThrowsException() throws Exception {
+    void zeroAcquireLockDelayThrowsException() {
         ClusterConfig config = new ClusterConfig();
-        config.setHeartbeatTimeoutMultiplier(0);
-
-        Exception exception = assertThrows(Exception.class, () -> {
+        config.setAcquireLockDelay(0);
+        assertThrows(IllegalArgumentException.class, () -> {
             try (CamelContext camelContext = createCamelContext(config)) {
                 camelContext.start();
             }
         });
-        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+    }
+
+    @Test
+    void negativeAcquireLockIntervalThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setAcquireLockInterval(-1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void zeroAcquireLockIntervalThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setAcquireLockInterval(0);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void negativeHeartbeatTimeoutMultiplierThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setHeartbeatTimeoutMultiplier(-1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void zeroHeartbeatTimeoutMultiplierThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setHeartbeatTimeoutMultiplier(0);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void negativeClusterDataTaskMaxAttemptsThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskMaxAttempts(-1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void zeroClusterDataTaskMaxAttemptsThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskMaxAttempts(0);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void negativeClusterDataTaskTimeoutThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskTimeout(-1);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
+    }
+
+    @Test
+    void zeroClusterDataTaskTimeoutThrowsException() {
+        ClusterConfig config = new ClusterConfig();
+        config.setClusterDataTaskTimeout(0);
+        assertThrows(IllegalArgumentException.class, () -> {
+            try (CamelContext camelContext = createCamelContext(config)) {
+                camelContext.start();
+            }
+        });
     }
 }

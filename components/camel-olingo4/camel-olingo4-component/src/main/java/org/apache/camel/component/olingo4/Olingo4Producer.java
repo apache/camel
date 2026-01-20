@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Olingo4 producer.
  */
+@Deprecated(since = "4.18")
 public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4Configuration> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo4Producer.class);

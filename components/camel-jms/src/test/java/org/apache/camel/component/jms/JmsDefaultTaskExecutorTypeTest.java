@@ -180,16 +180,18 @@ class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
             public void configure() {
                 from("activemq:queue:foo.JmsDefaultTaskExecutorTypeTest.simpleAsync?defaultTaskExecutorType=SimpleAsync")
                         .routeId("simpleAsync")
-                        .noAutoStartup()
+                        .autoStartup(false)
                         .to("mock:result.simpleAsync")
                         .setBody(constant("Reply"));
 
                 from("activemq:queue:foo.JmsDefaultTaskExecutorTypeTest.threadPool?defaultTaskExecutorType=ThreadPool")
-                        .routeId("threadPool").noAutoStartup()
+                        .routeId("threadPool")
+                        .autoStartup(false)
                         .to("mock:result.threadPool")
                         .setBody(constant("Reply"));
 
-                from("activemq:queue:foo.JmsDefaultTaskExecutorTypeTest.default").routeId("default").noAutoStartup()
+                from("activemq:queue:foo.JmsDefaultTaskExecutorTypeTest.default").routeId("default")
+                        .autoStartup(false)
                         .to("mock:result.default")
                         .setBody(constant("Reply"));
             }

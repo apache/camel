@@ -32,7 +32,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisabledOnOs(OS.AIX)
-public class ManagedNettyEndpointTest extends BaseNettyTest {
+public class ManagedNettyEndpointTest extends BaseNettyTestSupport {
 
     @Override
     protected boolean useJmx() {

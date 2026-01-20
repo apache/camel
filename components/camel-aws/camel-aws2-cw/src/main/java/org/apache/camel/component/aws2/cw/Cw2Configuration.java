@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.cw;
 import java.time.Instant;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -27,11 +28,13 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 @UriParams
-public class Cw2Configuration implements Cloneable {
+public class Cw2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath
     @Metadata(required = true)
     private String namespace;
+    @UriParam(defaultValue = "putMetricData")
+    private Cw2Operations operation = Cw2Operations.putMetricData;
     @UriParam
     @Metadata(label = "advanced", autowired = true)
     private CloudWatchClient amazonCwClient;
@@ -149,6 +152,17 @@ public class Cw2Configuration implements Cloneable {
         this.namespace = namespace;
     }
 
+    public Cw2Operations getOperation() {
+        return operation;
+    }
+
+    /**
+     * The operation to perform. Defaults to putMetricData.
+     */
+    public void setOperation(Cw2Operations operation) {
+        this.operation = operation;
+    }
+
     /**
      * The metric timestamp
      */
@@ -258,7 +272,7 @@ public class Cw2Configuration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 

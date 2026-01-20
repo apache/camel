@@ -210,7 +210,8 @@ public interface Aws2TranscribeComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Transcribe client.
          * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
@@ -218,7 +219,7 @@ public interface Aws2TranscribeComponentBuilderFactory {
          * @param proxyProtocol the value to set
          * @return the dsl builder
          */
-        default Aws2TranscribeComponentBuilder proxyProtocol(java.lang.String proxyProtocol) {
+        default Aws2TranscribeComponentBuilder proxyProtocol(software.amazon.awssdk.core.Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
@@ -474,7 +475,7 @@ public interface Aws2TranscribeComponentBuilderFactory {
             case "protocol": getOrCreateConfiguration((Transcribe2Component) component).setProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "proxyHost": getOrCreateConfiguration((Transcribe2Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((Transcribe2Component) component).setProxyPort((java.lang.Integer) value); return true;
-            case "proxyProtocol": getOrCreateConfiguration((Transcribe2Component) component).setProxyProtocol((java.lang.String) value); return true;
+            case "proxyProtocol": getOrCreateConfiguration((Transcribe2Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
             case "region": getOrCreateConfiguration((Transcribe2Component) component).setRegion((java.lang.String) value); return true;
             case "transcribeClient": getOrCreateConfiguration((Transcribe2Component) component).setTranscribeClient((software.amazon.awssdk.services.transcribe.TranscribeClient) value); return true;
             case "trustAllCertificates": getOrCreateConfiguration((Transcribe2Component) component).setTrustAllCertificates((boolean) value); return true;

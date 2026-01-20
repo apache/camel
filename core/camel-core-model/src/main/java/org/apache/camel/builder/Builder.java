@@ -181,6 +181,16 @@ public final class Builder {
     }
 
     /**
+     * Returns a simple expression
+     */
+    public static ValueBuilder simple(String value, Class<?> resultType, boolean pretty) {
+        SimpleExpression exp = new SimpleExpression(value);
+        exp.setResultType(resultType);
+        exp.setPretty(Boolean.toString(pretty));
+        return new ValueBuilder(exp);
+    }
+
+    /**
      * Returns a JOOR expression value builder
      */
     @Deprecated(since = "4.3.0")

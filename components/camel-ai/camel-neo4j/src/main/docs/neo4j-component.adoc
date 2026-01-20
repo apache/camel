@@ -253,7 +253,7 @@ You can generate embeddings with an Embedding Models using the camel Lancghain4j
             .to("langchain4j-embeddings:test")
             .setHeader(Neo4j.Headers.OPERATION).constant(Neo4Operation.CREATE_VECTOR)
             .setHeader(Neo4j.Headers.LABEL).constant("Test")
-            .transform(new DataType("neo4j:embeddings"))
+            .transformDataType(new DataType("neo4j:embeddings"))
             .to("neo4j:neo4j?vectorIndexName=myIndex&label=Test");
 ----
 

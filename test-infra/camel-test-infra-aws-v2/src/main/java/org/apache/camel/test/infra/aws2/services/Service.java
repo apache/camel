@@ -30,6 +30,7 @@ public enum Service {
     S3("s3"),
     SECRETS_MANAGER("secretsmanager"),
     SNS("sns"),
+    SSM("ssm"),
     SQS("sqs"),
     STS("sts"),
     TRANSCRIBE("transcribe");

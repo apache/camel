@@ -104,6 +104,13 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is other operator
+     */
+    public boolean isOther() {
+        return type == TokenType.otherOperator;
+    }
+
+    /**
      * Whether the type is unary operator
      */
     public boolean isUnary() {

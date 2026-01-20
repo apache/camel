@@ -731,6 +731,67 @@ public interface EventbridgeEndpointBuilderFactory {
         public String awsEventbridgeDetailType() {
             return "CamelAwsEventbridgeDetailType";
         }
+        /**
+         * The token for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listRules listTargetsByRule listRuleNamesByTarget
+         * 
+         * @return the name of the header {@code AwsEventbridgeNextToken}.
+         */
+        public String awsEventbridgeNextToken() {
+            return "CamelAwsEventbridgeNextToken";
+        }
+        /**
+         * The maximum number of results to return.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: listRules listTargetsByRule listRuleNamesByTarget
+         * 
+         * @return the name of the header {@code AwsEventbridgeLimit}.
+         */
+        public String awsEventbridgeLimit() {
+            return "CamelAwsEventbridgeLimit";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: listRules listTargetsByRule listRuleNamesByTarget
+         * 
+         * @return the name of the header {@code AwsEventbridgeIsTruncated}.
+         */
+        public String awsEventbridgeIsTruncated() {
+            return "CamelAwsEventbridgeIsTruncated";
+        }
+        /**
+         * The Amazon Resource Name (ARN) of the rule.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: putRule describeRule
+         * 
+         * @return the name of the header {@code AwsEventbridgeRuleArn}.
+         */
+        public String awsEventbridgeRuleArn() {
+            return "CamelAwsEventbridgeRuleArn";
+        }
+        /**
+         * The number of failed entries in the response.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: putEvent putTargets removeTargets
+         * 
+         * @return the name of the header {@code
+         * AwsEventbridgeFailedEntryCount}.
+         */
+        public String awsEventbridgeFailedEntryCount() {
+            return "CamelAwsEventbridgeFailedEntryCount";
+        }
     }
     static EventbridgeEndpointBuilder endpointBuilder(String componentName, String path) {
         class EventbridgeEndpointBuilderImpl extends AbstractEndpointBuilder implements EventbridgeEndpointBuilder, AdvancedEventbridgeEndpointBuilder {

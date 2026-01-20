@@ -18,7 +18,6 @@ package org.apache.camel.component.telegram;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 
 /**
@@ -28,7 +27,14 @@ public interface TelegramService {
 
     UpdateResult getUpdates(Long offset, Integer limit, Integer timeoutSeconds);
 
-    void sendMessage(Exchange exchange, AsyncCallback callback, OutgoingMessage message);
+    /**
+     * Sends a message to Telegram.
+     *
+     * @param exchange the exchange
+     * @param callback the async callback
+     * @param message  the message to send
+     */
+    void sendMessage(Exchange exchange, AsyncCallback callback, TelegramMessage message);
 
     boolean setWebhook(String url);
 

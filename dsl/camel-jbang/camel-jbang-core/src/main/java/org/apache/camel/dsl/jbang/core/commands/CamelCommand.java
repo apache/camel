@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Stack;
 import java.util.concurrent.Callable;
@@ -93,6 +94,14 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     public abstract Integer doCall() throws Exception;
 
+    protected static String getScheme(String name) {
+        int pos = name.indexOf(":");
+        if (pos != -1) {
+            return name.substring(0, pos);
+        }
+        return null;
+    }
+
     public Path getStatusFile(String pid) {
         return CommandLineHelper.getCamelDir().resolve(pid + "-status.json");
     }
@@ -141,7 +150,7 @@ public abstract class CamelCommand implements Callable<Integer> {
                 // name starts with --
                 configProperties.containsKey(name.substring(2)))) {
                     lines.add(String.format("    %s=%s",
-                            opt.longestName(), opt.getValue().toString()));
+                            opt.longestName(), Optional.ofNullable(opt.getValue()).orElse("")));
                 }
             });
             if (!lines.isEmpty()) {

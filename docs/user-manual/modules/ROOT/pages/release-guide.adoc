@@ -1,7 +1,6 @@
 = Release Guide
 
-This guide covers how to create and announce a Camel release.
-Instructions on updating the website to include the new documentation version are xref:release-guide-website.adoc[here].
+This guide covers how to create and announce a Camel release. Instructions on updating the website to include the new documentation version are xref:release-guide-website.adoc[here].
 
 [[ReleaseGuide-Prequisites]]
 == Prequisites
@@ -13,10 +12,73 @@ To prepare or perform a release, you *must be* at least an Apache Camel committe
 * Your public key should also be cross-signed by other Apache committers (this can be done at key signing parties at
 ApacheCon, for instance).
 * Make sure you have the correct maven configuration in `~/.m2/settings.xml`.
-* https://github.com/takari/maven-wrapper[Maven Wrapper] is used and bundled with Camel 2.21 onwards and should be used
-for building the release.
 * You may want to get familiar with the release settings in the parent Apache POM.
-* Make sure you are using Java 11 for Apache Camel 3 and Java 21 for Apache Camel 4.
+* Make sure you are using the expected supported Java version.
+
+[[ReleaseGuide-GPG]]
+== GPG setup
+
+NOTE: this step is required and is the same whether you're releasing the main Camel project or any of the subproject (eg, camel-k, camel-quarkus, ...).
+
+Here some quick notes about how to configure the GPG key (this will be required just once, typically the first time you do a release). If you're on a Linux distribution, you should have `gpg` binary available: try with `gpg --version`.
+
+=== Create a new GPG key
+
+----
+gpg --full-gen-key
+----
+
+This command will prompt a series of requests you'll need to fill. Have a look at the procedure described in https://cwiki.apache.org/confluence/display/PEGASUS/Configure+GPG+key[another Apache project page] for more details.
+
+Once you have created your key, it is convenient you add it to the `KEYS` file in root Camel github repository. IMPORTANT: always export the GPG key to the main project, even if the release concerns a Camel subproject.
+
+----
+gpg --list-sigs "pcongiusti@apache.org" >> KEYS && gpg --armor --export "pcongiusti@apache.org" >> KEYS
+----
+
+At this stage you should commit the change and provide a PR to the project with the changes done in the KEYS file.
+
+=== Sync GPG keys
+
+Everytime there is a change in the source GPG keys on the main project you need to synchronize with the dist Camel project, in order to correctly provide the KEYS file to the expected location. You need to use `svn` tool and authenticate with your Apache credentials. Once it's done you can proceed like the following:
+
+----
+svn checkout https://dist.apache.org/repos/dist/release/camel camel-dist
+cd camel-dist
+cp /path/to/repo/camel/KEYS . # replace the path with your main project repository
+svn commit -m "Add GPG key for Your Name"
+----
+
+The change will be applied to the `dist` repository and after a few minutes will be synchronized with the https://downloads.apache.org/camel/ public repository which is the one we use to provide the GPG KEYS. After every change in this file it would be convenient to send a short email to dev@camel.apache.org to let everybody know about the new addition.
+
+=== Promote the GPG key publicly
+
+You also need to recover your fingerprint and copy to the https://id.apache.org account:
+
+----
+$ gpg --fingerprint
+
+pub   rsa4096 2023-05-26 [SC]
+      xyzz accc brrr dsad 1234  1234 1234 1234 1234 1234    <-- This is the fingerprint!
+uid           [ultimate] Pasquale Congiusti (gpg key) <pcongiusti@apache.org>
+sub   rsa4096 2023-05-26 [E]
+----
+
+Once this step is over, you will need to send your GPG key to certain serves used later when verifying the signed pushed artifacts:
+
+----
+$ gpg -k
+
+pub   rsa4096 2023-05-26 [SC]
+      1234123412341234123412341132132131312123            <-- This is the key you need!
+uid           [ultimate] Pasquale Congiusti (gpg key) <pcongiusti@apache.org>
+sub   rsa4096 2023-05-26 [E]
+
+gpg --keyserver hkp://keyserver.ubuntu.com --send-keys 1234123412341234123412341132132131312123
+gpg --keyserver hkp://keys.openpgp.org --send-keys 1234123412341234123412341132132131312123
+----
+
+Now you can proceed with the release.
 
 [[ReleaseGuide-MavenSetup]]
 == Maven Setup
@@ -85,7 +147,7 @@ Complete the following steps to create a new Camel release:
 
 . Grab the latest source from Git, checkout the target branch (`BRANCH_NAME`) to build from, and create a release branch off of that branch:
 
-  
+
   $ git clone https://git-wip-us.apache.org/repos/asf/camel.git
   $ cd camel
   $ git checkout BRANCH_NAME
@@ -93,10 +155,10 @@ Complete the following steps to create a new Camel release:
 
 . Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
 
-  
+
   ./mvnw -e org.apache.rat:apache-rat-plugin:check
   grep -e ' !?????' target/rat.txt
-  
+
 
 *  The latter command will provide a list of all files without valid license headers.
   Ideally this list is empty, otherwise fix the issues by adding valid license headers and rerun the above commands before
@@ -104,9 +166,9 @@ Complete the following steps to create a new Camel release:
 
 . Do a release dry run to check for problems:
 
-  
+
   ./mvnw release:prepare -DdryRun -Prelease
-  
+
 
 * The release plugin will prompt for a release version, an SCM tag and the next release version.
 
@@ -118,12 +180,13 @@ Complete the following steps to create a new Camel release:
 
 * Make sure to check the generated signature files:
 
-  
-  $ gpg camel-core/target/camel-core-3.0.0-SNAPSHOT.jar.asc
-  gpg: assuming signed data in `camel-core/target/camel-core-3.0.0.jar'
-  gpg: Signature made Sat 06 Apr 2019 03:58:01 AM PDT using RSA key ID 5942C049
-  gpg: Good signature from "Gregor Zurowski <gzurowski@apache.org>"
- 
+
+  $ gpg --verify core/target/core-4.18.0-SNAPSHOT.pom.asc
+  gpg: assuming signed data in 'core/target/core-4.18.0-SNAPSHOT.pom'
+  gpg: Signature made Thu 08 Jan 2026 10:07:47 AM CET
+  gpg:                using EDDSA key D5A8412A12BFEBD9C7362CD8CED552456D5000FB
+  gpg: Good signature from "Aurélien Pupier <apupier@apache.org>" [ultimate]
+
 
 . Prepare the release:
 
@@ -181,12 +244,12 @@ Complete the following steps to create a new Camel-spring-boot release:
 . From Camel 3.3.0 ahead, the camel-spring-boot project uses camel-dependencies as parent.
 You'll need to set the version here https://github.com/apache/camel-spring-boot/blob/master/pom.xml#L26
 To the version released from the main Camel repository as the first step.
-  
+
 . Perform a license check with http://creadur.apache.org/rat/apache-rat-plugin[Apache Rat]:
 
   ./mvnw -e org.apache.rat:apache-rat-plugin:check
   grep -e ' !?????' target/rat.txt
-  
+
 *  The latter command will provide a list of all files without valid license headers.
   Ideally this list is empty, otherwise fix the issues by adding valid license headers and rerun the above commands before
   proceeding with the next step.
@@ -197,7 +260,7 @@ Change the camel-version property in https://github.com/apache/camel-spring-boot
 . Do a release dry run to check for problems:
 
   ./mvnw release:prepare -DdryRun -Prelease
-  
+
  * The release plugin will prompt for a release version, an SCM tag and the next release version.
 
 *  Use a three digit release version of the form: `MAJOR.MINOR.PATCH`, e.g. `3.0.0`.
@@ -212,7 +275,7 @@ Change the camel-version property in https://github.com/apache/camel-spring-boot
   gpg: assuming signed data in `core/camel-spring-boot/target/camel-spring-boot-3.0.0-SNAPSHOT.jar'
   gpg: Signature made Sat 06 Apr 2019 03:58:01 AM PDT using RSA key ID 5942C049
   gpg: Good signature from "Gregor Zurowski <gzurowski@apache.org>"
- 
+
 . Prepare the release:
 
 * First clean up the dry run results:
@@ -276,7 +339,7 @@ This will release the artifacts.
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
   ./release-distro.sh <Camel version>
-  
+
 . Copy SBOMs to Apache website:
 
   cd ${CAMEL_ROOT_DIR}/etc/scripts
@@ -342,7 +405,7 @@ Once the release train (camel and camel-spring-boot) has been voted and publishe
 * Update the `camel.version` properties to the next version
 
 * Run the following command to advance the version in the examples
-  
+
   $ find . -type f -exec sed -i 's/$oldVersion/$newVersion/g' {} +
 
 * To be sure everything is fine, run:
@@ -354,15 +417,15 @@ Once the release train (camel and camel-spring-boot) has been voted and publishe
 * On https://github.com/apache/camel-spring-boot-examples in the examples/pom.xml file the following steps are necessary:
 
 * Update the camel-dependencies version to the version coming from the release-train
-    
+
 * Update the `camel.version` properties to the version coming from the release-train
-    
+
 * To be sure everything is fine, run:
-      
+
   $ ./mvnw clean install
-    
+
 * Commit
-  
+
   $ git commit -a
   $ git push origin master (or the branch related to the release, eg. camel-3.4.x)
   $ git tag -a camel-spring-boot-examples-$version -m "$version"
@@ -377,7 +440,7 @@ Once the release train (camel and camel-spring-boot) has been voted and publishe
 * Run the following command to advance the version in the examples
 
   $ find . -type f -exec sed -i 's/$oldVersion/$newVersion/g' {} +
-   
+
 * To be sure everything is fine, run:
 
   $ ./mvnw clean install

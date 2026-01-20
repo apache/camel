@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.ec2;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.ec2.Ec2Client;
 
 @UriParams
-public class AWS2EC2Configuration implements Cloneable {
+public class AWS2EC2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Logical name")
     @Metadata(required = true)
@@ -218,14 +219,16 @@ public class AWS2EC2Configuration implements Cloneable {
      * Set whether the EC2 client should expect to load credentials through a default credentials provider or to expect
      * static credentials to be passed in.
      */
-    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    @Override
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 
+    @Override
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }

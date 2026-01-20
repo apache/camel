@@ -39,7 +39,7 @@ public class RandomLoadBalancer extends QueueLoadBalancer {
         }
 
         // pick a random
-        index = ThreadLocalRandom.current().nextInt(size);
+        index = ThreadLocalRandom.current().nextInt(size); // NOSONAR
         return processors[index];
     }
 

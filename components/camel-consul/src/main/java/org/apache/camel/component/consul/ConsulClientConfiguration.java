@@ -85,24 +85,6 @@ public abstract class ConsulClientConfiguration implements Cloneable {
         this.url = url;
     }
 
-    /**
-     * @deprecated replaced by {@link #getDatacenter()} ()}
-     */
-    @Deprecated
-    public String getDc() {
-        return datacenter;
-    }
-
-    /**
-     * The data center
-     *
-     * @deprecated replaced by {@link #setDatacenter(String)} ()}
-     */
-    @Deprecated
-    public void setDc(String dc) {
-        this.datacenter = dc;
-    }
-
     public String getDatacenter() {
         return datacenter;
     }
@@ -227,7 +209,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * Connect timeout for OkHttpClient
+     * Connect timeout
      */
     public void setConnectTimeout(Duration connectTimeout) {
         this.connectTimeout = connectTimeout;
@@ -238,7 +220,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * Read timeout for OkHttpClient
+     * Read timeout
      */
     public void setReadTimeout(Duration readTimeout) {
         this.readTimeout = readTimeout;
@@ -249,7 +231,7 @@ public abstract class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * Write timeout for OkHttpClient
+     * Write timeout
      */
     public void setWriteTimeout(Duration writeTimeout) {
         this.writeTimeout = writeTimeout;

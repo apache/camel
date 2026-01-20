@@ -26,6 +26,7 @@ import org.apache.olingo.odata2.api.uri.PathSegment;
 /**
  * Copied from Olingo2 library, since URI parsing wasn't made a part of it's public API.
  */
+@Deprecated(since = "4.18")
 public class ODataPathSegmentImpl implements PathSegment {
 
     private String path;

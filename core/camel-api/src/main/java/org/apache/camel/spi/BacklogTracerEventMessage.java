@@ -34,12 +34,14 @@ public interface BacklogTracerEventMessage {
     long getUid();
 
     /**
-     * Whether this is a new incoming message and this is the first trace.
+     * Whether this is first message for a given route When a message is routed via multiple routes, then each route
+     * will have a first/last pair.
      */
     boolean isFirst();
 
     /**
-     * Whether this is the last trace of the message (its complete).
+     * Whether this is last message for a given route When a message is routed via multiple routes, then each route will
+     * have a first/last pair.
      */
     boolean isLast();
 
@@ -54,9 +56,14 @@ public interface BacklogTracerEventMessage {
     String getLocation();
 
     /**
-     * Route id
+     * Current route id
      */
     String getRouteId();
+
+    /**
+     * The original incoming route id
+     */
+    String getFromRouteId();
 
     /**
      * Whether this event was from a route that is created from Rest DSL.

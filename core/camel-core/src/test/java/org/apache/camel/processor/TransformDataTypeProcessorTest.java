@@ -27,9 +27,9 @@ public class TransformDataTypeProcessorTest extends TransformViaDSLTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                transformer().name("myDataType").withJava(MyDataTypeTransformer.class);
                 // START SNIPPET: example
-                from("direct:start").transform(new DataType("myDataType")).to("mock:result");
+                transformer().name("myDataType").withJava(MyDataTypeTransformer.class);
+                from("direct:start").transformDataType(new DataType("myDataType")).to("mock:result");
                 // END SNIPPET: example
             }
         };

@@ -42,7 +42,7 @@ public class Transcribe2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "proxyport":
         case "proxyPort": target.getConfiguration().setProxyPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "proxyprotocol":
-        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "proxyProtocol": target.getConfiguration().setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
         case "proxyusername":
         case "proxyUsername": target.getConfiguration().setProxyUsername(property(camelContext, java.lang.String.class, value)); return true;
         case "region": target.getConfiguration().setRegion(property(camelContext, java.lang.String.class, value)); return true;
@@ -88,7 +88,7 @@ public class Transcribe2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "proxyport":
         case "proxyPort": return java.lang.Integer.class;
         case "proxyprotocol":
-        case "proxyProtocol": return java.lang.String.class;
+        case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
         case "proxyusername":
         case "proxyUsername": return java.lang.String.class;
         case "region": return java.lang.String.class;

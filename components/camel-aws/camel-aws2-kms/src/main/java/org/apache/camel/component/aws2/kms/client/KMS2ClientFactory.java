@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.kms.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.kms.KMS2Configuration;
-import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientProfileOptimizedImpl;
-import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientStandardImpl;
+import software.amazon.awssdk.services.kms.KmsClient;
 
 /**
- * Factory class to return the correct type of AWS KMS client.
+ * Factory class to create AWS KMS clients using common configuration.
  */
 public final class KMS2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class KMS2ClientFactory {
     }
 
     /**
-     * Return the correct AWS KMS client (based on remote vs local).
+     * Create a KMS client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               KMSClient
+     * @param  configuration The KMS configuration
+     * @return               Configured KmsClient
      */
-    public static KMS2InternalClient getKmsClient(KMS2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new KMS2ClientOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new KMS2ClientProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new KMS2ClientSessionTokenImpl(configuration);
-        } else {
-            return new KMS2ClientStandardImpl(configuration);
-        }
+    public static KmsClient getKmsClient(KMS2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                KmsClient::builder);
     }
 }

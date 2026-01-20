@@ -25,6 +25,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 #set( $componentConfig = "${componentName}Configuration" )
 import ${componentPackage}.${componentConfig};
@@ -39,6 +40,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for $componentName
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class $collectionName extends ApiCollection<${apiNameEnum}, ${componentConfig}> {
 
     private ${collectionName}() {

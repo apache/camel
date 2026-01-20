@@ -50,6 +50,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
+import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LoggerHelper;
@@ -63,7 +64,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DefaultBacklogDebugger extends ServiceSupport implements BacklogDebugger {
+public final class DefaultBacklogDebugger extends ServiceSupport implements BacklogDebugger, ShutdownPrepared {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBacklogDebugger.class);
 
@@ -265,6 +266,15 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             logger.log("Waiting for a debugger to attach");
             suspendMessageProcessing();
         }
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        logger.log("Preparing debugger for shutdown");
+        // camel is being shutdown so if we are suspended during debugging
+        // then turn this off so messages can finish processing
+        suspendMode = false;
+        resumeMessageProcessing();
     }
 
     /**
@@ -880,7 +890,8 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
                 nodeId,
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
                         camelContext,
-                        false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getRouteId(),
+                        false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getFromRouteId(),
+                        message.getRouteId(),
                         message.getToNode(), message.getToNodeParentId(), message.getToNodeParentWhenId(),
                         message.getToNodeParentWhenLabel(),
                         message.getToNodeShortName(), message.getToNodeLabel(),
@@ -924,6 +935,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String toNodeShortName = definition.getShortName();
             // avoid label is too large
             String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
+            String fromRouteId = exchange.getFromRouteId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
@@ -935,7 +947,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            first, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
+                            first, false, uid, timestamp, source, fromRouteId, routeId, toNode, toNodeParentId, null, null,
                             toNodeShortName, toNodeLabel, level, exchangeId, correlationExchangeId,
                             false, false, data);
             suspendedBreakpointMessages.put(nodeId, msg);
@@ -1014,6 +1026,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             String toNodeShortName = definition.getShortName();
             // avoid label is too large
             String toNodeLabel = StringHelper.limitLength(definition.getLabel(), 50);
+            String fromRouteId = exchange.getFromRouteId();
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
@@ -1024,7 +1037,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, false, uid, timestamp, source, routeId, toNode, toNodeParentId, null, null,
+                            false, false, uid, timestamp, source, fromRouteId, routeId, toNode, toNodeParentId, null, null,
                             toNodeShortName, toNodeLabel, level,
                             exchangeId, correlationExchangeId,
                             false, false, data);
@@ -1123,6 +1136,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             long timestamp = System.currentTimeMillis();
             String toNode = CamelContextHelper.getRouteId(definition);
             String toNodeParentId = definition.getParentId();
+            String fromRouteId = exchange.getFromRouteId();
             String routeId = route != null ? route.getRouteId() : toNode;
             String exchangeId = exchange.getExchangeId();
             String correlationExchangeId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
@@ -1133,7 +1147,7 @@ public final class DefaultBacklogDebugger extends ServiceSupport implements Back
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
                             camelContext,
-                            false, true, uid, timestamp, source, routeId, toNode, toNodeParentId,
+                            false, true, uid, timestamp, source, fromRouteId, routeId, toNode, toNodeParentId,
                             null, null, null, null, level, exchangeId, correlationExchangeId,
                             false, false, data);
             // we want to capture if there was an exception

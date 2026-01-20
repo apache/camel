@@ -66,7 +66,7 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements Endpoin
 
         ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null
                 ? configuration.getAmazonDynamoDbStreamsClient()
-                : Ddb2StreamClientFactory.getDynamoDBStreamClient(configuration).getDynamoDBStreamClient();
+                : Ddb2StreamClientFactory.getDynamoDBStreamClient(configuration);
     }
 
     @Override

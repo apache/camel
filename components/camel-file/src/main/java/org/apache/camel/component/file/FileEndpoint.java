@@ -447,14 +447,15 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             permissions.add(PosixFilePermission.GROUP_EXECUTE);
         }
 
+        // NOTE: the user is explicitly setting the permissions
         if ((othersValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_WRITE);
+            permissions.add(PosixFilePermission.OTHERS_WRITE); // NOSONAR
         }
         if ((othersValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_READ);
+            permissions.add(PosixFilePermission.OTHERS_READ); // NOSONAR
         }
         if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+            permissions.add(PosixFilePermission.OTHERS_EXECUTE); // NOSONAR
         }
 
         return permissions;
@@ -509,14 +510,15 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             permissions.add(PosixFilePermission.GROUP_EXECUTE);
         }
 
+        // NOTE: the user is explicitly setting the permissions
         if ((othersValue & CHMOD_WRITE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_WRITE);
+            permissions.add(PosixFilePermission.OTHERS_WRITE); // NOSONAR
         }
         if ((othersValue & CHMOD_READ_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_READ);
+            permissions.add(PosixFilePermission.OTHERS_READ); // NOSONAR
         }
         if ((othersValue & CHMOD_EXECUTE_MASK) > 0) {
-            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+            permissions.add(PosixFilePermission.OTHERS_EXECUTE); // NOSONAR
         }
 
         return permissions;

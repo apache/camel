@@ -1,0 +1,18 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 219398830,
+            "purchased_paid_media": {
+                "from": {
+                    "id": 1585844777,
+                    "is_bot": false,
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "username": "johndoe"
+                },
+                "paid_media_payload": "premium_content_12345"
+            }
+        }
+    ]
+}

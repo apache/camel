@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "accept", description="Accept a Dispute, given a dispute ID", signatures={"com.braintreegateway.Result<com.braintreegateway.Dispute> accept(String id)"}), @ApiMethod(methodName = "addFileEvidence", description="Add File Evidence to a Dispute, given an ID and a FileEvidenceRequest File evidence request", signatures={"com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, String documentId)", "com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addFileEvidence(String disputeId, com.braintreegateway.FileEvidenceRequest fileEvidenceRequest)"}), @ApiMethod(methodName = "addTextEvidence", description="Add Text Evidence to a Dispute, given an ID and content", signatures={"com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, String content)", "com.braintreegateway.Result<com.braintreegateway.DisputeEvidence> addTextEvidence(String id, com.braintreegateway.TextEvidenceRequest textEvidenceRequest)"}), @ApiMethod(methodName = "finalize", description="Finalize a Dispute, given an ID", signatures={"com.braintreegateway.Result<com.braintreegateway.Dispute> finalize(String id)"}), @ApiMethod(methodName = "find", description="Returns a Dispute, given an ID", signatures={"com.braintreegateway.Dispute find(String id)"}), @ApiMethod(methodName = "removeEvidence", description="Remove Evidence from a Dispute, given an ID and a DisputeEvidence ID", signatures={"com.braintreegateway.Result<com.braintreegateway.Dispute> removeEvidence(String disputeId, String evidenceId)"}), @ApiMethod(methodName = "search", description="Finds all Disputes that match the query", signatures={"com.braintreegateway.PaginatedCollection<com.braintreegateway.Dispute> search(com.braintreegateway.DisputeSearchRequest query)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DisputeGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "addTextEvidence", description="The content of the text evidence for the dispute")})

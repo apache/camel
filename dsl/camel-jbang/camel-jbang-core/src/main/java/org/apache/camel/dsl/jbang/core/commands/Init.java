@@ -76,6 +76,10 @@ public class Init extends CamelCommand {
             description = "When creating a yaml file should it be created as a Pipe CR")
     private boolean pipe;
 
+    @Option(names = { "--repo", "--repos" },
+            description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    protected String repositories;
+
     public Init(CamelJBangMain main) {
         super(main);
     }
@@ -118,7 +122,7 @@ public class Init extends CamelCommand {
                     kameletsVersion = VersionHelper.extractKameletsVersion();
                 }
                 // load existing kamelet
-                is = KameletCatalogHelper.loadKameletYamlSchema(fromKamelet, kameletsVersion);
+                is = KameletCatalogHelper.loadKameletYamlSchema(fromKamelet, kameletsVersion, repositories);
             } else if (file.contains("source")) {
                 ext = "kamelet-source.yaml";
             } else if (file.contains("sink")) {

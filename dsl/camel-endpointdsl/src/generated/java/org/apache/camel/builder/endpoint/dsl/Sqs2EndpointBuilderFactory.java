@@ -3435,6 +3435,78 @@ public interface Sqs2EndpointBuilderFactory {
         public String awsSqsOperation() {
             return "CamelAwsSqsOperation";
         }
+        /**
+         * The token for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listQueues
+         * 
+         * @return the name of the header {@code AwsSqsNextToken}.
+         */
+        public String awsSqsNextToken() {
+            return "CamelAwsSqsNextToken";
+        }
+        /**
+         * The maximum number of results to return.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: listQueues
+         * 
+         * @return the name of the header {@code AwsSqsMaxResults}.
+         */
+        public String awsSqsMaxResults() {
+            return "CamelAwsSqsMaxResults";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: listQueues
+         * 
+         * @return the name of the header {@code AwsSqsIsTruncated}.
+         */
+        public String awsSqsIsTruncated() {
+            return "CamelAwsSqsIsTruncated";
+        }
+        /**
+         * The sequence number for FIFO queues.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsSqsSequenceNumber}.
+         */
+        public String awsSqsSequenceNumber() {
+            return "CamelAwsSqsSequenceNumber";
+        }
+        /**
+         * The number of failed messages in a batch send operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: sendBatchMessage
+         * 
+         * @return the name of the header {@code AwsSqsFailedMessageCount}.
+         */
+        public String awsSqsFailedMessageCount() {
+            return "CamelAwsSqsFailedMessageCount";
+        }
+        /**
+         * The number of successful messages in a batch send operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: sendBatchMessage
+         * 
+         * @return the name of the header {@code AwsSqsSuccessfulMessageCount}.
+         */
+        public String awsSqsSuccessfulMessageCount() {
+            return "CamelAwsSqsSuccessfulMessageCount";
+        }
     }
     static Sqs2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Sqs2EndpointBuilderImpl extends AbstractEndpointBuilder implements Sqs2EndpointBuilder, AdvancedSqs2EndpointBuilder {

@@ -17,43 +17,43 @@
 package org.apache.camel.component.aws2.mq;
 
 import org.apache.camel.component.aws2.mq.client.MQ2ClientFactory;
-import org.apache.camel.component.aws2.mq.client.MQ2InternalClient;
-import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.mq.MqClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MQ2ClientFactoryTest {
 
     @Test
-    public void getStandardMQClientDefault() {
-        MQ2Configuration mq2Configuration = new MQ2Configuration();
-        MQ2InternalClient mqClient = MQ2ClientFactory.getMqClient(mq2Configuration);
-        assertTrue(mqClient instanceof MQ2ClientStandardImpl);
+    public void getMqClientWithDefaultCredentials() {
+        MQ2Configuration configuration = new MQ2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        MqClient mqClient = MQ2ClientFactory.getMqClient(configuration);
+        assertNotNull(mqClient);
+        mqClient.close();
     }
 
     @Test
-    public void getStandardMQClient() {
-        MQ2Configuration mq2Configuration = new MQ2Configuration();
-        mq2Configuration.setUseDefaultCredentialsProvider(false);
-        MQ2InternalClient mqClient = MQ2ClientFactory.getMqClient(mq2Configuration);
-        assertTrue(mqClient instanceof MQ2ClientStandardImpl);
+    public void getMqClientWithStaticCredentials() {
+        MQ2Configuration configuration = new MQ2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        MqClient mqClient = MQ2ClientFactory.getMqClient(configuration);
+        assertNotNull(mqClient);
+        mqClient.close();
     }
 
     @Test
-    public void getIAMOptimizedMQClient() {
-        MQ2Configuration mq2Configuration = new MQ2Configuration();
-        mq2Configuration.setUseDefaultCredentialsProvider(true);
-        MQ2InternalClient mqClient = MQ2ClientFactory.getMqClient(mq2Configuration);
-        assertTrue(mqClient instanceof MQ2ClientOptimizedImpl);
-    }
-
-    @Test
-    public void getSessionTokenMQClient() {
-        MQ2Configuration mq2Configuration = new MQ2Configuration();
-        mq2Configuration.setUseDefaultCredentialsProvider(true);
-        MQ2InternalClient mqClient = MQ2ClientFactory.getMqClient(mq2Configuration);
-        assertTrue(mqClient instanceof MQ2ClientOptimizedImpl);
+    public void getMqClientWithEndpointOverride() {
+        MQ2Configuration configuration = new MQ2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        MqClient mqClient = MQ2ClientFactory.getMqClient(configuration);
+        assertNotNull(mqClient);
+        mqClient.close();
     }
 }

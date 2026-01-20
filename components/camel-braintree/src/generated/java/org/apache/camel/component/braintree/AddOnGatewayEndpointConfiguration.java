@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,5 +20,6 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "all", signatures={"java.util.List<com.braintreegateway.AddOn> all()"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class AddOnGatewayEndpointConfiguration extends BraintreeConfiguration {
 }

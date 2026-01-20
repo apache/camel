@@ -22,6 +22,7 @@ import java.util.Arrays;
 /**
  * Copied from Olingo2 core package.
  */
+@Deprecated(since = "4.18")
 public enum UriType {
     /**
      * Service document

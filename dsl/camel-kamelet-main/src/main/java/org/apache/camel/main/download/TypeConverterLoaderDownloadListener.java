@@ -61,16 +61,17 @@ public class TypeConverterLoaderDownloadListener implements ArtifactDownloadList
     protected void loadTypeConverters(File file) throws Exception {
         // use isolated classloader to load the service file as we only want to check this file
         // (and not what is already in the existing classloader)
-        DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(null);
-        cl.addFile(file);
+        try (DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(null)) {
+            cl.addFile(file);
 
-        // load names for custom type converters from the downloaded JAR
-        Collection<String> loaders = new ArrayList<>();
-        findTypeConverterLoaderClasses(loaders,
-                cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_TYPE_CONVERTER_LOADER));
-        findTypeConverterLoaderClasses(loaders,
-                cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_FALLBACK_TYPE_CONVERTER));
-        loadTypeConverters(loaders);
+            // load names for custom type converters from the downloaded JAR
+            Collection<String> loaders = new ArrayList<>();
+            findTypeConverterLoaderClasses(loaders,
+                    cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_TYPE_CONVERTER_LOADER));
+            findTypeConverterLoaderClasses(loaders,
+                    cl.getResourceAsStream(BaseTypeConverterRegistry.META_INF_SERVICES_FALLBACK_TYPE_CONVERTER));
+            loadTypeConverters(loaders);
+        }
     }
 
     protected void findTypeConverterLoaderClasses(Collection<String> loaders, InputStream is) throws IOException {

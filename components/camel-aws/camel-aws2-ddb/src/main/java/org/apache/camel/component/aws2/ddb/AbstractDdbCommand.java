@@ -96,4 +96,73 @@ public abstract class AbstractDdbCommand {
     protected Integer determineLimit() {
         return exchange.getIn().getHeader(Ddb2Constants.LIMIT, Integer.class);
     }
+
+    /**
+     * Gets the filter expression from the exchange header.
+     */
+    protected String determineFilterExpression() {
+        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class);
+    }
+
+    /**
+     * Gets the filter expression attribute names from the exchange header.
+     */
+    @SuppressWarnings("unchecked")
+    protected Map<String, String> determineFilterExpressionAttributeNames() {
+        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class);
+    }
+
+    /**
+     * Gets the filter expression attribute values from the exchange header.
+     */
+    @SuppressWarnings("unchecked")
+    protected Map<String, AttributeValue> determineFilterExpressionAttributeValues() {
+        return exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class);
+    }
+
+    /**
+     * Gets the projection expression from the exchange header.
+     */
+    protected String determineProjectExpression() {
+        return exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, String.class);
+    }
+
+    /**
+     * Gets the index name from the exchange header.
+     */
+    protected String determineIndexName() {
+        return exchange.getIn().getHeader(Ddb2Constants.INDEX_NAME, String.class);
+    }
+
+    /**
+     * Checks if the filter expression is set and not empty.
+     */
+    protected boolean hasFilterExpression() {
+        String filterExpression = exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class);
+        return filterExpression != null && !filterExpression.isEmpty();
+    }
+
+    /**
+     * Checks if the filter expression attribute names are set and not empty.
+     */
+    protected boolean hasFilterExpressionAttributeNames() {
+        Map<?, ?> names = exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class);
+        return names != null && !names.isEmpty();
+    }
+
+    /**
+     * Checks if the filter expression attribute values are set and not empty.
+     */
+    protected boolean hasFilterExpressionAttributeValues() {
+        Map<?, ?> values = exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class);
+        return values != null && !values.isEmpty();
+    }
+
+    /**
+     * Checks if the projection expression is set and not empty.
+     */
+    protected boolean hasProjectExpression() {
+        String projectExpression = exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, String.class);
+        return projectExpression != null && !projectExpression.isEmpty();
+    }
 }

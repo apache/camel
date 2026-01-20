@@ -4,7 +4,7 @@
 :artifactid: camel-ibm-cos
 :description: Store and retrieve objects from IBM Cloud Object Storage.
 :since: 4.16
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -126,6 +126,8 @@ Examples:
 
 For a complete list of endpoints, see
 https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-endpoints[IBM COS Endpoints documentation].
+
+Note that several operations requires a regional endpoint, as opposed to a cross-region endpoint.
 
 === IBM COS Producer Operation examples
 

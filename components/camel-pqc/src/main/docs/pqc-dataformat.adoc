@@ -4,7 +4,7 @@
 :artifactid: camel-pqc
 :description: Encrypt and decrypt messages using Post-Quantum Cryptography Key Encapsulation Mechanisms (KEM).
 :since: 4.16
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: pqc

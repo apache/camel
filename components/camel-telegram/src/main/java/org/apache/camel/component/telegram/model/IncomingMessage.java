@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
@@ -24,6 +25,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.camel.component.telegram.model.payments.RefundedPayment;
+import org.apache.camel.component.telegram.model.payments.SuccessfulPayment;
 
 /**
  * A message that is exchanged with the Telegram network.
@@ -70,6 +73,14 @@ public class IncomingMessage implements Serializable {
     private String caption;
 
     private IncomingGame game;
+
+    private IncomingVoice voice;
+
+    @JsonProperty("successful_payment")
+    private SuccessfulPayment successfulPayment;
+
+    @JsonProperty("refunded_payment")
+    private RefundedPayment refundedPayment;
 
     public IncomingMessage() {
     }
@@ -202,6 +213,30 @@ public class IncomingMessage implements Serializable {
         this.game = game;
     }
 
+    public IncomingVoice getVoice() {
+        return voice;
+    }
+
+    public void setVoice(IncomingVoice voice) {
+        this.voice = voice;
+    }
+
+    public SuccessfulPayment getSuccessfulPayment() {
+        return successfulPayment;
+    }
+
+    public void setSuccessfulPayment(SuccessfulPayment successfulPayment) {
+        this.successfulPayment = successfulPayment;
+    }
+
+    public RefundedPayment getRefundedPayment() {
+        return refundedPayment;
+    }
+
+    public void setRefundedPayment(RefundedPayment refundedPayment) {
+        this.refundedPayment = refundedPayment;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingMessage{");
@@ -221,6 +256,9 @@ public class IncomingMessage implements Serializable {
         sb.append(", captionEntities=").append(captionEntities);
         sb.append(", replyMarkup=").append(replyMarkup);
         sb.append(", game=").append(game);
+        sb.append(", voice=").append(voice);
+        sb.append(", successfulPayment=").append(successfulPayment);
+        sb.append(", refundedPayment=").append(refundedPayment);
         sb.append('}');
         return sb.toString();
     }

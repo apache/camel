@@ -27,12 +27,15 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ExpressionFactory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
 
 /**
  * Route messages based on a series of predicates
@@ -91,10 +94,12 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
         if (otherwise != null) {
             output.setParent(this);
             otherwise.addOutput(output);
+            prepareOutput(output);
         } else if (!whenClauses.isEmpty()) {
             output.setParent(this);
             WhenDefinition last = whenClauses.get(whenClauses.size() - 1);
             last.addOutput(output);
+            prepareOutput(output);
         } else {
             super.addOutput(output);
         }
@@ -103,11 +108,37 @@ public class ChoiceDefinition extends NoOutputDefinition<ChoiceDefinition> {
     public void addOutput(WhenDefinition when) {
         when.setParent(this);
         whenClauses.add(when);
+        prepareOutput(when);
     }
 
     public void addOutput(OtherwiseDefinition other) {
         other.setParent(this);
         this.otherwise = other;
+        prepareOutput(other);
+    }
+
+    protected void prepareOutput(NamedNode output) {
+        // grab camel context depends on if this is a regular route or a route configuration
+        CamelContext context = this.getCamelContext();
+        if (context == null) {
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+            if (route != null) {
+                context = route.getCamelContext();
+            } else {
+                RouteConfigurationDefinition rc = this.getRouteConfiguration();
+                if (rc != null) {
+                    context = rc.getCamelContext();
+                }
+            }
+        }
+
+        if (context != null && (context.isSourceLocationEnabled()
+                || context.isDebugging() || context.isDebugStandby()
+                || context.isTracing() || context.isTracingStandby())) {
+            // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
+            Resource resource = ProcessorDefinitionHelper.getResource(this);
+            ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
+        }
     }
 
     /**

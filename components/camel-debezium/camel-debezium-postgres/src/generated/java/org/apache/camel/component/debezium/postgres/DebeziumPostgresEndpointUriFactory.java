@@ -23,7 +23,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(128);
+        Set<String> props = new HashSet<>(129);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -33,6 +33,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("connectionValidationTimeoutMs");
         props.add("converters");
         props.add("customMetricTags");
+        props.add("customSanitizePattern");
         props.add("databaseDbname");
         props.add("databaseHostname");
         props.add("databaseInitialStatements");
@@ -55,7 +56,6 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("exchangePattern");
         props.add("executorShutdownTimeoutMs");
         props.add("extendedHeadersEnabled");
-        props.add("flushLsnSource");
         props.add("guardrailCollectionsLimitAction");
         props.add("guardrailCollectionsMax");
         props.add("heartbeatActionQuery");
@@ -69,6 +69,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("internalKeyConverter");
         props.add("internalValueConverter");
         props.add("intervalHandlingMode");
+        props.add("lsnFlushMode");
         props.add("lsnFlushTimeoutAction");
         props.add("lsnFlushTimeoutMs");
         props.add("maxBatchSize");

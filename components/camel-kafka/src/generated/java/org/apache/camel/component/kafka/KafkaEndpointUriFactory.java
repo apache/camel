@@ -23,7 +23,7 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(112);
+        Set<String> props = new HashSet<>(119);
         props.add("additionalProperties");
         props.add("allowManualCommit");
         props.add("autoCommitEnable");
@@ -81,6 +81,10 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("metricReporters");
         props.add("metricsSampleWindowMs");
         props.add("noOfMetricsSample");
+        props.add("oauthClientId");
+        props.add("oauthClientSecret");
+        props.add("oauthScope");
+        props.add("oauthTokenEndpointUri");
         props.add("offsetRepository");
         props.add("partitionAssignor");
         props.add("partitionKey");
@@ -100,9 +104,12 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("retries");
         props.add("retryBackoffMaxMs");
         props.add("retryBackoffMs");
+        props.add("saslAuthType");
         props.add("saslJaasConfig");
         props.add("saslKerberosServiceName");
         props.add("saslMechanism");
+        props.add("saslPassword");
+        props.add("saslUsername");
         props.add("schemaRegistryURL");
         props.add("securityProtocol");
         props.add("seekTo");
@@ -137,8 +144,10 @@ public class KafkaEndpointUriFactory extends org.apache.camel.support.component.
         props.add("workerPoolCoreSize");
         props.add("workerPoolMaxSize");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(4);
+        Set<String> secretProps = new HashSet<>(6);
+        secretProps.add("oauthClientSecret");
         secretProps.add("saslJaasConfig");
+        secretProps.add("saslPassword");
         secretProps.add("sslKeyPassword");
         secretProps.add("sslKeystorePassword");
         secretProps.add("sslTruststorePassword");

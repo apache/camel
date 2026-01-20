@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.ddbstream.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.ddbstream.Ddb2StreamConfiguration;
-import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientSessionTokenImpl;
-import org.apache.camel.component.aws2.ddbstream.client.impl.Ddb2StreamClientStandardImpl;
+import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 /**
- * Factory class to return the correct type of AWS DynamoDB client.
+ * Factory class to create AWS DynamoDB Streams clients using common configuration.
  */
 public final class Ddb2StreamClientFactory {
 
@@ -31,20 +29,14 @@ public final class Ddb2StreamClientFactory {
     }
 
     /**
-     * Return the correct AWS DynamoDB client (based on remote vs local).
+     * Create a DynamoDB Streams client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               DynamoDBClient
+     * @param  configuration The DynamoDB Streams configuration
+     * @return               Configured DynamoDbStreamsClient
      */
-    public static Ddb2StreamInternalClient getDynamoDBStreamClient(Ddb2StreamConfiguration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Ddb2StreamClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Ddb2StreamClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Ddb2StreamClientSessionTokenImpl(configuration);
-        } else {
-            return new Ddb2StreamClientStandardImpl(configuration);
-        }
+    public static DynamoDbStreamsClient getDynamoDBStreamClient(Ddb2StreamConfiguration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                DynamoDbStreamsClient::builder);
     }
 }

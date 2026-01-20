@@ -62,7 +62,7 @@ public class AWS2EC2Endpoint extends DefaultEndpoint implements EndpointServiceL
         super.doStart();
 
         ec2Client = configuration.getAmazonEc2Client() != null
-                ? configuration.getAmazonEc2Client() : AWS2EC2ClientFactory.getEc2Client(configuration).getEc2Client();
+                ? configuration.getAmazonEc2Client() : AWS2EC2ClientFactory.getEc2Client(configuration);
     }
 
     @Override

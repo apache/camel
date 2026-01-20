@@ -1,0 +1,203 @@
+= Google Vertex AI Component
+:doctitle: Google Vertex AI
+:shortname: google-vertexai
+:artifactid: camel-google-vertexai
+:description: Interact with Google Cloud Vertex AI generative models.
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-vertexai
+
+*Since Camel {since}*
+
+*{component-header}*
+
+This component integrates with Google Cloud Vertex AI, supporting both Google's native models (Gemini, Imagen) and partner models (Claude, Llama, Mistral) through the rawPredict API.
+
+== Prerequisites
+
+* A Google Cloud Platform account with Vertex AI API enabled
+* A service account with appropriate permissions, or Application Default Credentials configured
+
+For setup instructions, see https://cloud.google.com/vertex-ai/docs[Vertex AI Documentation].
+
+== URI Format
+
+----
+google-vertexai:projectId:location:modelId[?options]
+----
+
+* `projectId` - Your GCP project ID
+* `location` - Region where the model is available (e.g., `us-central1`, `us-east5`)
+* `modelId` - Model identifier (e.g., `gemini-2.0-flash`, `claude-sonnet-4@20250514`)
+
+== Configuring Options
+
+// component-configure options: START
+
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+
+// endpoint options: END
+
+== Authentication
+
+The component supports two authentication methods:
+
+1. *Service Account Key File* - Set the `serviceAccountKey` parameter to a file path:
++
+----
+serviceAccountKey=file:/path/to/service-account.json
+----
+
+2. *Application Default Credentials* - If no key is provided, the component uses ADC automatically.
+
+== Operations
+
+=== Google Models
+
+Use these operations with Gemini, Imagen, and other Google models:
+
+[cols="1,3"]
+|===
+|Operation |Description
+
+|`generateText`
+|Generate text from a prompt
+
+|`generateChat`
+|Generate chat responses
+
+|`generateCode`
+|Generate code from a description
+|===
+
+=== Partner Models
+
+Use `rawPredict` for Claude, Llama, and Mistral models:
+
+[cols="1,3"]
+|===
+|Operation |Description
+
+|`rawPredict`
+|Send requests to partner models via the Prediction Service API
+|===
+
+Partner models require the `publisher` parameter: `anthropic`, `meta`, or `mistralai`.
+
+== Examples
+
+=== Text Generation with Gemini
+
+[source,java]
+----
+from("direct:prompt")
+    .setBody(constant("Explain quantum computing briefly"))
+    .to("google-vertexai:my-project:us-central1:gemini-2.0-flash")
+    .log("${body}");
+----
+
+=== Using a Service Account
+
+[source,java]
+----
+from("direct:prompt")
+    .to("google-vertexai:my-project:us-central1:gemini-2.0-flash"
+        + "?serviceAccountKey=file:/path/to/key.json")
+    .log("${body}");
+----
+
+=== Calling Claude with rawPredict
+
+[source,java]
+----
+from("direct:claude")
+    .setBody(constant("What is Apache Camel?"))
+    .to("google-vertexai:my-project:us-east5:claude-sonnet-4@20250514"
+        + "?operation=rawPredict&publisher=anthropic")
+    .log("${body}");
+----
+
+The component automatically wraps simple text prompts in the required Anthropic format.
+
+=== Claude with Custom Request
+
+For more control, pass a JSON or Map body:
+
+[source,java]
+----
+from("direct:claude")
+    .process(exchange -> {
+        String json = """
+            {
+                "anthropic_version": "vertex-2023-10-16",
+                "max_tokens": 512,
+                "messages": [{"role": "user", "content": "Write a haiku"}]
+            }
+            """;
+        exchange.getMessage().setBody(json);
+    })
+    .to("google-vertexai:my-project:us-east5:claude-sonnet-4@20250514"
+        + "?operation=rawPredict&publisher=anthropic")
+    .log("${body}");
+----
+
+== Supported Models
+
+=== Google Models
+
+Use with `generateText`, `generateChat`, or `generateCode`:
+
+* *Gemini*: `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-pro`, `gemini-1.5-flash`
+* *Imagen*: `imagen-4.0-generate-preview-05-20`, `imagen-3.0-generate-002`
+* *Gemma*: `gemma-3-27b-it`, `gemma-2-27b-it`, `gemma-2-9b-it`
+* *Embeddings*: `text-embedding-005`, `text-embedding-004`
+
+=== Partner Models
+
+Use with `rawPredict` and the appropriate `publisher`:
+
+[cols="1,2,2"]
+|===
+|Publisher |Models |Regions
+
+|`anthropic`
+|`claude-sonnet-4@20250514`, `claude-opus-4@20250514`, `claude-3-5-haiku@20241022`
+|us-east5, europe-west1
+
+|`meta`
+|`llama-4-maverick-17b-128e-instruct-maas`, `llama-3.3-70b-instruct-maas`
+|us-central1
+
+|`mistralai`
+|`mistral-medium-3`, `mistral-small-2503`, `codestral-2`
+|us-central1, europe-west4
+|===
+
+See `VertexAIModels` for all available model identifiers.
+
+== Dependencies
+
+Add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-vertexai</artifactId>
+    <version>x.x.x</version>
+</dependency>
+----
+
+include::spring-boot:partial$starter.adoc[]

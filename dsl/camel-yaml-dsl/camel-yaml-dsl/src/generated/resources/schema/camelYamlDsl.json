@@ -184,6 +184,9 @@
           "transacted" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.TransactedDefinition"
           },
+          "transformDataType" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.TransformDataTypeDefinition"
+          },
           "transform" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.TransformDefinition"
           },
@@ -3624,7 +3627,7 @@
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
-            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
+            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
             "default" : "0"
           }
         }
@@ -3907,6 +3910,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
+                "description" : "The predicate to use",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
@@ -4824,7 +4828,7 @@
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
-            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Recipient List breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
+            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Recipient List breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
             "default" : "0"
           },
           "constant" : { },
@@ -7314,7 +7318,7 @@
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
-            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to split and process all the sub messages within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
+            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
             "default" : "0"
           },
           "constant" : { },
@@ -8101,6 +8105,46 @@
           }
         }
       },
+      "org.apache.camel.model.TransformDataTypeDefinition" : {
+        "title" : "Transform Data Type",
+        "description" : "Transforms the message body based on known data type transformers.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "title" : "Description",
+            "description" : "Sets the description of this node"
+          },
+          "disabled" : {
+            "type" : "boolean",
+            "title" : "Disabled",
+            "description" : "Disables this EIP from the route.",
+            "default" : false
+          },
+          "fromType" : {
+            "type" : "string",
+            "title" : "From Type",
+            "description" : "From type used in data type transformation."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "Sets the id of this node"
+          },
+          "note" : {
+            "type" : "string",
+            "title" : "Note",
+            "description" : "Sets the note of this node"
+          },
+          "toType" : {
+            "type" : "string",
+            "title" : "To Type",
+            "description" : "To type used as a target data type in the transformation."
+          }
+        },
+        "required" : [ "toType" ]
+      },
       "org.apache.camel.model.TransformDefinition" : {
         "title" : "Transform",
         "description" : "Transforms the message body based on an expression",
@@ -8191,11 +8235,6 @@
             "description" : "Disables this EIP from the route.",
             "default" : false
           },
-          "fromType" : {
-            "type" : "string",
-            "title" : "From Type",
-            "description" : "From type used in data type transformation."
-          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -8205,11 +8244,6 @@
             "type" : "string",
             "title" : "Note",
             "description" : "Sets the note of this node"
-          },
-          "toType" : {
-            "type" : "string",
-            "title" : "To Type",
-            "description" : "To type used as a target data type in the transformation."
           },
           "constant" : { },
           "csimple" : { },
@@ -10876,6 +10910,12 @@
             "type" : "string",
             "title" : "Class Type",
             "description" : "Name of model class to use."
+          },
+          "defaultValueStringAsNull" : {
+            "type" : "boolean",
+            "title" : "Default Value String As Null",
+            "description" : "To change the default value for string types to be null instead of an empty string.",
+            "default" : false
           },
           "id" : {
             "type" : "string",
@@ -13827,6 +13867,12 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
+            "pretty" : {
+              "type" : "boolean",
+              "title" : "Pretty",
+              "description" : "To pretty format the output (only JSon or XML supported)",
+              "default" : false
+            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
@@ -14780,6 +14826,12 @@
               "type" : "string",
               "title" : "Id",
               "description" : "Sets the id of this node"
+            },
+            "pretty" : {
+              "type" : "boolean",
+              "title" : "Pretty",
+              "description" : "To pretty format the output (only JSon or XML supported)",
+              "default" : false
             },
             "resultType" : {
               "type" : "string",
@@ -18052,6 +18104,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
+                "description" : "The predicate to use for validation.",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }

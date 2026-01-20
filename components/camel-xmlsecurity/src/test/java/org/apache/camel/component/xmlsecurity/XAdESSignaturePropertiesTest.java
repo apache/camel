@@ -500,7 +500,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     @Test
     public void enveloped() throws Exception {
         setupMock();
-        sendBody("direct:enveloped", payload);
+        TestSupport.sendBody(this.template, "direct:enveloped", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -509,7 +509,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
                                  "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         setupMock();
-        sendBody("direct:detached", detachedPayload);
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -529,7 +529,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = getSignerEndpoint();
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSigPolicyId(value);
-        sendBody("direct:enveloping", payload, Collections.emptyMap());
+        TestSupport.sendBody(this.template, "direct:enveloping", payload, Collections.emptyMap());
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class,
                 "The XAdES-EPES configuration is invalid. The signature policy identifier is missing.", null);
@@ -551,7 +551,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = getSignerEndpoint();
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSignaturePolicyDigestValue(value);
-        sendBody("direct:enveloping", payload, Collections.emptyMap());
+        TestSupport.sendBody(this.template, "direct:enveloping", payload, Collections.emptyMap());
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class,
                 "The XAdES-EPES configuration is invalid. The digest value for the signature policy is missing.", null);
@@ -573,7 +573,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = getSignerEndpoint();
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSignaturePolicyDigestAlgorithm(value);
-        sendBody("direct:enveloping", payload, Collections.emptyMap());
+        TestSupport.sendBody(this.template, "direct:enveloping", payload, Collections.emptyMap());
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class,
                 "The XAdES-EPES configuration is invalid. The digest algorithm for the signature policy is missing.", null);
@@ -586,7 +586,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = getSignerEndpoint();
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSignerClaimedRoles(Collections.singletonList("<ClaimedRole>wrong XML fragment<ClaimedRole>")); // Element 'ClaimedRole' is not closed correctly
-        sendBody("direct:enveloping", payload, Collections.emptyMap());
+        TestSupport.sendBody(this.template, "direct:enveloping", payload, Collections.emptyMap());
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
@@ -604,7 +604,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setCommitmentTypeQualifiers(
                 Collections.singletonList("<CommitmentTypeQualifier>wrong XML fragment<CommitmentTypeQualifier>")); // end tag is not correct
-        sendBody("direct:enveloping", payload, Collections.emptyMap());
+        TestSupport.sendBody(this.template, "direct:enveloping", payload, Collections.emptyMap());
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
@@ -621,7 +621,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = getSignerEndpoint();
         XAdESSignatureProperties props = (XAdESSignatureProperties) endpoint.getConfiguration().getProperties();
         props.setSigPolicyQualifiers(Collections.singletonList("<SigPolicyQualifier>wrong XML fragment<SigPolicyQualifier>")); // end tag is not correct
-        sendBody("direct:enveloping", payload, Collections.emptyMap());
+        TestSupport.sendBody(this.template, "direct:enveloping", payload, Collections.emptyMap());
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
@@ -640,7 +640,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         props.setSigPolicyQualifiers(Collections
                 .singletonList(
                         "<SigPolicyQualifier xmlns=\"http://invalid.com\">XML fragment with wrong namespace for root element</SigPolicyQualifier>"));
-        sendBody("direct:enveloping", payload, Collections.emptyMap());
+        TestSupport.sendBody(this.template, "direct:enveloping", payload, Collections.emptyMap());
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
@@ -849,7 +849,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     protected Document testEnveloping(String fromUri, Map<String, Object> headers)
             throws Exception {
         MockEndpoint mock = setupMock();
-        sendBody(fromUri, payload, headers);
+        TestSupport.sendBody(this.template, fromUri, payload, headers);
         MockEndpoint.assertIsSatisfied(context);
         Message message = getMessage(mock);
         byte[] body = message.getBody(byte[].class);

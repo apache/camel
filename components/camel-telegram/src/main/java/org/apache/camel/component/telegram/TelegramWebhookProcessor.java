@@ -29,7 +29,7 @@ import org.apache.camel.support.AsyncProcessorSupport;
 
 import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
-public class TelegramWebhookProcessor extends AsyncProcessorSupport implements AsyncProcessor {
+public class TelegramWebhookProcessor extends AsyncProcessorSupport {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 

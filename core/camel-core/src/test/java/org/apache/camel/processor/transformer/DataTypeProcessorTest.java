@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.transformer;
 
 import java.io.ByteArrayInputStream;
@@ -29,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DataTypeProcessorTest {
+public class DataTypeProcessorTest {
 
     private final DefaultCamelContext camelContext = new DefaultCamelContext();
 
@@ -46,6 +45,7 @@ class DataTypeProcessorTest {
 
         exchange.getMessage().setBody(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)));
         processor.setToType("uppercase");
+        processor.start();
         processor.process(exchange);
 
         assertEquals(String.class, exchange.getMessage().getBody().getClass());
@@ -58,22 +58,11 @@ class DataTypeProcessorTest {
 
         exchange.getMessage().setBody(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)));
         processor.setToType("lowercase");
+        processor.start();
         processor.process(exchange);
 
         assertEquals(String.class, exchange.getMessage().getBody().getClass());
         assertEquals("test", exchange.getMessage().getBody());
     }
 
-    @Test
-    public void shouldIgnoreUnknownDataType() throws Exception {
-        Exchange exchange = new DefaultExchange(camelContext);
-
-        exchange.getMessage().setBody(new ByteArrayInputStream("Test".getBytes(StandardCharsets.UTF_8)));
-        processor.setIgnoreMissingDataType(true);
-        processor.setToType("foo:unknown");
-        processor.process(exchange);
-
-        assertEquals(ByteArrayInputStream.class, exchange.getMessage().getBody().getClass());
-        assertEquals("Test", exchange.getMessage().getBody(String.class));
-    }
 }

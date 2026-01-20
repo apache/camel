@@ -165,18 +165,18 @@ public class LangChain4jEmbeddingsComponentNeo4jTargetIT extends CamelTestSuppor
                         .setHeader(Neo4jHeaders.OPERATION).constant(Neo4Operation.CREATE_VECTOR)
                         .setHeader(Neo4jHeaders.VECTOR_ID).constant("1")
                         .setHeader(Neo4jHeaders.LABEL).constant("Test")
-                        .transform(new org.apache.camel.spi.DataType("neo4j:embeddings"))
+                        .transformDataType(new org.apache.camel.spi.DataType("neo4j:embeddings"))
                         .to(NEO4J_URI);
 
                 from("direct:search")
                         .to("langchain4j-embeddings:test")
                         // transform prompt into embeddings for search
-                        .transform(
+                        .transformDataType(
                                 new DataType("neo4j:embeddings"))
                         .setHeader(Neo4jHeaders.OPERATION, constant(Neo4Operation.VECTOR_SIMILARITY_SEARCH))
                         .to(NEO4J_URI)
                         // decode retrieved embeddings for RAG
-                        .transform(
+                        .transformDataType(
                                 new DataType("neo4j:rag"));
             }
         };

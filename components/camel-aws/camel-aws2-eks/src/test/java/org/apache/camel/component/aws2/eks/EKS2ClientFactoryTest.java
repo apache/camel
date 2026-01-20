@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.eks;
 
 import org.apache.camel.component.aws2.eks.client.EKS2ClientFactory;
-import org.apache.camel.component.aws2.eks.client.EKS2InternalClient;
-import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.eks.client.impl.EKS2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.eks.EksClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EKS2ClientFactoryTest {
 
     @Test
-    public void getStandardEKS2ClientDefault() {
-        EKS2Configuration eks2Configuration = new EKS2Configuration();
-        EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(eks2Configuration);
-        assertTrue(eks2Client instanceof EKS2ClientStandardImpl);
+    public void getEksClientWithDefaultCredentials() {
+        EKS2Configuration configuration = new EKS2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        EksClient eksClient = EKS2ClientFactory.getEksClient(configuration);
+        assertNotNull(eksClient);
+        eksClient.close();
     }
 
     @Test
-    public void getStandardEKS2Client() {
-        EKS2Configuration eks2Configuration = new EKS2Configuration();
-        eks2Configuration.setUseDefaultCredentialsProvider(false);
-        EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(eks2Configuration);
-        assertTrue(eks2Client instanceof EKS2ClientStandardImpl);
+    public void getEksClientWithStaticCredentials() {
+        EKS2Configuration configuration = new EKS2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        EksClient eksClient = EKS2ClientFactory.getEksClient(configuration);
+        assertNotNull(eksClient);
+        eksClient.close();
     }
 
     @Test
-    public void getIAMOptimizedEKS2Client() {
-        EKS2Configuration eks2Configuration = new EKS2Configuration();
-        eks2Configuration.setUseDefaultCredentialsProvider(true);
-        EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(eks2Configuration);
-        assertTrue(eks2Client instanceof EKS2ClientIAMOptimizedImpl);
-    }
-
-    @Test
-    public void getSessionTokenEKS2Client() {
-        EKS2Configuration eks2Configuration = new EKS2Configuration();
-        eks2Configuration.setUseSessionCredentials(true);
-        EKS2InternalClient eks2Client = EKS2ClientFactory.getEksClient(eks2Configuration);
-        assertTrue(eks2Client instanceof EKS2ClientSessionTokenImpl);
+    public void getEksClientWithEndpointOverride() {
+        EKS2Configuration configuration = new EKS2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        EksClient eksClient = EKS2ClientFactory.getEksClient(configuration);
+        assertNotNull(eksClient);
+        eksClient.close();
     }
 }

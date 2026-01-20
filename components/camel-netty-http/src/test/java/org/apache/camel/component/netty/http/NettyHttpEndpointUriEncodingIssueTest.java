@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpEndpointUriEncodingIssueTest extends BaseNettyTest {
+public class NettyHttpEndpointUriEncodingIssueTest extends BaseNettyTestSupport {
 
     @Test
     public void testEndpointUriEncodingIssue() {

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
+public class NettyHttpMapHeadersFalseTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpHeaderCase() throws Exception {

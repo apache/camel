@@ -19,9 +19,9 @@ package org.apache.camel.component.pg.replication.slot;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -197,12 +197,15 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     }
 
     private boolean isSlotCreated() throws SQLException {
-        String sql
-                = String.format("SELECT count(*) FROM pg_replication_slots WHERE slot_name = '%s';", this.endpoint.getSlot());
+        String sql = "SELECT count(*) FROM pg_replication_slots WHERE slot_name = ?";
 
-        try (Statement statement = this.connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
-            resultSet.next();
-            return resultSet.getInt(1) > 0;
+        try (PreparedStatement ps = this.connection.prepareStatement(sql)) {
+            ps.setString(1, this.endpoint.getSlot());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
         }
     }
 
@@ -232,13 +235,18 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
     }
 
     private boolean isSlotActive() throws SQLException {
-        String sql = String.format("SELECT count(*) FROM pg_replication_slots where slot_name = '%s' AND active = true;",
-                this.endpoint.getSlot());
+        String sql = "SELECT count(*) FROM pg_replication_slots WHERE slot_name = ? AND active = true";
 
-        try (Statement statement = this.connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
-            resultSet.next();
-            return resultSet.getInt(1) > 0;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, endpoint.getSlot());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
         }
+        return false;
     }
 
     private void connect() throws SQLException {

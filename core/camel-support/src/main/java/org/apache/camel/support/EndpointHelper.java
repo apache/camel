@@ -458,7 +458,7 @@ public final class EndpointHelper {
      * @return                          list of lookup results, will always return a list.
      * @throws IllegalArgumentException if any referenced object was not found in registry.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     public static <T> List<T> resolveReferenceListParameter(CamelContext context, String value, Class<T> elementType) {
         if (value == null) {
             return new ArrayList<>();

@@ -31,4 +31,11 @@ public interface CliConnector extends StaticService, NonManagedService {
      */
     void sigterm();
 
+    /**
+     * Allows to adjust the frequency delay which the CliConnect reacts. Uses 1000 millis by default.
+     *
+     * @param delay delay in millis
+     */
+    void updateDelay(int delay);
+
 }

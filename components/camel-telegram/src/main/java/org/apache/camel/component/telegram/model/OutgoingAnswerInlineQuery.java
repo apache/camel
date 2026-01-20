@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *      https://core.telegram.org/bots/api#answerinlinequery</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OutgoingAnswerInlineQuery extends OutgoingMessage {
+public class OutgoingAnswerInlineQuery extends OutgoingMessage implements NoChatIdRequired {
 
     private static final long serialVersionUID = -1928788814068921178L;
 

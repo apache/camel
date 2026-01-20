@@ -40,4 +40,12 @@ public interface Kinesis2Constants {
      */
     @Metadata(description = "The shard ID of the shard where the data record was placed.", javaType = "String")
     String SHARD_ID = "CamelAwsKinesisShardId";
+
+    // Batch operation response metadata
+    @Metadata(label = "producer",
+              description = "The number of records that failed in a batch put operation.", javaType = "Integer")
+    String FAILED_RECORD_COUNT = "CamelAwsKinesisFailedRecordCount";
+    @Metadata(label = "producer",
+              description = "The total number of records in a batch put operation.", javaType = "Integer")
+    String RECORD_COUNT = "CamelAwsKinesisRecordCount";
 }

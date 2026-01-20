@@ -214,7 +214,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             throw new IllegalArgumentException("The mandatory key/tag : " + key + " has not been defined !");
                         }
 
-                        Object result = getDefaultValueForPrimitive(field.getType());
+                        Object result = getDefaultValueForPrimitive(field.getType(), isDefaultValueStringAsNull());
 
                         try {
                             field.set(obj, result);
@@ -243,7 +243,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                 obj = clazz.newInstance();
                             }
 
-                            Object result = getDefaultValueForPrimitive(field.getType());
+                            Object result = getDefaultValueForPrimitive(field.getType(), isDefaultValueStringAsNull());
                             try {
                                 field.set(obj, result);
                             } catch (Exception e) {
@@ -299,7 +299,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                 LOG.debug("Value formated : {}", result);
 
                             } else {
-                                result = getDefaultValueForPrimitive(field.getType());
+                                result = getDefaultValueForPrimitive(field.getType(), isDefaultValueStringAsNull());
                             }
                             try {
                                 field.set(obj, result);
@@ -344,7 +344,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                         if (value != null) {
                                             field.set(obj, result);
                                         } else {
-                                            field.set(obj, getDefaultValueForPrimitive(field.getType()));
+                                            field.set(obj,
+                                                    getDefaultValueForPrimitive(field.getType(), isDefaultValueStringAsNull()));
                                         }
                                     } catch (Exception e) {
                                         throw new IllegalArgumentException(
@@ -376,7 +377,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     } else {
 
                         // No values found from message
-                        Object result = getDefaultValueForPrimitive(field.getType());
+                        Object result = getDefaultValueForPrimitive(field.getType(), isDefaultValueStringAsNull());
 
                         try {
                             field.set(obj, result);

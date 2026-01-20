@@ -34,7 +34,7 @@ import static org.apache.camel.test.junit5.TestSupport.body;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled("TODO: investigate for Camel 3.0")
-public class NettyHttpProducerConcurrentTest extends BaseNettyTest {
+public class NettyHttpProducerConcurrentTest extends BaseNettyTestSupport {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {

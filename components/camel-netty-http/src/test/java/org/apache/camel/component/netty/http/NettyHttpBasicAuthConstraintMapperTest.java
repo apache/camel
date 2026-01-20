@@ -29,7 +29,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class NettyHttpBasicAuthConstraintMapperTest extends BaseNettyTest {
+public class NettyHttpBasicAuthConstraintMapperTest extends BaseNettyTestSupport {
 
     @Override
     public void doPreSetup() {

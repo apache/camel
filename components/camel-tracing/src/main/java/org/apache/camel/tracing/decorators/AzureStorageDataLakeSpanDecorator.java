@@ -71,7 +71,7 @@ public class AzureStorageDataLakeSpanDecorator extends AbstractSpanDecorator {
                     ? queryParameters.get("operation")
                     : super.getOperationName(exchange, endpoint);
         }
-        return operation;
+        return clipMaxLength(operation);
     }
 
     @Override

@@ -483,7 +483,7 @@ public class MethodInfo {
     }
 
     public boolean isReturnTypeVoid() {
-        return method.getReturnType().getName().equals("void");
+        return method.getReturnType() == void.class;
     }
 
     public boolean isStaticMethod() {

@@ -23,6 +23,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OpenAIEndpoint target = (OpenAIEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalbodyproperty":
+        case "additionalBodyProperty": target.getConfiguration().setAdditionalBodyProperty(property(camelContext, java.util.Map.class, value)); return true;
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "baseurl":
@@ -59,6 +61,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalbodyproperty":
+        case "additionalBodyProperty": return java.util.Map.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "baseurl":
@@ -96,6 +100,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OpenAIEndpoint target = (OpenAIEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalbodyproperty":
+        case "additionalBodyProperty": return target.getConfiguration().getAdditionalBodyProperty();
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
         case "baseurl":
@@ -125,6 +131,15 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "topP": return target.getConfiguration().getTopP();
         case "usermessage":
         case "userMessage": return target.getConfiguration().getUserMessage();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase() : name) {
+        case "additionalbodyproperty":
+        case "additionalBodyProperty": return java.lang.Object.class;
         default: return null;
         }
     }

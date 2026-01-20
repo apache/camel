@@ -129,12 +129,18 @@ public class MQ2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
+                message.setHeader(MQ2Constants.NEXT_TOKEN, result.nextToken());
+                message.setHeader(MQ2Constants.IS_TRUNCATED, result.nextToken() != null);
             }
         } else {
             ListBrokersRequest.Builder builder = ListBrokersRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQ2Constants.MAX_RESULTS))) {
-                int maxResults = exchange.getIn().getHeader(MQ2Constants.MAX_RESULTS, Integer.class);
+            Integer maxResults = getOptionalHeader(exchange, MQ2Constants.MAX_RESULTS, Integer.class);
+            if (maxResults != null) {
                 builder.maxResults(maxResults);
+            }
+            String nextToken = getOptionalHeader(exchange, MQ2Constants.NEXT_TOKEN, String.class);
+            if (nextToken != null) {
+                builder.nextToken(nextToken);
             }
             ListBrokersResponse result;
             try {
@@ -145,6 +151,8 @@ public class MQ2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(MQ2Constants.NEXT_TOKEN, result.nextToken());
+            message.setHeader(MQ2Constants.IS_TRUNCATED, result.nextToken() != null);
         }
     }
 
@@ -223,6 +231,8 @@ public class MQ2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(MQ2Constants.BROKER_ID, result.brokerId());
+            message.setHeader(MQ2Constants.BROKER_ARN, result.brokerArn());
         }
     }
 
@@ -365,16 +375,25 @@ public class MQ2Producer extends DefaultProducer {
             try {
                 result = mqClient.describeBroker(builder.build());
             } catch (AwsServiceException ase) {
-                LOG.trace("Reboot Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
+                LOG.trace("Describe Broker command returned the error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(MQ2Constants.BROKER_ARN, result.brokerArn());
+            message.setHeader(MQ2Constants.BROKER_STATE, result.brokerStateAsString());
         }
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    /**
+     * Gets an optional header value.
+     */
+    private <T> T getOptionalHeader(Exchange exchange, String headerName, Class<T> headerType) {
+        return exchange.getIn().getHeader(headerName, headerType);
     }
 
     @Override

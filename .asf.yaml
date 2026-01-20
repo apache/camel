@@ -26,5 +26,10 @@ github:
     - java
   dependabot_alerts:  true
   dependabot_updates: true
+  
+  protected_branches:
+    # protect main against force push
+    main: {}
+  
 notifications:
   pullrequests: commits@camel.apache.org

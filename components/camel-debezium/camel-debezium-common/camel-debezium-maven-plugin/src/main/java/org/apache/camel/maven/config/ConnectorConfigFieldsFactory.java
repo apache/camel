@@ -29,7 +29,7 @@ import org.apache.kafka.common.config.ConfigDef;
 
 public final class ConnectorConfigFieldsFactory {
 
-    private static final String[] ILLEGAL_CHARS = { "%", "+", "[", "]", "*", "(", ")", "ˆ", "@", "%", "~" };
+    private static final String ILLEGAL_CHARS = "%+[]*()ˆ@%~";
 
     private ConnectorConfigFieldsFactory() {
     }

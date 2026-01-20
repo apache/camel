@@ -59,6 +59,38 @@ public interface Cw2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The operation to perform. Defaults to putMetricData.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.aws2.cw.Cw2Operations</code> type.
+         * 
+         * Default: putMetricData
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Cw2EndpointBuilder operation(org.apache.camel.component.aws2.cw.Cw2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to perform. Defaults to putMetricData.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.aws2.cw.Cw2Operations</code> type.
+         * 
+         * Default: putMetricData
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Cw2EndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
@@ -615,6 +647,18 @@ public interface Cw2EndpointBuilderFactory {
         private static final Cw2HeaderNameBuilder INSTANCE = new Cw2HeaderNameBuilder();
 
         /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwOperation}.
+         */
+        public String awsCwOperation() {
+            return "CamelAwsCwOperation";
+        }
+        /**
          * The Amazon CW metric namespace.
          * 
          * The option is a: {@code String} type.
@@ -709,6 +753,66 @@ public interface Cw2EndpointBuilderFactory {
          */
         public String awsCwMetricDimensionValue() {
             return "CamelAwsCwMetricDimensionValue";
+        }
+        /**
+         * The name of the alarm.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwAlarmName}.
+         */
+        public String awsCwAlarmName() {
+            return "CamelAwsCwAlarmName";
+        }
+        /**
+         * The state value for the alarm (OK, ALARM, INSUFFICIENT_DATA).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwAlarmState}.
+         */
+        public String awsCwAlarmState() {
+            return "CamelAwsCwAlarmState";
+        }
+        /**
+         * The token for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwNextToken}.
+         */
+        public String awsCwNextToken() {
+            return "CamelAwsCwNextToken";
+        }
+        /**
+         * The maximum number of results to return.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwMaxResults}.
+         */
+        public String awsCwMaxResults() {
+            return "CamelAwsCwMaxResults";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsCwIsTruncated}.
+         */
+        public String awsCwIsTruncated() {
+            return "CamelAwsCwIsTruncated";
         }
     }
     static Cw2EndpointBuilder endpointBuilder(String componentName, String path) {

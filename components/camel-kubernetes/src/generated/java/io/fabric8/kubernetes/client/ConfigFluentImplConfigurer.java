@@ -119,6 +119,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "useragent":
         case "userAgent": target.withUserAgent(property(camelContext, java.lang.String.class, value)); return true;
         case "username": target.withUsername(property(camelContext, java.lang.String.class, value)); return true;
+        case "watchlist":
+        case "watchList": target.withWatchList(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "watchreconnectinterval":
         case "watchReconnectInterval": target.withWatchReconnectInterval(property(camelContext, java.lang.Integer.class, value)); return true;
         case "watchreconnectlimit":
@@ -228,6 +230,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "useragent":
         case "userAgent": return java.lang.String.class;
         case "username": return java.lang.String.class;
+        case "watchlist":
+        case "watchList": return java.lang.Boolean.class;
         case "watchreconnectinterval":
         case "watchReconnectInterval": return java.lang.Integer.class;
         case "watchreconnectlimit":
@@ -338,6 +342,8 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "useragent":
         case "userAgent": return target.getUserAgent();
         case "username": return target.getUsername();
+        case "watchlist":
+        case "watchList": return target.getWatchList();
         case "watchreconnectinterval":
         case "watchReconnectInterval": return target.getWatchReconnectInterval();
         case "watchreconnectlimit":

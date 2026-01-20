@@ -32,7 +32,7 @@ public class WeightedRandomLoadBalancer extends WeightedLoadBalancer {
     protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         lock.lock();
         try {
-            int randomWeight = ThreadLocalRandom.current().nextInt(runtimeRatioSum);
+            int randomWeight = ThreadLocalRandom.current().nextInt(runtimeRatioSum); // NOSONAR
             int choiceWeight = 0;
             int index = 0;
             while (true) {

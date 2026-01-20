@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "delete", description="Removes a calendar from the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Delete delete(String calendarId)"}), @ApiMethod(methodName = "get", description="Returns a calendar from the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Get get(String calendarId)"}), @ApiMethod(methodName = "insert", description="Inserts an existing calendar into the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Insert insert(com.google.api.services.calendar.model.CalendarListEntry content)"}), @ApiMethod(methodName = "list", description="Returns the calendars on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$List list()"}), @ApiMethod(methodName = "patch", description="Updates an existing calendar on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Patch patch(String calendarId, com.google.api.services.calendar.model.CalendarListEntry content)"}), @ApiMethod(methodName = "update", description="Updates an existing calendar on the user's calendar list", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Update update(String calendarId, com.google.api.services.calendar.model.CalendarListEntry content)"}), @ApiMethod(methodName = "watch", description="Watch for changes to CalendarList resources", signatures={"com.google.api.services.calendar.Calendar$CalendarList$Watch watch(com.google.api.services.calendar.model.Channel content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class CalendarCalendarListEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "delete", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "get", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "patch", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "update", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword.")})

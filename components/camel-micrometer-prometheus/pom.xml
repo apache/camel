@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-micrometer-prometheus</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Micrometer Prometheus</name>
+    <name>Camel :: Micrometer :: Prometheus</name>
     <description>Camel Micrometer Prometheus for Camel Main</description>
 
     <properties>

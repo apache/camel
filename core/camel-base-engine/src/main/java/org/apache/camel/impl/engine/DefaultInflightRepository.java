@@ -231,7 +231,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public long getElapsed() {
-            // this can only be calculate if message history is enabled
+            // this can only be calculated if message history is enabled
             List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
             if (list == null || list.isEmpty()) {
                 return 0;
@@ -242,7 +242,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             if (history != null) {
                 long elapsed = history.getElapsed();
                 if (elapsed == 0) {
-                    // still in progress, so lets compute it via the start time
+                    // still in progress, so let's compute it via the start time
                     elapsed = history.getElapsedSinceCreated();
                 }
                 return elapsed;

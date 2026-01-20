@@ -30,11 +30,14 @@ import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get",
-                     description = "Display available plugins.", sortOptions = false, showDefaultValues = true)
+                     description = "Display available plugins", sortOptions = false, showDefaultValues = true)
 public class PluginGet extends PluginBaseCommand {
 
-    @CommandLine.Option(names = { "--all" }, defaultValue = "false", description = "Display all available plugins.")
+    @CommandLine.Option(names = { "--all" }, defaultValue = "false", description = "Display all available plugins")
     public boolean all;
+
+    @CommandLine.Option(names = { "--repos" }, defaultValue = "false", description = "Display maven repository column")
+    public boolean repos;
 
     public PluginGet(CamelJBangMain main) {
         super(main);
@@ -54,8 +57,9 @@ public class PluginGet extends PluginBaseCommand {
                     "org.apache.camel:camel-jbang-plugin-%s".formatted(command));
             String description
                     = details.getStringOrDefault("description", "Plugin %s called with command %s".formatted(name, command));
+            String repos = details.getString("repos");
 
-            rows.add(new Row(name, command, dependency, description));
+            rows.add(new Row(name, command, dependency, description, repos));
         });
 
         printRows(rows);
@@ -67,7 +71,7 @@ public class PluginGet extends PluginBaseCommand {
                     String dependency = "org.apache.camel:camel-jbang-plugin-%s".formatted(camelPlugin.getCommand());
                     rows.add(new Row(
                             camelPlugin.getName(), camelPlugin.getCommand(), dependency,
-                            camelPlugin.getDescription()));
+                            camelPlugin.getDescription(), camelPlugin.getRepos()));
                 }
             }
 
@@ -92,12 +96,15 @@ public class PluginGet extends PluginBaseCommand {
                             .with(r -> r.command),
                     new Column().header("DEPENDENCY").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.dependency),
+                    new Column().visible(repos).header("REPOSITORY").headerAlign(HorizontalAlign.LEFT)
+                            .dataAlign(HorizontalAlign.LEFT)
+                            .with(r -> r.repos),
                     new Column().header("DESCRIPTION").headerAlign(HorizontalAlign.LEFT).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.description))));
         }
     }
 
-    private record Row(String name, String command, String dependency, String description) {
+    private record Row(String name, String command, String dependency, String description, String repos) {
     }
 }

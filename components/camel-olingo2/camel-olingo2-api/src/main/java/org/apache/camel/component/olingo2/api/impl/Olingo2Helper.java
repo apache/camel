@@ -23,6 +23,7 @@ import org.apache.http.entity.ContentType;
 /**
  * Helper
  */
+@Deprecated(since = "4.18")
 public final class Olingo2Helper {
 
     private Olingo2Helper() {

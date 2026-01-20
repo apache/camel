@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpMethodRestrictTest extends BaseNettyTest {
+public class NettyHttpMethodRestrictTest extends BaseNettyTestSupport {
 
     private String getUrl() {
         return "http://localhost:" + getPort() + "/methodRestrict";

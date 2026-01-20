@@ -29,7 +29,7 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
-class KubernetesPodLogsTest extends KubernetesBaseTest {
+class KubernetesPodLogsTest extends KubernetesBaseTestSupport {
 
     @Test
     public void shouldHandlePodNotFound() throws Exception {

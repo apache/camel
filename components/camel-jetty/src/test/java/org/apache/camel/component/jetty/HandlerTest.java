@@ -43,41 +43,41 @@ public class HandlerTest extends BaseJettyTest {
     @Test
     public void testWithOneHandler() throws Exception {
         // First test the situation where one should invoke the handler once
-        assertEquals(0, statisticsHandler1.getRequests());
-        assertEquals(0, statisticsHandler2.getRequests());
-        assertEquals(0, statisticsHandler3.getRequests());
+        assertEquals(0, statisticsHandler1.getRequestTotal());
+        assertEquals(0, statisticsHandler2.getRequestTotal());
+        assertEquals(0, statisticsHandler3.getRequestTotal());
 
         InputStream html = (InputStream) template.requestBody("http://localhost:" + port1, "");
         BufferedReader br = IOHelper.buffered(new InputStreamReader(html));
 
         assertEquals(htmlResponse, br.readLine());
-        assertEquals(1, statisticsHandler1.getRequests());
-        assertEquals(0, statisticsHandler2.getRequests());
-        assertEquals(0, statisticsHandler3.getRequests());
+        assertEquals(1, statisticsHandler1.getRequestTotal());
+        assertEquals(0, statisticsHandler2.getRequestTotal());
+        assertEquals(0, statisticsHandler3.getRequestTotal());
     }
 
     @Test
     public void testWithTwoHandlers() throws Exception {
         // First test the situation where one should invoke the handler once
-        assertEquals(0, statisticsHandler1.getRequests());
-        assertEquals(0, statisticsHandler2.getRequests());
-        assertEquals(0, statisticsHandler3.getRequests());
+        assertEquals(0, statisticsHandler1.getRequestTotal());
+        assertEquals(0, statisticsHandler2.getRequestTotal());
+        assertEquals(0, statisticsHandler3.getRequestTotal());
 
         InputStream html = (InputStream) template.requestBody("http://localhost:" + port2, "");
         BufferedReader br = IOHelper.buffered(new InputStreamReader(html));
 
         assertEquals(htmlResponse, br.readLine());
-        assertEquals(0, statisticsHandler1.getRequests());
-        assertEquals(1, statisticsHandler2.getRequests());
-        assertEquals(1, statisticsHandler3.getRequests());
+        assertEquals(0, statisticsHandler1.getRequestTotal());
+        assertEquals(1, statisticsHandler2.getRequestTotal());
+        assertEquals(1, statisticsHandler3.getRequestTotal());
     }
 
     @Test
     public void testWithTwoHandlersTwoEndpointsOnSamePort() throws Exception {
         // First test the situation where one should invoke the handler once
-        assertEquals(0, statisticsHandler1.getRequests());
-        assertEquals(0, statisticsHandler2.getRequests());
-        assertEquals(0, statisticsHandler3.getRequests());
+        assertEquals(0, statisticsHandler1.getRequestTotal());
+        assertEquals(0, statisticsHandler2.getRequestTotal());
+        assertEquals(0, statisticsHandler3.getRequestTotal());
 
         InputStream html1 = (InputStream) template.requestBody("http://localhost:" + port2, "");
         BufferedReader br1 = IOHelper.buffered(new InputStreamReader(html1));
@@ -87,9 +87,9 @@ public class HandlerTest extends BaseJettyTest {
         BufferedReader br2 = IOHelper.buffered(new InputStreamReader(html2));
         assertEquals(htmlResponse, br2.readLine());
 
-        assertEquals(0, statisticsHandler1.getRequests());
-        assertEquals(2, statisticsHandler2.getRequests());
-        assertEquals(2, statisticsHandler3.getRequests());
+        assertEquals(0, statisticsHandler1.getRequestTotal());
+        assertEquals(2, statisticsHandler2.getRequestTotal());
+        assertEquals(2, statisticsHandler3.getRequestTotal());
     }
 
     @Override

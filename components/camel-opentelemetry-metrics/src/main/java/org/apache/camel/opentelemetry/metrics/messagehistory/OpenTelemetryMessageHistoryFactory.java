@@ -22,7 +22,6 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.LongHistogram;
 import io.opentelemetry.api.metrics.Meter;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
@@ -30,14 +29,13 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.StaticService;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
 public class OpenTelemetryMessageHistoryFactory extends ServiceSupport
-        implements CamelContextAware, StaticService, NonManagedService, MessageHistoryFactory {
+        implements NonManagedService, MessageHistoryFactory {
 
     private CamelContext camelContext;
     private Meter meter;

@@ -348,8 +348,8 @@ public class JsltEndpoint extends ResourceEndpoint {
         }
 
         private static boolean isRecord(Class<?> clazz) {
-            final Class<?> parent = clazz.getSuperclass();
-            return parent != null && parent.getName().equals("java.lang.Record");
+            // This is available since Java 16.
+            return clazz.isRecord();
         }
     }
 }

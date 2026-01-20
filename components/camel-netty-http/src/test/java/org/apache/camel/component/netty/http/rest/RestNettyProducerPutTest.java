@@ -18,10 +18,10 @@ package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class RestNettyProducerPutTest extends BaseNettyTest {
+public class RestNettyProducerPutTest extends BaseNettyTestSupport {
 
     @Test
     public void testNettyProducerPut() throws Exception {

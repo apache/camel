@@ -95,7 +95,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         @Override
         public void configure() {
             from("cxf://" + testAddress + "?dataFormat=PAYLOAD")
-                    .streamCaching()
+                    .streamCache(true)
                     .process(new XPathProcessor())
                     .process(new ResponseProcessor());
         }
@@ -105,7 +105,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         @Override
         public void configure() {
             from("cxf://" + testAddress + "?dataFormat=PAYLOAD")
-                    .streamCaching()
+                    .streamCache(true)
                     .process(new XPathStringResultProcessor())
                     .process(new ResponseProcessor());
         }
@@ -115,7 +115,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         @Override
         public void configure() {
             from("cxf://" + testAddress + "?dataFormat=PAYLOAD")
-                    .streamCaching()
+                    .streamCache(true)
                     .process(new DomFirstOneOnlyProcessor())
                     .process(new ResponseProcessor());
         }
@@ -125,7 +125,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         @Override
         public void configure() {
             from("cxf://" + testAddress + "?dataFormat=PAYLOAD")
-                    .streamCaching()
+                    .streamCache(true)
                     .process(new DomProcessor())
                     .process(new ResponseProcessor());
         }
@@ -208,7 +208,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
     private void simpleTest(int repeat, BaseRouteBuilder builder) throws Exception {
         testConfiguration().withUseRouteBuilder(false);
         context.addRoutes(builder);
-        startCamelContext();
+        context.start();
 
         String content = StringUtils.repeat("x", repeat);
         String msgIn = constructSoapMessage(content);
@@ -230,7 +230,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
 
         assertTrue(result.length() > repeat, "dataloss in output occurred");
 
-        stopCamelContext();
+        context.stop();
     }
 
     private abstract class BaseRouteBuilder extends RouteBuilder {

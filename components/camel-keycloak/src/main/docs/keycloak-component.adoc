@@ -1389,6 +1389,298 @@ template.sendBodyAndHeaders("keycloak:admin?operation=createResourcePermission&p
 template.sendBodyAndHeaders("keycloak:admin?operation=listResourcePermissions", null, permHeaders);
 ----
 
+=== Permission Evaluation Operation
+
+The `evaluatePermission` operation allows you to evaluate authorization permissions for a user or service account using Keycloak's Authorization Services. This operation uses the Keycloak Authorization Client (AuthzClient) to request permissions and obtain a Requesting Party Token (RPT) with granted permissions.
+
+NOTE: This operation requires Authorization Services to be enabled on the client in Keycloak.
+
+==== Configuration Requirements
+
+The `evaluatePermission` operation requires the following configuration:
+
+* `serverUrl` - Keycloak server URL
+* `realm` - Keycloak realm name
+* `clientId` - Client ID with authorization services enabled
+* `clientSecret` - Client secret (required for AuthzClient)
+
+==== Modes of Operation
+
+The operation supports two modes:
+
+1. **RPT Mode** (default): Returns a Requesting Party Token (RPT) containing the granted permissions
+2. **Permissions-Only Mode**: Returns only the list of permissions without obtaining an RPT token
+
+==== Response Format
+
+**RPT Mode** (default, `permissionsOnly=false`):
+
+[source,json]
+----
+{
+  "token": "eyJhbGciOiJSUzI1NiIs...",
+  "tokenType": "Bearer",
+  "expiresIn": 300,
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshExpiresIn": 1800,
+  "upgraded": true
+}
+----
+
+**Permissions-Only Mode** (`permissionsOnly=true`):
+
+[source,json]
+----
+{
+  "permissions": [
+    {
+      "resourceId": "resource-id-123",
+      "resourceName": "documents",
+      "scopes": ["read", "write"]
+    }
+  ],
+  "permissionCount": 1,
+  "granted": true
+}
+----
+
+==== Usage Examples
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Evaluate all permissions for a user
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.ACCESS_TOKEN, userAccessToken);
+headers.put(KeycloakConstants.PERMISSIONS_ONLY, true);
+
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:authz?serverUrl=http://localhost:8080&realm=myrealm"
+        + "&clientId=myapp&clientSecret=secret&operation=evaluatePermission",
+    null, headers, Map.class);
+
+List<Permission> permissions = (List<Permission>) result.get("permissions");
+boolean hasAccess = (Boolean) result.get("granted");
+
+System.out.println("User has access: " + hasAccess);
+System.out.println("Granted permissions: " + permissions.size());
+
+// Check specific resource permissions
+Map<String, Object> resourceHeaders = new HashMap<>();
+resourceHeaders.put(KeycloakConstants.ACCESS_TOKEN, userAccessToken);
+resourceHeaders.put(KeycloakConstants.PERMISSION_RESOURCE_NAMES, "document1,document2");
+resourceHeaders.put(KeycloakConstants.PERMISSION_SCOPES, "read,write");
+resourceHeaders.put(KeycloakConstants.PERMISSIONS_ONLY, true);
+
+Map<String, Object> resourceResult = template.requestBodyAndHeaders(
+    "keycloak:authz?serverUrl=http://localhost:8080&realm=myrealm"
+        + "&clientId=myapp&clientSecret=secret&operation=evaluatePermission",
+    null, resourceHeaders, Map.class);
+
+// Get RPT token with permissions (default mode)
+Map<String, Object> rptHeaders = new HashMap<>();
+rptHeaders.put(KeycloakConstants.PERMISSION_RESOURCE_NAMES, "protected-resource");
+
+Map<String, Object> rptResult = template.requestBodyAndHeaders(
+    "keycloak:authz?serverUrl=http://localhost:8080&realm=myrealm"
+        + "&clientId=myapp&clientSecret=secret&username=alice&password=alice"
+        + "&operation=evaluatePermission",
+    null, rptHeaders, Map.class);
+
+String rptToken = (String) rptResult.get("token");
+System.out.println("RPT token obtained: " + (rptToken != null));
+----
+
+YAML::
++
+[source,yaml]
+----
+# Evaluate permissions for a user
+- route:
+    id: evaluate-user-permissions
+    from:
+      uri: direct:check-permissions
+      steps:
+        - setHeader:
+            name: CamelKeycloakAccessToken
+            simple: "${header.Authorization.substring(7)}"  # Extract from Bearer token
+        - setHeader:
+            name: CamelKeycloakPermissionsOnly
+            constant: true
+        - to:
+            uri: >
+              keycloak:authz?
+              serverUrl={{keycloak.server-url}}&
+              realm={{keycloak.realm}}&
+              clientId={{keycloak.client-id}}&
+              clientSecret={{keycloak.client-secret}}&
+              operation=evaluatePermission
+        - log: "User has ${body[permissionCount]} permissions, access granted: ${body[granted]}"
+
+# Check specific resource access
+- route:
+    id: check-resource-access
+    from:
+      uri: direct:check-resource
+      steps:
+        - setHeader:
+            name: CamelKeycloakAccessToken
+            simple: "${header.Authorization.substring(7)}"
+        - setHeader:
+            name: CamelKeycloakPermissionResourceNames
+            simple: "${body[resourceName]}"
+        - setHeader:
+            name: CamelKeycloakPermissionScopes
+            constant: "read,write"
+        - setHeader:
+            name: CamelKeycloakPermissionsOnly
+            constant: true
+        - to:
+            uri: >
+              keycloak:authz?
+              serverUrl={{keycloak.server-url}}&
+              realm={{keycloak.realm}}&
+              clientId={{keycloak.client-id}}&
+              clientSecret={{keycloak.client-secret}}&
+              operation=evaluatePermission
+        - choice:
+            when:
+              - simple: "${body[granted]} == true"
+                steps:
+                  - log: "Access granted for resource ${body[resourceName]}"
+                  - to: "direct:process-resource"
+            otherwise:
+              steps:
+                - log: "Access denied for resource ${body[resourceName]}"
+                - setHeader:
+                    name: CamelHttpResponseCode
+                    constant: 403
+                - transform:
+                    constant: "Access Denied"
+
+# Get RPT token using username/password
+- route:
+    id: get-rpt-token
+    from:
+      uri: direct:get-rpt
+      steps:
+        - setHeader:
+            name: CamelKeycloakPermissionResourceNames
+            simple: "${body[resources]}"
+        - to:
+            uri: >
+              keycloak:authz?
+              serverUrl={{keycloak.server-url}}&
+              realm={{keycloak.realm}}&
+              clientId={{keycloak.client-id}}&
+              clientSecret={{keycloak.client-secret}}&
+              username={{service.username}}&
+              password={{service.password}}&
+              operation=evaluatePermission
+        - log: "RPT token obtained, expires in: ${body[expiresIn]} seconds"
+----
+====
+
+==== Authorization Patterns
+
+===== Fine-Grained Resource Authorization
+
+[source,java]
+----
+// Check if user can access a specific document
+public boolean canAccessDocument(String accessToken, String documentId) {
+    Map<String, Object> headers = new HashMap<>();
+    headers.put(KeycloakConstants.ACCESS_TOKEN, accessToken);
+    headers.put(KeycloakConstants.PERMISSION_RESOURCE_NAMES, documentId);
+    headers.put(KeycloakConstants.PERMISSION_SCOPES, "view");
+    headers.put(KeycloakConstants.PERMISSIONS_ONLY, true);
+
+    Map<String, Object> result = template.requestBodyAndHeaders(
+        "keycloak:authz?operation=evaluatePermission", null, headers, Map.class);
+
+    return Boolean.TRUE.equals(result.get("granted"));
+}
+
+// Check multiple resources at once
+public Map<String, Boolean> checkMultipleResources(String accessToken, List<String> resourceIds) {
+    Map<String, Boolean> accessMap = new HashMap<>();
+
+    for (String resourceId : resourceIds) {
+        accessMap.put(resourceId, canAccessDocument(accessToken, resourceId));
+    }
+
+    return accessMap;
+}
+----
+
+===== Token Exchange for Delegation
+
+[source,java]
+----
+// Evaluate permissions on behalf of another user (token exchange)
+Map<String, Object> headers = new HashMap<>();
+headers.put(KeycloakConstants.SUBJECT_TOKEN, userToken);  // The user's token
+headers.put(KeycloakConstants.PERMISSION_RESOURCE_NAMES, "admin-resource");
+headers.put(KeycloakConstants.PERMISSIONS_ONLY, true);
+
+// Service evaluates if the user (from subject token) can access the resource
+Map<String, Object> result = template.requestBodyAndHeaders(
+    "keycloak:authz?serverUrl=http://localhost:8080&realm=myrealm"
+        + "&clientId=service-client&clientSecret=secret&operation=evaluatePermission",
+    null, headers, Map.class);
+----
+
+==== Error Handling
+
+The operation throws exceptions in the following cases:
+
+* `IllegalArgumentException` - When required configuration is missing (serverUrl, realm, clientId, clientSecret)
+* `AuthorizationDeniedException` - When the user doesn't have permission to access the requested resources
+
+[source,java]
+----
+import org.keycloak.authorization.client.AuthorizationDeniedException;
+
+onException(AuthorizationDeniedException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(403))
+    .setHeader("Content-Type", constant("application/json"))
+    .transform().constant("{\"error\": \"Permission denied\", \"message\": \"User lacks required permissions\"}");
+
+onException(IllegalArgumentException.class)
+    .handled(true)
+    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
+    .log("Configuration error: ${exception.message}");
+----
+
+==== Keycloak Setup for Authorization Services
+
+To use the `evaluatePermission` operation, you must configure Authorization Services in Keycloak:
+
+1. **Enable Authorization** on the client:
+   - Go to **Clients** → Your client → **Settings**
+   - Enable **Authorization**: `ON`
+   - Save the client
+
+2. **Create Resources**:
+   - Go to **Clients** → Your client → **Authorization** → **Resources**
+   - Create resources representing protected entities (e.g., "documents", "reports")
+
+3. **Create Scopes** (optional):
+   - Go to **Authorization** → **Scopes**
+   - Create scopes like "read", "write", "delete"
+
+4. **Create Policies**:
+   - Go to **Authorization** → **Policies**
+   - Create policies (role-based, user-based, time-based, etc.)
+
+5. **Create Permissions**:
+   - Go to **Authorization** → **Permissions**
+   - Link resources, scopes, and policies together
+
 === Bulk Operations
 
 Bulk operations allow you to perform multiple operations in a single request, improving efficiency and reducing network overhead. These operations are particularly useful for provisioning, migrations, and large-scale administrative tasks.

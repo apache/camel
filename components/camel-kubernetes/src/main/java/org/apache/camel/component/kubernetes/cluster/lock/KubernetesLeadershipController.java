@@ -489,6 +489,6 @@ public class KubernetesLeadershipController implements Service {
     }
 
     private long jitter(long num, double factor) {
-        return (long) (num * (1 + Math.random() * (factor - 1)));
+        return (long) (num * (1 + Math.random() * (factor - 1))); // NOSONAR
     }
 }

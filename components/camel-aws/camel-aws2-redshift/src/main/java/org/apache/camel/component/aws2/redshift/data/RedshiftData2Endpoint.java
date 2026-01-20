@@ -70,7 +70,7 @@ public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointSe
         super.doStart();
         awsRedshiftDataClient = configuration.getAwsRedshiftDataClient() != null
                 ? configuration.getAwsRedshiftDataClient()
-                : RedshiftData2ClientFactory.getRedshiftDataClient(configuration).getRedshiftDataClient();
+                : RedshiftData2ClientFactory.getRedshiftDataClient(configuration);
     }
 
     @Override

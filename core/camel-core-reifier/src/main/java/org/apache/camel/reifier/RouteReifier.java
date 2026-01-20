@@ -324,7 +324,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // wrap in route lifecycle
-        internal.addRouteLifecycleAdvice();
+        internal.addRouteLifecycleAdvice(camelContext, route, definition);
 
         // add advices
         if (definition.getRestBindingDefinition() != null) {

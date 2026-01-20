@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.config;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.config.ConfigClient;
 
 @UriParams
-public class AWSConfigConfiguration implements Cloneable {
+public class AWSConfigConfiguration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Logical name")
     @Metadata(required = true)
@@ -216,11 +217,11 @@ public class AWSConfigConfiguration implements Cloneable {
      * Set whether the Config client should expect to load credentials through a default credentials provider or to
      * expect static credentials to be passed in.
      */
-    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 

@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NettyHttpPostDataTest extends BaseNettyTest {
+public class NettyHttpPostDataTest extends BaseNettyTestSupport {
     @Test
     public void testPostWWWFormUrlencoded() throws Exception {
         String body = "x=1&y=2";

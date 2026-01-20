@@ -46,4 +46,28 @@ public interface Sqs2Constants {
     @Metadata(description = "The operation we want to perform", javaType = "String")
     String SQS_OPERATION = "CamelAwsSqsOperation";
     String SQS_DELETE_FILTERED = "CamelAwsSqsDeleteFiltered";
+
+    // Pagination constants
+    @Metadata(label = "listQueues",
+              description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsSqsNextToken";
+    @Metadata(label = "listQueues",
+              description = "The maximum number of results to return.", javaType = "Integer")
+    String MAX_RESULTS = "CamelAwsSqsMaxResults";
+    @Metadata(label = "listQueues",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsSqsIsTruncated";
+
+    // Response metadata for FIFO queues
+    @Metadata(label = "producer",
+              description = "The sequence number for FIFO queues.", javaType = "String")
+    String SEQUENCE_NUMBER = "CamelAwsSqsSequenceNumber";
+
+    // Batch operation response metadata
+    @Metadata(label = "sendBatchMessage",
+              description = "The number of failed messages in a batch send operation.", javaType = "Integer")
+    String FAILED_MESSAGE_COUNT = "CamelAwsSqsFailedMessageCount";
+    @Metadata(label = "sendBatchMessage",
+              description = "The number of successful messages in a batch send operation.", javaType = "Integer")
+    String SUCCESSFUL_MESSAGE_COUNT = "CamelAwsSqsSuccessfulMessageCount";
 }

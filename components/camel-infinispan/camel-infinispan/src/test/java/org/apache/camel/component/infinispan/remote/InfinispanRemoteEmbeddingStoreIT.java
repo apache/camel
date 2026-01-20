@@ -179,13 +179,13 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
             public void configure() throws Exception {
                 from("direct:put")
                         .setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR).body()
-                        .transform(new DataType("infinispan:embeddings"))
+                        .transformDataType(new DataType("infinispan:embeddings"))
                         .toF("infinispan://%s?embeddingStoreDimension=3", CACHE_NAME);
 
                 from("direct:query")
                         .setHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR).body()
                         .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.QUERY)
-                        .transform(new DataType("infinispan:embeddings"))
+                        .transformDataType(new DataType("infinispan:embeddings"))
                         .toF("infinispan://%s?embeddingStoreDimension=3&embeddingStoreDistance=2", CACHE_NAME);
             }
         };

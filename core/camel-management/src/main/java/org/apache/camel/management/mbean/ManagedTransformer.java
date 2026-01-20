@@ -44,13 +44,4 @@ public class ManagedTransformer extends ManagedProcessor implements ManagedTrans
         return getDefinition().getExpression().getExpression();
     }
 
-    @Override
-    public String getFromType() {
-        return getDefinition().getFromType();
-    }
-
-    @Override
-    public String getToType() {
-        return getDefinition().getToType();
-    }
 }

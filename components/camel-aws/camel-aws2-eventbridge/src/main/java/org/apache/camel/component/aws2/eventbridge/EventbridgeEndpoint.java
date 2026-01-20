@@ -73,7 +73,7 @@ public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServ
 
         eventbridgeClient = configuration.getEventbridgeClient() != null
                 ? configuration.getEventbridgeClient()
-                : EventbridgeClientFactory.getEventbridgeClient(configuration).getEventbridgeClient();
+                : EventbridgeClientFactory.getEventbridgeClient(configuration);
     }
 
     @Override

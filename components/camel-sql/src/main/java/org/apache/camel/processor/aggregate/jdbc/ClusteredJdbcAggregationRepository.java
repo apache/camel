@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
 import org.springframework.jdbc.support.lob.LobCreator;
@@ -74,8 +75,9 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
                 final long version = exchange.getProperty(VERSION_PROPERTY, Long.class);
                 try {
                     LOG.debug("Removing key {}", correlationId);
-
-                    jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
+                    String table = getRepositoryName();
+                    verifyTableName(table);
+                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version, true);
@@ -173,10 +175,21 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
     public Set<String> scan(final CamelContext camelContext) {
         return transactionTemplateReadOnly.execute(new TransactionCallback<LinkedHashSet<String>>() {
             public LinkedHashSet<String> doInTransaction(final TransactionStatus status) {
+                String table = getRepositoryNameCompleted();
+                verifyTableName(table);
+
+                String sql;
+                final String[] params;
+                if (isRecoveryByInstance()) {
+                    sql = "SELECT " + ID + " FROM " + table + " WHERE INSTANCE_ID = ?";
+                    params = new String[] { instanceId };
+                } else {
+                    sql = "SELECT " + ID + " FROM " + table;
+                    params = new String[] {};
+                }
+                ArgumentPreparedStatementSetter apss = new ArgumentPreparedStatementSetter(params);
                 final List<String> keys = jdbcTemplate.query(
-                        "SELECT " + ID + " FROM " + getRepositoryNameCompleted()
-                                                             + (isRecoveryByInstance()
-                                                                     ? " WHERE INSTANCE_ID='" + instanceId + "'" : ""),
+                        sql, apss,
                         new RowMapper<String>() {
                             public String mapRow(final ResultSet rs, final int rowNum) throws SQLException {
                                 final String id = rs.getString(ID);

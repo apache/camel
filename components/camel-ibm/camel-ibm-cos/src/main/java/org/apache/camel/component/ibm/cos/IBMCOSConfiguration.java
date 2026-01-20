@@ -134,7 +134,8 @@ public class IBMCOSConfiguration implements Cloneable {
     }
 
     /**
-     * IBM COS Endpoint URL (e.g., https://s3.us-south.cloud-object-storage.appdomain.cloud)
+     * IBM COS Endpoint URL (e.g., https://s3.us-south.cloud-object-storage.appdomain.cloud) Note that some operations
+     * requires to use a regional endpoint URL instead of a cross-region one.
      */
     public void setEndpointUrl(String endpointUrl) {
         this.endpointUrl = endpointUrl;

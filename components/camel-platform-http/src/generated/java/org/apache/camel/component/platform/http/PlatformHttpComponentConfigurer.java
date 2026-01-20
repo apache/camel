@@ -34,6 +34,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, long.class, value)); return true;
+        case "serverrequestvalidation":
+        case "serverRequestValidation": target.setServerRequestValidation(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -52,6 +54,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
+        case "serverrequestvalidation":
+        case "serverRequestValidation": return boolean.class;
         default: return null;
         }
     }
@@ -71,6 +75,8 @@ public class PlatformHttpComponentConfigurer extends PropertyConfigurerSupport i
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "requesttimeout":
         case "requestTimeout": return target.getRequestTimeout();
+        case "serverrequestvalidation":
+        case "serverRequestValidation": return target.isServerRequestValidation();
         default: return null;
         }
     }

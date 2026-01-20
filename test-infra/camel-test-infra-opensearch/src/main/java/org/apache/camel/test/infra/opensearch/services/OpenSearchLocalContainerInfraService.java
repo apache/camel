@@ -34,7 +34,8 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
     private static final Logger LOG = LoggerFactory.getLogger(OpenSearchLocalContainerInfraService.class);
     private static final int OPEN_SEARCH_PORT = 9200;
     private static final String USER_NAME = "admin";
-    private static final String PASSWORD = "admin";
+    // NOTE: default value used for testing purposes only.
+    private static final String PASSWORD = "admin"; // NOSONAR
     private final OpensearchContainer container;
 
     public OpenSearchLocalContainerInfraService() {

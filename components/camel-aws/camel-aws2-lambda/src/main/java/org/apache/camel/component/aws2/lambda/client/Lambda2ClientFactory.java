@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.lambda.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.lambda.Lambda2Configuration;
-import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientStandardImpl;
+import software.amazon.awssdk.services.lambda.LambdaClient;
 
 /**
- * Factory class to return the correct type of AWS Lambda client.
+ * Factory class to create AWS Lambda clients using common configuration.
  */
 public final class Lambda2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class Lambda2ClientFactory {
     }
 
     /**
-     * Return the correct AWS Lambda client (based on remote vs local).
+     * Create a Lambda client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               LambdaClient
+     * @param  configuration The Lambda configuration
+     * @return               Configured LambdaClient
      */
-    public static Lambda2InternalClient getLambdaClient(Lambda2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Lambda2ClientOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Lambda2ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Lambda2ClientSessionTokenImpl(configuration);
-        } else {
-            return new Lambda2ClientStandardImpl(configuration);
-        }
+    public static LambdaClient getLambdaClient(Lambda2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                LambdaClient::builder);
     }
 }

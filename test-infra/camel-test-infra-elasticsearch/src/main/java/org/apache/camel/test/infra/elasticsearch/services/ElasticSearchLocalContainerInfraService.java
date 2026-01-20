@@ -45,7 +45,8 @@ public class ElasticSearchLocalContainerInfraService
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchLocalContainerInfraService.class);
     private static final int ELASTIC_SEARCH_PORT = 9200;
     private static final String USER_NAME = "elastic";
-    private static final String PASSWORD = "s3cret";
+    // NOTE: default value used for testing purposes only.
+    private static final String PASSWORD = "s3cret"; // NOSONAR
     private Path certPath;
     private SSLContext sslContext;
     private final ElasticsearchContainer container;

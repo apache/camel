@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.google.drive.GoogleDriveConfiguration;
 import org.apache.camel.component.google.drive.DriveAboutEndpointConfiguration;
@@ -28,6 +29,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for GoogleDrive
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApiName, GoogleDriveConfiguration> {
 
     private GoogleDriveApiCollection() {

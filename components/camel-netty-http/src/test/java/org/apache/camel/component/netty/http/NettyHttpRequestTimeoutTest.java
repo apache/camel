@@ -27,7 +27,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NettyHttpRequestTimeoutTest extends BaseNettyTest {
+public class NettyHttpRequestTimeoutTest extends BaseNettyTestSupport {
 
     @Test
     public void testRequestTimeout() {

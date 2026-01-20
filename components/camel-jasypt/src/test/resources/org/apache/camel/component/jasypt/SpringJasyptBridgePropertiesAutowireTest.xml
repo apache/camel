@@ -53,7 +53,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start" />
-      <to uri="bean:springTest" />
+      <to uri="bean:springTestBean" />
       <to uri="{{cool.result}}" />
     </route>
   </camelContext>

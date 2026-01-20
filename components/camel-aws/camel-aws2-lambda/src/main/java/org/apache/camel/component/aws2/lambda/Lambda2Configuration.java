@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.lambda;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -24,7 +25,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 
 @UriParams
-public class Lambda2Configuration implements Cloneable {
+public class Lambda2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriParam(defaultValue = "invokeFunction")
     private Lambda2Operations operation = Lambda2Operations.invokeFunction;
@@ -215,7 +216,7 @@ public class Lambda2Configuration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 

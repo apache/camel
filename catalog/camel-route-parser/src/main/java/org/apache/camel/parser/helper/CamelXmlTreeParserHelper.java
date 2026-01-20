@@ -84,6 +84,12 @@ public final class CamelXmlTreeParserHelper {
         // skip when/otherwise (as we do this in Java DSL)
         boolean isWhenOrOtherwise = "when".equals(name) || "otherwise".equals(name);
 
+        String id = null;
+        Node nid = node.getAttributes().getNamedItem("id");
+        if (nid != null) {
+            id = nid.getNodeValue();
+        }
+
         // only include if its a known Camel model (dont include languages)
         if (isRoute || isEip) {
             // skip route as we just keep from (and also skip when/otherwise)
@@ -92,6 +98,7 @@ public final class CamelXmlTreeParserHelper {
                 String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
                 newNode = nodeFactory.newNode(parent, name);
                 newNode.setRouteId(parent.getRouteId());
+                newNode.setNodeId(id);
                 newNode.setFileName(parent.getFileName());
                 newNode.setLineNumber(lineNumber);
                 newNode.setLineNumberEnd(lineNumberEnd);

@@ -85,6 +85,19 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
     private Keycloak keycloakClient;
     private KeycloakTokenIntrospector tokenIntrospector;
+    private KeycloakPublicKeyResolver publicKeyResolver;
+    /**
+     * Enable issuer validation to ensure tokens are issued by the expected realm. When enabled (default), tokens with
+     * an issuer that does not match the configured serverUrl and realm will be rejected. This prevents cross-realm
+     * token injection attacks in multi-tenant environments.
+     */
+    private boolean validateIssuer = true;
+    /**
+     * Enable automatic fetching of public keys from the Keycloak JWKS endpoint for signature verification. When enabled
+     * (default), public keys are automatically fetched and cached from
+     * {serverUrl}/realms/{realm}/protocol/openid-connect/certs. This ensures token signatures are properly verified.
+     */
+    private boolean autoFetchPublicKey = true;
 
     public KeycloakSecurityPolicy() {
         this.requiredRoles = "";
@@ -119,6 +132,10 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
         if (useTokenIntrospection && tokenIntrospector == null) {
             initializeTokenIntrospector();
         }
+        // Initialize public key resolver for signature and issuer validation
+        if (autoFetchPublicKey && publicKeyResolver == null) {
+            initializePublicKeyResolver();
+        }
     }
 
     @Override
@@ -151,6 +168,16 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
         tokenIntrospector = new KeycloakTokenIntrospector(
                 serverUrl, realm, clientId, clientSecret,
                 introspectionCacheEnabled, introspectionCacheTtl);
+    }
+
+    private void initializePublicKeyResolver() {
+        if (serverUrl == null || realm == null) {
+            throw new IllegalArgumentException(
+                    "Server URL and realm are required for public key resolution");
+        }
+        publicKeyResolver = new KeycloakPublicKeyResolver(serverUrl, realm);
+        LOG.info("Initialized public key resolver for realm '{}' - issuer validation is {}",
+                realm, validateIssuer ? "enabled" : "disabled");
     }
 
     // Getters and setters
@@ -372,5 +399,34 @@ public class KeycloakSecurityPolicy implements AuthorizationPolicy {
 
     public void setPreferPropertyOverHeader(boolean preferPropertyOverHeader) {
         this.preferPropertyOverHeader = preferPropertyOverHeader;
+    }
+
+    public boolean isValidateIssuer() {
+        return validateIssuer;
+    }
+
+    public void setValidateIssuer(boolean validateIssuer) {
+        this.validateIssuer = validateIssuer;
+    }
+
+    public boolean isAutoFetchPublicKey() {
+        return autoFetchPublicKey;
+    }
+
+    public void setAutoFetchPublicKey(boolean autoFetchPublicKey) {
+        this.autoFetchPublicKey = autoFetchPublicKey;
+    }
+
+    public KeycloakPublicKeyResolver getPublicKeyResolver() {
+        return publicKeyResolver;
+    }
+
+    /**
+     * Returns the expected issuer URL for this policy's realm.
+     *
+     * @return the expected issuer URL (e.g., "http://localhost:8080/realms/myrealm")
+     */
+    public String getExpectedIssuer() {
+        return serverUrl + "/realms/" + realm;
     }
 }

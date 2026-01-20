@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.olingo2.Olingo2Configuration;
 import org.apache.camel.component.olingo2.Olingo2AppEndpointConfiguration;
@@ -19,6 +20,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for Olingo2
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class Olingo2ApiCollection extends ApiCollection<Olingo2ApiName, Olingo2Configuration> {
 
     private Olingo2ApiCollection() {

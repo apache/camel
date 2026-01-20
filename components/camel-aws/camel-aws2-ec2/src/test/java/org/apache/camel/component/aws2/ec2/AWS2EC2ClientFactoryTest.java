@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.ec2;
 
 import org.apache.camel.component.aws2.ec2.client.AWS2EC2ClientFactory;
-import org.apache.camel.component.aws2.ec2.client.AWS2EC2InternalClient;
-import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.ec2.client.impl.AWS2EC2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.ec2.Ec2Client;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AWS2EC2ClientFactoryTest {
 
     @Test
-    public void getStandardEC2ClientDefault() {
-        AWS2EC2Configuration ec2Configuration = new AWS2EC2Configuration();
-        AWS2EC2InternalClient ec2Client = AWS2EC2ClientFactory.getEc2Client(ec2Configuration);
-        assertTrue(ec2Client instanceof AWS2EC2ClientStandardImpl);
+    public void getEc2ClientWithDefaultCredentials() {
+        AWS2EC2Configuration configuration = new AWS2EC2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        Ec2Client ec2Client = AWS2EC2ClientFactory.getEc2Client(configuration);
+        assertNotNull(ec2Client);
+        ec2Client.close();
     }
 
     @Test
-    public void getStandardEC2Client() {
-        AWS2EC2Configuration ec2Configuration = new AWS2EC2Configuration();
-        ec2Configuration.setUseDefaultCredentialsProvider(false);
-        AWS2EC2InternalClient ec2Client = AWS2EC2ClientFactory.getEc2Client(ec2Configuration);
-        assertTrue(ec2Client instanceof AWS2EC2ClientStandardImpl);
+    public void getEc2ClientWithStaticCredentials() {
+        AWS2EC2Configuration configuration = new AWS2EC2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        Ec2Client ec2Client = AWS2EC2ClientFactory.getEc2Client(configuration);
+        assertNotNull(ec2Client);
+        ec2Client.close();
     }
 
     @Test
-    public void getIAMOptimizedEC2Client() {
-        AWS2EC2Configuration ec2Configuration = new AWS2EC2Configuration();
-        ec2Configuration.setUseDefaultCredentialsProvider(true);
-        AWS2EC2InternalClient ec2Client = AWS2EC2ClientFactory.getEc2Client(ec2Configuration);
-        assertTrue(ec2Client instanceof AWS2EC2ClientIAMOptimizedImpl);
-    }
-
-    @Test
-    public void getSessionTokenEC2Client() {
-        AWS2EC2Configuration ec2Configuration = new AWS2EC2Configuration();
-        ec2Configuration.setUseSessionCredentials(true);
-        AWS2EC2InternalClient ec2Client = AWS2EC2ClientFactory.getEc2Client(ec2Configuration);
-        assertTrue(ec2Client instanceof AWS2EC2ClientSessionTokenImpl);
+    public void getEc2ClientWithEndpointOverride() {
+        AWS2EC2Configuration configuration = new AWS2EC2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        Ec2Client ec2Client = AWS2EC2ClientFactory.getEc2Client(configuration);
+        assertNotNull(ec2Client);
+        ec2Client.close();
     }
 }

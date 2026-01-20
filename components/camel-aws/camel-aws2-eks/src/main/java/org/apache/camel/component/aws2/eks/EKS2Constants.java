@@ -35,4 +35,17 @@ public interface EKS2Constants {
     @Metadata(description = "The VPC config for the creations of an EKS cluster",
               javaType = "software.amazon.awssdk.services.eks.model.VpcConfigRequest")
     String VPC_CONFIG = "CamelAwsEKSVPCConfig";
+
+    // Pagination constants
+    @Metadata(label = "listClusters",
+              description = "The token for the next set of results.", javaType = "String")
+    String NEXT_TOKEN = "CamelAwsEKSNextToken";
+    @Metadata(label = "listClusters",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsEKSIsTruncated";
+
+    // Response metadata
+    @Metadata(label = "createCluster describeCluster deleteCluster",
+              description = "The ARN of the cluster.", javaType = "String")
+    String CLUSTER_ARN = "CamelAwsEKSClusterArn";
 }

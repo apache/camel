@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.ecs.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.ecs.ECS2Configuration;
-import org.apache.camel.component.aws2.ecs.client.impl.ECS2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.ecs.client.impl.ECS2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.ecs.client.impl.ECS2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.ecs.client.impl.ECS2ClientStandardImpl;
+import software.amazon.awssdk.services.ecs.EcsClient;
 
 /**
- * Factory class to return the correct type of AWS Athena client.
+ * Factory class to create AWS ECS clients using common configuration.
  */
 public final class ECS2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class ECS2ClientFactory {
     }
 
     /**
-     * Return the correct AWS ECS client (based on remote vs local).
+     * Create an ECS client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               EcsClient
+     * @param  configuration The ECS configuration
+     * @return               Configured EcsClient
      */
-    public static ECS2InternalClient getEcsClient(ECS2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new ECS2ClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new ECS2ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new ECS2ClientSessionTokenImpl(configuration);
-        } else {
-            return new ECS2ClientStandardImpl(configuration);
-        }
+    public static EcsClient getEcsClient(ECS2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                EcsClient::builder);
     }
 }

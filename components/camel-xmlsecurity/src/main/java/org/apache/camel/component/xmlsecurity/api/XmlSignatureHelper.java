@@ -153,9 +153,7 @@ public final class XmlSignatureHelper {
         return getXpathFilter(xpath, null);
     }
 
-    @SuppressWarnings("unchecked")
     public static XPathExpression getXPathExpression(XPathFilterParameterSpec xpathFilter) throws XPathExpressionException {
-
         XPathFactory factory = XPathFactory.newInstance();
         XPath xpath = factory.newXPath();
         if (xpathFilter.getNamespaceMap() != null) {
@@ -195,7 +193,7 @@ public final class XmlSignatureHelper {
 
         // This method isn't necessary for XPath processing either.
         @Override
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         public Iterator getPrefixes(String uri) {
             throw new UnsupportedOperationException();
         }

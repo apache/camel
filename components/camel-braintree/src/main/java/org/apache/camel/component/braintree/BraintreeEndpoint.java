@@ -41,7 +41,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 @UriEndpoint(firstVersion = "2.17.0", scheme = "braintree", title = "Braintree", syntax = "braintree:apiName/methodName",
              producerOnly = true,
              apiSyntax = "apiName/methodName",
-             category = { Category.SAAS })
+             category = { Category.SAAS, Category.FINANCE })
 public class BraintreeEndpoint extends AbstractApiEndpoint<BraintreeApiName, BraintreeConfiguration> {
 
     @UriParam

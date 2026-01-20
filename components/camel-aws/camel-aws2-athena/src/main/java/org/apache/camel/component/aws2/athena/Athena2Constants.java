@@ -46,6 +46,11 @@ public interface Athena2Constants {
                             "If not set, will use the Athena API default for the given operation.",
               javaType = "Integer")
     String MAX_RESULTS = "CamelAwsAthenaMaxResults";
+    @Metadata(label = "getQueryResults listQueryExecutions",
+              description = "Whether the response has more results (i.e., is truncated). "
+                            + "If true, use the NEXT_TOKEN header to fetch the next page.",
+              javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsAthenaIsTruncated";
     @Metadata(label = "startQueryExecution",
               description = "Include useful trace information at the beginning of queries as an SQL comment (prefixed with \"--\").",
               javaType = "boolean")

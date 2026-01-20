@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyMixedCaseHttpPathTest extends BaseNettyTest {
+public class NettyMixedCaseHttpPathTest extends BaseNettyTestSupport {
 
     @Test
     public void testMixedCase() throws Exception {

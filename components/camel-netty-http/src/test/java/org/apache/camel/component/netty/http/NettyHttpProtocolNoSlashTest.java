@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpProtocolNoSlashTest extends BaseNettyTest {
+public class NettyHttpProtocolNoSlashTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpProtocolNoSlash() throws Exception {

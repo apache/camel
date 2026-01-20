@@ -244,7 +244,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     }
 
     private static int getInheritanceLevel(Class<?> clazz) {
-        if (clazz == null || "java.lang.Object".equals(clazz.getName())) {
+        if (clazz == null || clazz == Object.class) {
             return 0;
         }
         return 1 + getInheritanceLevel(clazz.getSuperclass());

@@ -34,7 +34,6 @@ import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
@@ -50,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Default implement of {@link org.apache.camel.spi.PackageScanResourceResolver}
  */
 public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
-        implements PackageScanResourceResolver, NonManagedService, CamelContextAware {
+        implements PackageScanResourceResolver, NonManagedService {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultPackageScanResourceResolver.class);
 
     private static final AntPathMatcher PATH_MATCHER = AntPathMatcher.INSTANCE;

@@ -63,7 +63,7 @@ public class KMS2Endpoint extends ScheduledPollEndpoint implements EndpointServi
 
         kmsClient = configuration.getKmsClient() != null
                 ? configuration.getKmsClient()
-                : KMS2ClientFactory.getKmsClient(configuration).getKmsClient();
+                : KMS2ClientFactory.getKmsClient(configuration);
     }
 
     @Override

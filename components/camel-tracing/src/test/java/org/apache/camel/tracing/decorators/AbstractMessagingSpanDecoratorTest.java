@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.tracing.MockSpanAdapter;
 import org.apache.camel.tracing.SpanDecorator;
 import org.apache.camel.tracing.TagConstants;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -104,6 +105,29 @@ public class AbstractMessagingSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(messageId, span.tags().get(TagConstants.MESSAGE_ID));
+    }
+
+    @Test
+    public void testOperationNameMaxLength() {
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+
+        Mockito.when(endpoint.getEndpointUri())
+                .thenReturn("kafka:" + "A".repeat(90) + "," + "B".repeat(90) + "," + "C".repeat(90));
+
+        SpanDecorator decorator = new AbstractMessagingSpanDecorator() {
+            @Override
+            public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
+        };
+
+        String name = decorator.getOperationName(null, endpoint);
+        Assertions.assertEquals(250, name.length());
     }
 
 }

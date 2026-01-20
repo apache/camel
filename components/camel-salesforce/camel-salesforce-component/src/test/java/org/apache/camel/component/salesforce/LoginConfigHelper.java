@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -33,10 +39,25 @@ public final class LoginConfigHelper {
     private static final Logger LOG = LoggerFactory.getLogger(LoginConfigHelper.class);
     private static final LoginConfigHelper INSTANCE = new LoginConfigHelper();
 
+    private static final String SF_CREDENTIALS_PATH = "it/resources/sfdx-project/.local/test-credentials.json";
+
     private final Map<String, String> configuration;
 
     private LoginConfigHelper() {
         configuration = new HashMap<>();
+        loadConfiguration();
+    }
+
+    public static void reloadCredentials() {
+        INSTANCE.configuration.clear();
+        INSTANCE.loadConfiguration();
+    }
+
+    private void loadConfiguration() {
+        // 1. First, try to load from SF CLI credentials file (lowest priority, can be overridden)
+        loadFromSfCliCredentials();
+
+        // 2. Load from properties file (overrides SF CLI)
         try {
             final ResourceBundle properties = ResourceBundle.getBundle("test-salesforce-login");
             properties.keySet().forEach(k -> configuration.put(k, properties.getString(k)));
@@ -44,12 +65,82 @@ public final class LoginConfigHelper {
             // ignoring if missing
         }
 
+        // 3. Environment variables (overrides properties file)
         System.getenv().keySet().stream()//
                 .filter(k -> k.startsWith("SALESFORCE_") && isNotEmpty(System.getenv(k)))
                 .forEach(k -> configuration.put(fromEnvName(k), System.getenv(k)));
+
+        // 4. System properties (highest priority)
         System.getProperties().keySet().stream().map(String.class::cast)
                 .filter(k -> k.startsWith("salesforce.") && isNotEmpty(System.getProperty(k)))
                 .forEach(k -> configuration.put(k, System.getProperty(k)));
+    }
+
+    private void loadFromSfCliCredentials() {
+        Path credentialsPath = findCredentialsFile();
+
+        if (credentialsPath == null || !Files.exists(credentialsPath)) {
+            LOG.debug("SF CLI credentials file not found");
+            return;
+        }
+
+        try {
+            LOG.info("Loading credentials from SF CLI: {}", credentialsPath);
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(credentialsPath.toFile());
+
+            setIfPresent(root, "clientId", "salesforce.client.id");
+            setIfPresent(root, "clientSecret", "salesforce.client.secret");
+            setIfPresent(root, "refreshToken", "salesforce.refresh.token");
+            setIfPresent(root, "username", "salesforce.username");
+            setIfPresent(root, "password", "salesforce.password");
+            setIfPresent(root, "instanceUrl", "salesforce.login.url");
+
+        } catch (IOException e) {
+            LOG.debug("Failed to read SF CLI credentials file: {}", e.getMessage());
+        }
+    }
+
+    private void setIfPresent(JsonNode root, String jsonKey, String configKey) {
+        JsonNode node = root.get(jsonKey);
+        if (node != null && !node.isNull() && isNotEmpty(node.asText())) {
+            configuration.put(configKey, node.asText());
+        }
+    }
+
+    private Path findCredentialsFile() {
+        // First, try the direct path from current directory
+        Path direct = Paths.get(SF_CREDENTIALS_PATH);
+        if (Files.exists(direct)) {
+            return direct;
+        }
+
+        // Try to find from camel-salesforce directory
+        Path current = Paths.get("").toAbsolutePath();
+        while (current != null) {
+            Path candidate = current.resolve(SF_CREDENTIALS_PATH);
+            if (Files.exists(candidate)) {
+                return candidate;
+            }
+            // Also check if we're in a subdirectory of camel-salesforce
+            if (current.endsWith("camel-salesforce") || current.endsWith("camel-salesforce-component")) {
+                candidate = current.getParent() != null
+                        ? current.getParent().resolve(SF_CREDENTIALS_PATH)
+                        : current.resolve(SF_CREDENTIALS_PATH);
+                if (Files.exists(candidate)) {
+                    return candidate;
+                }
+                // If we're in camel-salesforce directly
+                candidate = current.resolve(SF_CREDENTIALS_PATH);
+                if (Files.exists(candidate)) {
+                    return candidate;
+                }
+            }
+            current = current.getParent();
+        }
+
+        return null;
     }
 
     private String fromEnvName(final String envVariable) {
@@ -69,6 +160,7 @@ public final class LoginConfigHelper {
         }
         loginConfig.setClientId(configuration.get("salesforce.client.id"));
         loginConfig.setClientSecret(configuration.get("salesforce.client.secret"));
+        loginConfig.setRefreshToken(configuration.get("salesforce.refresh.token"));
         loginConfig.setUserName(configuration.get("salesforce.username"));
         loginConfig.setPassword(configuration.get("salesforce.password"));
 
@@ -90,20 +182,21 @@ public final class LoginConfigHelper {
         } catch (final IllegalArgumentException e) {
             LOG.info("To run integration tests Salesforce Authentication information is");
             LOG.info("needed.");
-            LOG.info("You need to specify the configuration for running tests by either");
+            LOG.info("");
+            LOG.info("RECOMMENDED: Use the SF CLI setup script to automatically configure");
+            LOG.info("a scratch org with all required credentials:");
+            LOG.info("");
+            LOG.info("  cd camel/components/camel-salesforce/it/resources");
+            LOG.info("  ./setup-salesforce.sh");
+            LOG.info("");
+            LOG.info("This will create a scratch org, deploy the test metadata, and store");
+            LOG.info("credentials that are automatically loaded by the tests.");
+            LOG.info("");
+            LOG.info("ALTERNATIVE: You can specify configuration manually by either");
             LOG.info("specifying environment variables, Maven properties or create a Java");
             LOG.info("properties file at:");
             LOG.info("");
             LOG.info("camel/components/camel-salesforce/test-salesforce-login.properties");
-            LOG.info("");
-            LOG.info("With authentication information to access a Salesforce instance.");
-            LOG.info("You can use:");
-            LOG.info("");
-            LOG.info("camel/components/camel-salesforce/test-salesforce-login.sample.properties");
-            LOG.info("");
-            LOG.info("as reference. A free Salesforce developer account can be obtained at:");
-            LOG.info("");
-            LOG.info("https://developer.salesforce.com");
             LOG.info("");
             LOG.info("Properties that you need to set:");
             LOG.info("");
@@ -123,23 +216,6 @@ public final class LoginConfigHelper {
             LOG.info("* UP  - when using username and password authentication");
             LOG.info("* RT  - when using refresh token flow");
             LOG.info("* JWT - when using JWT flow");
-            LOG.info("");
-            LOG.info("You can force authentication type to be one of USERNAME_PASSWORD,");
-            LOG.info("REFRESH_TOKEN or JWT by setting `salesforce.auth.type` (or ");
-            LOG.info("`SALESFORCE_AUTH_TYPE` for environment variables).");
-            LOG.info("");
-            LOG.info("Examples:");
-            LOG.info("");
-            LOG.info("Using environment:");
-            LOG.info("");
-            LOG.info("$ export SALESFORCE_CLIENT_ID=...");
-            LOG.info("$ export SALESFORCE_CLIENT_SECRET=...");
-            LOG.info("$ export ...others...");
-            LOG.info("");
-            LOG.info("or using Maven properties:");
-            LOG.info("");
-            LOG.info("$ mvn -Pintegration -Dsalesforce.client.id=... \\");
-            LOG.info("  -Dsalesforce.client.secret=... ...");
             LOG.info("");
         }
     }

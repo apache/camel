@@ -21,6 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
@@ -44,15 +45,21 @@ public class MDCAsyncTest extends ExchangeTestSupport {
 
     @Test
     public void testAsyncEndpoint() throws Exception {
-        getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
-        getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
+        MockEndpoint before = getMockEndpoint("mock:before");
+        MockEndpoint after = getMockEndpoint("mock:after");
+        MockEndpoint result = getMockEndpoint("mock:result");
+        before.expectedBodiesReceived("Hello Camel");
+        after.expectedBodiesReceived("Bye Camel");
+        result.expectedBodiesReceived("Bye Camel");
 
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
 
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+        before.assertIsSatisfied();
+        after.assertIsSatisfied();
+        result.assertIsSatisfied();
+
+        // NOTE: more assertions directly in process as it was simpler to verify the condition while executing the async process.
     }
 
     @Override

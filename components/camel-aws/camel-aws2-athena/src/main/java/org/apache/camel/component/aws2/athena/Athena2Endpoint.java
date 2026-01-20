@@ -69,7 +69,7 @@ public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceL
 
         athenaClient = configuration.getAmazonAthenaClient() != null
                 ? configuration.getAmazonAthenaClient()
-                : Athena2ClientFactory.getAWSAthenaClient(configuration).getAthenaClient();
+                : Athena2ClientFactory.getAthenaClient(configuration);
 
     }
 

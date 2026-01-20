@@ -5,6 +5,7 @@ package org.apache.camel.component.fhir.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.fhir.api.FhirPatch;
 
@@ -18,6 +19,7 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 /**
  * Camel {@link ApiMethod} Enumeration for org.apache.camel.component.fhir.api.FhirPatch
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum FhirPatchApiMethod implements ApiMethod {
 
     PATCH_BY_ID(

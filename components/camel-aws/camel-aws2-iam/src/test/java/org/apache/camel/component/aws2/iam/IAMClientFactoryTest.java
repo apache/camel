@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.iam;
 
 import org.apache.camel.component.aws2.iam.client.IAM2ClientFactory;
-import org.apache.camel.component.aws2.iam.client.IAM2InternalClient;
-import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.iam.client.impl.IAM2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.iam.IamClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IAMClientFactoryTest {
 
     @Test
-    public void getStandardEIamClientDefault() {
-        IAM2Configuration iam2Configuration = new IAM2Configuration();
-        IAM2InternalClient iamClient = IAM2ClientFactory.getIamClient(iam2Configuration);
-        assertTrue(iamClient instanceof IAM2ClientStandardImpl);
+    public void getIamClientWithDefaultCredentials() {
+        IAM2Configuration configuration = new IAM2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("aws-global");
+        IamClient iamClient = IAM2ClientFactory.getIamClient(configuration);
+        assertNotNull(iamClient);
+        iamClient.close();
     }
 
     @Test
-    public void getStandardIamClient() {
-        IAM2Configuration iam2Configuration = new IAM2Configuration();
-        iam2Configuration.setUseDefaultCredentialsProvider(false);
-        IAM2InternalClient iamClient = IAM2ClientFactory.getIamClient(iam2Configuration);
-        assertTrue(iamClient instanceof IAM2ClientStandardImpl);
+    public void getIamClientWithStaticCredentials() {
+        IAM2Configuration configuration = new IAM2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("aws-global");
+        IamClient iamClient = IAM2ClientFactory.getIamClient(configuration);
+        assertNotNull(iamClient);
+        iamClient.close();
     }
 
     @Test
-    public void getIAMOptimizedIamClient() {
-        IAM2Configuration iam2Configuration = new IAM2Configuration();
-        iam2Configuration.setUseDefaultCredentialsProvider(true);
-        IAM2InternalClient iamClient = IAM2ClientFactory.getIamClient(iam2Configuration);
-        assertTrue(iamClient instanceof IAM2ClientOptimizedImpl);
-    }
-
-    @Test
-    public void getSessionTokenIamClient() {
-        IAM2Configuration iam2Configuration = new IAM2Configuration();
-        iam2Configuration.setUseSessionCredentials(true);
-        IAM2InternalClient iamClient = IAM2ClientFactory.getIamClient(iam2Configuration);
-        assertTrue(iamClient instanceof IAM2ClientSessionTokenImpl);
+    public void getIamClientWithEndpointOverride() {
+        IAM2Configuration configuration = new IAM2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("aws-global");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        IamClient iamClient = IAM2ClientFactory.getIamClient(configuration);
+        assertNotNull(iamClient);
+        iamClient.close();
     }
 }

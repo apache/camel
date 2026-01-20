@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.box;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "searchFolder", description="Search folder and all descendant folders using the given query", signatures={"java.util.Collection<com.box.sdk.BoxItem> searchFolder(String folderId, String query)"})}, aliases = {"searchFolder=search"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxSearchManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "searchFolder", description="The id of folder searched")})

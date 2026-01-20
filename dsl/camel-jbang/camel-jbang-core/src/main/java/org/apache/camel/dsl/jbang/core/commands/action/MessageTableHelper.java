@@ -47,6 +47,7 @@ public class MessageTableHelper {
 
     private boolean loggingColor;
     private boolean pretty;
+    private boolean showHeaders = true;
     private boolean showExchangeProperties;
     private boolean showExchangeVariables;
     private ColorChooser exchangeIdColorChooser;
@@ -65,6 +66,14 @@ public class MessageTableHelper {
 
     public void setPretty(boolean pretty) {
         this.pretty = pretty;
+    }
+
+    public boolean isShowHeaders() {
+        return showHeaders;
+    }
+
+    public void setShowHeaders(boolean showHeaders) {
+        this.showHeaders = showHeaders;
     }
 
     public boolean isShowExchangeProperties() {
@@ -160,32 +169,37 @@ public class MessageTableHelper {
                         new Column().dataAlign(HorizontalAlign.RIGHT)
                                 .maxWidth(80).with(TableRow::exchangeIdAsValue)));
             }
-            // exchange variables
-            JsonArray arr = root.getCollection("exchangeVariables");
-            if (arr != null) {
-                for (Object o : arr) {
-                    JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow("Variable", jo.getString("type"), jo.getString("key"), jo.get("value")));
+            JsonArray arr;
+            if (showExchangeVariables) {
+                // exchange variables
+                arr = root.getCollection("exchangeVariables");
+                if (arr != null) {
+                    for (Object o : arr) {
+                        JsonObject jo = (JsonObject) o;
+                        rows.add(new TableRow("Variable", jo.getString("type"), jo.getString("key"), jo.get("value")));
+                    }
                 }
             }
-            // exchange properties
-            arr = root.getCollection("exchangeProperties");
-            if (arr != null) {
-                for (Object o : arr) {
-                    JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow(
-                            "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
-                            jo.getBooleanOrDefault("important", false)));
+            if (showExchangeProperties) {
+                // exchange properties
+                arr = root.getCollection("exchangeProperties");
+                if (arr != null) {
+                    for (Object o : arr) {
+                        JsonObject jo = (JsonObject) o;
+                        rows.add(new TableRow(
+                                "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
+                                jo.getBooleanOrDefault("important", false)));
+                    }
                 }
-            }
-            // internal exchange properties
-            arr = root.getCollection("internalExchangeProperties");
-            if (arr != null) {
-                for (Object o : arr) {
-                    JsonObject jo = (JsonObject) o;
-                    rows.add(new TableRow(
-                            "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
-                            jo.getBooleanOrDefault("important", false)));
+                // internal exchange properties
+                arr = root.getCollection("internalExchangeProperties");
+                if (arr != null) {
+                    for (Object o : arr) {
+                        JsonObject jo = (JsonObject) o;
+                        rows.add(new TableRow(
+                                "Property", jo.getString("type"), jo.getString("key"), jo.get("value"),
+                                jo.getBooleanOrDefault("important", false)));
+                    }
                 }
             }
             if (!rows.isEmpty()) {
@@ -211,28 +225,30 @@ public class MessageTableHelper {
                                 .with(TableRow::kindAsString),
                         new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
             }
-            arr = root.getCollection("headers");
-            if (arr != null) {
-                for (Object o : arr) {
-                    JsonObject jo = (JsonObject) o;
-                    String key = jo.getString("key");
-                    Object value = jo.get("value");
-                    if ("CamelMessageTimestamp".equals(key)) {
-                        long val = jo.getLongOrDefault("value", 0);
-                        if (val > 0) {
-                            String df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(val);
-                            String since = TimeUtils.printSince(val);
-                            value = "(" + df + " / " + since + " ago)";
-                            if (loggingColor) {
-                                value = val + " " + Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(value)
-                                        .reset().toString();
-                            } else {
-                                value = val + " " + value;
+            if (showHeaders) {
+                arr = root.getCollection("headers");
+                if (arr != null) {
+                    for (Object o : arr) {
+                        JsonObject jo = (JsonObject) o;
+                        String key = jo.getString("key");
+                        Object value = jo.get("value");
+                        if ("CamelMessageTimestamp".equals(key)) {
+                            long val = jo.getLongOrDefault("value", 0);
+                            if (val > 0) {
+                                String df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(val);
+                                String since = TimeUtils.printSince(val);
+                                value = "(" + df + " / " + since + " ago)";
+                                if (loggingColor) {
+                                    value = val + " " + Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(value)
+                                            .reset().toString();
+                                } else {
+                                    value = val + " " + value;
+                                }
                             }
                         }
+                        rows.add(new TableRow(
+                                "Header", jo.getString("type"), key, value, jo.getBooleanOrDefault("important", false)));
                     }
-                    rows.add(new TableRow(
-                            "Header", jo.getString("type"), key, value, jo.getBooleanOrDefault("important", false)));
                 }
             }
             if (!rows.isEmpty()) {
@@ -415,6 +431,9 @@ public class MessageTableHelper {
                 s = "WrappedInputStream";
             } else if (type.startsWith("org.apache.camel.converter.stream.")) {
                 s = type.substring(34);
+            } else if (type
+                    .equals("org.apache.camel.processor.aggregate.AbstractListAggregationStrategy.GroupedExchangeList")) {
+                s = "GroupedExchangeList";
             } else if (type.length() > 34) {
                 // type must not be too long
                 int pos = type.lastIndexOf('.');
@@ -446,6 +465,9 @@ public class MessageTableHelper {
                 s = "WrappedInputStream";
             } else if (type.startsWith("org.apache.camel.converter.stream.")) {
                 s = type.substring(34);
+            } else if (type
+                    .equals("org.apache.camel.processor.aggregate.AbstractListAggregationStrategy.GroupedExchangeList")) {
+                s = "GroupedExchangeList";
             } else {
                 s = type;
             }

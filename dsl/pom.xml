@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
@@ -42,6 +42,7 @@
         <module>camel-endpointdsl</module>
         <module>camel-componentdsl</module>
         <module>camel-cli-connector</module>
+        <module>camel-cli-debug</module>
         <module>camel-dsl-support</module>
         <module>camel-dsl-modeline</module>
         <module>camel-endpointdsl-support</module>

@@ -29,7 +29,7 @@ import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.DefaultThreadPoolFactory;
 
 @JdkService(ThreadPoolFactory.FACTORY)
-public class OpenTelemetryInstrumentedThreadPoolFactory extends DefaultThreadPoolFactory implements ThreadPoolFactory {
+public class OpenTelemetryInstrumentedThreadPoolFactory extends DefaultThreadPoolFactory {
 
     @Override
     public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {

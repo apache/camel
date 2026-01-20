@@ -32,4 +32,23 @@ public interface KMS2Constants {
     String KEY_ID = "CamelAwsKMSKeyId";
     @Metadata(description = "The waiting period, specified in number of days.", javaType = "Integer")
     String PENDING_WINDOW_IN_DAYS = "CamelAwsKMSPendingWindowInDays";
+
+    // Pagination constants
+    @Metadata(label = "listKeys",
+              description = "The marker for the next set of results.", javaType = "String")
+    String MARKER = "CamelAwsKMSMarker";
+    @Metadata(label = "listKeys",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsKMSTruncated";
+
+    // Response metadata
+    @Metadata(label = "createKey describeKey",
+              description = "The Amazon Resource Name (ARN) of the key.", javaType = "String")
+    String KEY_ARN = "CamelAwsKMSKeyArn";
+    @Metadata(label = "createKey describeKey",
+              description = "The state of the key.", javaType = "String")
+    String KEY_STATE = "CamelAwsKMSKeyState";
+    @Metadata(label = "scheduleKeyDeletion",
+              description = "The date and time after which AWS KMS deletes the key.", javaType = "java.time.Instant")
+    String DELETION_DATE = "CamelAwsKMSDeletionDate";
 }

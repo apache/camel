@@ -38,6 +38,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
  */
 @UriParams
 @Configurer(extended = true)
+@Deprecated(since = "4.18")
 public class Olingo2Configuration {
 
     private static final String DEFAULT_CONTENT_TYPE = ContentType.APPLICATION_JSON.toString();

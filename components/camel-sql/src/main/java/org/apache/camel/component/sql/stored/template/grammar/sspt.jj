@@ -27,11 +27,13 @@ PARSER_BEGIN(SSPTParser)
 
 package org.apache.camel.component.sql.stored.template.generated;
 
+import javax.annotation.processing.Generated;
 import java.io.Reader;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.component.sql.stored.template.ast.*;
 
+@Generated("JavaCC")
 public class SSPTParser {
    int parameterNameCounter = 0;
 

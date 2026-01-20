@@ -608,6 +608,66 @@ public interface STS2EndpointBuilderFactory {
         public String awsStsAssumeRoleDurationSeconds() {
             return "CamelAwsStsAssumeRoleDurationSeconds";
         }
+        /**
+         * The temporary access key ID.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: assumeRole getSessionToken getFederationToken
+         * 
+         * @return the name of the header {@code AwsStsAccessKeyId}.
+         */
+        public String awsStsAccessKeyId() {
+            return "CamelAwsStsAccessKeyId";
+        }
+        /**
+         * The temporary secret access key.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: assumeRole getSessionToken getFederationToken
+         * 
+         * @return the name of the header {@code AwsStsSecretKey}.
+         */
+        public String awsStsSecretKey() {
+            return "CamelAwsStsSecretKey";
+        }
+        /**
+         * The temporary session token.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: assumeRole getSessionToken getFederationToken
+         * 
+         * @return the name of the header {@code AwsStsSessionToken}.
+         */
+        public String awsStsSessionToken() {
+            return "CamelAwsStsSessionToken";
+        }
+        /**
+         * The expiration date and time of the credentials.
+         * 
+         * The option is a: {@code java.time.Instant} type.
+         * 
+         * Group: assumeRole getSessionToken getFederationToken
+         * 
+         * @return the name of the header {@code AwsStsExpiration}.
+         */
+        public String awsStsExpiration() {
+            return "CamelAwsStsExpiration";
+        }
+        /**
+         * The Amazon Resource Name (ARN) of the assumed role.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: assumeRole
+         * 
+         * @return the name of the header {@code AwsStsAssumedRoleArn}.
+         */
+        public String awsStsAssumedRoleArn() {
+            return "CamelAwsStsAssumedRoleArn";
+        }
     }
     static STS2EndpointBuilder endpointBuilder(String componentName, String path) {
         class STS2EndpointBuilderImpl extends AbstractEndpointBuilder implements STS2EndpointBuilder, AdvancedSTS2EndpointBuilder {

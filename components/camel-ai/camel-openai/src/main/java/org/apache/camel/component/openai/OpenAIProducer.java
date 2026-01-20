@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.core.JsonValue;
@@ -165,6 +166,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             }
         }
 
+        applyAdditionalBodyProperties(paramsBuilder, config);
+
         ChatCompletionCreateParams params = paramsBuilder.build();
 
         if (Boolean.TRUE.equals(streaming)) {
@@ -206,7 +209,14 @@ public class OpenAIProducer extends DefaultAsyncProducer {
         addConversationHistory(messages, in, config);
 
         ChatCompletionMessageParam userMessage = buildUserMessage(in, config);
-        messages.add(userMessage);
+        if (userMessage != null) {
+            messages.add(userMessage);
+        }
+
+        if (messages.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "No input provided to LLM. At least one message (user, system, or developer) must be provided");
+        }
 
         return messages;
     }
@@ -243,9 +253,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private ChatCompletionMessageParam buildTextMessage(Message in, String userPrompt, OpenAIConfiguration config) {
         String prompt = userPrompt != null ? userPrompt : in.getBody(String.class);
-        if (prompt == null || prompt.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Message body or user message configuration must contain the prompt text");
+        if (prompt == null || prompt.trim().isEmpty()) {
+            return null;
         }
         return createTextMessage(prompt);
     }
@@ -351,8 +360,8 @@ public class OpenAIProducer extends DefaultAsyncProducer {
 
     private void processStreaming(Exchange exchange, ChatCompletionCreateParams params) {
         // NOTE: the stream is going to be closed after the exchange completes.
-        StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions()
-                .createStreaming(params); // NOSONAR
+        StreamResponse<ChatCompletionChunk> streamResponse = getEndpoint().getClient().chat().completions() // NOSONAR
+                .createStreaming(params);
 
         // hand Camel an Iterator for streaming EIPs (split, recipientList, etc.)
         Iterator<ChatCompletionChunk> it = streamResponse.stream().iterator();
@@ -440,6 +449,33 @@ public class OpenAIProducer extends DefaultAsyncProducer {
             sb.putAdditionalProperty(e.getKey(), JsonValue.from(e.getValue()));
         }
         return sb.build();
+    }
+
+    private void applyAdditionalBodyProperties(ChatCompletionCreateParams.Builder paramsBuilder, OpenAIConfiguration config) {
+        Map<String, Object> additional = config.getAdditionalBodyProperty();
+        if (additional == null || additional.isEmpty()) {
+            return;
+        }
+
+        for (Map.Entry<String, Object> e : additional.entrySet()) {
+            String key = e.getKey();
+            Object rawValue = e.getValue();
+            Object valueToUse = rawValue;
+            if (rawValue instanceof String s) {
+                valueToUse = parseJsonOrString(s);
+            }
+
+            paramsBuilder.putAdditionalBodyProperty(key, JsonValue.from((Object) valueToUse));
+        }
+    }
+
+    private Object parseJsonOrString(String value) {
+        try {
+            return OBJECT_MAPPER.readValue(value, Object.class);
+        } catch (Exception e) {
+            // treat as literal string
+            return value;
+        }
     }
 
     private <T> T resolveParameter(Message message, String headerName, T defaultValue, Class<T> type) {

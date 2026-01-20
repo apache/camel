@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.olingo4.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component Olingo4
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum Olingo4ApiName implements ApiName {
 
     DEFAULT("");

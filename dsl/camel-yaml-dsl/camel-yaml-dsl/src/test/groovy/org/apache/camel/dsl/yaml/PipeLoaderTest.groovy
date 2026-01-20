@@ -19,7 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.KameletDefinition
 import org.apache.camel.model.ToDefinition
-import org.apache.camel.model.TransformDefinition
+import org.apache.camel.model.TransformDataTypeDefinition
 
 class PipeLoaderTest extends YamlTestSupport {
     @Override
@@ -610,7 +610,7 @@ class PipeLoaderTest extends YamlTestSupport {
                       name: timer-source
                     dataTypes:
                       in:
-                        format: plain/text
+                        format: text/plain
                     properties:
                       message: "Hello world!"
                   sink:
@@ -629,7 +629,7 @@ class PipeLoaderTest extends YamlTestSupport {
             routeId == 'timer-event-source'
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             input.lineNumber == 7
-            inputType.urn == 'plain/text'
+            inputType.urn == 'text/plain'
             outputType.urn == 'application/octet-stream'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
@@ -655,7 +655,7 @@ class PipeLoaderTest extends YamlTestSupport {
                     dataTypes:
                       in:
                         scheme: camel
-                        format: plain/text
+                        format: text/plain
                     properties:
                       message: "Hello world!"
                   sink:
@@ -675,7 +675,7 @@ class PipeLoaderTest extends YamlTestSupport {
             routeId == 'timer-event-source'
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             input.lineNumber == 7
-            inputType.urn == 'camel:plain/text'
+            inputType.urn == 'camel:text/plain'
             outputType.urn == 'camel:application/octet-stream'
             outputs.size() == 1
             with (outputs[0], ToDefinition) {
@@ -710,7 +710,7 @@ class PipeLoaderTest extends YamlTestSupport {
                       name: log-sink
                     dataTypes:
                       in:
-                        format: plain/text
+                        format: text/plain
             ''')
         then:
         context.routeDefinitions.size() == 3
@@ -720,14 +720,14 @@ class PipeLoaderTest extends YamlTestSupport {
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             input.lineNumber == 7
             outputs.size() == 3
-            with (outputs[0], TransformDefinition) {
+            with (outputs[0], TransformDataTypeDefinition) {
                 fromType == 'camel:any'
                 toType == 'application/octet-stream'
                 lineNumber == -1
             }
-            with (outputs[1], TransformDefinition) {
+            with (outputs[1], TransformDataTypeDefinition) {
                 fromType == 'camel:any'
-                toType == 'plain/text'
+                toType == 'text/plain'
                 lineNumber == -1
             }
             with (outputs[2], ToDefinition) {
@@ -764,7 +764,7 @@ class PipeLoaderTest extends YamlTestSupport {
                     dataTypes:
                       in:
                         scheme: camel
-                        format: plain/text
+                        format: text/plain
             ''')
         then:
         context.routeDefinitions.size() == 3
@@ -774,14 +774,14 @@ class PipeLoaderTest extends YamlTestSupport {
             input.endpointUri == 'kamelet:timer-source?message=Hello+world%21'
             input.lineNumber == 7
             outputs.size() == 3
-            with (outputs[0], TransformDefinition) {
+            with (outputs[0], TransformDataTypeDefinition) {
                 fromType == 'camel:any'
                 toType == 'camel:application/octet-stream'
                 lineNumber == -1
             }
-            with (outputs[1], TransformDefinition) {
+            with (outputs[1], TransformDataTypeDefinition) {
                 fromType == 'camel:any'
-                toType == 'camel:plain/text'
+                toType == 'camel:text/plain'
                 lineNumber == -1
             }
             with (outputs[2], ToDefinition) {

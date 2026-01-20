@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.msk.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.msk.MSK2Configuration;
-import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientProfileOptimizedImpl;
-import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.msk.client.impl.MSK2ClientStandardImpl;
+import software.amazon.awssdk.services.kafka.KafkaClient;
 
 /**
- * Factory class to return the correct type of AWS Kafka client.
+ * Factory class to create AWS MSK (Kafka) clients using common configuration.
  */
 public final class MSK2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class MSK2ClientFactory {
     }
 
     /**
-     * Return the correct AWS Kafka client (based on remote vs local).
+     * Create an MSK (Kafka) client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               MqClient
+     * @param  configuration The MSK configuration
+     * @return               Configured KafkaClient
      */
-    public static MSK2InternalClient getKafkaClient(MSK2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new MSK2ClientOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new MSK2ClientProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new MSK2ClientSessionTokenImpl(configuration);
-        } else {
-            return new MSK2ClientStandardImpl(configuration);
-        }
+    public static KafkaClient getKafkaClient(MSK2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                KafkaClient::builder);
     }
 }
