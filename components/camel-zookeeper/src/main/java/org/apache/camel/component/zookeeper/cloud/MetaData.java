@@ -22,7 +22,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("meta")
-@Deprecated
+@Deprecated(since = "4.7.0")
 public class MetaData extends HashMap<String, String> {
     public MetaData() {
     }

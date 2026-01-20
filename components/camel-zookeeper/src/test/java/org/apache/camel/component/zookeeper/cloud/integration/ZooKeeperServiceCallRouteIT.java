@@ -38,6 +38,8 @@ import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+@Deprecated(since = "4.7.0")
+// NOTE: we should remove this test when removing the source code deprecation on cloud.
 public class ZooKeeperServiceCallRouteIT extends CamelTestSupport {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();
