@@ -194,6 +194,7 @@ public interface ServiceEndpointBuilderFactory {
          * @param path delegateUri
          * @return the dsl builder
          */
+        @Deprecated
         default ServiceEndpointBuilder service(String path) {
             return ServiceEndpointBuilderFactory.endpointBuilder("service", path);
         }
@@ -216,6 +217,7 @@ public interface ServiceEndpointBuilderFactory {
          * @param path delegateUri
          * @return the dsl builder
          */
+        @Deprecated
         default ServiceEndpointBuilder service(String componentName, String path) {
             return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
