@@ -180,6 +180,10 @@ public final class SimpleConstants {
               label = "function", javaType = "Object", displayName = "If Then Else")
     public static final String IIF = "iif(predicate,trueExp,falseExp)";
 
+    @Metadata(description = "Whether the message body (or expression) is null or empty (list/map types are tested if they have 0 elements).",
+              label = "function", javaType = "boolean", displayName = "Is Empty")
+    public static final String IS_EMPTY = "isEmpty(exp)";
+
     @Metadata(description = "When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath. For input (optional), you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.",
               label = "function", javaType = "Object", displayName = "JQ")
     public static final String JQ = "jq(input,exp)";

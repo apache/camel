@@ -376,6 +376,50 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Whether the expression is empty or having a list/map which has no elements.
+     */
+    public static Expression isEmptyExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, Object.class);
+                } else {
+                    body = exchange.getMessage().getBody(Object.class);
+                }
+                // this may be an object that we can iterate
+                Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(body);
+                for (Object o : it) {
+                    if (o != null) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isEmpty(" + expression + ")";
+                } else {
+                    return "isEmpty()";
+                }
+            }
+        };
+    }
+
+    /**
      * Trims the given expressions (uses message body if expression is null)
      */
     public static Expression trimExpression(final String expression) {

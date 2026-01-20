@@ -961,6 +961,17 @@ public final class CSimpleHelper {
         return null;
     }
 
+    public static boolean isEmpty(Exchange exchange, Object value) {
+        // this may be an object that we can iterate
+        Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(value);
+        for (Object o : it) {
+            if (o != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static String trim(Exchange exchange, Object value) {
         String body;
         if (value != null) {

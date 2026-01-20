@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -2670,6 +2671,37 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${pad(${body},5)}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("Hello World", s);
+    }
+
+    @Test
+    public void testIsEmpty() {
+        exchange.getMessage().setBody("");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${isEmpty()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty(${body})}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty(' ')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty('   ')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty('Hello World')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty(${empty(map)})}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody(Collections.EMPTY_MAP);
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody(List.of("A", "B"));
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty()}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
     }
 
     @Test
