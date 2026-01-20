@@ -27,6 +27,7 @@ import org.quartz.Trigger;
  * A Camel message to be created upon each scheduled job execution.
  */
 public class QuartzMessage extends DefaultMessage {
+
     private final JobExecutionContext jobExecutionContext;
 
     public QuartzMessage(Exchange exchange, JobExecutionContext jobExecutionContext) {
@@ -38,6 +39,11 @@ public class QuartzMessage extends DefaultMessage {
 
     public JobExecutionContext getJobExecutionContext() {
         return jobExecutionContext;
+    }
+
+    @Override
+    protected boolean isPopulateHeadersSupported() {
+        return true;
     }
 
     @Override

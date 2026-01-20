@@ -612,6 +612,12 @@ public class StringHelperTest {
     }
 
     @Test
+    public void testCapitalizeAll() {
+        assertNull(StringHelper.capitalizeAll(null));
+        assertEquals("Hello World How Are You", StringHelper.capitalizeAll("hello world how are you"));
+    }
+
+    @Test
     public void testStartsWithIgnoreCase() {
         assertTrue(StringHelper.startsWithIgnoreCase(null, null));
         assertFalse(StringHelper.startsWithIgnoreCase("foo", null));

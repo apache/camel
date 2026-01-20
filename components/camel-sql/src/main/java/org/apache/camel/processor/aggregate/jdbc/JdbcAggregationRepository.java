@@ -192,14 +192,15 @@ public class JdbcAggregationRepository extends ServiceSupport
 
                 try {
                     LOG.debug("Adding exchange with key {}", correlationId);
-
+                    String table = getRepositoryName();
+                    verifyTableName(table);
                     boolean present = jdbcTemplate.queryForObject(
-                            "SELECT COUNT(1) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class,
+                            "SELECT COUNT(1) FROM " + table + " WHERE " + ID + " = ?", Integer.class, // NOSONAR
                             correlationId) != 0;
 
                     // Recover existing exchange with that ID
                     if (isReturnOldExchange() && present) {
-                        result = get(correlationId, getRepositoryName(), camelContext);
+                        result = get(correlationId, table, camelContext);
                     }
 
                     if (present) {
@@ -210,11 +211,11 @@ public class JdbcAggregationRepository extends ServiceSupport
                         } else {
                             long version = versionLong.longValue();
                             LOG.debug("Updating record with key {} and version {}", correlationId, version);
-                            update(camelContext, correlationId, exchange, getRepositoryName(), version);
+                            update(camelContext, correlationId, exchange, table, version);
                         }
                     } else {
                         LOG.debug("Inserting record with key {}", correlationId);
-                        insert(camelContext, correlationId, exchange, getRepositoryName(), 1L);
+                        insert(camelContext, correlationId, exchange, table, 1L);
                     }
 
                 } catch (Exception e) {
@@ -225,6 +226,13 @@ public class JdbcAggregationRepository extends ServiceSupport
                 return result;
             }
         });
+    }
+
+    // Useful to verify if the table name does not contain invalid characters.
+    protected static void verifyTableName(String tableName) {
+        if (!tableName.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+            throw new IllegalArgumentException("Invalid repository name: " + tableName);
+        }
     }
 
     /**
@@ -376,9 +384,9 @@ public class JdbcAggregationRepository extends ServiceSupport
         return transactionTemplateReadOnly.execute(new TransactionCallback<Exchange>() {
             public Exchange doInTransaction(TransactionStatus status) {
                 try {
-
+                    verifyTableName(repositoryName);
                     Map<String, Object> columns = jdbcTemplate.queryForMap(
-                            String.format("SELECT %1$s, %2$s FROM %3$s WHERE %4$s=?", EXCHANGE, VERSION, repositoryName, ID),
+                            String.format("SELECT %1$s, %2$s FROM %3$s WHERE %4$s=?", EXCHANGE, VERSION, repositoryName, ID), // NOSONAR
                             new Object[] { key }, new int[] { Types.VARCHAR });
 
                     byte[] marshalledExchange = (byte[]) columns.get(EXCHANGE);
@@ -416,8 +424,9 @@ public class JdbcAggregationRepository extends ServiceSupport
                 final long version = exchange.getProperty(VERSION_PROPERTY, Long.class);
                 try {
                     LOG.debug("Removing key {}", correlationId);
-
-                    jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
+                    String table = getRepositoryName();
+                    verifyTableName(table);
+                    jdbcTemplate.update("DELETE FROM " + table + " WHERE " + ID + " = ? AND " + VERSION + " = ?", // NOSONAR
                             correlationId, version);
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
@@ -440,8 +449,10 @@ public class JdbcAggregationRepository extends ServiceSupport
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 LOG.debug("Confirming exchangeId {}", exchangeId);
+                String table = getRepositoryNameCompleted();
+                verifyTableName(table);
                 final int mustBeOne = jdbcTemplate
-                        .update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?", exchangeId);
+                        .update("DELETE FROM " + table + " WHERE " + ID + " = ?", exchangeId); // NOSONAR
                 if (mustBeOne != 1) {
                     LOG.error("problem removing row {} from {} - DELETE statement did not return 1 but {}",
                             exchangeId, getRepositoryNameCompleted(), mustBeOne);
@@ -471,7 +482,8 @@ public class JdbcAggregationRepository extends ServiceSupport
     protected Set<String> getKeys(final String repositoryName) {
         return transactionTemplateReadOnly.execute(new TransactionCallback<LinkedHashSet<String>>() {
             public LinkedHashSet<String> doInTransaction(TransactionStatus status) {
-                List<String> keys = jdbcTemplate.query("SELECT " + ID + " FROM " + repositoryName,
+                verifyTableName(repositoryName);
+                List<String> keys = jdbcTemplate.query("SELECT " + ID + " FROM " + repositoryName, // NOSONAR
                         new RowMapper<String>() {
                             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                                 String id = rs.getString(ID);
@@ -698,7 +710,8 @@ public class JdbcAggregationRepository extends ServiceSupport
     }
 
     private int rowCount(final String repository) {
-        return jdbcTemplate.queryForObject("SELECT COUNT(1) FROM " + repository, Integer.class);
+        verifyTableName(repository);
+        return jdbcTemplate.queryForObject("SELECT COUNT(1) FROM " + repository, Integer.class); // NOSONAR
     }
 
     @Override

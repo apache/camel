@@ -106,6 +106,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TokenizerDefinition;
 import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.TransformDataTypeDefinition;
 import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
@@ -329,6 +330,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new TransactedReifier(route, definition);
         } else if (definition instanceof TransformDefinition) {
             return new TransformReifier(route, definition);
+        } else if (definition instanceof TransformDataTypeDefinition) {
+            return new TransformDataTypeReifier(route, definition);
         } else if (definition instanceof TryDefinition) {
             return new TryReifier(route, definition);
         } else if (definition instanceof UnmarshalDefinition) {

@@ -5,6 +5,7 @@ package org.apache.camel.component.zendesk.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import javax.annotation.processing.Generated;
 
 import org.zendesk.client.v2.Zendesk;
 
@@ -18,6 +19,7 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 /**
  * Camel {@link ApiMethod} Enumeration for org.zendesk.client.v2.Zendesk
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum ZendeskApiMethod implements ApiMethod {
 
     ADD_TAG_TO_ORGANISATIONS(
@@ -1253,6 +1255,17 @@ public enum ZendeskApiMethod implements ApiMethod {
     GET_TICKET_FORMS(
         java.util.List.class,
         "getTicketForms"),
+
+    GET_TICKET_FROM_SEARCH_WITH_EXPORT(
+        Iterable.class,
+        "getTicketFromSearchWithExport",
+        arg("searchTerm", String.class)),
+
+    GET_TICKET_FROM_SEARCH_WITH_EXPORT_1(
+        Iterable.class,
+        "getTicketFromSearchWithExport",
+        arg("searchTerm", String.class),
+        arg("pageSize", int.class)),
 
     GET_TICKET_INCIDENTS(
         Iterable.class,

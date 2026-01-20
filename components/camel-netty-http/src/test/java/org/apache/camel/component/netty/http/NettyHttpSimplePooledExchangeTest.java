@@ -35,7 +35,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
+public class NettyHttpSimplePooledExchangeTest extends BaseNettyTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

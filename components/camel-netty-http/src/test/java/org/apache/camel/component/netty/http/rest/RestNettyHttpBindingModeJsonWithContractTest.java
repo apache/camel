@@ -20,7 +20,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RestNettyHttpBindingModeJsonWithContractTest extends BaseNettyTest {
+public class RestNettyHttpBindingModeJsonWithContractTest extends BaseNettyTestSupport {
 
     @Test
     public void testBindingModeJsonWithContract() throws Exception {

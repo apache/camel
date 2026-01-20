@@ -17,7 +17,7 @@
 
 package org.apache.camel.dsl.jbang.core.commands.bind;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BindObjectReferenceTest extends CamelCommandBaseTest {
+class BindObjectReferenceTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldBindToObjectReference() throws Exception {

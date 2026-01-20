@@ -38,7 +38,7 @@ import org.ehcache.event.EventType;
 public class EhcacheConfiguration implements Cloneable {
     @UriParam(defaultValue = "true")
     private boolean createCacheIfNotExist = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", enums = "CLEAR,PUT,PUT_ALL,PUT_IF_ABSENT,GET,GET_ALL,REMOVE,REMOVE_ALL,REPLACE")
     private String action;
     @UriParam(label = "producer")
     private Object key;

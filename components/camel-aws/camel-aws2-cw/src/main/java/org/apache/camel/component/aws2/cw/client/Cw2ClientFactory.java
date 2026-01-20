@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.cw.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.cw.Cw2Configuration;
-import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.cw.client.impl.Cw2ClientStandardImpl;
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 
 /**
- * Factory class to return the correct type of AWS Cloud Watch client.
+ * Factory class to create AWS CloudWatch clients using common configuration.
  */
 public final class Cw2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class Cw2ClientFactory {
     }
 
     /**
-     * Return the correct AWS Cloud Watch client (based on remote vs local).
+     * Create a CloudWatch client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               CloudWatchClient
+     * @param  configuration The CloudWatch configuration
+     * @return               Configured CloudWatchClient
      */
-    public static Cw2InternalClient getCloudWatchClient(Cw2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Cw2ClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Cw2ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Cw2ClientSessionTokenImpl(configuration);
-        } else {
-            return new Cw2ClientStandardImpl(configuration);
-        }
+    public static CloudWatchClient getCloudWatchClient(Cw2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                CloudWatchClient::builder);
     }
 }

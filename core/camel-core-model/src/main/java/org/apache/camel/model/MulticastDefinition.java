@@ -436,9 +436,9 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     /**
      * Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to
      * send and process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out
-     * and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before
-     * breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is
-     * difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.
+     * and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks
+     * still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue
+     * to run. So use this option with a bit of care.
      *
      * @param  timeout timeout in millis
      * @return         the builder
@@ -450,9 +450,9 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
     /**
      * Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to
      * send and process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out
-     * and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before
-     * breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is
-     * difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.
+     * and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks
+     * still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue
+     * to run. So use this option with a bit of care.
      *
      * @param  timeout timeout in millis
      * @return         the builder

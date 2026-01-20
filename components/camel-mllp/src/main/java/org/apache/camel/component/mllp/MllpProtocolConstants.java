@@ -53,7 +53,10 @@ public final class MllpProtocolConstants {
         MSH18_VALUES.put("8859/8", Charset.forName("ISO-8859-8"));
         MSH18_VALUES.put("8859/9", Charset.forName("ISO-8859-9"));
         MSH18_VALUES.put("8859/15", Charset.forName("ISO-8859-15"));
+        MSH18_VALUES.put("UNICODE", StandardCharsets.UTF_8);
         MSH18_VALUES.put("UNICODE UTF-8", StandardCharsets.UTF_8);
+        MSH18_VALUES.put("UNICODE UTF-16", StandardCharsets.UTF_16);
+        MSH18_VALUES.put("UNICODE UTF-32", Charset.forName("UTF-32"));
 
         /*
           These values are defined in the HL7 Spec, but currently not mapped to a Java charset
@@ -69,10 +72,9 @@ public final class MllpProtocolConstants {
           CNS 11643-1992
           BIG-5
           UNICODE
-          UNICODE UTF-16
-          UNICODE UTF-32
 
           see: https://terminology.hl7.org/CodeSystem-v2-0211.html
+          CAMEL-22712: Assuming UNICODE to be UTF-8
         */
     }
 

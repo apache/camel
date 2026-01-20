@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +39,7 @@ public class CsvMarshalCharsetTest extends CamelTestSupport {
         List<List<String>> data = new ArrayList<>();
         data.add(0, new ArrayList<String>());
         data.get(0).add(0, "L\u00fccky Luke");
-        Exchange in = createExchangeWithBody(data);
+        Exchange in = TestSupport.createExchangeWithBody(this.context, data);
         in.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
         template.send("direct:start", in);
 

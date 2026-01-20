@@ -31,8 +31,6 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
-import static org.apache.camel.support.LoggerHelper.extractSourceLocationLineNumber;
-
 public final class ConsoleHelper {
 
     private ConsoleHelper() {

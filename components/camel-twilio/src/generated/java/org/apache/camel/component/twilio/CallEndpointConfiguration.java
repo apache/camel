@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.account.CallCreator creator(com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, String applicationSid)", "com.twilio.rest.api.v2010.account.CallCreator creator(com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, com.twilio.type.Twiml twiml)", "com.twilio.rest.api.v2010.account.CallCreator creator(com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, java.net.URI url)", "com.twilio.rest.api.v2010.account.CallCreator creator(String pathAccountSid, com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, String applicationSid)", "com.twilio.rest.api.v2010.account.CallCreator creator(String pathAccountSid, com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, com.twilio.type.Twiml twiml)", "com.twilio.rest.api.v2010.account.CallCreator creator(String pathAccountSid, com.twilio.type.Endpoint to, com.twilio.type.Endpoint from, java.net.URI url)"}), @ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.CallDeleter deleter(String pathSid)", "com.twilio.rest.api.v2010.account.CallDeleter deleter(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.CallFetcher fetcher(String pathSid)", "com.twilio.rest.api.v2010.account.CallFetcher fetcher(String pathAccountSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.CallReader reader()", "com.twilio.rest.api.v2010.account.CallReader reader(String pathAccountSid)"}), @ApiMethod(methodName = "updater", signatures={"com.twilio.rest.api.v2010.account.CallUpdater updater(String pathSid)", "com.twilio.rest.api.v2010.account.CallUpdater updater(String pathAccountSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class CallEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator")})

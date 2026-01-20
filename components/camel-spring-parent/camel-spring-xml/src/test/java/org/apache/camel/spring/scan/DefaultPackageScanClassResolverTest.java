@@ -157,7 +157,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             resolver.addFilter(filter);
             Set<Class<?>> scanned = resolver.findByFilter(filter, "a.b.c");
             assertEquals(1, scanned.size());
-            assertEquals("class a.b.c.Test", scanned.iterator().next().toString());
+            assertEquals("class a.b.c.Sample", scanned.iterator().next().toString());
         } finally {
             Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
@@ -183,7 +183,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             resolver.addFilter(filter);
             Set<Class<?>> scanned = resolver.findByFilter(filter, "a.b.c");
             assertEquals(1, scanned.size());
-            assertEquals("class a.b.c.Test", scanned.iterator().next().toString());
+            assertEquals("class a.b.c.Sample", scanned.iterator().next().toString());
         } finally {
             Thread.currentThread().setContextClassLoader(savedClassLoader);
         }

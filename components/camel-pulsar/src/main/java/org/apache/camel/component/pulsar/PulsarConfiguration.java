@@ -44,11 +44,11 @@ public class PulsarConfiguration implements Cloneable {
     private String authenticationParams;
     @UriParam(label = "consumer")
     private boolean topicsPattern;
-    @UriParam(label = "consumer", defaultValue = "PersistentOnly")
+    @UriParam(label = "consumer", defaultValue = "PersistentOnly", enums = "PersistentOnly,NonPersistentOnly,AllTopics")
     private RegexSubscriptionMode subscriptionTopicsMode;
     @UriParam(label = "consumer", defaultValue = "subs")
     private String subscriptionName = "subs";
-    @UriParam(label = "consumer", defaultValue = "EXCLUSIVE")
+    @UriParam(label = "consumer", defaultValue = "EXCLUSIVE", enums = "EXCLUSIVE,SHARED,FAILOVER,KEY_SHARED")
     private SubscriptionType subscriptionType = EXCLUSIVE;
     @UriParam(label = "consumer", defaultValue = "1")
     private int numberOfConsumers = 1;
@@ -72,7 +72,7 @@ public class PulsarConfiguration implements Cloneable {
     private RedeliveryBackoff negativeAckRedeliveryBackoff;
     @UriParam(label = "consumer", defaultValue = "100")
     private long ackGroupTimeMillis = 100;
-    @UriParam(label = "consumer", defaultValue = "LATEST")
+    @UriParam(label = "consumer", defaultValue = "LATEST", enums = "EARLIEST,LATEST")
     private SubscriptionInitialPosition subscriptionInitialPosition = LATEST;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean readCompacted;
@@ -122,17 +122,20 @@ public class PulsarConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Control whether automatic batching of messages is enabled for the producer.",
               defaultValue = "true")
     private boolean batchingEnabled = true;
-    @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT")
+    @UriParam(label = "producer", description = "Control batching method used by the producer.", defaultValue = "DEFAULT",
+              enums = "DEFAULT,KEY_BASED")
     private BatcherBuilder batcherBuilder = BatcherBuilder.DEFAULT;
     @UriParam(label = "producer", description = "The first message published will have a sequence Id of initialSequenceId  1.",
               defaultValue = "-1")
     private long initialSequenceId = -1;
-    @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
+    @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE",
+              enums = "NONE,LZ4,ZLIB,ZSTD,SNAPPY")
     private CompressionType compressionType = CompressionType.NONE;
     @UriParam(label = "producer", description = "Control whether chunking of messages is enabled for the producer.",
               defaultValue = "false")
     private boolean chunkingEnabled;
-    @UriParam(label = "producer", description = "Message Routing Mode to use", defaultValue = "RoundRobinPartition")
+    @UriParam(label = "producer", description = "Message Routing Mode to use", defaultValue = "RoundRobinPartition",
+              enums = "SinglePartition,RoundRobinPartition,CustomPartition")
     private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
     @UriParam(label = "producer", description = "Custom Message Router to use")
     private MessageRouter messageRouter;

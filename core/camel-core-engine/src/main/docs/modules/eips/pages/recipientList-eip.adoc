@@ -338,7 +338,7 @@ This allows you to deal with the timeout in the `AggregationStrategy` if you rea
 .Timeout is total
 ====
 The timeout is total, which means that after X time, Camel will aggregate the messages which have completed within the timeframe.
-The remainder will be canceled. Camel will also only invoke the `timeout` method in the `TimeoutAwareAggregationStrategy` once, for the first index which caused the timeout.
+The remainder will be canceled. Camel will also only invoke the `timeout` method in the `AggregationStrategy` once, for the first index which caused the timeout.
 ====
 
 === Using ExchangePattern in recipients

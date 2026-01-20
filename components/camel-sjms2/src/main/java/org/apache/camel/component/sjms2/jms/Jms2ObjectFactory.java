@@ -210,11 +210,13 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
     }
 
     @Override
+    // Factory method: resource must be closed by client.
     public MessageProducer createMessageProducer(
             Session session, Destination destination,
             boolean persistent, long ttl)
             throws Exception {
-        MessageProducer messageProducer = session.createProducer(destination);
+        // NOTE: client must close this resource.
+        MessageProducer messageProducer = session.createProducer(destination); // NOSONAR
         messageProducer.setDeliveryMode(persistent
                 ? DeliveryMode.PERSISTENT
                 : DeliveryMode.NON_PERSISTENT);

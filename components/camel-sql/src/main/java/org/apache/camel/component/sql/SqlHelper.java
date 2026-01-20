@@ -18,10 +18,15 @@ package org.apache.camel.component.sql;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 
 public final class SqlHelper {
@@ -60,5 +65,53 @@ public final class SqlHelper {
         }
         answer = sj.toString();
         return answer;
+    }
+
+    public static Object lookupParameter(String nextParam, Exchange exchange, Object batchBody) {
+        Object body = batchBody != null ? batchBody : exchange.getMessage().getBody();
+        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, exchange, body));
+        Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
+        Map<?, ?> variablesMap = safeMap(exchange.getVariables());
+
+        Object answer = null;
+        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
+            if (batchBody != null) {
+                // in batch mode then need to work on a copy of the original exchange and set the batch body
+                exchange = ExchangeHelper.createCopy(exchange, true);
+                exchange.getMessage().setBody(batchBody);
+            }
+            Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(nextParam);
+            answer = exp.evaluate(exchange, Object.class);
+        } else if (bodyMap.containsKey(nextParam)) {
+            answer = bodyMap.get(nextParam);
+        } else if (headersMap.containsKey(nextParam)) {
+            answer = headersMap.get(nextParam);
+        } else if (variablesMap.containsKey(nextParam)) {
+            answer = variablesMap.get(nextParam);
+        }
+
+        return answer;
+    }
+
+    public static boolean hasParameter(String nextParam, Exchange exchange, Object body) {
+        Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
+        Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
+        Map<?, ?> variablesMap = safeMap(exchange.getVariables());
+
+        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
+            return true;
+        } else if (bodyMap.containsKey(nextParam)) {
+            return true;
+        } else if (headersMap.containsKey(nextParam)) {
+            return true;
+        } else if (variablesMap.containsKey(nextParam)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static Map<?, ?> safeMap(Map<?, ?> map) {
+        return (map == null || map.isEmpty()) ? Collections.emptyMap() : map;
     }
 }

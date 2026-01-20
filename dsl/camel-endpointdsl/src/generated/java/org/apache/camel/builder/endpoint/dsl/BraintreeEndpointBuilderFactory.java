@@ -332,7 +332,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Braintree (camel-braintree)
          * Process payments using Braintree Payments.
          * 
-         * Category: saas
+         * Category: saas,finance
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-braintree
          * 
@@ -367,7 +367,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Braintree (camel-braintree)
          * Process payments using Braintree Payments.
          * 
-         * Category: saas
+         * Category: saas,finance
          * Since: 2.17
          * Maven coordinates: org.apache.camel:camel-braintree
          * 

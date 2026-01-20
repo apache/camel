@@ -21,12 +21,12 @@ import java.util.List;
 import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import org.apache.camel.CamelContext;
-import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
+import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public abstract class AbstractOpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryTest {
+public abstract class AbstractOpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryTestSupport {
 
     protected OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
         OpenTelemetryRoutePolicyFactory factory = new OpenTelemetryRoutePolicyFactory();

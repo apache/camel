@@ -288,7 +288,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                             e);
                 }
             } else {
-                value = getDefaultValueForPrimitive(field.getType());
+                value = getDefaultValueForPrimitive(field.getType(), isDefaultValueStringAsNull());
             }
 
             if (value != null && !dataField.method().isEmpty()) {

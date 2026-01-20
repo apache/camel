@@ -3114,6 +3114,81 @@ public interface KeycloakEndpointBuilderFactory {
         public String keycloakBatchSize() {
             return "CamelKeycloakBatchSize";
         }
+        /**
+         * The access token for permission evaluation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakAccessToken}.
+         */
+        public String keycloakAccessToken() {
+            return "CamelKeycloakAccessToken";
+        }
+        /**
+         * Comma-separated list of resource names or IDs to evaluate permissions
+         * for.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code
+         * KeycloakPermissionResourceNames}.
+         */
+        public String keycloakPermissionResourceNames() {
+            return "CamelKeycloakPermissionResourceNames";
+        }
+        /**
+         * Comma-separated list of scopes to evaluate permissions for.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPermissionScopes}.
+         */
+        public String keycloakPermissionScopes() {
+            return "CamelKeycloakPermissionScopes";
+        }
+        /**
+         * Subject token for permission evaluation on behalf of a user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakSubjectToken}.
+         */
+        public String keycloakSubjectToken() {
+            return "CamelKeycloakSubjectToken";
+        }
+        /**
+         * Audience for permission evaluation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPermissionAudience}.
+         */
+        public String keycloakPermissionAudience() {
+            return "CamelKeycloakPermissionAudience";
+        }
+        /**
+         * Whether to only return the list of permissions without obtaining an
+         * RPT.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code KeycloakPermissionsOnly}.
+         */
+        public String keycloakPermissionsOnly() {
+            return "CamelKeycloakPermissionsOnly";
+        }
     }
     static KeycloakEndpointBuilder endpointBuilder(String componentName, String path) {
         class KeycloakEndpointBuilderImpl extends AbstractEndpointBuilder implements KeycloakEndpointBuilder, AdvancedKeycloakEndpointBuilder {

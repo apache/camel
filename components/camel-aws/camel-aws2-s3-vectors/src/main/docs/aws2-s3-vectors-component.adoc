@@ -1,0 +1,232 @@
+= AWS S3 Vectors Component
+:doctitle: AWS S3 Vectors
+:shortname: aws2-s3-vectors
+:artifactid: camel-aws2-s3-vectors
+:description: Store and query vector embeddings using AWS S3 Vectors with similarity search.
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws2-s3-vectors
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS S3 Vectors component stores and queries vector embeddings using https://aws.amazon.com/s3/features/vectors/[Amazon S3 Vectors].
+
+Prerequisites
+
+You need an AWS account with access to S3 Vectors. See https://aws.amazon.com/s3/features/vectors/[Amazon S3 Vectors].
+
+== URI Format
+
+------------------------------
+aws2-s3-vectors://vectorBucketName[?options]
+------------------------------
+
+You can append query options to the URI:
+
+`?option1=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Producer Operations
+
+* `putVectors` - Insert vectors
+* `queryVectors` - Search similar vectors
+* `deleteVectors` - Delete vectors
+* `getVectors` - Retrieve vectors by ID
+* `createVectorBucket` - Create bucket
+* `deleteVectorBucket` - Delete bucket
+* `listVectorBuckets` - List buckets
+* `describeVectorBucket` - Get bucket info
+* `createVectorIndex` - Create index
+* `deleteVectorIndex` - Delete index
+* `listVectorIndexes` - List indexes
+* `describeVectorIndex` - Get index info
+
+=== Consumer
+
+The consumer polls for vectors using similarity search. It tracks processed vector IDs to avoid duplicates.
+
+== Examples
+
+=== Insert Vectors
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:insert")
+    .setHeader(AWS2S3VectorsConstants.VECTOR_ID, constant("doc-001"))
+    .setBody(constant(Arrays.asList(0.1f, 0.2f, 0.3f)))
+    .to("aws2-s3-vectors://my-bucket?operation=putVectors&vectorIndexName=my-index");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:insert
+    steps:
+      - setHeader:
+          name: CamelAwsS3VectorsVectorId
+          constant: doc-001
+      - setBody:
+          constant:
+            - 0.1
+            - 0.2
+            - 0.3
+      - to:
+          uri: aws2-s3-vectors://my-bucket
+          parameters:
+            operation: putVectors
+            vectorIndexName: my-index
+----
+====
+
+=== Query Similar Vectors
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:search")
+    .setBody(constant(Arrays.asList(0.15f, 0.25f, 0.35f)))
+    .setHeader(AWS2S3VectorsConstants.TOP_K, constant(5))
+    .to("aws2-s3-vectors://my-bucket?operation=queryVectors&vectorIndexName=my-index")
+    .log("Found ${body.size} similar vectors");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:search
+    steps:
+      - setBody:
+          constant:
+            - 0.15
+            - 0.25
+            - 0.35
+      - setHeader:
+          name: CamelAwsS3VectorsTopK
+          constant: 5
+      - to:
+          uri: aws2-s3-vectors://my-bucket
+          parameters:
+            operation: queryVectors
+            vectorIndexName: my-index
+      - log: "Found ${body.size} similar vectors"
+----
+====
+
+=== Consumer Polling
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("aws2-s3-vectors://my-bucket?"
+    + "vectorIndexName=my-index"
+    + "&consumerQueryVector=0.1,0.2,0.3"
+    + "&delay=5000"
+    + "&maxMessagesPerPoll=10")
+    .log("Vector ID: ${header.CamelAwsS3VectorsVectorId}")
+    .to("direct:process");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: aws2-s3-vectors://my-bucket
+    parameters:
+      vectorIndexName: my-index
+      consumerQueryVector: "0.1,0.2,0.3"
+      delay: 5000
+      maxMessagesPerPoll: 10
+    steps:
+      - log: "Vector ID: ${header.CamelAwsS3VectorsVectorId}"
+      - to: direct:process
+----
+====
+
+=== Create Index
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:createIndex")
+    .setHeader(AWS2S3VectorsConstants.VECTOR_DIMENSIONS, constant(1536))
+    .setHeader(AWS2S3VectorsConstants.DATA_TYPE, constant("float32"))
+    .setHeader(AWS2S3VectorsConstants.DISTANCE_METRIC, constant("cosine"))
+    .to("aws2-s3-vectors://my-bucket?operation=createVectorIndex&vectorIndexName=my-index");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:createIndex
+    steps:
+      - setHeader:
+          name: CamelAwsS3VectorsVectorDimensions
+          constant: 1536
+      - setHeader:
+          name: CamelAwsS3VectorsDataType
+          constant: float32
+      - setHeader:
+          name: CamelAwsS3VectorsDistanceMetric
+          constant: cosine
+      - to:
+          uri: aws2-s3-vectors://my-bucket
+          parameters:
+            operation: createVectorIndex
+            vectorIndexName: my-index
+----
+====
+
+== Dependencies
+
+Maven users will need to add the following dependency to their `pom.xml`.
+
+*pom.xml*
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-s3-vectors</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+where `x.x.x` is the version number of the latest Camel release.
+
+include::spring-boot:partial$starter.adoc[]

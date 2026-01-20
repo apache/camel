@@ -5,14 +5,13 @@ known xref:components:eips:enterprise-integration-patterns.adoc[Enterprise Integ
 Patterns].
 
 Camel empowers you to define routing and mediation rules in a variety of
-domain-specific languages (xref:manual::dsl.adoc[DSL], such as Java, XML, Groovy and YAML).
-This means you get smart completion of
-routing rules in your IDE, whether in a Java or XML editor.
+domain-specific languages (xref:manual::dsl.adoc[DSL], such as Java, XML, and YAML).
+This means you get smart completion of routing rules in your IDE.
 
 Apache Camel uses xref:ROOT:uris.adoc[URIs] to work directly with any kind of
 transport or messaging model such as
 xref:components::http-component.adoc[HTTP], xref:components::kafka-component.adoc[Kafka], xref:components::jms-component.adoc[JMS],
-JBI, SCA, xref:components::mina-component.adoc[MINA] or xref:components::cxf-component.adoc[CXF], as
+xref:components::netty-component.adoc[Netty] or xref:components::aws2-s3-component.adoc[AWS S3], as
 well as pluggable xref:ROOT:component.adoc[Components] and
 xref:ROOT:data-format.adoc[Data Format] options. Apache Camel is a small
 library with minimal xref:ROOT:what-are-the-dependencies.adoc[dependencies]
@@ -27,29 +26,7 @@ and seamless integration with popular frameworks such as
 xref:ROOT:spring.adoc[Spring]. Camel also has extensive support for
 xref:ROOT:testing.adoc[unit testing] your routes.
 
-The following projects can leverage Apache Camel as a routing and
-mediation engine:
+A highly recommended video introducing Apache Camel and the concepts is a must to watch to get familiar and higher success of learning to use Camel:
 
-* http://servicemix.apache.org/[Apache ServiceMix] -- a popular
-distributed open source ESB and JBI container
-* http://activemq.apache.org/[Apache ActiveMQ] -- a mature, widely used
-open source message broker
-* http://cxf.apache.org/[Apache CXF] -- a smart web services suite
-(JAX-WS and JAX-RS)
-* http://karaf.apache.org/[Apache Karaf] -- a small OSGi based runtime in
-which applications can be deployed
-* http://mina.apache.org/[Apache MINA] -- a high-performance
-http://en.wikipedia.org/wiki/New_I/O[NIO]-driven networking framework
+* https://www.youtube.com/watch?v=5xQKG1TSrZc[Enterprise Integration Patterns (EIP) | What is Apache Camel?]
 
-So don't get the hump -- try Camel today! :smile:
-
-[NOTE]
-====
-*Too many buzzwords -- what exactly is Camel?*
-
-Okay, so the description above is technology focused.
-There's a great discussion about Camel at
-http://stackoverflow.com/questions/8845186/what-exactly-is-apache-camel[Stack
-Overflow]. We suggest you view the post, read the comments, and browse
-the suggested links for more details.
-====

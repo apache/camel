@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 
+import org.apache.camel.util.HomeHelper;
 import org.jline.builtins.ClasspathResourceUtil;
 import org.jline.builtins.ConfigurationPath;
 import org.jline.console.SystemRegistry;
@@ -46,7 +47,7 @@ import picocli.CommandLine;
 import picocli.shell.jline3.PicocliCommands;
 
 @CommandLine.Command(name = "shell",
-                     description = "Interactive Camel JBang shell. Hit @|magenta <TAB>|@ to see available commands.",
+                     description = "Interactive Camel JBang shell.",
                      footer = "Press Ctrl-C to exit.")
 public class Shell extends CamelCommand {
 
@@ -76,7 +77,7 @@ public class Shell extends CamelCommand {
             systemRegistry.setCommandRegistries(builtins, commands);
             systemRegistry.register("help", commands);
 
-            String history = Paths.get(System.getProperty("user.home"), ".camel-jbang-history").toString();
+            String history = Paths.get(HomeHelper.resolveHomeDir(), ".camel-jbang-history").toString();
             LineReader reader = LineReaderBuilder.builder()
                     .terminal(terminal)
                     .completer(systemRegistry.completer())

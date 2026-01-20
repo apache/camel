@@ -25,7 +25,7 @@
     <parent>
         <artifactId>camel-ai-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-docling</artifactId>
@@ -52,11 +52,11 @@
             <version>${jackson2-version}</version>
         </dependency>
 
-        <!-- HTTP client for docling-serve API integration -->
+        <!-- docling-java client for docling-serve API integration -->
         <dependency>
-            <groupId>org.apache.httpcomponents.client5</groupId>
-            <artifactId>httpclient5</artifactId>
-            <version>${httpclient-version}</version>
+            <groupId>ai.docling</groupId>
+            <artifactId>docling-serve-client</artifactId>
+            <version>${docling-java-version}</version>
         </dependency>
 
         <!-- for testing -->

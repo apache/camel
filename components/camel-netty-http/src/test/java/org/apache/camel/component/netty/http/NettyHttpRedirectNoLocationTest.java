@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
+public class NettyHttpRedirectNoLocationTest extends BaseNettyTestSupport {
 
     @RegisterExtension
     AvailablePortFinder.Port nextPort = AvailablePortFinder.find();

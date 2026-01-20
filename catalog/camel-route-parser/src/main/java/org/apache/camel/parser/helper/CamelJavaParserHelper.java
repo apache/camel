@@ -348,10 +348,7 @@ public final class CamelJavaParserHelper {
             FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, (SimpleName) arg);
             if (field != null) {
                 // find the endpoint uri from the annotation
-                AnnotationSource<JavaClassSource> annotation = field.getAnnotation("org.apache.camel.cdi.Uri");
-                if (annotation == null) {
-                    annotation = field.getAnnotation("org.apache.camel.EndpointInject");
-                }
+                AnnotationSource<JavaClassSource> annotation = field.getAnnotation("org.apache.camel.EndpointInject");
                 if (annotation != null) {
                     Expression exp = extractExpression(annotation.getInternal());
                     String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
@@ -527,8 +524,7 @@ public final class CamelJavaParserHelper {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
                     for (Annotation<JavaClassSource> ann : field.getAnnotations()) {
-                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName());
                         if (valid) {
                             Expression exp = extractExpression(ann.getInternal());
                             if (exp != null) {

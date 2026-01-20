@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.drive;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "create", description="Deprecated: Use drives", signatures={"com.google.api.services.drive.Drive$Teamdrives$Create create(String requestId, com.google.api.services.drive.model.TeamDrive content)"}), @ApiMethod(methodName = "delete", description="Deprecated: Use drives", signatures={"com.google.api.services.drive.Drive$Teamdrives$Delete delete(String teamDriveId)"}), @ApiMethod(methodName = "get", description="Deprecated: Use drives", signatures={"com.google.api.services.drive.Drive$Teamdrives$Get get(String teamDriveId)"}), @ApiMethod(methodName = "list", description="Deprecated: Use drives", signatures={"com.google.api.services.drive.Drive$Teamdrives$List list()"}), @ApiMethod(methodName = "update", description="Deprecated: Use drives", signatures={"com.google.api.services.drive.Drive$Teamdrives$Update update(String teamDriveId, com.google.api.services.drive.model.TeamDrive content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DriveTeamdrivesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The com.google.api.services.drive.model.TeamDrive"), @ApiMethod(methodName = "update", description="The com.google.api.services.drive.model.TeamDrive")})

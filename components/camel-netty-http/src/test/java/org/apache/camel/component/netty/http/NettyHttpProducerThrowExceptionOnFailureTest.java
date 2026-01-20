@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTest {
+public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpProducerThrowExceptionOnFailureTest.class);
 
     @Test

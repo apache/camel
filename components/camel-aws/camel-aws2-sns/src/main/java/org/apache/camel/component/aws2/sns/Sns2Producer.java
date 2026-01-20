@@ -78,6 +78,7 @@ public class Sns2Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setHeader(Sns2Constants.MESSAGE_ID, result.messageId());
+            message.setHeader(Sns2Constants.SEQUENCE_NUMBER, result.sequenceNumber());
         } else {
             PublishBatchRequest.Builder publishBatchRequestBuilder = PublishBatchRequest.builder();
             publishBatchRequestBuilder.topicArn(getConfiguration().getTopicArn());
@@ -85,6 +86,10 @@ public class Sns2Producer extends DefaultProducer {
             PublishBatchResponse response = getEndpoint().getSNSClient().publishBatch(publishBatchRequestBuilder.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(response);
+            message.setHeader(Sns2Constants.FAILED_MESSAGE_COUNT,
+                    response.failed() != null ? response.failed().size() : 0);
+            message.setHeader(Sns2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    response.successful() != null ? response.successful().size() : 0);
         }
     }
 

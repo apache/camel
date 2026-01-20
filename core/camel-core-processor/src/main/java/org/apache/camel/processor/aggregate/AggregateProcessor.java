@@ -1520,7 +1520,7 @@ public class AggregateProcessor extends BaseProcessorSupport
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         if (aggregationStrategy.canPreComplete()) {
             preCompletion = true;
-            LOG.info("PreCompletionAwareAggregationStrategy detected. Aggregator {} is in pre-completion mode.", getId());
+            LOG.info("Aggregator {} is in pre-completion mode.", getId());
         }
 
         if (!preCompletion) {

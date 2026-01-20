@@ -51,7 +51,7 @@ public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint implem
         super.doStart();
         awsTimestreamQueryClient = getConfiguration().getAwsTimestreamQueryClient() != null
                 ? getConfiguration().getAwsTimestreamQueryClient()
-                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamQueryClient();
+                : Timestream2ClientFactory.getTimestreamQueryClient(getConfiguration());
     }
 
     @Override

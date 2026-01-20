@@ -23,6 +23,8 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -33,14 +35,19 @@ import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.ftp.common.FtpProperties;
 import org.apache.camel.test.infra.ftp.services.FtpInfraService;
 import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.common.config.keys.KeyUtils;
+import org.apache.sshd.common.config.keys.PublicKeyEntry;
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
+import org.apache.sshd.common.keyprovider.ClassLoadableResourceKeyPairProvider;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.apache.sshd.common.session.helpers.AbstractSession;
 import org.apache.sshd.common.signature.BuiltinSignatures;
 import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
+import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +102,7 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
             sshd.setPort(port);
         }
 
-        sshd.setKeyPairProvider(new FileKeyPairProvider(Paths.get(embeddedConfiguration.getKeyPairFile())));
+        sshd.setKeyPairProvider(createKeyPairProvider());
         sshd.setSubsystemFactories(Collections.singletonList(new SftpSubsystemFactory()));
         sshd.setCommandFactory(new ScpCommandFactory());
         sshd.setPasswordAuthenticator((username, password, session) -> true);
@@ -122,6 +129,52 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
 
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
         return (username, key, session) -> true;
+    }
+
+    private KeyPairProvider createKeyPairProvider() {
+        // 1. First try: Use existing file on disk if configured path exists
+        Path keyPairPath = Paths.get(embeddedConfiguration.getKeyPairFile());
+        if (Files.exists(keyPairPath)) {
+            LOG.debug("Using existing host key file: {}", keyPairPath);
+            return new FileKeyPairProvider(keyPairPath);
+        }
+
+        // 2. Second try: Load bundled host key from classpath
+        KeyPairProvider classpathProvider = loadKeyFromClasspath();
+        if (classpathProvider != null) {
+            return classpathProvider;
+        }
+
+        // 3. Last resort: Generate a new host key
+        Path generatedKeyPath = testDirectory().resolve("hostkey.ser");
+        LOG.info("Host key file not found at {}. Generating new host key at: {}", keyPairPath, generatedKeyPath);
+        SimpleGeneratorHostKeyProvider provider = new SimpleGeneratorHostKeyProvider(generatedKeyPath);
+        provider.setAlgorithm("RSA");
+        provider.setKeySize(2048);
+        return provider;
+    }
+
+    /**
+     * Attempts to load the bundled host key from the classpath.
+     *
+     * @return KeyPairProvider if the bundled key is available and can be loaded, null otherwise
+     */
+    private KeyPairProvider loadKeyFromClasspath() {
+        try {
+            ClassLoadableResourceKeyPairProvider provider
+                    = new ClassLoadableResourceKeyPairProvider(EmbeddedConfiguration.BUNDLED_HOST_KEY_RESOURCE);
+
+            // Verify the key can actually be loaded
+            Iterable<KeyPair> keyPairs = provider.loadKeys(null);
+            if (keyPairs != null && keyPairs.iterator().hasNext()) {
+                LOG.info("Using bundled host key from classpath: {}",
+                        EmbeddedConfiguration.BUNDLED_HOST_KEY_RESOURCE);
+                return provider;
+            }
+        } catch (Exception e) {
+            LOG.debug("Failed to load bundled host key from classpath: {}", e.getMessage());
+        }
+        return null;
     }
 
     public void tearDown() {
@@ -186,5 +239,60 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
     @Override
     public int port() {
         return port;
+    }
+
+    /**
+     * Returns the SSH host key fingerprint in SHA256 format. This can be used to verify the server identity when
+     * connecting.
+     *
+     * @return the host key fingerprint (e.g., "SHA256:...") or null if unavailable
+     */
+    @Override
+    public String hostKeyFingerprint() {
+        try {
+            PublicKey publicKey = getHostPublicKey();
+            if (publicKey != null) {
+                return KeyUtils.getFingerPrint(publicKey);
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to get host key fingerprint: {}", e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the known_hosts entry for this server.
+     *
+     * @return the known_hosts entry or null if unavailable
+     */
+    @Override
+    public String knownHostsEntry() {
+        try {
+            PublicKey publicKey = getHostPublicKey();
+            if (publicKey != null) {
+                StringBuilder sb = new StringBuilder();
+                PublicKeyEntry.appendPublicKeyEntry(sb, publicKey);
+                return String.format("[%s]:%d %s",
+                        embeddedConfiguration.getServerAddress(), port, sb);
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to get known_hosts entry: {}", e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private PublicKey getHostPublicKey() {
+        if (sshd == null) {
+            return null;
+        }
+        try {
+            Iterable<KeyPair> keyPairs = sshd.getKeyPairProvider().loadKeys(null);
+            for (KeyPair keyPair : keyPairs) {
+                return keyPair.getPublic();
+            }
+        } catch (Exception e) {
+            LOG.debug("Failed to load host key: {}", e.getMessage(), e);
+        }
+        return null;
     }
 }

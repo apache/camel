@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettySharedHttpServerTest extends BaseNettyTest {
+public class NettySharedHttpServerTest extends BaseNettyTestSupport {
 
     private NettySharedHttpServer nettySharedHttpServer;
 

@@ -127,8 +127,14 @@ public class BinaryExpression extends BaseSimpleNode {
             return createRangeExpression(camelContext, expression, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.STARTS_WITH) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.startsWith(leftExp, rightExp));
+        } else if (operator == BinaryOperatorType.NOT_STARTS_WITH) {
+            return createExpression(camelContext, leftExp, rightExp,
+                    PredicateBuilder.not(PredicateBuilder.startsWith(leftExp, rightExp)));
         } else if (operator == BinaryOperatorType.ENDS_WITH) {
             return createExpression(camelContext, leftExp, rightExp, PredicateBuilder.endsWith(leftExp, rightExp));
+        } else if (operator == BinaryOperatorType.NOT_ENDS_WITH) {
+            return createExpression(camelContext, leftExp, rightExp,
+                    PredicateBuilder.not(PredicateBuilder.endsWith(leftExp, rightExp)));
         }
 
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());
@@ -351,8 +357,12 @@ public class BinaryExpression extends BaseSimpleNode {
             return "!range(exchange, " + leftExp + ", " + rightExp + ")";
         } else if (operator == BinaryOperatorType.STARTS_WITH) {
             return "startsWith(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_STARTS_WITH) {
+            return "!startsWith(exchange, " + leftExp + ", " + rightExp + ")";
         } else if (operator == BinaryOperatorType.ENDS_WITH) {
             return "endsWith(exchange, " + leftExp + ", " + rightExp + ")";
+        } else if (operator == BinaryOperatorType.NOT_ENDS_WITH) {
+            return "!endsWith(exchange, " + leftExp + ", " + rightExp + ")";
         }
 
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());

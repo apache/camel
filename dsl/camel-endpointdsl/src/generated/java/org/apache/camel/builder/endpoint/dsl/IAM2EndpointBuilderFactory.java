@@ -667,6 +667,102 @@ public interface IAM2EndpointBuilderFactory {
         public String awsIAMGroupPath() {
             return "CamelAwsIAMGroupPath";
         }
+        /**
+         * The marker to use for pagination in list operations.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMMarker}.
+         */
+        public String awsIAMMarker() {
+            return "CamelAwsIAMMarker";
+        }
+        /**
+         * The maximum number of items to return in list operations.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMMaxItems}.
+         */
+        public String awsIAMMaxItems() {
+            return "CamelAwsIAMMaxItems";
+        }
+        /**
+         * Whether the list response is truncated (has more results).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMIsTruncated}.
+         */
+        public String awsIAMIsTruncated() {
+            return "CamelAwsIAMIsTruncated";
+        }
+        /**
+         * The marker to use for the next page of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMNextMarker}.
+         */
+        public String awsIAMNextMarker() {
+            return "CamelAwsIAMNextMarker";
+        }
+        /**
+         * The ARN of the created or retrieved user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMUserArn}.
+         */
+        public String awsIAMUserArn() {
+            return "CamelAwsIAMUserArn";
+        }
+        /**
+         * The ID of the created or retrieved user.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMUserId}.
+         */
+        public String awsIAMUserId() {
+            return "CamelAwsIAMUserId";
+        }
+        /**
+         * The ARN of the created or retrieved group.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMGroupArn}.
+         */
+        public String awsIAMGroupArn() {
+            return "CamelAwsIAMGroupArn";
+        }
+        /**
+         * The ID of the created or retrieved group.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMGroupId}.
+         */
+        public String awsIAMGroupId() {
+            return "CamelAwsIAMGroupId";
+        }
     }
     static IAM2EndpointBuilder endpointBuilder(String componentName, String path) {
         class IAM2EndpointBuilderImpl extends AbstractEndpointBuilder implements IAM2EndpointBuilder, AdvancedIAM2EndpointBuilder {

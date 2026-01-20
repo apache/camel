@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.aws2.timestream.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.timestream.Timestream2Configuration;
-import org.apache.camel.component.aws2.timestream.client.impl.Timestream2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.timestream.client.impl.Timestream2ClientStandardImpl;
+import software.amazon.awssdk.services.timestreamquery.TimestreamQueryClient;
+import software.amazon.awssdk.services.timestreamwrite.TimestreamWriteClient;
 
 /**
- * Factory class to return the correct type of AWS Timestream client.
+ * Factory class to create AWS Timestream clients using common configuration.
  */
 public final class Timestream2ClientFactory {
 
@@ -29,14 +30,26 @@ public final class Timestream2ClientFactory {
     }
 
     /**
-     * Return the correct AWS Timestream client (based on remote vs local).
+     * Create a TimestreamWriteClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               Timestream
+     * @param  configuration The Timestream configuration
+     * @return               Configured TimestreamWriteClient
      */
-    public static Timestream2InternalClient getTimestreamClient(Timestream2Configuration configuration) {
-        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new Timestream2ClientIAMOptimizedImpl(configuration) : new Timestream2ClientStandardImpl(configuration);
+    public static TimestreamWriteClient getTimestreamWriteClient(Timestream2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                TimestreamWriteClient::builder);
     }
 
+    /**
+     * Create a TimestreamQueryClient based on configuration.
+     *
+     * @param  configuration The Timestream configuration
+     * @return               Configured TimestreamQueryClient
+     */
+    public static TimestreamQueryClient getTimestreamQueryClient(Timestream2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                TimestreamQueryClient::builder);
+    }
 }

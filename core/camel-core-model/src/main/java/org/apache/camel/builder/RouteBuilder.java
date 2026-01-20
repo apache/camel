@@ -235,8 +235,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 // do not auto-start component as we need to configure it first
                 obj = (T) getCamelContext().getComponent(name, true, false);
             }
-            if (obj != null && !type.getName().equals("org.apache.camel.component.stub.StubComponent")
-                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) {
+            // NOTE: SubComponent class is not available at compilation time.
+            if (obj != null && !type.getName().equals("org.apache.camel.component.stub.StubComponent") // NOSONAR
+                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) { // NOSONAR
                 // if we run in stub mode then we can't apply the configuration as we stubbed the actual component
                 obj = null;
             }
@@ -286,8 +287,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (obj == null && Component.class.isAssignableFrom(type)) {
             // do not auto-start component as we need to configure it first
             obj = (T) getCamelContext().getComponent(name, true, false);
+            // NOTE: SubComponent class is not available at compilation time.
             if (obj != null && !"stub".equals(name)
-                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) {
+                    && "org.apache.camel.component.stub.StubComponent".equals(obj.getClass().getName())) { // NOSONAR
                 // if we run in stub mode then we can't apply the configuration as we stubbed the actual component
                 obj = null;
             }

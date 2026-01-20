@@ -18,8 +18,8 @@ package org.apache.camel.component.salesforce.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import org.apache.camel.component.salesforce.dto.generated.MSPTest;
-import org.apache.camel.component.salesforce.dto.generated.StringMSPTest;
+import org.apache.camel.component.salesforce.dto.generated.MSP;
+import org.apache.camel.component.salesforce.dto.generated.StringMSP;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -38,8 +38,8 @@ public class MultiSelectPicklistJsonTest {
 
     @Test
     public void testMarshal() throws Exception {
-        final MSPTest mspTest = new MSPTest();
-        mspTest.setMspField(MSPTest.MSPEnum.values());
+        final MSP mspTest = new MSP();
+        mspTest.setMspField(MSP.MSPEnum.values());
 
         String json = objectMapper.writeValueAsString(mspTest);
         assertEquals(TEST_JSON, json);
@@ -54,8 +54,8 @@ public class MultiSelectPicklistJsonTest {
 
     @Test
     public void testMarshalDoesntSerializeNulls() throws Exception {
-        final MSPTest mspTest = new MSPTest();
-        mspTest.setMspField(MSPTest.MSPEnum.values());
+        final MSP mspTest = new MSP();
+        mspTest.setMspField(MSP.MSPEnum.values());
         // setting no null, but not including in fieldsToNull
         mspTest.setMspField(null);
 
@@ -65,17 +65,17 @@ public class MultiSelectPicklistJsonTest {
 
     @Test
     public void testUnmarshal() throws Exception {
-        MSPTest mspTest = objectMapper.readValue(TEST_JSON, MSPTest.class);
-        assertArrayEquals(MSPTest.MSPEnum.values(), mspTest.getMspField());
+        MSP mspTest = objectMapper.readValue(TEST_JSON, MSP.class);
+        assertArrayEquals(MSP.MSPEnum.values(), mspTest.getMspField());
 
         // test null
-        mspTest = objectMapper.readValue(TEST_NULL_JSON, MSPTest.class);
+        mspTest = objectMapper.readValue(TEST_NULL_JSON, MSP.class);
         assertNull(mspTest.getMspField());
     }
 
     @Test
     public void testMarshalString() throws Exception {
-        final StringMSPTest mspTest = new StringMSPTest();
+        final StringMSP mspTest = new StringMSP();
         String[] stringList = new String[] { "Value1", "Value2", "Value3" };
         mspTest.setMspField(stringList);
 
@@ -92,12 +92,12 @@ public class MultiSelectPicklistJsonTest {
 
     @Test
     public void testUnmarshalString() throws Exception {
-        StringMSPTest mspTest = objectMapper.readValue(TEST_JSON, StringMSPTest.class);
+        StringMSP mspTest = objectMapper.readValue(TEST_JSON, StringMSP.class);
         String[] stringList = new String[] { "Value1", "Value2", "Value3" };
         assertArrayEquals(stringList, mspTest.getMspField());
 
         // test null
-        mspTest = objectMapper.readValue(TEST_NULL_JSON, StringMSPTest.class);
+        mspTest = objectMapper.readValue(TEST_NULL_JSON, StringMSP.class);
         assertNull(mspTest.getMspField());
     }
 }

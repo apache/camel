@@ -31,6 +31,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.TelegramException;
+import org.apache.camel.component.telegram.TelegramMessage;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
 import org.apache.camel.component.telegram.model.EditMessageDelete;
@@ -40,23 +41,34 @@ import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.MessageResultGameScores;
+import org.apache.camel.component.telegram.model.MessageResultString;
 import org.apache.camel.component.telegram.model.OutgoingAnswerInlineQuery;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingCallbackQueryMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingGameMessage;
 import org.apache.camel.component.telegram.model.OutgoingGetGameHighScoresMessage;
-import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingSetGameScoreMessage;
 import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.SendChatActionMessage;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.SendVenueMessage;
 import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.model.WebhookResult;
+import org.apache.camel.component.telegram.model.payments.AnswerPreCheckoutQueryMessage;
+import org.apache.camel.component.telegram.model.payments.AnswerShippingQueryMessage;
+import org.apache.camel.component.telegram.model.payments.CreateInvoiceLinkMessage;
+import org.apache.camel.component.telegram.model.payments.EditUserStarSubscriptionMessage;
+import org.apache.camel.component.telegram.model.payments.GetMyStarBalanceMessage;
+import org.apache.camel.component.telegram.model.payments.GetStarTransactionsMessage;
+import org.apache.camel.component.telegram.model.payments.MessageResultStarAmount;
+import org.apache.camel.component.telegram.model.payments.MessageResultStarTransactions;
+import org.apache.camel.component.telegram.model.payments.RefundStarPaymentMessage;
+import org.apache.camel.component.telegram.model.payments.SendInvoiceMessage;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +79,7 @@ import org.slf4j.LoggerFactory;
 public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     private static final Logger LOG = LoggerFactory.getLogger(TelegramServiceRestBotAPIAdapter.class);
 
-    private final Map<Class<?>, OutgoingMessageHandler<?>> handlers;
+    private final TelegramHandlerRegistry handlerRegistry;
     private final HttpClient client;
 
     @Deprecated
@@ -80,45 +92,40 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
         this.baseUri = telegramBaseUri + "/bot" + authorizationToken;
         this.mapper = new ObjectMapper();
-        final Map<Class<?>, OutgoingMessageHandler<?>> m = new HashMap<>();
-        m.put(OutgoingTextMessage.class, new OutgoingPlainMessageHandler(client, mapper, baseUri + "/sendMessage", bufferSize));
-        m.put(OutgoingPhotoMessage.class, new OutgoingPhotoMessageHandler(client, mapper, baseUri, bufferSize));
-        m.put(OutgoingAudioMessage.class, new OutgoingAudioMessageHandler(client, mapper, baseUri, bufferSize));
-        m.put(OutgoingVideoMessage.class, new OutgoingVideoMessageHandler(client, mapper, baseUri, bufferSize));
-        m.put(OutgoingDocumentMessage.class, new OutgoingDocumentMessageHandler(client, mapper, baseUri, bufferSize));
-        m.put(OutgoingStickerMessage.class, new OutgoingStickerMessageHandler(client, mapper, baseUri, bufferSize));
-        m.put(OutgoingGameMessage.class, new OutgoingPlainMessageHandler(client, mapper, baseUri + "/sendGame", bufferSize));
-        m.put(SendLocationMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/sendLocation", bufferSize));
-        m.put(EditMessageLiveLocationMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/editMessageLiveLocation", bufferSize));
-        m.put(StopMessageLiveLocationMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/stopMessageLiveLocation", bufferSize));
-        m.put(SendVenueMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/sendVenue", bufferSize));
-        m.put(EditMessageTextMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/editMessageText", bufferSize));
-        m.put(EditMessageCaptionMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/editMessageCaption", bufferSize));
-        m.put(EditMessageMediaMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/editMessageMedia", bufferSize));
-        m.put(EditMessageDelete.class, new OutgoingPlainMessageHandler(
-                client,
-                mapper, baseUri + "/deleteMessage", bufferSize));
-        m.put(EditMessageReplyMarkupMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/editMessageReplyMarkup", bufferSize));
-        m.put(OutgoingCallbackQueryMessage.class, new OutgoingPlainMessageHandler(
-                client,
-                mapper, baseUri + "/answerCallbackQuery", bufferSize));
-        m.put(OutgoingSetGameScoreMessage.class,
-                new OutgoingPlainMessageHandler(client, mapper, baseUri + "/setGameScore", bufferSize));
-        m.put(OutgoingGetGameHighScoresMessage.class, new OutgoingPlainMessageHandler(
-                client,
-                mapper, baseUri + "/getGameHighScores", MessageResultGameScores.class, bufferSize));
-        m.put(OutgoingAnswerInlineQuery.class, new OutgoingPlainMessageHandler(
-                client,
-                mapper, baseUri + "/answerInlineQuery", bufferSize));
-        this.handlers = m;
+        final TelegramApiClient apiClient = new TelegramApiClient(client, mapper, baseUri, bufferSize);
+        this.handlerRegistry = TelegramHandlerRegistry.builder(apiClient)
+                // Media handlers (require custom addBody logic)
+                .register(OutgoingPhotoMessage.class, new OutgoingPhotoMessageHandler(apiClient))
+                .register(OutgoingAudioMessage.class, new OutgoingAudioMessageHandler(apiClient))
+                .register(OutgoingVideoMessage.class, new OutgoingVideoMessageHandler(apiClient))
+                .register(OutgoingDocumentMessage.class, new OutgoingDocumentMessageHandler(apiClient))
+                .register(OutgoingStickerMessage.class, new OutgoingStickerMessageHandler(apiClient))
+                // JSON handlers (simple JSON serialization)
+                .register(OutgoingTextMessage.class, "sendMessage")
+                .register(OutgoingGameMessage.class, "sendGame")
+                .register(SendLocationMessage.class, "sendLocation")
+                .register(EditMessageLiveLocationMessage.class, "editMessageLiveLocation")
+                .register(StopMessageLiveLocationMessage.class, "stopMessageLiveLocation")
+                .register(SendVenueMessage.class, "sendVenue")
+                .register(EditMessageTextMessage.class, "editMessageText")
+                .register(EditMessageCaptionMessage.class, "editMessageCaption")
+                .register(EditMessageMediaMessage.class, "editMessageMedia")
+                .register(EditMessageDelete.class, "deleteMessage")
+                .register(EditMessageReplyMarkupMessage.class, "editMessageReplyMarkup")
+                .register(OutgoingCallbackQueryMessage.class, "answerCallbackQuery")
+                .register(OutgoingSetGameScoreMessage.class, "setGameScore")
+                .register(OutgoingGetGameHighScoresMessage.class, "getGameHighScores", MessageResultGameScores.class)
+                .register(OutgoingAnswerInlineQuery.class, "answerInlineQuery")
+                .register(SendInvoiceMessage.class, "sendInvoice")
+                .register(CreateInvoiceLinkMessage.class, "createInvoiceLink", MessageResultString.class)
+                .register(AnswerPreCheckoutQueryMessage.class, "answerPreCheckoutQuery")
+                .register(AnswerShippingQueryMessage.class, "answerShippingQuery")
+                .register(SendChatActionMessage.class, "sendChatAction")
+                .register(GetMyStarBalanceMessage.class, "getMyStarBalance", MessageResultStarAmount.class)
+                .register(GetStarTransactionsMessage.class, "getStarTransactions", MessageResultStarTransactions.class)
+                .register(RefundStarPaymentMessage.class, "refundStarPayment")
+                .register(EditUserStarSubscriptionMessage.class, "editUserStarSubscription")
+                .build();
     }
 
     @Override
@@ -193,10 +200,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     }
 
     @Override
-    public void sendMessage(Exchange exchange, AsyncCallback callback, OutgoingMessage message) {
+    public void sendMessage(Exchange exchange, AsyncCallback callback, TelegramMessage message) {
         @SuppressWarnings("unchecked")
-        final OutgoingMessageHandler<OutgoingMessage> handler = (OutgoingMessageHandler<OutgoingMessage>) handlers
-                .get(message.getClass());
+        final TelegramMessageHandler<TelegramMessage> handler
+                = (TelegramMessageHandler<TelegramMessage>) handlerRegistry.get(message.getClass());
         if (handler == null) {
             throw new IllegalArgumentException(
                     "Unsupported message type " + (message.getClass().getName()));
@@ -204,37 +211,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         handler.sendMessage(exchange, callback, message);
     }
 
-    static class OutgoingPlainMessageHandler extends OutgoingMessageHandler<OutgoingMessage> {
-
-        public OutgoingPlainMessageHandler(HttpClient client, ObjectMapper mapper,
-                                           String uri, Class<? extends MessageResult> returnType, int bufferSize) {
-            super(client, mapper, uri, "application/json", returnType, bufferSize);
-        }
-
-        public OutgoingPlainMessageHandler(HttpClient client, ObjectMapper mapper,
-                                           String uri, int bufferSize) {
-            this(client, mapper, uri, MessageResult.class, bufferSize);
-        }
-
-        @Override
-        protected void addBody(OutgoingMessage message) {
-            try {
-                final String body = mapper.writeValueAsString(message);
-
-                bodyPublisher.addBodyPart(new TelegramBodyPublisher.SingleBodyPart(body));
-
-            } catch (JsonProcessingException e) {
-                throw new RuntimeCamelException("Could not serialize " + message);
-            }
-        }
-
-    }
-
     static class OutgoingAudioMessageHandler extends OutgoingMessageHandler<OutgoingAudioMessage> {
 
-        public OutgoingAudioMessageHandler(HttpClient client, ObjectMapper mapper,
-                                           String baseUri, int bufferSize) {
-            super(client, mapper, baseUri + "/sendAudio", null, MessageResult.class, bufferSize);
+        public OutgoingAudioMessageHandler(TelegramApiClient apiClient) {
+            super(apiClient, apiClient.baseUri() + "/sendAudio", null, MessageResult.class);
         }
 
         @Override
@@ -251,9 +231,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
     static class OutgoingVideoMessageHandler extends OutgoingMessageHandler<OutgoingVideoMessage> {
 
-        public OutgoingVideoMessageHandler(HttpClient client, ObjectMapper mapper,
-                                           String baseUri, int bufferSize) {
-            super(client, mapper, baseUri + "/sendVideo", null, MessageResult.class, bufferSize);
+        public OutgoingVideoMessageHandler(TelegramApiClient apiClient) {
+            super(apiClient, apiClient.baseUri() + "/sendVideo", null, MessageResult.class);
         }
 
         @Override
@@ -270,9 +249,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
     static class OutgoingDocumentMessageHandler extends OutgoingMessageHandler<OutgoingDocumentMessage> {
 
-        public OutgoingDocumentMessageHandler(HttpClient client, ObjectMapper mapper,
-                                              String baseUri, int bufferSize) {
-            super(client, mapper, baseUri + "/sendDocument", null, MessageResult.class, bufferSize);
+        public OutgoingDocumentMessageHandler(TelegramApiClient apiClient) {
+            super(apiClient, apiClient.baseUri() + "/sendDocument", null, MessageResult.class);
         }
 
         @Override
@@ -287,9 +265,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
 
     static class OutgoingPhotoMessageHandler extends OutgoingMessageHandler<OutgoingPhotoMessage> {
 
-        public OutgoingPhotoMessageHandler(HttpClient client, ObjectMapper mapper,
-                                           String baseUri, int bufferSize) {
-            super(client, mapper, baseUri + "/sendPhoto", null, MessageResult.class, bufferSize);
+        public OutgoingPhotoMessageHandler(TelegramApiClient apiClient) {
+            super(apiClient, apiClient.baseUri() + "/sendPhoto", null, MessageResult.class);
         }
 
         @Override
@@ -303,9 +280,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
     }
 
     static class OutgoingStickerMessageHandler extends OutgoingMessageHandler<OutgoingStickerMessage> {
-        public OutgoingStickerMessageHandler(HttpClient client, ObjectMapper mapper,
-                                             String baseUri, int bufferSize) {
-            super(client, mapper, baseUri + "/sendSticker", null, MessageResult.class, bufferSize);
+        public OutgoingStickerMessageHandler(TelegramApiClient apiClient) {
+            super(apiClient, apiClient.baseUri() + "/sendSticker", null, MessageResult.class);
         }
 
         @Override

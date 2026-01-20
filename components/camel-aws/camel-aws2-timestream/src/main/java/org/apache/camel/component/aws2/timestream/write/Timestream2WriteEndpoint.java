@@ -52,7 +52,7 @@ public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint implem
         super.doStart();
         awsTimestreamWriteClient = getConfiguration().getAwsTimestreamWriteClient() != null
                 ? getConfiguration().getAwsTimestreamWriteClient()
-                : Timestream2ClientFactory.getTimestreamClient(getConfiguration()).getTimestreamWriteClient();
+                : Timestream2ClientFactory.getTimestreamWriteClient(getConfiguration());
     }
 
     @Override

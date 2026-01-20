@@ -148,7 +148,8 @@ For these operations, `accountName`, `containerName` and `blobName` are *require
 |`deleteBlob`  |Common|Delete a blob.
 |`downloadBlobToFile` |Common|Download the entire blob into a file specified by the path. The file will be created and must not exist, if the file already exists a `FileAlreadyExistsException` will be thrown.
 |`downloadLink`  |Common| Generate the download link for the specified blob using shared access signatures (SAS). This by default only limits to 1hour of allowed access. However, you can override the default expiration duration through the headers.
-|`uploadBlockBlob` |BlockBlob|Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. Partial updates are not supported with PutBlob; the content of the existing blob is overwritten with the new content.
+|`uploadBlockBlob` |BlockBlob|Creates a new block blob, or updates the content of an existing block blob. Updating an existing block blob overwrites any existing metadata on the blob. Partial updates are not supported with PutBlob; the content of the existing blob is overwritten with the new content. Note: For larger files, use `uploadBlockBlobChunked`.
+|`uploadBlockBlobChunked` |BlockBlob|Creates or updates a block blob with support for large files (up to several GB). Uses chunked parallel uploads for memory efficiency. Accepts File, Path, WrappedFile, or InputStream as body. Configure `blockSize` (default: 4MB) and `maxConcurrency` (default: auto) for performance tuning. Recommended for files larger than 256MB.
 |`stageBlockBlobList`|`BlockBlob`|Uploads the specified block to the block blob's "staging area" to be later committed by a call to commitBlobBlockList. However, in case header `CamelAzureStorageBlobCommitBlobBlockListLater` or config `commitBlockListLater` is set to false, this will commit the blocks immediately after staging the blocks.
 |`commitBlobBlockList`|`BlockBlob`|Write a blob by specifying the list of block IDs that are to make up the blob. To be written as part
 of a blob, a block must have been successfully written to the server in a prior `stageBlockBlobList` operation. You can
@@ -356,6 +357,57 @@ from("direct:start")
   .to("azure-storage-blob://camelazure/container1?blobName=blob&operation=uploadBlockBlob&serviceClient=#client")
   .to("mock:result");
 --------------------------------------------------------------------------------
+
+- `uploadBlockBlobChunked`
+
+This operation is recommended for uploading large files (larger than 256MB) as it uses chunked parallel uploads for memory efficiency.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Upload large files from the file component
+from("file://data?noop=true")
+  .log("Uploading file: ${header.CamelFileName}")
+  .to("azure-storage-blob://camelazure/container1" +
+      "?blobName=${header.CamelFileName}" +
+      "&operation=uploadBlockBlobChunked" +
+      "&blockSize=52428800" +      // 50MB blocks
+      "&maxConcurrency=4" +        // 4 parallel uploads
+      "&serviceClient=#client")
+  .log("Upload completed: ${header.CamelFileName}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: azure-blob-upload
+    from:
+      uri: file://data?noop=true
+      steps:
+        - log: "Uploading file: ${header.CamelFileName}"
+        - toD:
+            uri: "azure-storage-blob://{{azure.account}}/{{azure.container}}"
+            parameters:
+              blobName: "${header.CamelFileName}"
+              operation: uploadBlockBlobChunked
+              blockSize: 52428800        # 50MB blocks
+              maxConcurrency: 4          # 4 parallel uploads
+              credentialType: SHARED_ACCOUNT_KEY
+              accessKey: "RAW({{azure.accessKey}})"
+        - log: "Upload completed: ${header.CamelFileName}"
+----
+====
+
+The `blockSize` and `maxConcurrency` options control memory usage and upload speed:
+
+* `blockSize`: Size of each chunk (default: 4MB, max: 4000MB). Larger blocks = fewer requests but more memory.
+* `maxConcurrency`: Number of parallel uploads (default: auto-detected based on CPU cores). Higher = faster but more memory.
+* Memory usage is approximately `blockSize × maxConcurrency`.
 
 - `stageBlockBlobList`
 

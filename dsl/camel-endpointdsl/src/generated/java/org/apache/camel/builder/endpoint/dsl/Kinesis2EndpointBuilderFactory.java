@@ -2889,6 +2889,30 @@ public interface Kinesis2EndpointBuilderFactory {
         public String awsKinesisShardId() {
             return "CamelAwsKinesisShardId";
         }
+        /**
+         * The number of records that failed in a batch put operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKinesisFailedRecordCount}.
+         */
+        public String awsKinesisFailedRecordCount() {
+            return "CamelAwsKinesisFailedRecordCount";
+        }
+        /**
+         * The total number of records in a batch put operation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsKinesisRecordCount}.
+         */
+        public String awsKinesisRecordCount() {
+            return "CamelAwsKinesisRecordCount";
+        }
     }
     static Kinesis2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Kinesis2EndpointBuilderImpl extends AbstractEndpointBuilder implements Kinesis2EndpointBuilder, AdvancedKinesis2EndpointBuilder {

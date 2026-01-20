@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ShutdownableService;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -45,7 +44,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * CAMEL_MESSAGEPROCESSED table or if in case the instance holding the lock has crashed. This is determined if the
  * timestamp on the createdAt column is more than the lockMaxAge.
  */
-public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository implements ShutdownableService {
+public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository {
 
     private final StampedLock sl = new StampedLock();
 
@@ -94,9 +93,10 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
          * If the update timestamp time is more than lockMaxAge then assume that the lock is orphan and the process
          * which had acquired the lock has died
          */
+        // NOTE: the querystring is passed by the user, so, we are safe as he decide what query wants to perform.
         String orphanLockRecoverQueryString = getQueryString() + " AND createdAt >= ?";
         Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
-        return jdbcTemplate.queryForObject(orphanLockRecoverQueryString, Integer.class, processorName, key,
+        return jdbcTemplate.queryForObject(orphanLockRecoverQueryString, Integer.class, processorName, key, // NOSONAR
                 xMillisAgo);
     }
 

@@ -270,10 +270,6 @@ public final class CamelJavaTreeParserHelper {
         return node;
     }
 
-    /**
-     * @deprecated currently not in use
-     */
-    @Deprecated
     public static String getLiteralValue(JavaClassSource clazz, Block block, Expression expression) {
         // unwrap parenthesis
         if (expression instanceof ParenthesizedExpression) {
@@ -310,8 +306,7 @@ public final class CamelJavaTreeParserHelper {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
                     for (Annotation<JavaClassSource> ann : field.getAnnotations()) {
-                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName());
                         if (valid) {
                             Expression exp = (Expression) ann.getInternal();
                             if (exp instanceof SingleMemberAnnotation) {

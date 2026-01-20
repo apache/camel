@@ -16,27 +16,22 @@
  */
 package org.apache.camel.component.undertow;
 
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
-import org.apache.camel.support.http.HttpUtil;
+import org.apache.camel.Exchange;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 
-/**
- *
- * @deprecated use {@link org.apache.camel.http.base.HttpHeaderFilterStrategy} instead.
- */
-public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public class UndertowHeaderFilterStrategy extends HttpHeaderFilterStrategy {
 
     public UndertowHeaderFilterStrategy() {
         initialize();
     }
 
-    protected void initialize() {
-        HttpUtil.addCommonFilters(getOutFilter());
-
-        setLowerCase(true);
-
-        // filter headers begin with "Camel" or "org.apache.camel"
-        // must ignore case for Http based transports
-        setOutFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
-        setInFilterStartsWith(CAMEL_FILTER_STARTS_WITH);
+    @Override
+    public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
+        boolean skip = io.undertow.util.HttpString.tryFromString(headerName) == null;
+        if (skip) {
+            // skip all not valid headers by undertow rules
+            return true;
+        }
+        return super.applyFilterToExternalHeaders(headerName, headerValue, exchange);
     }
 }

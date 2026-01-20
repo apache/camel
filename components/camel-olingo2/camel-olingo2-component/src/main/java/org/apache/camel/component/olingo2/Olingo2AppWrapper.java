@@ -31,6 +31,7 @@ import org.apache.olingo.odata2.api.edm.Edm;
  * Holder class for {@link org.apache.camel.component.olingo2.api.Olingo2App} and its lazily read
  * {@link org.apache.olingo.odata2.api.edm.Edm}.
  */
+@Deprecated(since = "4.18")
 public class Olingo2AppWrapper {
 
     private final Lock lock = new ReentrantLock();

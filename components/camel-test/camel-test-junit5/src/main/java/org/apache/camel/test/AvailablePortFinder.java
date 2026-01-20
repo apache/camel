@@ -139,7 +139,7 @@ public final class AvailablePortFinder {
      * @return                       the available port
      */
     public static int getNextRandomAvailable() {
-        Random random = new Random();
+        Random random = new Random(); // NOSONAR
         int fromPort = random.nextInt(10000, 65500);
         int toPort = random.nextInt(fromPort, 65500);
         try (Port port = INSTANCE.findPort(fromPort, toPort)) {

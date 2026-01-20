@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.message.MediaDeleter deleter(String pathMessageSid, String pathSid)", "com.twilio.rest.api.v2010.account.message.MediaDeleter deleter(String pathAccountSid, String pathMessageSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.message.MediaFetcher fetcher(String pathMessageSid, String pathSid)", "com.twilio.rest.api.v2010.account.message.MediaFetcher fetcher(String pathAccountSid, String pathMessageSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.message.MediaReader reader(String pathMessageSid)", "com.twilio.rest.api.v2010.account.message.MediaReader reader(String pathAccountSid, String pathMessageSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class MessageMediaEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "deleter"), @ApiMethod(methodName = "fetcher"), @ApiMethod(methodName = "reader")})

@@ -2097,6 +2097,66 @@ public interface MllpEndpointBuilderFactory {
             return "CamelMllpRemoteAddress";
         }
         /**
+         * The SSL client certificate subject name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MllpSslClientCertSubjectName}.
+         */
+        public String mllpSslClientCertSubjectName() {
+            return "CamelMllpSslClientCertSubjectName";
+        }
+        /**
+         * The SSL client certificate issuer name.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MllpSslClientCertIssuerName}.
+         */
+        public String mllpSslClientCertIssuerName() {
+            return "CamelMllpSslClientCertIssuerName";
+        }
+        /**
+         * The SSL client certificate serial number.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MllpSslClientCertSerialNo}.
+         */
+        public String mllpSslClientCertSerialNo() {
+            return "CamelMllpSslClientCertSerialNo";
+        }
+        /**
+         * The SSL client certificate not before.
+         * 
+         * The option is a: {@code java.util.Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MllpSslClientCertNotBefore}.
+         */
+        public String mllpSslClientCertNotBefore() {
+            return "CamelMllpSslClientCertNotBefore";
+        }
+        /**
+         * The SSL client certificate not after.
+         * 
+         * The option is a: {@code java.util.Date} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code MllpSslClientCertNotAfter}.
+         */
+        public String mllpSslClientCertNotAfter() {
+            return "CamelMllpSslClientCertNotAfter";
+        }
+        /**
          * The HL7 Acknowledgment received in bytes.
          * 
          * The option is a: {@code byte[]} type.

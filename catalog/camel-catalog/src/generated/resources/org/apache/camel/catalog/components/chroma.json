@@ -1,0 +1,53 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "chroma",
+    "title": "Chroma",
+    "description": "Perform operations on the Chroma Vector Database.",
+    "deprecated": false,
+    "firstVersion": "4.17.0",
+    "label": "database,ai",
+    "javaType": "org.apache.camel.component.chroma.ChromaComponent",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-chroma",
+    "version": "4.18.0-SNAPSHOT",
+    "scheme": "chroma",
+    "extendsScheme": "",
+    "syntax": "chroma:collection",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": true,
+    "lenientProperties": false,
+    "browsable": false,
+    "remote": true
+  },
+  "componentProperties": {
+    "configuration": { "index": 0, "kind": "property", "displayName": "Configuration", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "org.apache.camel.component.chroma.ChromaConfiguration", "deprecated": false, "autowired": false, "secret": false, "description": "The configuration;" },
+    "host": { "index": 1, "kind": "property", "displayName": "Host", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.chroma.ChromaConfiguration", "configurationField": "configuration", "description": "The Chroma server host URL." },
+    "lazyStartProducer": { "index": 2, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
+    "maxResults": { "index": 3, "kind": "property", "displayName": "Max Results", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 10, "configurationClass": "org.apache.camel.component.chroma.ChromaConfiguration", "configurationField": "configuration", "description": "Max results for similarity search." },
+    "autowiredEnabled": { "index": 4, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." }
+  },
+  "headers": {
+    "CamelChromaAction": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "enum": [ "CREATE_COLLECTION", "DELETE_COLLECTION", "GET_COLLECTION", "ADD", "QUERY", "GET", "UPDATE", "UPSERT", "DELETE" ], "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The action to be performed.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#ACTION" },
+    "CamelChromaCollectionName": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The collection name.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#COLLECTION_NAME" },
+    "CamelChromaIds": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The embedding IDs.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#IDS" },
+    "CamelChromaEmbeddings": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<java.util.List<Float>>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The embeddings.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#EMBEDDINGS" },
+    "CamelChromaMetadatas": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<java.util.Map<String, String>>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The metadata for embeddings.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#METADATAS" },
+    "CamelChromaDocuments": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The documents for embeddings.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#DOCUMENTS" },
+    "CamelChromaQueryEmbeddings": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<java.util.List<Float>>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The query embeddings for similarity search.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#QUERY_EMBEDDINGS" },
+    "CamelChromaNResults": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "10", "description": "The number of results to return.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#N_RESULTS" },
+    "CamelChromaWhere": { "index": 8, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Chroma where filter.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#WHERE" },
+    "CamelChromaWhereDocument": { "index": 9, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.Map<String, Object>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Chroma where document filter.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#WHERE_DOCUMENT" },
+    "CamelChromaInclude": { "index": 10, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "java.util.List<String>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The fields to include in the result.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#INCLUDE" },
+    "CamelChromaOperationStatus": { "index": 11, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation status.", "constantName": "org.apache.camel.component.chroma.ChromaHeaders#OPERATION_STATUS" }
+  },
+  "properties": {
+    "collection": { "index": 0, "kind": "path", "displayName": "Collection", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The collection name" },
+    "host": { "index": 1, "kind": "parameter", "displayName": "Host", "group": "producer", "label": "", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.chroma.ChromaConfiguration", "configurationField": "configuration", "description": "The Chroma server host URL." },
+    "maxResults": { "index": 2, "kind": "parameter", "displayName": "Max Results", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "autowired": false, "secret": false, "defaultValue": 10, "configurationClass": "org.apache.camel.component.chroma.ChromaConfiguration", "configurationField": "configuration", "description": "Max results for similarity search." },
+    "lazyStartProducer": { "index": 3, "kind": "parameter", "displayName": "Lazy Start Producer", "group": "producer (advanced)", "label": "producer,advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." }
+  }
+}

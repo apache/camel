@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.braintree;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "find", signatures={"com.braintreegateway.UsBankAccount find(String token)"}), @ApiMethod(methodName = "sale", signatures={"com.braintreegateway.Result<com.braintreegateway.Transaction> sale(String token, com.braintreegateway.TransactionRequest transactionRequest)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class UsBankAccountGatewayEndpointConfiguration extends BraintreeConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "find"), @ApiMethod(methodName = "sale")})

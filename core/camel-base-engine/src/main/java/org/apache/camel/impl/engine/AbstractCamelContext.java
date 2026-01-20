@@ -184,6 +184,7 @@ import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
@@ -196,6 +197,7 @@ import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.startup.DefaultStartupStepRecorder;
 import org.apache.camel.support.task.TaskManagerRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -2336,7 +2338,8 @@ public abstract class AbstractCamelContext extends BaseService
 
         // auto-detect step recorder from classpath if none has been explicit configured
         StartupStepRecorder startupStepRecorder = camelContextExtension.getStartupStepRecorder();
-        if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
+        // NOTE: only check the specific class, not any subclass
+        if (startupStepRecorder.getClass() == DefaultStartupStepRecorder.class) { // NOSONAR
             StartupStepRecorder fr = camelContextExtension.getBootstrapFactoryFinder()
                     .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
             if (fr != null) {
@@ -2506,6 +2509,18 @@ public abstract class AbstractCamelContext extends BaseService
 
         forceLazyInitialization();
 
+        // setup cli-connector if not already done (before debugger)
+        if (hasService(CliConnector.class) == null) {
+            CliConnectorFactory ccf = getCamelContextExtension().getContextPlugin(CliConnectorFactory.class);
+            if (ccf != null && ccf.isEnabled()) {
+                CliConnector connector = ccf.createConnector();
+                addService(connector, true);
+                // force start cli connector early as otherwise it will be deferred until context is started
+                // but, we want status available during startup phase
+                ServiceHelper.startService(connector);
+            }
+        }
+
         // auto-detect camel-debug on classpath (if debugger has not been explicit added)
         boolean debuggerDetected = false;
         if (getDebugger() == null && hasService(BacklogDebugger.class) == null) {
@@ -2528,17 +2543,6 @@ public abstract class AbstractCamelContext extends BaseService
                 // so install default debugger
                 BacklogDebugger backlog = DefaultBacklogDebugger.createDebugger(this);
                 addService(backlog, true, true);
-            }
-        }
-        // setup cli-connector if not already done (after debugger)
-        if (hasService(CliConnector.class) == null) {
-            CliConnectorFactory ccf = getCamelContextExtension().getContextPlugin(CliConnectorFactory.class);
-            if (ccf != null && ccf.isEnabled()) {
-                CliConnector connector = ccf.createConnector();
-                addService(connector, true);
-                // force start cli connector early as otherwise it will be deferred until context is started
-                // but, we want status available during startup phase
-                ServiceHelper.startService(connector);
             }
         }
 
@@ -2771,7 +2775,8 @@ public abstract class AbstractCamelContext extends BaseService
                 if (!counters.containsKey(source)) {
                     for (String targetName : cnames) {
                         Class<?> target = getComponent(targetName).getClass();
-                        boolean skip = "StubComponent".equals(target.getSimpleName());
+                        // NOTE: the StubComponent can be added as a user dependency.
+                        boolean skip = "StubComponent".equals(target.getSimpleName()); // NOSONAR
                         if (!skip && source == target) {
                             Set<String> names = counters.computeIfAbsent(source, k -> new TreeSet<>());
                             names.add(targetName);
@@ -3086,14 +3091,14 @@ public abstract class AbstractCamelContext extends BaseService
 
         // lets log at INFO level if we are not using the default reactive executor
         final ReactiveExecutor reactiveExecutor = camelContextExtension.getReactiveExecutor();
-        if (!reactiveExecutor.getClass().getSimpleName().equals("DefaultReactiveExecutor")) {
+        if (!(reactiveExecutor instanceof DefaultReactiveExecutor)) {
             LOG.info("Using ReactiveExecutor: {}", reactiveExecutor);
         } else {
             LOG.debug("Using ReactiveExecutor: {}", reactiveExecutor);
         }
 
         // lets log at INFO level if we are not using the default thread pool factory
-        if (!getExecutorServiceManager().getThreadPoolFactory().getClass().getSimpleName().equals("DefaultThreadPoolFactory")) {
+        if (!(getExecutorServiceManager().getThreadPoolFactory() instanceof DefaultThreadPoolFactory)) {
             LOG.info("Using ThreadPoolFactory: {}", getExecutorServiceManager().getThreadPoolFactory());
         } else {
             LOG.debug("Using ThreadPoolFactory: {}", getExecutorServiceManager().getThreadPoolFactory());

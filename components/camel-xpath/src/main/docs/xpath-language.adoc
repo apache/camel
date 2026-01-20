@@ -66,6 +66,26 @@ local part. Camel will try to resolve a variable in the following steps:
 * from `variables` that has been set using the `variable(name, value)` fluent builder
 * from `message.in.header` if there is a header with the given key
 * from `exchange.properties` if there is a property with the given key
+* from `exchange.variables` if there is a variable with the given key
+
+==== Example of using variables, header and body in XPath expression
+You can combine headers, properties, body and variables in an XPath expression as shown in the example below:
+[source,java]
+----
+from("timer:java?period=1000,repeatCount=1")
+    .setBody()
+        .simple("<dummy>YES</dummy>")
+    .setVariable("Foo", simple("<hello><id>123</id></hello>", Document.class))
+    .setVariable("Bar", simple("<holla><id>123</id></holla>", Document.class))
+    .setHeader("Baz", simple("<hallo><id>123</id></hallo>", Document.class))
+    .choice()
+        .when(xpath("($Foo/hello/id = $Bar/holla/id) and /dummy='YES' and $Baz/hallo/id=123"))
+            .log("EQUAL")
+        .otherwise()
+            .log("DIFFERENT")
+    .end();
+}
+----
 
 == Functions
 

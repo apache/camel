@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.as2;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "receive", signatures={"void receive(String requestUriPattern, org.apache.hc.core5.http.io.HttpRequestHandler handler)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class AS2AsyncMDNServerManagerEndpointConfiguration extends AS2Configuration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "receive")})

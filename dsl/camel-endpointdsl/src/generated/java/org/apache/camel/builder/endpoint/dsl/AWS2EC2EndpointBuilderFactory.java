@@ -783,6 +783,42 @@ public interface AWS2EC2EndpointBuilderFactory {
         public String awsEC2SubnetId() {
             return "CamelAwsEC2SubnetId";
         }
+        /**
+         * The token for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: describeInstances describeInstancesStatus
+         * 
+         * @return the name of the header {@code AwsEC2NextToken}.
+         */
+        public String awsEC2NextToken() {
+            return "CamelAwsEC2NextToken";
+        }
+        /**
+         * The maximum number of results to return.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: describeInstances describeInstancesStatus
+         * 
+         * @return the name of the header {@code AwsEC2MaxResults}.
+         */
+        public String awsEC2MaxResults() {
+            return "CamelAwsEC2MaxResults";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: describeInstances describeInstancesStatus
+         * 
+         * @return the name of the header {@code AwsEC2IsTruncated}.
+         */
+        public String awsEC2IsTruncated() {
+            return "CamelAwsEC2IsTruncated";
+        }
     }
     static AWS2EC2EndpointBuilder endpointBuilder(String componentName, String path) {
         class AWS2EC2EndpointBuilderImpl extends AbstractEndpointBuilder implements AWS2EC2EndpointBuilder, AdvancedAWS2EC2EndpointBuilder {

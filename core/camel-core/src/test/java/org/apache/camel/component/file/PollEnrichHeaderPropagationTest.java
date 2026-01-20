@@ -36,6 +36,8 @@ public class PollEnrichHeaderPropagationTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Camel from file");
         mock.expectedHeaderReceived("foo", "bar");
         mock.expectedHeaderReceived("customHeader", "customValue");
+        mock.expectedPropertyReceived("customProp", "cheese");
+        mock.expectedVariableReceived("myVar", "beer");
 
         // Create a file to be consumed by pollEnrich
         template.sendBodyAndHeader(fileUri(), "Hello Camel from file", Exchange.FILE_NAME, "file.txt");
@@ -59,9 +61,11 @@ public class PollEnrichHeaderPropagationTest extends ContextTestSupport {
                 from("direct:start")
                         .setHeader("foo", constant("bar"))
                         .setHeader("customHeader", constant("customValue"))
+                        .setProperty("customProp", constant("cheese"))
+                        .setVariable("myVar", constant("beer"))
                         .pollEnrich(fileUri("?fileName=file.txt"), 3000)
                         .convertBodyTo(String.class)
-                        .log("${headers}")
+                        .to("log:result?showAll=true")
                         .to("mock:result");
             }
         };

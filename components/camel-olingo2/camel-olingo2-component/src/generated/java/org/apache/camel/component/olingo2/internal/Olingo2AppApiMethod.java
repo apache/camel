@@ -5,6 +5,7 @@ package org.apache.camel.component.olingo2.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.olingo2.api.Olingo2App;
 
@@ -18,6 +19,7 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 /**
  * Camel {@link ApiMethod} Enumeration for org.apache.camel.component.olingo2.api.Olingo2App
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum Olingo2AppApiMethod implements ApiMethod {
 
     BATCH(

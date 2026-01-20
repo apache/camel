@@ -43,6 +43,7 @@ public class BindyDataFormatReifier extends DataFormatReifier<BindyDataFormat> {
         properties.put("classType", or(definition.getClassType(), definition.getClassTypeAsString()));
         properties.put("unwrapSingleInstance", definition.getUnwrapSingleInstance());
         properties.put("allowEmptyStream", definition.getAllowEmptyStream());
+        properties.put("defaultValueStringAsNull", definition.getDefaultValueStringAsNull());
     }
 
 }

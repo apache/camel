@@ -1,0 +1,22 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "transformDataType",
+    "title": "Transform Data Type",
+    "description": "Transforms the message body based on known data type transformers.",
+    "deprecated": false,
+    "label": "eip,transformation",
+    "javaType": "org.apache.camel.model.TransformDataTypeDefinition",
+    "abstract": false,
+    "input": true,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
+    "note": { "index": 1, "kind": "attribute", "displayName": "Note", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the note of this node" },
+    "description": { "index": 2, "kind": "attribute", "displayName": "Description", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the description of this node" },
+    "disabled": { "index": 3, "kind": "attribute", "displayName": "Disabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Disables this EIP from the route." },
+    "fromType": { "index": 4, "kind": "attribute", "displayName": "From Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "From type used in data type transformation." },
+    "toType": { "index": 5, "kind": "attribute", "displayName": "To Type", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "To type used as a target data type in the transformation." }
+  }
+}

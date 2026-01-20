@@ -50,6 +50,7 @@ import java.util.stream.Stream;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginExporter;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
@@ -124,8 +125,8 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected String name;
 
     @CommandLine.Option(names = { "--port" },
-                        description = "Embeds a local HTTP server on this port", defaultValue = "8080")
-    int port;
+                        description = "Embeds a local HTTP server on this port")
+    int port = -1;
 
     @CommandLine.Option(names = { "--management-port" },
                         description = "To use a dedicated port for HTTP management")
@@ -203,11 +204,13 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected boolean mavenWrapper = true;
 
     @CommandLine.Option(names = { "--gradle-wrapper" }, defaultValue = "true",
-                        description = "Include Gradle Wrapper files in exported project")
+                        description = "DEPRECATED: Include Gradle Wrapper files in exported project")
+    @Deprecated
     protected boolean gradleWrapper = true;
 
     @CommandLine.Option(names = { "--build-tool" }, defaultValue = "maven",
-                        description = "Build tool to use (maven or gradle)")
+                        description = "DEPRECATED: Build tool to use (maven or gradle) (gradle is deprecated)")
+    @Deprecated
     protected String buildTool = "maven";
 
     @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
@@ -282,6 +285,14 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main)")
     protected boolean groovyPrecompiled;
 
+    @CommandLine.Option(names = { "--hawtio" }, defaultValue = "false",
+                        description = "Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus)")
+    protected boolean hawtio;
+
+    @CommandLine.Option(names = { "--hawtio-version" },
+                        description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
+    protected String hawtioVersion;
+
     protected boolean symbolicLink;     // copy source files using symbolic link
     protected boolean javaLiveReload; // reload java codes in dev
     public String pomTemplateName;   // support for specialised pom templates
@@ -351,14 +362,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
 
     protected abstract Integer export() throws Exception;
 
-    protected static String getScheme(String name) {
-        int pos = name.indexOf(":");
-        if (pos != -1) {
-            return name.substring(0, pos);
-        }
-        return null;
-    }
-
     protected Integer runSilently(boolean ignoreLoadingError, boolean lazyBean, boolean verbose) throws Exception {
         Run run = new Run(getMain());
         // need to declare the profile to use for run
@@ -399,7 +402,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         Properties properties = mapBuildProperties();
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
@@ -450,7 +453,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         List<String> lines = RuntimeUtil.loadPropertiesLines(settings);
 
         // check if we use custom and/or official ASF kamelets
-        List<String> officialKamelets = KameletCatalogHelper.findKameletNames(kameletsVersion);
+        List<String> officialKamelets = KameletCatalogHelper.findKameletNames(kameletsVersion, repositories);
         boolean kamelets = false;
         boolean asfKamelets = false;
         for (String line : lines) {
@@ -597,7 +600,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)
@@ -777,7 +780,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         if (!skipPlugins) {
-            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain()).values()
+            Set<PluginExporter> exporters = PluginHelper.getActivePlugins(getMain(), repositories).values()
                     .stream()
                     .map(Plugin::getExporter)
                     .filter(Optional::isPresent)

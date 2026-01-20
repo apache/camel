@@ -42,8 +42,9 @@ public final class ExpressionNodeHelper {
      * @return            a definition which describes the expression
      */
     public static ExpressionDefinition toExpressionDefinition(Expression expression) {
+        // NOTE: XPathBuilder class is not available at compilation time.
         if (expression instanceof ExpressionResultTypeAware
-                && expression.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
+                && expression.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) { // NOSONAR
             ExpressionResultTypeAware aware = (ExpressionResultTypeAware) expression;
             // we keep the original expression by using the constructor that
             // accepts an expression
@@ -72,8 +73,9 @@ public final class ExpressionNodeHelper {
      * @return           a definition which describes the predicate
      */
     public static ExpressionDefinition toExpressionDefinition(Predicate predicate) {
+        // NOTE: XPathBuilder class is not available at compilation time.
         if (predicate instanceof ExpressionResultTypeAware
-                && predicate.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
+                && predicate.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) { // NOSONAR
             ExpressionResultTypeAware aware = (ExpressionResultTypeAware) predicate;
             Expression expression = (Expression) predicate;
             // we keep the original expression by using the constructor that

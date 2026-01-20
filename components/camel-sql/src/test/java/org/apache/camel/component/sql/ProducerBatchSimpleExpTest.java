@@ -60,7 +60,7 @@ public class ProducerBatchSimpleExpTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:query");
         mock.expectedMessageCount(1);
 
-        List data = new ArrayList();
+        List<MyData> data = new ArrayList<>();
         data.add(new MyData(4, "Donald", "DIS"));
         data.add(new MyData(5, "Goofy", "DIS"));
         template.requestBody("direct:query", data);

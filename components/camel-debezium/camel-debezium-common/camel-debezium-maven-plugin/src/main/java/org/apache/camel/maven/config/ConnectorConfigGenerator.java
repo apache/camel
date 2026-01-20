@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.processing.Generated;
+
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.config.Field;
@@ -63,7 +65,7 @@ public final class ConnectorConfigGenerator {
     /**
      * @deprecated use {@link #create(SourceConnector, Class, String)} instead
      */
-    @Deprecated(since = "3.9.0", forRemoval = true)
+    @Deprecated(since = "4.9.0", forRemoval = true)
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass) {
         return create(connector, dbzConfigClass, null, Collections.emptySet(), Collections.emptyMap());
@@ -77,7 +79,7 @@ public final class ConnectorConfigGenerator {
     /**
      * @deprecated use {@link #create(SourceConnector, Class, String, Set)} instead
      */
-    @Deprecated(since = "3.9.0", forRemoval = true)
+    @Deprecated(since = "4.9.0", forRemoval = true)
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass,
             final Set<String> requiredFields) {
@@ -93,7 +95,7 @@ public final class ConnectorConfigGenerator {
     /**
      * @deprecated use {@link #create(SourceConnector, Class, String, Map)} instead
      */
-    @Deprecated(since = "3.9.0", forRemoval = true)
+    @Deprecated(since = "4.9.0", forRemoval = true)
     public static ConnectorConfigGenerator create(
             final SourceConnector connector, final Class<?> dbzConfigClass,
             final Map<String, Object> overriddenDefaultValues) {
@@ -182,6 +184,7 @@ public final class ConnectorConfigGenerator {
     }
 
     private void setImports() {
+        javaClass.addImport(Generated.class);
         javaClass.addImport(Configuration.class);
         javaClass.addImport(connector.getClass());
         javaClass.addImport(Metadata.class);
@@ -191,6 +194,8 @@ public final class ConnectorConfigGenerator {
     }
 
     private void setClassNameAndType() {
+        javaClass.addAnnotation(Generated.class).setStringValue("value", "org.apache.camel.maven.GenerateConnectorConfigMojo");
+
         javaClass.setName(className)
                 .extendSuperType(PARENT_TYPE)
                 .addAnnotation(UriParams.class);

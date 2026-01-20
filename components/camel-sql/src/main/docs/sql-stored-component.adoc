@@ -59,9 +59,9 @@ template, as show:
 [source,sql]
 ----
 SUBNUMBERS(
-  INTEGER ${headers.num1},
-  INTEGER ${headers.num2},
-  INOUT INTEGER ${headers.num3} out1,
+  INTEGER :#num,
+  INTEGER :#num2,
+  INOUT INTEGER :#num3 out1,
   OUT INTEGER out2
 )
 ----
@@ -120,6 +120,13 @@ Value source is required. Value source populates the parameter value from the Ex
 It can be either a Simple expression or header location i.e. `:#<header name>`. For example,
 the Simple expression `${header.val}` would mean that parameter value will be read from the header `val`.
 Header location expression `:#val` would have identical effect.
+
+When using named parameters, Camel will look up the names in the given precedence:
+
+1. from a xref:languages:simple-language.adoc[Simple] expressions
+2. from message body if it is a `java.util.Map`
+3. from message headers
+4. from exchange variables
 
 [source,xml]
 ----

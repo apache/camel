@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.box.BoxConfiguration;
 import org.apache.camel.component.box.BoxCollaborationsManagerEndpointConfiguration;
@@ -28,6 +29,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for Box
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxApiCollection extends ApiCollection<BoxApiName, BoxConfiguration> {
 
     private BoxApiCollection() {

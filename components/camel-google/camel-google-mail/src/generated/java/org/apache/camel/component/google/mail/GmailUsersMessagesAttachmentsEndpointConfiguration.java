@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.mail;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "get", description="Gets the specified message attachment", signatures={"com.google.api.services.gmail.Gmail$Users$Messages$Attachments$Get get(String userId, String messageId, String id)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class GmailUsersMessagesAttachmentsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "get", description="The ID of the attachment")})

@@ -1,0 +1,1 @@
+../../../../../components/camel-iggy/src/main/docs/iggy-component.adoc

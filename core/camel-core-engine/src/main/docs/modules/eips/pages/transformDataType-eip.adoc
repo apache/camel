@@ -1,0 +1,87 @@
+= Transform Data Type EIP
+:doctitle: Transform Data Type
+:shortname: transformDataType
+:description: Transforms the message body based on known data type transformers.
+:since: 
+:supportlevel: Stable
+:tabs-sync-option:
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
+Translator] from the xref:enterprise-integration-patterns.adoc[EIP
+patterns].
+
+How can systems using different data formats communicate with each other using messaging?
+
+image::eip/MessageTranslator.gif[image]
+
+Use a special filter, a Message Translator, between other filters or applications to translate one data format into another.
+
+The xref:message-translator.adoc[Message Translator] can be done in different ways in Camel:
+
+* Using xref:transform-eip.adoc[Transform] or xref:setBody-eip.adoc[Set Body] in the DSL
+* Calling a xref:manual::processor.adoc[Processor] or xref:manual::bean-integration.adoc[bean]
+to perform the transformation
+* Using template-based xref:ROOT:index.adoc[Components], with the template being the source for how the message is translated
+* Messages can also be transformed using xref:manual::data-format.adoc[Data Format]
+to marshal and unmarshal messages in different encodings.
+* Using data type based transformation using xref:transformDataType-eip.adoc[Transform DataType]
+
+This page is documenting the last approach by using Transform Data Type EIP.
+
+== Options
+
+// eip options: START
+include::partial$eip-options.adoc[]
+// eip options: END
+
+== Exchange properties
+
+// eip exchangeProperties: START
+include::partial$eip-exchangeProperties.adoc[]
+// eip exchangeProperties: END
+
+== Using Transform DataType EIP
+
+The xref:transformDataType-eip.adoc[Transform DataType] references a given from/to data type (`org.apache.camel.spi.DataType`).
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:cheese")
+    .transformDataType("myDataType")
+    .to("log:hello");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:cheese"/>
+    <transformDataType toType="myDataType"/>
+    <to uri="log:hello"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:cheese
+    steps:
+      - transformDataType:
+          toType: myDataType
+      - to:
+          uri: log:hello
+----
+====
+
+The example above defines the xref:transformDataType-eip.adoc[Transform DataType] EIP that uses a target data type `myDataType`.
+The given data type may reference a xref:manual::transformer.adoc[Transformer] that is able to handle the data type transformation.
+
+Users may also specify `fromType` in order to reference a very specific transformation from a given data type to a given data type.

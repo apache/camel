@@ -348,6 +348,9 @@ public class ModelWriter extends BaseWriter {
     public void writeTransactedDefinition(TransactedDefinition def) throws IOException {
         doWriteTransactedDefinition("transacted", def);
     }
+    public void writeTransformDataTypeDefinition(TransformDataTypeDefinition def) throws IOException {
+        doWriteTransformDataTypeDefinition("transformDataType", def);
+    }
     public void writeTransformDefinition(TransformDefinition def) throws IOException {
         doWriteTransformDefinition("transform", def);
     }
@@ -1947,11 +1950,16 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }
-    protected void doWriteTransformDefinition(String name, TransformDefinition def) throws IOException {
+    protected void doWriteTransformDataTypeDefinition(String name, TransformDataTypeDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("toType", def.getToType(), null);
         doWriteAttribute("fromType", def.getFromType(), null);
+        endElement(name);
+    }
+    protected void doWriteTransformDefinition(String name, TransformDefinition def) throws IOException {
+        startElement(name);
+        doWriteProcessorDefinitionAttributes(def);
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
@@ -2454,6 +2462,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("unwrapSingleInstance", def.getUnwrapSingleInstance(), "true");
+        doWriteAttribute("defaultValueStringAsNull", def.getDefaultValueStringAsNull(), null);
         doWriteAttribute("classType", def.getClassTypeAsString(), null);
         doWriteAttribute("locale", def.getLocale(), null);
         doWriteAttribute("type", def.getType(), null);
@@ -3087,6 +3096,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCSimpleExpression(String name, CSimpleExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("pretty", def.getPretty(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3233,6 +3243,7 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSimpleExpression(String name, SimpleExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("pretty", def.getPretty(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3905,6 +3916,7 @@ public class ModelWriter extends BaseWriter {
                 case "ToDynamicDefinition" -> doWriteToDynamicDefinition("toD", (ToDynamicDefinition) v);
                 case "TokenizerDefinition" -> doWriteTokenizerDefinition("tokenizer", (TokenizerDefinition) v);
                 case "TransactedDefinition" -> doWriteTransactedDefinition("transacted", (TransactedDefinition) v);
+                case "TransformDataTypeDefinition" -> doWriteTransformDataTypeDefinition("transformDataType", (TransformDataTypeDefinition) v);
                 case "TransformDefinition" -> doWriteTransformDefinition("transform", (TransformDefinition) v);
                 case "TryDefinition" -> doWriteTryDefinition("doTry", (TryDefinition) v);
                 case "UnmarshalDefinition" -> doWriteUnmarshalDefinition("unmarshal", (UnmarshalDefinition) v);
@@ -3999,6 +4011,7 @@ public class ModelWriter extends BaseWriter {
                 case "ToDynamicDefinition" -> doWriteToDynamicDefinition("toD", (ToDynamicDefinition) v);
                 case "TokenizerDefinition" -> doWriteTokenizerDefinition("tokenizer", (TokenizerDefinition) v);
                 case "TransactedDefinition" -> doWriteTransactedDefinition("transacted", (TransactedDefinition) v);
+                case "TransformDataTypeDefinition" -> doWriteTransformDataTypeDefinition("transformDataType", (TransformDataTypeDefinition) v);
                 case "TransformDefinition" -> doWriteTransformDefinition("transform", (TransformDefinition) v);
                 case "TryDefinition" -> doWriteTryDefinition("doTry", (TryDefinition) v);
                 case "UnmarshalDefinition" -> doWriteUnmarshalDefinition("unmarshal", (UnmarshalDefinition) v);

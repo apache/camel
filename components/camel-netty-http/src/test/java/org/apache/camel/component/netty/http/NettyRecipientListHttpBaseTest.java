@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NettyRecipientListHttpBaseTest extends BaseNettyTest {
+public class NettyRecipientListHttpBaseTest extends BaseNettyTestSupport {
 
     @Test
     public void testRecipientListHttpBase() throws Exception {

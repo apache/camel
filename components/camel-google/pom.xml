@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-google-parent</artifactId>
@@ -43,6 +43,7 @@
         <module>camel-google-secret-manager</module>
         <module>camel-google-sheets</module>
         <module>camel-google-storage</module>
+        <module>camel-google-vertexai</module>
     </modules>
 
 </project>

@@ -17,15 +17,15 @@
 package org.apache.camel.component.mllp;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.Principal;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,6 +34,10 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -255,6 +259,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             Message message = exchange.getIn();
 
+            if (consumerRunnable.getSocket() instanceof SSLSocket sslSocket) {
+                enrichWithClientCertInformation(sslSocket.getSession(), message);
+            }
+
             if (consumerRunnable.hasLocalAddress()) {
                 message.setHeader(MllpConstants.MLLP_LOCAL_ADDRESS, consumerRunnable.getLocalAddress());
             }
@@ -302,6 +310,46 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         } finally {
             doneUoW(exchange);
             releaseExchange(exchange, false);
+        }
+    }
+
+    /**
+     * Enriches the message with client certificate details such as subject name, serial number, etc.
+     * <p/>
+     * If the certificate is unverified then the headers is not enriched.
+     *
+     * @param sslSession the SSL session
+     * @param message    the message to enrich
+     */
+    protected void enrichWithClientCertInformation(SSLSession sslSession, Message message) {
+        if (sslSession == null || message == null) {
+            return;
+        }
+
+        try {
+            Certificate[] certificates = sslSession.getPeerCertificates();
+            if (certificates != null && certificates.length > 0) {
+                if (!(certificates[0] instanceof X509Certificate cert)) {
+                    return;
+                }
+
+                Principal subject = cert.getSubjectX500Principal();
+                if (subject != null) {
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SUBJECT_NAME, subject.toString());
+                }
+                Principal issuer = cert.getIssuerX500Principal();
+                if (issuer != null) {
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_ISSUER_NAME, issuer.toString());
+                }
+                BigInteger serial = cert.getSerialNumber();
+                if (serial != null) {
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SERIAL_NO, serial.toString());
+                }
+                message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_BEFORE, cert.getNotBefore());
+                message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_AFTER, cert.getNotAfter());
+            }
+        } catch (SSLPeerUnverifiedException e) {
+            // ignore
         }
     }
 

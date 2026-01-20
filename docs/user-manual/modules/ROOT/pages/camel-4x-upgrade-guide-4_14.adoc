@@ -11,6 +11,12 @@ Note that manual migration is still required.
 See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 ====
 
+== Upgrading from 4.14.2 to 4.14.3
+
+=== camel-tika
+
+Upgraded to Tika v3, and removed `textMain` from `tikaParseOutputFormat` option.
+
 == Upgrading from 4.14.1 to 4.14.2
 
 === camel-kamelet

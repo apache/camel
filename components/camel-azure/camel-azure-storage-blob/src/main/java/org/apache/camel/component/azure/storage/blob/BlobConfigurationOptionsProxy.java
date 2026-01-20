@@ -221,6 +221,56 @@ public class BlobConfigurationOptionsProxy {
                 exchange);
     }
 
+    public String getFilePath(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getFilePathFromHeaders, () -> null, exchange);
+    }
+
+    public Long getBlockSize(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getBlockSizeFromHeaders, configuration::getBlockSize, exchange);
+    }
+
+    public Integer getMaxConcurrency(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getMaxConcurrencyFromHeaders, configuration::getMaxConcurrency, exchange);
+    }
+
+    public Long getMaxSingleUploadSize(final Exchange exchange) {
+        return getOption(BlobExchangeHeaders::getMaxSingleUploadSizeFromHeaders, configuration::getMaxSingleUploadSize,
+                exchange);
+    }
+
+    /**
+     * Creates ParallelTransferOptions from configuration and exchange headers. Used for upload operations that support
+     * chunked parallel uploads.
+     */
+    public ParallelTransferOptions getUploadParallelTransferOptions(final Exchange exchange) {
+        // First check if explicit ParallelTransferOptions was provided via header
+        ParallelTransferOptions pto = getParallelTransferOptions(exchange);
+        if (pto != null) {
+            return pto;
+        }
+
+        // Build from individual settings
+        Long blockSize = getBlockSize(exchange);
+        Integer maxConcurrency = getMaxConcurrency(exchange);
+        Long maxSingleUploadSize = getMaxSingleUploadSize(exchange);
+
+        if (blockSize != null || maxConcurrency != null || maxSingleUploadSize != null) {
+            pto = new ParallelTransferOptions();
+            if (blockSize != null) {
+                pto.setBlockSizeLong(blockSize);
+            }
+            if (maxConcurrency != null) {
+                pto.setMaxConcurrency(maxConcurrency);
+            }
+            if (maxSingleUploadSize != null) {
+                pto.setMaxSingleUploadSizeLong(maxSingleUploadSize);
+            }
+            return pto;
+        }
+
+        return null;
+    }
+
     public BlobConfiguration getConfiguration() {
         return configuration;
     }

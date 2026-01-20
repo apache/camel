@@ -106,8 +106,8 @@ public class JsonPathEngine {
     private ObjectMapper findRegisteredMapper(CamelContext context) {
         if (context != null) {
             ObjectMapper mapper = context.getRegistry().findSingleByType(ObjectMapper.class);
-            // do not use XML mapper
-            if (mapper != null && !mapper.getClass().getSimpleName().equals("XmlMapper")) {
+            // do not use XML mapper: the object can be registered by the user.
+            if (mapper != null && !mapper.getClass().getSimpleName().equals("XmlMapper")) { // NOSONAR
                 return mapper;
             }
         }
@@ -199,13 +199,11 @@ public class JsonPathEngine {
             LOG.trace("JSonPath: {} is read as String: {}", path, json);
             String str = (String) json;
             return JsonPath.using(configuration).parse(str).read(path);
-        } else if (json instanceof Map) {
+        } else if (json instanceof Map map) {
             LOG.trace("JSonPath: {} is read as Map: {}", path, json);
-            Map map = (Map) json;
             return JsonPath.using(configuration).parse(map).read(path);
-        } else if (json instanceof List) {
+        } else if (json instanceof List list) {
             LOG.trace("JSonPath: {} is read as List: {}", path, json);
-            List list = (List) json;
             return JsonPath.using(configuration).parse(list).read(path);
         } else {
             //try to auto convert into inputStream

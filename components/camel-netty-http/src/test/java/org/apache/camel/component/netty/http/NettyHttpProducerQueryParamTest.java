@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
+public class NettyHttpProducerQueryParamTest extends BaseNettyTestSupport {
 
     private final String url = "netty-http:http://localhost:" + getPort() + "/cheese?urlDecodeHeaders=true";
 

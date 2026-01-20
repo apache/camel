@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.calendar;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "clear", description="Clears a primary calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Clear clear(String calendarId)"}), @ApiMethod(methodName = "delete", description="Deletes a secondary calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Delete delete(String calendarId)"}), @ApiMethod(methodName = "get", description="Returns metadata for a calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Get get(String calendarId)"}), @ApiMethod(methodName = "insert", description="Creates a secondary calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Insert insert(com.google.api.services.calendar.model.Calendar content)"}), @ApiMethod(methodName = "patch", description="Updates metadata for a calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Patch patch(String calendarId, com.google.api.services.calendar.model.Calendar content)"}), @ApiMethod(methodName = "update", description="Updates metadata for a calendar", signatures={"com.google.api.services.calendar.Calendar$Calendars$Update update(String calendarId, com.google.api.services.calendar.model.Calendar content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class CalendarCalendarsEndpointConfiguration extends GoogleCalendarConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "clear", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "delete", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "get", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "patch", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword."), @ApiMethod(methodName = "update", description="Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the primary keyword.")})

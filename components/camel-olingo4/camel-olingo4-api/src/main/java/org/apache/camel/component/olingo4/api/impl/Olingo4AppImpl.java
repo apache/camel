@@ -118,6 +118,7 @@ import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getConte
 /**
  * Application API used by Olingo4 Component.
  */
+@Deprecated(since = "4.18")
 public final class Olingo4AppImpl implements Olingo4App {
 
     private static final String SEPARATOR = "/";

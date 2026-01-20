@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelLogger;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A logger for logging message throughput.
  */
-public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProcessor, IdAware, RouteIdAware {
+public class ThroughputLogger extends AsyncProcessorSupport implements IdAware, RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 

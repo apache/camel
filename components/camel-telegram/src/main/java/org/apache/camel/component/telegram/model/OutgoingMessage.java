@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.camel.component.telegram.TelegramMessage;
 
 /**
- * The superclass of all outgoing messages.
+ * Abstract base class for outgoing messages that require a chat ID.
+ *
+ * @see TelegramMessage
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class OutgoingMessage implements Serializable {
+public abstract class OutgoingMessage implements TelegramMessage {
 
     private static final long serialVersionUID = -5958829164103569292L;
 

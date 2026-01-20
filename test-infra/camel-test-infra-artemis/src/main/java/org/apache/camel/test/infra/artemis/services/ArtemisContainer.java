@@ -29,7 +29,8 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
     private static final int DEFAULT_ADMIN_PORT = 8161;
     private static final int DEFAULT_ACCEPTOR_PORT = 61616;
     private static final String DEFAULT_USERNAME = "admin";
-    private static final String DEFAULT_PASSWORD = "admin";
+    // NOTE: default value used for testing purposes only
+    private static final String DEFAULT_PASSWORD = "admin"; // NOSONAR
 
     public ArtemisContainer() {
         super(DockerImageName

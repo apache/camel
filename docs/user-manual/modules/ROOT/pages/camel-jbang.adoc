@@ -30,6 +30,11 @@ Note: It requires access to the internet, in case of using a proxy, please ensur
 If Camel JBang is not working with your current configuration,
 please look to https://www.jbang.dev/documentation/jbang/latest/configuration.html#proxy-configuration[Proxy configuration in JBang documentation].
 
+=== Installing without JBang
+
+It is also possible to install and run Camel JBang without _JBang_ using the xref:camel-jbang-launcher.adoc[Camel JBang Launcher] which essentially is
+a standard Java _fat-jar_ with launch scripts.
+
 === Installing a specific Camel JBang version
 
 By default, Camel JBang installs the latest release, which may not be the desired version.
@@ -53,10 +58,10 @@ When installing Camel JBang as a JBang app via `jbang app install ...` then JBan
 occasionally if the upstream version has changed and then automatic update. This can be undesired if you
 want to ensure your Camel JBang app is not automatically updated, such as when there are newer Apache Camel releases.
 
-1. Download https://github.com/apache/camel/blob/main/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java[CamelJBang.java] file to local disk.\
-2. Edit the `CamelJBang.java` file with the desired Camel version you want to use.
-3. And then install via `jbang app install CamelJBang.java`.
-4. After this you can delete the `CamelJBang.java` file.
+1. Download https://github.com/apache/camel/blob/main/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java[CamelJBang.java] file to local disk
+2. Edit the `CamelJBang.java` file with the desired Camel version you want to use
+3. And then install via `jbang app install CamelJBang.java`
+4. After this you can delete the `CamelJBang.java` file
 
 
 == Container Image
@@ -122,6 +127,8 @@ camel --help
 TIP: The first time you run this command, it may cause dependencies to be cached, therefore taking a few extra seconds to run. If you are already using JBang and you get first time to run errors such as `Exception in thread "main" java.lang.NoClassDefFoundError: "org/apache/camel/dsl/jbang/core/commands/CamelJBangMain"` you may try clearing the JBang cache and re-install again.
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
+
+TIP: For a complete reference of all commands and their options, see the xref:jbang-commands/camel-jbang-commands.adoc[Camel JBang Command Reference].
 
 === Enable shell completion
 
@@ -693,6 +700,16 @@ Message History of last completed (id:32E020F6050C165-0000000000000000 status:su
 ----
 
 The history command shows what happened and as you can see we are able to show that the there are 4 entries in the Split, and also how each splitted message has its own unique exchange id, that links to the parent exchange id. Also notice how the HTTP call we can see the 404 error code, and the response body is in text/plain.
+
+==== Interactive mode with full message history details
+
+The `camel get history` command can be used in _interactive mode_ via `camel get history --it` which shows
+more detailed information for each step. (similar screen like `camel debug`). This allows you to see the content
+of the message including message headers, body, etc.
+
+You can then go forward (press ENTER), or go back (press P + ENTER).
+
+TIP: Use `camel get history --help` to see all available options.
 
 
 [#_using_profiles]

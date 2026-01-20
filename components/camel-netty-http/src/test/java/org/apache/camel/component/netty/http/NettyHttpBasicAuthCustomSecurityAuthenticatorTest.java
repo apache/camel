@@ -32,7 +32,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTest {
+public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTestSupport {
 
     @BindToRegistry("myAuthenticator")
     private MyAuthenticator auth = new MyAuthenticator();

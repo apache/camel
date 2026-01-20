@@ -21,13 +21,21 @@ import java.time.Instant;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
+import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsForMetricResponse;
+import software.amazon.awssdk.services.cloudwatch.model.DescribeAlarmsResponse;
+import software.amazon.awssdk.services.cloudwatch.model.ListMetricsResponse;
 import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CwComponentTest extends CamelTestSupport {
 
@@ -58,6 +66,51 @@ public class CwComponentTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
+    @Test
+    public void listMetrics() throws Exception {
+        Exchange exchange = template.send("direct:listMetrics", ExchangePattern.InOut, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Cw2Constants.METRIC_NAMESPACE, "TestNamespace");
+            }
+        });
+
+        ListMetricsResponse response = exchange.getMessage().getBody(ListMetricsResponse.class);
+        assertNotNull(response);
+        assertEquals(2, response.metrics().size());
+        assertEquals("TestMetric", response.metrics().get(0).metricName());
+        assertFalse(exchange.getMessage().getHeader(Cw2Constants.IS_TRUNCATED, Boolean.class));
+    }
+
+    @Test
+    public void describeAlarms() throws Exception {
+        Exchange exchange = template.send("direct:describeAlarms", ExchangePattern.InOut, new Processor() {
+            public void process(Exchange exchange) {
+                // No headers needed for basic describe alarms
+            }
+        });
+
+        DescribeAlarmsResponse response = exchange.getMessage().getBody(DescribeAlarmsResponse.class);
+        assertNotNull(response);
+        assertEquals(1, response.metricAlarms().size());
+        assertEquals("TestAlarm", response.metricAlarms().get(0).alarmName());
+        assertFalse(exchange.getMessage().getHeader(Cw2Constants.IS_TRUNCATED, Boolean.class));
+    }
+
+    @Test
+    public void describeAlarmsForMetric() throws Exception {
+        Exchange exchange = template.send("direct:describeAlarmsForMetric", ExchangePattern.InOut, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Cw2Constants.METRIC_NAMESPACE, "TestNamespace");
+                exchange.getIn().setHeader(Cw2Constants.METRIC_NAME, "TestMetric");
+            }
+        });
+
+        DescribeAlarmsForMetricResponse response = exchange.getMessage().getBody(DescribeAlarmsForMetricResponse.class);
+        assertNotNull(response);
+        assertEquals(1, response.metricAlarms().size());
+        assertEquals("TestAlarmForMetric", response.metricAlarms().get(0).alarmName());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -66,6 +119,15 @@ public class CwComponentTest extends CamelTestSupport {
                 from("direct:start").to(
                         "aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&name=testMetric&unit=BYTES&timestamp=#now")
                         .to("mock:result");
+
+                from("direct:listMetrics").to(
+                        "aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&operation=listMetrics");
+
+                from("direct:describeAlarms").to(
+                        "aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&operation=describeAlarms");
+
+                from("direct:describeAlarmsForMetric").to(
+                        "aws2-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&operation=describeAlarmsForMetric");
             }
         };
     }

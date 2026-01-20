@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,10 +29,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IncomingVideo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5280714879829232835L;
 
     @JsonProperty("file_id")
     private String fileId;
+
+    @JsonProperty("file_unique_id")
+    private String fileUniqueId;
 
     private Integer width;
 
@@ -39,7 +45,23 @@ public class IncomingVideo implements Serializable {
     @JsonProperty("duration")
     private Integer durationSeconds;
 
+    /**
+     * Optional. Video thumbnail in the .WEBP or .JPG format.
+     *
+     * @deprecated Use {@link #thumbnail} instead. Kept for backward compatibility.
+     */
+    @Deprecated
     private IncomingPhotoSize thumb;
+
+    private IncomingPhotoSize thumbnail;
+
+    private List<IncomingPhotoSize> cover;
+
+    @JsonProperty("start_timestamp")
+    private Integer startTimestamp;
+
+    @JsonProperty("file_name")
+    private String fileName;
 
     @JsonProperty("mime_type")
     private String mimeType;
@@ -56,6 +78,14 @@ public class IncomingVideo implements Serializable {
 
     public void setFileId(String fileId) {
         this.fileId = fileId;
+    }
+
+    public String getFileUniqueId() {
+        return fileUniqueId;
+    }
+
+    public void setFileUniqueId(String fileUniqueId) {
+        this.fileUniqueId = fileUniqueId;
     }
 
     public Integer getWidth() {
@@ -90,12 +120,52 @@ public class IncomingVideo implements Serializable {
         this.durationSeconds = durationSeconds;
     }
 
+    /**
+     * @deprecated Use {@link #getThumbnail()} instead.
+     */
+    @Deprecated
     public IncomingPhotoSize getThumb() {
         return thumb;
     }
 
+    /**
+     * @deprecated Use {@link #setThumbnail(IncomingPhotoSize)} instead.
+     */
+    @Deprecated
     public void setThumb(IncomingPhotoSize thumb) {
         this.thumb = thumb;
+    }
+
+    public IncomingPhotoSize getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(IncomingPhotoSize thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public List<IncomingPhotoSize> getCover() {
+        return cover;
+    }
+
+    public void setCover(List<IncomingPhotoSize> cover) {
+        this.cover = cover;
+    }
+
+    public Integer getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(Integer startTimestamp) {
+        this.startTimestamp = startTimestamp;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getMimeType() {
@@ -110,10 +180,15 @@ public class IncomingVideo implements Serializable {
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingVideo{");
         sb.append("fileId='").append(fileId).append('\'');
+        sb.append(", fileUniqueId='").append(fileUniqueId).append('\'');
         sb.append(", width=").append(width);
         sb.append(", height=").append(height);
         sb.append(", durationSeconds=").append(durationSeconds);
         sb.append(", thumb=").append(thumb);
+        sb.append(", thumbnail=").append(thumbnail);
+        sb.append(", cover=").append(cover);
+        sb.append(", startTimestamp=").append(startTimestamp);
+        sb.append(", fileName='").append(fileName).append('\'');
         sb.append(", mimeType='").append(mimeType).append('\'');
         sb.append(", fileSize=").append(fileSize);
         sb.append('}');

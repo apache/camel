@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.function.Consumer;
 
+import org.apache.camel.util.HomeHelper;
 import org.apache.camel.util.OrderedProperties;
 import picocli.CommandLine;
 
@@ -35,7 +36,7 @@ import picocli.CommandLine;
  */
 public final class CommandLineHelper {
 
-    private static volatile Path homeDir = Paths.get(System.getProperty("user.home"));
+    private static volatile Path homeDir = Paths.get(HomeHelper.resolveHomeDir());
     public static final String USER_CONFIG = ".camel-jbang-user.properties";
     public static final String LOCAL_USER_CONFIG = "camel-jbang-user.properties";
     public static final String CAMEL_DIR = ".camel";

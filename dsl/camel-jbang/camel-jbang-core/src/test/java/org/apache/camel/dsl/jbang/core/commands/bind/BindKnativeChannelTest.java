@@ -17,13 +17,13 @@
 
 package org.apache.camel.dsl.jbang.core.commands.bind;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class BindKnativeChannelTest extends CamelCommandBaseTest {
+class BindKnativeChannelTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldBindToKnativeChannel() throws Exception {

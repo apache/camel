@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.mq.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.mq.MQ2Configuration;
-import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientProfileOptimizedImpl;
-import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.mq.client.impl.MQ2ClientStandardImpl;
+import software.amazon.awssdk.services.mq.MqClient;
 
 /**
- * Factory class to return the correct type of AWS MQ client.
+ * Factory class to create AWS MQ clients using common configuration.
  */
 public final class MQ2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class MQ2ClientFactory {
     }
 
     /**
-     * Return the correct AWS Mq client (based on remote vs local).
+     * Create an MQ client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               MqClient
+     * @param  configuration The MQ configuration
+     * @return               Configured MqClient
      */
-    public static MQ2InternalClient getMqClient(MQ2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new MQ2ClientOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new MQ2ClientProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new MQ2ClientSessionTokenImpl(configuration);
-        } else {
-            return new MQ2ClientStandardImpl(configuration);
-        }
+    public static MqClient getMqClient(MQ2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                MqClient::builder);
     }
 }

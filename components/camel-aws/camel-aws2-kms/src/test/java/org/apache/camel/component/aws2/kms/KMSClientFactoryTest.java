@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.kms;
 
 import org.apache.camel.component.aws2.kms.client.KMS2ClientFactory;
-import org.apache.camel.component.aws2.kms.client.KMS2InternalClient;
-import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.kms.client.impl.KMS2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.kms.KmsClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class KMSClientFactoryTest {
 
     @Test
-    public void getStandardKMSClientDefault() {
-        KMS2Configuration kms2Configuration = new KMS2Configuration();
-        KMS2InternalClient kmsClient = KMS2ClientFactory.getKmsClient(kms2Configuration);
-        assertTrue(kmsClient instanceof KMS2ClientStandardImpl);
+    public void getKmsClientWithDefaultCredentials() {
+        KMS2Configuration configuration = new KMS2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        KmsClient kmsClient = KMS2ClientFactory.getKmsClient(configuration);
+        assertNotNull(kmsClient);
+        kmsClient.close();
     }
 
     @Test
-    public void getStandardKMSClient() {
-        KMS2Configuration kms2Configuration = new KMS2Configuration();
-        kms2Configuration.setUseDefaultCredentialsProvider(false);
-        KMS2InternalClient kmsClient = KMS2ClientFactory.getKmsClient(kms2Configuration);
-        assertTrue(kmsClient instanceof KMS2ClientStandardImpl);
+    public void getKmsClientWithStaticCredentials() {
+        KMS2Configuration configuration = new KMS2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        KmsClient kmsClient = KMS2ClientFactory.getKmsClient(configuration);
+        assertNotNull(kmsClient);
+        kmsClient.close();
     }
 
     @Test
-    public void getIAMOptimizedKMSClient() {
-        KMS2Configuration kms2Configuration = new KMS2Configuration();
-        kms2Configuration.setUseDefaultCredentialsProvider(true);
-        KMS2InternalClient kmsClient = KMS2ClientFactory.getKmsClient(kms2Configuration);
-        assertTrue(kmsClient instanceof KMS2ClientOptimizedImpl);
-    }
-
-    @Test
-    public void getSessionTokenKMSClient() {
-        KMS2Configuration kms2Configuration = new KMS2Configuration();
-        kms2Configuration.setUseSessionCredentials(true);
-        KMS2InternalClient kmsClient = KMS2ClientFactory.getKmsClient(kms2Configuration);
-        assertTrue(kmsClient instanceof KMS2ClientSessionTokenImpl);
+    public void getKmsClientWithEndpointOverride() {
+        KMS2Configuration configuration = new KMS2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        KmsClient kmsClient = KMS2ClientFactory.getKmsClient(configuration);
+        assertNotNull(kmsClient);
+        kmsClient.close();
     }
 }

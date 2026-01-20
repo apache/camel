@@ -103,6 +103,7 @@ public class MiloBrowseProducer extends DefaultAsyncProducer {
         final int depth = endpoint.isRecursive() ? endpoint.getDepth() : -1;
         final boolean subTypes = endpoint.isIncludeSubTypes() || endpoint.isRecursive();
 
+        @SuppressWarnings("unused")
         final CompletableFuture<?> future = this.connection
                 .browse(expandedNodeIds, endpoint.getDirection(), endpoint.getNodeClassMask(), depth, endpoint.getFilter(),
                         subTypes, endpoint.getMaxNodeIdsPerRequest())

@@ -67,7 +67,7 @@ public class AWSConfigEndpoint extends DefaultEndpoint implements EndpointServic
         super.doStart();
 
         configClient = configuration.getConfigClient() != null
-                ? configuration.getConfigClient() : AWSConfigClientFactory.getConfigClient(configuration).getConfigClient();
+                ? configuration.getConfigClient() : AWSConfigClientFactory.getConfigClient(configuration);
     }
 
     @Override

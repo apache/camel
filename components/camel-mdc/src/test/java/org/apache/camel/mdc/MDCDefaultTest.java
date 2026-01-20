@@ -16,24 +16,18 @@
  */
 package org.apache.camel.mdc;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MDCDefaultTest extends ExchangeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MDCDefaultTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -45,10 +39,19 @@ public class MDCDefaultTest extends ExchangeTestSupport {
     }
 
     @Test
-    void testRouteSingleRequest() throws IOException {
+    void testRouteSingleRequest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:assertMdc");
+
+        mock.expectedMessageCount(1);
+        mock.whenAnyExchangeReceived(exchange -> {
+            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID), "MDC_MESSAGE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID), "MDC_EXCHANGE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID), "MDC_ROUTE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID), "MDC_CAMEL_CONTEXT_ID should be set");
+        });
+
         template.request("direct:start", null);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -59,13 +62,7 @@ public class MDCDefaultTest extends ExchangeTestSupport {
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
-                        .process(exchange -> {
-                            LOG.info("A process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                        })
+                        .to("mock:assertMdc")
                         .to("log:info");
             }
         };

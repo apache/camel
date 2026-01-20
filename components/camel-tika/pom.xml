@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-tika</artifactId>
@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parser-html-commons</artifactId>
+            <artifactId>tika-parser-html-module</artifactId>
             <version>${tika-version}</version>
         </dependency>
         <dependency>

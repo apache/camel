@@ -29,7 +29,7 @@ public class ShortUuidGenerator implements UuidGenerator {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private final char[] seed
-            = (seedToHex(ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray();
+            = (seedToHex(ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray(); // NOSONAR
     private final AtomicLong index = new AtomicLong();
 
     @Override

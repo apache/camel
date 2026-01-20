@@ -132,4 +132,29 @@ public interface Lambda2Constants {
     String FUNCTION_ALIAS_NAME = "CamelAwsLambdaAliasFunctionName";
     @Metadata(label = "createAlias", description = "The function description to set in the alias", javaType = "String")
     String FUNCTION_ALIAS_DESCRIPTION = "CamelAwsLambdaAliasFunctionDescription";
+
+    // Pagination constants
+    @Metadata(label = "listFunctions listVersions listAliases listEventSourceMapping listTags",
+              description = "The marker for the next set of results.", javaType = "String")
+    String MARKER = "CamelAwsLambdaMarker";
+    @Metadata(label = "listFunctions listVersions listAliases listEventSourceMapping",
+              description = "The maximum number of results to return.", javaType = "Integer")
+    String MAX_ITEMS = "CamelAwsLambdaMaxItems";
+    @Metadata(label = "listFunctions listVersions listAliases listEventSourceMapping",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsLambdaIsTruncated";
+
+    // Response metadata
+    @Metadata(label = "createFunction getFunction publishVersion createAlias getAlias",
+              description = "The Amazon Resource Name (ARN) of the function.", javaType = "String")
+    String FUNCTION_ARN = "CamelAwsLambdaFunctionArn";
+    @Metadata(label = "invokeFunction",
+              description = "The HTTP status code of the function invocation.", javaType = "Integer")
+    String STATUS_CODE = "CamelAwsLambdaStatusCode";
+    @Metadata(label = "invokeFunction",
+              description = "If present, indicates that an error occurred during function execution.", javaType = "String")
+    String FUNCTION_ERROR = "CamelAwsLambdaFunctionError";
+    @Metadata(label = "invokeFunction",
+              description = "The last 4 KB of the execution log.", javaType = "String")
+    String LOG_RESULT = "CamelAwsLambdaLogResult";
 }

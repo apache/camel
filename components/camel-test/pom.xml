@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-test-parent</artifactId>
@@ -36,7 +36,9 @@
         <module>camel-test-junit5</module>
         <module>camel-test-junit6</module>
         <module>camel-test-spring-junit5</module>
+        <module>camel-test-spring-junit6</module>
         <module>camel-test-main-junit5</module>
+        <module>camel-test-main-junit6</module>
     </modules>
 
 </project>

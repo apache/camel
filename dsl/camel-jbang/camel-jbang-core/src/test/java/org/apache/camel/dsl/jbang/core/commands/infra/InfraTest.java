@@ -19,13 +19,13 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTest;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
-public class InfraTest extends CamelCommandBaseTest {
+public class InfraTest extends CamelCommandBaseTestSupport {
 
     /**
      * This test asserts that the reflection in InfraRun works as expected. In case of issues in the reflection, most

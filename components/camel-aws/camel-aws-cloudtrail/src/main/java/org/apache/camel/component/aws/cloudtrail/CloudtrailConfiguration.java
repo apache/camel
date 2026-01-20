@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.cloudtrail;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 
 @UriParams
-public class CloudtrailConfiguration implements Cloneable {
+public class CloudtrailConfiguration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "A label for indexing cloudtrail endpoints")
     @Metadata(required = true)

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyRouteSimpleDynamicURITest extends BaseNettyTest {
+public class NettyRouteSimpleDynamicURITest extends BaseNettyTestSupport {
 
     @RegisterExtension
     AvailablePortFinder.Port port2 = AvailablePortFinder.find();

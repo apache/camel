@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.s3;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.component.aws2.s3.stream.AWSS3NamingStrategyEnum;
 import org.apache.camel.component.aws2.s3.stream.AWSS3RestartingPolicyEnum;
 import org.apache.camel.spi.Metadata;
@@ -28,7 +29,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @UriParams
-public class AWS2S3Configuration implements Cloneable {
+public class AWS2S3Configuration implements Cloneable, AwsCommonConfiguration {
 
     private String bucketName;
     @UriParam(label = "advanced")
@@ -586,7 +587,7 @@ public class AWS2S3Configuration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 

@@ -23,6 +23,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 /**
  * HTTP MERGE method.
  */
+@Deprecated(since = "4.18")
 public class HttpMerge extends HttpEntityEnclosingRequestBase {
 
     public static final String METHOD_NAME = "MERGE";

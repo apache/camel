@@ -445,6 +445,24 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Regular expression identifying configuration keys whose values should
+         * be masked. When set, this custom pattern replaces Debeziums default
+         * password masking pattern.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * Group: postgres
+         * 
+         * @param customSanitizePattern the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder customSanitizePattern(String customSanitizePattern) {
+            doSetProperty("customSanitizePattern", customSanitizePattern);
+            return this;
+        }
+        /**
          * The name of the database from which the connector should capture
          * changes.
          * 
@@ -876,40 +894,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Boolean to determine if Debezium should flush LSN in the source
-         * postgres database. If set to false, user will have to flush the LSN
-         * manually outside Debezium.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: postgres
-         * 
-         * @param flushLsnSource the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder flushLsnSource(boolean flushLsnSource) {
-            doSetProperty("flushLsnSource", flushLsnSource);
-            return this;
-        }
-        /**
-         * Boolean to determine if Debezium should flush LSN in the source
-         * postgres database. If set to false, user will have to flush the LSN
-         * manually outside Debezium.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: postgres
-         * 
-         * @param flushLsnSource the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder flushLsnSource(String flushLsnSource) {
-            doSetProperty("flushLsnSource", flushLsnSource);
-            return this;
-        }
-        /**
          * Specify the action to take when a guardrail collections limit is
          * exceeded: 'warn' (the default) logs a warning message and continues
          * processing; 'fail' stops the connector with an error.
@@ -1186,6 +1170,26 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          */
         default DebeziumPostgresEndpointBuilder intervalHandlingMode(String intervalHandlingMode) {
             doSetProperty("intervalHandlingMode", intervalHandlingMode);
+            return this;
+        }
+        /**
+         * Determines the LSN flushing strategy. Options include: 'connector'
+         * (default) for Debezium managed LSN flushing (replaces deprecated
+         * flush.lsn.source=true); 'manual' for externally managed LSN flushing
+         * (replaces deprecated flush.lsn.source=false); 'connector_and_driver'
+         * for Debezium managed LSN flushing with the pgjdbc driver flushing
+         * unmonitored LSNsusing server keepalive LSN, which prevents WAL growth
+         * on low-activity databases.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         * 
+         * @param lsnFlushMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder lsnFlushMode(String lsnFlushMode) {
+            doSetProperty("lsnFlushMode", lsnFlushMode);
             return this;
         }
         /**
@@ -1900,7 +1904,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The name of the data collection that is used to send signals/commands
-         * to Debezium. Signaling is disabled when not set.
+         * to Debezium. For multi-partition mode connectors, multiple signal
+         * data collections can be specified as a comma-separated list.
+         * Signaling is disabled when not set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

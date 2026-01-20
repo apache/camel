@@ -19,7 +19,6 @@ package org.apache.camel.management;
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -41,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * during start/shutdown of {@link CamelContext} which causes problems by sending those events to Camel routes by this
  * notifier.
  */
-public class PublishEventNotifier extends EventNotifierSupport implements CamelContextAware {
+public class PublishEventNotifier extends EventNotifierSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(PublishEventNotifier.class);
 

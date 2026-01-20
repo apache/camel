@@ -48,6 +48,7 @@ import org.apache.camel.util.CaseInsensitiveMap;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "olingo4", title = "Olingo4", syntax = "olingo4:apiName/methodName",
              apiSyntax = "apiName/methodName",
              category = { Category.CLOUD }, headersClass = Olingo4Constants.class)
+@Deprecated(since = "4.18")
 public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4Configuration>
         implements EndpointServiceLocation {
 

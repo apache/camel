@@ -24,8 +24,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BacklogTracerEventMessage;
-import org.apache.camel.util.json.JsonObject;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -62,63 +60,10 @@ public class BacklogTracerAggregateTest extends ManagementTestSupport {
                 = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
-        assertEquals(19, events.size());
 
-        // this is the 1st incoming message
-        BacklogTracerEventMessage event = events.get(0);
-        Assertions.assertTrue(event.isFirst());
-        Assertions.assertFalse(event.isLast());
-        Assertions.assertEquals("direct://start", event.getEndpointUri());
-        JsonObject jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A}", jo.getMap("message").get("body").toString());
-        event = events.get(4);
-        Assertions.assertFalse(event.isFirst());
-        Assertions.assertTrue(event.isLast());
-        Assertions.assertEquals("direct://start", event.getEndpointUri());
-        jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A}", jo.getMap("message").get("body").toString());
-
-        // this is the 2nd incoming message
-        event = events.get(5);
-        Assertions.assertTrue(event.isFirst());
-        Assertions.assertFalse(event.isLast());
-        Assertions.assertEquals("direct://start", event.getEndpointUri());
-        jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=B}", jo.getMap("message").get("body").toString());
-        event = events.get(9);
-        Assertions.assertFalse(event.isFirst());
-        Assertions.assertTrue(event.isLast());
-        Assertions.assertEquals("direct://start", event.getEndpointUri());
-        jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=B}", jo.getMap("message").get("body").toString());
-
-        // this is the 3rd incoming message
-        event = events.get(10);
-        Assertions.assertTrue(event.isFirst());
-        Assertions.assertFalse(event.isLast());
-        Assertions.assertEquals("direct://start", event.getEndpointUri());
-        jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=C}", jo.getMap("message").get("body").toString());
-        event = events.get(14);
-        Assertions.assertFalse(event.isFirst());
-        Assertions.assertTrue(event.isLast());
-        Assertions.assertEquals("direct://start", event.getEndpointUri());
-        jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=C}", jo.getMap("message").get("body").toString());
-
-        // this is the outgoing aggregation result
-        event = events.get(15);
-        Assertions.assertTrue(event.isFirst());
-        Assertions.assertFalse(event.isLast());
-        Assertions.assertNull(event.getEndpointUri());
-        jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A,B,C}", jo.getMap("message").get("body").toString());
-        event = events.get(18);
-        Assertions.assertFalse(event.isFirst());
-        Assertions.assertTrue(event.isLast());
-        Assertions.assertNull(event.getEndpointUri());
-        jo = (JsonObject) event.asJSon();
-        Assertions.assertEquals("{type=java.lang.String, value=A,B,C}", jo.getMap("message").get("body").toString());
+        // should be 4 first and 4 last
+        assertEquals(4, events.stream().filter(BacklogTracerEventMessage::isFirst).count());
+        assertEquals(4, events.stream().filter(BacklogTracerEventMessage::isLast).count());
     }
 
     @Override

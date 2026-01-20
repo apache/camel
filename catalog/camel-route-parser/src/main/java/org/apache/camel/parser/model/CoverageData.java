@@ -21,13 +21,17 @@ package org.apache.camel.parser.model;
  */
 public class CoverageData {
 
+    private final String nodeId;
     private final String node;
     private final int count;
     private String routeId;
+    private int lineNumber;
 
-    public CoverageData(String node, int count) {
+    public CoverageData(String nodeId, String node, int count, String routeId) {
+        this.nodeId = nodeId;
         this.node = node;
         this.count = count;
+        this.routeId = routeId;
     }
 
     public String getNode() {
@@ -38,11 +42,23 @@ public class CoverageData {
         return count;
     }
 
+    public String getRouteId() {
+        return routeId;
+    }
+
     public void setRouteId(String routeId) {
         this.routeId = routeId;
     }
 
-    public String getRouteId() {
-        return routeId;
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 }

@@ -6,6 +6,8 @@
 :since: 4.2
 :supportlevel: Stable
 :tabs-sync-option:
+//Manually maintained attributes
+:group: Azure
 
 *Since Camel {since}*
 

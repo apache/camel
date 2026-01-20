@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *      https://core.telegram.org/bots/api#answercallbackquery</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OutgoingCallbackQueryMessage extends OutgoingMessage {
+public class OutgoingCallbackQueryMessage extends OutgoingMessage implements NoChatIdRequired {
 
     @JsonProperty("callback_query_id")
     private String callbackQueryId;

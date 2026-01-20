@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.bedrock.agentruntime.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.bedrock.agentruntime.BedrockAgentRuntimeConfiguration;
-import org.apache.camel.component.aws2.bedrock.agentruntime.client.impl.BedrockAgentRuntimeClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.bedrock.agentruntime.client.impl.BedrockAgentRuntimeClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.bedrock.agentruntime.client.impl.BedrockAgentRuntimeClientSessionTokenImpl;
-import org.apache.camel.component.aws2.bedrock.agentruntime.client.impl.BedrockAgentRuntimeClientStandardImpl;
+import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
 
 /**
- * Factory class to return the correct type of AWS Bedrock runtime client.
+ * Factory class to create AWS Bedrock Agent Runtime clients using common configuration.
  */
 public final class BedrockAgentRuntimeClientFactory {
 
@@ -31,21 +29,14 @@ public final class BedrockAgentRuntimeClientFactory {
     }
 
     /**
-     * Return the correct AWS Bedrock Agent runtime client (based on remote vs local).
+     * Create a BedrockAgentRuntimeClient based on configuration.
      *
-     * @param  configuration configuration
-     * @return               BedrockAgentRuntimeInternalClient
+     * @param  configuration The Bedrock Agent Runtime configuration
+     * @return               Configured BedrockAgentRuntimeClient
      */
-    public static BedrockAgentRuntimeInternalClient getBedrockAgentRuntimeClient(
-            BedrockAgentRuntimeConfiguration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new BedrockAgentRuntimeClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new BedrockAgentRuntimeClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new BedrockAgentRuntimeClientSessionTokenImpl(configuration);
-        } else {
-            return new BedrockAgentRuntimeClientStandardImpl(configuration);
-        }
+    public static BedrockAgentRuntimeClient getBedrockAgentRuntimeClient(BedrockAgentRuntimeConfiguration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                BedrockAgentRuntimeClient::builder);
     }
 }

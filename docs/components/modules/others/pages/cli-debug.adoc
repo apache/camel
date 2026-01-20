@@ -1,0 +1,1 @@
+../../../../../dsl/camel-cli-debug/src/main/docs/cli-debug.adoc

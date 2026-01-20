@@ -478,7 +478,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            if (previous != null && previous != e) {
+            if (previous != null && previous != e && e != null) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
                 // see also FatalFallbackErrorHandler
@@ -501,7 +501,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // store the original caused exception in a property, so we can restore it later
-            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
+            if (e != null) {
+                exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
+            }
 
             // store where the exception happened
             Route rc = ExchangeHelper.getRoute(exchange);

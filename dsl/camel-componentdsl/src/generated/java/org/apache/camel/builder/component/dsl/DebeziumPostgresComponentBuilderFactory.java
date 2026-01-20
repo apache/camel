@@ -435,6 +435,26 @@ public interface DebeziumPostgresComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Regular expression identifying configuration keys whose values should
+         * be masked. When set, this custom pattern replaces Debeziums default
+         * password masking pattern.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * Group: postgres
+         * 
+         * @param customSanitizePattern the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder customSanitizePattern(java.lang.String customSanitizePattern) {
+            doSetProperty("customSanitizePattern", customSanitizePattern);
+            return this;
+        }
+    
         /**
          * The name of the database from which the connector should capture
          * changes.
@@ -800,25 +820,6 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         
         /**
-         * Boolean to determine if Debezium should flush LSN in the source
-         * postgres database. If set to false, user will have to flush the LSN
-         * manually outside Debezium.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: postgres
-         * 
-         * @param flushLsnSource the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresComponentBuilder flushLsnSource(boolean flushLsnSource) {
-            doSetProperty("flushLsnSource", flushLsnSource);
-            return this;
-        }
-    
-        
-        /**
          * Specify the action to take when a guardrail collections limit is
          * exceeded: 'warn' (the default) logs a warning message and continues
          * processing; 'fail' stops the connector with an error.
@@ -1023,6 +1024,27 @@ public interface DebeziumPostgresComponentBuilderFactory {
          */
         default DebeziumPostgresComponentBuilder intervalHandlingMode(java.lang.String intervalHandlingMode) {
             doSetProperty("intervalHandlingMode", intervalHandlingMode);
+            return this;
+        }
+    
+        /**
+         * Determines the LSN flushing strategy. Options include: 'connector'
+         * (default) for Debezium managed LSN flushing (replaces deprecated
+         * flush.lsn.source=true); 'manual' for externally managed LSN flushing
+         * (replaces deprecated flush.lsn.source=false); 'connector_and_driver'
+         * for Debezium managed LSN flushing with the pgjdbc driver flushing
+         * unmonitored LSNsusing server keepalive LSN, which prevents WAL growth
+         * on low-activity databases.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param lsnFlushMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresComponentBuilder lsnFlushMode(java.lang.String lsnFlushMode) {
+            doSetProperty("lsnFlushMode", lsnFlushMode);
             return this;
         }
     
@@ -1621,7 +1643,9 @@ public interface DebeziumPostgresComponentBuilderFactory {
     
         /**
          * The name of the data collection that is used to send signals/commands
-         * to Debezium. Signaling is disabled when not set.
+         * to Debezium. For multi-partition mode connectors, multiple signal
+         * data collections can be specified as a comma-separated list.
+         * Signaling is disabled when not set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2478,6 +2502,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumPostgresComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumPostgresComponent) component).setCustomMetricTags((java.lang.String) value); return true;
+            case "customSanitizePattern": getOrCreateConfiguration((DebeziumPostgresComponent) component).setCustomSanitizePattern((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseDbname((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databaseInitialStatements": getOrCreateConfiguration((DebeziumPostgresComponent) component).setDatabaseInitialStatements((java.lang.String) value); return true;
@@ -2498,7 +2523,6 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumPostgresComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
-            case "flushLsnSource": getOrCreateConfiguration((DebeziumPostgresComponent) component).setFlushLsnSource((boolean) value); return true;
             case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumPostgresComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
             case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumPostgresComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumPostgresComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
@@ -2510,6 +2534,7 @@ public interface DebeziumPostgresComponentBuilderFactory {
             case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
+            case "lsnFlushMode": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushMode((java.lang.String) value); return true;
             case "lsnFlushTimeoutAction": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushTimeoutAction((java.lang.String) value); return true;
             case "lsnFlushTimeoutMs": getOrCreateConfiguration((DebeziumPostgresComponent) component).setLsnFlushTimeoutMs((long) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumPostgresComponent) component).setMaxBatchSize((int) value); return true;

@@ -1,0 +1,31 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.17 to 4.18
+
+== camel-core
+
+=== camel-simple
+
+The *simple* language has deprecated binary operators that uses space in the name:
+
+- `not contains` use `!contains` instead
+- `not regex` use `!regex` instead
+- `not range` use `!range` instead
+- `starts with` use `startsWith` instead
+- `ends with` use `endsWith` instead
+
+=== Component deprecation
+
+The `camel-olingo2` and `camel-olingo4` component are deprecated.
+This is due the Apache Olingo project is EOL and has been moved to the attic and is no longer maintained.

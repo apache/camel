@@ -29,6 +29,7 @@ import org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties;
 /**
  * Olingo2 Client Api Interface.
  */
+@Deprecated(since = "4.18")
 public interface Olingo2App {
 
     /**

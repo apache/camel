@@ -237,8 +237,7 @@ public final class RouteBuilderParser {
     }
 
     private static boolean isValid(Annotation<JavaClassSource> ann) {
-        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName());
     }
 
     static List<MethodSource<JavaClassSource>> findAllConfigureMethods(

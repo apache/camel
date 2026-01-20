@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-public class NettyHttpProducerSendEmptyHeaderTest extends BaseNettyTest {
+public class NettyHttpProducerSendEmptyHeaderTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpProducerSendEmptyHeader() throws Exception {

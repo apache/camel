@@ -33,6 +33,7 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * system properties) contains values from the first creation. Therefore, it is not possible to create different test,
  * which uses systemProperties without forked JVM.
  */
+@Tag("require-isolated-jvm")
 public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
 
     private static Object defaultSystemHttpAgent;

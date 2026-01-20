@@ -100,7 +100,9 @@ public interface IbmCosComponentBuilderFactory {
     
         /**
          * IBM COS Endpoint URL (e.g.,
-         * https://s3.us-south.cloud-object-storage.appdomain.cloud).
+         * https://s3.us-south.cloud-object-storage.appdomain.cloud) Note that
+         * some operations requires to use a regional endpoint URL instead of a
+         * cross-region one.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

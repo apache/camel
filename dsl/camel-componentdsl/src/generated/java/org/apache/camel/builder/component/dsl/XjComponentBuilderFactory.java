@@ -277,6 +277,25 @@ public interface XjComponentBuilderFactory {
             doSetProperty("uriResolverFactory", uriResolverFactory);
             return this;
         }
+    
+        
+        /**
+         * Limits the total number of XPath operators in an XSL Stylesheet. The
+         * default (from JDK) is 10000. Configuring this corresponds to setting
+         * JVM system property: jdk.xml.xpathTotalOpLimit.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: advanced
+         * 
+         * @param xpathTotalOpLimit the value to set
+         * @return the dsl builder
+         */
+        default XjComponentBuilder xpathTotalOpLimit(int xpathTotalOpLimit) {
+            doSetProperty("xpathTotalOpLimit", xpathTotalOpLimit);
+            return this;
+        }
     }
 
     class XjComponentBuilderImpl
@@ -304,6 +323,7 @@ public interface XjComponentBuilderFactory {
             case "transformerFactoryConfigurationStrategy": ((XJComponent) component).setTransformerFactoryConfigurationStrategy((org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy) value); return true;
             case "uriResolver": ((XJComponent) component).setUriResolver((javax.xml.transform.URIResolver) value); return true;
             case "uriResolverFactory": ((XJComponent) component).setUriResolverFactory((org.apache.camel.component.xslt.XsltUriResolverFactory) value); return true;
+            case "xpathTotalOpLimit": ((XJComponent) component).setXpathTotalOpLimit((int) value); return true;
             default: return false;
             }
         }

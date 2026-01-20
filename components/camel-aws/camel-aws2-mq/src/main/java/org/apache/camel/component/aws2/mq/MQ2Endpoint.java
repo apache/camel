@@ -67,7 +67,7 @@ public class MQ2Endpoint extends ScheduledPollEndpoint implements EndpointServic
 
         mqClient = configuration.getAmazonMqClient() != null
                 ? configuration.getAmazonMqClient()
-                : MQ2ClientFactory.getMqClient(configuration).getMqClient();
+                : MQ2ClientFactory.getMqClient(configuration);
     }
 
     @Override

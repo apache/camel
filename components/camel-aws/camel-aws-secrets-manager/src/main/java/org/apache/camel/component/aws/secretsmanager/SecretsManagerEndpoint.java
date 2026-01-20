@@ -72,7 +72,7 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements End
 
         secretsManagerClient = configuration.getSecretsManagerClient() != null
                 ? configuration.getSecretsManagerClient()
-                : SecretsManagerClientFactory.getSecretsManagerClient(configuration).getSecretsManagerClient();
+                : SecretsManagerClientFactory.getSecretsManagerClient(configuration);
     }
 
     @Override

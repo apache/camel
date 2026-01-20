@@ -202,6 +202,14 @@ public final class AdviceWith {
         ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         Model model = camelContext.getCamelContextExtension().getContextPlugin(Model.class);
 
+        // before we can advice then the input route must be prepared
+        if (!definition.isPrepared()) {
+            RoutesDefinition routes = new RoutesDefinition();
+            routes.setCamelContext(camelContext);
+            routes.setResource(definition.getResource());
+            routes.prepareRoute(definition);
+        }
+
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
         if (builder instanceof AdviceWithRouteBuilder arb) {

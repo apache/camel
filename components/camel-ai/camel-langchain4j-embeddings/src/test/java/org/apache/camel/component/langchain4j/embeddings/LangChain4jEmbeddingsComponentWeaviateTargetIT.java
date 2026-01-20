@@ -165,30 +165,30 @@ public class LangChain4jEmbeddingsComponentWeaviateTargetIT extends CamelTestSup
                         .to("langchain4j-embeddings:test")
                         .setHeader(WeaviateVectorDbHeaders.ACTION).constant(WeaviateVectorDbAction.CREATE)
                         // transform data to embed to a vecto embeddings
-                        .transform(
+                        .transformDataType(
                                 new DataType("weaviate:embeddings"))
                         .to(WEAVIATE_URI);
 
                 from("direct:up")
                         .to("langchain4j-embeddings:test")
                         // transform prompt into embeddings for search
-                        .transform(
+                        .transformDataType(
                                 new DataType("weaviate:embeddings"))
                         .setHeader(WeaviateVectorDbHeaders.ACTION, constant(WeaviateVectorDbAction.UPDATE_BY_ID))
                         .to(WEAVIATE_URI)
                         // decode retrieved embeddings for RAG
-                        .transform(
+                        .transformDataType(
                                 new DataType("weaviate:embeddings"));
 
                 from("direct:query")
                         .to("langchain4j-embeddings:test")
                         // transform prompt into embeddings for search
-                        .transform(
+                        .transformDataType(
                                 new DataType("weaviate:embeddings"))
                         .setHeader(WeaviateVectorDbHeaders.ACTION, constant(WeaviateVectorDbAction.QUERY))
                         .to(WEAVIATE_URI)
                         // decode retrieved embeddings for RAG
-                        .transform(
+                        .transformDataType(
                                 new DataType("weaviate:embeddings"));
             }
         };

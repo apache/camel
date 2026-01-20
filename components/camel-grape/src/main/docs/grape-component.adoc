@@ -15,6 +15,11 @@
 
 *{component-header}*
 
+[NOTE]
+====
+This component is deprecated since Camel 4.1 and will be removed in a future release.
+====
+
 http://docs.groovy-lang.org/latest/html/documentation/grape.html[Grape]
 component allows you to fetch, load and manage additional jars when
 `CamelContext` is running. In practice with the Camel Grape component you

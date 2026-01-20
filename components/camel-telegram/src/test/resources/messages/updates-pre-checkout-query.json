@@ -1,0 +1,19 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 219398824,
+            "pre_checkout_query": {
+                "id": "pre_checkout_query_123",
+                "from": {
+                    "id": 1585844777,
+                    "first_name": "John",
+                    "last_name": "Doe"
+                },
+                "currency": "USD",
+                "total_amount": 1000,
+                "invoice_payload": "test_payload"
+            }
+        }
+    ]
+}

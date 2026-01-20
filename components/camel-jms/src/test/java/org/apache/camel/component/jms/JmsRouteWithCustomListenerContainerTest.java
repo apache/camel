@@ -59,9 +59,11 @@ public class JmsRouteWithCustomListenerContainerTest extends AbstractJMSTest {
     @Test
     public void testSendOrder() throws Exception {
         MockEndpoint inbox = getMockEndpoint("mock:inbox");
+        inbox.reset();
         inbox.expectedBodiesReceived("Camel in Action");
 
         MockEndpoint order = getMockEndpoint("mock:topic");
+        order.reset();
         order.expectedBodiesReceived("Camel in Action");
 
         Object out = template.requestBody("activemq:queue:JmsRouteWithCustomListenerContainerTest", "Camel in Action");

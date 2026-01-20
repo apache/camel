@@ -174,6 +174,25 @@ public final class KeycloakConstants {
     @Metadata(description = "Batch size for bulk operations", javaType = "Integer")
     public static final String BATCH_SIZE = "CamelKeycloakBatchSize";
 
+    // Permission evaluation constants
+    @Metadata(description = "The access token for permission evaluation", javaType = "String")
+    public static final String ACCESS_TOKEN = "CamelKeycloakAccessToken";
+
+    @Metadata(description = "Comma-separated list of resource names or IDs to evaluate permissions for", javaType = "String")
+    public static final String PERMISSION_RESOURCE_NAMES = "CamelKeycloakPermissionResourceNames";
+
+    @Metadata(description = "Comma-separated list of scopes to evaluate permissions for", javaType = "String")
+    public static final String PERMISSION_SCOPES = "CamelKeycloakPermissionScopes";
+
+    @Metadata(description = "Subject token for permission evaluation on behalf of a user", javaType = "String")
+    public static final String SUBJECT_TOKEN = "CamelKeycloakSubjectToken";
+
+    @Metadata(description = "Audience for permission evaluation", javaType = "String")
+    public static final String PERMISSION_AUDIENCE = "CamelKeycloakPermissionAudience";
+
+    @Metadata(description = "Whether to only return the list of permissions without obtaining an RPT", javaType = "Boolean")
+    public static final String PERMISSIONS_ONLY = "CamelKeycloakPermissionsOnly";
+
     private KeycloakConstants() {
         // Utility class
     }

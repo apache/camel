@@ -1,5 +1,6 @@
 package org.apache.camel.component.debezium.oracle.configuration;
 
+import javax.annotation.processing.Generated;
 import io.debezium.config.Configuration;
 import io.debezium.connector.oracle.OracleConnector;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
@@ -8,6 +9,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
+@Generated("org.apache.camel.maven.GenerateConnectorConfigMojo")
 @UriParams
 public class OracleConnectorEmbeddedDebeziumConfiguration
         extends
@@ -223,6 +225,8 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret";
     @UriParam(label = LABEL_NAME)
     private String racNodes;
     @UriParam(label = LABEL_NAME)
@@ -411,7 +415,9 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The name of the data collection that is used to send signals/commands to
-     * Debezium. Signaling is disabled when not set.
+     * Debezium. For multi-partition mode connectors, multiple signal data
+     * collections can be specified as a comma-separated list. Signaling is
+     * disabled when not set.
      */
     public void setSignalDataCollection(String signalDataCollection) {
         this.signalDataCollection = signalDataCollection;
@@ -1683,6 +1689,19 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Regular expression identifying configuration keys whose values should be
+     * masked. When set, this custom pattern replaces Debeziums default password
+     * masking pattern.
+     */
+    public void setCustomSanitizePattern(String customSanitizePattern) {
+        this.customSanitizePattern = customSanitizePattern;
+    }
+
+    public String getCustomSanitizePattern() {
+        return customSanitizePattern;
+    }
+
+    /**
      * A comma-separated list of RAC node hostnames or ip addresses
      */
     public void setRacNodes(String racNodes) {
@@ -2154,6 +2173,7 @@ public class OracleConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
+        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
         addPropertyIfNotNull(configBuilder, "rac.nodes", racNodes);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.infinispan.cache.global", logMiningBufferInfinispanCacheGlobal);
         addPropertyIfNotNull(configBuilder, "log.mining.buffer.transaction.events.threshold", logMiningBufferTransactionEventsThreshold);

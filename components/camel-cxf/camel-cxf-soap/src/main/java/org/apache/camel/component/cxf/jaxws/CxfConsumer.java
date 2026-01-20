@@ -230,9 +230,10 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
                     = (ContinuationProvider) cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
             Continuation continuation = provider == null ? null : provider.getContinuation();
             // Make sure we don't return the JMSContinuation, as it doesn't support the Continuation we wants
-            // Don't want to introduce the dependency of cxf-rt-transprot-jms here
+            // Don't want to introduce the dependency of cxf-rt-transprot-jms here.
+            // NOTE: The class dependency has to be included at compilation time by the user, so, we cannot use instanceof operator.
             if (continuation != null
-                    && continuation.getClass().getName().equals("org.apache.cxf.transport.jms.continuations.JMSContinuation")) {
+                    && continuation.getClass().getName().equals("org.apache.cxf.transport.jms.continuations.JMSContinuation")) { // NOSONAR
                 return null;
             } else {
                 return continuation;

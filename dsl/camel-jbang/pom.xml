@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -40,8 +40,9 @@
         <module>camel-jbang-plugin-generate</module>
         <module>camel-jbang-plugin-edit</module>
         <module>camel-jbang-plugin-kubernetes</module>
+        <module>camel-jbang-plugin-route-parser</module>
         <module>camel-jbang-plugin-test</module>
-        <module>camel-launcher</module>
         <module>camel-jbang-it</module>
+        <module>camel-launcher</module>
     </modules>
 </project>

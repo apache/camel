@@ -39,7 +39,7 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelJBangCommand;
+import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
 
 @CommandLine.Command(name = "run", description = "Run an external service", sortOptions = false, showDefaultValues = true)
 public class InfraRun extends InfraBaseCommand {
@@ -122,7 +122,7 @@ public class InfraRun extends InfraBaseCommand {
         cmds.remove("--background=true");
         cmds.remove("--background");
 
-        addCamelJBangCommand(cmds);
+        addCamelCLICommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);

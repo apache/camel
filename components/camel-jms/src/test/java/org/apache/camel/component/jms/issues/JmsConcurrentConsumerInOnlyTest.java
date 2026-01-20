@@ -69,7 +69,7 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("activemq:JmsConcurrentConsumerInOnlyTest?concurrentConsumers=2&maxConcurrentConsumers=5").routeId("foo")
-                        .noAutoStartup()
+                        .autoStartup(false)
                         .log("${threadName} got ${body}")
                         .delay(simple("${random(0,10)}"))
                         .to("mock:foo");

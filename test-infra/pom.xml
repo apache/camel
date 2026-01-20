@@ -21,7 +21,7 @@
     <parent>
         <artifactId>camel-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -74,6 +74,7 @@
         <module>camel-test-infra-fhir</module>
         <module>camel-test-infra-mosquitto</module>
         <module>camel-test-infra-chatscript</module>
+        <module>camel-test-infra-chroma</module>
         <module>camel-test-infra-openai-mock</module>
         <module>camel-test-infra-openldap</module>
         <module>camel-test-infra-ignite</module>
@@ -96,6 +97,7 @@
         <module>camel-test-infra-weaviate</module>
         <module>camel-test-infra-ibmmq</module>
         <module>camel-test-infra-docling</module>
+        <module>camel-test-infra-iggy</module>
         <module>camel-test-infra-all</module>
     </modules>
 

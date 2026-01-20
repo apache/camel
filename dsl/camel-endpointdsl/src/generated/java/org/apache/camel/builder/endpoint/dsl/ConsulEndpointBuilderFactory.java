@@ -44,7 +44,7 @@ public interface ConsulEndpointBuilderFactory {
             return (AdvancedConsulEndpointConsumerBuilder) this;
         }
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -58,7 +58,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -119,7 +119,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -133,7 +133,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -208,7 +208,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -222,7 +222,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -648,7 +648,7 @@ public interface ConsulEndpointBuilderFactory {
         }
 
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -662,7 +662,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -723,7 +723,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -737,7 +737,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -812,7 +812,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -826,7 +826,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -1103,7 +1103,7 @@ public interface ConsulEndpointBuilderFactory {
         }
 
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -1117,7 +1117,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Connect timeout for OkHttpClient.
+         * Connect timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -1178,7 +1178,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -1192,7 +1192,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Read timeout for OkHttpClient.
+         * Read timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.
@@ -1267,7 +1267,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout.
          * 
          * The option is a: <code>java.time.Duration</code> type.
          * 
@@ -1281,7 +1281,7 @@ public interface ConsulEndpointBuilderFactory {
             return this;
         }
         /**
-         * Write timeout for OkHttpClient.
+         * Write timeout.
          * 
          * The option will be converted to a <code>java.time.Duration</code>
          * type.

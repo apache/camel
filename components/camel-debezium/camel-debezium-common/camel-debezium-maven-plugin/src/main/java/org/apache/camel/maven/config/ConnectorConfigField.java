@@ -80,7 +80,10 @@ public class ConnectorConfigField {
                 || fieldDef.type() == ConfigDef.Type.CLASS && defaultValue instanceof Class) {
             defaultValue = ConfigDef.convertToString(defaultValue, fieldDef.type());
         }
-        return String.format("\"%s\"", defaultValue);
+        // its converted to a string so we need to escape \. as \\.
+        String answer = String.format("\"%s\"", defaultValue);
+        answer = answer.replace("\\.", "\\\\.");
+        return answer;
     }
 
     public String getDefaultValueAsString() {
@@ -161,14 +164,20 @@ public class ConnectorConfigField {
         if (defaultValue == null) {
             return null;
         }
+        String answer;
         if (fieldDef.type() == ConfigDef.Type.LIST
                 || fieldDef.type() == ConfigDef.Type.CLASS && defaultValue instanceof Class) {
-            return String.format("\"%s\"", ConfigDef.convertToString(defaultValue, fieldDef.type()));
+            answer = String.format("\"%s\"", ConfigDef.convertToString(defaultValue, fieldDef.type()));
         } else if (field.type() == ConfigDef.Type.STRING || field.type() == ConfigDef.Type.PASSWORD
                 || field.type() == ConfigDef.Type.CLASS) {
-            return String.format("\"%s\"", defaultValue);
+            answer = String.format("\"%s\"", defaultValue);
+        } else {
+            answer = defaultValue.toString();
+
         }
-        return defaultValue.toString();
+        // its converted to a string so we need to escape \. as \\.
+        answer = answer.replace("\\.", "\\\\.");
+        return answer;
     }
 
     private String removeNonAsciiChars(final String text) {

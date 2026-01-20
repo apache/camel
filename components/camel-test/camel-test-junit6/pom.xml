@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-parent</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
 	<artifactId>camel-test-junit6</artifactId>
@@ -37,6 +37,18 @@
 		<label>testing,java</label>
         <title>Test JUnit6</title>
 	</properties>
+
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit6-jupiter-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
 
 	<dependencies>
 		<dependency>

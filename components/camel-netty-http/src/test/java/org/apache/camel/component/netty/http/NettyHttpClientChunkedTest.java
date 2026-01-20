@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpClientChunkedTest extends BaseNettyTest {
+public class NettyHttpClientChunkedTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpSimple() throws Exception {

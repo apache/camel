@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.dhis2;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "analytics", signatures={"void analytics(Boolean skipAggregate, Boolean skipEvents, Integer lastYears, Integer interval, Boolean async)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class Dhis2ResourceTablesEndpointConfiguration extends Dhis2Configuration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "analytics")})

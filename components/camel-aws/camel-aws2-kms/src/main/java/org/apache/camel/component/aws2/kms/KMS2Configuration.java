@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.kms;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.kms.KmsClient;
 
 @UriParams
-public class KMS2Configuration implements Cloneable {
+public class KMS2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Logical name")
     @Metadata(required = true)
@@ -216,14 +217,16 @@ public class KMS2Configuration implements Cloneable {
      * Set whether the KMS client should expect to load credentials through a default credentials provider or to expect
      * static credentials to be passed in.
      */
-    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    @Override
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 
+    @Override
     public boolean isUseProfileCredentialsProvider() {
         return useProfileCredentialsProvider;
     }

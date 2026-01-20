@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.bedrock.runtime.BedrockConfiguration;
-import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntimeClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntimeClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntimeClientSessionTokenImpl;
-import org.apache.camel.component.aws2.bedrock.runtime.client.impl.BedrockRuntimeClientStandardImpl;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeAsyncClient;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 /**
- * Factory class to return the correct type of AWS Bedrock runtime client.
+ * Factory class to create AWS Bedrock Runtime clients using common configuration.
  */
 public final class BedrockClientFactory {
 
@@ -31,20 +30,26 @@ public final class BedrockClientFactory {
     }
 
     /**
-     * Return the correct AWS Bedrock runtime client (based on remote vs local).
+     * Create a BedrockRuntimeClient (sync) based on configuration.
      *
-     * @param  configuration configuration
-     * @return               BedrockRuntimeInternalClient
+     * @param  configuration The Bedrock configuration
+     * @return               Configured BedrockRuntimeClient
      */
-    public static BedrockRuntimeInternalClient getBedrockRuntimeClient(BedrockConfiguration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new BedrockRuntimeClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new BedrockRuntimeClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new BedrockRuntimeClientSessionTokenImpl(configuration);
-        } else {
-            return new BedrockRuntimeClientStandardImpl(configuration);
-        }
+    public static BedrockRuntimeClient getBedrockRuntimeClient(BedrockConfiguration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                BedrockRuntimeClient::builder);
+    }
+
+    /**
+     * Create a BedrockRuntimeAsyncClient based on configuration.
+     *
+     * @param  configuration The Bedrock configuration
+     * @return               Configured BedrockRuntimeAsyncClient
+     */
+    public static BedrockRuntimeAsyncClient getBedrockRuntimeAsyncClient(BedrockConfiguration configuration) {
+        return AwsClientBuilderUtil.buildAsyncClient(
+                configuration,
+                BedrockRuntimeAsyncClient::builder);
     }
 }

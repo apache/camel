@@ -92,6 +92,9 @@ public class EmbeddedConfiguration {
                                               + "zFd/Bk51E65UTmmSrmW0O1ohtzi6HzsDPjXgCtlTt3FqTcfFfI92IlTr4JWqC9UK1QT1ZTeng0MkPQmv68hDANHbt5CpETZHjW5q4OOgWhV"
                                               + "vj5IyOC2NZHtKlJBkdsMAa15ouOOJLzBvAvbqOR/yUROsEiQ==";
 
+    static final String BUNDLED_HOST_KEY_RESOURCE = "hostkey.pem";
+    static final String BUNDLED_KEYSTORE_RESOURCE = "server.jks";
+
     private String testDirectory;
     private List<User> users = new ArrayList<>();
     private User admin;

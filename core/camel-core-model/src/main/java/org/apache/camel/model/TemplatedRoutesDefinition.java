@@ -38,7 +38,7 @@ import org.apache.camel.spi.ResourceAware;
 @XmlRootElement(name = "templatedRoutes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TemplatedRoutesDefinition extends OptionalIdentifiedDefinition<TemplatedRoutesDefinition>
-        implements TemplatedRouteContainer, CamelContextAware, ResourceAware {
+        implements TemplatedRouteContainer, ResourceAware {
 
     @XmlTransient
     private CamelContext camelContext;

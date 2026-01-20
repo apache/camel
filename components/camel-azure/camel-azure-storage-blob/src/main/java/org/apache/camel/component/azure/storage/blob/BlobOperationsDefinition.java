@@ -71,6 +71,15 @@ public enum BlobOperationsDefinition {
      */
     uploadBlockBlob,
     /**
+     * Creates a new block blob, or updates the content of an existing block blob. This operation supports data larger
+     * than 256MB (up to several GB) by automatically using staged block uploads with configurable parallelism. The
+     * message body can be a File, Path, WrappedFile, or InputStream. For files, memory-mapped I/O is used for optimal
+     * performance. For streams, chunked parallel upload is used. Configure block size and concurrency via blockSize and
+     * maxConcurrency options. This is the recommended operation for uploading large files as it uses memory-efficient
+     * chunked uploads.
+     */
+    uploadBlockBlobChunked,
+    /**
      * Uploads the specified block to the block blob's "staging area" to be later committed by a call to
      * commitBlobBlockList. However in case header `CamelAzureStorageBlobCommitBlobBlockListLater` is set to false, this
      * will also commit the blocks.

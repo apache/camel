@@ -263,6 +263,11 @@ public class SjmsMessage extends DefaultMessage {
     }
 
     @Override
+    protected boolean isPopulateHeadersSupported() {
+        return true;
+    }
+
+    @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (jmsMessage != null && map != null) {
             map.putAll(getBinding().extractHeadersFromJms(jmsMessage, getExchange()));

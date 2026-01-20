@@ -24,12 +24,12 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>35</version>
+        <version>37</version>
     </parent>
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>4.17.0-SNAPSHOT</version>
+    <version>4.18.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -118,7 +118,7 @@
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
-        <project.build.outputTimestamp>2025-11-05T13:14:58Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-01-12T11:12:19Z</project.build.outputTimestamp>
 
         <cyclonedx-maven-plugin-version>2.9.1</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.7.3</flatten-maven-plugin-version>
@@ -130,11 +130,11 @@
         <maven-enforcer-plugin-version>3.6.2</maven-enforcer-plugin-version>
         <maven-invoker-plugin-version>3.9.1</maven-invoker-plugin-version>
         <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
-        <maven-release-plugin-version>3.2.0</maven-release-plugin-version>
+        <maven-release-plugin-version>3.3.1</maven-release-plugin-version>
         <maven-remote-resources-plugin-version>3.3.0</maven-remote-resources-plugin-version>
         <maven-surefire-plugin-version>3.5.4</maven-surefire-plugin-version>
-        <templating-maven-plugin-version>3.0.0</templating-maven-plugin-version>
-        <versions-maven-plugin-version>2.20.1</versions-maven-plugin-version>
+        <templating-maven-plugin-version>3.1.0</templating-maven-plugin-version>
+        <versions-maven-plugin-version>2.21.0</versions-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
         <invoker.skip>${skipTests}</invoker.skip>
@@ -275,6 +275,7 @@
                                     <exclude>**/*.keystore</exclude>
                                     <exclude>**/*.mar</exclude>
                                     <exclude>**/*.model</exclude>
+                                    <exclude>**/*.mvel</exclude>
                                     <exclude>**/*.mp3</exclude>
                                     <exclude>**/*.mp4</exclude>
                                     <exclude>**/*.p12</exclude>
@@ -312,10 +313,10 @@
                                     <exclude>**/README</exclude>
                                     <exclude>**/TestImpl*</exclude>
                                     <exclude>**/archetype-resources/**</exclude>
-				    <exclude>**/ca-openssl.cnf</exclude>
-				    <exclude>**/openssl-ca.cnf</exclude>
-				    <exclude>**/openssl-server.cnf</exclude>
-				    <exclude>**/keystore</exclude>
+                                    <exclude>**/ca-openssl.cnf</exclude>
+                                    <exclude>**/openssl-ca.cnf</exclude>
+                                    <exclude>**/openssl-server.cnf</exclude>
+                                    <exclude>**/keystore</exclude>
                                     <exclude>**/cacerts</exclude>
                                     <exclude>**/cxf.extension</exclude>
                                     <exclude>**/dhis.conf</exclude>
@@ -327,6 +328,9 @@
                                     <exclude>**/ignite/**</exclude>
                                     <exclude>**/it/resources/*.connectedApp</exclude>
                                     <exclude>**/it/resources/salesforce/**</exclude>
+                                    <exclude>**/it/resources/sfdx-project/.sf/**</exclude>
+                                    <exclude>**/it/resources/sfdx-project/.sfdx/**</exclude>
+                                    <exclude>**/it/resources/sfdx-project/salesforce-source/**</exclude>
                                     <exclude>**/javamail.default.*</exclude>
                                     <exclude>**/kafka*.config</exclude>
                                     <exclude>**/known_hosts*</exclude>
@@ -505,6 +509,7 @@
                             <exclude>**/CometDReplayExtension.java</exclude>
                             <exclude>**/LICENSE-SALESFORCE.txt</exclude>
                             <exclude>**/LICENSE-ICU4J.txt</exclude>
+                            <exclude>**/sfdx-project/**</exclude>
                             <!-- camel-as2 -->
                             <exclude>**/mdnDescription.vm</exclude>
                             <!-- camel-jbpm -->

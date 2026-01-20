@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.drive;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "create", description="Creates a shared drive", signatures={"com.google.api.services.drive.Drive$Drives$Create create(String requestId, com.google.api.services.drive.model.Drive content)"}), @ApiMethod(methodName = "delete", description="Permanently deletes a shared drive for which the user is an organizer", signatures={"com.google.api.services.drive.Drive$Drives$Delete delete(String driveId)"}), @ApiMethod(methodName = "get", description="Gets a shared drive's metadata by ID", signatures={"com.google.api.services.drive.Drive$Drives$Get get(String driveId)"}), @ApiMethod(methodName = "hide", description="Hides a shared drive from the default view", signatures={"com.google.api.services.drive.Drive$Drives$Hide hide(String driveId)"}), @ApiMethod(methodName = "list", description="Lists the user's shared drives", signatures={"com.google.api.services.drive.Drive$Drives$List list()"}), @ApiMethod(methodName = "unhide", description="Restores a shared drive to the default view", signatures={"com.google.api.services.drive.Drive$Drives$Unhide unhide(String driveId)"}), @ApiMethod(methodName = "update", description="Updates the metadata for a shared drive", signatures={"com.google.api.services.drive.Drive$Drives$Update update(String driveId, com.google.api.services.drive.model.Drive content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DriveDrivesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "delete", description="Whether any items inside the shared drive should also be deleted")})

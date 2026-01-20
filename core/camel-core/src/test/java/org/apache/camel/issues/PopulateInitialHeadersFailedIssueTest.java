@@ -66,6 +66,11 @@ public class PopulateInitialHeadersFailedIssueTest extends ContextTestSupport {
         }
 
         @Override
+        protected boolean isPopulateHeadersSupported() {
+            return true;
+        }
+
+        @Override
         protected void populateInitialHeaders(Map<String, Object> map) {
             throw new IllegalArgumentException("Forced headers error");
         }

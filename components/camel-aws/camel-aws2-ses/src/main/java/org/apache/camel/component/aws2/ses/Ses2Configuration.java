@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.ses;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.ses.SesClient;
 
 @UriParams
-public class Ses2Configuration implements Cloneable {
+public class Ses2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath
     @Metadata(required = true)
@@ -285,7 +286,7 @@ public class Ses2Configuration implements Cloneable {
      * Set whether the Ses client should expect to load credentials through a default credentials provider or to expect
      * static credentials to be passed in.
      */
-    public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
+    public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
@@ -303,7 +304,8 @@ public class Ses2Configuration implements Cloneable {
         this.configurationSet = configurationSet;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    @Override
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 

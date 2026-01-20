@@ -16,13 +16,19 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,6 +41,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Predicate;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
@@ -51,6 +58,7 @@ import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
@@ -156,6 +164,37 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns an iterator to collate (iterate) the given expression
+     */
+    public static Expression collateExpression(final String expression, final String group) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression num;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                num = context.resolveLanguage("simple").createExpression(group);
+                num.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Integer n = num.evaluate(exchange, Integer.class);
+                exp = ExpressionBuilder.groupIteratorExpression(exp, null, Integer.toString(n), false);
+                exp.init(exchange.getContext());
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "collate(" + expression + "," + group + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an iterator to skip (iterate) the given expression
      */
     public static Expression skipExpression(final String expression, final int number) {
@@ -176,6 +215,608 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "skip(" + expression + "," + number + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns an iterator to skip (iterate) the given expression
+     */
+    public static Expression skipExpression(final String expression, final String number) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression num;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                num = context.resolveLanguage("simple").createExpression(number);
+                num.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                int n = num.evaluate(exchange, Integer.class);
+                return skipIteratorExpression(exp, n).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "skip(" + expression + "," + number + ")";
+            }
+        };
+    }
+
+    /**
+     * Converts the given expressions to a number and return the absolute value (uses message body if expression is
+     * null)
+     */
+    public static Expression absExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Long.class);
+                } else {
+                    value = exchange.getMessage().getBody(Long.class);
+                }
+                if (value != null) {
+                    value = Math.abs(value);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "abs(" + expression + ")";
+                } else {
+                    return "abs()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Converts the given expressions to a floating number and return the floor value (uses message body if expression
+     * is null)
+     */
+    public static Expression floorExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Double value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Double.class);
+                } else {
+                    value = exchange.getMessage().getBody(Double.class);
+                }
+                if (value != null) {
+                    double d = Math.floor(value);
+                    return (int) d;
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "floor(" + expression + ")";
+                } else {
+                    return "floor()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Converts the given expressions to a floating number and return the ceil value (uses message body if expression is
+     * null)
+     */
+    public static Expression ceilExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Double value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Double.class);
+                } else {
+                    value = exchange.getMessage().getBody(Double.class);
+                }
+                if (value != null) {
+                    double d = Math.ceil(value);
+                    return (int) d;
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "ceil(" + expression + ")";
+                } else {
+                    return "ceil()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Trims the given expressions (uses message body if expression is null)
+     */
+    public static Expression trimExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = value.trim();
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "trim(" + expression + ")";
+                } else {
+                    return "trim()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Capitalizes the given expressions (uses message body if expression is null)
+     */
+    public static Expression capitalizeExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = StringHelper.capitalizeAll(value);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "capitalize(" + expression + ")";
+                } else {
+                    return "capitalize()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Pad the expression
+     */
+    public static Expression padExpression(final String expression, final String length, final String separator) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression len;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                len = context.resolveLanguage("simple").createExpression(length);
+                len.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String answer = exp.evaluate(exchange, String.class);
+                Integer width = len.evaluate(exchange, Integer.class);
+                String sep = separator;
+                if (sep == null || sep.isEmpty()) {
+                    sep = " ";
+                }
+
+                int max = Math.abs(width);
+                while (max > answer.length()) {
+                    if (width > 0) {
+                        answer = answer + sep;
+                    } else {
+                        answer = sep + answer;
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "pad(" + exp + "," + length + ")";
+            }
+        };
+    }
+
+    /**
+     * String concats the two expressions.
+     */
+    public static Expression concatExpression(final String right, final String left, String separator) {
+        return new ExpressionAdapter() {
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                exp1 = context.resolveLanguage("simple").createExpression(right);
+                exp1.init(context);
+                exp2 = context.resolveLanguage("simple").createExpression(left);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value1 = exp1.evaluate(exchange, String.class);
+                String value2 = exp2.evaluate(exchange, String.class);
+                if (value1 != null && value2 != null) {
+                    return value1 + (separator != null ? separator : "") + value2;
+                } else {
+                    return value1 != null ? value1 : value2;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "concat(" + right + "," + left + ")";
+            }
+        };
+    }
+
+    /**
+     * Converts the result of the expression to the given type
+     */
+    public static Expression convertToExpression(final String expression, final String type) {
+        return new ExpressionAdapter() {
+            private Class<?> clazz;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                try {
+                    clazz = context.getClassResolver().resolveMandatoryClass(type);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapRuntimeException(e);
+                }
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exp.evaluate(exchange, clazz);
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "convertTo(" + expression + ", " + type + ")";
+                } else {
+                    return "convertTo(" + type + ")";
+                }
+            }
+        };
+    }
+
+    /**
+     * Converts the result of the expression to the given type and invoking methods on the converted object defined in a
+     * simple OGNL notation
+     */
+    public static Expression convertToOgnlExpression(final String expression, final String type, final String ognl) {
+        return new ExpressionAdapter() {
+            private Class<?> clazz;
+            private Expression exp;
+            private Language bean;
+
+            @Override
+            public void init(CamelContext context) {
+                try {
+                    clazz = context.getClassResolver().resolveMandatoryClass(type);
+                } catch (ClassNotFoundException e) {
+                    throw CamelExecutionException.wrapRuntimeException(e);
+                }
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                bean = context.resolveLanguage("bean");
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body = exp.evaluate(exchange, clazz);
+                if (body == null) {
+                    return null;
+                }
+                Expression ognlExp = bean.createExpression(null, new Object[] { null, body, ognl });
+                ognlExp.init(exchange.getContext());
+                return ognlExp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "convertToOgnl(" + expression + ", " + type + ")." + ognl;
+                } else {
+                    return "convertToOgnl(" + type + ")." + ognl;
+                }
+            }
+        };
+    }
+
+    /**
+     * Uppercases the given expressions (uses message body if expression is null)
+     */
+    public static Expression uppercaseExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = value.toUpperCase(Locale.ENGLISH);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "uppercase(" + expression + ")";
+                } else {
+                    return "uppercase()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Lowercases the given expressions (uses message body if expression is null)
+     */
+    public static Expression lowercaseExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = value.toLowerCase(Locale.ENGLISH);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "lowercase(" + expression + ")";
+                } else {
+                    return "lowercase()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns the size of the expression (number of elements in collection/map; otherwise size of payload in bytes)
+     */
+    public static Expression sizeExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, Object.class);
+                } else {
+                    body = exchange.getMessage().getBody(Object.class);
+                }
+                if (body != null) {
+                    try {
+                        // calculate length
+                        if (body instanceof byte[] arr) {
+                            return arr.length;
+                        } else if (body instanceof char[] arr) {
+                            return arr.length;
+                        } else if (body instanceof int[] arr) {
+                            return arr.length;
+                        } else if (body instanceof long[] arr) {
+                            return arr.length;
+                        } else if (body instanceof double[] arr) {
+                            return arr.length;
+                        } else if (body instanceof String s) {
+                            return s.length();
+                        } else if (body instanceof Collection<?> c) {
+                            return c.size();
+                        } else if (body instanceof Map<?, ?> m) {
+                            return m.size();
+                        } else {
+                            // fall back to stream to read
+                            InputStream is
+                                    = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+                            int len = 0;
+                            while (is.read() != -1) {
+                                len++;
+                            }
+                            return len;
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    } finally {
+                        if (body instanceof StreamCache streamCache) {
+                            streamCache.reset();
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "size(" + expression + ")";
+                } else {
+                    return "size()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns the length of the expression (length of payload in bytes)
+     */
+    public static Expression lengthExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, Object.class);
+                } else {
+                    body = exchange.getMessage().getBody(Object.class);
+                }
+                try {
+                    if (body instanceof byte[] arr) {
+                        return arr.length;
+                    } else if (body instanceof char[] arr) {
+                        return arr.length;
+                    } else if (body instanceof int[] arr) {
+                        return arr.length;
+                    } else if (body instanceof long[] arr) {
+                        return arr.length;
+                    } else if (body instanceof double[] arr) {
+                        return arr.length;
+                    }
+                    String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
+                    if (data != null) {
+                        return data.length();
+                    }
+                } finally {
+                    if (body instanceof StreamCache streamCache) {
+                        streamCache.reset();
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "length(" + expression + ")";
+                } else {
+                    return "length()";
+                }
             }
         };
     }
@@ -211,6 +852,50 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "iif(" + predicate + "," + trueValue + "," + falseValue + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that converts the expressions to number and sum the values
+     */
+    public static Expression sumExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long sum = null;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (sum == null) {
+                                sum = 0L;
+                            }
+                            sum += val;
+                        }
+                    }
+                }
+                return sum;
+            }
+
+            @Override
+            public String toString() {
+                return "sum(" + Arrays.toString(numbers) + ")";
             }
         };
     }
@@ -323,6 +1008,119 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Split the String values from the expression using the given separator
+     */
+    public static Expression splitStringExpression(final String expression, final String separator) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String text = exp.evaluate(exchange, String.class);
+                if (text == null) {
+                    return null;
+                }
+                return text.split(separator);
+            }
+
+            @Override
+            public String toString() {
+                return "split(" + expression + "," + separator + ")";
+            }
+        };
+    }
+
+    /**
+     * Sets the message header with the given expression value
+     */
+    public static Expression setHeaderExpression(final String name, final String type, final String expression) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                classResolver = context.getClassResolver();
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Class<?> clazz = Object.class;
+                if (type != null) {
+                    try {
+                        clazz = classResolver.resolveMandatoryClass(type);
+                    } catch (ClassNotFoundException e) {
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+                Object value = exp.evaluate(exchange, clazz);
+                if (value != null) {
+                    exchange.getMessage().setHeader(name, value);
+                } else {
+                    exchange.getMessage().removeHeader(name);
+                }
+                // does not return anything
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "setHeader(" + name + "," + expression + ")";
+            }
+        };
+    }
+
+    /**
+     * Sets the variable with the given expression value
+     */
+    public static Expression setVariableExpression(final String name, final String type, final String expression) {
+        return new ExpressionAdapter() {
+            private ClassResolver classResolver;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                classResolver = context.getClassResolver();
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Class<?> clazz = Object.class;
+                if (type != null) {
+                    try {
+                        clazz = classResolver.resolveMandatoryClass(type);
+                    } catch (ClassNotFoundException e) {
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    }
+                }
+                Object value = exp.evaluate(exchange, clazz);
+                if (value != null) {
+                    exchange.setVariable(name, value);
+                } else {
+                    exchange.removeVariable(name);
+                }
+                // does not return anything
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "setVariable(" + name + "," + expression + ")";
+            }
+        };
+    }
+
+    /**
      * Replaces string values from the expression
      */
     public static Expression replaceExpression(final String expression, final String from, final String to) {
@@ -390,6 +1188,109 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns the substring from the given expression that comes before
+     */
+    public static Expression substringBeforeExpression(final String expression, final String before) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression expBefore;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                expBefore = ExpressionBuilder.simpleExpression(before);
+                expBefore.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exp.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                }
+                String bef = expBefore.evaluate(exchange, String.class);
+                return StringHelper.before(body, bef);
+            }
+
+            @Override
+            public String toString() {
+                return "substringBefore(" + expression + "," + before + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the substring from the given expression that comes after
+     */
+    public static Expression substringAfterExpression(final String expression, final String after) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression expAfter;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                expAfter = ExpressionBuilder.simpleExpression(after);
+                expAfter.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exp.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                }
+                String aft = expAfter.evaluate(exchange, String.class);
+                return StringHelper.after(body, aft);
+            }
+
+            @Override
+            public String toString() {
+                return "substringAfter(" + expression + "," + after + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns the substring from the given expression that are between after and before
+     */
+    public static Expression substringBetweenExpression(final String expression, final String after, final String before) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+            private Expression expAfter;
+            private Expression expBefore;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                expAfter = ExpressionBuilder.simpleExpression(after);
+                expAfter.init(context);
+                expBefore = ExpressionBuilder.simpleExpression(before);
+                expBefore.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body = exp.evaluate(exchange, String.class);
+                if (body == null) {
+                    return null;
+                }
+                String aft = expAfter.evaluate(exchange, String.class);
+                String bef = expBefore.evaluate(exchange, String.class);
+                return StringHelper.between(body, aft, bef);
+            }
+
+            @Override
+            public String toString() {
+                return "substringBetween(" + expression + "," + after + "," + before + ")";
+            }
+        };
+    }
+
+    /**
      * Hashes the value using the given algorithm
      */
     public static Expression hashExpression(final String expression, final String algorithm) {
@@ -404,14 +1305,24 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                byte[] data = exp.evaluate(exchange, byte[].class);
-                if (data != null && data.length > 0) {
+                InputStream is = exp.evaluate(exchange, InputStream.class);
+                if (is != null) {
                     try {
+                        // calculate the hash in chunks in case the payload is big
                         MessageDigest digest = MessageDigest.getInstance(algorithm);
-                        byte[] bytes = digest.digest(data);
-                        return StringHelper.bytesToHex(bytes);
+                        DigestInputStream dis = new DigestInputStream(is, digest);
+                        IOHelper.copy(dis, new OutputStream() {
+                            @Override
+                            public void write(int b) throws IOException {
+                                // ignore
+                            }
+                        });
+                        return StringHelper.bytesToHex(digest.digest());
                     } catch (Exception e) {
                         throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+                    } finally {
+                        // reset cached streams so they can be read again
+                        MessageHelper.resetStreamCache(exchange.getMessage());
                     }
                 }
                 return null;

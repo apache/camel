@@ -54,6 +54,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "custommetrictags":
         case "customMetricTags": getOrCreateConfiguration(target).setCustomMetricTags(property(camelContext, java.lang.String.class, value)); return true;
+        case "customsanitizepattern":
+        case "customSanitizePattern": getOrCreateConfiguration(target).setCustomSanitizePattern(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseconnectionadapter":
         case "databaseConnectionAdapter": getOrCreateConfiguration(target).setDatabaseConnectionAdapter(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
@@ -351,6 +353,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "converters": return java.lang.String.class;
         case "custommetrictags":
         case "customMetricTags": return java.lang.String.class;
+        case "customsanitizepattern":
+        case "customSanitizePattern": return java.lang.String.class;
         case "databaseconnectionadapter":
         case "databaseConnectionAdapter": return java.lang.String.class;
         case "databasedbname":
@@ -649,6 +653,8 @@ public class DebeziumOracleComponentConfigurer extends PropertyConfigurerSupport
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "custommetrictags":
         case "customMetricTags": return getOrCreateConfiguration(target).getCustomMetricTags();
+        case "customsanitizepattern":
+        case "customSanitizePattern": return getOrCreateConfiguration(target).getCustomSanitizePattern();
         case "databaseconnectionadapter":
         case "databaseConnectionAdapter": return getOrCreateConfiguration(target).getDatabaseConnectionAdapter();
         case "databasedbname":

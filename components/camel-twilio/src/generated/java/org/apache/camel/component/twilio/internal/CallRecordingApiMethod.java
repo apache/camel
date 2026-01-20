@@ -5,6 +5,7 @@ package org.apache.camel.component.twilio.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import javax.annotation.processing.Generated;
 
 import com.twilio.rest.api.v2010.account.call.Recording;
 
@@ -18,6 +19,7 @@ import static org.apache.camel.support.component.ApiMethodArg.setter;
 /**
  * Camel {@link ApiMethod} Enumeration for com.twilio.rest.api.v2010.account.call.Recording
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum CallRecordingApiMethod implements ApiMethod {
 
     CREATOR(

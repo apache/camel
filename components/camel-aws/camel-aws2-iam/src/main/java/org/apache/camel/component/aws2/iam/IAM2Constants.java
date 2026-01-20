@@ -35,4 +35,24 @@ public interface IAM2Constants {
     String GROUP_NAME = "CamelAwsIAMGroupName";
     @Metadata(description = "The path of an AWS IAM Group", javaType = "String")
     String GROUP_PATH = "CamelAwsIAMGroupPath";
+
+    // Pagination support
+    @Metadata(description = "The marker to use for pagination in list operations", javaType = "String")
+    String MARKER = "CamelAwsIAMMarker";
+    @Metadata(description = "The maximum number of items to return in list operations", javaType = "Integer")
+    String MAX_ITEMS = "CamelAwsIAMMaxItems";
+
+    // Response metadata
+    @Metadata(description = "Whether the list response is truncated (has more results)", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsIAMIsTruncated";
+    @Metadata(description = "The marker to use for the next page of results", javaType = "String")
+    String NEXT_MARKER = "CamelAwsIAMNextMarker";
+    @Metadata(description = "The ARN of the created or retrieved user", javaType = "String")
+    String USER_ARN = "CamelAwsIAMUserArn";
+    @Metadata(description = "The ID of the created or retrieved user", javaType = "String")
+    String USER_ID = "CamelAwsIAMUserId";
+    @Metadata(description = "The ARN of the created or retrieved group", javaType = "String")
+    String GROUP_ARN = "CamelAwsIAMGroupArn";
+    @Metadata(description = "The ID of the created or retrieved group", javaType = "String")
+    String GROUP_ID = "CamelAwsIAMGroupId";
 }

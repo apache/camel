@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.box;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "addFileComment", description="Add comment to file", signatures={"com.box.sdk.BoxFile addFileComment(String fileId, String message)"}), @ApiMethod(methodName = "changeCommentMessage", description="Change comment message", signatures={"com.box.sdk.BoxComment changeCommentMessage(String commentId, String message)"}), @ApiMethod(methodName = "deleteComment", description="Delete comment", signatures={"void deleteComment(String commentId)"}), @ApiMethod(methodName = "getCommentInfo", description="Get comment information", signatures={"com.box.sdk.BoxComment$Info getCommentInfo(String commentId)"}), @ApiMethod(methodName = "getFileComments", description="Get a list of any comments on this file", signatures={"java.util.List<com.box.sdk.BoxComment$Info> getFileComments(String fileId)"}), @ApiMethod(methodName = "replyToComment", description="Reply to a comment", signatures={"com.box.sdk.BoxComment replyToComment(String commentId, String message)"})}, aliases = {"addFileComment=add", "changeCommentMessage=updateMessage", "deleteComment=delete", "getCommentInfo=info", "getFileComments=comments", "replyToComment=reply"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxCommentsManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "changeCommentMessage", description="The id of comment to change"), @ApiMethod(methodName = "deleteComment", description="The id of comment to delete"), @ApiMethod(methodName = "getCommentInfo", description="The id of comment"), @ApiMethod(methodName = "replyToComment", description="The id of comment to reply to")})

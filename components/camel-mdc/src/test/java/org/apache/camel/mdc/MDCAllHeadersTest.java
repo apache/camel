@@ -22,18 +22,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MDCAllHeadersTest extends ExchangeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MDCSelectedPropertiesTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -46,10 +43,22 @@ public class MDCAllHeadersTest extends ExchangeTestSupport {
     }
 
     @Test
-    void testRouteSingleRequest() throws IOException {
+    void testRouteSingleRequest() throws IOException, InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:assertMdc");
+        mock.expectedMessageCount(1);
+        mock.whenAnyExchangeReceived(exchange -> {
+            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
+
+            assertEquals("Header1", MDC.get("head1"));
+            assertEquals("Header2", MDC.get("head2"));
+        });
+
         template.request("direct:start", null);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -62,15 +71,7 @@ public class MDCAllHeadersTest extends ExchangeTestSupport {
                         .log("A message")
                         .setHeader("head1", simple("Header1"))
                         .setHeader("head2", simple("Header2"))
-                        .process(exchange -> {
-                            LOG.info("A process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                            assertEquals("Header1", MDC.get("head1"));
-                            assertEquals("Header2", MDC.get("head2"));
-                        })
+                        .to("mock:assertMdc")
                         .to("log:info");
             }
         };

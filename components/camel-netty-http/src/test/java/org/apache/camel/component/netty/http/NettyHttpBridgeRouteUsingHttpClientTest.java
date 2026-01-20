@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTest {
+public class NettyHttpBridgeRouteUsingHttpClientTest extends BaseNettyTestSupport {
 
     final AvailablePortFinder.Port port1 = port;
     @RegisterExtension

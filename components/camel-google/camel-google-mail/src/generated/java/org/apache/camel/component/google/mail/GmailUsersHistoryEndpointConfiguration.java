@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.mail;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "list", description="Lists the history of all changes to the given mailbox", signatures={"com.google.api.services.gmail.Gmail$Users$History$List list(String userId)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class GmailUsersHistoryEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="History types to be returned by the function")})

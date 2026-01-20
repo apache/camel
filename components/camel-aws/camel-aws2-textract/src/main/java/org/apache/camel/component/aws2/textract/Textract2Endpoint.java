@@ -68,7 +68,7 @@ public class Textract2Endpoint extends ScheduledPollEndpoint implements Endpoint
         textractClient
                 = configuration.getTextractClient() != null
                         ? configuration.getTextractClient()
-                        : Textract2ClientFactory.getTextractClient(configuration).getTextractClient();
+                        : Textract2ClientFactory.getTextractClient(configuration);
     }
 
     @Override

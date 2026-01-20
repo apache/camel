@@ -16,24 +16,19 @@
  */
 package org.apache.camel.mdc;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MDCAllPropertiesTest extends ExchangeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MDCSelectedPropertiesTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -46,10 +41,26 @@ public class MDCAllPropertiesTest extends ExchangeTestSupport {
     }
 
     @Test
-    void testRouteSingleRequest() throws IOException {
+    void testRouteSingleRequest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:assertMdc");
+
+        mock.expectedMessageCount(1);
+        mock.whenAnyExchangeReceived(exchange -> {
+            // Assert MDC values
+            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
+            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
+            // Assert exchange properties are correctly set
+            assertEquals("Property1", exchange.getProperty("prop1"));
+            assertEquals("Property2", exchange.getProperty("prop2"));
+        });
+
+        // Trigger the route
         template.request("direct:start", null);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+
+        // Wait for assertions to pass
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -60,17 +71,9 @@ public class MDCAllPropertiesTest extends ExchangeTestSupport {
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
-                        .setProperty("prop1", simple("Property1"))
-                        .setProperty("prop2", simple("Property2"))
-                        .process(exchange -> {
-                            LOG.info("A process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                            assertEquals("Property1", MDC.get("prop1"));
-                            assertEquals("Property2", MDC.get("prop2"));
-                        })
+                        .setProperty("prop1", constant("Property1"))
+                        .setProperty("prop2", constant("Property2"))
+                        .to("mock:assertMdc")
                         .to("log:info");
             }
         };

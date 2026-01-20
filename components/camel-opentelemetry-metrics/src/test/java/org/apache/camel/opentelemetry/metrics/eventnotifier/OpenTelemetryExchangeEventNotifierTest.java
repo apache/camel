@@ -29,7 +29,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTest;
+import org.apache.camel.opentelemetry.metrics.AbstractOpenTelemetryTestSupport;
 import org.apache.camel.support.ExpressionAdapter;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ThrowingRunnable;
@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OpenTelemetryExchangeEventNotifierTest extends AbstractOpenTelemetryTest {
+public class OpenTelemetryExchangeEventNotifierTest extends AbstractOpenTelemetryTestSupport {
 
     private static final Long DELAY = 250L;
     private static final Long TOLERANCE = 100L;

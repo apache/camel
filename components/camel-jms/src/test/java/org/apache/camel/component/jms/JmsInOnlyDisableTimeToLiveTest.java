@@ -31,12 +31,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JmsInOnlyDisableTimeToLiveTest extends AbstractJMSTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JmsInOnlyDisableTimeToLiveTest.class);
 
     @Order(2)
     @RegisterExtension

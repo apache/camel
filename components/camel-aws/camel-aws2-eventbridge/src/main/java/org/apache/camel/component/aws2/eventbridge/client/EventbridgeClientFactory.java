@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.eventbridge.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.eventbridge.EventbridgeConfiguration;
-import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientSessionTokenImpl;
-import org.apache.camel.component.aws2.eventbridge.client.impl.EventbridgeClientStandardImpl;
+import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 
 /**
- * Factory class to return the correct type of AWS Eventbridge client.
+ * Factory class to create AWS EventBridge clients using common configuration.
  */
 public final class EventbridgeClientFactory {
 
@@ -31,20 +29,14 @@ public final class EventbridgeClientFactory {
     }
 
     /**
-     * Return the correct AWS Eventbridge client (based on remote vs local).
+     * Create an EventBridge client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               EventBridgeClient
+     * @param  configuration The EventBridge configuration
+     * @return               Configured EventBridgeClient
      */
-    public static EventbridgeInternalClient getEventbridgeClient(EventbridgeConfiguration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new EventbridgeClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new EventbridgeClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new EventbridgeClientSessionTokenImpl(configuration);
-        } else {
-            return new EventbridgeClientStandardImpl(configuration);
-        }
+    public static EventBridgeClient getEventbridgeClient(EventbridgeConfiguration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                EventBridgeClient::builder);
     }
 }

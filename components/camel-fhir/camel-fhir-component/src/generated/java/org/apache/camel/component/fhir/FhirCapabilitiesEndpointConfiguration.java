@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.fhir;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "ofType", description="Retrieve the conformance statement using the given model type", signatures={"org.hl7.fhir.instance.model.api.IBaseConformance ofType(Class<org.hl7.fhir.instance.model.api.IBaseConformance> type, java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> extraParameters)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class FhirCapabilitiesEndpointConfiguration extends FhirConfiguration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "ofType", description="See ExtraParameters for a full list of parameters that can be passed, may be NULL")})

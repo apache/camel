@@ -26,6 +26,17 @@ public final class MllpConstants {
     public static final String MLLP_LOCAL_ADDRESS = "CamelMllpLocalAddress";
     @Metadata(description = "The remote TCP Address of the Socket", javaType = "String")
     public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
+    @Metadata(description = "The SSL client certificate subject name", label = "consumer", javaType = "String")
+    public static final String MLLP_SSL_CLIENT_CERT_SUBJECT_NAME = "CamelMllpSslClientCertSubjectName";
+    @Metadata(description = "The SSL client certificate issuer name", label = "consumer", javaType = "String")
+    public static final String MLLP_SSL_CLIENT_CERT_ISSUER_NAME = "CamelMllpSslClientCertIssuerName";
+    @Metadata(description = "The SSL client certificate serial number", label = "consumer", javaType = "String")
+    public static final String MLLP_SSL_CLIENT_CERT_SERIAL_NO = "CamelMllpSslClientCertSerialNo";
+    @Metadata(description = "The SSL client certificate not before.", label = "consumer", javaType = "java.util.Date")
+    public static final String MLLP_SSL_CLIENT_CERT_NOT_BEFORE = "CamelMllpSslClientCertNotBefore";
+    @Metadata(description = "The SSL client certificate not after.", label = "consumer", javaType = "java.util.Date")
+    public static final String MLLP_SSL_CLIENT_CERT_NOT_AFTER = "CamelMllpSslClientCertNotAfter";
+
     @Metadata(description = "The HL7 Acknowledgment received in bytes", javaType = "byte[]")
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
     @Metadata(description = "The HL7 Acknowledgment received, converted to a String", javaType = "String")

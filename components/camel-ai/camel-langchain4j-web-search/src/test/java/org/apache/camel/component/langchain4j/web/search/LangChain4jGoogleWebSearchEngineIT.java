@@ -77,7 +77,7 @@ public class LangChain4jGoogleWebSearchEngineIT extends CamelTestSupport {
 
         List<String> listResult = result.getIn().getBody(List.class);
         assertNotNull(listResult, "The list results from the Google Search Engine shouldn't be null.");
-        assertNotEquals(0, listResult.get(0),
+        assertNotEquals(0, listResult.size(),
                 "The list results from the Google Search Engine shouldn't be empty. It's the value of the snippet as a Strng");
     }
 
@@ -85,6 +85,6 @@ public class LangChain4jGoogleWebSearchEngineIT extends CamelTestSupport {
     void advancedRequestTest() {
         List<String> response = template.requestBody(WEB_SEARCH_URI, null, List.class);
         assertNotNull(response, "An Exchange is expected.");
-        assertNotEquals(0, response.get(0), "The list results from the Google Search Engine shouldn't be empty.");
+        assertNotEquals(0, response.size(), "The list results from the Google Search Engine shouldn't be empty.");
     }
 }

@@ -21,6 +21,7 @@ import java.util.Map;
 /**
  * Batch Query part.
  */
+@Deprecated(since = "4.18")
 public class Olingo4BatchQueryRequest extends Olingo4BatchRequest {
 
     private Map<String, String> queryParams;

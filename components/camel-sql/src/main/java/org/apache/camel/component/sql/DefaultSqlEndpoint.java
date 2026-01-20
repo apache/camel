@@ -154,8 +154,8 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint implemen
     }
 
     /**
-     * Whether to detect the network address location of the JMS broker on startup. This information is gathered via
-     * reflection on the ConnectionFactory, and is vendor specific. This option can be used to turn this off.
+     * Whether to detect the network address location of the database on startup. This information is gathered via
+     * reflection on the DataSource, and is vendor specific. This option can be used to turn this off.
      */
     public void setServiceLocationEnabled(boolean serviceLocationEnabled) {
         this.serviceLocationEnabled = serviceLocationEnabled;

@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.util.HomeHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ public class MavenArtifactProviderManualTest {
         // use ~/.m2/repository as one of the remote repos - I needed it to test dummy-component SNAPSHOT
         // fixed only locally (and also when Apache Snapshots repo was down)
         provider.addMavenRepository("local",
-                new File(System.getProperty("user.home"), ".m2/repository").toURI().toURL().toString());
+                new File(HomeHelper.resolveHomeDir(), ".m2/repository").toURI().toURL().toString());
         Set<String> names = provider.addArtifactToCatalog(camelCatalog, "org.apache.camel", "dummy-component",
                 camelCatalog.getCatalogVersion());
         assertTrue(names.contains("dummy"));

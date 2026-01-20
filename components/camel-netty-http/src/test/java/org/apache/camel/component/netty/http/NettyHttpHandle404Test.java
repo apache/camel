@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpHandle404Test extends BaseNettyTest {
+public class NettyHttpHandle404Test extends BaseNettyTestSupport {
 
     public String getProducerUrl() {
         return "netty-http:http://localhost:{{port}}/myserver?user=Camel";
