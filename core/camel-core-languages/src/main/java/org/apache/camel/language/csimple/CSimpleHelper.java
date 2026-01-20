@@ -845,6 +845,34 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static Integer floor(Exchange exchange, Object value) {
+        Double body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(Double.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(Double.class);
+        }
+        if (body != null) {
+            double d = Math.floor(body);
+            return (int) d;
+        }
+        return null;
+    }
+
+    public static Integer ceil(Exchange exchange, Object value) {
+        Double body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(Double.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(Double.class);
+        }
+        if (body != null) {
+            double d = Math.ceil(body);
+            return (int) d;
+        }
+        return null;
+    }
+
     public static String trim(Exchange exchange, Object value) {
         String body;
         if (value != null) {

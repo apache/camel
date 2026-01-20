@@ -290,6 +290,90 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Converts the given expressions to a floating number and return the floor value (uses message body if expression
+     * is null)
+     */
+    public static Expression floorExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Double value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Double.class);
+                } else {
+                    value = exchange.getMessage().getBody(Double.class);
+                }
+                if (value != null) {
+                    double d = Math.floor(value);
+                    return (int) d;
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "floor(" + expression + ")";
+                } else {
+                    return "floor()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Converts the given expressions to a floating number and return the ceil value (uses message body if expression is
+     * null)
+     */
+    public static Expression ceilExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Double value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Double.class);
+                } else {
+                    value = exchange.getMessage().getBody(Double.class);
+                }
+                if (value != null) {
+                    double d = Math.ceil(value);
+                    return (int) d;
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "ceil(" + expression + ")";
+                } else {
+                    return "ceil()";
+                }
+            }
+        };
+    }
+
+    /**
      * Trims the given expressions (uses message body if expression is null)
      */
     public static Expression trimExpression(final String expression) {

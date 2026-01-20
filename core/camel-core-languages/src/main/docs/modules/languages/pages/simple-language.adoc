@@ -126,6 +126,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
+|`abs()` | `long` | Converts the message body to a long number and return the absolute value.
 |`abs(exp)` | `Long` | Converts the message body (or expression) to a long number and return the absolute value.
 |`bean(name.method)` | `Object` | Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language. Specifying a method name, you must use dot as the separator. We also support the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean] component. Camel will by default lookup a bean by the given name. However, if you need to refer to a bean class (such as calling a static method), then you can prefix with the type, such as `bean:type:fqnClassName`.
 |`body._OGNL_` | `Object` | The body invoked using a Camel _OGNL syntax_. For example to invoke the `getCountryCode` on the message body, you can use `${body.getCountryCode()}`. In the message body is a POJO then you can use a short-hand syntax `${body.countryCode}`.
@@ -138,6 +139,8 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`camelId` | `String` | The name of the Camel application (ie `CamelContext`).
 |`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
 |`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
+|`ceil()` | `int` | Converts the message body to a floating number and return the ceil value (rounded up to nearest integer).
+|`ceil(exp)` | `int` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
 |`collate(size)` | `List` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
 |`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator (uses comma by default).
 |`convertTo(type)` | `<T>` | Converts the message body to the specified type.
@@ -157,6 +160,8 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`exchangeProperty.key` | `Object` | Returns the value of the exchange property with the given key. Returns `null` if the property does not exists.
 |`exchangeProperty.key._OGNL_` | `Object` | Same as `exchangeProperty.key` and then invoke Camel _OGNL syntax_.
 |`exchange` | `Exchange` | The current `Exchange` object.
+|`floor()` | `int` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
+|`floor(exp)` | `int` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
 |`fromRouteId` | `String` | Returns the original route id where this `Exchange` was created.
 |`hash(exp,algorithm)` | `String` | Returns a hashed value (string in hex decimal) of the given expression. The algorithm can be `SHA-256` (default) or `SHA3-256`.
 |`header.key` | `Object` | The message header with the given key.

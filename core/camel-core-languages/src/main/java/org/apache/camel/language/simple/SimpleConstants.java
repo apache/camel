@@ -271,6 +271,12 @@ public final class SimpleConstants {
     @Metadata(description = "Converts the message body (or expression) to a long number and return the absolute value.",
               label = "function", javaType = "Long", displayName = "Absolute Number")
     public static final String ABS = "abs(exp)";
+    @Metadata(description = "Converts the message body (or expression) to a floating number and return the ceil value (rounded up to nearest integer).",
+              label = "function", javaType = "Integer", displayName = "Ceil Number")
+    public static final String CEIL = "ceil(exp)";
+    @Metadata(description = "Converts the message body (or expression) to a floating number and return the floor value (rounded down to nearest integer).",
+              label = "function", javaType = "Integer", displayName = "Floor Number")
+    public static final String FLOOR = "floor(exp)";
     @Metadata(description = "All the attachments as a Map<String,DataHandler.", javaType = "java.util.Map", label = "function")
     public static final String ATTACHMENTS = "attachments";
     @Metadata(description = "The number of attachments. Is 0 if there are no attachments.", javaType = "int",
