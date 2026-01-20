@@ -30,5 +30,29 @@ public enum IAM2Operations {
     deleteGroup,
     listGroups,
     addUserToGroup,
-    removeUserFromGroup
+    removeUserFromGroup,
+    // Role operations
+    createRole,
+    deleteRole,
+    getRole,
+    listRoles,
+    // Policy operations
+    createPolicy,
+    deletePolicy,
+    getPolicy,
+    listPolicies,
+    // Policy attachment operations
+    attachUserPolicy,
+    detachUserPolicy,
+    attachGroupPolicy,
+    detachGroupPolicy,
+    attachRolePolicy,
+    detachRolePolicy,
+    // Instance profile operations
+    createInstanceProfile,
+    deleteInstanceProfile,
+    getInstanceProfile,
+    listInstanceProfiles,
+    addRoleToInstanceProfile,
+    removeRoleFromInstanceProfile
 }
