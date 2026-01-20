@@ -875,7 +875,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                Long sum = null;
+                Long answer = null;
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
@@ -883,19 +883,153 @@ public final class SimpleExpressionBuilder {
                     for (Object i : it) {
                         Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
                         if (val != null) {
-                            if (sum == null) {
-                                sum = 0L;
+                            if (answer == null) {
+                                answer = 0L;
                             }
-                            sum += val;
+                            answer += val;
                         }
                     }
                 }
-                return sum;
+                return answer;
             }
 
             @Override
             public String toString() {
                 return "sum(" + Arrays.toString(numbers) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that converts the expressions to number and returns the maximum number
+     */
+    public static Expression maxExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long answer = null;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (answer == null) {
+                                answer = val;
+                            }
+                            answer = Math.max(answer, val);
+                        }
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "max(" + Arrays.toString(numbers) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that converts the expressions to number and returns the minimum number
+     */
+    public static Expression minExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long answer = null;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (answer == null) {
+                                answer = val;
+                            }
+                            answer = Math.min(answer, val);
+                        }
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "min(" + Arrays.toString(numbers) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that converts the expressions to number and returns the average number
+     */
+    public static Expression averageExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long answer = null;
+                int counter = 0;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (answer == null) {
+                                answer = 0L;
+                            }
+                            answer += val;
+                            counter++;
+                        }
+                    }
+                }
+                return answer != null ? answer / counter : null;
+            }
+
+            @Override
+            public String toString() {
+                return "average(" + Arrays.toString(numbers) + ")";
             }
         };
     }

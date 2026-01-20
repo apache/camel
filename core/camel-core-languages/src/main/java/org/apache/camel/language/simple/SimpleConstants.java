@@ -271,6 +271,15 @@ public final class SimpleConstants {
     @Metadata(description = "Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.",
               label = "function", javaType = "long", displayName = "Calculate Sum Number")
     public static final String SUM = "sum(val...)";
+    @Metadata(description = "Returns the maximum number from all the values",
+              label = "function", javaType = "long", displayName = "Maximum Number")
+    public static final String MAX = "max(val...)";
+    @Metadata(description = "Returns the minimum number from all the values",
+              label = "function", javaType = "long", displayName = "Minimum Number")
+    public static final String MIN = "min(val...)";
+    @Metadata(description = "Returns the average number from all the values",
+              label = "function", javaType = "long", displayName = "Average Number")
+    public static final String AVERAGE = "average(val...)";
     @Metadata(description = "Converts the message body (or expression) to a long number and return the absolute value.",
               label = "function", javaType = "Long", displayName = "Absolute Number")
     public static final String ABS = "abs(exp)";

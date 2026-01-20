@@ -527,21 +527,77 @@ public final class CSimpleHelper {
     }
 
     public static Long sum(Exchange exchange, Object... args) {
-        Long sum = null;
+        Long answer = null;
         for (Object o : args) {
             // this may be an object that we can iterate
             Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
             for (Object i : it) {
                 Long val = tryConvertTo(exchange, Long.class, i);
                 if (val != null) {
-                    if (sum == null) {
-                        sum = 0L;
+                    if (answer == null) {
+                        answer = 0L;
                     }
-                    sum += val;
+                    answer += val;
                 }
             }
         }
-        return sum;
+        return answer;
+    }
+
+    public static Long max(Exchange exchange, Object... args) {
+        Long answer = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = val;
+                    }
+                    answer = Math.max(answer, val);
+                }
+            }
+        }
+        return answer;
+    }
+
+    public static Long min(Exchange exchange, Object... args) {
+        Long answer = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = val;
+                    }
+                    answer = Math.min(answer, val);
+                }
+            }
+        }
+        return answer;
+    }
+
+    public static Long average(Exchange exchange, Object... args) {
+        Long answer = null;
+        int counter = 0;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = 0L;
+                    }
+                    answer += val;
+                    counter++;
+                }
+            }
+        }
+        return answer != null ? answer / counter : null;
     }
 
     public static Map<String, Object> map(Exchange exchange, Object... args) {

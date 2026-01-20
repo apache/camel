@@ -128,6 +128,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |Function |Response Type |Description
 |`abs()` | `long` | Converts the message body to a long number and return the absolute value.
 |`abs(exp)` | `Long` | Converts the message body (or expression) to a long number and return the absolute value.
+|`average(val1,val2,...)` | `long` | Returns the average number from all the values.
 |`bean(name.method)` | `Object` | Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language. Specifying a method name, you must use dot as the separator. We also support the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean] component. Camel will by default lookup a bean by the given name. However, if you need to refer to a bean class (such as calling a static method), then you can prefix with the type, such as `bean:type:fqnClassName`.
 |`body._OGNL_` | `Object` | The body invoked using a Camel _OGNL syntax_. For example to invoke the `getCountryCode` on the message body, you can use `${body.getCountryCode()}`. In the message body is a POJO then you can use a short-hand syntax `${body.countryCode}`.
 |`bodyAs(type)` | `<T>` | Converts the body to the given type determined by its classname.
@@ -193,11 +194,13 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`mandatoryBodyAs(type)` | `<T>` | Converts the message body to the given type determined by its classname. If the body is `null` then an exception is thrown.
 |`mandatoryBodyAs(type)._OGNL_` | `Object` | Same as `mandatoryBodyAs(type)` and then invoke Camel _OGNL syntax_.
 |`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
+|`max(val1,val2,...)` | `long` | Returns the maximum number from all the values.
 |`messageAs(type)` | `<T>` | Converts the message to the given type determined by its classname.
 |`messageAs(type)._OGNL_` | `Object` | Same as `messageAs(type)` and then invoke Camel _OGNL syntax_.
 |`messageHistory` | `String` | The message history of the current exchange (how it has been routed). This is similar to the route stack-trace message history the error handler logs in case of an unhandled exception.
 |`messageHistory(false)` | `String` | Same as `messageHistory` but without the exchange details (only includes the route stack-trace). This can be used if you do not want to log sensitive data from the message itself.
 |`messageTimestamp` | `long` | The message timestamp (millis since epoc) that this message originates from. Some systems like JMS, Kafka, AWS have a timestamp on the event/message that Camel received. This method returns the timestamp if a timestamp exists. The message timestamp and exchange created are different. An exchange always has a created timestamp which is the local timestamp when Camel created the exchange. The message timestamp is only available in some Camel components when the consumer is able to extract the timestamp from the source event. If the message has no timestamp, then 0 is returned.
+|`min(val1,val2,...)` | `long` | Returns the minimum number from all the values.
 |`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.
 |`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
 |`null` | `null` | Returns a `null` value.
