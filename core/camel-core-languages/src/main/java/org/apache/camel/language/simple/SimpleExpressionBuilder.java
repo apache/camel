@@ -857,6 +857,50 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * An expression that converts the expressions to number and sum the values
+     */
+    public static Expression sumExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long sum = null;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (sum == null) {
+                                sum = 0L;
+                            }
+                            sum += val;
+                        }
+                    }
+                }
+                return sum;
+            }
+
+            @Override
+            public String toString() {
+                return "sum(" + Arrays.toString(numbers) + ")";
+            }
+        };
+    }
+
+    /**
      * An expression that creates an ArrayList
      */
     public static Expression listExpression(String[] values) {

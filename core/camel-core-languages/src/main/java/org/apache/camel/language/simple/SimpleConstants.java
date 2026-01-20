@@ -268,6 +268,9 @@ public final class SimpleConstants {
     @Metadata(description = "The map function creates a LinkedHashMap with the given set of pairs.",
               label = "function", javaType = "java.util.LinkedHashMap", displayName = "Create Map of pairs")
     public static final String MAP = "map(key1,value1,...)";
+    @Metadata(description = "Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.",
+              label = "function", javaType = "long", displayName = "Calculate Sum Number")
+    public static final String SUM = "sum(val...)";
     @Metadata(description = "Converts the message body (or expression) to a long number and return the absolute value.",
               label = "function", javaType = "Long", displayName = "Absolute Number")
     public static final String ABS = "abs(exp)";

@@ -526,6 +526,24 @@ public final class CSimpleHelper {
         return answer;
     }
 
+    public static Long sum(Exchange exchange, Object... args) {
+        Long sum = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (sum == null) {
+                        sum = 0L;
+                    }
+                    sum += val;
+                }
+            }
+        }
+        return sum;
+    }
+
     public static Map<String, Object> map(Exchange exchange, Object... args) {
         Map<String, Object> answer = new LinkedHashMap<>();
         for (int i = 0, j = 0; args != null && i < args.length - 1; j++) {

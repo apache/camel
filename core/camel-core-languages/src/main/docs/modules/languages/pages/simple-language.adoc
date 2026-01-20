@@ -231,6 +231,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`substringBefore(exp,before)` | `String` | Returns a substring of the expression that comes before. Returns `null` if nothing comes before.
 |`substringBetween(after,before` | `String` | Returns a substring of the message body that are between before and after. Returns `null` if nothing comes between.
 |`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
+|`sum(val1,val2,...)` | `long` | Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.
 |`sys.key` | `String` | *Deprecated* To lookup the JVM system property with the given key.
 |`sysenv.key` | `String` | To lookup the JVM system property with the given key.
 |`threadId` | `String` | Returns the id of the current thread.
