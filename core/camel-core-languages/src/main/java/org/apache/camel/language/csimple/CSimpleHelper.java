@@ -961,6 +961,48 @@ public final class CSimpleHelper {
         return null;
     }
 
+    public static boolean isAlpha(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isLetter(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAlphaNumeric(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isLetterOrDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNumeric(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean isEmpty(Exchange exchange, Object value) {
         // this may be an object that we can iterate
         Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(value);

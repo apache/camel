@@ -420,6 +420,144 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Whether the expression is an alphabetic String
+     */
+    public static Expression isAlphaExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, String.class);
+                } else {
+                    body = exchange.getMessage().getBody(String.class);
+                }
+                if (body == null || body.isBlank()) {
+                    return false;
+                }
+                for (int i = 0; i < body.length(); i++) {
+                    char ch = body.charAt(i);
+                    if (!Character.isLetter(ch)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isAlpha(" + expression + ")";
+                } else {
+                    return "isAlpha()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Whether the expression is a number (integral or floating)
+     */
+    public static Expression isNumericExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, String.class);
+                } else {
+                    body = exchange.getMessage().getBody(String.class);
+                }
+                if (body == null || body.isBlank()) {
+                    return false;
+                }
+                for (int i = 0; i < body.length(); i++) {
+                    char ch = body.charAt(i);
+                    if (!Character.isDigit(ch)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isNumeric(" + expression + ")";
+                } else {
+                    return "isNumeric()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Whether the expression is an alphabetic or numeric String
+     */
+    public static Expression isAlphaNumericExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, String.class);
+                } else {
+                    body = exchange.getMessage().getBody(String.class);
+                }
+                if (body == null || body.isBlank()) {
+                    return false;
+                }
+                for (int i = 0; i < body.length(); i++) {
+                    char ch = body.charAt(i);
+                    if (!Character.isLetterOrDigit(ch)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isAlphaNumeric(" + expression + ")";
+                } else {
+                    return "isAlphaNumeric()";
+                }
+            }
+        };
+    }
+
+    /**
      * Trims the given expressions (uses message body if expression is null)
      */
     public static Expression trimExpression(final String expression) {

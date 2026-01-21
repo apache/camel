@@ -181,6 +181,12 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`iif(predicate,trueExp,falseExp`) | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 |`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
 |`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
+|`isAlpha()` | `boolean` | Whether the message body is numeric value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlpha(exp)` | `boolean` | Whether the expression is numeric value (A..Z). For more advanced checks use the `regex` operator.
+|`isAlphaNumeric()` | `boolean` | Whether the message body is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
+|`isAlphaNumeric(exp)` | `boolean` | Whether the expression is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
+|`isNumeric()` | `boolean` | Whether the message body is numeric value (0..9). For more advanced checks use the `regex` operator.
+|`isNumeric(exp)` | `boolean` | Whether the expression is numeric value (0..9). For more advanced checks use the `regex` operator.
 |`join(separator,prefix,exp` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
 |`jq(exp)` | `Object` | When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
 |`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSon document.
