@@ -1158,7 +1158,7 @@ public class Run extends CamelCommand {
         eq.lazyBean = this.lazyBean;
         eq.applicationProperties = this.property;
 
-        printer().println("Running using Quarkus v" + eq.quarkusVersion + " (preparing and downloading files)");
+        printer().println("Running using Quarkus (preparing and downloading files)");
 
         // run export
         int exit = eq.export();
@@ -1271,7 +1271,7 @@ public class Run extends CamelCommand {
         eq.lazyBean = this.lazyBean;
         eq.applicationProperties = this.property;
 
-        printer().println("Running using Spring Boot v" + eq.springBootVersion + " (preparing and downloading files)");
+        printer().println("Running using Spring Boot (preparing and downloading files)");
 
         // run export
         int exit = eq.export();
