@@ -71,4 +71,12 @@ public interface FtpInfraService extends InfrastructureService {
     default String knownHostsEntry() {
         return null;
     }
+
+    default String endpointUri() {
+        return String.format("ftp:%s:%d/%s", host(), port(), directoryName());
+    }
+    
+    default String connectionBase() {
+        return String.format("ftp:%s:%d", host(), port());
+    }
 }

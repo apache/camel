@@ -32,4 +32,12 @@ public interface MicroprofileLRAInfraService extends InfrastructureService {
     default String getServiceAddress() {
         return String.format("http://%s:%d", host(), port());
     }
+
+    default String endpointUri() {
+        return String.format("http:%s:%d/lra-coordinator/start", host(), port());
+    }
+    
+    default String coordinatorUrl() {
+        return String.format("http://%s:%d/lra-coordinator", host(), port());
+    }
 }

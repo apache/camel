@@ -24,9 +24,38 @@ public interface SmbInfraService extends InfrastructureService {
 
     String shareName();
 
+    @Deprecated
     String userName();
 
     String password();
 
     String smbFile(String file);
+
+    default String hostname() {
+        String addr = address();
+        if (addr != null && addr.contains(":")) {
+            return addr.substring(0, addr.indexOf(':'));
+        }
+        return addr;
+    }
+
+    default int port() {
+        String addr = address();
+        if (addr != null && addr.contains(":")) {
+            return Integer.parseInt(addr.substring(addr.indexOf(':') + 1));
+        }
+        return 445; // default SMB port
+    }
+
+    default String username() {
+        return userName();
+    }
+
+    default String endpointUri() {
+        return String.format("smb:%s:%d/%s", hostname(), port(), shareName());
+    }
+
+    default String connectionBase() {
+        return String.format("smb:%s:%d", hostname(), port());
+    }
 }

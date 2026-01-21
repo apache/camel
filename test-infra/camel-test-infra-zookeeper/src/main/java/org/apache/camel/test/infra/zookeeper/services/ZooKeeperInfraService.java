@@ -22,5 +22,18 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  * Test infra service for ZooKeeper
  */
 public interface ZooKeeperInfraService extends InfrastructureService {
+    @Deprecated
     String getConnectionString();
+
+    default String serverUrls() {
+        return getConnectionString();
+    }
+
+    default String endpointUri() {
+        return String.format("zookeeper:%s/camel", serverUrls());
+    }
+
+    default String connectionBase() {
+        return String.format("zookeeper:%s", serverUrls());
+    }
 }

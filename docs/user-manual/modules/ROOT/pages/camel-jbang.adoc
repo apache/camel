@@ -1563,16 +1563,44 @@ $ camel infra run nats
 $ camel cmd send --body=file:payload.json --infra=nats
 ----
 
-The command automatically discovers the running NATS service, reads its connection details from the JSON file (e.g., `~/.camel/infra-nats-{pid}.json`), and constructs the appropriate endpoint URI with the server information.
+The command automatically discovers the running infrastructure service, reads its connection details from the JSON file (stored in `~/.camel/`), and constructs the appropriate endpoint URI with the server information using the Camel Catalog.
 
-You can also combine the `--infra` option with a specific endpoint:
+===== Specifying a custom endpoint
+
+If you don't specify an `--endpoint`, the command automatically creates a default endpoint based on the infrastructure service type (e.g., `kafka:default`, `nats:default`).
+
+You can also combine the `--infra` option with a specific endpoint to customize the destination:
 
 [source,bash]
 ----
-$ camel cmd send --endpoint='nats:subject:test' --body=file:payload.json --infra=nats
+$ camel cmd send --endpoint='kafka:myTopic' --body=file:payload.json --infra=kafka
+$ camel cmd send --endpoint='nats:mySubject' --body=file:payload.json --infra=nats
 ----
 
-This allows you to send messages to infrastructure services without needing to know or specify the server addresses manually.
+NOTE: If your endpoint already contains query parameters (e.g., `kafka:myTopic?groupId=myGroup`), the connection details from the infrastructure service will not override them.
+
+===== Automatic credential handling
+
+For services that support authentication (such as artemis, ftp, sftp), the command automatically appends credentials from the connection details to the endpoint URI if the Camel component supports them:
+
+[source,bash]
+----
+$ camel infra run artemis
+$ camel cmd send --endpoint='jms:myQueue' --body='Hello' --infra=artemis
+----
+
+The resulting endpoint will automatically include authentication parameters like `username` and `password=RAW(...)`.
+
+===== Multiple service detection
+
+If multiple instances of the same infrastructure service are running, the command will display an error and ask you to be more specific:
+
+[source,bash]
+----
+Multiple running infrastructure services found for: kafka. Found 2 services.
+----
+
+In this case, stop the unwanted service or specify the exact PID.
 
 ==== Poll messages via Camel
 

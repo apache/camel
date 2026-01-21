@@ -25,4 +25,12 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 public interface HazelcastInfraService extends InfrastructureService {
 
     Config createConfiguration(String name, int port, String instanceName, String componentName);
+
+    default String endpointUri() {
+        return "hazelcast-map:default";
+    }
+
+    default String hazelcastInstanceName() {
+        return "camel-hazelcast";
+    }
 }

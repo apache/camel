@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -133,6 +134,13 @@ public class CamelSendAction extends ActionBaseCommand {
     private MessageTableHelper tableHelper;
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
+
+    // Common Camel framework properties that should not be auto-set from infra connection details.
+    // These are component lifecycle/behavior properties, not infrastructure connection properties.
+    private static final Set<String> EXCLUDED_COMPONENT_OPTIONS = Set.of(
+            "bridgeErrorHandler",
+            "lazyStartProducer",
+            "autowiredEnabled");
 
     public CamelSendAction(CamelJBangMain main) {
         super(main);
@@ -427,9 +435,39 @@ public class CamelSendAction extends ActionBaseCommand {
             return 1;
         }
 
+        String scheme = extractScheme(endpoint, infraService);
+
         this.endpoint = updateEndpointWithConnectionDetails(endpoint, infraService, connectionDetails);
 
+        Map<String, String> componentProps = buildComponentProperties(scheme, connectionDetails);
+
+        Map<String, String> beanProps = buildBeanProperties(connectionDetails);
+
+        int additionalCount = componentProps.size() + beanProps.size();
+        if (additionalCount > 0) {
+            int existingCount = (property != null) ? property.length : 0;
+            String[] merged = new String[existingCount + additionalCount];
+            if (property != null) {
+                System.arraycopy(property, 0, merged, 0, existingCount);
+            }
+            int i = existingCount;
+            for (Map.Entry<String, String> compEntry : componentProps.entrySet()) {
+                merged[i++] = "camel.component." + scheme + "." + compEntry.getKey() + "=" + compEntry.getValue();
+            }
+            for (Map.Entry<String, String> beanEntry : beanProps.entrySet()) {
+                merged[i++] = beanEntry.getKey() + "=" + beanEntry.getValue();
+            }
+            property = merged;
+        }
+
         return doCallLocal();
+    }
+
+    private String extractScheme(String endpoint, String infraService) {
+        if (endpoint != null && endpoint.contains(":")) {
+            return StringHelper.before(endpoint, ":");
+        }
+        return infraService;
     }
 
     private Map<Long, Path> findInfraPids(String serviceName) throws Exception {
@@ -487,15 +525,22 @@ public class CamelSendAction extends ActionBaseCommand {
             return originalEndpoint;
         }
 
-        String scheme = StringHelper.before(originalEndpoint, ":");
-        String path = StringHelper.after(originalEndpoint, ":");
+        String scheme;
+        String path;
+        if (originalEndpoint.contains(":")) {
+            scheme = StringHelper.before(originalEndpoint, ":");
+            path = StringHelper.after(originalEndpoint, ":");
+        } else {
+            scheme = originalEndpoint;
+            path = null;
+        }
 
-        String pathBasedEndpoint = buildPathBasedEndpoint(infraService, scheme, path, connectionDetails);
+        String pathBasedEndpoint = buildPathBasedEndpoint(scheme, path, connectionDetails);
         if (pathBasedEndpoint != null) {
             return pathBasedEndpoint;
         }
 
-        Map<String, String> properties = buildPropertiesMap(infraService, connectionDetails);
+        Map<String, String> properties = buildPropertiesMap(scheme, connectionDetails);
 
         try {
             String uri = catalog.asEndpointUri(scheme, properties, true);
@@ -518,43 +563,14 @@ public class CamelSendAction extends ActionBaseCommand {
         return buildEndpointManually(originalEndpoint, properties);
     }
 
-    // Build properties map from infrastructure connection details.
-    private Map<String, String> buildPropertiesMap(String infraService, JsonObject connectionDetails) {
+    private Map<String, String> buildBeanProperties(JsonObject connectionDetails) {
         Map<String, String> properties = new LinkedHashMap<>();
 
-        addServiceSpecificProperties(infraService, connectionDetails, properties);
-
-        for (Map.Entry<String, Object> entry : connectionDetails.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-            if (key.startsWith("get") || key.startsWith("is")) {
-                continue;
-            }
-
-            if (value == null || value instanceof Map) {
-                continue;
-            }
-
-            if (properties.containsKey(key)) {
-                continue;
-            }
-
-            properties.put(key, String.valueOf(value));
-        }
-
-        if (properties.isEmpty()) {
-            for (Map.Entry<String, Object> entry : connectionDetails.entrySet()) {
-                String key = entry.getKey();
-                Object value = entry.getValue();
-
-                if (value == null || value instanceof Map) {
-                    continue;
-                }
-
-                String mappedName = mapDeprecatedPropertyName(key);
-                if (mappedName != null) {
-                    properties.put(mappedName, String.valueOf(value));
+        Object beanProps = connectionDetails.get("beanProperties");
+        if (beanProps instanceof Map<?, ?> beanMap) {
+            for (Map.Entry<?, ?> entry : beanMap.entrySet()) {
+                if (entry.getKey() != null && entry.getValue() != null) {
+                    properties.put(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
                 }
             }
         }
@@ -562,159 +578,94 @@ public class CamelSendAction extends ActionBaseCommand {
         return properties;
     }
 
-    // Add service-specific property mappings that require special handling.
-    private void addServiceSpecificProperties(
-            String infraService, JsonObject connectionDetails, Map<String, String> properties) {
-        switch (infraService) {
-            case "mosquitto" -> {
-                Object port = connectionDetails.get("getPort");
-                if (port != null) {
-                    properties.put("brokerUrl", "tcp://localhost:" + port);
-                }
-            }
-            case "hive-mq" -> {
-                Object hostAddr = connectionDetails.get("getMqttHostAddress");
-                if (hostAddr != null) {
-                    properties.put("brokerUrl", String.valueOf(hostAddr));
-                } else {
-                    Object host = connectionDetails.get("getMqttHost");
-                    Object port = connectionDetails.get("getMqttPort");
-                    if (host != null && port != null) {
-                        properties.put("brokerUrl", "tcp://" + host + ":" + port);
-                    }
-                }
-            }
-            case "artemis" -> {
-                Object uri = connectionDetails.get("remoteURI");
-                if (uri == null) {
-                    uri = connectionDetails.get("serviceAddress");
-                }
-                if (uri != null) {
-                    properties.put("brokerURL", String.valueOf(uri));
-                }
-                Object user = connectionDetails.get("userName");
-                if (user != null) {
-                    properties.put("username", String.valueOf(user));
-                }
-                Object pass = connectionDetails.get("password");
-                if (pass != null) {
-                    properties.put("password", String.valueOf(pass));
-                }
-            }
-            case "rabbitmq" -> {
-                Object uri = connectionDetails.get("uri");
-                if (uri != null) {
-                    properties.put("addresses", String.valueOf(uri));
-                }
-            }
-            case "couchbase" -> {
-                Object connStr = connectionDetails.get("getConnectionString");
-                if (connStr != null) {
-                    properties.put("connectionString", String.valueOf(connStr));
-                }
-            }
+    private Map<String, String> buildComponentProperties(String scheme, JsonObject connectionDetails) {
+        Map<String, String> properties = new LinkedHashMap<>();
 
-            case "aws" -> {
-                Object host = connectionDetails.get("amazonAWSHost");
-                if (host != null) {
-                    properties.put("overrideEndpoint", "true");
-                    properties.put("uriEndpointOverride", "http://" + host);
-                }
-                Object region = connectionDetails.get("region");
-                if (region != null) {
-                    properties.put("region", String.valueOf(region));
-                }
-                Object accessKey = connectionDetails.get("accessKey");
-                if (accessKey != null) {
-                    properties.put("accessKey", String.valueOf(accessKey));
-                }
-                Object secretKey = connectionDetails.get("secretKey");
-                if (secretKey != null) {
-                    properties.put("secretKey", String.valueOf(secretKey));
-                }
-            }
-            case "azure" -> {
-                Object accountName = connectionDetails.get("accountName");
-                if (accountName != null) {
-                    properties.put("accountName", String.valueOf(accountName));
-                }
-                Object accessKey = connectionDetails.get("accessKey");
-                if (accessKey != null) {
-                    properties.put("accessKey", String.valueOf(accessKey));
-                }
-                Object hostProp = connectionDetails.get("host");
-                Object portProp = connectionDetails.get("port");
-                if (hostProp != null && portProp != null) {
-                    properties.put("serviceEndpoint", "http://" + hostProp + ":" + portProp);
-                }
-            }
-            case "google" -> {
-                Object addr = connectionDetails.get("getServiceAddress");
-                if (addr != null) {
-                    properties.put("endpoint", String.valueOf(addr));
-                }
-            }
-            default -> {
-                // No special handling needed
-            }
+        var componentModel = catalog.componentModel(scheme);
+        if (componentModel != null) {
+            componentModel.getComponentOptions().stream()
+                    .map(opt -> opt.getName())
+                    .filter(name -> isValidConnectionProperty(name, connectionDetails))
+                    .filter(name -> !EXCLUDED_COMPONENT_OPTIONS.contains(name))
+                    .forEach(name -> properties.put(name, String.valueOf(connectionDetails.get(name))));
         }
+
+        return properties;
     }
 
-    private String mapDeprecatedPropertyName(String propertyName) {
-        return switch (propertyName) {
-            case "getServiceAddress" -> "servers";           // NATS
-            case "getBootstrapServers" -> "brokers";         // Kafka
-            case "getPulsarBrokerUrl" -> "serviceUrl";       // Pulsar
-            case "getMqttHostAddress" -> "brokerUrl";        // HiveMQ
-            case "getReplicaSetUrl", "getConnectionAddress" -> "hosts"; // MongoDB
-            case "getHttpHostAddress" -> "hostAddresses";    // Elasticsearch
-            case "getConnectionString" -> "servers";         // ZooKeeper
-            case "getKeycloakServerUrl" -> "serverUrl";      // Keycloak
-            case "getKeycloakRealm" -> "realm";              // Keycloak
-            case "getWeaviateEndpointUrl" -> "endpointUrl";  // Weaviate
-            case "getWeaviateHost" -> "host";                // Weaviate
-            case "getWeaviatePort" -> "port";                // Weaviate
-            case "getHost" -> "ldapServerUrl";               // OpenLDAP
-            case "getPort" -> "port";                        // Generic
-            case "getServiceBaseURL" -> "serverUrl";         // FHIR
-            default -> null;
-        };
+    private Map<String, String> buildPropertiesMap(String scheme, JsonObject connectionDetails) {
+        Map<String, String> properties = new LinkedHashMap<>();
+
+        var componentModel = catalog.componentModel(scheme);
+        if (componentModel != null) {
+            componentModel.getEndpointOptions().stream()
+                    .map(opt -> opt.getName())
+                    .filter(name -> isValidConnectionProperty(name, connectionDetails))
+                    .forEach(name -> properties.put(name, String.valueOf(connectionDetails.get(name))));
+        }
+
+        return properties;
     }
 
-    private String buildPathBasedEndpoint(
-            String infraService, String scheme, String path, JsonObject connectionDetails) {
-        return switch (infraService) {
-            case "redis" -> {
-                Object host = connectionDetails.get("host");
-                Object port = connectionDetails.get("port");
-                if (host != null && port != null) {
-                    yield scheme + ":" + host + ":" + port;
-                } else if (host != null) {
-                    yield scheme + ":" + host;
+    private boolean isValidConnectionProperty(String name, JsonObject connectionDetails) {
+        if (!connectionDetails.containsKey(name)) {
+            return false;
+        }
+        Object value = connectionDetails.get(name);
+        return value != null && !(value instanceof Map);
+    }
+
+    private String buildPathBasedEndpoint(String scheme, String path, JsonObject connectionDetails) {
+
+        Object endpointUri = connectionDetails.get("endpointUri");
+        if (endpointUri != null) {
+            String uri = String.valueOf(endpointUri);
+
+            if (path != null && !path.isEmpty()) {
+                Object connectionBase = connectionDetails.get("connectionBase");
+                if (connectionBase != null) {
+                    uri = connectionBase + (path.startsWith("/") ? path : "/" + path);
                 }
-                yield null;
             }
-            case "xmpp" -> {
-                Object host = connectionDetails.get("host");
-                Object port = connectionDetails.get("port");
-                String participant = path.contains("/") ? StringHelper.after(path, "/") : "room";
-                if (host != null && port != null) {
-                    yield scheme + ":" + host + ":" + port + "/" + participant;
-                } else if (host != null) {
-                    yield scheme + ":" + host + "/" + participant;
-                }
-                yield null;
-            }
-            case "chat-script" -> {
-                Object serviceAddress = connectionDetails.get("serviceAddress");
-                String botName = path.contains("/") ? StringHelper.after(path, "/") : "Harry";
-                if (serviceAddress != null) {
-                    yield scheme + ":" + serviceAddress + "/" + botName;
-                }
-                yield null;
-            }
-            default -> null;
-        };
+
+            uri = appendCredentialsIfSupported(scheme, uri, connectionDetails);
+            return uri;
+        }
+
+        return null;
+    }
+
+    private String appendCredentialsIfSupported(String scheme, String uri, JsonObject connectionDetails) {
+        Object username = connectionDetails.get("username");
+        Object password = connectionDetails.get("password");
+
+        if (username == null && password == null) {
+            return uri;
+        }
+
+        var componentModel = catalog.componentModel(scheme);
+        if (componentModel == null) {
+            return uri;
+        }
+
+        var endpointOptions = componentModel.getEndpointOptions();
+        boolean hasUsernameOption = endpointOptions.stream().anyMatch(opt -> "username".equals(opt.getName()));
+        boolean hasPasswordOption = endpointOptions.stream().anyMatch(opt -> "password".equals(opt.getName()));
+
+        if (!hasUsernameOption && !hasPasswordOption) {
+            return uri;
+        }
+
+        StringBuilder sb = new StringBuilder(uri);
+        String sep = uri.contains("?") ? "&" : "?";
+        if (username != null && hasUsernameOption) {
+            sb.append(sep).append("username=").append(username);
+            sep = "&";
+        }
+        if (password != null && hasPasswordOption) {
+            sb.append(sep).append("password=RAW(").append(password).append(")");
+        }
+        return sb.toString();
     }
 
     private String buildEndpointManually(String endpoint, Map<String, String> properties) {

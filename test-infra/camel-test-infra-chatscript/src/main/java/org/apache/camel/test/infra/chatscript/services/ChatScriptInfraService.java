@@ -24,4 +24,16 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 public interface ChatScriptInfraService extends InfrastructureService {
 
     String serviceAddress();
+
+    default String botName() {
+        return "Harry";
+    }
+
+    default String endpointUri() {
+        return String.format("chatscript:%s/%s", serviceAddress(), botName());
+    }
+
+    default String connectionBase() {
+        return String.format("chatscript:%s", serviceAddress());
+    }
 }

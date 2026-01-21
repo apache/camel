@@ -35,4 +35,28 @@ public interface CassandraInfraService extends InfrastructureService {
     String hosts();
 
     int port();
+
+    default String keyspace() {
+        return "camel";
+    }
+
+    default String datacenter() {
+        return "datacenter1";
+    }
+
+    default String username() {
+        return "cassandra";
+    }
+
+    default String password() {
+        return "cassandra";
+    }
+
+    default String endpointUri() {
+        return String.format("cql:%s:%d/%s", hosts(), port(), keyspace());
+    }
+
+    default String connectionBase() {
+        return String.format("cql:%s:%d", hosts(), port());
+    }
 }

@@ -54,4 +54,12 @@ public interface CouchbaseInfraService extends InfrastructureService {
     String viewName();
 
     String designDocumentName();
+
+    default String endpointUri() {
+        return String.format("couchbase:%s://%s:%d/%s", protocol(), hostname(), port(), bucket());
+    }
+
+    default String connectionBase() {
+        return String.format("couchbase:%s://%s:%d", protocol(), hostname(), port());
+    }
 }

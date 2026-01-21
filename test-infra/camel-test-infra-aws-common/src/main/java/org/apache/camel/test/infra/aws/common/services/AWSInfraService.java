@@ -34,4 +34,12 @@ public interface AWSInfraService extends InfrastructureService {
     String accessKey();
 
     String secretKey();
+
+    default String uriEndpointOverride() {
+        return String.format("%s://%s", protocol(), amazonAWSHost());
+    }
+    
+    default boolean overrideEndpoint() {
+        return true;
+    }
 }

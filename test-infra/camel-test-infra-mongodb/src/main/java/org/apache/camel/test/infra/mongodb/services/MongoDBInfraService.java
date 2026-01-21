@@ -26,6 +26,7 @@ public interface MongoDBInfraService extends InfrastructureService {
      *
      * @return the replica set URL
      */
+    @Deprecated
     String getReplicaSetUrl();
 
     /**
@@ -33,5 +34,10 @@ public interface MongoDBInfraService extends InfrastructureService {
      *
      * @return the connection address
      */
+    @Deprecated
     String getConnectionAddress();
+
+    default String hosts() {
+        return getConnectionAddress();
+    }
 }
