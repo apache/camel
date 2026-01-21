@@ -132,7 +132,7 @@ public abstract class BaseService {
                     logger().error("Error while stopping service after it failed to start: {}. This exception is ignored",
                             this, e);
                 }
-                logger().trace("Error while starting service: {}", this, e);
+                logger().error("Error while starting service: {}", this, e);
                 fail(e);
             }
         } finally {
