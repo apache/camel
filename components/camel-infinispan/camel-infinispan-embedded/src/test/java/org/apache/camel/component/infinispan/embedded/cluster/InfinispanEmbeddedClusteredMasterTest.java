@@ -48,11 +48,7 @@ public class InfinispanEmbeddedClusteredMasterTest extends AbstractInfinispanEmb
                 }
             });
 
-            // Start the context after some random time so the startup order
-            // changes for each test.
-            Thread.sleep(ThreadLocalRandom.current().nextInt(500));
             context.start();
-
             contextLatch.await();
         }
     }

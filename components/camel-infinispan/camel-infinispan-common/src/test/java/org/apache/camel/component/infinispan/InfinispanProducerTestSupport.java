@@ -336,7 +336,9 @@ public interface InfinispanProducerTestSupport {
                 .get(5, TimeUnit.SECONDS);
 
         assertEquals(VALUE_ONE, getCache().get(KEY_ONE));
-        Thread.sleep(MAX_IDLE_TIME * 2);
+        Awaitility.await()
+                .pollDelay(MAX_IDLE_TIME * 2, TimeUnit.MILLISECONDS)
+                .until(() -> !getCache().containsKey(KEY_ONE));
         assertFalse(getCache().containsKey(KEY_ONE));
     }
 

@@ -29,6 +29,7 @@ import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.apache.commons.lang3.SystemUtils;
+import org.awaitility.Awaitility;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.exceptions.RemoteIllegalLifecycleStateException;
@@ -143,25 +144,21 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
                 component -> component.getConfiguration().setCacheContainer(cacheContainer));
     }
 
-    // We need to make a polling based call until the cache manager is ready. The cache container is started
-    // asynchronously and we don't know without this workaround when it is ready to serve.
-    public static void waitForCacheReady(RemoteCacheManager manager, String cacheName, int timeoutMs)
-            throws InterruptedException {
-        int interval = 250;
-        int retries = timeoutMs / interval;
-        while (retries-- > 0) {
-            try {
-                manager.administration()
-                        .getOrCreateCache(
-                                cacheName,
-                                new org.infinispan.configuration.cache.ConfigurationBuilder()
-                                        .clustering()
-                                        .cacheMode(CacheMode.DIST_SYNC).build());
-                return;
-            } catch (RemoteIllegalLifecycleStateException e) {
-                Thread.sleep(interval);
-            }
-        }
-        throw new IllegalStateException("Cache not ready after " + timeoutMs + "ms");
+    public static void waitForCacheReady(RemoteCacheManager manager, String cacheName, int timeoutMs) {
+        Awaitility.await()
+                .atMost(Duration.ofMillis(timeoutMs))
+                .pollInterval(Duration.ofMillis(250))
+                .ignoreExceptionsMatching(e -> e instanceof RemoteIllegalLifecycleStateException)
+                .until(() -> {
+                    // Attempt to create/get the cache
+                    manager.administration()
+                            .getOrCreateCache(
+                                    cacheName,
+                                    new org.infinispan.configuration.cache.ConfigurationBuilder()
+                                            .clustering()
+                                            .cacheMode(CacheMode.DIST_SYNC)
+                                            .build());
+                    return true; // success means cache is ready
+                });
     }
 }
