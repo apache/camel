@@ -49,8 +49,16 @@
         <dependencies>
             <dependency>
                 <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>${opentelemetry-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Required to support certain features still in alpha stage. May not be entirely ready for prod support. -->
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
                 <artifactId>opentelemetry-bom-alpha</artifactId>
-                <version>1.57.0-alpha</version>
+                <version>${opentelemetry-alpha-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
