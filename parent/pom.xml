@@ -218,7 +218,7 @@
         <google-cloud-storage-version>2.62.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.83.0</google-cloud-aiplatform-version>
         <google-genai-version>1.35.0</google-genai-version>
-        <graaljs-version>25.0.1</graaljs-version>
+        <graaljs-version>25.0.2</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
         <greenmail-version>2.1.8</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
