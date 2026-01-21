@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterView;
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
@@ -29,7 +30,6 @@ import org.infinispan.client.hotrod.configuration.Configuration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createCache;
 import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -45,7 +45,7 @@ public class InfinispanRemoteClusteredViewIT {
         Configuration configuration = createConfiguration(service);
 
         try (RemoteCacheManager cacheContainer = new RemoteCacheManager(configuration)) {
-            createCache(cacheContainer, viewName);
+            InfinispanRemoteTestSupport.waitForCacheReady(cacheContainer, viewName, 5000);
 
             InfinispanRemoteClusterService clusterService = new InfinispanRemoteClusterService();
             clusterService.setCacheContainer(cacheContainer);
