@@ -1761,6 +1761,8 @@ public final class SimpleExpressionBuilder {
                     return "";
                 } else if ("list".equalsIgnoreCase(type)) {
                     return new ArrayList<>();
+                } else if ("set".equalsIgnoreCase(type)) {
+                    return new LinkedHashSet<>();
                 }
                 throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
             }

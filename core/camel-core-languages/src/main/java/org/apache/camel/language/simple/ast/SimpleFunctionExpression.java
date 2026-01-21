@@ -1299,6 +1299,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return SimpleExpressionBuilder.newEmptyExpression(value);
         }
+        // newEmpty function
+        remainder = ifStartsWithReturnRemainder("newEmpty(", function);
+        if (remainder != null) {
+            String value = StringHelper.before(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${newEmpty(<type>)} but was: " + function, token.getIndex());
+            }
+            return SimpleExpressionBuilder.newEmptyExpression(value);
+        }
         // iif function
         remainder = ifStartsWithReturnRemainder("iif(", function);
         if (remainder != null) {
@@ -3111,7 +3121,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         "Valid syntax: ${empty(<type>)} but was: " + function, token.getIndex());
             }
             value = StringQuoteHelper.doubleQuote(value);
-            return "empty(exchange, " + value + ")";
+            return "newEmpty(exchange, " + value + ")";
+        }
+        // newEmpty
+        remainder = ifStartsWithReturnRemainder("newEmpty(", function);
+        if (remainder != null) {
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${newEmpty(<type>)} but was: " + function, token.getIndex());
+            }
+            value = StringQuoteHelper.doubleQuote(value);
+            return "newEmpty(exchange, " + value + ")";
         }
 
         // list function

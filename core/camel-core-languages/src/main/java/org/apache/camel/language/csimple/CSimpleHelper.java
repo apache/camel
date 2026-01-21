@@ -509,15 +509,17 @@ public final class CSimpleHelper {
         }
     }
 
-    public static Object empty(Exchange exchange, String type) {
+    public static Object newEmpty(Exchange exchange, String type) {
         if ("map".equalsIgnoreCase(type)) {
             return new LinkedHashMap<>();
         } else if ("string".equalsIgnoreCase(type)) {
             return "";
         } else if ("list".equalsIgnoreCase(type)) {
             return new ArrayList<>();
+        } else if ("set".equalsIgnoreCase(type)) {
+            return new LinkedHashSet<>();
         }
-        throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
+        throw new IllegalArgumentException("function newEmpty(%s) has unknown type".formatted(type));
     }
 
     public static List<Object> list(Exchange exchange, Object... args) {

@@ -119,7 +119,8 @@ public final class SimpleConstants {
               label = "function", javaType = "long", displayName = "Distinct Values")
     public static final String DISTINCT = "distinct(val...)";
 
-    @Metadata(description = "Creates a new empty object (decided by type). Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.LinkedHashMap`.",
+    @Deprecated
+    @Metadata(description = "Creates a new empty object (decided by type). Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.LinkedHashMap`. Use `set` to create an empty `java.util.LinkedHashSet`.",
               label = "function", javaType = "Object", displayName = "Create Empty Object")
     public static final String EMPTY = "empty(type)";
 
@@ -246,6 +247,10 @@ public final class SimpleConstants {
     @Metadata(description = "Returns the minimum number from all the values", label = "function", javaType = "long",
               displayName = "Minimum Number")
     public static final String MIN = "min(val...)";
+
+    @Metadata(description = "Creates a new empty object (decided by type). Use `string` to create an empty String. Use `list` to create an empty `java.util.ArrayList`. Use `map` to create an empty `java.util.LinkedHashMap`. Use `set` to create an empty `java.util.LinkedHashSet`.",
+              label = "function", javaType = "Object", displayName = "Create Empty Object")
+    public static final String NEW_EMPTY = "newEmpty(type)";
 
     @Metadata(description = "Represents a null value", label = "function", javaType = "Object")
     public static final String NULL = "null";
