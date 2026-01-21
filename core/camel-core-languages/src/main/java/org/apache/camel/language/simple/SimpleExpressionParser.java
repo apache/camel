@@ -65,15 +65,18 @@ public class SimpleExpressionParser extends BaseSimpleParser {
 
     public Expression parseExpression() {
         try {
-            // parse init block
-            SimpleInitBlockParser initParser
-                    = new SimpleInitBlockParser(camelContext, expression, allowEscape, cacheExpression);
-            Expression init = initParser.parseExpression();
-            if (init != null && SimpleTokenizer.hasInitBlock(originalExpression)) {
-                this.expression = StringHelper.after(originalExpression, SimpleTokenizer.INIT_END);
-                // use $$key as local variable
-                for (String key : initParser.getInitKeys()) {
-                    this.expression = this.expression.replace("$$" + key, "${variable." + key + "}");
+            Expression init = null;
+            // are there init block then parse this part only, and change the expression to clip out the init block afterwards
+            if (SimpleTokenizer.hasInitBlock(expression)) {
+                SimpleInitBlockParser initParser
+                        = new SimpleInitBlockParser(camelContext, expression, allowEscape, cacheExpression);
+                init = initParser.parseExpression();
+                if (init != null) {
+                    this.expression = StringHelper.after(expression, SimpleTokenizer.INIT_END);
+                    // use $$key as local variable in the expression afterwards
+                    for (String key : initParser.getInitKeys()) {
+                        this.expression = this.expression.replace("$$" + key, "${variable." + key + "}");
+                    }
                 }
             }
 

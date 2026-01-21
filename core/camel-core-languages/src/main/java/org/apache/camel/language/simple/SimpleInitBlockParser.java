@@ -36,7 +36,8 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
 
     public SimpleInitBlockParser(CamelContext camelContext, String expression, boolean allowEscape,
                                  Map<String, Expression> cacheExpression) {
-        super(camelContext, expression, allowEscape, cacheExpression);
+        super(camelContext, StringHelper.between(expression, SimpleTokenizer.INIT_START, SimpleTokenizer.INIT_END), allowEscape,
+              cacheExpression);
     }
 
     public Set<String> getInitKeys() {
@@ -56,13 +57,6 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     }
 
     protected List<SimpleNode> parseInitTokens() {
-        // prepare the expression to use for parsing
-        if (SimpleTokenizer.hasInitBlock(originalExpression)) {
-            this.expression = StringHelper.between(originalExpression, SimpleTokenizer.INIT_START, SimpleTokenizer.INIT_END);
-        } else {
-            this.expression = "";
-        }
-
         clear();
         initKeys.clear();
 

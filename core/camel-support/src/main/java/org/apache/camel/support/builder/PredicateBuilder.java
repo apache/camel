@@ -42,9 +42,22 @@ public class PredicateBuilder {
      * Executes the expression and always return true
      */
     public static Predicate alwaysTrue(final Expression expression) {
-        return exchange -> {
-            expression.evaluate(exchange, Object.class);
-            return true;
+        return new Predicate() {
+            @Override
+            public void init(CamelContext context) {
+                expression.init(context);
+            }
+
+            @Override
+            public boolean matches(Exchange exchange) {
+                expression.evaluate(exchange, Object.class);
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return expression.toString();
+            }
         };
     }
 

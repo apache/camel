@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.LanguageTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SimpleInitBlockTest extends LanguageTestSupport {
@@ -43,12 +44,32 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
             $$sum > 200 && $$sku != 999
             """;
 
+    private static final String INIT3 = """
+            $init{
+              // this is a java like comment
+              $$sum := ${sum(${header.lines},100)}
+
+              $$sku := ${iif(${body} contains 'Camel',123,999)}
+              ## and here is also a yaml like comment
+            }init$
+            """;
+
     @Test
     public void testInitBlockExpression() throws Exception {
         exchange.getMessage().setBody("Hello Camel");
         exchange.getMessage().setHeader("lines", "75,33");
 
         assertExpression(exchange, INIT, "\norderId=123,total=208\n");
+    }
+
+    @Test
+    public void testInitBlockOnlyExpression() throws Exception {
+        exchange.getMessage().setBody("Hello Camel");
+        exchange.getMessage().setHeader("lines", "75,33");
+
+        assertExpression(exchange, INIT3, "\n");
+        Assertions.assertEquals("123", exchange.getVariable("sku"));
+        Assertions.assertEquals(208L, exchange.getVariable("sum"));
     }
 
     @Test
