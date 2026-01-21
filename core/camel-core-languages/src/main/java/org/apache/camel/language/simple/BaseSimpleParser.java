@@ -54,9 +54,12 @@ public abstract class BaseSimpleParser {
     public static final String CODE_END = "]]code@@\"";
 
     protected final CamelContext camelContext;
-    protected final String expression;
+    protected final String originalExpression;
+    // regular simple expression
     protected final List<SimpleToken> tokens = new ArrayList<>();
     protected final List<SimpleNode> nodes = new ArrayList<>();
+    // tokenizer state
+    protected String expression;
     protected SimpleToken token;
     protected int previousIndex;
     protected int index;
@@ -64,8 +67,9 @@ public abstract class BaseSimpleParser {
 
     protected BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape) {
         this.camelContext = camelContext;
-        this.expression = expression;
+        this.originalExpression = expression;
         this.allowEscape = allowEscape;
+        this.expression = expression;
     }
 
     /**

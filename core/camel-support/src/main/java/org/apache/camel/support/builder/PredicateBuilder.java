@@ -37,6 +37,17 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * A helper class for working with predicates
  */
 public class PredicateBuilder {
+
+    /**
+     * Executes the expression and always return true
+     */
+    public static Predicate alwaysTrue(final Expression expression) {
+        return exchange -> {
+            expression.evaluate(exchange, Object.class);
+            return true;
+        };
+    }
+
     /**
      * Converts the given expression into an {@link Predicate}
      */

@@ -122,8 +122,6 @@ The Simple language has many built-in functions which allows access to various p
 
 NOTE: Some functions take 1 or more arguments enclosed in parentheses, and arguments separated by comma (ie `${replace('custID','customerId')}`.
 
-TIP:
-
 === Camel Functions
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -192,6 +190,7 @@ TIP:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
+|Function |Response Type |Description
 |`collate(size)` | `List` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
 |`distinct(val1,val2,...)` | `Set` | Returns a set of all the values with duplicates removed
 |`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
@@ -207,6 +206,7 @@ TIP:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
+|Function |Response Type |Description
 |`iif(predicate,trueExp,falseExp`) | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 |`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
 |`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
@@ -256,6 +256,7 @@ TIP:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
+|Function |Response Type |Description
 |`env.key` | `String` | Refers to the OS system environment variable with the given key. For example `env.HOME` to refer to the home directory.
 |`hash(exp,algorithm)` | `String` | Returns a hashed value (string in hex decimal) of the given expression. The algorithm can be `SHA-256` (default) or `SHA3-256`.
 |`hostname` | `String` | Returns the local hostname (may be `null` if not possible to resolve).
@@ -269,8 +270,9 @@ TIP:
 
 === String Functions
 
-0[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",cols="10%,10%,80%",options="header",]
 |====
+|Function |Response Type |Description
 |`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
 |`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
 |`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator (uses comma by default).
@@ -301,6 +303,7 @@ TIP:
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
+|Function |Response Type |Description
 |`jq(exp)` | `Object` | When working with JSon data, then this allows using the JQ language, for example, to extract data from the message body (in JSon format). This requires having camel-jq JAR on the classpath.
 |`jq(input,exp)` | `Object` | Same as `jq(exp)` but to use the _input_ expression as the source of the JSon document.
 |`jsonpath(exp)` | `Object` | When working with JSon data, then this allows using the JsonPath language, for example, to extract data from the message body (in JSon format). This requires having camel-jsonpath JAR on the classpath.
@@ -617,6 +620,69 @@ And of course the `||` is also supported. The sample would be:
 -----
 simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
 -----
+
+== Init Blocks
+
+Starting from *Camel 4.18* you can in the top of your Simple expressions declare an _initialization_ block that are used
+to define a set of local variables that are pre-computed, and can be used in the following Simple expression. This allows
+to reuse variables, and also avoid making the simple expression complicated when having inlined functions, and in general
+making using the simple expression easier to maintain and understand.
+
+The _init block_ is declared as follows:
+
+[source,text]
+----
+$init{
+  // init block
+  // goes here
+  // ...
+}init$
+// here is the regular simple expression
+----
+
+Notice how the block uses the `$init{` ... `}init$` markers to indicate the start and end of the block.
+
+Inside the init block, then you can assign local variables in the syntax `$$key := ...` where you can then use simple language to declare
+the value of the variable.
+
+In the example below the `foo` variable is assigned a constant value of `Hello foo`, while `bar` variable is a string value with the dynamic value
+of the message body.
+
+[source,text]
+----
+$init{
+  $$foo := 'Hello foo'
+  $$bar := 'Hi from ${body}'
+}init$
+----
+
+Yes you can use the full power of the simple language and all its functions, for example:
+
+[source,text]
+----
+$init{
+  $$foo := ${upper('Hello $body}'}
+  $$bar := ${iif(${header.code} > 999,'Gold','Silver')}
+}init$
+----
+
+The local variables can then easily be used in the Simple language either using the `${variable.foo}` syntax
+to the same shorthand syntax `$$foo`.
+
+For example
+
+[source,text]
+----
+$init{
+  $$greeting := ${upper('Hello $body}'}
+  $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+}init$
+{
+  "message": "$$greeting",
+  "status": "$$level"
+}
+----
+
 
 == OGNL Expression Support
 

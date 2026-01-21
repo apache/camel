@@ -125,6 +125,20 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is init operator
+     */
+    public boolean isInit() {
+        return type == TokenType.initOperator;
+    }
+
+    /**
+     * Whether the type is init variable
+     */
+    public boolean isInitVariable() {
+        return type == TokenType.initVariable;
+    }
+
+    /**
      * Whether the type is a null value
      */
     public boolean isNullValue() {

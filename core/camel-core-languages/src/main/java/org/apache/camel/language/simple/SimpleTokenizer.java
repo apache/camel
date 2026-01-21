@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
@@ -27,14 +29,20 @@ import org.apache.camel.util.ObjectHelper;
 public final class SimpleTokenizer {
 
     // keep this number in sync with tokens list
-    private static final int NUMBER_OF_TOKENS = 50;
+    private static final int NUMBER_OF_TOKENS = 52;
 
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
-    // optimise to be able to quick check for start functions
+    // optimize to be able to quick check for start functions
     private static final String[] FUNCTION_START = new String[] { "${", "$simple{" };
-    // optimise to be able to quick check for end function
+    // optimize to be able to quick check for end function
     private static final String FUNCTION_END = "}";
+
+    // TODO: what symbols to use for init block?
+    // optimize to be able to quick check for init block
+    public static final String INIT_START = "$init{";
+    // optimize to be able to quick check for init block
+    public static final String INIT_END = "}init$";
 
     static {
         // add known tokens
@@ -96,14 +104,33 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[47] = new SimpleTokenType(TokenType.logicalOperator, "&&");
         KNOWN_TOKENS[48] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
+        // init
+        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.initOperator, ":=");
+        KNOWN_TOKENS[50] = new SimpleTokenType(TokenType.initVariable, "$$");
+
         //binary operator
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
-        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.minusValue, "-");
+        KNOWN_TOKENS[51] = new SimpleTokenType(TokenType.minusValue, "-");
     }
+
+    static final AtomicBoolean INIT_MODE = new AtomicBoolean();
 
     private SimpleTokenizer() {
         // static methods
+    }
+
+    /**
+     * Does the expression include a simple init block.
+     *
+     * @param  expression the expression
+     * @return            <tt>true</tt> if init block exists
+     */
+    public static boolean hasInitBlock(String expression) {
+        if (expression != null) {
+            return expression.startsWith(INIT_START) && expression.contains(INIT_END);
+        }
+        return false;
     }
 
     /**
@@ -182,6 +209,12 @@ public final class SimpleTokenizer {
         String text = expression.substring(index);
         for (int i = 0; i < NUMBER_OF_TOKENS; i++) {
             SimpleTokenType token = KNOWN_TOKENS[i];
+
+            // init tokens is only valid if using init mode of tokenizer
+            boolean init = token.isInit() || token.isInitVariable();
+            if (init && !INIT_MODE.get()) {
+                break;
+            }
             if (acceptType(token.getType(), filters)
                     && acceptToken(token, text, expression, index)) {
                 return new SimpleToken(token, index);

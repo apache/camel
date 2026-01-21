@@ -2305,6 +2305,31 @@ public class ExpressionBuilder {
         };
     }
 
+    public static Expression eval(List<Expression> expressions) {
+        return new ExpressionAdapter() {
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                for (Expression exp : expressions) {
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                for (Expression exp : expressions) {
+                    exp.evaluate(exchange, Object.class);
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "eval";
+            }
+        };
+    }
+
     /**
      * Returns an Expression for the inbound message id
      */

@@ -53,6 +53,7 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
 import static org.apache.camel.support.ObjectHelper.isNumber;
@@ -82,8 +83,25 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     public Predicate parsePredicate() {
         try {
+            // parse init block
+            SimpleInitBlockParser initParser
+                    = new SimpleInitBlockParser(camelContext, expression, allowEscape, cacheExpression);
+            Expression init = initParser.parseExpression();
+            if (init != null && SimpleTokenizer.hasInitBlock(originalExpression)) {
+                this.expression = StringHelper.after(originalExpression, SimpleTokenizer.INIT_END);
+                // use $$key as local variable
+                for (String key : initParser.getInitKeys()) {
+                    this.expression = this.expression.replace("$$" + key, "${variable." + key + "}");
+                }
+            }
+
             parseTokens();
-            return doParsePredicate();
+            Predicate pre = doParsePredicate();
+            // include init block in expression
+            if (init != null) {
+                pre = PredicateBuilder.and(PredicateBuilder.alwaysTrue(init), pre);
+            }
+            return pre;
         } catch (SimpleParserException e) {
             // catch parser exception and turn that into a syntax exceptions
             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
