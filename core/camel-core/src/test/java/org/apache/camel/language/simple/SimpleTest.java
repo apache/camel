@@ -2208,6 +2208,82 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testTernaryOperator() {
+        // Basic ternary operator tests
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${header.foo > 0 ? 'positive' : 'negative'}", "positive");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${header.foo > 0 ? 'positive' : 'negative'}", "negative");
+
+        // Test with body
+        exchange.getIn().setBody("Hello World");
+        exchange.getIn().setHeader("foo", 44);
+        assertExpression("${header.foo > 0 ? ${body} : 'Bye World'}", "Hello World");
+        exchange.getIn().setHeader("foo", -123);
+        assertExpression("${header.foo > 0 ? ${body} : 'Bye World'}", "Bye World");
+        assertExpression("${header.foo > 0 ? ${body} : ${null}}", null);
+
+        // Test with file name
+        exchange.getIn().setHeader("CamelFileName", "testfile.txt");
+        assertExpression("${file:name startsWith 'test' ? 'foo' : 'bar'}", "foo");
+        exchange.getIn().setHeader("CamelFileName", "dummy.txt");
+        assertExpression("${file:name startsWith 'test' ? 'foo' : 'bar'}", "bar");
+    }
+
+    @Test
+    public void testTernaryOperatorWithNumbers() {
+        exchange.getIn().setHeader("score", 85);
+        assertExpression("${header.score >= 90 ? 'A' : 'B'}", "B");
+        exchange.getIn().setHeader("score", 95);
+        assertExpression("${header.score >= 90 ? 'A' : 'B'}", "A");
+
+        exchange.getIn().setHeader("age", 25);
+        assertExpression("${header.age >= 18 ? 'adult' : 'minor'}", "adult");
+        exchange.getIn().setHeader("age", 15);
+        assertExpression("${header.age >= 18 ? 'adult' : 'minor'}", "minor");
+    }
+
+    @Test
+    public void testTernaryOperatorWithBooleans() {
+        exchange.getIn().setHeader("enabled", true);
+        assertExpression("${header.enabled == true ? 'yes' : 'no'}", "yes");
+        exchange.getIn().setHeader("enabled", false);
+        assertExpression("${header.enabled == true ? 'yes' : 'no'}", "no");
+    }
+
+    @Test
+    public void testTernaryOperatorWithNull() {
+        exchange.getIn().setHeader("value", null);
+        assertExpression("${header.value == null ? 'empty' : 'full'}", "empty");
+        exchange.getIn().setHeader("value", "something");
+        assertExpression("${header.value == null ? 'empty' : 'full'}", "full");
+    }
+
+    @Test
+    public void testTernaryOperatorNested() {
+        // Nested ternary operators
+        exchange.getIn().setHeader("score", 95);
+        assertExpression("${header.score >= 90 ? 'A' : ${header.score} >= 80 ? 'B' : 'C'}", "A");
+        exchange.getIn().setHeader("score", 85);
+        assertExpression("${header.score >= 90 ? 'A' : ${header.score} >= 80 ? 'B' : 'C'}", "B");
+        exchange.getIn().setHeader("score", 75);
+        assertExpression("${header.score >= 90 ? 'A' : ${header.score} >= 80 ? 'B' : 'C'}", "C");
+    }
+
+    @Test
+    public void testTernaryOperatorWithStrings() {
+        exchange.getIn().setBody("Hello");
+        assertExpression("${body == 'Hello' ? 'greeting' : 'other'}", "greeting");
+        exchange.getIn().setBody("Goodbye");
+        assertExpression("${body == 'Hello' ? 'greeting' : 'other'}", "other");
+
+        exchange.getIn().setHeader("name", "John");
+        assertExpression("${header.name contains 'John' ? 'found' : 'not found'}", "found");
+        exchange.getIn().setHeader("name", "Jane");
+        assertExpression("${header.name contains 'John' ? 'found' : 'not found'}", "not found");
+    }
+
+    @Test
     public void testListRemoveByInstance() {
         List<Object> data = new ArrayList<>();
         data.add("A");

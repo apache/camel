@@ -27,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 public final class SimpleTokenizer {
 
     // keep this number in sync with tokens list
-    private static final int NUMBER_OF_TOKENS = 50;
+    private static final int NUMBER_OF_TOKENS = 52;
 
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
@@ -96,10 +96,14 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[47] = new SimpleTokenType(TokenType.logicalOperator, "&&");
         KNOWN_TOKENS[48] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
+        // ternary operators
+        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.ternaryOperator, "?");
+        KNOWN_TOKENS[50] = new SimpleTokenType(TokenType.ternaryOperator, ":");
+
         //binary operator
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
-        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.minusValue, "-");
+        KNOWN_TOKENS[51] = new SimpleTokenType(TokenType.minusValue, "-");
     }
 
     private SimpleTokenizer() {
@@ -267,6 +271,9 @@ public final class SimpleTokenizer {
         if (token.isOther()) {
             return evalOther(token, text, expression, index);
         }
+        if (token.isTernary()) {
+            return evalTernary(token, text, expression, index);
+        }
 
         return text.startsWith(token.getValue());
     }
@@ -285,6 +292,17 @@ public final class SimpleTokenizer {
     private static boolean evalOther(SimpleTokenType token, String text, String expression, int index) {
         int len = token.getValue().length();
         // The other operator must be used in the format of "exp1 op exp2"
+        if (index < 2 || len >= text.length() - 1) {
+            return false;
+        }
+        String previousOne = expression.substring(index - 1, index);
+        String afterOne = text.substring(len, len + 1);
+        return " ".equals(previousOne) && " ".equals(afterOne) && text.substring(0, len).equals(token.getValue());
+    }
+
+    private static boolean evalTernary(SimpleTokenType token, String text, String expression, int index) {
+        int len = token.getValue().length();
+        // The ternary operator must be used in the format of "exp1 ? exp2 : exp3"
         if (index < 2 || len >= text.length() - 1) {
             return false;
         }

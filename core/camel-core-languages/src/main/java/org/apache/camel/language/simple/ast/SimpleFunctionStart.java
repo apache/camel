@@ -81,6 +81,16 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
+                // Special case: if the block contains only a ternary expression, evaluate it directly
+                if (block.getChildren().size() == 1 && block.getChildren().get(0) instanceof TernaryExpression) {
+                    try {
+                        Expression ternaryExp = block.getChildren().get(0).createExpression(camelContext, expression);
+                        return ternaryExp.evaluate(exchange, type);
+                    } catch (SimpleParserException e) {
+                        throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
+                    }
+                }
+
                 StringBuilder sb = new StringBuilder(256);
                 boolean quoteEmbeddedFunctions = false;
 
@@ -140,9 +150,10 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
 
     @Override
     public boolean acceptAndAddNode(SimpleNode node) {
-        // only accept literals, quotes or embedded functions
+        // only accept literals, quotes, ternary expressions, or embedded functions
         if (node instanceof LiteralNode || node instanceof SimpleFunctionStart
-                || node instanceof SingleQuoteStart || node instanceof DoubleQuoteStart) {
+                || node instanceof SingleQuoteStart || node instanceof DoubleQuoteStart
+                || node instanceof TernaryExpression) {
             block.addChild(node);
             return true;
         } else {
