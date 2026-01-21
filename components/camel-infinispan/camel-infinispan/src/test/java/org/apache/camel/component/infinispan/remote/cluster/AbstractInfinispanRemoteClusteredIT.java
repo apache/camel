@@ -27,6 +27,7 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicy;
 import org.apache.camel.impl.cluster.ClusteredRoutePolicyFactory;
@@ -43,7 +44,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createCache;
 import static org.apache.camel.component.infinispan.remote.cluster.InfinispanRemoteClusteredTestSupport.createConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -64,10 +64,10 @@ public class AbstractInfinispanRemoteClusteredIT {
     }
 
     @BeforeEach
-    public void setUpManager() {
+    public void setUpManager() throws InterruptedException {
         Configuration configuration = createConfiguration(service);
         cacheContainer = new RemoteCacheManager(configuration);
-        createCache(cacheContainer, viewName);
+        InfinispanRemoteTestSupport.waitForCacheReady(cacheContainer, viewName, 5000);
     }
 
     public void runTest(Function<RunnerEnv, RouteBuilder> routeBuilderFunction) throws Exception {
