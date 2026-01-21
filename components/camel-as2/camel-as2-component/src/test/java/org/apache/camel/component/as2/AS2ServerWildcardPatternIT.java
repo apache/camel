@@ -39,6 +39,18 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
                 // Consumer with wildcard pattern - should match /consumer/orders, /consumer/invoices, etc.
                 from("as2://server/listen?requestUriPattern=/consumer/*")
                         .to("mock:wildcardConsumer");
+
+                // Consumer with exact match - should take precedence over wildcard
+                from("as2://server/listen?requestUriPattern=/consumer/orders")
+                        .to("mock:exactConsumer");
+
+                // Consumer with more specific wildcard pattern
+                from("as2://server/listen?requestUriPattern=/consumer/orders/*")
+                        .to("mock:specificWildcardConsumer");
+
+                // Consumer with different path - should not match /consumer/* requests
+                from("as2://server/listen?requestUriPattern=/admin/*")
+                        .to("mock:adminConsumer");
             }
         };
     }
@@ -48,8 +60,8 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:wildcardConsumer");
         mockEndpoint.expectedMessageCount(1);
 
-        // Send to /consumer/orders - should match the /consumer/* pattern
-        HttpCoreContext context = sendToPath("/consumer/orders", AS2MessageStructure.PLAIN);
+        // Send to /consumer/products - should match the /consumer/* pattern
+        HttpCoreContext context = sendToPath("/consumer/products", AS2MessageStructure.PLAIN);
 
         verifyOkResponse(context);
         mockEndpoint.assertIsSatisfied();
@@ -79,10 +91,10 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
 
     @Test
     public void testWildcardPatternMatchesNestedPath() throws Exception {
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:wildcardConsumer");
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:specificWildcardConsumer");
         mockEndpoint.expectedMessageCount(1);
 
-        // Send to /consumer/orders/123 - should also match the /consumer/* pattern
+        // Send to /consumer/orders/123 - should match the more specific /consumer/orders/* pattern
         HttpCoreContext context = sendToPath("/consumer/orders/123", AS2MessageStructure.PLAIN);
 
         verifyOkResponse(context);
@@ -90,6 +102,66 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
 
         // Verify the message was received
         Exchange exchange = mockEndpoint.getReceivedExchanges().get(0);
+        assertNotNull(exchange);
+        assertEquals(EDI_MESSAGE, exchange.getIn().getBody(String.class));
+    }
+
+    @Test
+    public void testExactMatchTakesPrecedence() throws Exception {
+        MockEndpoint exactEndpoint = getMockEndpoint("mock:exactConsumer");
+        MockEndpoint wildcardEndpoint = getMockEndpoint("mock:wildcardConsumer");
+        exactEndpoint.expectedMessageCount(1);
+        wildcardEndpoint.expectedMessageCount(0);
+
+        // Send to /consumer/orders - should match exact pattern, not wildcard
+        HttpCoreContext context = sendToPath("/consumer/orders", AS2MessageStructure.PLAIN);
+
+        verifyOkResponse(context);
+        exactEndpoint.assertIsSatisfied();
+        wildcardEndpoint.assertIsSatisfied();
+
+        // Verify the message was received by exact consumer
+        Exchange exchange = exactEndpoint.getReceivedExchanges().get(0);
+        assertNotNull(exchange);
+        assertEquals(EDI_MESSAGE, exchange.getIn().getBody(String.class));
+    }
+
+    @Test
+    public void testLongerPatternTakesPrecedence() throws Exception {
+        MockEndpoint specificEndpoint = getMockEndpoint("mock:specificWildcardConsumer");
+        MockEndpoint generalEndpoint = getMockEndpoint("mock:wildcardConsumer");
+        specificEndpoint.expectedMessageCount(1);
+        generalEndpoint.expectedMessageCount(0);
+
+        // Send to /consumer/orders/456 - should match /consumer/orders/*, not /consumer/*
+        HttpCoreContext context = sendToPath("/consumer/orders/456", AS2MessageStructure.PLAIN);
+
+        verifyOkResponse(context);
+        specificEndpoint.assertIsSatisfied();
+        generalEndpoint.assertIsSatisfied();
+
+        // Verify the message was received by specific consumer
+        Exchange exchange = specificEndpoint.getReceivedExchanges().get(0);
+        assertNotNull(exchange);
+        assertEquals(EDI_MESSAGE, exchange.getIn().getBody(String.class));
+    }
+
+    @Test
+    public void testNoPatternMatch() throws Exception {
+        MockEndpoint wildcardEndpoint = getMockEndpoint("mock:wildcardConsumer");
+        MockEndpoint adminEndpoint = getMockEndpoint("mock:adminConsumer");
+        wildcardEndpoint.expectedMessageCount(0);
+        adminEndpoint.expectedMessageCount(1);
+
+        // Send to /admin/test - should match /admin/*, not /consumer/*
+        HttpCoreContext context = sendToPath("/admin/test", AS2MessageStructure.PLAIN);
+
+        verifyOkResponse(context);
+        wildcardEndpoint.assertIsSatisfied();
+        adminEndpoint.assertIsSatisfied();
+
+        // Verify the message was received by admin consumer
+        Exchange exchange = adminEndpoint.getReceivedExchanges().get(0);
         assertNotNull(exchange);
         assertEquals(EDI_MESSAGE, exchange.getIn().getBody(String.class));
     }

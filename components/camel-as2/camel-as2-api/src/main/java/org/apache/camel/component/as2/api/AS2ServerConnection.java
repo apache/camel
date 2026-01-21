@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -92,6 +93,12 @@ public class AS2ServerConnection {
      * Stores the configuration for each consumer endpoint path (e.g., "/consumerA")
      */
     private final Map<String, AS2ConsumerConfiguration> consumerConfigurations = new ConcurrentHashMap<>();
+
+    /**
+     * Cache of compiled regex patterns for wildcard matching. Key is the pattern string, value is the compiled Pattern
+     * object.
+     */
+    private final Map<String, Pattern> compiledPatterns = new ConcurrentHashMap<>();
 
     /**
      * Simple wrapper class to associate the AS2ConsumerConfiguration with the specific request URI path that was
@@ -163,15 +170,30 @@ public class AS2ServerConnection {
      * Retrieves the specific AS2 consumer configuration associated with the given request path. Supports wildcard
      * patterns (e.g., "/consumer/*") in addition to exact matches.
      *
+     * <p>
+     * Pattern matching examples:
+     * <ul>
+     * <li>Pattern "/consumer/*" matches "/consumer/orders", "/consumer/invoices", "/consumer/a/b/c"</li>
+     * <li>Pattern "/api/&#42;/orders" matches "/api/v1/orders", "/api/v2/orders"</li>
+     * <li>Pattern "/*" matches any path</li>
+     * </ul>
+     *
+     * <p>
+     * When multiple patterns match, the longest (most specific) pattern is preferred. Exact matches always take
+     * precedence over wildcard matches.
+     *
      * @param  path The canonical request URI path (e.g., "/consumerA").
      * @return      An Optional containing the configuration if a match is found, otherwise empty.
      */
     public Optional<AS2ConsumerConfiguration> getConfigurationForPath(String path) {
-        // First try exact match for performance
+        // First try exact match for performance - this is the most common case
         AS2ConsumerConfiguration exactMatch = consumerConfigurations.get(path);
         if (exactMatch != null) {
+            LOG.debug("Found exact match for path: {}", path);
             return Optional.of(exactMatch);
         }
+
+        LOG.debug("No exact match for path: {}, trying pattern matching", path);
 
         // Then try pattern matching for wildcards
         String bestMatchPattern = null;
@@ -189,9 +211,11 @@ public class AS2ServerConnection {
         }
 
         if (bestMatchPattern != null) {
+            LOG.debug("Path {} matched pattern: {}", path, bestMatchPattern);
             return Optional.ofNullable(consumerConfigurations.get(bestMatchPattern));
         }
 
+        LOG.debug("No pattern matched for path: {}", path);
         return Optional.empty();
     }
 
@@ -199,12 +223,16 @@ public class AS2ServerConnection {
      * Checks if a request path matches a pattern that may contain wildcards. Supports wildcard '*' which matches any
      * sequence of characters.
      *
+     * <p>
+     * This method uses compiled regex patterns with caching for performance. All regex special characters in the
+     * pattern are properly escaped using Pattern.quote(), ensuring that only the wildcard '*' has special meaning.
+     *
      * @param  requestPath the incoming request path
      * @param  pattern     the pattern to match against (may contain wildcards)
      * @return             true if the path matches the pattern, false otherwise
      */
     private boolean matchesPattern(String requestPath, String pattern) {
-        // Exact match
+        // Exact match - fast path
         if (requestPath.equals(pattern)) {
             return true;
         }
@@ -214,24 +242,35 @@ public class AS2ServerConnection {
             return false;
         }
 
-        // Handle wildcard matching
-        // Convert pattern to regex: escape special chars except *, then replace * with .*
-        String regex = pattern
-                .replace(".", "\\.")
-                .replace("?", "\\?")
-                .replace("+", "\\+")
-                .replace("(", "\\(")
-                .replace(")", "\\)")
-                .replace("[", "\\[")
-                .replace("]", "\\]")
-                .replace("{", "\\{")
-                .replace("}", "\\}")
-                .replace("^", "\\^")
-                .replace("$", "\\$")
-                .replace("|", "\\|")
-                .replace("*", ".*");
+        // Get or compile the pattern
+        Pattern compiledPattern = getCompiledPattern(pattern);
+        return compiledPattern.matcher(requestPath).matches();
+    }
 
-        return requestPath.matches(regex);
+    /**
+     * Gets a compiled regex Pattern for the given wildcard pattern string. Patterns are cached for performance.
+     *
+     * <p>
+     * This method splits the pattern by '*' and uses Pattern.quote() to properly escape all regex special characters in
+     * each segment, then joins them with '.*' to create the final regex pattern.
+     *
+     * @param  pattern the wildcard pattern string (e.g., "/consumer/*")
+     * @return         the compiled Pattern object
+     */
+    private Pattern getCompiledPattern(String pattern) {
+        return compiledPatterns.computeIfAbsent(pattern, p -> {
+            // Split by * and quote each segment, then join with .*
+            String[] segments = p.split("\\*", -1);
+            StringBuilder regex = new StringBuilder();
+            for (int i = 0; i < segments.length; i++) {
+                // Pattern.quote() properly escapes all regex special characters
+                regex.append(Pattern.quote(segments[i]));
+                if (i < segments.length - 1) {
+                    regex.append(".*");
+                }
+            }
+            return Pattern.compile(regex.toString());
+        });
     }
 
     /**
