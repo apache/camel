@@ -33,11 +33,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Integration tests for multimodal content support in the LangChain4j Agent component. Tests the ability to send both
@@ -59,6 +61,16 @@ public class LangChain4jAgentMultimodalityIT extends CamelTestSupport {
         super.setupResources();
 
         chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
+    }
+
+    @BeforeEach
+    void skipIfOllama() {
+        boolean isOllama = OLLAMA != null || "ollama".equals(System.getenv(ModelHelper.MODEL_PROVIDER));
+        assumeFalse(isOllama,
+                "Skipping multimodality tests with Ollama: LangChain4j's Ollama provider does not support " +
+                              "multiple content blocks in a single UserMessage. The provider's InternalOllamaHelper.toText() " +
+                              "calls UserMessage.singleText() which requires exactly one TextContent. " +
+                              "Use OpenAI or Gemini providers for multimodal content testing.");
     }
 
     /**
