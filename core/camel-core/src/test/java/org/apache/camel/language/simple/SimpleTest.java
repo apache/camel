@@ -2209,11 +2209,20 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testTernaryOperator() {
-        // Basic ternary operator tests
+        // Test that the same expression object evaluates correctly with different header values
         exchange.getIn().setHeader("foo", 44);
-        assertExpression("${header.foo > 0 ? 'positive' : 'negative'}", "positive");
+        Expression exp = context.resolveLanguage("simple").createExpression("${header.foo > 0 ? 'positive' : 'negative'}");
+        assertEquals("positive", exp.evaluate(exchange, String.class), "First evaluation with foo=44");
+
         exchange.getIn().setHeader("foo", -123);
-        assertExpression("${header.foo > 0 ? 'positive' : 'negative'}", "negative");
+        assertEquals("negative", exp.evaluate(exchange, String.class), "Second evaluation with foo=-123");
+
+        // Test a simple ternary with a constant condition
+        Expression expTrue = context.resolveLanguage("simple").createExpression("${true ? 'yes' : 'no'}");
+        assertEquals("yes", expTrue.evaluate(exchange, String.class), "Constant true ternary");
+
+        Expression expFalse = context.resolveLanguage("simple").createExpression("${false ? 'yes' : 'no'}");
+        assertEquals("no", expFalse.evaluate(exchange, String.class), "Constant false ternary");
 
         // Test with body
         exchange.getIn().setBody("Hello World");

@@ -77,13 +77,16 @@ public class TernaryExpression extends BaseSimpleNode {
     @Override
     public Expression createExpression(CamelContext camelContext, String expression) {
         if (condition == null) {
-            throw new SimpleParserException("Ternary operator ? has no condition at index " + token.getIndex(), token.getIndex());
+            throw new SimpleParserException(
+                    "Ternary operator ? has no condition at index " + token.getIndex(), token.getIndex());
         }
         if (trueValue == null) {
-            throw new SimpleParserException("Ternary operator ? has no true value at index " + token.getIndex(), token.getIndex());
+            throw new SimpleParserException(
+                    "Ternary operator ? has no true value at index " + token.getIndex(), token.getIndex());
         }
         if (falseValue == null) {
-            throw new SimpleParserException("Ternary operator : has no false value at index " + token.getIndex(), token.getIndex());
+            throw new SimpleParserException(
+                    "Ternary operator : has no false value at index " + token.getIndex(), token.getIndex());
         }
 
         // the expression parser does not parse literal text into single/double quote tokens
