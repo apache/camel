@@ -63,6 +63,7 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
                 exchange -> exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY));
         assertNull(request.getException());
 
+        @SuppressWarnings("unchecked")
         List<User> queryResult = request.getIn().getBody(List.class);
         assertNull(queryResult);
     }
@@ -82,6 +83,7 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
 
         assertNull(request.getException());
 
+        @SuppressWarnings("unchecked")
         List<User> queryResult = request.getIn().getBody(List.class);
         assertNotNull(queryResult);
         assertEquals(0, queryResult.size());
@@ -153,6 +155,7 @@ public class InfinispanRemoteQueryProducerIT extends InfinispanRemoteQueryTestSu
         Exchange request = template.request(endpoint, createQueryProcessor(builder));
         assertNull(request.getException());
 
+        @SuppressWarnings("unchecked")
         List<User> queryResult = request.getIn().getBody(List.class);
         assertNotNull(queryResult);
         assertEquals(2, queryResult.size());

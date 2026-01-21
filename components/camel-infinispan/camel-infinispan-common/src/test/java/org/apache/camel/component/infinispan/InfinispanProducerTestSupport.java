@@ -664,6 +664,7 @@ public interface InfinispanProducerTestSupport {
     default void replaceAValueByKeyAsyncWithOldValue() throws ExecutionException, InterruptedException {
         getCache().put(KEY_ONE, VALUE_ONE);
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<Boolean> result = fluentTemplate()
                 .to("direct:start")
                 .withHeader(InfinispanConstants.KEY, KEY_ONE)
