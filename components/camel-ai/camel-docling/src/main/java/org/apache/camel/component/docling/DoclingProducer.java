@@ -42,6 +42,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import ai.docling.core.DoclingDocument;
+import ai.docling.core.DoclingDocument.DocumentOrigin;
 import ai.docling.serve.api.DoclingServeApi;
 import ai.docling.serve.api.convert.request.ConvertDocumentRequest;
 import ai.docling.serve.api.convert.request.options.ConvertDocumentOptions;
@@ -70,14 +72,12 @@ public class DoclingProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingProducer.class);
 
-    private DoclingEndpoint endpoint;
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
         this.objectMapper = new ObjectMapper();
     }
@@ -384,7 +384,8 @@ public class DoclingProducer extends DefaultProducer {
         metadata.setFilePath(inputPath);
 
         try {
-            JsonNode rootNode = objectMapper.readTree(jsonOutput);
+            // TODO: get directly the DoclingDocument instead of converting back and forth
+            DoclingDocument doclingDocument = objectMapper.readValue(jsonOutput, DoclingDocument.class);
 
             // Extract basic file information for file paths
             if (!inputPath.startsWith("http://") && !inputPath.startsWith("https://")) {
@@ -395,44 +396,18 @@ public class DoclingProducer extends DefaultProducer {
                 }
             }
 
-            // Try to extract metadata from the JSON structure
-            if (rootNode.has(DoclingMetadataFields.METADATA)) {
-                JsonNode metadataNode = rootNode.get(DoclingMetadataFields.METADATA);
-                extractMetadataFieldsFromJson(metadata, metadataNode);
+            if (doclingDocument.getPages() != null) {
+                metadata.setPageCount(doclingDocument.getPages().size());
             }
 
-            // Look for document-level information
-            if (rootNode.has(DoclingMetadataFields.DOCUMENT)) {
-                JsonNode docNode = rootNode.get(DoclingMetadataFields.DOCUMENT);
-                if (docNode.has(DoclingMetadataFields.NAME) && metadata.getTitle() == null) {
-                    metadata.setTitle(docNode.get(DoclingMetadataFields.NAME).asText());
-                }
-            }
-
-            // Extract main text to determine document type/format
-            if (rootNode.has(DoclingMetadataFields.MAIN_TEXT)) {
-                JsonNode mainTextNode = rootNode.get(DoclingMetadataFields.MAIN_TEXT);
-                if (mainTextNode.isArray() && mainTextNode.size() > 0) {
-                    // Document has text content
-                    metadata.setDocumentType("Text Document");
-                }
-            }
-
-            // Count pages if available
-            if (rootNode.has(DoclingMetadataFields.PAGES)) {
-                if (rootNode.get(DoclingMetadataFields.PAGES).isArray()) {
-                    metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).size());
-                } else if (rootNode.get(DoclingMetadataFields.PAGES).isInt()) {
-                    metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).asInt());
-                }
-            } else if (rootNode.has(DoclingMetadataFields.NUM_PAGES)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
-            } else if (rootNode.has(DoclingMetadataFields.PAGE_COUNT)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGE_COUNT).asInt());
+            DocumentOrigin origin = doclingDocument.getOrigin();
+            if (origin != null && origin.getMimetype() != null) {
+                metadata.setFormat(origin.getMimetype());
             }
 
             // Store raw metadata if requested
             if (configuration.isIncludeRawMetadata()) {
+                JsonNode rootNode = objectMapper.readTree(jsonOutput);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> rawMap = objectMapper.convertValue(rootNode, Map.class);
                 metadata.setRawMetadata(rawMap);
@@ -446,123 +421,6 @@ public class DoclingProducer extends DefaultProducer {
         return metadata;
     }
 
-    private void extractMetadataFieldsFromJson(DocumentMetadata metadata, JsonNode metadataNode) {
-        // Extract standard metadata fields
-        if (metadataNode.has(DoclingMetadataFields.TITLE)) {
-            metadata.setTitle(metadataNode.get(DoclingMetadataFields.TITLE).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.AUTHOR) || metadataNode.has(DoclingMetadataFields.AUTHOR_PASCAL)) {
-            String author = metadataNode.has(DoclingMetadataFields.AUTHOR)
-                    ? metadataNode.get(DoclingMetadataFields.AUTHOR).asText()
-                    : metadataNode.get(DoclingMetadataFields.AUTHOR_PASCAL).asText();
-            metadata.setAuthor(author);
-        }
-        if (metadataNode.has(DoclingMetadataFields.CREATOR) || metadataNode.has(DoclingMetadataFields.CREATOR_PASCAL)) {
-            String creator = metadataNode.has(DoclingMetadataFields.CREATOR)
-                    ? metadataNode.get(DoclingMetadataFields.CREATOR).asText()
-                    : metadataNode.get(DoclingMetadataFields.CREATOR_PASCAL).asText();
-            metadata.setCreator(creator);
-        }
-        if (metadataNode.has(DoclingMetadataFields.PRODUCER) || metadataNode.has(DoclingMetadataFields.PRODUCER_PASCAL)) {
-            String producer = metadataNode.has(DoclingMetadataFields.PRODUCER)
-                    ? metadataNode.get(DoclingMetadataFields.PRODUCER).asText()
-                    : metadataNode.get(DoclingMetadataFields.PRODUCER_PASCAL).asText();
-            metadata.setProducer(producer);
-        }
-        if (metadataNode.has(DoclingMetadataFields.SUBJECT) || metadataNode.has(DoclingMetadataFields.SUBJECT_PASCAL)) {
-            String subject = metadataNode.has(DoclingMetadataFields.SUBJECT)
-                    ? metadataNode.get(DoclingMetadataFields.SUBJECT).asText()
-                    : metadataNode.get(DoclingMetadataFields.SUBJECT_PASCAL).asText();
-            metadata.setSubject(subject);
-        }
-        if (metadataNode.has(DoclingMetadataFields.KEYWORDS) || metadataNode.has(DoclingMetadataFields.KEYWORDS_PASCAL)) {
-            String keywords = metadataNode.has(DoclingMetadataFields.KEYWORDS)
-                    ? metadataNode.get(DoclingMetadataFields.KEYWORDS).asText()
-                    : metadataNode.get(DoclingMetadataFields.KEYWORDS_PASCAL).asText();
-            metadata.setKeywords(keywords);
-        }
-        if (metadataNode.has(DoclingMetadataFields.LANGUAGE) || metadataNode.has(DoclingMetadataFields.LANGUAGE_PASCAL)) {
-            String language = metadataNode.has(DoclingMetadataFields.LANGUAGE)
-                    ? metadataNode.get(DoclingMetadataFields.LANGUAGE).asText()
-                    : metadataNode.get(DoclingMetadataFields.LANGUAGE_PASCAL).asText();
-            metadata.setLanguage(language);
-        }
-
-        // Extract format information
-        if (metadataNode.has(DoclingMetadataFields.FORMAT) || metadataNode.has(DoclingMetadataFields.FORMAT_PASCAL)) {
-            String format = metadataNode.has(DoclingMetadataFields.FORMAT)
-                    ? metadataNode.get(DoclingMetadataFields.FORMAT).asText()
-                    : metadataNode.get(DoclingMetadataFields.FORMAT_PASCAL).asText();
-            metadata.setFormat(format);
-        }
-
-        // Extract dates - try multiple field name variations
-        extractDateFieldFromJson(metadata, metadataNode, DoclingMetadataFields.CREATION_DATE,
-                DoclingMetadataFields.CREATION_DATE_PASCAL, DoclingMetadataFields.CREATED,
-                DoclingMetadataFields.CREATED_PASCAL, (date) -> metadata.setCreationDate(date));
-        extractDateFieldFromJson(metadata, metadataNode, DoclingMetadataFields.MODIFICATION_DATE,
-                DoclingMetadataFields.MODIFICATION_DATE_PASCAL, DoclingMetadataFields.MODIFIED,
-                DoclingMetadataFields.MODIFIED_PASCAL, (date) -> metadata.setModificationDate(date));
-
-        // Extract all other fields as custom metadata if requested
-        if (configuration.isExtractAllMetadata()) {
-            metadataNode.fields().forEachRemaining(entry -> {
-                String key = entry.getKey();
-                // Skip standard fields we already extracted
-                if (!DoclingMetadataFields.isStandardField(key)) {
-                    JsonNode value = entry.getValue();
-                    if (value.isTextual()) {
-                        metadata.addCustomMetadata(key, value.asText());
-                    } else if (value.isInt()) {
-                        metadata.addCustomMetadata(key, value.asInt());
-                    } else if (value.isLong()) {
-                        metadata.addCustomMetadata(key, value.asLong());
-                    } else if (value.isBoolean()) {
-                        metadata.addCustomMetadata(key, value.asBoolean());
-                    } else if (value.isDouble()) {
-                        metadata.addCustomMetadata(key, value.asDouble());
-                    } else {
-                        metadata.addCustomMetadata(key, value.toString());
-                    }
-                }
-            });
-        }
-    }
-
-    private void extractDateFieldFromJson(
-            DocumentMetadata metadata, JsonNode metadataNode, String fieldName1,
-            String fieldName2, String fieldName3, String fieldName4,
-            java.util.function.Consumer<java.time.Instant> setter) {
-        String dateStr = null;
-
-        if (metadataNode.has(fieldName1)) {
-            dateStr = metadataNode.get(fieldName1).asText();
-        } else if (metadataNode.has(fieldName2)) {
-            dateStr = metadataNode.get(fieldName2).asText();
-        } else if (metadataNode.has(fieldName3)) {
-            dateStr = metadataNode.get(fieldName3).asText();
-        } else if (metadataNode.has(fieldName4)) {
-            dateStr = metadataNode.get(fieldName4).asText();
-        }
-
-        if (dateStr != null && !dateStr.isEmpty()) {
-            try {
-                java.time.Instant instant = java.time.Instant.parse(dateStr);
-                setter.accept(instant);
-            } catch (Exception e) {
-                LOG.debug("Failed to parse date field {}: {}", fieldName1, dateStr);
-                // Try parsing as ISO local date time
-                try {
-                    java.time.LocalDateTime ldt = java.time.LocalDateTime.parse(dateStr);
-                    java.time.Instant instant = ldt.atZone(java.time.ZoneId.systemDefault()).toInstant();
-                    setter.accept(instant);
-                } catch (Exception e2) {
-                    LOG.debug("Failed to parse date as LocalDateTime: {}", dateStr);
-                }
-            }
-        }
-    }
-
     private DocumentMetadata extractMetadataUsingCLI(String inputPath, Exchange exchange) throws Exception {
         LOG.debug("Extracting metadata using Docling CLI for: {}", inputPath);
 
@@ -570,9 +428,7 @@ public class DoclingProducer extends DefaultProducer {
         String jsonOutput = executeDoclingCommand(inputPath, "json", exchange);
 
         // Parse the JSON output to extract metadata
-        DocumentMetadata metadata = parseMetadataFromJson(jsonOutput, inputPath);
-
-        return metadata;
+        return parseMetadataFromJson(jsonOutput, inputPath);
     }
 
     private DocumentMetadata parseMetadataFromJson(String jsonOutput, String inputPath) {
@@ -580,7 +436,7 @@ public class DoclingProducer extends DefaultProducer {
         metadata.setFilePath(inputPath);
 
         try {
-            JsonNode rootNode = objectMapper.readTree(jsonOutput);
+            DoclingDocument doclingDocument = objectMapper.readValue(jsonOutput, DoclingDocument.class);
 
             // Extract basic file information
             File file = new File(inputPath);
@@ -589,30 +445,18 @@ public class DoclingProducer extends DefaultProducer {
                 metadata.setFileSizeBytes(file.length());
             }
 
-            // Try to extract metadata from the JSON structure
-            // Docling JSON output may have different structures depending on the document
-            if (rootNode.has(DoclingMetadataFields.METADATA)) {
-                JsonNode metadataNode = rootNode.get(DoclingMetadataFields.METADATA);
-                extractFieldsFromJsonNode(metadata, metadataNode);
+            if (doclingDocument.getPages() != null) {
+                metadata.setPageCount(doclingDocument.getPages().size());
             }
 
-            // Look for document-level information
-            if (rootNode.has(DoclingMetadataFields.DOCUMENT)) {
-                JsonNode docNode = rootNode.get(DoclingMetadataFields.DOCUMENT);
-                if (docNode.has(DoclingMetadataFields.NAME)) {
-                    metadata.setTitle(docNode.get(DoclingMetadataFields.NAME).asText());
-                }
-            }
-
-            // Count pages if available
-            if (rootNode.has(DoclingMetadataFields.PAGES)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).size());
-            } else if (rootNode.has(DoclingMetadataFields.NUM_PAGES)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
+            DocumentOrigin origin = doclingDocument.getOrigin();
+            if (origin != null && origin.getMimetype() != null) {
+                metadata.setFormat(origin.getMimetype());
             }
 
             // Store raw metadata if configured
             if (configuration.isIncludeRawMetadata()) {
+                JsonNode rootNode = objectMapper.readTree(jsonOutput);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> rawMap = objectMapper.convertValue(rootNode, java.util.Map.class);
                 metadata.setRawMetadata(rawMap);
@@ -623,76 +467,6 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         return metadata;
-    }
-
-    private void extractFieldsFromJsonNode(DocumentMetadata metadata, JsonNode metadataNode) {
-        // Extract common metadata fields
-        if (metadataNode.has(DoclingMetadataFields.TITLE)) {
-            metadata.setTitle(metadataNode.get(DoclingMetadataFields.TITLE).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.AUTHOR)) {
-            metadata.setAuthor(metadataNode.get(DoclingMetadataFields.AUTHOR).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.CREATOR)) {
-            metadata.setCreator(metadataNode.get(DoclingMetadataFields.CREATOR).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.PRODUCER)) {
-            metadata.setProducer(metadataNode.get(DoclingMetadataFields.PRODUCER).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.SUBJECT)) {
-            metadata.setSubject(metadataNode.get(DoclingMetadataFields.SUBJECT).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.KEYWORDS)) {
-            metadata.setKeywords(metadataNode.get(DoclingMetadataFields.KEYWORDS).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.LANGUAGE)) {
-            metadata.setLanguage(metadataNode.get(DoclingMetadataFields.LANGUAGE).asText());
-        }
-
-        // Extract dates
-        if (metadataNode.has(DoclingMetadataFields.CREATION_DATE)
-                || metadataNode.has(DoclingMetadataFields.CREATION_DATE_CAMEL)) {
-            String dateStr = metadataNode.has(DoclingMetadataFields.CREATION_DATE)
-                    ? metadataNode.get(DoclingMetadataFields.CREATION_DATE).asText()
-                    : metadataNode.get(DoclingMetadataFields.CREATION_DATE_CAMEL).asText();
-            try {
-                metadata.setCreationDate(java.time.Instant.parse(dateStr));
-            } catch (Exception e) {
-                LOG.debug("Failed to parse creation date: {}", dateStr);
-            }
-        }
-
-        if (metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE)
-                || metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE_CAMEL)) {
-            String dateStr = metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE)
-                    ? metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE).asText()
-                    : metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE_CAMEL).asText();
-            try {
-                metadata.setModificationDate(java.time.Instant.parse(dateStr));
-            } catch (Exception e) {
-                LOG.debug("Failed to parse modification date: {}", dateStr);
-            }
-        }
-
-        // Extract custom metadata if extractAllMetadata is enabled
-        if (configuration.isExtractAllMetadata()) {
-            metadataNode.fields().forEachRemaining(entry -> {
-                String key = entry.getKey();
-                // Skip standard fields we already extracted
-                if (!DoclingMetadataFields.isStandardField(key)) {
-                    JsonNode value = entry.getValue();
-                    if (value.isTextual()) {
-                        metadata.addCustomMetadata(key, value.asText());
-                    } else if (value.isNumber()) {
-                        metadata.addCustomMetadata(key, value.asLong());
-                    } else if (value.isBoolean()) {
-                        metadata.addCustomMetadata(key, value.asBoolean());
-                    } else {
-                        metadata.addCustomMetadata(key, value.toString());
-                    }
-                }
-            });
-        }
     }
 
     private void setMetadataHeaders(Exchange exchange, DocumentMetadata metadata) {

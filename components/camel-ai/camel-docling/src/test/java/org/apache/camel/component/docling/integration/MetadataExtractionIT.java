@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.docling.integration;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,6 +82,35 @@ public class MetadataExtractionIT extends CamelTestSupport {
         LOG.info("Successfully extracted metadata: {}", metadata);
         LOG.info("File name: {}", metadata.getFileName());
         LOG.info("File size: {} bytes", metadata.getFileSizeBytes());
+    }
+
+    @Test
+    void testMetadataExtractionFromPdf() throws Exception {
+        Path testFile = createTestPdfFile();
+
+        DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
+                testFile.toString(), DocumentMetadata.class);
+
+        assertNotNull(metadata, "Metadata should not be null");
+        assertNotNull(metadata.getFileName(), "File name should be extracted");
+        assertTrue(metadata.getFileSizeBytes() > 0, "File size should be greater than 0");
+        assertNotNull(metadata.getFilePath(), "File path should be set");
+        assertThat(metadata.getPageCount()).isEqualTo(5);
+        assertThat(metadata.getFormat()).isEqualTo("application/pdf");
+        // TODO: assertThat(metadata.getTitle()).isEqualTo("The Evolution of the Word Processor");
+        // TODO: assertThat(metadata.getDocumentType()).isEqualTo("PDF");
+
+        LOG.info("Successfully extracted metadata: {}", metadata);
+        LOG.info("File name: {}", metadata.getFileName());
+        LOG.info("File size: {} bytes", metadata.getFileSizeBytes());
+    }
+
+    private Path createTestPdfFile() throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("multi_page.pdf")) {
+            java.nio.file.Path tempFile = Files.createTempFile("docling-test-multi_page", ".pdf");
+            Files.copy(is, tempFile.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
+            return tempFile;
+        }
     }
 
     @Test
