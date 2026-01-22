@@ -41,6 +41,8 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
         INIT_TOKENS[1] = new SimpleTokenType(TokenType.initVariable, "$$");
     }
 
+    private boolean acceptInitTokens = true; // flag to turn on|off
+
     /**
      * Does the expression include a simple init block.
      *
@@ -54,8 +56,16 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
         return false;
     }
 
+    protected void setAcceptInitTokens(boolean accept) {
+        this.acceptInitTokens = accept;
+    }
+
     @Override
     protected SimpleToken customToken(String expression, int index, boolean allowEscape, TokenType... filters) {
+        if (!acceptInitTokens) {
+            return null;
+        }
+
         // it could be any of the known tokens
         String text = expression.substring(index);
         for (int i = 0; i < NUMBER_OF_TOKENS; i++) {
@@ -65,6 +75,7 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
                 return new SimpleToken(token, index);
             }
         }
+
         return null;
     }
 

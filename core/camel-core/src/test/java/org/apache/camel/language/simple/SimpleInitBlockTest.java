@@ -54,6 +54,17 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
             }init$
             """;
 
+    private static final String INIT4 = """
+            $init{
+              // this is a java like comment
+              $$sum := ${sum(${header.lines},100)}
+
+              $$sku := ${iif(${body} contains 'Hi := Me $$sku',123,999)}
+              ## and here is also a yaml like comment
+            }init$
+            orderId=$$sku,total=$$sum
+            """;
+
     @Test
     public void testInitBlockExpression() throws Exception {
         exchange.getMessage().setBody("Hello Camel");
@@ -89,6 +100,14 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Hello World");
         exchange.getMessage().setHeader("lines", "3,5");
         assertPredicate(exchange, INIT2, false);
+    }
+
+    @Test
+    public void testInitBlockExpressionWithAssignmentInFunction() throws Exception {
+        exchange.getMessage().setBody("Hello Hi := Me $$sku");
+        exchange.getMessage().setHeader("lines", "75,33");
+
+        assertExpression(exchange, INIT4, "\norderId=123,total=208\n");
     }
 
     @Override

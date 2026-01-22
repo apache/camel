@@ -45,6 +45,10 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         return initKeys;
     }
 
+    protected SimpleInitBlockTokenizer getTokenizer() {
+        return (SimpleInitBlockTokenizer) tokenizer;
+    }
+
     @Override
     public Expression parseExpression() {
         // parse init block
@@ -94,6 +98,8 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     // $$name := <function>
     // $$name2 := <function>
     protected boolean initText() {
+        // turn on init mode so the parser can find the beginning of the init variable
+        getTokenizer().setAcceptInitTokens(true);
         while (!token.getType().isInitVariable() && !token.getType().isEol()) {
             // skip until we find init variable
             nextToken();
@@ -107,6 +113,9 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
             expect(TokenType.initOperator);
             nextToken();
             expect(TokenType.whiteSpace);
+            // turn off init mode so the parser does not detect init variables inside functions or literal text
+            // because they may also use := or $$ symbols
+            getTokenizer().setAcceptInitTokens(false);
             return true;
         }
 
