@@ -412,8 +412,30 @@ And the following other operators can be used:
 [width="100%",cols="50%,50%",options="header",]
 |====
 |Operator |Description
+|`? :` | The ternary operator evaluates a condition and returns a value based on the result. If the condition is true, the first value (after `?`) is returned; otherwise, the second value (after `:`) is returned. There must be spaces around both `?` and `:` operators. This is similar to the ternary operator in Java.
 |`?:` | The elvis operator returns the left-hand side if it has an effective Boolean value of true, otherwise it returns the right-hand side. This is useful for providing fallback values when an expression may evaluate to a value with an effective Boolean value of false (such as `null`, `false`, `0`, empty/blank string).
 |====
+
+The syntax for the ternary operator is:
+
+[source,text]
+----
+${leftValue} OP rightValue ? trueValue : falseValue
+----
+
+For example the following ternary operator will return `positive` if header `foo` is greater than 0, otherwise `negative`:
+
+[source,java]
+----
+simple("${header.foo > 0 ? 'positive' : 'negative'}");
+----
+
+Ternary operators can also be nested to handle multiple conditions:
+
+[source,java]
+----
+simple("${header.score >= 90 ? 'A' : ${header.score >= 80 ? 'B' : 'C'}}");
+----
 
 For example the following elvis operator will return the username header unless its null or empty, which
 then the default value of `Guest` is returned.
