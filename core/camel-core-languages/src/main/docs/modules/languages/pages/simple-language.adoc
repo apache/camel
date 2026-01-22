@@ -688,13 +688,74 @@ allows to use the variables later in the Camel routes.
 
 For example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:welcome")
-  .transform().simple(MAPPING) // where MAPPING is as previous shown
+  .transform().simple("""
+                        $init{
+                          $$greeting := ${upper('Hello $body}'}
+                          $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+                        }init$
+                        {
+                          "message": "$$greeting",
+                          "status": "$$level"
+                        }
+                      """)
   .to("kafka:welcome")
   .log("Sending welcome email to customer with status ${variable.level}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:welcome"/>
+    <transform>
+        <simple>
+            $init{
+              $$greeting := ${upper('Hello $body}'}
+              $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+            }init$
+            {
+              "message": "$$greeting",
+              "status": "$$level"
+            }
+        </simple>
+    </transform>
+    <to uri="kafka:welcome"/>
+    <log message="Sending welcome email to customer with status ${variable.level}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:welcome
+    steps:
+      - transform:
+          simple:
+            expression: |-
+              $init{
+                // this is a java like comment
+                $$sum := ${sum(${header.lines},100)}
+
+                $$sku := ${iif(${body} contains 'Camel',123,999)}
+                ## and here is also a yaml like comment
+              }init$
+              orderId=$$sku,total=$$sum
+      - to:
+          uri: kafka:welcome
+      - log:
+          message: "Sending welcome email to customer with status ${variable.level}"
+----
+====
 
 Notice how we can refer to the variable (`$$level`) in the log statement using the standard `${variable.xxx}` syntax.
 
