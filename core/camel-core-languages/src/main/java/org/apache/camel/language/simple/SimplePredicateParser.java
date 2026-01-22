@@ -408,6 +408,9 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * removed, which makes the succeeding parsing easier.
      */
     private void removeIgnorableWhiteSpaceTokens() {
+        // remove all ignored
+        tokens.removeIf(t -> t.getType().isIgnore());
+
         // white space can be removed if its not part of a quoted text or within function(s)
         boolean quote = false;
         int functionCount = 0;

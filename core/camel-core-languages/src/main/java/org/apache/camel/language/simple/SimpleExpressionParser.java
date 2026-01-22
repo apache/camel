@@ -195,6 +195,9 @@ public class SimpleExpressionParser extends BaseSimpleParser {
      * removed, which makes the succeeding parsing easier.
      */
     protected void removeIgnorableWhiteSpaceTokens() {
+        // remove all ignored
+        tokens.removeIf(t -> t.getType().isIgnore());
+
         // white space should be removed before and after the other operator
         List<SimpleToken> toRemove = new ArrayList<>();
         for (int i = 1; i < tokens.size() - 1; i++) {
@@ -207,6 +210,11 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 }
                 if (next.getType().isWhitespace()) {
                     toRemove.add(next);
+                }
+            }
+            if (cur.getType().isInitVariable()) {
+                if (prev.getType().isWhitespace()) {
+                    toRemove.add(prev);
                 }
             }
         }

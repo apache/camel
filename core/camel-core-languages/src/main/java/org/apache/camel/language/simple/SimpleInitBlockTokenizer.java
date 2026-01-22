@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.Arrays;
+
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
@@ -74,6 +76,13 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
                     && acceptToken(token, text, expression, index)) {
                 return new SimpleToken(token, index);
             }
+        }
+
+        boolean initVar = Arrays.asList(filters).contains(TokenType.initVariable);
+        if (initVar) {
+            // if we are filtering to find an init variable then we need to ignore when not found
+            char ch = text.charAt(0);
+            return new SimpleToken(new SimpleTokenType(TokenType.ignore, String.valueOf(ch)), index);
         }
 
         return null;

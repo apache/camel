@@ -21,6 +21,7 @@ package org.apache.camel.language.simple.types;
  */
 public enum TokenType {
 
+    ignore,
     whiteSpace,
     character,
     booleanValue,

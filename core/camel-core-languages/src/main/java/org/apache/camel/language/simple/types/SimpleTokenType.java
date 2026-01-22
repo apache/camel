@@ -48,6 +48,13 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is ignore token
+     */
+    public boolean isIgnore() {
+        return type == TokenType.ignore;
+    }
+
+    /**
      * Whether the type is whitespace
      */
     public boolean isWhitespace() {

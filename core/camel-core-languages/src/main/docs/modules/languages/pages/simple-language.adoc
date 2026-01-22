@@ -658,6 +658,19 @@ $init{
 }init$
 ----
 
+You can have Java style code comments in the init block using `// comment here` as follows:
+
+[source,text]
+----
+$init{
+  // foo is a beginner phrase
+  $$foo := 'Hello foo'
+
+  // here we can inline functions to get the name of the user from the message body
+  $$bar := 'Hi from ${body}'
+}init$
+----
+
 Yes you can use the full power of the simple language and all its functions, such as:
 
 [source,text]

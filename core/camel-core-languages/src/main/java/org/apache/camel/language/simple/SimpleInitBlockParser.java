@@ -85,11 +85,10 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         initKeys.clear();
 
         // parse the expression using the following grammar
+        // init statements are variables assigned to functions/operators
         nextToken();
         while (!token.getType().isEol()) {
-            // an expression supports just template (eg text), functions, unary, or other operator
             initText();
-            templateText();
             functionText();
             unaryOperator();
             otherOperator();
@@ -100,7 +99,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         // into an ast, and then from the ast, to Camel expression(s).
         // hence why there are a number of tasks going on below to accomplish this
 
-        // remove any ignorable white space tokens
+        // remove any ignore and ignorable white space tokens
         removeIgnorableWhiteSpaceTokens();
         // prepare for any local variables to use $$ syntax in simple expression
 
@@ -125,8 +124,9 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         // turn on init mode so the parser can find the beginning of the init variable
         getTokenizer().setAcceptInitTokens(true);
         while (!token.getType().isInitVariable() && !token.getType().isEol()) {
-            // skip until we find init variable
-            nextToken();
+            // skip until we find init variable/function (this skips code comments)
+            nextToken(TokenType.functionStart, TokenType.unaryOperator, TokenType.otherOperator, TokenType.initVariable,
+                    TokenType.eol);
         }
         if (accept(TokenType.initVariable)) {
             while (!token.getType().isWhitespace() && !token.getType().isEol()) {
@@ -136,7 +136,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
             nextToken();
             expect(TokenType.initOperator);
             nextToken();
-            expect(TokenType.whiteSpace);
+            expectAndAcceptMore(TokenType.whiteSpace);
             // turn off init mode so the parser does not detect init variables inside functions or literal text
             // because they may also use := or $$ symbols
             getTokenizer().setAcceptInitTokens(false);
