@@ -55,4 +55,42 @@ public interface IAM2Constants {
     String GROUP_ARN = "CamelAwsIAMGroupArn";
     @Metadata(description = "The ID of the created or retrieved group", javaType = "String")
     String GROUP_ID = "CamelAwsIAMGroupId";
+
+    // Role constants
+    @Metadata(description = "The name of an AWS IAM Role", javaType = "String")
+    String ROLE_NAME = "CamelAwsIAMRoleName";
+    @Metadata(description = "The path of an AWS IAM Role", javaType = "String")
+    String ROLE_PATH = "CamelAwsIAMRolePath";
+    @Metadata(description = "The assume role policy document for the role", javaType = "String")
+    String ASSUME_ROLE_POLICY_DOCUMENT = "CamelAwsIAMAssumeRolePolicyDocument";
+    @Metadata(description = "The ARN of the created or retrieved role", javaType = "String")
+    String ROLE_ARN = "CamelAwsIAMRoleArn";
+    @Metadata(description = "The ID of the created or retrieved role", javaType = "String")
+    String ROLE_ID = "CamelAwsIAMRoleId";
+    @Metadata(description = "The description of an AWS IAM Role", javaType = "String")
+    String ROLE_DESCRIPTION = "CamelAwsIAMRoleDescription";
+
+    // Policy constants
+    @Metadata(description = "The name of an AWS IAM Policy", javaType = "String")
+    String POLICY_NAME = "CamelAwsIAMPolicyName";
+    @Metadata(description = "The path of an AWS IAM Policy", javaType = "String")
+    String POLICY_PATH = "CamelAwsIAMPolicyPath";
+    @Metadata(description = "The policy document", javaType = "String")
+    String POLICY_DOCUMENT = "CamelAwsIAMPolicyDocument";
+    @Metadata(description = "The ARN of an AWS IAM Policy", javaType = "String")
+    String POLICY_ARN = "CamelAwsIAMPolicyArn";
+    @Metadata(description = "The ID of an AWS IAM Policy", javaType = "String")
+    String POLICY_ID = "CamelAwsIAMPolicyId";
+    @Metadata(description = "The description of an AWS IAM Policy", javaType = "String")
+    String POLICY_DESCRIPTION = "CamelAwsIAMPolicyDescription";
+
+    // Instance profile constants
+    @Metadata(description = "The name of an AWS IAM Instance Profile", javaType = "String")
+    String INSTANCE_PROFILE_NAME = "CamelAwsIAMInstanceProfileName";
+    @Metadata(description = "The path of an AWS IAM Instance Profile", javaType = "String")
+    String INSTANCE_PROFILE_PATH = "CamelAwsIAMInstanceProfilePath";
+    @Metadata(description = "The ARN of an AWS IAM Instance Profile", javaType = "String")
+    String INSTANCE_PROFILE_ARN = "CamelAwsIAMInstanceProfileArn";
+    @Metadata(description = "The ID of an AWS IAM Instance Profile", javaType = "String")
+    String INSTANCE_PROFILE_ID = "CamelAwsIAMInstanceProfileId";
 }

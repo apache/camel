@@ -33,6 +33,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 @Component("service")
+@Deprecated(since = "4.8.0")
 public class ServiceComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private ServiceRegistry service;

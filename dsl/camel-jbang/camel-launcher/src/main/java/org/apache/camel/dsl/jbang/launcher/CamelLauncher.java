@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.launcher;
 
+import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 
 /**
@@ -32,6 +36,42 @@ public class CamelLauncher {
      * @param args command line arguments to pass to Camel JBang
      */
     public static void main(String... args) {
+        // Set system property to indicate we're running from the launcher
+        System.setProperty("camel.launcher", "true");
+
+        // Try to determine and set the JAR path
+        String jarPath = detectJarPath();
+        if (jarPath != null) {
+            System.setProperty("camel.launcher.jar", jarPath);
+        }
+
         CamelJBangMain.run(args);
+    }
+
+    private static String detectJarPath() {
+        try {
+            URL location = CamelLauncher.class.getProtectionDomain()
+                    .getCodeSource().getLocation();
+            if (location != null) {
+                String urlStr = location.toString();
+                // Handle nested JAR (Spring Boot loader)
+                if (urlStr.startsWith("jar:file:")) {
+                    int idx = urlStr.indexOf("!/");
+                    if (idx > 0) {
+                        String path = urlStr.substring(9, idx);
+                        // Decode URL-encoded characters (spaces, special chars)
+                        return URLDecoder.decode(path, StandardCharsets.UTF_8);
+                    }
+                }
+                // Handle direct file URL
+                if (urlStr.startsWith("file:")) {
+                    String path = urlStr.substring(5);
+                    return URLDecoder.decode(path, StandardCharsets.UTF_8);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("WARN: Failed to detect launcher JAR path: " + e.getMessage());
+        }
+        return null;
     }
 }

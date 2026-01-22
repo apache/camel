@@ -40,6 +40,8 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Deprecated(since = "4.7.0")
+// NOTE: we should remove this test when removing the source code deprecation on cloud.
 class ZooKeeperServiceDiscoveryIT {
     @RegisterExtension
     static ZooKeeperService service = ZooKeeperServiceFactory.createService();

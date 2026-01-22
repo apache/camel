@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
@@ -28,7 +29,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -99,10 +99,12 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
         put.setEntity(entity);
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
-        try (CloseableHttpResponse response = httpclient.execute(put)) {
-            assertEquals(200, response.getCode());
-            assertEquals(RESPONSE, EntityUtils.toString(response.getEntity()));
-        }
+        MyResponse httpResponse = httpclient.execute(put, response -> {
+            return new MyResponse(response.getCode(), EntityUtils.toString(response.getEntity()));
+        });
+
+        assertEquals(200, httpResponse.status());
+        assertEquals(RESPONSE, httpResponse.content());
 
         mock.assertIsSatisfied();
         onComplete.assertIsSatisfied();

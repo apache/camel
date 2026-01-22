@@ -43,6 +43,8 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Deprecated(since = "4.7.0")
+// NOTE: we should remove this test when removing the source code deprecation on cloud.
 public abstract class ZooKeeperServiceRegistrationITBase extends CamelTestSupport {
     protected static final String SERVICE_ID = UUID.randomUUID().toString();
     protected static final String SERVICE_NAME = "my-service";

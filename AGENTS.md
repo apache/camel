@@ -4,7 +4,7 @@ Guidelines for AI agents working on this codebase.
 
 ## Project Info
 
-Apache Camel is an integration framework supporting routing rules in Java, XML, Groovy, and YAML DSLs.
+Apache Camel is an integration framework supporting routing rules in Java, XML and YAML DSLs.
 
 - Version: 4.18.0-SNAPSHOT
 - Java: 17+ (21 for Virtual Threads)

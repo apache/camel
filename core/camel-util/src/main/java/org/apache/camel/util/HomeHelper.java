@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cloud;
+package org.apache.camel.util;
 
-import java.util.HashMap;
-import java.util.Map;
+public final class HomeHelper {
 
-import com.fasterxml.jackson.annotation.JsonRootName;
-
-@JsonRootName("meta")
-@Deprecated(since = "4.7.0")
-public class MetaData extends HashMap<String, String> {
-    public MetaData() {
+    /**
+     * Resolves the user.home directory
+     */
+    public static String resolveHomeDir() {
+        String dir = System.getProperty("user.home");
+        if (dir == null || dir.isBlank() || dir.startsWith("?")) {
+            // fallback to use ENV as ? can be returned on linux in some weird situations
+            dir = System.getenv("HOME");
+        }
+        return dir;
     }
 
-    public MetaData(Map<? extends String, ? extends String> meta) {
-        super(meta);
-    }
 }

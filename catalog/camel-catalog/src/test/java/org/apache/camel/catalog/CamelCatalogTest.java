@@ -1681,14 +1681,15 @@ public class CamelCatalogTest {
         LanguageModel model = catalog.languageModel("simple");
         assertNotNull(model);
 
-        assertTrue(model.getFunctions().size() > 50);
+        assertTrue(model.getFunctions().size() > 80);
 
-        assertEquals("body", model.getFunctions().get(0).getConstantName());
-        assertEquals("${", model.getFunctions().get(0).getPrefix());
-        assertEquals("}", model.getFunctions().get(0).getSuffix());
-        assertEquals("The message body", model.getFunctions().get(0).getDescription());
+        var f = model.getFunctions().stream().filter(m -> m.getConstantName().equals("body")).findFirst().orElseThrow();
+        assertEquals("body", f.getConstantName());
+        assertEquals("${", f.getPrefix());
+        assertEquals("}", f.getSuffix());
+        assertEquals("The message body", f.getDescription());
 
-        var f = model.getFunctions().stream().filter(m -> m.getConstantName().equals("pretty(exp)")).findFirst().orElseThrow();
+        f = model.getFunctions().stream().filter(m -> m.getConstantName().equals("pretty(exp)")).findFirst().orElseThrow();
         assertEquals("pretty(exp)", f.getConstantName());
         assertEquals("${", f.getPrefix());
         assertEquals("}", f.getSuffix());

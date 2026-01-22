@@ -14,20 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.zookeeper.cloud;
+package org.apache.camel.component.cxf.jaxrs.response;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonRootName;
-
-@JsonRootName("meta")
-@Deprecated(since = "4.7.0")
-public class MetaData extends HashMap<String, String> {
-    public MetaData() {
-    }
-
-    public MetaData(Map<? extends String, ? extends String> meta) {
-        super(meta);
-    }
+// A record using exclusively for testing purposes: used to hold status, content and eventually any other
+// response required for testing.
+public record MyResponse(int status, String content) {
 }

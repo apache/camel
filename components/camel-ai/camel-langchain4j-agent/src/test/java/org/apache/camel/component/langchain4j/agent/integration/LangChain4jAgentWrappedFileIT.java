@@ -32,6 +32,8 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Integration tests for WrappedFile support in the LangChain4j Agent component. Tests the ability to process files from
@@ -58,11 +60,17 @@ public class LangChain4jAgentWrappedFileIT extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        if (!ModelHelper.hasEnvironmentConfiguration()) {
-            throw new IllegalStateException(
-                    "This test requires environment variables: API_KEY, MODEL_PROVIDER. "
-                                            + "Optionally: MODEL_BASE_URL, MODEL_NAME");
-        }
+        // Skip if no environment configuration - this test requires external API providers
+        assumeTrue(ModelHelper.hasEnvironmentConfiguration(),
+                "Skipping: This test requires environment variables: API_KEY, MODEL_PROVIDER. " +
+                                                              "Optionally: MODEL_BASE_URL, MODEL_NAME");
+
+        // Skip if using Ollama - it doesn't support multimodal content
+        assumeFalse("ollama".equals(System.getenv(ModelHelper.MODEL_PROVIDER)),
+                "Skipping wrapped file tests with Ollama: LangChain4j's Ollama provider does not support " +
+                                                                                "multimodal content (images, PDFs). The provider's InternalOllamaHelper requires "
+                                                                                +
+                                                                                "single text content in UserMessage. Use OpenAI or Gemini providers for file processing tests.");
 
         chatModel = ModelHelper.loadFromEnv();
 

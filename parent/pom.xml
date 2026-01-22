@@ -78,7 +78,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.41.10</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.41.11</aws-java-sdk2-version>
         <aws-xray-version>2.20.0</aws-xray-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.34</azure-storage-blob-changefeed-version>
@@ -208,17 +208,17 @@
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.57.1</google-cloud-bigquery-version>
+        <google-cloud-bigquery-version>2.57.2</google-cloud-bigquery-version>
         <google-cloud-core-version>2.63.1</google-cloud-core-version>
         <google-cloud-functions-version>2.72.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.0.3</google-cloud-http-client-version>
         <google-cloud-pubsub-version>1.145.0</google-cloud-pubsub-version>
-        <google-cloud-pubsublite-version>1.15.20</google-cloud-pubsublite-version>
+        <google-cloud-pubsublite-version>1.15.21</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.82.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.62.0</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.83.0</google-cloud-aiplatform-version>
         <google-genai-version>1.35.0</google-genai-version>
-        <graaljs-version>25.0.1</graaljs-version>
+        <graaljs-version>25.0.2</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
         <greenmail-version>2.1.8</greenmail-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
@@ -270,15 +270,15 @@
         <jackson-databind-nullable-version>0.2.8</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.0</jackson-jq-version>
         <jackson2-version>2.19.4</jackson2-version>
-        <jackrabbit-version>2.22.2</jackrabbit-version>
+        <jackrabbit-version>2.22.3</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.5.3</jandex-version>
         <jansi-version>2.4.2</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
-        <java-util-version>4.83.0</java-util-version>
+        <java-util-version>4.84.0</java-util-version>
         <jnats-version>2.25.1</jnats-version>
-        <javacc-maven-plugin-version>3.1.1</javacc-maven-plugin-version>
+        <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
         <javapoet-version>1.13.0</javapoet-version>
@@ -295,7 +295,7 @@
         <jakarta-xml-ws-api-version>4.0.2</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.1.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>4.0.6</glassfish-jaxb-runtime-version>
-        <jaxb2-maven-plugin-version>3.3.0</jaxb2-maven-plugin-version>
+        <jaxb2-maven-plugin-version>4.1.0</jaxb2-maven-plugin-version>
         <jaxp-ri-version>1.4.5</jaxp-ri-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.6.1.Final</jboss-logging-version>
@@ -341,7 +341,7 @@
         <json-unit-version>5.1.0</json-unit-version>
         <jsoup-version>1.22.1</jsoup-version>
         <jt400-version>21.0.6</jt400-version>
-        <jte-version>3.2.1</jte-version>
+        <jte-version>3.2.2</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.13.4</junit-jupiter-version>
         <junit6-jupiter-version>6.0.1</junit6-jupiter-version>
@@ -427,7 +427,7 @@
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.10</ognl-version>
         <openai-java-version>4.15.0</openai-java-version>
-        <openapi-generator-version>7.18.0</openapi-generator-version>
+        <openapi-generator-version>7.19.0</openapi-generator-version>
         <openjpa-version>4.1.1</openjpa-version>
         <opensearch-rest-client-version>3.4.0</opensearch-rest-client-version>
         <opensearch-java-client-version>3.5.0</opensearch-java-client-version>
@@ -460,7 +460,7 @@
         <protobuf-maven-plugin-version>4.1.2</protobuf-maven-plugin-version>
         <protonpack-version>1.8</protonpack-version>
         <prowide-version>SRU2025-10.3.4</prowide-version>
-        <pubnub-version>12.1.1</pubnub-version>
+        <pubnub-version>12.1.3</pubnub-version>
         <pulsar-version>4.1.2</pulsar-version>
         <qdrant-client-version>1.16.2</qdrant-client-version>
         <qpid-broker-version>10.0.1</qpid-broker-version>
@@ -497,7 +497,7 @@
         <snakeyaml-version>2.5</snakeyaml-version>
         <snakeyaml-engine-version>3.0.1</snakeyaml-engine-version>
         <snmp4j-version>3.9.6</snmp4j-version>
-        <solr-version>9.10.0</solr-version>
+        <solr-version>9.10.1</solr-version>
         <solr-zookeeper-version>3.9.4</solr-zookeeper-version>
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.4-groovy-4.0</spock-version>
@@ -518,7 +518,7 @@
         <squareup-okio-version>1.17.5</squareup-okio-version>
         <sshd-version>2.16.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
-        <stripe-java-version>31.1.0</stripe-java-version>
+        <stripe-java-version>31.2.0</stripe-java-version>
         <stumbleupon-async-version>1.4.1</stumbleupon-async-version>
         <swagger-java-version>1.6.10</swagger-java-version>
         <swagger-openapi3-version>2.2.36</swagger-openapi3-version>

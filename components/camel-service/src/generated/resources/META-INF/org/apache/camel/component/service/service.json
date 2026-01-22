@@ -4,7 +4,7 @@
     "name": "service",
     "title": "Service",
     "description": "Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.22.0",
     "label": "cloud",
     "javaType": "org.apache.camel.component.service.ServiceComponent",

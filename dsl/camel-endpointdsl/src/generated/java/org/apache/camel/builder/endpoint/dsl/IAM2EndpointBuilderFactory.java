@@ -763,6 +763,199 @@ public interface IAM2EndpointBuilderFactory {
         public String awsIAMGroupId() {
             return "CamelAwsIAMGroupId";
         }
+        /**
+         * The name of an AWS IAM Role.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMRoleName}.
+         */
+        public String awsIAMRoleName() {
+            return "CamelAwsIAMRoleName";
+        }
+        /**
+         * The path of an AWS IAM Role.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMRolePath}.
+         */
+        public String awsIAMRolePath() {
+            return "CamelAwsIAMRolePath";
+        }
+        /**
+         * The assume role policy document for the role.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * AwsIAMAssumeRolePolicyDocument}.
+         */
+        public String awsIAMAssumeRolePolicyDocument() {
+            return "CamelAwsIAMAssumeRolePolicyDocument";
+        }
+        /**
+         * The ARN of the created or retrieved role.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMRoleArn}.
+         */
+        public String awsIAMRoleArn() {
+            return "CamelAwsIAMRoleArn";
+        }
+        /**
+         * The ID of the created or retrieved role.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMRoleId}.
+         */
+        public String awsIAMRoleId() {
+            return "CamelAwsIAMRoleId";
+        }
+        /**
+         * The description of an AWS IAM Role.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMRoleDescription}.
+         */
+        public String awsIAMRoleDescription() {
+            return "CamelAwsIAMRoleDescription";
+        }
+        /**
+         * The name of an AWS IAM Policy.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMPolicyName}.
+         */
+        public String awsIAMPolicyName() {
+            return "CamelAwsIAMPolicyName";
+        }
+        /**
+         * The path of an AWS IAM Policy.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMPolicyPath}.
+         */
+        public String awsIAMPolicyPath() {
+            return "CamelAwsIAMPolicyPath";
+        }
+        /**
+         * The policy document.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMPolicyDocument}.
+         */
+        public String awsIAMPolicyDocument() {
+            return "CamelAwsIAMPolicyDocument";
+        }
+        /**
+         * The ARN of an AWS IAM Policy.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMPolicyArn}.
+         */
+        public String awsIAMPolicyArn() {
+            return "CamelAwsIAMPolicyArn";
+        }
+        /**
+         * The ID of an AWS IAM Policy.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMPolicyId}.
+         */
+        public String awsIAMPolicyId() {
+            return "CamelAwsIAMPolicyId";
+        }
+        /**
+         * The description of an AWS IAM Policy.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMPolicyDescription}.
+         */
+        public String awsIAMPolicyDescription() {
+            return "CamelAwsIAMPolicyDescription";
+        }
+        /**
+         * The name of an AWS IAM Instance Profile.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMInstanceProfileName}.
+         */
+        public String awsIAMInstanceProfileName() {
+            return "CamelAwsIAMInstanceProfileName";
+        }
+        /**
+         * The path of an AWS IAM Instance Profile.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMInstanceProfilePath}.
+         */
+        public String awsIAMInstanceProfilePath() {
+            return "CamelAwsIAMInstanceProfilePath";
+        }
+        /**
+         * The ARN of an AWS IAM Instance Profile.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMInstanceProfileArn}.
+         */
+        public String awsIAMInstanceProfileArn() {
+            return "CamelAwsIAMInstanceProfileArn";
+        }
+        /**
+         * The ID of an AWS IAM Instance Profile.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code AwsIAMInstanceProfileId}.
+         */
+        public String awsIAMInstanceProfileId() {
+            return "CamelAwsIAMInstanceProfileId";
+        }
     }
     static IAM2EndpointBuilder endpointBuilder(String componentName, String path) {
         class IAM2EndpointBuilderImpl extends AbstractEndpointBuilder implements IAM2EndpointBuilder, AdvancedIAM2EndpointBuilder {

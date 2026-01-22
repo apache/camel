@@ -51,5 +51,5 @@ camel @{command.fullName} [options]
 @end{}
 @if{hasExamplesFile}
 
-include::examples/@{examplesFileName}[]
+include::partial$jbang-commands/examples/@{examplesFileName}[]
 @end{}
