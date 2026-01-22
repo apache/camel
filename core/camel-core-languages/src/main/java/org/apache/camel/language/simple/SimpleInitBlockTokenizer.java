@@ -40,7 +40,7 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
     static {
         // init
         INIT_TOKENS[0] = new SimpleTokenType(TokenType.initOperator, ":=");
-        INIT_TOKENS[1] = new SimpleTokenType(TokenType.initVariable, "$$");
+        INIT_TOKENS[1] = new SimpleTokenType(TokenType.initVariable, "$");
     }
 
     private boolean acceptInitTokens = true; // flag to turn on|off

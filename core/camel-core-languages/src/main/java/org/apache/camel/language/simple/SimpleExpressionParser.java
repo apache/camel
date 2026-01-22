@@ -89,7 +89,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                     this.expression = part;
                     // use $$key as local variable in the expression afterwards
                     for (String key : initParser.getInitKeys()) {
-                        this.expression = this.expression.replace("$$" + key, "${variable." + key + "}");
+                        this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
                     }
                 }
             }

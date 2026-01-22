@@ -644,7 +644,7 @@ $init{
 
 Notice how the block uses the `$init{` ... `}init$` markers to indicate the start and end of the block.
 
-Inside the init block, then you can assign local variables in the syntax `$$key := ...` where you can then use simple language to declare
+Inside the init block, then you can assign local variables in the syntax `$key := ...` where you can then use simple language to declare
 the value of the variable.
 
 In the example below the `foo` variable is assigned a constant value of `Hello foo`, while `bar` variable is a string value with the dynamic value
@@ -653,8 +653,8 @@ of the message body.
 [source,text]
 ----
 $init{
-  $$foo := 'Hello foo'
-  $$bar := 'Hi from ${body}'
+  $foo := 'Hello foo'
+  $bar := 'Hi from ${body}'
 }init$
 ----
 
@@ -664,10 +664,10 @@ You can have Java style code comments in the init block using `// comment here` 
 ----
 $init{
   // foo is a beginner phrase
-  $$foo := 'Hello foo'
+  $foo := 'Hello foo'
 
   // here we can inline functions to get the name of the user from the message body
-  $$bar := 'Hi from ${body}'
+  $bar := 'Hi from ${body}'
 }init$
 ----
 
@@ -676,25 +676,25 @@ Yes you can use the full power of the simple language and all its functions, suc
 [source,text]
 ----
 $init{
-  $$foo := ${upper('Hello $body}'}
-  $$bar := ${iif(${header.code} > 999,'Gold','Silver')}
+  $foo := ${upper('Hello $body}'}
+  $bar := ${iif(${header.code} > 999,'Gold','Silver')}
 }init$
 ----
 
 The local variables can then easily be used in the Simple language either using the `${variable.foo}` syntax
-or the shorthand syntax `$$foo`.
+or the shorthand syntax `$foo`.
 
 For example as below where we do a basic JSon mapping:
 
 [source,text]
 ----
 $init{
-  $$greeting := ${upper('Hello $body}'}
-  $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+  $greeting := ${upper('Hello $body}'}
+  $level := ${iif(${header.code} > 999,'Gold','Silver')}
 }init$
 {
-  "message": "$$greeting",
-  "status": "$$level"
+  "message": "$greeting",
+  "status": "$level"
 }
 ----
 
@@ -712,12 +712,12 @@ Java::
 from("direct:welcome")
   .transform().simple("""
                         $init{
-                          $$greeting := ${upper('Hello $body}'}
-                          $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+                          $greeting := ${upper('Hello $body}'}
+                          $level := ${iif(${header.code} > 999,'Gold','Silver')}
                         }init$
                         {
-                          "message": "$$greeting",
-                          "status": "$$level"
+                          "message": "$greeting",
+                          "status": "$level"
                         }
                       """)
   .to("kafka:welcome")
@@ -733,12 +733,12 @@ XML::
     <transform>
         <simple>
             $init{
-              $$greeting := ${upper('Hello $body}'}
-              $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+              $greeting := ${upper('Hello $body}'}
+              $level := ${iif(${header.code} > 999,'Gold','Silver')}
             }init$
             {
-              "message": "$$greeting",
-              "status": "$$level"
+              "message": "$greeting",
+              "status": "$level"
             }
         </simple>
     </transform>
@@ -758,12 +758,12 @@ YAML::
           simple:
             expression: |-
                 $init{
-                  $$greeting := ${upper('Hello $body}'}
-                  $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+                  $greeting := ${upper('Hello $body}'}
+                  $level := ${iif(${header.code} > 999,'Gold','Silver')}
                 }init$
                 {
-                  "message": "$$greeting",
-                  "status": "$$level"
+                  "message": "$greeting",
+                  "status": "$level"
                 }
       - to:
           uri: kafka:welcome
@@ -772,7 +772,7 @@ YAML::
 ----
 ====
 
-Notice how we can refer to the variable (`$$level`) in the log statement using the standard `${variable.xxx}` syntax.
+Notice how we can refer to the variable (`$level`) in the log statement using the standard `${variable.xxx}` syntax.
 
 == OGNL Expression Support
 

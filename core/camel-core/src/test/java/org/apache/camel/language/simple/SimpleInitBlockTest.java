@@ -25,44 +25,40 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
     private static final String INIT = """
             $init{
               // this is a java like comment
-              $$sum := ${sum(${header.lines},100)}
+              $sum := ${sum(${header.lines},100)}
 
-              $$sku := ${iif(${body} contains 'Camel',123,999)}
-              ## and here is also a yaml like comment
+              $sku := ${iif(${body} contains 'Camel',123,999)}
             }init$
-            orderId=$$sku,total=$$sum
+            orderId=$sku,total=$sum
             """;
 
     private static final String INIT2 = """
             $init{
               // this is a java like comment
-              $$sum := ${sum(${header.lines},100)}
+              $sum := ${sum(${header.lines},100)}
 
-              $$sku := ${iif(${body} contains 'Camel',123,999)}
-              ## and here is also a yaml like comment
+              $sku := ${iif(${body} contains 'Camel',123,999)}
             }init$
-            $$sum > 200 && $$sku != 999
+            $sum > 200 && $sku != 999
             """;
 
     private static final String INIT3 = """
             $init{
               // this is a java like comment
-              $$sum := ${sum(${header.lines},100)}
+              $sum := ${sum(${header.lines},100)}
 
-              $$sku := ${iif(${body} contains 'Camel',123,999)}
-              ## and here is also a yaml like comment
+              $sku := ${iif(${body} contains 'Camel',123,999)}
             }init$
             """;
 
     private static final String INIT4 = """
             $init{
               // this is a java like comment
-              $$sum := ${sum(${header.lines},100)}
+              $sum := ${sum(${header.lines},100)}
 
-              $$sku := ${iif(${body} contains 'Hi := Me $$sku',123,999)}
-              ## and here is also a yaml like comment
+              $sku := ${iif(${body} contains 'Hi := Me $sku',123,999)}
             }init$
-            orderId=$$sku,total=$$sum
+            orderId=$sku,total=$sum
             """;
 
     @Test
@@ -104,7 +100,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
 
     @Test
     public void testInitBlockExpressionWithAssignmentInFunction() throws Exception {
-        exchange.getMessage().setBody("Hello Hi := Me $$sku");
+        exchange.getMessage().setBody("Hello Hi := Me $sku");
         exchange.getMessage().setHeader("lines", "75,33");
 
         assertExpression(exchange, INIT4, "orderId=123,total=208\n");

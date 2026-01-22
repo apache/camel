@@ -98,7 +98,7 @@ public class InitBlockExpression extends BaseSimpleNode {
             public <T> T evaluate(Exchange exchange, Class<T> type) {
                 String name = leftExp.evaluate(exchange, String.class);
                 name = name.trim();
-                name = StringHelper.after(name, "$$", name);
+                name = StringHelper.after(name, "$", name);
                 Object value = rightExp.evaluate(exchange, Object.class);
                 exchange.setVariable(name, value);
                 return null;

@@ -159,7 +159,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
 
                 // remember which init variables we have created
                 if (prev instanceof LiteralNode ln) {
-                    String key = StringHelper.after(ln.getText(), "$$");
+                    String key = StringHelper.after(ln.getText(), "$");
                     if (key != null) {
                         key = key.trim();
                         initKeys.add(key);
