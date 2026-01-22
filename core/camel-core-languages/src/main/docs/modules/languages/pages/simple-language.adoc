@@ -626,7 +626,7 @@ simple("${header.title} contains 'Camel' || ${header.type'} == 'gold'")
 Starting from *Camel 4.18* you can in the top of your Simple expressions declare an _initialization_ block that are used
 to define a set of local variables that are pre-computed, and can be used in the following Simple expression. This allows
 to reuse variables, and also avoid making the simple expression complicated when having inlined functions, and in general
-making using the simple expression easier to maintain and understand.
+make the simple expression easier to maintain and understand.
 
 The _init block_ is declared as follows:
 
@@ -656,7 +656,7 @@ $init{
 }init$
 ----
 
-Yes you can use the full power of the simple language and all its functions, for example:
+Yes you can use the full power of the simple language and all its functions, such as:
 
 [source,text]
 ----
@@ -667,9 +667,9 @@ $init{
 ----
 
 The local variables can then easily be used in the Simple language either using the `${variable.foo}` syntax
-to the same shorthand syntax `$$foo`.
+or the shorthand syntax `$$foo`.
 
-For example
+For example as below where we do a basic JSon mapping:
 
 [source,text]
 ----
@@ -683,6 +683,20 @@ $init{
 }
 ----
 
+The assigned variables from the _init block_ are stored as xref:manual::variables.adoc[Variables] on the `Exchange` which
+allows to use the variables later in the Camel routes.
+
+For example:
+
+[source,java]
+----
+from("direct:welcome")
+  .transform().simple(MAPPING) // where MAPPING is as previous shown
+  .to("kafka:welcome")
+  .log("Sending welcome email to customer with status ${variable.level}");
+----
+
+Notice how we can refer to the variable (`$$level`) in the log statement using the standard `${variable.xxx}` syntax.
 
 == OGNL Expression Support
 
