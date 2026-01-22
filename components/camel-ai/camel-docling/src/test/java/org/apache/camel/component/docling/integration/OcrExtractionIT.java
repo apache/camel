@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This test demonstrates how to use Docling's OCR capabilities to extract text from images containing text content.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
-public class OcrExtractionIT extends CamelTestSupport {
+class OcrExtractionIT extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(OcrExtractionIT.class);
 
@@ -76,7 +76,7 @@ public class OcrExtractionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOcrTextExtractionFromImage() throws Exception {
+    void testOcrTextExtractionFromImage() throws Exception {
         Path testImage = createTestImageWithText();
 
         LOG.info("Created test image at: {}", testImage);
@@ -88,6 +88,12 @@ public class OcrExtractionIT extends CamelTestSupport {
 
         LOG.info("OCR extraction result:\n{}", result);
 
+        checkExtractedText(result);
+
+        LOG.info("Successfully extracted text from image using OCR");
+    }
+
+    private void checkExtractedText(String result) {
         // Verify that at least some of the expected text was extracted
         // Note: OCR may not be 100% accurate, so we check for partial matches
         String resultLower = result.toLowerCase();
@@ -97,8 +103,6 @@ public class OcrExtractionIT extends CamelTestSupport {
 
         assertTrue(foundHello || foundApache || foundOcr,
                 "OCR should extract at least some of the expected text. Got: " + result);
-
-        LOG.info("Successfully extracted text from image using OCR");
     }
 
     @Test
@@ -109,6 +113,8 @@ public class OcrExtractionIT extends CamelTestSupport {
 
         assertNotNull(result, "Markdown result should not be null");
         assertTrue(result.length() > 0, "Markdown result should not be empty");
+
+        checkExtractedText(result);
 
         LOG.info("OCR Markdown conversion result:\n{}", result);
         LOG.info("Successfully converted image to Markdown using OCR");
@@ -124,6 +130,8 @@ public class OcrExtractionIT extends CamelTestSupport {
         assertTrue(result.length() > 0, "JSON result should not be empty");
         assertTrue(result.contains("{") || result.contains("["), "Result should be valid JSON");
 
+        checkExtractedText(result);
+
         LOG.info("OCR JSON conversion result:\n{}", result);
         LOG.info("Successfully converted image to JSON using OCR");
     }
@@ -136,6 +144,8 @@ public class OcrExtractionIT extends CamelTestSupport {
 
         assertNotNull(result, "Async OCR result should not be null");
         assertTrue(result.length() > 0, "Async OCR result should not be empty");
+
+        checkExtractedText(result);
 
         LOG.info("Async OCR extraction result:\n{}", result);
         LOG.info("Successfully extracted text from image using async OCR");
@@ -150,6 +160,8 @@ public class OcrExtractionIT extends CamelTestSupport {
         assertNotNull(result, "OCR result from PNG should not be null");
         assertTrue(result.length() > 0, "OCR result from PNG should not be empty");
 
+        checkExtractedText(result);
+
         LOG.info("OCR extraction from PNG result:\n{}", result);
         LOG.info("Successfully extracted text from PNG image using OCR");
     }
@@ -162,6 +174,20 @@ public class OcrExtractionIT extends CamelTestSupport {
 
         assertNotNull(result, "OCR result should not be null");
         assertTrue(result.length() > 0, "OCR result should not be empty");
+
+        // Verify that at least some of the expected text was extracted
+        // Note: OCR may not be 100% accurate, so we check for partial matches
+        String resultLower = result.toLowerCase();
+        boolean foundFirst = resultLower.contains("first");
+        boolean foundSecond = resultLower.contains("second");
+
+        assertTrue(foundFirst && foundSecond,
+                "OCR should extract at least some of the expected text. Got: " + result);
+
+        // TODO: footer is not found by the ocr by Camel docling
+        //        boolean foundFooter = resultLower.contains("footer");
+        //        assertTrue(foundFooter,
+        //                "OCR should extract at least some of the expected text from the footer. Got: " + result);
 
         LOG.info("OCR extraction with multiple text blocks result:\n{}", result);
         LOG.info("Successfully extracted text from image with multiple text blocks");
