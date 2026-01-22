@@ -90,7 +90,12 @@ public class SimplePredicateParser extends BaseSimpleParser {
                         = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
                 init = initParser.parseExpression();
                 if (init != null) {
-                    this.expression = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
+                    String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
+                    if (part.startsWith("\n")) {
+                        // skip newline after ending init block
+                        part = part.substring(1);
+                    }
+                    this.expression = part;
                     // use $$key as local variable in the expression afterwards
                     for (String key : initParser.getInitKeys()) {
                         this.expression = this.expression.replace("$$" + key, "${variable." + key + "}");

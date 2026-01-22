@@ -70,7 +70,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Hello Camel");
         exchange.getMessage().setHeader("lines", "75,33");
 
-        assertExpression(exchange, INIT, "\norderId=123,total=208\n");
+        assertExpression(exchange, INIT, "orderId=123,total=208\n");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Hello Camel");
         exchange.getMessage().setHeader("lines", "75,33");
 
-        assertExpression(exchange, INIT3, "\n");
+        assertExpression(exchange, INIT3, "");
         Assertions.assertEquals("123", exchange.getVariable("sku"));
         Assertions.assertEquals(208L, exchange.getVariable("sum"));
     }
@@ -107,7 +107,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Hello Hi := Me $$sku");
         exchange.getMessage().setHeader("lines", "75,33");
 
-        assertExpression(exchange, INIT4, "\norderId=123,total=208\n");
+        assertExpression(exchange, INIT4, "orderId=123,total=208\n");
     }
 
     @Override
