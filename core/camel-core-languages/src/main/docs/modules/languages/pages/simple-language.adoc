@@ -744,14 +744,14 @@ YAML::
       - transform:
           simple:
             expression: |-
-              $init{
-                // this is a java like comment
-                $$sum := ${sum(${header.lines},100)}
-
-                $$sku := ${iif(${body} contains 'Camel',123,999)}
-                ## and here is also a yaml like comment
-              }init$
-              orderId=$$sku,total=$$sum
+                $init{
+                  $$greeting := ${upper('Hello $body}'}
+                  $$level := ${iif(${header.code} > 999,'Gold','Silver')}
+                }init$
+                {
+                  "message": "$$greeting",
+                  "status": "$$level"
+                }
       - to:
           uri: kafka:welcome
       - log:
