@@ -710,16 +710,17 @@ Java::
 [source,java]
 ----
 from("direct:welcome")
-  .transform().simple("""
-                        $init{
-                          $greeting := ${upper('Hello $body}'}
-                          $level := ${iif(${header.code} > 999,'Gold','Silver')}
-                        }init$
-                        {
-                          "message": "$greeting",
-                          "status": "$level"
-                        }
-                      """)
+  .transform().simple(
+          """
+            $init{
+              $greeting := ${upper('Hello $body}'}
+              $level := ${iif(${header.code} > 999,'Gold','Silver')}
+            }init$
+            {
+              "message": "$greeting",
+              "status": "$level"
+            }
+          """)
   .to("kafka:welcome")
   .log("Sending welcome email to customer with status ${variable.level}");
 ----
@@ -773,6 +774,9 @@ YAML::
 ====
 
 Notice how we can refer to the variable (`$level`) in the log statement using the standard `${variable.xxx}` syntax.
+
+TIP: Instead of inlining the simple script in the route, you can externalize this to a source file such as `mymapping.txt`
+and then refer to the file such as `resource:classpath:mymapping.txt` where the file is located in the root classpath (can also be located in sub packages).
 
 == OGNL Expression Support
 

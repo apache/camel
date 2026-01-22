@@ -25,31 +25,31 @@ public class JsonPathSimpleInitBlockTest extends CamelTestSupport {
 
     private final String MAPPING = """
             $init{
-              $$id := ${jsonpath($.id)}
-              $$type := ${header.type}
-              $$price := ${jsonpath($.amount)}
-              $$level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
+              $id := ${jsonpath($.id)}
+              $type := ${header.type}
+              $price := ${jsonpath($.amount)}
+              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
             }init$
             {
-              "id": "$$id",
-              "type": "$$type",
-              "amount": $$price,
-              "status": "$$level"
+              "id": "$id",
+              "type": "$type",
+              "amount": $price,
+              "status": "$level"
             }
             """;
 
     private final String MAPPING2 = """
             $init{
-              $$id := ${jsonpath($.id)}
-              $$type := ${header.type}
-              $$price := ${jsonpath($.amount)}
-              $$level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
+              $id := ${jsonpath($.id)}
+              $type := ${header.type}
+              $price := ${jsonpath($.amount)}
+              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
             }init$
             {
-              "id": "$$id",
-              "type": "$$type",
+              "id": "$id",
+              "type": "$type",
               "amount": ${jsonpath($.amount)},
-              "status": "${lowercase($$level)}"
+              "status": "${lowercase($level)}"
             }
             """;
 

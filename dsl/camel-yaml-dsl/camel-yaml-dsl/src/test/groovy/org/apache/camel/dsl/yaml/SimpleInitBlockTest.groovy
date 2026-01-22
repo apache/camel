@@ -33,12 +33,11 @@ class SimpleInitBlockTest extends YamlTestSupport {
                               expression: |-
                                 $init{
                                   // this is a java like comment
-                                  $$sum := ${sum(${header.lines},100)}
+                                  $sum := ${sum(${header.lines},100)}
                     
-                                  $$sku := ${iif(${body} contains 'Camel',123,999)}
-                                  ## and here is also a yaml like comment
+                                  $sku := ${iif(${body} contains 'Camel',123,999)}
                                 }init$
-                                orderId=$$sku,total=$$sum
+                                orderId=$sku,total=$sum
                         - to:
                             uri: mock:result
                         '''
