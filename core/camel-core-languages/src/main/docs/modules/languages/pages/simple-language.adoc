@@ -216,6 +216,7 @@ TIP:
 |`isAlphaNumeric(exp)` | `boolean` | Whether the expression is alphanumeric value (A..Z0-9). For more advanced checks use the `regex` operator.
 |`isNumeric()` | `boolean` | Whether the message body is numeric value (0..9). For more advanced checks use the `regex` operator.
 |`isNumeric(exp)` | `boolean` | Whether the expression is numeric value (0..9). For more advanced checks use the `regex` operator.
+|`not(predicate)` | `boolean` | Evaluates the predicate and returns the opposite.
 |====
 
 === Date & Time Functions

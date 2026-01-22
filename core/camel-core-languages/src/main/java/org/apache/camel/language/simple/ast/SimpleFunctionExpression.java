@@ -28,6 +28,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.spi.Language;
@@ -1085,6 +1086,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return SimpleExpressionBuilder.isNumericExpression(exp);
         }
+        // not function
+        remainder = ifStartsWithReturnRemainder("not(", function);
+        if (remainder != null) {
+            String exp = "${body}";
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = value;
+            }
+            return SimpleExpressionBuilder.isNotPredicate(exp);
+        }
 
         // trim function
         remainder = ifStartsWithReturnRemainder("trim(", function);
@@ -1654,7 +1665,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
-        String misc = createCodeExpressionMisc(function);
+        String misc = createCodeExpressionMisc(camelContext, function);
         if (misc != null) {
             return misc;
         }
@@ -2314,7 +2325,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return factory.get().createCode(camelContext, function, token.getIndex());
     }
 
-    private String createCodeExpressionMisc(String function) {
+    private String createCodeExpressionMisc(CamelContext camelContext, String function) {
         String remainder;
 
         // setHeader function
@@ -2667,8 +2678,6 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // pad function
         remainder = ifStartsWithReturnRemainder("pad(", function);
         if (remainder != null) {
-            String exp;
-            String len;
             String separator = null;
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
@@ -2823,6 +2832,25 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 exp = "body";
             }
             return "Object o = " + exp + ";\n        return isNumeric(exchange, o);";
+        }
+        // not function
+        remainder = ifStartsWithReturnRemainder("not(", function);
+        if (remainder != null) {
+            String exp = "body";
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${not(exp)} was: " + function, token.getIndex());
+                }
+
+                // Parse the condition as a predicate and generate code
+                SimplePredicateParser predicateParser
+                        = new SimplePredicateParser(camelContext, tokens[0], true, skipFileFunctions, null);
+                exp = predicateParser.parseCode();
+            }
+            return "Object o = " + exp + ";\n        return isNot(exchange, o);";
         }
 
         // capitalize function

@@ -59,6 +59,7 @@ import org.apache.camel.support.RandomUuidGenerator;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -552,6 +553,34 @@ public final class SimpleExpressionBuilder {
                     return "isAlphaNumeric(" + expression + ")";
                 } else {
                     return "isAlphaNumeric()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns the opposite result of the predicate
+     */
+    public static Expression isNotPredicate(final String predicate) {
+        return new ExpressionAdapter() {
+            private Predicate pred;
+
+            @Override
+            public void init(CamelContext context) {
+                pred = PredicateBuilder.not(context.resolveLanguage("simple").createPredicate(predicate));
+                pred.init(context);
+            }
+
+            public Object evaluate(Exchange exchange) {
+                return pred.matches(exchange);
+            }
+
+            @Override
+            public String toString() {
+                if (predicate != null) {
+                    return "not(" + predicate + ")";
+                } else {
+                    return "not()";
                 }
             }
         };

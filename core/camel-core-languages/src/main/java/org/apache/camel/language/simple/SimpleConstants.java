@@ -252,6 +252,9 @@ public final class SimpleConstants {
               label = "function", javaType = "Object", displayName = "Create Empty Object")
     public static final String NEW_EMPTY = "newEmpty(type)";
 
+    @Metadata(description = "Evaluates the predicate and returns the opposite.", label = "function", javaType = "boolean")
+    public static final String NOT = "not";
+
     @Metadata(description = "Represents a null value", label = "function", javaType = "Object")
     public static final String NULL = "null";
 

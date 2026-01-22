@@ -1184,4 +1184,28 @@ public final class CSimpleHelper {
         return null;
     }
 
+    public static boolean isNot(Exchange exchange, Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String s) {
+            if (s.isEmpty()) {
+                return true;
+            }
+            if ("false".equalsIgnoreCase(s)) {
+                return true;
+            } else if ("true".equalsIgnoreCase(s)) {
+                return false;
+            } else {
+                return false;
+            }
+        }
+        Boolean b = convertTo(exchange, Boolean.class, value);
+        if (b == null) {
+            return true;
+        } else {
+            return !b;
+        }
+    }
+
 }
