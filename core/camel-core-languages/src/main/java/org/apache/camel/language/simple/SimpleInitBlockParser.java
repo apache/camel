@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.ast.InitExpression;
+import org.apache.camel.language.simple.ast.InitBlockExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.types.TokenType;
@@ -54,6 +54,30 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         // parse init block
         parseInitTokens();
         return doParseInitExpression();
+    }
+
+    @Override
+    public String parseCode() {
+        throw new UnsupportedOperationException("Using init blocks with csimple is not supported");
+    }
+
+    /**
+     * Second step parsing into code
+     */
+    @Override
+    protected String doParseCode() {
+        StringBuilder sb = new StringBuilder(256);
+        for (SimpleNode node : nodes) {
+            String exp = node.createCode(camelContext, expression);
+            if (exp != null) {
+                parseLiteralNode(sb, node, exp);
+            }
+        }
+
+        String code = sb.toString();
+        code = code.replace(BaseSimpleParser.CODE_START, "");
+        code = code.replace(BaseSimpleParser.CODE_END, "");
+        return code;
     }
 
     protected List<SimpleNode> parseInitTokens() {
@@ -126,7 +150,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         List<SimpleNode> answer = new ArrayList<>();
         for (int i = 1; i < nodes.size() - 2; i++) {
             SimpleNode token = nodes.get(i);
-            if (token instanceof InitExpression ie) {
+            if (token instanceof InitBlockExpression ie) {
                 SimpleNode prev = nodes.get(i - 1);
                 SimpleNode next = nodes.get(i + 1);
                 ie.acceptLeftNode(prev);

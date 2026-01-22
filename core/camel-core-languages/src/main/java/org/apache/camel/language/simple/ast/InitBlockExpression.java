@@ -25,18 +25,17 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.StringQuoteHelper;
 
 /**
  * Represents other init block expression in the AST.
  */
-public class InitExpression extends BaseSimpleNode {
+public class InitBlockExpression extends BaseSimpleNode {
 
     private final InitOperatorType operator;
     private SimpleNode left;
     private SimpleNode right;
 
-    public InitExpression(SimpleToken token) {
+    public InitBlockExpression(SimpleToken token) {
         super(token);
         operator = InitOperatorType.asOperator(token.getText());
     }
@@ -118,28 +117,7 @@ public class InitExpression extends BaseSimpleNode {
     }
 
     private String doCreateCode(CamelContext camelContext, String expression) throws SimpleParserException {
-        ObjectHelper.notNull(left, "left node", this);
-        ObjectHelper.notNull(right, "right node", this);
-
-        // the expression parser does not parse literal text into single/double quote tokens
-        // so we need to manually remove leading quotes from the literal text when using the other operators
-        final String leftExp = left.createCode(camelContext, expression);
-        if (right instanceof LiteralExpression le) {
-            String text = le.getText();
-            // must be in double quotes to be a String type
-            String changed = StringHelper.removeLeadingAndEndingQuotes(text);
-            changed = StringQuoteHelper.doubleQuote(changed);
-            if (!changed.equals(text)) {
-                le.replaceText(changed);
-            }
-        }
-        final String rightExp = right.createCode(camelContext, expression);
-
-        if (operator == InitOperatorType.ASSIGNMENT) {
-            return "initAssignment(exchange, " + leftExp + ", " + rightExp + ")";
-        }
-
-        throw new SimpleParserException("Unknown other operator " + operator, token.getIndex());
+        throw new SimpleParserException("Using init blocks with csimple is not supported", token.getIndex());
     }
 
 }

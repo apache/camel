@@ -628,6 +628,8 @@ to define a set of local variables that are pre-computed, and can be used in the
 to reuse variables, and also avoid making the simple expression complicated when having inlined functions, and in general
 make the simple expression easier to maintain and understand.
 
+IMPORTANT: Init Blocks is not supported with xref:csimple-language.adoc[CSimple] language.
+
 The _init block_ is declared as follows:
 
 [source,text]

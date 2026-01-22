@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.ast.InitExpression;
+import org.apache.camel.language.simple.ast.InitBlockExpression;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.OtherExpression;
@@ -78,6 +78,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             if (SimpleInitBlockTokenizer.hasInitBlock(expression)) {
                 SimpleInitBlockParser initParser
                         = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
+                // the init block should be parsed in predicate mode as that is needed to fully parse with all the operators and functions
                 init = initParser.parseExpression();
                 if (init != null) {
                     this.expression = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
@@ -274,7 +275,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         } else if (token.getType().isOther()) {
             return new OtherExpression(token);
         } else if (token.getType().isInit()) {
-            return new InitExpression(token);
+            return new InitBlockExpression(token);
         }
 
         // by returning null, we will let the parser determine what to do

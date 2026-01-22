@@ -26,6 +26,7 @@ import java.util.StringJoiner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.language.csimple.CSimplePredicateParser;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.language.simple.SimplePredicateParser;
