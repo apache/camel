@@ -34,10 +34,11 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
 
     private final Set<String> initKeys = new LinkedHashSet<>();
 
-    public SimpleInitBlockParser(CamelContext camelContext, String expression, boolean allowEscape,
+    public SimpleInitBlockParser(CamelContext camelContext, String expression, boolean allowEscape, boolean skipFileFunctions,
                                  Map<String, Expression> cacheExpression) {
-        super(camelContext, StringHelper.between(expression, SimpleTokenizer.INIT_START, SimpleTokenizer.INIT_END), allowEscape,
-              cacheExpression);
+        super(camelContext,
+              StringHelper.between(expression, SimpleInitBlockTokenizer.INIT_START, SimpleInitBlockTokenizer.INIT_END),
+              allowEscape, skipFileFunctions, cacheExpression, new SimpleInitBlockTokenizer());
     }
 
     public Set<String> getInitKeys() {
@@ -47,21 +48,13 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     @Override
     public Expression parseExpression() {
         // parse init block
-        try {
-            SimpleTokenizer.INIT_MODE.set(true);
-            parseInitTokens();
-            return doParseInitExpression();
-        } finally {
-            SimpleTokenizer.INIT_MODE.set(false);
-        }
+        parseInitTokens();
+        return doParseInitExpression();
     }
 
     protected List<SimpleNode> parseInitTokens() {
         clear();
         initKeys.clear();
-
-        // run in init-mode
-        SimpleTokenizer.INIT_MODE.set(true);
 
         // parse the expression using the following grammar
         nextToken();

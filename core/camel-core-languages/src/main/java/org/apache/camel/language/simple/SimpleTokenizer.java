@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.simple;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
@@ -26,10 +24,10 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Tokenizer to create {@link SimpleToken} from the input.
  */
-public final class SimpleTokenizer {
+public class SimpleTokenizer {
 
     // keep this number in sync with tokens list
-    private static final int NUMBER_OF_TOKENS = 52;
+    private static final int NUMBER_OF_TOKENS = 50;
 
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
@@ -37,12 +35,6 @@ public final class SimpleTokenizer {
     private static final String[] FUNCTION_START = new String[] { "${", "$simple{" };
     // optimize to be able to quick check for end function
     private static final String FUNCTION_END = "}";
-
-    // TODO: what symbols to use for init block?
-    // optimize to be able to quick check for init block
-    public static final String INIT_START = "$init{";
-    // optimize to be able to quick check for init block
-    public static final String INIT_END = "}init$";
 
     static {
         // add known tokens
@@ -104,33 +96,10 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[47] = new SimpleTokenType(TokenType.logicalOperator, "&&");
         KNOWN_TOKENS[48] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
-        // init
-        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.initOperator, ":=");
-        KNOWN_TOKENS[50] = new SimpleTokenType(TokenType.initVariable, "$$");
-
         //binary operator
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
-        KNOWN_TOKENS[51] = new SimpleTokenType(TokenType.minusValue, "-");
-    }
-
-    static final AtomicBoolean INIT_MODE = new AtomicBoolean();
-
-    private SimpleTokenizer() {
-        // static methods
-    }
-
-    /**
-     * Does the expression include a simple init block.
-     *
-     * @param  expression the expression
-     * @return            <tt>true</tt> if init block exists
-     */
-    public static boolean hasInitBlock(String expression) {
-        if (expression != null) {
-            return expression.startsWith(INIT_START) && expression.contains(INIT_END);
-        }
-        return false;
+        KNOWN_TOKENS[49] = new SimpleTokenType(TokenType.minusValue, "-");
     }
 
     /**
@@ -169,7 +138,7 @@ public final class SimpleTokenizer {
      * @param  filter      defines the accepted token types to be returned (character is always used as fallback)
      * @return             the created token, will always return a token
      */
-    public static SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
+    public SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
         return doNextToken(expression, index, allowEscape, filter);
     }
 
@@ -181,11 +150,11 @@ public final class SimpleTokenizer {
      * @param  allowEscape whether to allow escapes
      * @return             the created token will always return a token
      */
-    public static SimpleToken nextToken(String expression, int index, boolean allowEscape) {
+    public SimpleToken nextToken(String expression, int index, boolean allowEscape) {
         return doNextToken(expression, index, allowEscape);
     }
 
-    private static SimpleToken doNextToken(String expression, int index, boolean allowEscape, TokenType... filters) {
+    private SimpleToken doNextToken(String expression, int index, boolean allowEscape, TokenType... filters) {
         boolean numericAllowed = acceptType(TokenType.numericValue, filters);
         if (numericAllowed) {
             // is it a numeric value
@@ -209,21 +178,24 @@ public final class SimpleTokenizer {
         String text = expression.substring(index);
         for (int i = 0; i < NUMBER_OF_TOKENS; i++) {
             SimpleTokenType token = KNOWN_TOKENS[i];
-
-            // init tokens is only valid if using init mode of tokenizer
-            boolean init = token.isInit() || token.isInitVariable();
-            if (init && !INIT_MODE.get()) {
-                break;
-            }
             if (acceptType(token.getType(), filters)
                     && acceptToken(token, text, expression, index)) {
                 return new SimpleToken(token, index);
             }
         }
 
+        SimpleToken custom = customToken(expression, index, allowEscape, filters);
+        if (custom != null) {
+            return custom;
+        }
+
         // fallback and create a character token
         char ch = expression.charAt(index);
         return new SimpleToken(new SimpleTokenType(TokenType.character, String.valueOf(ch)), index);
+    }
+
+    protected SimpleToken customToken(String expression, int index, boolean allowEscape, TokenType... filters) {
+        return null;
     }
 
     private static int repositionIndex(String expression, int index, StringBuilder sb) {
@@ -278,7 +250,7 @@ public final class SimpleTokenizer {
         return new SimpleToken(new SimpleTokenType(TokenType.character, sb.toString()), index, special ? 2 : 1);
     }
 
-    private static boolean acceptType(TokenType type, TokenType... filters) {
+    protected static boolean acceptType(TokenType type, TokenType... filters) {
         if (filters == null || filters.length == 0) {
             return true;
         }
@@ -290,7 +262,7 @@ public final class SimpleTokenizer {
         return false;
     }
 
-    private static boolean acceptToken(SimpleTokenType token, String text, String expression, int index) {
+    protected static boolean acceptToken(SimpleTokenType token, String text, String expression, int index) {
         if (token.isUnary() && text.startsWith(token.getValue())) {
             return evalUnary(token, text, expression, index);
         }

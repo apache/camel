@@ -55,6 +55,7 @@ public abstract class BaseSimpleParser {
 
     protected final CamelContext camelContext;
     protected String expression;
+    protected final SimpleTokenizer tokenizer;
     // regular simple expression
     protected final List<SimpleToken> tokens = new ArrayList<>();
     protected final List<SimpleNode> nodes = new ArrayList<>();
@@ -65,9 +66,14 @@ public abstract class BaseSimpleParser {
     protected final boolean allowEscape;
 
     protected BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape) {
+        this(camelContext, expression, allowEscape, new SimpleTokenizer());
+    }
+
+    public BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape, SimpleTokenizer tokenizer) {
         this.camelContext = camelContext;
         this.expression = expression;
         this.allowEscape = allowEscape;
+        this.tokenizer = tokenizer;
     }
 
     /**
@@ -75,7 +81,7 @@ public abstract class BaseSimpleParser {
      */
     protected void nextToken() {
         if (index < expression.length()) {
-            SimpleToken next = SimpleTokenizer.nextToken(expression, index, allowEscape);
+            SimpleToken next = tokenizer.nextToken(expression, index, allowEscape);
             // add token
             tokens.add(next);
             token = next;
@@ -95,7 +101,7 @@ public abstract class BaseSimpleParser {
      */
     protected void nextToken(TokenType... filter) {
         if (index < expression.length()) {
-            SimpleToken next = SimpleTokenizer.nextToken(expression, index, allowEscape, filter);
+            SimpleToken next = tokenizer.nextToken(expression, index, allowEscape, filter);
             // add token
             tokens.add(next);
             token = next;
