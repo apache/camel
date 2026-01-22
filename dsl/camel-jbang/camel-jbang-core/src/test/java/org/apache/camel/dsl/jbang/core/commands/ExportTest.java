@@ -102,7 +102,7 @@ class ExportTest {
             return;
         }
         Export command = createCommand(rt, new String[] { "classpath:route.yaml" },
-                "--gav=examples:route:1.0.0", "--camel-version=4.16.0", "--dir=" + workingDir, "--quiet");
+                "--gav=examples:route:1.0.0", "--camel-version=4.17.0", "--dir=" + workingDir, "--quiet");
         int exit = command.doCall();
 
         Assertions.assertEquals(0, exit);
@@ -115,19 +115,19 @@ class ExportTest {
 
         if (rt == RuntimeType.main) {
             assertThat(model.getDependencyManagement().getDependencies())
-                    .as("Expected to find dependencyManagement entry: org.apache.camel:camel-bom:4.16.0")
+                    .as("Expected to find dependencyManagement entry: org.apache.camel:camel-bom:4.17.0")
                     .anySatisfy(dep -> {
                         assertThat(dep.getGroupId()).isEqualTo("org.apache.camel");
                         assertThat(dep.getArtifactId()).isEqualTo("camel-bom");
-                        assertThat(dep.getVersion()).isEqualTo("4.16.0");
+                        assertThat(dep.getVersion()).isEqualTo("4.17.0");
                     });
         } else if (rt == RuntimeType.springBoot) {
             assertThat(model.getDependencyManagement().getDependencies())
-                    .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.16.0")
+                    .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.17.0")
                     .anySatisfy(dep -> {
                         assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.springboot");
                         assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
-                        assertThat(dep.getVersion()).isEqualTo("4.16.0");
+                        assertThat(dep.getVersion()).isEqualTo("4.17.0");
                     });
         }
     }
@@ -765,7 +765,7 @@ class ExportTest {
     }
 
     @Test
-    @SetSystemProperty(key = CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, value = "4.16.0")
+    @SetSystemProperty(key = CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION, value = "4.17.0")
     public void shouldOverrideSpringBootVersionFromSystemProperty() throws Exception {
         LOG.info("shouldOverrideSpringBootVersionFromSystemProperty");
         Export command = createCommand(RuntimeType.springBoot, new String[] { "classpath:route.yaml" },
@@ -775,11 +775,11 @@ class ExportTest {
         Assertions.assertEquals(0, exit);
         Model model = readMavenModel();
         assertThat(model.getDependencyManagement().getDependencies())
-                .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.16.0")
+                .as("Expected to find dependencyManagement entry: org.apache.camel.springboot:camel-spring-boot-bom:4.17.0")
                 .anySatisfy(dep -> {
                     assertThat(dep.getGroupId()).isEqualTo("org.apache.camel.springboot");
                     assertThat(dep.getArtifactId()).isEqualTo("camel-spring-boot-bom");
-                    assertThat(dep.getVersion()).isEqualTo("4.16.0");
+                    assertThat(dep.getVersion()).isEqualTo("4.17.0");
                 });
     }
 
