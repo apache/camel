@@ -53,7 +53,7 @@ public interface CassandraInfraService extends InfrastructureService {
     }
 
     default String endpointUri() {
-        return String.format("cql:%s:%d/%s", hosts(), port(), keyspace());
+        return String.format("cql:%s:%d/%s?username=%s&password=RAW(%s)", hosts(), port(), keyspace(), username(), password());
     }
 
     default String connectionBase() {

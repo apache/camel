@@ -175,7 +175,7 @@ public class CamelSendActionInfraTest extends CamelCommandBaseTestSupport {
                 "smb",
                 createJson("address", "localhost:445", "shareName", "myShare",
                         "userName", "user", "password", "pass",
-                        "endpointUri", "smb:localhost:445/myShare",
+                        "endpointUri", "smb:localhost:445/myShare?username=user&password=RAW(pass)",
                         "connectionBase", "smb:localhost:445"),
                 "smb:myShare",
                 "localhost", "myShare"));
@@ -240,7 +240,7 @@ public class CamelSendActionInfraTest extends CamelCommandBaseTestSupport {
                 "ftp",
                 createJson("host", "localhost", "port", 21,
                         "username", "admin", "password", "admin",
-                        "endpointUri", "ftp:localhost:21/defaultdir",
+                        "endpointUri", "ftp:localhost:21/defaultdir?username=admin&password=RAW(admin)",
                         "connectionBase", "ftp:localhost:21"),
                 "ftp:mydir",
                 "username", "admin"));
@@ -249,7 +249,7 @@ public class CamelSendActionInfraTest extends CamelCommandBaseTestSupport {
                 "ftps",
                 createJson("host", "localhost", "port", 21,
                         "username", "admin", "password", "admin",
-                        "endpointUri", "ftps:localhost:21/defaultdir",
+                        "endpointUri", "ftps:localhost:21/defaultdir?username=admin&password=RAW(admin)",
                         "connectionBase", "ftps:localhost:21"),
                 "ftps:mydir",
                 "username", "admin"));
@@ -258,7 +258,7 @@ public class CamelSendActionInfraTest extends CamelCommandBaseTestSupport {
                 "sftp",
                 createJson("host", "localhost", "port", 22,
                         "username", "admin", "password", "admin",
-                        "endpointUri", "sftp:localhost:22/defaultdir",
+                        "endpointUri", "sftp:localhost:22/defaultdir?username=admin&password=RAW(admin)",
                         "connectionBase", "sftp:localhost:22"),
                 "sftp:mydir",
                 "username", "admin"));
@@ -511,7 +511,7 @@ public class CamelSendActionInfraTest extends CamelCommandBaseTestSupport {
         json.put("port", 21);
         json.put("username", "admin");
         json.put("password", "secret");
-        json.put("endpointUri", "ftp:localhost:21/mydir");
+        json.put("endpointUri", "ftp:localhost:21/mydir?username=admin&password=RAW(secret)");
 
         String result = sendAction.updateEndpointWithConnectionDetails(
                 "ftp:mydir", "ftp", json);

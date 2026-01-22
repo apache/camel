@@ -31,7 +31,7 @@ public interface FhirInfraService extends InfrastructureService {
 
     @Deprecated
     Integer getPort();
-    
+
     default String serverUrl() {
         return getServiceBaseURL();
     }

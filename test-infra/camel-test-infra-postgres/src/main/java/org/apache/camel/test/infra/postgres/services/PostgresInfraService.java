@@ -35,7 +35,7 @@ public interface PostgresInfraService extends InfrastructureService {
     String password();
 
     String getServiceAddress();
-    
+
     default String database() {
         return "postgres";
     }

@@ -52,7 +52,8 @@ public interface SmbInfraService extends InfrastructureService {
     }
 
     default String endpointUri() {
-        return String.format("smb:%s:%d/%s", hostname(), port(), shareName());
+        return String.format("smb:%s:%d/%s?username=%s&password=RAW(%s)", hostname(), port(), shareName(), username(),
+                password());
     }
 
     default String connectionBase() {

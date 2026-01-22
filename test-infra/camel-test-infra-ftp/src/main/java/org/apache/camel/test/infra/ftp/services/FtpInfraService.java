@@ -73,9 +73,10 @@ public interface FtpInfraService extends InfrastructureService {
     }
 
     default String endpointUri() {
-        return String.format("ftp:%s:%d/%s", host(), port(), directoryName());
+        return String.format("ftp:%s:%d/%s?username=%s&password=RAW(%s)", host(), port(), directoryName(), username(),
+                password());
     }
-    
+
     default String connectionBase() {
         return String.format("ftp:%s:%d", host(), port());
     }

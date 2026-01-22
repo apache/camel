@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -134,13 +133,6 @@ public class CamelSendAction extends ActionBaseCommand {
     private MessageTableHelper tableHelper;
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
-
-    // Common Camel framework properties that should not be auto-set from infra connection details.
-    // These are component lifecycle/behavior properties, not infrastructure connection properties.
-    private static final Set<String> EXCLUDED_COMPONENT_OPTIONS = Set.of(
-            "bridgeErrorHandler",
-            "lazyStartProducer",
-            "autowiredEnabled");
 
     public CamelSendAction(CamelJBangMain main) {
         super(main);
@@ -535,7 +527,7 @@ public class CamelSendAction extends ActionBaseCommand {
             path = null;
         }
 
-        String pathBasedEndpoint = buildPathBasedEndpoint(scheme, path, connectionDetails);
+        String pathBasedEndpoint = buildPathBasedEndpoint(path, connectionDetails);
         if (pathBasedEndpoint != null) {
             return pathBasedEndpoint;
         }
@@ -586,7 +578,6 @@ public class CamelSendAction extends ActionBaseCommand {
             componentModel.getComponentOptions().stream()
                     .map(opt -> opt.getName())
                     .filter(name -> isValidConnectionProperty(name, connectionDetails))
-                    .filter(name -> !EXCLUDED_COMPONENT_OPTIONS.contains(name))
                     .forEach(name -> properties.put(name, String.valueOf(connectionDetails.get(name))));
         }
 
@@ -615,7 +606,7 @@ public class CamelSendAction extends ActionBaseCommand {
         return value != null && !(value instanceof Map);
     }
 
-    private String buildPathBasedEndpoint(String scheme, String path, JsonObject connectionDetails) {
+    private String buildPathBasedEndpoint(String path, JsonObject connectionDetails) {
 
         Object endpointUri = connectionDetails.get("endpointUri");
         if (endpointUri != null) {
@@ -624,48 +615,18 @@ public class CamelSendAction extends ActionBaseCommand {
             if (path != null && !path.isEmpty()) {
                 Object connectionBase = connectionDetails.get("connectionBase");
                 if (connectionBase != null) {
-                    uri = connectionBase + (path.startsWith("/") ? path : "/" + path);
+                    String queryPart = "";
+                    if (uri.contains("?")) {
+                        queryPart = uri.substring(uri.indexOf("?"));
+                    }
+                    uri = connectionBase + (path.startsWith("/") ? path : "/" + path) + queryPart;
                 }
             }
 
-            uri = appendCredentialsIfSupported(scheme, uri, connectionDetails);
             return uri;
         }
 
         return null;
-    }
-
-    private String appendCredentialsIfSupported(String scheme, String uri, JsonObject connectionDetails) {
-        Object username = connectionDetails.get("username");
-        Object password = connectionDetails.get("password");
-
-        if (username == null && password == null) {
-            return uri;
-        }
-
-        var componentModel = catalog.componentModel(scheme);
-        if (componentModel == null) {
-            return uri;
-        }
-
-        var endpointOptions = componentModel.getEndpointOptions();
-        boolean hasUsernameOption = endpointOptions.stream().anyMatch(opt -> "username".equals(opt.getName()));
-        boolean hasPasswordOption = endpointOptions.stream().anyMatch(opt -> "password".equals(opt.getName()));
-
-        if (!hasUsernameOption && !hasPasswordOption) {
-            return uri;
-        }
-
-        StringBuilder sb = new StringBuilder(uri);
-        String sep = uri.contains("?") ? "&" : "?";
-        if (username != null && hasUsernameOption) {
-            sb.append(sep).append("username=").append(username);
-            sep = "&";
-        }
-        if (password != null && hasPasswordOption) {
-            sb.append(sep).append("password=RAW(").append(password).append(")");
-        }
-        return sb.toString();
     }
 
     private String buildEndpointManually(String endpoint, Map<String, String> properties) {

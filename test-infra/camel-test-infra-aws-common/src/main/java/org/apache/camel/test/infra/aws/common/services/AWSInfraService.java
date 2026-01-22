@@ -38,7 +38,7 @@ public interface AWSInfraService extends InfrastructureService {
     default String uriEndpointOverride() {
         return String.format("%s://%s", protocol(), amazonAWSHost());
     }
-    
+
     default boolean overrideEndpoint() {
         return true;
     }
