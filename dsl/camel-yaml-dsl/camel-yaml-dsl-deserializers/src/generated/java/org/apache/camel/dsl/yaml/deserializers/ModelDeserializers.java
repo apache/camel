@@ -1754,7 +1754,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "pretty", type = "boolean", defaultValue = "false", description = "To pretty format the output (only JSon or XML supported)", displayName = "Pretty"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim"),
+                    @YamlProperty(name = "trimResult", type = "boolean", defaultValue = "false", description = "Whether to trim the returned values when this language are in use. For example the output result may contain unwanted line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be backwards compatible with existing behavior.", displayName = "Trim Result")
             }
     )
     public static class CSimpleExpressionDeserializer extends YamlDeserializerBase<CSimpleExpression> {
@@ -1800,6 +1801,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "trimResult": {
+                    String val = asText(node);
+                    target.setTrimResult(val);
                     break;
                 }
                 default: {
@@ -2480,7 +2486,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class ConstantExpressionDeserializer extends YamlDeserializerBase<ConstantExpression> {
@@ -4435,7 +4441,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "outputMediaType", type = "string", description = "The String representation of the MediaType to output", displayName = "Output Media Type"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class DatasonnetExpressionDeserializer extends YamlDeserializerBase<DatasonnetExpression> {
@@ -5610,7 +5616,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class ExchangePropertyExpressionDeserializer extends YamlDeserializerBase<ExchangePropertyExpression> {
@@ -6763,7 +6769,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class GroovyExpressionDeserializer extends YamlDeserializerBase<GroovyExpression> {
@@ -7138,7 +7144,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class HeaderExpressionDeserializer extends YamlDeserializerBase<HeaderExpression> {
@@ -7250,7 +7256,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class Hl7TerserExpressionDeserializer extends YamlDeserializerBase<Hl7TerserExpression> {
@@ -7986,7 +7992,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "preCompile", type = "boolean", defaultValue = "true", description = "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.", displayName = "Pre Compile"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "singleQuotes", type = "boolean", defaultValue = "true", description = "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.", displayName = "Single Quotes"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class JavaExpressionDeserializer extends YamlDeserializerBase<JavaExpression> {
@@ -8068,7 +8074,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class JavaScriptExpressionDeserializer extends YamlDeserializerBase<JavaScriptExpression> {
@@ -8301,7 +8307,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "preCompile", type = "boolean", defaultValue = "true", description = "Whether the expression should be pre compiled once during initialization phase. If this is turned off, then the expression is reloaded and compiled on each evaluation.", displayName = "Pre Compile"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "singleQuotes", type = "boolean", defaultValue = "true", description = "Whether single quotes can be used as replacement for double quotes. This is convenient when you need to work with strings inside strings.", displayName = "Single Quotes"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class JoorExpressionDeserializer extends YamlDeserializerBase<JoorExpression> {
@@ -8384,7 +8390,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class JqExpressionDeserializer extends YamlDeserializerBase<JqExpression> {
@@ -8699,7 +8705,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "suppressExceptions", type = "boolean", defaultValue = "false", description = "Whether to suppress exceptions such as PathNotFoundException.", displayName = "Suppress Exceptions"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim"),
                     @YamlProperty(name = "unpackArray", type = "boolean", defaultValue = "false", description = "Whether to unpack a single element json-array into an object.", displayName = "Unpack Array"),
                     @YamlProperty(name = "writeAsString", type = "boolean", defaultValue = "false", description = "Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.", displayName = "Write As String")
             }
@@ -9507,7 +9513,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "language", type = "string", required = true, description = "The name of the language to use", displayName = "Language"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class LanguageExpressionDeserializer extends YamlDeserializerBase<LanguageExpression> {
@@ -10300,7 +10306,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ref", type = "string", description = "Reference to an existing bean (bean id) to lookup in the registry", displayName = "Ref"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "scope", type = "enum:Singleton,Request,Prototype", defaultValue = "Singleton", description = "Scope of bean. When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint. The bean should be thread-safe in case concurrent threads is calling the bean at the same time. When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean while processing a request and you want to call the same bean instance multiple times while processing the request. The bean does not have to be thread-safe as the instance is only called from the same request. When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope. So when using prototype scope then this depends on the bean registry implementation.", displayName = "Scope"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim"),
                     @YamlProperty(name = "validate", type = "boolean", defaultValue = "true", description = "Whether to validate the bean has the configured method.", displayName = "Validate")
             }
     )
@@ -10641,7 +10647,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class MvelExpressionDeserializer extends YamlDeserializerBase<MvelExpression> {
@@ -10825,7 +10831,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class OgnlExpressionDeserializer extends YamlDeserializerBase<OgnlExpression> {
@@ -13414,7 +13420,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class PythonExpressionDeserializer extends YamlDeserializerBase<PythonExpression> {
@@ -13920,7 +13926,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class RefExpressionDeserializer extends YamlDeserializerBase<RefExpression> {
@@ -17662,7 +17668,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "pretty", type = "boolean", defaultValue = "false", description = "To pretty format the output (only JSon or XML supported)", displayName = "Pretty"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim"),
+                    @YamlProperty(name = "trimResult", type = "boolean", defaultValue = "false", description = "Whether to trim the returned values when this language are in use. For example the output result may contain unwanted line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be backwards compatible with existing behavior.", displayName = "Trim Result")
             }
     )
     public static class SimpleExpressionDeserializer extends YamlDeserializerBase<SimpleExpression> {
@@ -17708,6 +17715,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "trim": {
                     String val = asText(node);
                     target.setTrim(val);
+                    break;
+                }
+                case "trimResult": {
+                    String val = asText(node);
+                    target.setTrimResult(val);
                     break;
                 }
                 default: {
@@ -17950,7 +17962,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class SpELExpressionDeserializer extends YamlDeserializerBase<SpELExpression> {
@@ -19624,7 +19636,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "skipFirst", type = "boolean", defaultValue = "false", description = "To skip the very first element", displayName = "Skip First"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "token", type = "string", required = true, description = "The (start) token to use as tokenizer, for example you can use the new line token. You can use simple language as the token to support dynamic tokens.", displayName = "Token"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim"),
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim"),
                     @YamlProperty(name = "xml", type = "boolean", defaultValue = "false", description = "Whether the input is XML messages. This option must be set to true if working with XML payloads.", displayName = "Xml")
             }
     )
@@ -21182,7 +21194,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "expression", type = "string", required = true, description = "The expression value in your chosen language syntax", displayName = "Expression"),
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class VariableExpressionDeserializer extends YamlDeserializerBase<VariableExpression> {
@@ -21250,7 +21262,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "Sets the id of this node", displayName = "Id"),
                     @YamlProperty(name = "module", type = "string", required = true, description = "Set the module (the distributable, loadable, and executable unit of code in WebAssembly) resource that provides the expression function.", displayName = "Module"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class WasmExpressionDeserializer extends YamlDeserializerBase<WasmExpression> {
@@ -21719,7 +21731,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix - uri mappings", displayName = "Namespace"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class XMLTokenizerExpressionDeserializer extends YamlDeserializerBase<XMLTokenizerExpression> {
@@ -21821,7 +21833,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "saxon", type = "boolean", defaultValue = "false", description = "Whether to use Saxon.", displayName = "Saxon"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
                     @YamlProperty(name = "threadSafety", type = "boolean", defaultValue = "false", description = "Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type, and the returned set has multiple elements. In this situation there can be thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode. This option prevents concurrency issues by doing defensive copies of the nodes. It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has thread-safety issues which can be prevented by turning this option on.", displayName = "Thread Safety"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class XPathExpressionDeserializer extends YamlDeserializerBase<XPathExpression> {
@@ -21946,7 +21958,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "namespace", type = "array:org.apache.camel.model.PropertyDefinition", description = "Injects the XML Namespaces of prefix - uri mappings", displayName = "Namespace"),
                     @YamlProperty(name = "resultType", type = "string", description = "Sets the class of the result type (type from output)", displayName = "Result Type"),
                     @YamlProperty(name = "source", type = "string", description = "Source to use, instead of message body. You can prefix with variable:, header:, or property: to specify kind of source. Otherwise, the source is assumed to be a variable. Use empty or null to use default source, which is the message body.", displayName = "Source"),
-                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the value to remove leading and trailing whitespaces and line breaks", displayName = "Trim")
+                    @YamlProperty(name = "trim", type = "boolean", defaultValue = "true", description = "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.", displayName = "Trim")
             }
     )
     public static class XQueryExpressionDeserializer extends YamlDeserializerBase<XQueryExpression> {

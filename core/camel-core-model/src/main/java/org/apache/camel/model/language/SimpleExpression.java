@@ -35,6 +35,9 @@ public class SimpleExpression extends TypedExpressionDefinition {
 
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
+    private String trimResult;
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String pretty;
 
     public SimpleExpression() {
@@ -42,6 +45,7 @@ public class SimpleExpression extends TypedExpressionDefinition {
 
     protected SimpleExpression(SimpleExpression source) {
         super(source);
+        this.trimResult = source.trimResult;
         this.pretty = source.pretty;
     }
 
@@ -55,6 +59,7 @@ public class SimpleExpression extends TypedExpressionDefinition {
 
     private SimpleExpression(Builder builder) {
         super(builder);
+        this.trimResult = builder.trimResult;
         this.pretty = builder.pretty;
     }
 
@@ -66,6 +71,22 @@ public class SimpleExpression extends TypedExpressionDefinition {
     @Override
     public String getLanguage() {
         return "simple";
+    }
+
+    public String getTrimResult() {
+        return trimResult;
+    }
+
+    /**
+     * Whether to trim the returned values when this language are in use.
+     *
+     * For example the output result may contain unwanted line breaks at the beginning and end such as when using Java
+     * DSL with multi-line blocks.
+     *
+     * Is default false to be backwards compatible with existing behavior.
+     */
+    public void setTrimResult(String trimResult) {
+        this.trimResult = trimResult;
     }
 
     public String getPretty() {
@@ -85,7 +106,34 @@ public class SimpleExpression extends TypedExpressionDefinition {
     @XmlTransient
     public static class Builder extends AbstractBuilder<Builder, SimpleExpression> {
 
+        private String trimResult;
         private String pretty;
+
+        /**
+         * Whether to trim the returned values when this language are in use.
+         *
+         * For example the output result may contain unwanted line breaks at the beginning and end such as when using
+         * Java DSL with multi-line blocks.
+         *
+         * Is default false to be backwards compatible with existing behavior.
+         */
+        public Builder trimResult(String trimResult) {
+            this.trimResult = trimResult;
+            return this;
+        }
+
+        /**
+         * Whether to trim the returned values when this language are in use.
+         *
+         * For example the output result may contain unwanted line breaks at the beginning and end such as when using
+         * Java DSL with multi-line blocks.
+         *
+         * Is default false to be backwards compatible with existing behavior.
+         */
+        public Builder trimResult(boolean trimResult) {
+            this.trimResult = Boolean.toString(trimResult);
+            return this;
+        }
 
         /**
          * To pretty format the output (only JSon or XML supported)

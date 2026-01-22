@@ -3097,6 +3097,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("pretty", def.getPretty(), "false");
+        doWriteAttribute("trimResult", def.getTrimResult(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3244,6 +3245,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
         doWriteAttribute("pretty", def.getPretty(), "false");
+        doWriteAttribute("trimResult", def.getTrimResult(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }
