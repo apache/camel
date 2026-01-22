@@ -34,6 +34,7 @@
     <properties>
         <camel.surefire.parallel>true</camel.surefire.parallel>
         <camel.surefire.parallel.factor>4</camel.surefire.parallel.factor>
+        <camel.unsupported.arch>true</camel.unsupported.arch>
     </properties>
 
     <dependencies>

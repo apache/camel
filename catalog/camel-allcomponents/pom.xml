@@ -51,6 +51,7 @@
     </repositories>
 
     <dependencies>
+        <!-- CODEGEN SUPPORTED ARCHITECTURES DEPENDENCIES START -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq</artifactId>
@@ -414,11 +415,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-chatscript</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-chroma</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -2271,6 +2267,30 @@
             <artifactId>camel-zookeeper-master</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- CODEGEN SUPPORTED ARCHITECTURES DEPENDENCIES END -->
     </dependencies>
+
+    <profiles>
+        <!--
+        IMPORTANT: this is used to detect unsupported modules which cannot be compiled for certain architectures.
+        -->
+        <profile>
+            <id>unsupported-arch</id>
+            <activation>
+                <property>
+                    <name>!unsupported-arch</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- CODEGEN UNSUPPORTED ARCHITECTURES DEPENDENCIES START -->
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-chroma</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <!-- CODEGEN UNSUPPORTED ARCHITECTURES DEPENDENCIES END -->
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>
