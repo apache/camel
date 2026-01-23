@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api.dto.approval;
 
-import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,20 +30,19 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Res
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.DeserializationContext;
-import tools.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ApprovalResultDeserializer.class)
 public final class ApprovalResult implements Serializable, Iterable<Result> {
 
-    public static final class ApprovalResultDeserializer extends JsonDeserializer<ApprovalResult> {
+    public static final class ApprovalResultDeserializer extends ValueDeserializer<ApprovalResult> {
 
         private static final TypeReference<List<Result>> RESULTS_TYPE = new TypeReference<>() {
         };
 
         @Override
-        public ApprovalResult deserialize(final JsonParser parser, final DeserializationContext context)
-                throws IOException {
+        public ApprovalResult deserialize(final JsonParser parser, final DeserializationContext context) {
             final List<Result> results = parser.readValueAs(RESULTS_TYPE);
 
             return new ApprovalResult(results);

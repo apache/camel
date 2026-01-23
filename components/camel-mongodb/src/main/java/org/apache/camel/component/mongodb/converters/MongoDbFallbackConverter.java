@@ -19,7 +19,6 @@ package org.apache.camel.component.mongodb.converters;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import tools.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -28,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.bson.Document;
+import tools.jackson.databind.ObjectMapper;
 
 @Converter(generateLoader = true)
 public final class MongoDbFallbackConverter {

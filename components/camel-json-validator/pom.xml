@@ -46,6 +46,12 @@
             <version>${networknt-json-schema-validator-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson3-version}</version>
+        </dependency>
+
         <!-- for testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

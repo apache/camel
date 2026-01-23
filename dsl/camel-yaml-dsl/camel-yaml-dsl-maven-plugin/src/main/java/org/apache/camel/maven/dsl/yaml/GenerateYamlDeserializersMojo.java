@@ -35,8 +35,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
@@ -66,6 +64,8 @@ import org.jboss.jandex.ParameterizedType;
 import org.jboss.jandex.Type;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @Mojo(
       name = "generate-yaml-deserializers",

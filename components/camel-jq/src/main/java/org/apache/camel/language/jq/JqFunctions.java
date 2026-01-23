@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.NullNode;
-import tools.jackson.databind.node.TextNode;
+import tools.jackson.databind.node.StringNode;
 
 public final class JqFunctions {
 
@@ -172,7 +172,7 @@ public final class JqFunctions {
             if (header == null) {
                 output.emit(NullNode.getInstance(), null);
             } else {
-                output.emit(new TextNode(header), null);
+                output.emit(new StringNode(header), null);
             }
         }
     }
@@ -231,7 +231,7 @@ public final class JqFunctions {
             if (header == null) {
                 output.emit(NullNode.getInstance(), null);
             } else {
-                output.emit(new TextNode(header), null);
+                output.emit(new StringNode(header), null);
             }
         }
     }
@@ -256,7 +256,7 @@ public final class JqFunctions {
                 throws JsonQueryException {
             FunctionCall fc = (FunctionCall) args.get(0);
             String t = fc.toString();
-            output.emit(new TextNode(t), null);
+            output.emit(new StringNode(t), null);
         }
     }
 
@@ -314,7 +314,7 @@ public final class JqFunctions {
             if (variable == null) {
                 output.emit(NullNode.getInstance(), null);
             } else {
-                output.emit(new TextNode(variable), null);
+                output.emit(new StringNode(variable), null);
             }
         }
     }
@@ -345,7 +345,7 @@ public final class JqFunctions {
                     sc.reset();
                 }
                 String t = exchange.getMessage().getBody(String.class);
-                output.emit(new TextNode(t), null);
+                output.emit(new StringNode(t), null);
             }
         }
     }

@@ -19,7 +19,7 @@ package org.apache.camel.language.jq;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.node.TextNode;
+import tools.jackson.databind.node.StringNode;
 
 public class JqExpressionSimpleTest extends JqTestSupport {
     @Override
@@ -36,7 +36,7 @@ public class JqExpressionSimpleTest extends JqTestSupport {
 
     @Test
     public void testExpression() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(new TextNode("bar"));
+        getMockEndpoint("mock:result").expectedBodiesReceived(new StringNode("bar"));
 
         template.sendBody("direct:start", node("foo", "bar", "baz", "bak"));
 

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jsonvalidator;
 
-import com.networknt.schema.JsonSchema;
+import com.networknt.schema.Schema;
 import org.apache.camel.CamelContext;
 
 /**
@@ -31,6 +31,6 @@ public interface JsonUriSchemaLoader {
      * @param  schemaUri    the schema URI
      * @return              a Schema to be used when validating incoming requests
      */
-    JsonSchema createSchema(CamelContext camelContext, String schemaUri) throws Exception;
+    Schema createSchema(CamelContext camelContext, String schemaUri) throws Exception;
 
 }

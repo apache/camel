@@ -133,13 +133,14 @@ public class JqExpressionTest {
         try (CamelContext context = new DefaultCamelContext()) {
             ArrayNode node = MAPPER.createArrayNode();
 
-            var n1 = MAPPER.createObjectNode().with("commit");
-            n1.with("commit").put("name", "Stephen Dolan");
-            n1.with("commit").put("message", "Merge pull request #163 from stedolan/utf8-fixes\n\nUtf8 fixes. Closes #161");
+            ObjectNode n1 = MAPPER.createObjectNode().withObject("commit");
+            n1.withObject("commit").put("name", "Stephen Dolan");
+            n1.withObject("commit").put("message",
+                    "Merge pull request #163 from stedolan/utf8-fixes\n\nUtf8 fixes. Closes #161");
 
-            var n2 = MAPPER.createObjectNode();
-            n2.with("commit").put("name", "Nicolas Williams");
-            n2.with("commit").put("message", "Reject all overlong UTF8 sequences.");
+            ObjectNode n2 = MAPPER.createObjectNode();
+            n2.withObject("commit").put("name", "Nicolas Williams");
+            n2.withObject("commit").put("message", "Reject all overlong UTF8 sequences.");
 
             node.add(n1);
             node.add(n2);
@@ -161,8 +162,8 @@ public class JqExpressionTest {
     public void setField() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             ObjectNode node = MAPPER.createObjectNode();
-            node.with("commit").put("name", "Nicolas Williams");
-            node.with("commit").put("message", "Reject all overlong UTF8 sequences.");
+            node.withObject("commit").put("name", "Nicolas Williams");
+            node.withObject("commit").put("message", "Reject all overlong UTF8 sequences.");
 
             Exchange exchange = new DefaultExchange(context);
             exchange.getMessage().setBody(node);
@@ -183,8 +184,8 @@ public class JqExpressionTest {
     public void setFieldFromHeader() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             ObjectNode node = MAPPER.createObjectNode();
-            node.with("commit").put("name", "Nicolas Williams");
-            node.with("commit").put("message", "Reject all overlong UTF8 sequences.");
+            node.withObject("commit").put("name", "Nicolas Williams");
+            node.withObject("commit").put("message", "Reject all overlong UTF8 sequences.");
 
             Exchange exchange = new DefaultExchange(context);
             exchange.getMessage().setHeader("CommitterName", "Andrea");
@@ -206,8 +207,8 @@ public class JqExpressionTest {
     public void setFieldFromProperty() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             ObjectNode node = MAPPER.createObjectNode();
-            node.with("commit").put("name", "Nicolas Williams");
-            node.with("commit").put("message", "Reject all overlong UTF8 sequences.");
+            node.withObject("commit").put("name", "Nicolas Williams");
+            node.withObject("commit").put("message", "Reject all overlong UTF8 sequences.");
 
             Exchange exchange = new DefaultExchange(context);
             exchange.setProperty("CommitterName", "Andrea");
@@ -229,8 +230,8 @@ public class JqExpressionTest {
     public void removeField() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
             ObjectNode node = MAPPER.createObjectNode();
-            node.with("commit").put("name", "Nicolas Williams");
-            node.with("commit").put("message", "Reject all overlong UTF8 sequences.");
+            node.withObject("commit").put("name", "Nicolas Williams");
+            node.withObject("commit").put("message", "Reject all overlong UTF8 sequences.");
 
             Exchange exchange = new DefaultExchange(context);
             exchange.getMessage().setBody(node);

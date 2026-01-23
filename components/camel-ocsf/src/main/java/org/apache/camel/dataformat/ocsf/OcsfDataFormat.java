@@ -24,13 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -44,6 +37,12 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.type.CollectionType;
 
 /**
  * OCSF (Open Cybersecurity Schema Framework) DataFormat.
@@ -302,9 +301,7 @@ public class OcsfDataFormat extends ServiceSupport implements DataFormat, DataFo
             if (objectMapper == null) {
                 objectMapper = new ObjectMapper();
                 // Configure for OCSF compatibility
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                // Register JavaTimeModule for java.time.Instant support
-                objectMapper.registerModule(new JavaTimeModule());
+                objectMapper = objectMapper.rebuild().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).build();
                 LOG.debug("Creating new ObjectMapper to use: {}", objectMapper);
             }
         }
@@ -314,7 +311,7 @@ public class OcsfDataFormat extends ServiceSupport implements DataFormat, DataFo
         }
 
         if (prettyPrint) {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            objectMapper = objectMapper.rebuild().enable(SerializationFeature.INDENT_OUTPUT).build();
         }
     }
 

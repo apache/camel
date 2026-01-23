@@ -72,5 +72,11 @@
       		<scope>test</scope>
       		<version>${h2-version}</version>
     	</dependency>
+        <dependency>
+      		<groupId>tools.jackson.core</groupId>
+      		<artifactId>jackson-databind</artifactId>
+      		<scope>test</scope>
+      		<version>${jackson3-version}</version>
+        </dependency>
     </dependencies>
 </project>

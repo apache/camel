@@ -20,10 +20,10 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.dto.generated.MSP;
 import org.apache.camel.component.salesforce.dto.generated.StringMSP;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MultiSelectPicklistJsonTest {
@@ -42,14 +42,14 @@ public class MultiSelectPicklistJsonTest {
         mspTest.setMspField(MSP.MSPEnum.values());
 
         String json = objectMapper.writeValueAsString(mspTest);
-        assertEquals(TEST_JSON, json);
+        JSONAssert.assertEquals(TEST_JSON, json, false);
 
         // test null
         mspTest.setMspField(null);
         mspTest.getFieldsToNull().add("MspField");
 
         json = objectMapper.writeValueAsString(mspTest);
-        assertEquals(TEST_NULL_JSON, json);
+        JSONAssert.assertEquals(TEST_NULL_JSON, json, false);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class MultiSelectPicklistJsonTest {
         mspTest.setMspField(null);
 
         String json = objectMapper.writeValueAsString(mspTest);
-        assertEquals(TEST_NO_NULL_JSON, json);
+        JSONAssert.assertEquals(TEST_NO_NULL_JSON, json, false);
     }
 
     @Test
@@ -80,14 +80,14 @@ public class MultiSelectPicklistJsonTest {
         mspTest.setMspField(stringList);
 
         String json = objectMapper.writeValueAsString(mspTest);
-        assertEquals(TEST_JSON, json);
+        JSONAssert.assertEquals(TEST_JSON, json, false);
 
         // test null
         mspTest.setMspField(null);
         mspTest.getFieldsToNull().add("MspField");
 
         json = objectMapper.writeValueAsString(mspTest);
-        assertEquals(TEST_NULL_JSON, json);
+        JSONAssert.assertEquals(TEST_NULL_JSON, json, false);
     }
 
     @Test

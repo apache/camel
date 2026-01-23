@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 
-import tools.jackson.databind.ObjectMapper;
 import org.apache.camel.component.keycloak.security.cache.TokenCache;
 import org.apache.camel.component.keycloak.security.cache.TokenCacheFactory;
 import org.apache.camel.component.keycloak.security.cache.TokenCacheType;
@@ -35,6 +34,7 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Token introspection client for Keycloak OAuth 2.0 Token Introspection (RFC 7662). This class handles communication

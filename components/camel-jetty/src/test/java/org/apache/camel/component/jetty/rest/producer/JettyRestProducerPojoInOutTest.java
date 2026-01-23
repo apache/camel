@@ -23,7 +23,9 @@ import org.apache.camel.component.jetty.rest.CountryPojo;
 import org.apache.camel.component.jetty.rest.UserPojo;
 import org.apache.camel.component.jetty.rest.UserService;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,27 +33,29 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
 
     @Test
-    public void testJettyEmptyBody() {
+    public void testJettyEmptyBody() throws JSONException {
         String out = fluentTemplate.to("rest:get:users/lives").withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .request(String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, false);
+        //assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
 
     @Test
-    public void testJettyJSonBody() {
+    public void testJettyJSonBody() throws JSONException {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
 
         String out = fluentTemplate.to("rest:post:users/lives").withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withBody(body).request(String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, false);
+        //assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
 
     @Test
-    public void testJettyPojoIn() {
+    public void testJettyPojoIn() throws JSONException {
         UserPojo user = new UserPojo();
         user.setId(123);
         user.setName("Donald Duck");
@@ -60,7 +64,8 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
                 .withBody(user).request(String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, false);
+        //assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
 
     @Test

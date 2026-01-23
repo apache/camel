@@ -41,9 +41,9 @@ import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
-import tools.jackson.core.JsonFactory;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
@@ -166,12 +166,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     @Override
     protected InputStream getRequestStream(final Message in, final Object object) throws SalesforceException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            objectMapper.writeValue(out, object);
-        } catch (IOException e) {
-            final String msg = "Error marshaling request: " + e.getMessage();
-            throw new SalesforceException(msg, e);
-        }
+        objectMapper.writeValue(out, object);
 
         return new ByteArrayInputStream(out.toByteArray());
     }
@@ -251,7 +246,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             }
             String prefix = exchange.getProperty(RESPONSE_CLASS_PREFIX, "", String.class);
             responseClass = getSObjectClass(prefix + type, null);
-        } catch (IOException | SalesforceException exc) {
+        } catch (SalesforceException exc) {
             throw new RuntimeException(exc);
         } finally {
             responseEntity.reset();

@@ -54,8 +54,9 @@ public class SObjectTreeTest extends CompositeTestBase {
 
     @Test
     public void shouldSerializeToJson() throws JacksonException {
-        final ObjectMapper mapper = JsonUtils.createObjectMapper();
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+        final ObjectMapper mapper = JsonUtils.createObjectMapper().rebuild()
+                .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+                .build();
 
         final ObjectWriter writer = mapper.writerFor(SObjectTree.class);
 

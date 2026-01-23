@@ -26,7 +26,7 @@ import tools.jackson.databind.ser.std.SimpleBeanPropertyFilter;
 public class FieldsToNullPropertyFilter extends SimpleBeanPropertyFilter {
 
     @Override
-    public void serializeAsField(Object pojo, JsonGenerator jgen, SerializationContext provider, PropertyWriter writer)
+    public void serializeAsProperty(Object pojo, JsonGenerator jgen, SerializationContext provider, PropertyWriter writer)
             throws Exception {
 
         AbstractSObjectBase sob = (AbstractSObjectBase) pojo;
@@ -42,9 +42,9 @@ public class FieldsToNullPropertyFilter extends SimpleBeanPropertyFilter {
             failedToReadFieldValue = true;
         }
         if (sob.getFieldsToNull().contains(writer.getName()) || fieldValue != null || failedToReadFieldValue) {
-            writer.serializeAsField(pojo, jgen, provider);
+            writer.serializeAsProperty(pojo, jgen, provider);
         } else {
-            writer.serializeAsOmittedField(pojo, jgen, provider);
+            writer.serializeAsOmittedProperty(pojo, jgen, provider);
         }
     }
 }

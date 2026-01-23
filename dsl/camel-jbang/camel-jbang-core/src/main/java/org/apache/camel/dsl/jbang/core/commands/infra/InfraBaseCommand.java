@@ -35,10 +35,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.MapperFeature;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
@@ -54,10 +50,19 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 public abstract class InfraBaseCommand extends CamelCommand {
 
-    protected final ObjectMapper jsonMapper = new ObjectMapper();
+    protected final ObjectMapper jsonMapper = JsonMapper.builder()
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+            .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+            .build();
 
     @CommandLine.Option(names = { "--json" },
                         description = "Output in JSON Format")
@@ -65,11 +70,6 @@ public abstract class InfraBaseCommand extends CamelCommand {
 
     public InfraBaseCommand(CamelJBangMain main) {
         super(main);
-
-        jsonMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        jsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-        jsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-        jsonMapper.configure(MapperFeature.REQUIRE_HANDLERS_FOR_JAVA8_OPTIONALS, false);
     }
 
     protected static Map<Long, Path> findPids(String name) throws Exception {

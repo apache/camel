@@ -17,10 +17,12 @@
 package org.apache.camel.dsl.yaml.support
 
 import tools.jackson.databind.ObjectMapper
-import tools.jackson.dataformat.yaml.YAMLFactory
-import com.networknt.schema.JsonSchemaFactory
-import com.networknt.schema.SchemaValidatorsConfig
-import com.networknt.schema.SpecVersionDetector
+import tools.jackson.dataformat.yaml.YAMLMapper
+import com.networknt.schema.Schema
+import com.networknt.schema.SchemaLocation
+import com.networknt.schema.SchemaRegistry
+import com.networknt.schema.SchemaRegistryConfig
+import com.networknt.schema.SpecificationVersion
 import groovy.util.logging.Slf4j
 import org.apache.camel.CamelContext
 import org.apache.camel.FluentProducerTemplate
@@ -40,15 +42,23 @@ import java.nio.charset.StandardCharsets
 
 @Slf4j
 class YamlTestSupport extends Specification implements HasCamelContext {
-    static def MAPPER = new ObjectMapper(new YAMLFactory())
+    static def MAPPER = YAMLMapper.builder().build()
     static def SCHEMA_NODE = MAPPER.readTree(ResourceHelper.getResourceAsStream('/schema/camelYamlDsl.json'))
-    static def FACTORY = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(SCHEMA_NODE))
-    static def SCHEMA_VALIDATORS_CONFIG = {
-        SchemaValidatorsConfig config = new SchemaValidatorsConfig()
-        config.setLocale(Locale.ENGLISH)
-        return config
+    static def VERSION = {
+        SpecificationVersion version = SpecificationVersion.DRAFT_4
+        if (SCHEMA_NODE.has('$schema')) {
+            String dialectId = SCHEMA_NODE.get('$schema').asString()
+            version = SpecificationVersion.fromDialectId(dialectId).orElse(SpecificationVersion.DRAFT_4)
+        }
+        return version
     }()
-    static def SCHEMA = FACTORY.getSchema(SCHEMA_NODE, SCHEMA_VALIDATORS_CONFIG)
+    static def SCHEMA_REGISTRY_CONFIG = SchemaRegistryConfig.builder()
+            .locale(Locale.ENGLISH)
+            .build()
+    static def REGISTRY = SchemaRegistry.withDefaultDialect(VERSION, { builder ->
+        builder.schemaRegistryConfig(SCHEMA_REGISTRY_CONFIG)
+    })
+    static def SCHEMA = REGISTRY.getSchema(SchemaLocation.of('classpath:/schema/camelYamlDsl.json'), SCHEMA_NODE)
 
     @AutoCleanup
     def context = new DefaultCamelContext()

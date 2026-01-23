@@ -17,7 +17,7 @@
 package org.apache.camel.component.salesforce.api;
 
 import tools.jackson.core.JsonGenerator;
-import tools.jackson.core.StreamWriteException;
+import tools.jackson.core.exc.StreamWriteException;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
@@ -56,9 +56,9 @@ public class StringMultiSelectPicklistSerializer extends StdSerializer<Object> {
 
         } catch (Exception e) {
             throw new StreamWriteException(
+                    jgen,
                     String.format("Exception writing pick list value %s of type %s: %s", value, value.getClass().getName(),
-                            e.getMessage()),
-                    jgen);
+                            e.getMessage()));
         }
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -31,12 +30,8 @@ public abstract class AbstractDTOBase {
 
     @Override
     public String toString() {
-        try {
-            StringWriter writer = new StringWriter();
-            MAPPER.writeValue(writer, this);
-            return writer.toString();
-        } catch (IOException e) {
-            return "Error in toString " + e.getMessage();
-        }
+        StringWriter writer = new StringWriter();
+        MAPPER.writeValue(writer, this);
+        return writer.toString();
     }
 }

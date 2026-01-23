@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import tools.jackson.core.JsonProcessingException;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -64,7 +64,7 @@ public class CamelCatalogJsonSchemaTest {
 
     @ParameterizedTest
     @MethodSource("componentCatalog")
-    void testValidateJsonComponent(String name) throws JsonProcessingException {
+    void testValidateJsonComponent(String name) throws JacksonException {
         String json = CATALOG.componentJSonSchema(name);
 
         LOG.info("Validating {} component", name);
@@ -88,7 +88,7 @@ public class CamelCatalogJsonSchemaTest {
         List<String> pathProperties = new ArrayList<>();
         List<String> requiredProperties = new ArrayList<>();
 
-        Iterator<Map.Entry<String, JsonNode>> it = tree.get("properties").fields();
+        Iterator<Map.Entry<String, JsonNode>> it = tree.get("properties").properties().iterator();
         while (it.hasNext()) {
             Map.Entry<String, JsonNode> property = it.next();
             if ("path".equals(property.getValue().get("kind").textValue())) {

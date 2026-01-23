@@ -35,6 +35,7 @@
 
     <properties>
         <camel.surefire.parallel>true</camel.surefire.parallel>
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencyManagement>

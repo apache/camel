@@ -112,7 +112,9 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
 
         try {
-            ObjectMapper mapper = JsonMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
+            ObjectMapper mapper = JsonMapper.builder()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .build();
             String modelsAsJson = mapper.writeValueAsString(models);
 
             if (generatedResourcesOutputDir == null) {

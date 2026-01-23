@@ -112,11 +112,11 @@ public class SObjectCompositeTest {
                                 "/org/apache/camel/component/salesforce/api/dto/composite_request_example.json"),
                         StandardCharsets.UTF_8);
 
-        final ObjectMapper mapper
-                = JsonUtils.createObjectMapper().copy().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-                        .configure(SerializationFeature.INDENT_OUTPUT, true);
+        final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final String serialized = mapper.writerFor(SObjectComposite.class).writeValueAsString(composite);
+        final String serialized
+                = mapper.writer(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, SerializationFeature.INDENT_OUTPUT)
+                        .forType(SObjectComposite.class).writeValueAsString(composite);
         assertThat(serialized).as("Should serialize as expected by Salesforce").isEqualTo(expectedJson);
     }
 }

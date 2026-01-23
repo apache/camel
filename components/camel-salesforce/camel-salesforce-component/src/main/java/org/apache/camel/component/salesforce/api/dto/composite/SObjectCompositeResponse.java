@@ -33,7 +33,7 @@ public final class SObjectCompositeResponse implements Serializable {
     private final List<SObjectCompositeResult> compositeResponse;
 
     @JsonCreator
-    public SObjectCompositeResponse(@JsonProperty("results") final List<SObjectCompositeResult> compositeResponse) {
+    public SObjectCompositeResponse(@JsonProperty("compositeResponse") final List<SObjectCompositeResult> compositeResponse) {
         this.compositeResponse = compositeResponse;
     }
 

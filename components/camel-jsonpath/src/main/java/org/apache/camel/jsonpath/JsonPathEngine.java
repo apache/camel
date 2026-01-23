@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.json.Jackson3JsonProvider;
+import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -80,11 +80,11 @@ public class JsonPathEngine {
         // Use custom ObjectMapper if provided (CAMEL-17956)
         ObjectMapper objectMapper = findRegisteredMapper(context);
         if (objectMapper != null) {
-            builder.jsonProvider(new JacksonJsonProvider(objectMapper));
-            builder.mappingProvider(new JacksonMappingProvider(objectMapper));
+            builder.jsonProvider(new Jackson3JsonProvider(objectMapper));
+            builder.mappingProvider(new Jackson3MappingProvider(objectMapper));
         } else {
-            builder.jsonProvider(new JacksonJsonProvider());
-            builder.mappingProvider(new JacksonMappingProvider());
+            builder.jsonProvider(new Jackson3JsonProvider());
+            builder.mappingProvider(new Jackson3MappingProvider());
         }
 
         if (suppressExceptions) {

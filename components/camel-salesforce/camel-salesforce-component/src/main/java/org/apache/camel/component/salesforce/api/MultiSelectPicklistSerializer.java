@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.salesforce.api;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
 import tools.jackson.core.JsonGenerator;
-import tools.jackson.core.StreamWriteException;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.core.exc.StreamWriteException;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
@@ -37,7 +36,7 @@ public class MultiSelectPicklistSerializer extends StdSerializer<Object> {
     }
 
     @Override
-    public void serialize(Object value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void serialize(Object value, JsonGenerator jgen, SerializationContext provider) {
 
         // get Picklist enum element class from array class
         Class<?> arrayClass = value.getClass();
@@ -61,9 +60,9 @@ public class MultiSelectPicklistSerializer extends StdSerializer<Object> {
 
         } catch (Exception e) {
             throw new StreamWriteException(
+                    jgen,
                     String.format("Exception writing pick list value %s of type %s: %s", value, value.getClass().getName(),
-                            e.getMessage()),
-                    jgen);
+                            e.getMessage()));
         }
     }
 }

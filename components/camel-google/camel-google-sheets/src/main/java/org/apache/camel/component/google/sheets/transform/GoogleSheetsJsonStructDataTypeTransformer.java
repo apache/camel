@@ -31,7 +31,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsConstants;
 import org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConstants;
-import org.apache.camel.component.jackson.transform.Json;
+import org.apache.camel.component.jackson3.transform.Json;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;

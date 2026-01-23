@@ -23,9 +23,9 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.StringJoiner;
 
+import org.apache.camel.util.FileUtil;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import org.apache.camel.util.FileUtil;
 
 public final class GistHelper {
 
@@ -91,25 +91,25 @@ public final class GistHelper {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(res.body());
             for (JsonNode c : root.get("files")) {
-                String name = c.get("filename").asText();
+                String name = c.get("filename").textValue();
                 String ext = FileUtil.onlyExt(name, false);
                 if (kamelets != null && "kamelet.yaml".equalsIgnoreCase(ext)) {
-                    String rawUrl = c.get("raw_url").asText();
+                    String rawUrl = c.get("raw_url").textValue();
                     String u = asGistSingleUrl(rawUrl);
                     kamelets.add(u);
                 } else if (properties != null && "properties".equalsIgnoreCase(ext)) {
-                    String rawUrl = c.get("raw_url").asText();
+                    String rawUrl = c.get("raw_url").textValue();
                     String u = asGistSingleUrl(rawUrl);
                     properties.add(u);
                 } else if (routes != null) {
                     if ("java".equalsIgnoreCase(ext) || "xml".equalsIgnoreCase(ext)
                             || "yaml".equalsIgnoreCase(ext) || "camel.yaml".equalsIgnoreCase(ext)) {
-                        String rawUrl = c.get("raw_url").asText();
+                        String rawUrl = c.get("raw_url").textValue();
                         String u = asGistSingleUrl(rawUrl);
                         routes.add(u);
                     }
                 } else if (all != null) {
-                    String rawUrl = c.get("raw_url").asText();
+                    String rawUrl = c.get("raw_url").textValue();
                     String u = asGistSingleUrl(rawUrl);
                     all.add(u);
                 }
