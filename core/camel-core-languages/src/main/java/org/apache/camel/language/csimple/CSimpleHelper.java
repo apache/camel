@@ -21,6 +21,7 @@ import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -613,6 +614,32 @@ public final class CSimpleHelper {
                 answer.add(i);
             }
         }
+        return answer;
+    }
+
+    public static List<Object> reverse(Exchange exchange, Object... args) {
+        List<Object> answer = new ArrayList<>();
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                answer.add(i);
+            }
+        }
+        Collections.reverse(answer);
+        return answer;
+    }
+
+    public static List<Object> shuffle(Exchange exchange, Object... args) {
+        List<Object> answer = new ArrayList<>();
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                answer.add(i);
+            }
+        }
+        Collections.shuffle(answer);
         return answer;
     }
 

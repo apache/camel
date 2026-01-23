@@ -64,6 +64,7 @@ import org.junit.jupiter.api.parallel.Resources;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -3513,6 +3514,51 @@ public class SimpleTest extends LanguageTestSupport {
 
         exchange.getMessage().setBody(null);
         expression = context.resolveLanguage("simple").createExpression("${distinct()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("[]", s);
+    }
+
+    @Test
+    public void testReverse() {
+        exchange.getMessage().setBody("1,2,3,4,5");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${reverse()}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(5, list.size());
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("[5, 4, 3, 2, 1]", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${reverse('Z','X','Z','A','B','A','C','D','B','E')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("[E, B, D, C, A, B, A, Z, X, Z]", s);
+
+        expression = context.resolveLanguage("simple")
+                .createExpression("${reverse('Z','4',${body},'A','B','A','C','D','B','E')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("[E, B, D, C, A, B, A, 5, 4, 3, 2, 1, 4, Z]", s);
+
+        exchange.getMessage().setBody(null);
+        expression = context.resolveLanguage("simple").createExpression("${reverse()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("[]", s);
+    }
+
+    @Test
+    public void testShuffle() {
+        String input = "1,2,3,4,5,6,7,8,9,0";
+        exchange.getMessage().setBody(input);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${shuffle()}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(10, list.size());
+        String s = expression.evaluate(exchange, String.class);
+        String s2 = expression.evaluate(exchange, String.class);
+        assertNotEquals(input, s);
+        assertNotEquals(input, s2);
+        assertNotEquals(s, s2); // should be random when calling again
+
+        exchange.getMessage().setBody(null);
+        expression = context.resolveLanguage("simple").createExpression("${shuffle()}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("[]", s);
     }

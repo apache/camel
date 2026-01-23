@@ -968,13 +968,37 @@ public class SimpleFunctionExpression extends LiteralExpression {
         remainder = ifStartsWithReturnRemainder("distinct(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
-            String[] tokens = null;
+            String[] tokens;
             if (ObjectHelper.isNotEmpty(values)) {
                 tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
             } else {
                 tokens = new String[] { "${body}" };
             }
             return SimpleExpressionBuilder.distinctExpression(tokens);
+        }
+        // reverse function
+        remainder = ifStartsWithReturnRemainder("reverse(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            } else {
+                tokens = new String[] { "${body}" };
+            }
+            return SimpleExpressionBuilder.reverseExpression(tokens);
+        }
+        // shuffle function
+        remainder = ifStartsWithReturnRemainder("shuffle(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            } else {
+                tokens = new String[] { "${body}" };
+            }
+            return SimpleExpressionBuilder.shuffleExpression(tokens);
         }
         // skip function
         remainder = ifStartsWithReturnRemainder("skip(", function);
@@ -2643,7 +2667,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "replace(exchange, " + from + ", " + to + ")";
         }
 
-        // distinct
+        // distinct function
         remainder = ifStartsWithReturnRemainder("distinct(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
@@ -2663,6 +2687,48 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             String p = sj.length() > 0 ? sj.toString() : "body";
             return "distinct(exchange, " + p + ")";
+        }
+        // reverse function
+        remainder = ifStartsWithReturnRemainder("reverse(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "body";
+            return "reverse(exchange, " + p + ")";
+        }
+        // shuffle function
+        remainder = ifStartsWithReturnRemainder("shuffle(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "body";
+            return "shuffle(exchange, " + p + ")";
         }
 
         // skip function

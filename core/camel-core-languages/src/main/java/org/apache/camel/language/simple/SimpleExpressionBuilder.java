@@ -24,6 +24,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -1103,6 +1104,84 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "distinct(" + Arrays.toString(values) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that returns the elements in reverse order
+     */
+    public static Expression reverseExpression(String[] values) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[values != null ? values.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; values != null && i < values.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(values[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                List<Object> answer = new ArrayList<>();
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        answer.add(i);
+                    }
+                }
+                Collections.reverse(answer);
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "reverse(" + Arrays.toString(values) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that returns the elements in random order
+     */
+    public static Expression shuffleExpression(String[] values) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[values != null ? values.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; values != null && i < values.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(values[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                List<Object> answer = new ArrayList<>();
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        answer.add(i);
+                    }
+                }
+                Collections.shuffle(answer);
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "reverse(" + Arrays.toString(values) + ")";
             }
         };
     }

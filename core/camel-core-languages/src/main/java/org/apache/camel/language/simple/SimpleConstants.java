@@ -116,7 +116,7 @@ public final class SimpleConstants {
     public static final String DATE_WITH_TIMEZONE = "date-with-timezone(command:timezone:pattern)";
 
     @Metadata(description = "Returns a set of all the values with duplicates removed",
-              label = "function", javaType = "long", displayName = "Distinct Values")
+              label = "function", javaType = "Set", displayName = "Distinct Values")
     public static final String DISTINCT = "distinct(val...)";
 
     @Deprecated
@@ -294,6 +294,10 @@ public final class SimpleConstants {
               label = "function", javaType = "String", displayName = "Replace String Values")
     public static final String REPLACE = "replace(from,to,exp)";
 
+    @Metadata(description = "Returns a list of all the values, but in reverse order",
+              label = "function", javaType = "List", displayName = "Reverse Values")
+    public static final String REVERSE = "reverse(val...)";
+
     @Metadata(description = "The route group of the current route the Exchange is being routed. Not all routes have a group assigned, so this may be null.",
               javaType = "String", label = "function")
     public static final String ROUTE_GROUP = "routeGroup";
@@ -309,6 +313,10 @@ public final class SimpleConstants {
     @Metadata(description = "Sets a variable with the given expression (optional converting to the given type)",
               label = "function", javaType = "Object")
     public static final String SET_VARIABLE = "setVariable(name,type,exp)";
+
+    @Metadata(description = "Returns a list of all the values shuffled in random order",
+              label = "function", javaType = "List", displayName = "Shuffle Values")
+    public static final String SHUFFLE = "shuffle(val...)";
 
     @Metadata(description = "The size of the message body (or expression). If the payload is java.util.Collection or java.util.Map based then the size is the number of elements; otherwise the payload size in bytes.",
               label = "function", javaType = "int", displayName = "Size")
