@@ -21,32 +21,17 @@ import org.apache.camel.spi.Metadata;
 
 public class WeaviateVectorDbHeaders {
     @Metadata(description = "The action to be performed.", javaType = "String",
-              enums = "CREATE_COLLECTION,CREATE_INDEX,UPSERT,INSERT,SEARCH,DELETE,UPDATE,QUERY,QUERY_BY_ID")
+              enums = "CREATE_COLLECTION,CREATE,DELETE_BY_ID,DELETE_COLLECTION,QUERY,QUERY_BY_ID,UPDATE_BY_ID")
     public static final String ACTION = "CamelWeaviateAction";
 
-    @Metadata(description = "Text Field Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "Text Field Name for Create/Update/Query operation", javaType = "String")
     public static final String TEXT_FIELD_NAME = "CamelWeaviateTextFieldName";
 
-    @Metadata(description = "Vector Field Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "Vector Field Name for Create/Update/Query operation", javaType = "String")
     public static final String VECTOR_FIELD_NAME = "CamelweaviateVectorFieldName";
 
-    @Metadata(description = "Collection Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "Collection Name for all operations", javaType = "String")
     public static final String COLLECTION_NAME = "CamelWeaviateCollectionName";
-
-    @Metadata(description = "Collection Similarity Metric", javaType = "String", enums = "cosine,euclidean,dotproduct")
-    public static final String COLLECTION_SIMILARITY_METRIC = "CamelWeaviateCollectionSimilarityMetric";
-
-    @Metadata(description = "Collection Dimension", javaType = "int")
-    public static final String COLLECTION_DIMENSION = "CamelWeaviateCollectionDimension";
-
-    @Metadata(description = "Collection Cloud Vendor", javaType = "String", enums = "aws,gcp,azure")
-    public static final String COLLECTION_CLOUD = "CamelWeaviateCollectionCloud";
-
-    @Metadata(description = "Collection Cloud Vendor Region", javaType = "String", enums = "aws,gcp,azure")
-    public static final String COLLECTION_CLOUD_REGION = "CamelWeaviateCollectionCloudRegion";
-
-    @Metadata(description = "Index Name", javaType = "String")
-    public static final String INDEX_NAME = "CamelWeaviateIndexName";
 
     @Metadata(description = "Weaviate Object fields", javaType = "HashMap")
     public static final String FIELDS = "CamelWeaviateFields";
@@ -63,10 +48,10 @@ public class WeaviateVectorDbHeaders {
     @Metadata(description = "Merges properties into the object", javaType = "Boolean", defaultValue = "true")
     public static final String UPDATE_WITH_MERGE = "CamelWeaviateUpdateWithMerge";
 
-    @Metadata(description = "Key Name for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "Key Name for Create/Update/Query operation", javaType = "String")
     public static final String KEY_NAME = "CamelWeaviateKeyName";
 
-    @Metadata(description = "Key Value for Insert/Upsert operation", javaType = "String")
+    @Metadata(description = "Key Value for Create/Update/Query operation", javaType = "String")
     public static final String KEY_VALUE = "CamelWeaviateKeyValue";
 
 }
