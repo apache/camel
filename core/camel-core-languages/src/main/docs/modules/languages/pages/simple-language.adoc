@@ -194,6 +194,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`collate(size)` | `List` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
 |`distinct(val1,val2,...)` | `Set` | Returns a set of all the values with duplicates removed
 |`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
+|`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression. This function is not supported when using csimple.
 |`list(val1,val2,...)` | `List` | The list function creates an `java.util.ArrayList` with the given set of values.
 |`map(key1,value1,...)` | `Map` | The map function creates a `java.util.LinkedHashMap` with the given set of pairs.
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.

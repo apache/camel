@@ -18,10 +18,12 @@ package org.apache.camel.language.simple.ast;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -1068,6 +1070,24 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 }
             }
             return SimpleExpressionBuilder.splitStringExpression(exp, separator);
+        }
+        // foreach function
+        remainder = ifStartsWithReturnRemainder("forEach(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${forEach(exp,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${forEach(exp,exp)} was: " + function, token.getIndex());
+            }
+            String exp1 = tokens[0];
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.forEachExpression(exp1, exp2);
         }
 
         // isEmpty function
@@ -2612,6 +2632,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
             separator = StringQuoteHelper.doubleQuote(separator);
             return "Object value = " + exp + ";\n        String separator = " + separator
                    + ";\n        return stringSplit(exchange, value, separator);";
+        }
+        // foreach function
+        remainder = ifStartsWithReturnRemainder("forEach(", function);
+        if (remainder != null) {
+            throw new UnsupportedOperationException("forEach is not supported in csimple language");
         }
 
         // random function

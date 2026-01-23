@@ -3564,6 +3564,38 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testForEach() {
+        exchange.getMessage().setBody("Camel,World,Cheese");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${forEach(${body},'Hello ${body}')}");
+        List list = expression.evaluate(exchange, List.class);
+        assertEquals(3, list.size());
+        assertEquals("Hello Camel", list.get(0));
+        assertEquals("Hello World", list.get(1));
+        assertEquals("Hello Cheese", list.get(2));
+
+        expression = context.resolveLanguage("simple").createExpression("${forEach(${body},'Bye ${body}')}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(3, list.size());
+        assertEquals("Bye Camel", list.get(0));
+        assertEquals("Bye World", list.get(1));
+        assertEquals("Bye Cheese", list.get(2));
+
+        exchange.getMessage().setBody("1,2,3");
+        expression = context.resolveLanguage("simple").createExpression("${forEach(${body},${sum(${body},7)})}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(3, list.size());
+        assertEquals(8L, list.get(0));
+        assertEquals(9L, list.get(1));
+        assertEquals(10L, list.get(2));
+
+        exchange.getMessage().setBody(null);
+        expression = context.resolveLanguage("simple").createExpression("${forEach(${body},'Hello ${body}')}");
+        list = expression.evaluate(exchange, List.class);
+        assertEquals(0, list.size());
+    }
+
+    @Test
     public void testNot() {
         exchange.getMessage().setBody("");
         Expression expression = context.resolveLanguage("simple").createExpression("${not()}");

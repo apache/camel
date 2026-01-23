@@ -149,6 +149,10 @@ public final class SimpleConstants {
               javaType = "String", label = "function", displayName = "Exception Stacktrace")
     public static final String EXCEPTION_STACKTRACE = "exception.stackTrace";
 
+    @Metadata(description = "Returns a List containing the values returned by the function when applied to each value from the input expression",
+              label = "function", javaType = "List", displayName = "For Each call Function")
+    public static final String FOR_EACH = "forEach(exp,fun)";
+
     @Metadata(description = "Converts the message body (or expression) to a floating number and return the floor value (rounded down to nearest integer).",
               label = "function", javaType = "Integer", displayName = "Floor Number")
     public static final String FLOOR = "floor(exp)";
