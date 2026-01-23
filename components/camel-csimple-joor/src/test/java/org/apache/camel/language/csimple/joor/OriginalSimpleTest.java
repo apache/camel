@@ -3136,6 +3136,24 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertEquals("[]", s);
     }
 
+    @Test
+    public void testNot() {
+        exchange.getMessage().setBody("");
+        Expression expression = context.resolveLanguage("csimple").createExpression("${not()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello");
+        expression = context.resolveLanguage("csimple").createExpression("${not()}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("csimple").createExpression("${not(${body} == 'Hello')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Bye");
+        expression = context.resolveLanguage("csimple").createExpression("${not(${body} == 'Hello')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";
