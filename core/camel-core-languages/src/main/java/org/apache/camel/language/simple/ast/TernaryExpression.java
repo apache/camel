@@ -106,22 +106,29 @@ public class TernaryExpression extends BaseSimpleNode {
             }
         }
 
-        final Expression conditionExp = condition.createExpression(camelContext, expression);
+        final Predicate predicate
+                = ExpressionToPredicateAdapter.toPredicate(condition.createExpression(camelContext, expression));
         final Expression trueExp = trueValue.createExpression(camelContext, expression);
         final Expression falseExp = falseValue.createExpression(camelContext, expression);
 
-        return createTernaryExpression(camelContext, conditionExp, trueExp, falseExp);
+        return createTernaryExpression(camelContext, predicate, trueExp, falseExp);
     }
 
     private Expression createTernaryExpression(
-            final CamelContext camelContext, final Expression conditionExp,
+            final CamelContext camelContext, final Predicate predicate,
             final Expression trueExp, final Expression falseExp) {
         return new Expression() {
+
+            @Override
+            public void init(CamelContext context) {
+                Expression.super.init(context);
+                predicate.init(context);
+                trueExp.init(context);
+                falseExp.init(context);
+            }
+
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                // Convert condition to predicate
-                Predicate predicate = ExpressionToPredicateAdapter.toPredicate(conditionExp);
-
                 if (predicate.matches(exchange)) {
                     return trueExp.evaluate(exchange, type);
                 } else {

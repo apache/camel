@@ -350,6 +350,19 @@ This requires having `camel-base64` JAR on the classpath.
 |`base64Encode(exp)` | `String` |Base64 encodes the expression
 |====
 
+== Built-in Symbols
+
+The following special symbols can be used when escaped with `\` as below:
+
+[width="100%",cols="50%,50%",options="header",]
+|====
+|Symbol |Description
+|`\n` | To use newline character.
+|`\t` | To use tab character.
+|`\r` | To use carriage return character.
+|`\}` | To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
+|====
+
 == Built-in Operators
 
 The simple language has limited support for operators that are used in predicates to evaluate whether a condition is either _true_ or _false_.
@@ -371,7 +384,9 @@ Camel will automatically type convert the rightValue type to the
 leftValue type, so it is able to e.g., convert a string into a numeric, so
 you can use `>` comparison for numeric values.
 
-The following operators are supported:
+=== Comparison Operators
+
+The following comparison operators are supported:
 
 [width="100%",cols="50%,50%",options="header",]
 |====
@@ -402,7 +417,9 @@ The following operators are supported:
 |`!startsWith` | For testing if the left-hand side string does not start with the right-hand string.
 |====
 
-And the following unary operators can be used:
+=== Numeric Operators
+
+The following numeric operators can be used:
 
 [width="100%",cols="50%,50%",options="header",]
 |====
@@ -411,7 +428,9 @@ And the following unary operators can be used:
 |`--` | To decrement a number by one. The left-hand side must be a function, otherwise parsed as literal.
 |====
 
-And the following other operators can be used:
+=== Other Operators
+
+The following other operators can be used:
 
 [width="100%",cols="50%,50%",options="header",]
 |====
@@ -449,24 +468,15 @@ then the default value of `Guest` is returned.
 simple("${header.username} ?: 'Guest'");
 ----
 
-And the following special symbols:
+=== Boolean Operators
 
-[width="100%",cols="50%,50%",options="header",]
-|====
-|Symbol |Description
-|`\n` | To use newline character.
-|`\t` | To use tab character.
-|`\r` | To use carriage return character.
-|`\}` | To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
-|====
-
-And the following logical operators can be used to group expressions:
+And the following boolean operators can be used to group expressions:
 
 [width="100%",cols="50%,50%",options="header",]
 |====
 |Operator |Description
-|`&&` | The logical and operator is used to group two expressions.
-|`\|\|` | The logical or operator is used to group two expressions.
+|`&&` | The `and` operator is used to group two expressions if both operands evaluates to `true`.
+|`\|\|` | The `or` operator is used to group two expressions if any operand evaluates to `true`.
 |====
 
 The syntax for AND is:
@@ -625,7 +635,7 @@ order:
 </from>
 ----
 
-=== Combining multiple expression using AND / OR
+=== Combining multiple expression using AND / OR Operator
 
 If you have two expressions you can combine them with the `&&` (and) or `||` (or) operator.
 
@@ -651,6 +661,8 @@ to reuse variables, and also avoid making the simple expression complicated when
 make the simple expression easier to maintain and understand.
 
 IMPORTANT: Init Blocks is not supported with xref:csimple-language.adoc[CSimple] language.
+
+NOTE: The init block declaration `$init{ ... }init$` may be changed in the future.
 
 The _init block_ is declared as follows:
 

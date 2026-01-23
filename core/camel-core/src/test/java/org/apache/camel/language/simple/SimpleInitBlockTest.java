@@ -27,7 +27,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
               // this is a java like comment
               $sum := ${sum(${header.lines},100)}
 
-              $sku := ${iif(${body} contains 'Camel',123,999)}
+              $sku := ${body contains 'Camel' ? '123' : '999'}
             }init$
             orderId=$sku,total=$sum
             """;
@@ -37,7 +37,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
               // this is a java like comment
               $sum := ${sum(${header.lines},100)}
 
-              $sku := ${iif(${body} contains 'Camel',123,999)}
+              $sku := ${body contains 'Camel' ? '123' : '999'}
             }init$
             $sum > 200 && $sku != 999
             """;
@@ -47,7 +47,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
               // this is a java like comment
               $sum := ${sum(${header.lines},100)}
 
-              $sku := ${iif(${body} contains 'Camel',123,999)}
+              $sku := ${body contains 'Camel' ? '123' : '999'}
             }init$
             """;
 
@@ -56,7 +56,7 @@ public class SimpleInitBlockTest extends LanguageTestSupport {
               // this is a java like comment
               $sum := ${sum(${header.lines},100)}
 
-              $sku := ${iif(${body} contains 'Hi := Me $sku',123,999)}
+              $sku := ${body contains 'Hi := Me $sku' ? '123' : '999'}
             }init$
             orderId=$sku,total=$sum
             """;
