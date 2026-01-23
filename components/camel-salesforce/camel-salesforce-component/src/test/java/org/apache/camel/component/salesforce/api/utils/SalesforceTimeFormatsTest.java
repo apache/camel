@@ -34,7 +34,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.type.TypeFactory;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,7 +93,7 @@ public class SalesforceTimeFormatsTest {
     public void shouldDeserializeJson(DateTransferObject<?> dto, String json, Class<?> parameterType)
             throws IOException {
         final JavaType javaType
-                = TypeFactory.defaultInstance().constructParametricType(DateTransferObject.class, parameterType);
+                = objectMapper.getTypeFactory().constructParametricType(DateTransferObject.class, parameterType);
 
         final DateTransferObject<?> deserialized = objectMapper.readerFor(javaType).readValue(json);
 

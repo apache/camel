@@ -56,14 +56,8 @@
         <!-- json support -->
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-json</artifactId>
+            <artifactId>metrics-jackson3</artifactId>
             <version>${metrics-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>tools.jackson.core</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>tools.jackson.core</groupId>

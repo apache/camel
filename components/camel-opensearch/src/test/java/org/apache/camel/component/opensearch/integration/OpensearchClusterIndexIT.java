@@ -19,6 +19,7 @@ package org.apache.camel.component.opensearch.integration;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.opensearch.OpensearchConstants;
 import org.apache.camel.component.opensearch.OpensearchOperation;
@@ -26,7 +27,6 @@ import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.Request;
 import org.opensearch.client.opensearch.core.GetRequest;
-import tools.jackson.databind.node.ObjectNode;
 
 import static org.apache.camel.test.junit6.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

@@ -27,6 +27,8 @@ import java.util.concurrent.CompletableFuture;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -76,8 +78,6 @@ import org.opensearch.client.transport.endpoints.BooleanResponse;
 import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
 
 import static org.apache.camel.component.opensearch.OpensearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.opensearch.OpensearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;

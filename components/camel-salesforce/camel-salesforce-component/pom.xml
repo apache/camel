@@ -78,6 +78,11 @@
         </dependency>
         <!-- json schema -->
         <dependency>
+            <groupId>tools.jackson.module</groupId>
+            <artifactId>jackson-module-jsonSchema-jakarta</artifactId>
+            <version>${jackson-jsonSchema-jakarta-version}</version>
+        </dependency>
+        <dependency>
             <groupId>tools.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
             <exclusions>
@@ -196,6 +201,12 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>${jsonassert-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

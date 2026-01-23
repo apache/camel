@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
@@ -43,6 +41,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.catalog.impl.CatalogHelper.loadText;
 import static org.junit.jupiter.api.Assertions.assertEquals;

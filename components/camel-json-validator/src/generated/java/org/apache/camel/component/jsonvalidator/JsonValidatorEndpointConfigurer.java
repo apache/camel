@@ -42,7 +42,7 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "urischemaloader":
         case "uriSchemaLoader": target.setUriSchemaLoader(property(camelContext, org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader.class, value)); return true;
         default: return false;
@@ -71,7 +71,7 @@ public class JsonValidatorEndpointConfigurer extends PropertyConfigurerSupport i
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "urischemaloader":
         case "uriSchemaLoader": return org.apache.camel.component.jsonvalidator.JsonUriSchemaLoader.class;
         default: return null;

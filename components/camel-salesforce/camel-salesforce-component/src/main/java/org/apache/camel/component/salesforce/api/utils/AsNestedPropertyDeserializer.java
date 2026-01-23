@@ -21,8 +21,8 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.JsonDeserializer;
 import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.jsontype.TypeDeserializer;
 import tools.jackson.databind.jsontype.TypeIdResolver;
 import tools.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer;
@@ -32,7 +32,7 @@ public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
 
     public AsNestedPropertyDeserializer(JavaType bt, TypeIdResolver idRes, String typePropertyName, boolean typeIdVisible,
                                         JavaType defaultImpl, JsonTypeInfo.As inclusion) {
-        super(bt, idRes, typePropertyName, typeIdVisible, defaultImpl, inclusion);
+        super(bt, idRes, typePropertyName, typeIdVisible, defaultImpl, inclusion, false);
     }
 
     public AsNestedPropertyDeserializer(AsPropertyTypeDeserializer src, BeanProperty property) {
@@ -57,9 +57,9 @@ public class AsNestedPropertyDeserializer extends AsPropertyTypeDeserializer {
             }
             node = nestedProperty;
         }
-        JsonDeserializer<Object> deser = _findDeserializer(ctxt, node.asText());
-        try (JsonParser jsonParser = new TreeTraversingParser(originalNode, p.getCodec())) {
-            if (jsonParser.getCurrentToken() == null) {
+        ValueDeserializer<Object> deser = _findDeserializer(ctxt, node.asText());
+        try (JsonParser jsonParser = new TreeTraversingParser(originalNode, ctxt)) {
+            if (jsonParser.currentToken() == null) {
                 jsonParser.nextToken();
             }
             return deser.deserialize(jsonParser, ctxt);

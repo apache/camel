@@ -355,9 +355,6 @@ public class SalesforceSession extends ServiceSupport {
                             String.format("Login error status:[%s] reason:[%s]", responseStatus, loginResponse.getReason()),
                             responseStatus);
             }
-        } catch (IOException e) {
-            String msg = "Login error: response parse exception " + e.getMessage();
-            throw new SalesforceException(msg, e);
         } finally {
             lock.unlock();
         }

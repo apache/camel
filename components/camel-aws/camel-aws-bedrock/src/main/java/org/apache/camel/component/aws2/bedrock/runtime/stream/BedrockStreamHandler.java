@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamResponseHandler;

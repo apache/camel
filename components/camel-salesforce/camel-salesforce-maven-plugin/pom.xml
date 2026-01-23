@@ -100,7 +100,10 @@
             <artifactId>jsonschema-generator</artifactId>
             <version>4.38.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
 
         <!-- testing -->
         <dependency>

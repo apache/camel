@@ -17,19 +17,34 @@
 package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
-import tools.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.std.StdDeserializer;
 
 import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-final class InstantDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer<Instant> {
+final class InstantDeserializer extends StdDeserializer<Instant> {
 
-    static final JsonDeserializer<Instant> INSTANCE = new InstantDeserializer();
+    static final ValueDeserializer<Instant> INSTANCE = new InstantDeserializer();
 
     private static final long serialVersionUID = 1L;
 
     private InstantDeserializer() {
-        super(com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.INSTANT, ISO_OFFSET_DATE_TIME);
+        super(Instant.class);
+    }
+
+    @Override
+    public Instant deserialize(final JsonParser parser, final DeserializationContext context) {
+        try {
+            final String text = parser.getText();
+            final ZonedDateTime zonedDateTime = ZonedDateTime.parse(text, ISO_OFFSET_DATE_TIME);
+            return zonedDateTime.toInstant();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deserialize Instant", e);
+        }
     }
 
 }

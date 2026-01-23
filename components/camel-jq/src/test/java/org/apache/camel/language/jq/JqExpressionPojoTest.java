@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jackson.JacksonConstants;
+import org.apache.camel.component.jackson3.JacksonConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.node.ObjectNode;
@@ -53,7 +53,7 @@ public class JqExpressionPojoTest extends JqTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived(new Book("foo", "bar"));
 
         ObjectNode node = MAPPER.createObjectNode();
-        node.with("book").put("author", "foo").put("title", "bar");
+        node.withObject("book").put("author", "foo").put("title", "bar");
 
         template.sendBody("direct:start", node);
 

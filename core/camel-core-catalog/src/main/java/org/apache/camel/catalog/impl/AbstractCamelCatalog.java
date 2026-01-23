@@ -1621,7 +1621,12 @@ public abstract class AbstractCamelCatalog {
             }
 
             if (cause != null) {
-                answer.setError(cause.getMessage());
+                String errMsg = cause.getMessage();
+                // Strip Jackson 3 location information (e.g., "\n at [No location information]")
+                if (errMsg != null && errMsg.contains("\n at [")) {
+                    errMsg = errMsg.substring(0, errMsg.indexOf("\n at ["));
+                }
+                answer.setError(errMsg);
             }
         }
 

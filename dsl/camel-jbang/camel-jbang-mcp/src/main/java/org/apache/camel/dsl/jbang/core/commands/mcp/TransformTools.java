@@ -28,7 +28,7 @@ import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
@@ -275,7 +275,7 @@ public class TransformTools {
             File tempFile = File.createTempFile("camel-validate-", ".yaml");
             try {
                 Files.writeString(tempFile.toPath(), route);
-                List<ValidationMessage> messages = yamlValidator.validate(tempFile);
+                List<Error> messages = yamlValidator.validate(tempFile);
 
                 List<YamlDslError> errors = null;
                 if (!messages.isEmpty()) {
@@ -283,7 +283,7 @@ public class TransformTools {
                             .map(m -> new YamlDslError(
                                     m.getMessage(),
                                     m.getInstanceLocation() != null ? m.getInstanceLocation().toString() : null,
-                                    m.getType(),
+                                    m.getKeyword(),
                                     m.getSchemaLocation() != null ? m.getSchemaLocation().toString() : null))
                             .toList();
                 }

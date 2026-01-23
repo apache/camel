@@ -19,9 +19,9 @@ package org.apache.camel.component.kamelet.utils.format.schema;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.jackson.avro.transform.AvroSchemaResolver;
-import org.apache.camel.component.jackson.protobuf.transform.ProtobufSchemaResolver;
-import org.apache.camel.component.jackson.transform.JsonSchemaResolver;
+import org.apache.camel.component.jackson3.avro.transform.AvroSchemaResolver;
+import org.apache.camel.component.jackson3.protobuf.transform.ProtobufSchemaResolver;
+import org.apache.camel.component.jackson3.transform.JsonSchemaResolver;
 import org.apache.camel.component.kamelet.utils.format.MimeType;
 import org.apache.camel.util.ObjectHelper;
 

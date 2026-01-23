@@ -21,10 +21,8 @@ import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
 import org.junit.jupiter.api.Test;
-import tools.jackson.core.JacksonException;
+import org.skyscreamer.jsonassert.JSONAssert;
 import tools.jackson.databind.ObjectMapper;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SObjectBatchTest {
 
@@ -71,7 +69,7 @@ public class SObjectBatchTest {
     }
 
     @Test
-    public void shouldSerializeToJson() throws JacksonException {
+    public void shouldSerializeToJson() throws Exception {
         final String json = "{" + "\"batchRequests\":[" + "{" + "\"method\":\"POST\"," + "\"url\":\"v37.0/sobjects/Account/\","
                             + "\"richInput\":{" + "\"attributes\":{"
                             + "\"referenceId\":null," + "\"type\":\"Account\"," + "\"url\":null" + "},"
@@ -102,6 +100,6 @@ public class SObjectBatchTest {
                             + "}";
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
         final String serialized = mapper.writerFor(SObjectBatch.class).writeValueAsString(batch);
-        assertEquals(json, serialized, "Should serialize as expected by Salesforce");
+        JSONAssert.assertEquals(json, serialized, false);
     }
 }

@@ -70,8 +70,6 @@ public class QueryResultIterator<T extends AbstractSObjectBase> implements Itera
                     iterator = queryRecords.getRecords().iterator();
                     valueHolder.add(iterator.next());
                     latch.countDown();
-                } catch (IOException e) {
-                    throw new RuntimeCamelException(e);
                 } finally {
                     if (response != null) {
                         try {

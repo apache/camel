@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 
 import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.JsonSerializer;
-import tools.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.ser.std.StdSerializer;
+
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
 final class OffsetDateTimeSerializer extends StdSerializer<OffsetDateTime> {
 
-    static final JsonSerializer<OffsetDateTime> INSTANCE = new OffsetDateTimeSerializer();
+    static final ValueSerializer<OffsetDateTime> INSTANCE = new OffsetDateTimeSerializer();
 
     private static final long serialVersionUID = 1L;
 
@@ -36,12 +36,13 @@ final class OffsetDateTimeSerializer extends StdSerializer<OffsetDateTime> {
     }
 
     @Override
-    public void serialize(final OffsetDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
-            throws IOException {
-
-        final ZonedDateTime zonedDateTime = value.toZonedDateTime();
-
-        serializers.defaultSerializeValue(zonedDateTime, gen);
+    public void serialize(final OffsetDateTime value, final JsonGenerator gen, final SerializationContext serializers) {
+        try {
+            final String formatted = ISO_OFFSET_DATE_TIME.format(value);
+            gen.writeString(formatted);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize OffsetDateTime", e);
+        }
     }
 
 }

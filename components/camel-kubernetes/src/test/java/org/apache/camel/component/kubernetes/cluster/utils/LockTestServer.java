@@ -25,8 +25,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 import io.fabric8.kubernetes.api.model.HasMetadata;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodListBuilder;
@@ -41,6 +39,8 @@ import io.fabric8.mockwebserver.utils.ResponseProvider;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A Test server to interact with Kubernetes for locking on a ConfigMap.
@@ -319,7 +319,7 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
     }
 
     private T convert(RecordedRequest request, Class<T> targetClass) throws IOException {
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        ObjectMapper mapper = JsonMapper.builder().build();
         return mapper.readValue(request.getBody().readByteArray(), targetClass);
     }
 

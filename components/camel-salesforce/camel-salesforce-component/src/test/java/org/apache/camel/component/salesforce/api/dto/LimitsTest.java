@@ -51,7 +51,8 @@ public class LimitsTest {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(Limits.class)
-                .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json"));
+                .readValue(LimitsTest.class.getResource("/org/apache/camel/component/salesforce/api/dto/limits.json")
+                        .openStream());
 
         assertThat("Limits should be parsed from JSON", read, instanceOf(Limits.class));
 

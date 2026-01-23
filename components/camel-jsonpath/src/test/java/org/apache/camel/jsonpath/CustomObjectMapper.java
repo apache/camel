@@ -18,12 +18,13 @@ package org.apache.camel.jsonpath;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class CustomObjectMapper extends ObjectMapper {
 
     public CustomObjectMapper() {
-        super();
-        this.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+        super(JsonMapper.builder()
+                .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS));
     }
 
 }

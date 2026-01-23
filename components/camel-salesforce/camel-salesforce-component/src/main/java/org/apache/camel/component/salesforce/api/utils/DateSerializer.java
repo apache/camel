@@ -19,32 +19,34 @@ package org.apache.camel.component.salesforce.api.utils;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.ser.std.StdSerializer;
 
-import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME_NUMERIC;
 
-final class InstantSerializer extends StdSerializer<Instant> {
+final class DateSerializer extends StdSerializer<Date> {
 
-    static final ValueSerializer<Instant> INSTANCE = new InstantSerializer();
+    static final ValueSerializer<Date> INSTANCE = new DateSerializer();
 
     private static final long serialVersionUID = 1L;
 
-    private InstantSerializer() {
-        super(Instant.class);
+    private DateSerializer() {
+        super(Date.class);
     }
 
     @Override
-    public void serialize(final Instant value, final JsonGenerator gen, final SerializationContext serializers) {
+    public void serialize(final Date value, final JsonGenerator gen, final SerializationContext serializers) {
         try {
-            final ZonedDateTime zonedDateTime = value.atZone(ZoneId.systemDefault());
-            final String formatted = ISO_OFFSET_DATE_TIME.format(zonedDateTime);
+            final Instant instant = value.toInstant();
+            final ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("UTC"));
+            final String formatted = ISO_OFFSET_DATE_TIME_NUMERIC.format(zonedDateTime);
             gen.writeString(formatted);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to serialize Instant", e);
+            throw new RuntimeException("Failed to serialize Date", e);
         }
     }
 

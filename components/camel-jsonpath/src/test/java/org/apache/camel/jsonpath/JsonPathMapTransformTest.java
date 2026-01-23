@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.json.Jackson3JsonProvider;
+import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -51,8 +51,8 @@ public class JsonPathMapTransformTest extends CamelTestSupport {
 
         // should be a map
         Configuration.ConfigurationBuilder builder = Configuration.builder();
-        builder.jsonProvider(new JacksonJsonProvider());
-        builder.mappingProvider(new JacksonMappingProvider());
+        builder.jsonProvider(new Jackson3JsonProvider());
+        builder.mappingProvider(new Jackson3MappingProvider());
         Object document = builder.build().jsonProvider()
                 .parse(new FileInputStream("src/test/resources/books.json"), "utf-8");
         assertIsInstanceOf(Map.class, document);

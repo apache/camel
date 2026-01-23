@@ -19,18 +19,20 @@ package org.apache.camel.maven.htmlxlsx.process;
 import java.util.List;
 import java.util.Map;
 
-import tools.jackson.core.JsonProcessingException;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.ObjectMapper;
 import org.apache.camel.maven.htmlxlsx.model.CamelContextRouteCoverage;
 import org.apache.camel.maven.htmlxlsx.model.Components;
 import org.apache.camel.maven.htmlxlsx.model.Route;
 import org.apache.camel.maven.htmlxlsx.model.Routes;
 import org.apache.camel.maven.htmlxlsx.model.TestResult;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class TestResultParser {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+    private final ObjectMapper objectMapper
+            = JsonMapper.builder().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).build();
 
     public TestResult parse(TestResult testResult) {
 
@@ -56,7 +58,7 @@ public class TestResultParser {
             Map<String, Object> componentsMap = route.getComponentsMap();
             String asString = objectMapper().writeValueAsString(componentsMap);
             components = objectMapper().readValue(asString, Components.class);
-        } catch (JsonProcessingException ex) {
+        } catch (JacksonException ex) {
             throw new RuntimeException(ex);
         }
 

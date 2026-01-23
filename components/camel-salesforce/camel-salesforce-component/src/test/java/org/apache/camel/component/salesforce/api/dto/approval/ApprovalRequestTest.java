@@ -21,7 +21,7 @@ import java.util.Collections;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
-import tools.jackson.core.JacksonException;
+import org.skyscreamer.jsonassert.JSONAssert;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -72,16 +72,16 @@ public class ApprovalRequestTest {
     }
 
     @Test
-    public void shouldSerializeAsJson() throws JacksonException {
+    public void shouldSerializeAsJson() throws Exception {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final String json = mapper.writerFor(ApprovalRequest.class).writeValueAsString(sampleRequest);
 
-        assertEquals("{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
-                     + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
-                     + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
-                json,
-                "ApprovalRequest should serialize as JSON from Salesforce examples");
+        JSONAssert.assertEquals(
+                "{\"actionType\":\"Submit\",\"contextActorId\":\"005D00000015rZy\",\"contextId\":\"001D000000I8mIm\""
+                                + ",\"comments\":\"this is a test\",\"nextApproverIds\":[\"005D00000015rY9\"],"
+                                + "\"processDefinitionNameOrId\":\"PTO_Request_Process\",\"skipEntryCriteria\":true}",
+                json, false);
     }
 
     @Test

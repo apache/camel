@@ -567,15 +567,14 @@ public interface SalesforceComponentBuilderFactory {
          * Salesforce objects.
          * 
          * The option is a:
-         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
-         * type.
+         * &lt;code&gt;tools.jackson.databind.ObjectMapper&lt;/code&gt; type.
          * 
          * Group: common
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default SalesforceComponentBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default SalesforceComponentBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -1957,7 +1956,7 @@ public interface SalesforceComponentBuilderFactory {
             case "notifyForOperations": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperations((org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum) value); return true;
             case "notifyForOperationUndelete": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUndelete((java.lang.Boolean) value); return true;
             case "notifyForOperationUpdate": getOrCreateConfiguration((SalesforceComponent) component).setNotifyForOperationUpdate((java.lang.Boolean) value); return true;
-            case "objectMapper": getOrCreateConfiguration((SalesforceComponent) component).setObjectMapper((com.fasterxml.jackson.databind.ObjectMapper) value); return true;
+            case "objectMapper": getOrCreateConfiguration((SalesforceComponent) component).setObjectMapper((tools.jackson.databind.ObjectMapper) value); return true;
             case "packages": ((SalesforceComponent) component).setPackages((java.lang.String) value); return true;
             case "pkChunking": getOrCreateConfiguration((SalesforceComponent) component).setPkChunking((java.lang.Boolean) value); return true;
             case "pkChunkingChunkSize": getOrCreateConfiguration((SalesforceComponent) component).setPkChunkingChunkSize((java.lang.Integer) value); return true;

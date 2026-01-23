@@ -18,7 +18,7 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.util.Collection;
 
-import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.jsontype.NamedType;
 import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
@@ -30,7 +30,7 @@ public class AsNestedPropertyResolver extends StdTypeResolverBuilder {
 
     @Override
     public TypeDeserializer buildTypeDeserializer(
-            DeserializationConfig config, JavaType baseType,
+            DeserializationContext config, JavaType baseType,
             Collection<NamedType> subtypes) {
 
         final PolymorphicTypeValidator subTypeValidator = verifyBaseTypeValidity(config, baseType);

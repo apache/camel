@@ -18,15 +18,26 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.OffsetTime;
 
-import tools.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-final class OffsetTimeDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.OffsetTimeDeserializer {
+import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_TIME;
 
-    static final JsonDeserializer<OffsetTime> INSTANCE = new OffsetTimeDeserializer();
+final class OffsetTimeDeserializer extends ValueDeserializer<OffsetTime> {
 
-    private static final long serialVersionUID = 1L;
+    static final ValueDeserializer<OffsetTime> INSTANCE = new OffsetTimeDeserializer();
 
     private OffsetTimeDeserializer() {
-        super(DateTimeHandling.ISO_OFFSET_TIME);
+    }
+
+    @Override
+    public OffsetTime deserialize(final JsonParser p, final DeserializationContext ctxt) {
+        try {
+            final String text = p.getText();
+            return OffsetTime.parse(text, ISO_OFFSET_TIME);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deserialize OffsetTime", e);
+        }
     }
 }

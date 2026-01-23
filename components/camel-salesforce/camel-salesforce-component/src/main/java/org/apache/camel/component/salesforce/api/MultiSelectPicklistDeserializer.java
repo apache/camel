@@ -30,7 +30,7 @@ import tools.jackson.databind.deser.std.StdDeserializer;
 /**
  * Jackson deserializer base class for reading ';' separated strings for MultiSelect pick-lists.
  */
-public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> implements ValueDeserializer {
+public class MultiSelectPicklistDeserializer extends StdDeserializer<Object> {
 
     private static final long serialVersionUID = -4568286926393043366L;
 

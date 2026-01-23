@@ -16,9 +16,9 @@
  */
 package org.apache.camel.maven.htmlxlsx.process;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
-public class TestJsonProcessingException extends JsonProcessingException {
+public class TestJsonProcessingException extends JacksonException {
 
     private static final String DONTCARE = "dontcare";
 

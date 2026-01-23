@@ -23,20 +23,22 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class Components {
 
     private Map<String, List<EipAttribute>> attributeMap = new HashMap<>();
 
     @JsonIgnore
-    private final ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+    private final ObjectMapper objectMapper
+            = JsonMapper.builder().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).build();
 
     @JsonAnySetter
-    public void setAttribute(String key, Object value) throws JsonProcessingException {
+    public void setAttribute(String key, Object value) throws JacksonException {
 
         List<EipAttribute> listValue;
 

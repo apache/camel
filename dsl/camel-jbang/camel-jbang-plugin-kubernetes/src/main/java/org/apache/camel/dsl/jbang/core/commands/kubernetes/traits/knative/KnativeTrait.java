@@ -29,7 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import tools.jackson.core.JsonProcessingException;
 import io.fabric8.knative.duck.v1.DestinationBuilder;
 import io.fabric8.knative.duck.v1.KReference;
 import io.fabric8.knative.duck.v1.KReferenceBuilder;
@@ -48,6 +47,7 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Knative;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import tools.jackson.core.JacksonException;
 
 public class KnativeTrait extends KnativeBaseTrait {
 
@@ -140,7 +140,7 @@ public class KnativeTrait extends KnativeBaseTrait {
                 }
                 camelTrait.getProperties().add("camel.component.knative.environmentPath=classpath:knative.json");
                 traitConfig.setCamel(camelTrait);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 context.printer().printf("Failed to write knative.json environment configuration - %s%n", e.getMessage());
             }
         }

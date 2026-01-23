@@ -37,6 +37,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,7 +74,7 @@ public class JsonRestProcessorTest {
     }
 
     @Test
-    public void shouldSerializeNullValues() throws SalesforceException, IOException {
+    public void shouldSerializeNullValues() throws Exception {
         final SalesforceComponent salesforce = new SalesforceComponent();
         final SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
         final SalesforceEndpoint endpoint
@@ -86,8 +87,9 @@ public class JsonRestProcessorTest {
             try (InputStream stream = jsonProcessor.getRequestStream(in, testObject);
                  InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 final String json = IOUtils.toString(reader);
-                assertThat(json)
-                        .isEqualTo("{\"creationDate\":null,\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}");
+                JSONAssert.assertEquals(
+                        "{\"creationDate\":null,\"attributes\":{\"referenceId\":null,\"type\":null,\"url\":null}}",
+                        json, false);
             }
         }
     }

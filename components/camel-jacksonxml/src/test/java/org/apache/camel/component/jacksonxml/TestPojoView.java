@@ -24,6 +24,7 @@ public class TestPojoView {
     @JsonView(Views.Age.class)
     private int age = 30;
 
+    @JsonView({ Views.Age.class, Views.Weight.class, Views.Height.class })
     private int height = 190;
 
     @JsonView(Views.Weight.class)

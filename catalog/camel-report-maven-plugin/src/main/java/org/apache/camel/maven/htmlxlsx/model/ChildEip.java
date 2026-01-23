@@ -21,9 +21,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class ChildEip {
 
@@ -37,9 +38,10 @@ public class ChildEip {
     protected ObjectMapper objectMapper() {
 
         if (OBJECT_MAPPER == null) {
-            OBJECT_MAPPER = new ObjectMapper();
-            OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            OBJECT_MAPPER.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+            OBJECT_MAPPER = JsonMapper.builder()
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    .build();
         }
 
         return OBJECT_MAPPER;
@@ -73,7 +75,7 @@ public class ChildEip {
                 String childJson = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(value);
                 EipAttribute eipAttribute = objectMapper().readValue(childJson, EipAttribute.class);
                 eipAttributeMap.put(key, eipAttribute);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeException(e);
             }
         } else {

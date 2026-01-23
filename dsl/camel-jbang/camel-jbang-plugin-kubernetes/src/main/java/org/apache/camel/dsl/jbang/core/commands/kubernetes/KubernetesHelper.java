@@ -28,12 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import tools.jackson.core.JsonParser;
-import tools.jackson.databind.DeserializationFeature;
-import tools.jackson.databind.MapperFeature;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationFeature;
-import tools.jackson.databind.json.JsonMapper;
 import io.fabric8.kubernetes.api.model.APIGroup;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
@@ -46,6 +40,10 @@ import org.apache.camel.dsl.jbang.core.common.YamlHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.yaml.snakeyaml.Yaml;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Helper class provides access to cached Kubernetes client. Also provides access to generic Json and Yaml mappers.
@@ -62,15 +60,10 @@ public final class KubernetesHelper {
     static {
         OBJECT_MAPPER = JsonMapper.builder()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
                 .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                .enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-                .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
-                .enable(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES)
                 .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
-                .build()
-                .setDefaultPropertyInclusion(
-                        JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, JsonInclude.Include.NON_EMPTY));
+                .changeDefaultPropertyInclusion(inclusion -> inclusion.withValueInclusion(JsonInclude.Include.NON_EMPTY))
+                .build();
     }
 
     private KubernetesHelper() {

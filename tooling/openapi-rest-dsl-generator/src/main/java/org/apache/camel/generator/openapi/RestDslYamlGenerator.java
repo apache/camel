@@ -50,6 +50,7 @@ import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.BooleanNode;
 import tools.jackson.databind.node.JsonNodeFactory;
 import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 import tools.jackson.dataformat.xml.XmlMapper;
 import tools.jackson.dataformat.yaml.YAMLMapper;
 import tools.jackson.dataformat.yaml.YAMLWriteFeature;
@@ -161,10 +162,10 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         if (generateRoutes) {
             for (Map.Entry<String, String> entry : toTagData.entrySet()) {
                 ObjectNode from = JsonNodeFactory.instance.objectNode();
-                from.set("uri", JsonNodeFactory.instance.textNode(entry.getKey()));
+                from.set("uri", new StringNode(entry.getKey()));
                 String description = entry.getValue();
                 if (description != null && !description.isBlank()) {
-                    from.set("description", JsonNodeFactory.instance.textNode(description));
+                    from.set("description", new StringNode(description));
                 }
                 ObjectNode route = JsonNodeFactory.instance.objectNode();
                 route.set("from", from);

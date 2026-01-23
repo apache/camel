@@ -19,7 +19,9 @@ package org.apache.camel.component.undertow.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,20 +29,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RestUndertowHttpPojoInOutTest extends BaseUndertowTest {
 
     @Test
-    public void testUndertowPojoInOut() {
+    public void testUndertowPojoInOut() throws JSONException {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/lives", body, String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, false);
     }
 
     @Test
-    public void testUndertowGetRequest() {
+    public void testUndertowGetRequest() throws JSONException {
         String out = template.requestBody("undertow:http://localhost:{{port}}/users/lives", null, String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, false);
     }
 
     @Override

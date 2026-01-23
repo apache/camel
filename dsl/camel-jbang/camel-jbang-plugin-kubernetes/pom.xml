@@ -47,6 +47,12 @@
           <artifactId>camel-jbang-core</artifactId>
         </dependency>
 
+        <!-- Jackson 3 -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- Kubernetes -->
         <dependency>
             <groupId>io.fabric8</groupId>

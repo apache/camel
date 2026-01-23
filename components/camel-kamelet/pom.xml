@@ -44,17 +44,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
+            <artifactId>camel-jackson3</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson-avro</artifactId>
+            <artifactId>camel-jackson3-avro</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson-protobuf</artifactId>
+            <artifactId>camel-jackson3-protobuf</artifactId>
             <scope>provided</scope>
         </dependency>
 

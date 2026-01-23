@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jackson3.MetricsModule;
 import com.codahale.metrics.jmx.JmxReporter;
-import com.codahale.metrics.json.MetricsModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;

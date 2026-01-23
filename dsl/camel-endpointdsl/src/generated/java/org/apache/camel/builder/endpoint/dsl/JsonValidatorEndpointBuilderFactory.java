@@ -309,15 +309,15 @@ public interface JsonValidatorEndpointBuilderFactory {
         /**
          * The used Jackson object mapper.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: advanced
          * 
          * @param objectMapper the value to set
          * @return the dsl builder
          */
-        default AdvancedJsonValidatorEndpointBuilder objectMapper(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        default AdvancedJsonValidatorEndpointBuilder objectMapper(tools.jackson.databind.ObjectMapper objectMapper) {
             doSetProperty("objectMapper", objectMapper);
             return this;
         }
@@ -325,7 +325,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * The used Jackson object mapper.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: advanced
          * 

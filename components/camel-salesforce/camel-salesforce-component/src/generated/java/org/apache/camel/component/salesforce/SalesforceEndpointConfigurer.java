@@ -101,7 +101,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyforoperations":
         case "notifyForOperations": target.getConfiguration().setNotifyForOperations(property(camelContext, org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class, value)); return true;
         case "objectmapper":
-        case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "objectMapper": target.getConfiguration().setObjectMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "pkchunking":
         case "pkChunking": target.getConfiguration().setPkChunking(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "pkchunkingchunksize":
@@ -247,7 +247,7 @@ public class SalesforceEndpointConfigurer extends PropertyConfigurerSupport impl
         case "notifyforoperations":
         case "notifyForOperations": return org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum.class;
         case "objectmapper":
-        case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "objectMapper": return tools.jackson.databind.ObjectMapper.class;
         case "pkchunking":
         case "pkChunking": return java.lang.Boolean.class;
         case "pkchunkingchunksize":

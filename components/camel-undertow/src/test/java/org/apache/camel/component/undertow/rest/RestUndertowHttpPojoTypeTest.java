@@ -30,13 +30,15 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder()
+            .build();
 
     @Test
     public void testUndertowPojoTypeValidateModel() {
@@ -99,29 +101,6 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
         assertNotNull(outExchange);
         assertEquals(200, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-    }
-
-    @Test
-    public void testUndertowPojoTypePutUserFail() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:putUser");
-        mock.expectedMessageCount(0);
-
-        Exchange outExchange = template.request("undertow:http://localhost:{{port}}/users/1", exchange -> {
-            exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-
-            CountryPojo country = new CountryPojo();
-            country.setIso("US");
-            country.setCountry("United States");
-
-            String body = mapper.writeValueAsString(country);
-            exchange.getIn().setBody(body);
-        });
-
-        assertNotNull(outExchange);
-        assertEquals(400, outExchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-
-        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,7 +42,7 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
         String out = response.getText();
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, false);
     }
 
     @Test
@@ -55,7 +56,7 @@ public class RestServletPojoInOutTest extends ServletCamelRouterTestSupport {
         String out = response.getText();
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, false);
     }
 
     @Override

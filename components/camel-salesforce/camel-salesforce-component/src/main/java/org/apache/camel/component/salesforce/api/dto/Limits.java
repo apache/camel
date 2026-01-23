@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,7 +32,7 @@ import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.Limits.LimitsDeserializer;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
-import tools.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
@@ -45,11 +44,10 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(using = LimitsDeserializer.class)
 public final class Limits implements Serializable {
 
-    public static final class LimitsDeserializer extends JsonDeserializer {
+    public static final class LimitsDeserializer extends ValueDeserializer {
 
         @Override
-        public Object deserialize(final JsonParser parser, final DeserializationContext context)
-                throws IOException {
+        public Object deserialize(final JsonParser parser, final DeserializationContext context) {
 
             final Map<String, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
 

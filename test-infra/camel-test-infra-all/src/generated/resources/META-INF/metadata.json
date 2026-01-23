@@ -548,9 +548,6 @@
   "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
   "version" : "4.19.0-SNAPSHOT"
 }, {
-  "service" : "org.apache.camel.test.infra.docling.services.DoclingInfraService",
-  "description" : "Document processing and conversion service",
-  "implementation" : "org.apache.camel.test.infra.docling.services.DoclingLocalContainerInfraService",
   "alias" : [ "docling" ],
   "aliasImplementation" : [ ],
   "artifactId" : "camel-test-infra-docling",

@@ -67,6 +67,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-caffeine</artifactId>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>

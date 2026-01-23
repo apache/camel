@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
-import tools.jackson.databind.ObjectMapper;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
@@ -47,6 +45,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.component.mongodb.MongoDbOperation.command;
 import static org.apache.camel.component.mongodb.MongoDbOperation.findAll;
@@ -395,29 +394,25 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
      */
     @SuppressWarnings("unchecked")
     public List<Bson> createIndex() {
-        try {
-            List<Bson> indexList = new ArrayList<>();
+        List<Bson> indexList = new ArrayList<>();
 
-            if (ObjectHelper.isNotEmpty(collectionIndex)) {
-                HashMap<String, String> indexMap = new ObjectMapper().readValue(collectionIndex, HashMap.class);
+        if (ObjectHelper.isNotEmpty(collectionIndex)) {
+            HashMap<String, String> indexMap = new ObjectMapper().readValue(collectionIndex, HashMap.class);
 
-                for (Map.Entry<String, String> set : indexMap.entrySet()) {
-                    Document index = new Document();
-                    // MongoDB 2.4 upwards is restrictive about the type of the
-                    // 'single field index' being
-                    // in use below (set.getValue())) as only an integer value
-                    // type is accepted, otherwise
-                    // server will throw an exception, see more details:
-                    // http://docs.mongodb.org/manual/release-notes/2.4/#improved-validation-of-index-types
-                    index.put(set.getKey(), set.getValue());
+            for (Map.Entry<String, String> set : indexMap.entrySet()) {
+                Document index = new Document();
+                // MongoDB 2.4 upwards is restrictive about the type of the
+                // 'single field index' being
+                // in use below (set.getValue())) as only an integer value
+                // type is accepted, otherwise
+                // server will throw an exception, see more details:
+                // http://docs.mongodb.org/manual/release-notes/2.4/#improved-validation-of-index-types
+                index.put(set.getKey(), set.getValue());
 
-                    indexList.add(index);
-                }
+                indexList.add(index);
             }
-            return indexList;
-        } catch (IOException e) {
-            throw new CamelMongoDbException("createIndex failed", e);
         }
+        return indexList;
     }
 
     @Override

@@ -1087,15 +1087,15 @@ public interface ServiceNowEndpointBuilderFactory {
         /**
          * Sets Jackson's ObjectMapper to use for request/reply.
          * 
-         * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * The option is a: <code>tools.jackson.databind.ObjectMapper</code>
+         * type.
          * 
          * Group: advanced
          * 
          * @param mapper the value to set
          * @return the dsl builder
          */
-        default AdvancedServiceNowEndpointBuilder mapper(com.fasterxml.jackson.databind.ObjectMapper mapper) {
+        default AdvancedServiceNowEndpointBuilder mapper(tools.jackson.databind.ObjectMapper mapper) {
             doSetProperty("mapper", mapper);
             return this;
         }
@@ -1103,7 +1103,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Sets Jackson's ObjectMapper to use for request/reply.
          * 
          * The option will be converted to a
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * <code>tools.jackson.databind.ObjectMapper</code> type.
          * 
          * Group: advanced
          * 

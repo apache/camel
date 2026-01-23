@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import tools.jackson.core.JsonGenerator;
@@ -27,24 +25,23 @@ import tools.jackson.databind.ser.std.StdSerializer;
 
 import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-final class InstantSerializer extends StdSerializer<Instant> {
+final class ZonedDateTimeSerializer extends StdSerializer<ZonedDateTime> {
 
-    static final ValueSerializer<Instant> INSTANCE = new InstantSerializer();
+    static final ValueSerializer<ZonedDateTime> INSTANCE = new ZonedDateTimeSerializer();
 
     private static final long serialVersionUID = 1L;
 
-    private InstantSerializer() {
-        super(Instant.class);
+    private ZonedDateTimeSerializer() {
+        super(ZonedDateTime.class);
     }
 
     @Override
-    public void serialize(final Instant value, final JsonGenerator gen, final SerializationContext serializers) {
+    public void serialize(final ZonedDateTime value, final JsonGenerator gen, final SerializationContext serializers) {
         try {
-            final ZonedDateTime zonedDateTime = value.atZone(ZoneId.systemDefault());
-            final String formatted = ISO_OFFSET_DATE_TIME.format(zonedDateTime);
+            final String formatted = ISO_OFFSET_DATE_TIME.format(value);
             gen.writeString(formatted);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to serialize Instant", e);
+            throw new RuntimeException("Failed to serialize ZonedDateTime", e);
         }
     }
 
