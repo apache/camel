@@ -23,19 +23,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.docling.DoclingComponent;
-import org.apache.camel.component.docling.DoclingConfiguration;
 import org.apache.camel.component.docling.DocumentMetadata;
-import org.apache.camel.test.infra.docling.services.DoclingService;
-import org.apache.camel.test.infra.docling.services.DoclingServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -46,26 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration test for metadata extraction operations using test-infra for container management.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
-public class MetadataExtractionIT extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MetadataExtractionIT.class);
-
-    @RegisterExtension
-    static DoclingService doclingService = DoclingServiceFactory.createService();
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DoclingComponent docling = context.getComponent("docling", DoclingComponent.class);
-        DoclingConfiguration conf = new DoclingConfiguration();
-        conf.setUseDoclingServe(true);
-        conf.setDoclingServeUrl(doclingService.doclingServerUrl());
-        docling.setConfiguration(conf);
-
-        LOG.info("Testing Docling-Serve metadata extraction at: {}", doclingService.doclingServerUrl());
-
-        return context;
-    }
+public class MetadataExtractionIT extends DoclingITestSupport {
 
     @Test
     public void testBasicMetadataExtraction() throws Exception {

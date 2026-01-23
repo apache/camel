@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.docling;
+package org.apache.camel.component.docling.integration;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,13 +23,12 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.docling.services.DoclingService;
-import org.apache.camel.test.infra.docling.services.DoclingServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.docling.BatchConversionResult;
+import org.apache.camel.component.docling.BatchProcessingResults;
+import org.apache.camel.component.docling.DoclingComponent;
+import org.apache.camel.component.docling.DoclingConfiguration;
+import org.apache.camel.component.docling.DoclingHeaders;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,12 +38,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Integration test for batch processing operations using test-infra for container management.
  */
-public class BatchProcessingIT extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BatchProcessingIT.class);
-
-    @RegisterExtension
-    static DoclingService doclingService = DoclingServiceFactory.createService();
+class BatchProcessingIT extends DoclingITestSupport {
 
     @Test
     public void testBatchConvertToMarkdown() throws Exception {
