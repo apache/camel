@@ -21,12 +21,22 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 public interface SolrInfraService extends InfrastructureService {
 
+    @Deprecated
     int getPort();
 
+    @Deprecated
     String getSolrHost();
 
+    @Deprecated
     default String getHttpHostAddress() {
         return String.format("%s:%d", getSolrHost(), getPort());
     }
 
+    default String host() {
+        return getSolrHost();
+    }
+
+    default int port() {
+        return getPort();
+    }
 }

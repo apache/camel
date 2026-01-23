@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.infra.openldap.services;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 /**
@@ -23,9 +26,44 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  */
 public interface OpenldapInfraService extends InfrastructureService {
 
+    @Deprecated
     Integer getPort();
 
+    @Deprecated
     Integer getSslPort();
 
+    @Deprecated
     String getHost();
+
+    default String host() {
+        return getHost();
+    }
+
+    default int port() {
+        return getPort();
+    }
+
+    default int sslPort() {
+        return getSslPort();
+    }
+
+    default String ldapUrl() {
+        return String.format("ldap://%s:%d", host(), port());
+    }
+
+    default String ldapContextFactory() {
+        return "com.sun.jndi.ldap.LdapCtxFactory";
+    }
+
+    default String endpointUri() {
+        return "ldap:ldapEnv";
+    }
+
+    default Map<String, String> beanProperties() {
+        Map<String, String> properties = new LinkedHashMap<>();
+        properties.put("camel.beans.ldapEnv", "#class:java.util.Hashtable");
+        properties.put("camel.beans.ldapEnv[java.naming.factory.initial]", ldapContextFactory());
+        properties.put("camel.beans.ldapEnv[java.naming.provider.url]", ldapUrl());
+        return properties;
+    }
 }

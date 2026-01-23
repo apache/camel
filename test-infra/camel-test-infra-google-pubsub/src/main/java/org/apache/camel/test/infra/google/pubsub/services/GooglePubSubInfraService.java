@@ -23,5 +23,14 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  */
 public interface GooglePubSubInfraService extends InfrastructureService {
 
+    @Deprecated
     String getServiceAddress();
+
+    default String endpoint() {
+        return getServiceAddress();
+    }
+
+    default boolean authenticate() {
+        return false;
+    }
 }

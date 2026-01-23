@@ -125,4 +125,9 @@ public class TorchServeLocalContainerInfraService implements TorchServeInfraServ
     public int metricsPort() {
         return container.getMappedPort(METRICS_PORT);
     }
+
+    @Override
+    public String host() {
+        return container.getHost();
+    }
 }

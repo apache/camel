@@ -23,9 +23,16 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  */
 public interface FhirInfraService extends InfrastructureService {
 
+    @Deprecated
     String getServiceBaseURL();
 
+    @Deprecated
     String getHost();
 
+    @Deprecated
     Integer getPort();
+
+    default String serverUrl() {
+        return getServiceBaseURL();
+    }
 }

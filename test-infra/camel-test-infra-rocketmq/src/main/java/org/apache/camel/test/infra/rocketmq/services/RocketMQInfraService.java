@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 public interface RocketMQInfraService extends InfrastructureService {
+    @Deprecated
     String nameserverAddress();
 
     default String defaultCluster() {
@@ -31,4 +32,7 @@ public interface RocketMQInfraService extends InfrastructureService {
 
     void deleteTopic(String topic) throws IOException, InterruptedException;
 
+    default String namesrvAddr() {
+        return nameserverAddress();
+    }
 }

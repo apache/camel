@@ -25,4 +25,16 @@ public interface TorchServeInfraService extends InfrastructureService {
     int managementPort();
 
     int metricsPort();
+
+    default String host() {
+        return "localhost";
+    }
+
+    default String inferenceAddress() {
+        return host();
+    }
+
+    default String managementAddress() {
+        return host();
+    }
 }

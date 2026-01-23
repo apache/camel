@@ -36,4 +36,8 @@ public interface MinioInfraService extends InfrastructureService {
     String consoleUsername();
 
     String consolePassword();
+
+    default String endpoint() {
+        return String.format("http://%s:%d", host(), port());
+    }
 }

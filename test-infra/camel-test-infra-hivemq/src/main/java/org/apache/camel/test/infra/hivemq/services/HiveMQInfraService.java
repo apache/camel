@@ -20,17 +20,34 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 public interface HiveMQInfraService extends InfrastructureService {
 
+    @Deprecated
     int getMqttPort();
 
+    @Deprecated
     String getMqttHost();
 
     boolean isRunning();
 
+    @Deprecated
     String getUserName();
 
+    @Deprecated
     char[] getUserPassword();
 
+    @Deprecated
     default String getMqttHostAddress() {
         return String.format("tcp://%s:%d", getMqttHost(), getMqttPort());
+    }
+
+    default String brokerUrl() {
+        return getMqttHostAddress();
+    }
+
+    default String userName() {
+        return getUserName();
+    }
+
+    default String password() {
+        return getUserPassword() != null ? new String(getUserPassword()) : null;
     }
 }

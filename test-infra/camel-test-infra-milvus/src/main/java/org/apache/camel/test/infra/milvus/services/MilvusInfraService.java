@@ -38,4 +38,12 @@ public interface MilvusInfraService extends InfrastructureService {
     String host();
 
     int port();
+
+    default String collection() {
+        return "testcollection";
+    }
+
+    default String token() {
+        return "";
+    }
 }

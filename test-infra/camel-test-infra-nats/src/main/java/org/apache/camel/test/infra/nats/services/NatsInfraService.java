@@ -23,5 +23,10 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  */
 public interface NatsInfraService extends InfrastructureService {
 
+    @Deprecated
     String getServiceAddress();
+
+    default String servers() {
+        return getServiceAddress();
+    }
 }

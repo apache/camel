@@ -26,5 +26,10 @@ public interface XmppInfraService extends InfrastructureService {
 
     int port();
 
+    @Deprecated
     String getUrl();
+
+    default String endpointUri() {
+        return String.format("xmpp:%s:%d", host(), port());
+    }
 }

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.test.infra.postgres.services;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 /**
@@ -32,4 +35,33 @@ public interface PostgresInfraService extends InfrastructureService {
     String password();
 
     String getServiceAddress();
+
+    default String database() {
+        return "postgres";
+    }
+
+    default String jdbcUrl() {
+        return String.format("jdbc:postgresql://%s:%d/%s", host(), port(), database());
+    }
+
+    default String jdbcDriver() {
+        return "org.postgresql.Driver";
+    }
+
+    default String username() {
+        return userName();
+    }
+
+    default String endpointUri() {
+        return "sql:SELECT 1?dataSource=#postgresDS";
+    }
+
+    default Map<String, String> beanProperties() {
+        Map<String, String> properties = new LinkedHashMap<>();
+        properties.put("camel.beans.postgresDS", "#class:org.postgresql.ds.PGSimpleDataSource");
+        properties.put("camel.beans.postgresDS.url", jdbcUrl());
+        properties.put("camel.beans.postgresDS.user", username());
+        properties.put("camel.beans.postgresDS.password", password());
+        return properties;
+    }
 }

@@ -18,17 +18,26 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PathUtils;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.StringHelper;
@@ -115,9 +124,15 @@ public class CamelSendAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
+    @CommandLine.Option(names = { "--infra" },
+                        description = "Send to infrastructure service (e.g., nats, kafka)")
+    String infra;
+
     private volatile long pid;
 
     private MessageTableHelper tableHelper;
+
+    private final CamelCatalog catalog = new DefaultCamelCatalog();
 
     public CamelSendAction(CamelJBangMain main) {
         super(main);
@@ -134,7 +149,9 @@ public class CamelSendAction extends ActionBaseCommand {
             }
         }
 
-        if (name != null) {
+        if (infra != null) {
+            return doCallInfra(infra);
+        } else if (name != null) {
             return doCall(name);
         } else {
             return doCallLocal();
@@ -361,7 +378,7 @@ public class CamelSendAction extends ActionBaseCommand {
             c = Ansi.Color.RED;
         } else if (replyFile != null) {
             if (poll) {
-                status = "Poll save to fill (success)";
+                status = "Poll save to file (success)";
             } else {
                 status = "Reply save to file (success)";
             }
@@ -386,4 +403,247 @@ public class CamelSendAction extends ActionBaseCommand {
         }
     }
 
+    private Integer doCallInfra(String infraService) throws Exception {
+        Map<Long, Path> infraPids = findInfraPids(infraService);
+
+        if (infraPids.isEmpty()) {
+            printer().println("No running infrastructure service found for: " + infraService);
+            return 1;
+        }
+
+        if (infraPids.size() > 1) {
+            printer().println("Multiple running infrastructure services found for: " + infraService +
+                              ". Found " + infraPids.size() + " services.");
+            return 1;
+        }
+
+        Map.Entry<Long, Path> entry = infraPids.entrySet().iterator().next();
+        Path jsonFile = entry.getValue();
+
+        JsonObject connectionDetails = readConnectionDetails(jsonFile);
+
+        if (connectionDetails == null) {
+            printer().println("Could not read connection details from: " + jsonFile);
+            return 1;
+        }
+
+        String scheme = extractScheme(endpoint, infraService);
+
+        this.endpoint = updateEndpointWithConnectionDetails(endpoint, infraService, connectionDetails);
+
+        Map<String, String> componentProps = buildComponentProperties(scheme, connectionDetails);
+
+        Map<String, String> beanProps = buildBeanProperties(connectionDetails);
+
+        int additionalCount = componentProps.size() + beanProps.size();
+        if (additionalCount > 0) {
+            int existingCount = (property != null) ? property.length : 0;
+            String[] merged = new String[existingCount + additionalCount];
+            if (property != null) {
+                System.arraycopy(property, 0, merged, 0, existingCount);
+            }
+            int i = existingCount;
+            for (Map.Entry<String, String> compEntry : componentProps.entrySet()) {
+                merged[i++] = "camel.component." + scheme + "." + compEntry.getKey() + "=" + compEntry.getValue();
+            }
+            for (Map.Entry<String, String> beanEntry : beanProps.entrySet()) {
+                merged[i++] = beanEntry.getKey() + "=" + beanEntry.getValue();
+            }
+            property = merged;
+        }
+
+        return doCallLocal();
+    }
+
+    private String extractScheme(String endpoint, String infraService) {
+        if (endpoint != null && endpoint.contains(":")) {
+            return StringHelper.before(endpoint, ":");
+        }
+        return infraService;
+    }
+
+    private Map<Long, Path> findInfraPids(String serviceName) throws Exception {
+        Map<Long, Path> pids = new HashMap<>();
+
+        Path camelDir = CommandLineHelper.getCamelDir();
+
+        try (Stream<Path> files = Files.list(camelDir)) {
+            List<Path> pidFiles = files
+                    .filter(p -> {
+                        String fileName = p.getFileName().toString();
+                        return fileName.startsWith("infra-") && fileName.endsWith(".json");
+                    })
+                    .collect(Collectors.toList());
+
+            for (Path pidFile : pidFiles) {
+                String fileName = pidFile.getFileName().toString();
+                // Format: infra-{service}-{pid}.json
+                String withoutPrefix = fileName.substring("infra-".length());
+                String withoutExtension = withoutPrefix.substring(0, withoutPrefix.lastIndexOf(".json"));
+
+                int lastDashIndex = withoutExtension.lastIndexOf('-');
+                if (lastDashIndex > 0) {
+                    String service = withoutExtension.substring(0, lastDashIndex);
+                    String pidStr = withoutExtension.substring(lastDashIndex + 1);
+
+                    if (service.equals(serviceName)) {
+                        try {
+                            long pid = Long.parseLong(pidStr);
+                            pids.put(pid, pidFile);
+                        } catch (NumberFormatException e) {
+                            // Skip invalid PID
+                        }
+                    }
+                }
+            }
+        }
+
+        return pids;
+    }
+
+    private JsonObject readConnectionDetails(Path jsonFile) throws Exception {
+        String content = Files.readString(jsonFile);
+        return (JsonObject) Jsoner.deserialize(content);
+    }
+
+    String updateEndpointWithConnectionDetails(
+            String originalEndpoint, String infraService, JsonObject connectionDetails) {
+
+        if (originalEndpoint == null) {
+            originalEndpoint = infraService + ":default";
+        }
+
+        if (originalEndpoint.contains("?")) {
+            return originalEndpoint;
+        }
+
+        String scheme;
+        String path;
+        if (originalEndpoint.contains(":")) {
+            scheme = StringHelper.before(originalEndpoint, ":");
+            path = StringHelper.after(originalEndpoint, ":");
+        } else {
+            scheme = originalEndpoint;
+            path = null;
+        }
+
+        String pathBasedEndpoint = buildPathBasedEndpoint(path, connectionDetails);
+        if (pathBasedEndpoint != null) {
+            return pathBasedEndpoint;
+        }
+
+        Map<String, String> properties = buildPropertiesMap(scheme, connectionDetails);
+
+        try {
+            String uri = catalog.asEndpointUri(scheme, properties, true);
+            if (uri != null && !uri.isEmpty()) {
+                String queryPart = "";
+                if (uri.contains("?")) {
+                    queryPart = "?" + StringHelper.after(uri, "?");
+                }
+
+                if (path != null && !path.isEmpty()) {
+                    return scheme + ":" + path + queryPart;
+                } else {
+                    return uri;
+                }
+            }
+        } catch (URISyntaxException e) {
+            // Fall back to manual construction if catalog fails
+        }
+
+        return buildEndpointManually(originalEndpoint, properties);
+    }
+
+    private Map<String, String> buildBeanProperties(JsonObject connectionDetails) {
+        Map<String, String> properties = new LinkedHashMap<>();
+
+        Object beanProps = connectionDetails.get("beanProperties");
+        if (beanProps instanceof Map<?, ?> beanMap) {
+            for (Map.Entry<?, ?> entry : beanMap.entrySet()) {
+                if (entry.getKey() != null && entry.getValue() != null) {
+                    properties.put(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
+                }
+            }
+        }
+
+        return properties;
+    }
+
+    private Map<String, String> buildComponentProperties(String scheme, JsonObject connectionDetails) {
+        Map<String, String> properties = new LinkedHashMap<>();
+
+        var componentModel = catalog.componentModel(scheme);
+        if (componentModel != null) {
+            componentModel.getComponentOptions().stream()
+                    .map(opt -> opt.getName())
+                    .filter(name -> isValidConnectionProperty(name, connectionDetails))
+                    .forEach(name -> properties.put(name, String.valueOf(connectionDetails.get(name))));
+        }
+
+        return properties;
+    }
+
+    private Map<String, String> buildPropertiesMap(String scheme, JsonObject connectionDetails) {
+        Map<String, String> properties = new LinkedHashMap<>();
+
+        var componentModel = catalog.componentModel(scheme);
+        if (componentModel != null) {
+            componentModel.getEndpointOptions().stream()
+                    .map(opt -> opt.getName())
+                    .filter(name -> isValidConnectionProperty(name, connectionDetails))
+                    .forEach(name -> properties.put(name, String.valueOf(connectionDetails.get(name))));
+        }
+
+        return properties;
+    }
+
+    private boolean isValidConnectionProperty(String name, JsonObject connectionDetails) {
+        if (!connectionDetails.containsKey(name)) {
+            return false;
+        }
+        Object value = connectionDetails.get(name);
+        return value != null && !(value instanceof Map);
+    }
+
+    private String buildPathBasedEndpoint(String path, JsonObject connectionDetails) {
+        String uri = connectionDetails.getString("endpointUri");
+        if (uri == null) {
+            return null;
+        }
+
+        if (path != null && !path.isEmpty()) {
+            String connectionBase = connectionDetails.getString("connectionBase");
+            if (connectionBase != null) {
+                String queryPart = StringHelper.after(uri, "?");
+                if (queryPart != null) {
+                    queryPart = "?" + queryPart;
+                } else {
+                    queryPart = "";
+                }
+
+                String newPath = path.startsWith("/") ? path : "/" + path;
+                return connectionBase + newPath + queryPart;
+            }
+        }
+
+        // fallback to original URI
+        return uri;
+    }
+
+    private String buildEndpointManually(String endpoint, Map<String, String> properties) {
+        if (properties.isEmpty()) {
+            return endpoint;
+        }
+
+        StringBuilder queryParams = new StringBuilder();
+        for (Map.Entry<String, String> entry : properties.entrySet()) {
+            if (queryParams.length() > 0) {
+                queryParams.append("&");
+            }
+            queryParams.append(entry.getKey()).append("=").append(entry.getValue());
+        }
+
+        return endpoint + "?" + queryParams;
+    }
 }

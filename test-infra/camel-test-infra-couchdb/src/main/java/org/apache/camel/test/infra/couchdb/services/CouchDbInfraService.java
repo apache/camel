@@ -27,7 +27,20 @@ public interface CouchDbInfraService extends InfrastructureService {
 
     int port();
 
+    @Deprecated
     default String getServiceAddress() {
         return String.format("%s:%d", host(), port());
+    }
+
+    default String database() {
+        return "testdb";
+    }
+
+    default String endpointUri() {
+        return String.format("couchdb:http:%s:%d/%s", host(), port(), database());
+    }
+
+    default String connectionBase() {
+        return String.format("couchdb:http:%s:%d", host(), port());
     }
 }

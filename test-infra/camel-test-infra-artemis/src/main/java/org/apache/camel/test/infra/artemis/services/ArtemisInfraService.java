@@ -24,11 +24,28 @@ public interface ArtemisInfraService extends InfrastructureService {
 
     String serviceAddress();
 
+    @Deprecated
     String userName();
 
     String password();
 
+    default String username() {
+        return userName();
+    }
+
     int brokerPort();
+
+    default String host() {
+        return "localhost";
+    }
+
+    default int port() {
+        return brokerPort();
+    }
+
+    default String brokerUrl() {
+        return String.format("amqp://%s:%d", host(), port());
+    }
 
     default String remoteURI() {
         throw new IllegalArgumentException("Remote URI is not supported");
