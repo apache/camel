@@ -256,8 +256,8 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         Path root = findCamelDirectory(project.getBasedir(), "catalog/camel-allcomponents").toPath();
         Path pomFile = root.resolve("pom.xml");
 
-        final String startDependenciesMarker = "<!-- CODEGEN SUPPORTED ARCHITECTURES DEPENDENCIES START -->";
-        final String endDependenciesMarker = "<!-- CODEGEN SUPPORTED ARCHITECTURES DEPENDENCIES END -->";
+        final String startDependenciesMarker = "<!-- CODEGEN DEPENDENCIES START -->";
+        final String endDependenciesMarker = "<!-- CODEGEN DEPENDENCIES END -->";
 
         if (!Files.isRegularFile(pomFile)) {
             throw new MojoExecutionException("Pom file " + pomFile + " does not exist");
@@ -281,15 +281,9 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                 MavenGav gav = new MavenGav(matcher.group(1), matcher.group(2), "${project.version}", null);
                 dependencies.add(gav);
             }
-            if ("true".equals(project.getProperties().getProperty("camel.unsupported.arch"))) {
-                // Add this component into the "unsupported architectures" profile
-                getLog().info("IMPORTANT NOTE: adding this component to the \"unupported architectures\" profile");
-                unsupportedArchDependencies
-                        .add(new MavenGav(project.getGroupId(), project.getArtifactId(), "${project.version}", null));
-            } else {
-                // Add this component into the regular list of dependencies
-                dependencies.add(new MavenGav(project.getGroupId(), project.getArtifactId(), "${project.version}", null));
-            }
+
+            // Add this component into the regular list of dependencies
+            dependencies.add(new MavenGav(project.getGroupId(), project.getArtifactId(), "${project.version}", null));
 
             // generate string output of all dependencies
             String s = dependencies.stream()
@@ -297,27 +291,9 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     .filter(g -> !g.artifactId.contains("-maven-plugin"))
                     .map(g -> g.asString("        "))
                     .collect(Collectors.joining("\n"));
-            String updatedPom = before + startDependenciesMarker
-                                + "\n" + s + "\n"
-                                + "        " + endDependenciesMarker + after;
-
-            if (!unsupportedArchDependencies.isEmpty()) {
-                final String unsupportedStartDependenciesMarker
-                        = "<!-- CODEGEN UNSUPPORTED ARCHITECTURES DEPENDENCIES START -->";
-                final String unsupportedEndDependenciesMarker = "<!-- CODEGEN UNSUPPORTED ARCHITECTURES DEPENDENCIES END -->";
-                final String unsupportedBefore = Strings.before(updatedPom, unsupportedStartDependenciesMarker);
-                final String unsupportedAfter = Strings.after(updatedPom, unsupportedEndDependenciesMarker);
-
-                String newUnsupportedContent = unsupportedArchDependencies.stream()
-                        // skip maven plugins
-                        .filter(g -> !g.artifactId.contains("-maven-plugin"))
-                        .map(g -> g.asString("                "))
-                        .collect(Collectors.joining("\n"));
-
-                updatedPom = unsupportedBefore + unsupportedStartDependenciesMarker
-                             + "\n" + newUnsupportedContent + "\n"
-                             + "                " + unsupportedEndDependenciesMarker + unsupportedAfter;
-            }
+            final String updatedPom = before + startDependenciesMarker
+                                      + "\n" + s + "\n"
+                                      + "        " + endDependenciesMarker + after;
 
             updateResource(root, "pom.xml", updatedPom);
         } catch (IOException e) {
