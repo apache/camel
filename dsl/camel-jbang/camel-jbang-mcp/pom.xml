@@ -40,7 +40,7 @@
         <label>jbang,mcp,ai</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
-        <quarkus-mcp-server-version>1.2.0</quarkus-mcp-server-version>
+        <quarkus-mcp-server-version>1.8.1</quarkus-mcp-server-version>
         <quarkus.platform.version>3.30.6</quarkus.platform.version>
         <!-- Build uber-jar for easy JBang execution -->
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
