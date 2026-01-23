@@ -21,9 +21,8 @@ def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.or
 Below parameters are required for camel/core/camel-core module's test cases to pass on ppc64 and s390x
 - xpathExprGrpLimit: limits the number of groups an Xpath expression can contain
 - xpathExprOpLimit: limits the number of operators an Xpath expression can contain
-- unsupported-arch: won't build modules which are not supported in the given architecture
 */
-def MAVEN_TEST_PARAMS_ALT_ARCHS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000 -Dunsupported-arch"
+def MAVEN_TEST_PARAMS_ALT_ARCHS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000"
 
 pipeline {
 
