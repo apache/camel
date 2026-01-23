@@ -534,7 +534,7 @@ If you experience timeout errors:
 == Additional Resources
 
 * https://docs.langchain4j.dev/tutorials/spring-boot-integration[LangChain4j Spring Boot Integration Documentation]
-* https://camel.apache.org/components/latest/langchain4j-chat-component.html[Camel LangChain4j Chat Component]
-* https://camel.apache.org/components/latest/langchain4j-embeddings-component.html[Camel LangChain4j Embeddings Component]
-* https://camel.apache.org/components/latest/langchain4j-agent-component.html[Camel LangChain4j Agent Component]
+* xref:components::langchain4j-chat-component.adoc[Camel LangChain4j Chat Component]
+* xref:components::langchain4j-embeddings-component.adoc[Camel LangChain4j Embeddings Component]
+* xref:components::langchain4j-agent-component.adoc[Camel LangChain4j Agent Component]
 
