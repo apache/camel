@@ -1160,6 +1160,18 @@ public final class CSimpleHelper {
         }
     }
 
+    public static Object ternary(Exchange exchange, Object condition, Object trueValue, Object falseValue) {
+        boolean result;
+        if (condition instanceof Boolean b) {
+            result = b;
+        } else {
+            // Try to convert to boolean - treat null, empty, and "false" as false
+            result = condition != null && !ObjectHelper.isEmpty(condition)
+                    && !Boolean.FALSE.equals(condition) && !"false".equalsIgnoreCase(String.valueOf(condition));
+        }
+        return result ? trueValue : falseValue;
+    }
+
     public static Object setHeader(Exchange exchange, String name, Class<?> type, Object value) {
         if (type != null && value != null) {
             value = convertTo(exchange, type, value);
