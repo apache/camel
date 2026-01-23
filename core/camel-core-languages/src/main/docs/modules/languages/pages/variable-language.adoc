@@ -49,4 +49,3 @@ from("direct:a").recipientList(variable("myVar"));
 
 The Header language is part of *camel-core*.
 
-include::spring-boot:partial$starter.adoc[]

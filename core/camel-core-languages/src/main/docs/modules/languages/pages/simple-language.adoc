@@ -1320,4 +1320,6 @@ And in XML DSL you use the pretty attribute to true as show below:
 </route>
 ----
 
-include::spring-boot:partial$starter.adoc[]
+== Dependencies
+
+The Simple language is part of *camel-core*.

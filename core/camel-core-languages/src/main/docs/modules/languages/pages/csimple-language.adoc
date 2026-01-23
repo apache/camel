@@ -256,4 +256,6 @@ The _echo()_ alias will be replaced with its value resulting in a script as:
 
 See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.
 
-include::spring-boot:partial$starter.adoc[]
+== Dependencies
+
+The CSimple language is part of *camel-core* and also requires *camel-simple-joor* JAR.

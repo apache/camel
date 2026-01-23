@@ -92,4 +92,3 @@ eg to refer to a file on the classpath you can do:
 
 The Constant language is part of *camel-core*.
 
-include::spring-boot:partial$starter.adoc[]

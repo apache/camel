@@ -61,4 +61,7 @@ from("direct:a")
 
 For more examples see xref:eips:split-eip.adoc[Split] EIP.
 
-include::spring-boot:partial$starter.adoc[]
+== Dependencies
+
+The Tokenize language is part of *camel-core*.
+
