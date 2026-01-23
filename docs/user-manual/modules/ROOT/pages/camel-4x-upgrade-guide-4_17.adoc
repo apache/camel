@@ -100,6 +100,10 @@ Upgraded to Tika v3, and removed `textMain` from `tikaParseOutputFormat` option.
 This component will not skip headers that has invalid characters in key names (UT10052), implemented
 in the `UndertowHeaderFilterStrategy` class.
 
+=== camel-docling
+
+There is a regression related to `EXTRACT_METADATA` operation. Only filename, filesize and filepath are still extracted.
+
 === Component deprecation
 
 The `camel-stomp` component is deprecated.
