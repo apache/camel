@@ -16,6 +16,12 @@
 
 *{component-header}*
 
+[NOTE]
+====
+This component is deprecated since Camel 4.10. Google Cloud Pub/Sub Lite will be shut down on March 18, 2026.
+Please migrate to xref:google-pubsub-component.adoc[Google Pub/Sub] or Google Cloud Managed Service for Apache Kafka.
+====
+
 The Google PubSub Lite component provides access
 to https://cloud.google.com/pubsub/[Cloud Pub/Sub Lite Infrastructure] via
 the https://github.com/googleapis/java-pubsublite[Google Cloud Pub/Sub Lite Client for Java].

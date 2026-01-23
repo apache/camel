@@ -2365,7 +2365,11 @@ public class ModelParser extends BaseParser {
         return doParse(new SpringTransactionErrorHandlerDefinition(), transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
     }
     protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new CSimpleExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+        return doParse(new CSimpleExpression(), (def, key, val) -> switch (key) {
+                case "pretty": def.setPretty(val); yield true;
+                case "trimResult": def.setTrimResult(val); yield true;
+                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected <T extends TypedExpressionDefinition> AttributeHandler<T> typedExpressionDefinitionAttributeHandler() {
         return (def, key, val) -> switch (key) {
@@ -2461,7 +2465,11 @@ public class ModelParser extends BaseParser {
         return doParse(new RefExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected SimpleExpression doParseSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new SimpleExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+        return doParse(new SimpleExpression(), (def, key, val) -> switch (key) {
+                case "pretty": def.setPretty(val); yield true;
+                case "trimResult": def.setTrimResult(val); yield true;
+                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected SpELExpression doParseSpELExpression() throws IOException, XmlPullParserException {
         return doParse(new SpELExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());

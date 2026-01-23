@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.Map;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -34,13 +36,13 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.")
     private String baseUrl;
 
-    @UriParam(defaultValue = "gpt-5")
+    @UriParam
     @Metadata(description = "The model to use for chat completion")
-    private String model = "gpt-5";
+    private String model;
 
-    @UriParam(defaultValue = "1.0")
+    @UriParam
     @Metadata(description = "Temperature for response generation (0.0 to 2.0)")
-    private Double temperature = 1.0;
+    private Double temperature;
 
     @UriParam
     @Metadata(description = "Top P for response generation (0.0 to 1.0)")
@@ -87,6 +89,10 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
     private boolean storeFullResponse = false;
+
+    @UriParam(prefix = "additionalBodyProperty.", multiValue = true)
+    @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
+    private Map<String, Object> additionalBodyProperty;
 
     public String getApiKey() {
         return apiKey;
@@ -206,6 +212,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setStoreFullResponse(boolean storeFullResponse) {
         this.storeFullResponse = storeFullResponse;
+    }
+
+    public Map<String, Object> getAdditionalBodyProperty() {
+        return additionalBodyProperty;
+    }
+
+    public void setAdditionalBodyProperty(Map<String, Object> additionalBodyProperty) {
+        this.additionalBodyProperty = additionalBodyProperty;
     }
 
     public OpenAIConfiguration copy() {

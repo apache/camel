@@ -1579,6 +1579,104 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth client ID. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder oauthClientId(String oauthClientId) {
+            doSetProperty("oauthClientId", oauthClientId);
+            return this;
+        }
+        /**
+         * OAuth client secret. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder oauthClientSecret(String oauthClientSecret) {
+            doSetProperty("oauthClientSecret", oauthClientSecret);
+            return this;
+        }
+        /**
+         * OAuth scope. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder oauthScope(String oauthScope) {
+            doSetProperty("oauthScope", oauthScope);
+            return this;
+        }
+        /**
+         * OAuth token endpoint URI. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthTokenEndpointUri the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder oauthTokenEndpointUri(String oauthTokenEndpointUri) {
+            doSetProperty("oauthTokenEndpointUri", oauthTokenEndpointUri);
+            return this;
+        }
+        /**
+         * Simplified authentication type to use. This provides an easier way to
+         * configure Kafka authentication without manually setting
+         * securityProtocol, saslMechanism, and saslJaasConfig. When set, the
+         * appropriate security settings are automatically derived. Note: This
+         * is optional. You can still use the traditional approach with explicit
+         * securityProtocol, saslMechanism, and saslJaasConfig properties.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.kafka.security.KafkaAuthType</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param saslAuthType the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder saslAuthType(org.apache.camel.component.kafka.security.KafkaAuthType saslAuthType) {
+            doSetProperty("saslAuthType", saslAuthType);
+            return this;
+        }
+        /**
+         * Simplified authentication type to use. This provides an easier way to
+         * configure Kafka authentication without manually setting
+         * securityProtocol, saslMechanism, and saslJaasConfig. When set, the
+         * appropriate security settings are automatically derived. Note: This
+         * is optional. You can still use the traditional approach with explicit
+         * securityProtocol, saslMechanism, and saslJaasConfig properties.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.kafka.security.KafkaAuthType</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param saslAuthType the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder saslAuthType(String saslAuthType) {
+            doSetProperty("saslAuthType", saslAuthType);
+            return this;
+        }
+        /**
          * Expose the kafka sasl.jaas.config parameter Example:
          * org.apache.kafka.common.security.plain.PlainLoginModule required
          * username=USERNAME password=PASSWORD;.
@@ -1624,6 +1722,36 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointConsumerBuilder saslMechanism(String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Password for SASL authentication. Used when saslAuthType is set to
+         * PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param saslPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder saslPassword(String saslPassword) {
+            doSetProperty("saslPassword", saslPassword);
+            return this;
+        }
+        /**
+         * Username for SASL authentication. Used when saslAuthType is set to
+         * PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param saslUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder saslUsername(String saslUsername) {
+            doSetProperty("saslUsername", saslUsername);
             return this;
         }
         /**
@@ -3850,6 +3978,104 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth client ID. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder oauthClientId(String oauthClientId) {
+            doSetProperty("oauthClientId", oauthClientId);
+            return this;
+        }
+        /**
+         * OAuth client secret. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder oauthClientSecret(String oauthClientSecret) {
+            doSetProperty("oauthClientSecret", oauthClientSecret);
+            return this;
+        }
+        /**
+         * OAuth scope. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder oauthScope(String oauthScope) {
+            doSetProperty("oauthScope", oauthScope);
+            return this;
+        }
+        /**
+         * OAuth token endpoint URI. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthTokenEndpointUri the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder oauthTokenEndpointUri(String oauthTokenEndpointUri) {
+            doSetProperty("oauthTokenEndpointUri", oauthTokenEndpointUri);
+            return this;
+        }
+        /**
+         * Simplified authentication type to use. This provides an easier way to
+         * configure Kafka authentication without manually setting
+         * securityProtocol, saslMechanism, and saslJaasConfig. When set, the
+         * appropriate security settings are automatically derived. Note: This
+         * is optional. You can still use the traditional approach with explicit
+         * securityProtocol, saslMechanism, and saslJaasConfig properties.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.kafka.security.KafkaAuthType</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param saslAuthType the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder saslAuthType(org.apache.camel.component.kafka.security.KafkaAuthType saslAuthType) {
+            doSetProperty("saslAuthType", saslAuthType);
+            return this;
+        }
+        /**
+         * Simplified authentication type to use. This provides an easier way to
+         * configure Kafka authentication without manually setting
+         * securityProtocol, saslMechanism, and saslJaasConfig. When set, the
+         * appropriate security settings are automatically derived. Note: This
+         * is optional. You can still use the traditional approach with explicit
+         * securityProtocol, saslMechanism, and saslJaasConfig properties.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.kafka.security.KafkaAuthType</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param saslAuthType the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder saslAuthType(String saslAuthType) {
+            doSetProperty("saslAuthType", saslAuthType);
+            return this;
+        }
+        /**
          * Expose the kafka sasl.jaas.config parameter Example:
          * org.apache.kafka.common.security.plain.PlainLoginModule required
          * username=USERNAME password=PASSWORD;.
@@ -3895,6 +4121,36 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointProducerBuilder saslMechanism(String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Password for SASL authentication. Used when saslAuthType is set to
+         * PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param saslPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder saslPassword(String saslPassword) {
+            doSetProperty("saslPassword", saslPassword);
+            return this;
+        }
+        /**
+         * Username for SASL authentication. Used when saslAuthType is set to
+         * PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param saslUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointProducerBuilder saslUsername(String saslUsername) {
+            doSetProperty("saslUsername", saslUsername);
             return this;
         }
         /**
@@ -4817,6 +5073,104 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * OAuth client ID. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthClientId the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder oauthClientId(String oauthClientId) {
+            doSetProperty("oauthClientId", oauthClientId);
+            return this;
+        }
+        /**
+         * OAuth client secret. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthClientSecret the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder oauthClientSecret(String oauthClientSecret) {
+            doSetProperty("oauthClientSecret", oauthClientSecret);
+            return this;
+        }
+        /**
+         * OAuth scope. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthScope the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder oauthScope(String oauthScope) {
+            doSetProperty("oauthScope", oauthScope);
+            return this;
+        }
+        /**
+         * OAuth token endpoint URI. Used when saslAuthType is set to OAUTH.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthTokenEndpointUri the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder oauthTokenEndpointUri(String oauthTokenEndpointUri) {
+            doSetProperty("oauthTokenEndpointUri", oauthTokenEndpointUri);
+            return this;
+        }
+        /**
+         * Simplified authentication type to use. This provides an easier way to
+         * configure Kafka authentication without manually setting
+         * securityProtocol, saslMechanism, and saslJaasConfig. When set, the
+         * appropriate security settings are automatically derived. Note: This
+         * is optional. You can still use the traditional approach with explicit
+         * securityProtocol, saslMechanism, and saslJaasConfig properties.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.kafka.security.KafkaAuthType</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param saslAuthType the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder saslAuthType(org.apache.camel.component.kafka.security.KafkaAuthType saslAuthType) {
+            doSetProperty("saslAuthType", saslAuthType);
+            return this;
+        }
+        /**
+         * Simplified authentication type to use. This provides an easier way to
+         * configure Kafka authentication without manually setting
+         * securityProtocol, saslMechanism, and saslJaasConfig. When set, the
+         * appropriate security settings are automatically derived. Note: This
+         * is optional. You can still use the traditional approach with explicit
+         * securityProtocol, saslMechanism, and saslJaasConfig properties.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.kafka.security.KafkaAuthType</code>
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param saslAuthType the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder saslAuthType(String saslAuthType) {
+            doSetProperty("saslAuthType", saslAuthType);
+            return this;
+        }
+        /**
          * Expose the kafka sasl.jaas.config parameter Example:
          * org.apache.kafka.common.security.plain.PlainLoginModule required
          * username=USERNAME password=PASSWORD;.
@@ -4862,6 +5216,36 @@ public interface KafkaEndpointBuilderFactory {
          */
         default KafkaEndpointBuilder saslMechanism(String saslMechanism) {
             doSetProperty("saslMechanism", saslMechanism);
+            return this;
+        }
+        /**
+         * Password for SASL authentication. Used when saslAuthType is set to
+         * PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param saslPassword the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder saslPassword(String saslPassword) {
+            doSetProperty("saslPassword", saslPassword);
+            return this;
+        }
+        /**
+         * Username for SASL authentication. Used when saslAuthType is set to
+         * PLAIN, SCRAM_SHA_256, or SCRAM_SHA_512.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param saslUsername the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointBuilder saslUsername(String saslUsername) {
+            doSetProperty("saslUsername", saslUsername);
             return this;
         }
         /**

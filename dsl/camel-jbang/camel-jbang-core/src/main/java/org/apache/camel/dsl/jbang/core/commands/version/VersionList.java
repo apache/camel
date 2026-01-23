@@ -83,65 +83,65 @@ public class VersionList extends CamelCommand {
                         completionCandidates = RuntimeCompletionCandidates.class,
                         converter = RuntimeTypeConverter.class,
                         description = "Runtime (${COMPLETION-CANDIDATES})")
-    RuntimeType runtime = RuntimeType.main;
+    public RuntimeType runtime = RuntimeType.main;
 
     @CommandLine.Option(names = { "--from-version" },
                         description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
-    String fromVersion;
+    public String fromVersion;
 
     @CommandLine.Option(names = { "--to-version" },
                         description = "Filter by Camel version (exclusive)")
-    String toVersion;
+    public String toVersion;
 
     @CommandLine.Option(names = { "--from-date" },
                         description = "Filter by release date (inclusive)")
-    String fromDate;
+    public String fromDate;
 
     @CommandLine.Option(names = { "--to-date" },
                         description = "Filter by release date (exclusive)")
-    String toDate;
+    public String toDate;
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by (version, date, or days)", defaultValue = "version")
-    String sort;
+    public String sort;
 
     @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
+    public String repositories;
 
     @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
-    boolean lts;
+    public boolean lts;
 
     @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true")
-    boolean eol = true;
+    public boolean eol = true;
 
     @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
-    boolean patch = true;
+    public boolean patch = true;
 
     @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
-    boolean rc;
+    public boolean rc;
 
     @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
-    boolean days;
+    public boolean days;
 
     @CommandLine.Option(names = { "--date-format" }, description = "The format to show the date (such as dd-MM-yyyy)",
                         defaultValue = DEFAULT_DATE_FORMAT)
-    String dateFormat;
+    public String dateFormat;
 
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of lines from the end of the table to show.")
-    int tail;
+    public int tail;
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
                         defaultValue = "false")
-    boolean fresh;
+    public boolean fresh;
 
     @CommandLine.Option(names = { "--download" }, defaultValue = "true",
                         description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
-    boolean download = true;
+    public boolean download = true;
 
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format", defaultValue = "false")
-    boolean jsonOutput;
+    public boolean jsonOutput;
 
     public VersionList(CamelJBangMain main) {
         super(main);

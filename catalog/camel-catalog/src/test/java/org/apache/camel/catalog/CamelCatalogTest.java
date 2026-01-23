@@ -1681,19 +1681,21 @@ public class CamelCatalogTest {
         LanguageModel model = catalog.languageModel("simple");
         assertNotNull(model);
 
-        assertTrue(model.getFunctions().size() > 50);
+        assertTrue(model.getFunctions().size() > 80);
 
-        assertEquals("body", model.getFunctions().get(0).getConstantName());
-        assertEquals("${", model.getFunctions().get(0).getPrefix());
-        assertEquals("}", model.getFunctions().get(0).getSuffix());
-        assertEquals("The message body", model.getFunctions().get(0).getDescription());
+        var f = model.getFunctions().stream().filter(m -> m.getConstantName().equals("body")).findFirst().orElseThrow();
+        assertEquals("body", f.getConstantName());
+        assertEquals("${", f.getPrefix());
+        assertEquals("}", f.getSuffix());
+        assertEquals("The message body", f.getDescription());
 
-        assertEquals("pretty(exp)", model.getFunctions().get(36).getConstantName());
-        assertEquals("${", model.getFunctions().get(36).getPrefix());
-        assertEquals("}", model.getFunctions().get(36).getSuffix());
+        f = model.getFunctions().stream().filter(m -> m.getConstantName().equals("pretty(exp)")).findFirst().orElseThrow();
+        assertEquals("pretty(exp)", f.getConstantName());
+        assertEquals("${", f.getPrefix());
+        assertEquals("}", f.getSuffix());
         assertEquals(
                 "Converts the expression to a String, and attempts to pretty print if JSon or XML, otherwise the expression is returned as the String value.",
-                model.getFunctions().get(36).getDescription());
+                f.getDescription());
     }
 
 }

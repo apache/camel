@@ -62,6 +62,12 @@ import org.apache.camel.component.telegram.model.WebhookResult;
 import org.apache.camel.component.telegram.model.payments.AnswerPreCheckoutQueryMessage;
 import org.apache.camel.component.telegram.model.payments.AnswerShippingQueryMessage;
 import org.apache.camel.component.telegram.model.payments.CreateInvoiceLinkMessage;
+import org.apache.camel.component.telegram.model.payments.EditUserStarSubscriptionMessage;
+import org.apache.camel.component.telegram.model.payments.GetMyStarBalanceMessage;
+import org.apache.camel.component.telegram.model.payments.GetStarTransactionsMessage;
+import org.apache.camel.component.telegram.model.payments.MessageResultStarAmount;
+import org.apache.camel.component.telegram.model.payments.MessageResultStarTransactions;
+import org.apache.camel.component.telegram.model.payments.RefundStarPaymentMessage;
 import org.apache.camel.component.telegram.model.payments.SendInvoiceMessage;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -115,6 +121,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 .register(AnswerPreCheckoutQueryMessage.class, "answerPreCheckoutQuery")
                 .register(AnswerShippingQueryMessage.class, "answerShippingQuery")
                 .register(SendChatActionMessage.class, "sendChatAction")
+                .register(GetMyStarBalanceMessage.class, "getMyStarBalance", MessageResultStarAmount.class)
+                .register(GetStarTransactionsMessage.class, "getStarTransactions", MessageResultStarTransactions.class)
+                .register(RefundStarPaymentMessage.class, "refundStarPayment")
+                .register(EditUserStarSubscriptionMessage.class, "editUserStarSubscription")
                 .build();
     }
 

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-mq",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "scheme": "aws2-mq",
     "extendsScheme": "",
     "syntax": "aws2-mq:label",
@@ -58,7 +58,11 @@
     "CamelAwsMQBrokerDeploymentMode": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The deployment mode for the broker in the createBroker operation", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#BROKER_DEPLOYMENT_MODE" },
     "CamelAwsMQBrokerInstanceType": { "index": 8, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The instance type for the MQ machine in the createBroker operation", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#BROKER_INSTANCE_TYPE" },
     "CamelAwsMQBrokerUsers": { "index": 9, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "List<User>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The list of users for MQ", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#BROKER_USERS" },
-    "CamelAwsMQBrokerPubliclyAccessible": { "index": 10, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "false", "description": "If the MQ instance must be publicly available or not.", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#BROKER_PUBLICLY_ACCESSIBLE" }
+    "CamelAwsMQBrokerPubliclyAccessible": { "index": 10, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "defaultValue": "false", "description": "If the MQ instance must be publicly available or not.", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#BROKER_PUBLICLY_ACCESSIBLE" },
+    "CamelAwsMQNextToken": { "index": 11, "kind": "header", "displayName": "", "group": "listBrokers", "label": "listBrokers", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The token for the next set of results.", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#NEXT_TOKEN" },
+    "CamelAwsMQIsTruncated": { "index": 12, "kind": "header", "displayName": "", "group": "listBrokers", "label": "listBrokers", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Whether the response has more results (is truncated).", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#IS_TRUNCATED" },
+    "CamelAwsMQBrokerArn": { "index": 13, "kind": "header", "displayName": "", "group": "createBroker", "label": "createBroker", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The Amazon Resource Name (ARN) of the broker.", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#BROKER_ARN" },
+    "CamelAwsMQBrokerState": { "index": 14, "kind": "header", "displayName": "", "group": "describeBroker", "label": "describeBroker", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The state of the broker.", "constantName": "org.apache.camel.component.aws2.mq.MQ2Constants#BROKER_STATE" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.mq.MQ2Configuration", "configurationField": "configuration", "description": "Logical name" },

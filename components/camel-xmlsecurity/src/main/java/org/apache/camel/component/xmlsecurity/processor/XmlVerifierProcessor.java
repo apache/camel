@@ -95,7 +95,6 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void verify(InputStream input, final Message out) throws Exception {
         LOG.debug("Verification of XML signature document started");
         final Document doc = parseInput(input, out);
@@ -233,7 +232,6 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         return nl;
     }
 
-    @SuppressWarnings("unchecked")
     protected boolean handleSignatureValidationFailed(DOMValidateContext valContext, XMLSignature signature) throws Exception {
         ValidationFailedHandler handler = getConfiguration().getValidationFailedHandler();
         LOG.debug("handleSignatureValidationFailed called");

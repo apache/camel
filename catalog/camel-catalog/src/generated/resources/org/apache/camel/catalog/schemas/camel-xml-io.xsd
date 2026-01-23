@@ -2781,7 +2781,9 @@ Sets the id of this node.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to trim the value to remove leading and trailing whitespaces and line breaks. Default value: true
+Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs
+where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.
+Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16030,7 +16032,28 @@ Refers to a custom KeyGenerator to lookup from the register for KEM operations.
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition"/>
+      <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="trimResult" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to trim the returned values when this language are in use. For example the output result may contain unwanted
+line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be
+backwards compatible with existing behavior. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="pretty" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To pretty format the output (only JSon or XML supported). Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="typedExpressionDefinition">
@@ -16337,7 +16360,28 @@ Whether to validate the bean has the configured method. Default value: true
   </xs:complexType>
   <xs:complexType name="simpleExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition"/>
+      <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="trimResult" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to trim the returned values when this language are in use. For example the output result may contain unwanted
+line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be
+backwards compatible with existing behavior. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="pretty" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To pretty format the output (only JSon or XML supported). Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="spELExpression">

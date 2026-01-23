@@ -71,6 +71,8 @@ public class CsvUnmarshalTabDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                @SuppressWarnings("resource")
+                // resource will be managed by framework lifecyle
                 CsvDataFormat csv = new CsvDataFormat()
                         .setDelimiter('\t');
 

@@ -19,10 +19,10 @@ package org.apache.camel.component.cxf.jaxrs;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -58,10 +58,12 @@ public class CxfRsResponseWithHeadersTest extends CamelTestSupport {
         StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.setEntity(entity);
 
-        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(put)) {
-            assertEquals(404, response.getCode());
-            assertEquals("Cannot find customer", EntityUtils.toString(response.getEntity()));
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build()) {
+            MyResponse httpResponse = httpclient.execute(put, response -> {
+                return new MyResponse(response.getCode(), EntityUtils.toString(response.getEntity()));
+            });
+            assertEquals(404, httpResponse.status());
+            assertEquals("Cannot find customer", httpResponse.content());
         }
     }
 

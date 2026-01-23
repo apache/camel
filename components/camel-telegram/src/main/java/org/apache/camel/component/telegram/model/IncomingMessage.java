@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.apache.camel.component.telegram.model.payments.RefundedPayment;
 import org.apache.camel.component.telegram.model.payments.SuccessfulPayment;
 
 /**
@@ -77,6 +78,9 @@ public class IncomingMessage implements Serializable {
 
     @JsonProperty("successful_payment")
     private SuccessfulPayment successfulPayment;
+
+    @JsonProperty("refunded_payment")
+    private RefundedPayment refundedPayment;
 
     public IncomingMessage() {
     }
@@ -225,6 +229,14 @@ public class IncomingMessage implements Serializable {
         this.successfulPayment = successfulPayment;
     }
 
+    public RefundedPayment getRefundedPayment() {
+        return refundedPayment;
+    }
+
+    public void setRefundedPayment(RefundedPayment refundedPayment) {
+        this.refundedPayment = refundedPayment;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingMessage{");
@@ -246,6 +258,7 @@ public class IncomingMessage implements Serializable {
         sb.append(", game=").append(game);
         sb.append(", voice=").append(voice);
         sb.append(", successfulPayment=").append(successfulPayment);
+        sb.append(", refundedPayment=").append(refundedPayment);
         sb.append('}');
         return sb.toString();
     }

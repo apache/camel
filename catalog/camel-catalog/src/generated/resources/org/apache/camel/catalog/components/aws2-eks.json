@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-eks",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "scheme": "aws2-eks",
     "extendsScheme": "",
     "syntax": "aws2-eks:label",
@@ -53,7 +53,10 @@
     "CamelAwsEKSDescription": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A key description to use while performing a createKey operation", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#DESCRIPTION" },
     "CamelAwsEKSClusterName": { "index": 3, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The cluster name", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#CLUSTER_NAME" },
     "CamelAwsEKSRoleARN": { "index": 4, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The role ARN to use while creating the cluster", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#ROLE_ARN" },
-    "CamelAwsEKSVPCConfig": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "software.amazon.awssdk.services.eks.model.VpcConfigRequest", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The VPC config for the creations of an EKS cluster", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#VPC_CONFIG" }
+    "CamelAwsEKSVPCConfig": { "index": 5, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "software.amazon.awssdk.services.eks.model.VpcConfigRequest", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The VPC config for the creations of an EKS cluster", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#VPC_CONFIG" },
+    "CamelAwsEKSNextToken": { "index": 6, "kind": "header", "displayName": "", "group": "listClusters", "label": "listClusters", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The token for the next set of results.", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#NEXT_TOKEN" },
+    "CamelAwsEKSIsTruncated": { "index": 7, "kind": "header", "displayName": "", "group": "listClusters", "label": "listClusters", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Whether the response has more results (is truncated).", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#IS_TRUNCATED" },
+    "CamelAwsEKSClusterArn": { "index": 8, "kind": "header", "displayName": "", "group": "createCluster describeCluster deleteCluster", "label": "createCluster describeCluster deleteCluster", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ARN of the cluster.", "constantName": "org.apache.camel.component.aws2.eks.EKS2Constants#CLUSTER_ARN" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.eks.EKS2Configuration", "configurationField": "configuration", "description": "Logical name" },

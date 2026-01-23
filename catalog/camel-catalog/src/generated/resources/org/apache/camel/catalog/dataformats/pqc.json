@@ -8,10 +8,10 @@
     "firstVersion": "4.16.0",
     "label": "dataformat,transformation,security",
     "javaType": "org.apache.camel.component.pqc.dataformat.PQCDataFormat",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-pqc",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "modelName": "pqc",
     "modelJavaType": "org.apache.camel.model.dataformat.PQCDataFormat"
   },

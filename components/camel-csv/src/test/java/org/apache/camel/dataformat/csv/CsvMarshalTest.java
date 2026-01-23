@@ -110,6 +110,8 @@ public class CsvMarshalTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @SuppressWarnings("resource")
+            // Resource lifecycle will be managed by the framework
             @Override
             public void configure() {
                 // Default format

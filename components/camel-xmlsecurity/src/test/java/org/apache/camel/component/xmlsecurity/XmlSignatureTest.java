@@ -100,6 +100,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -385,14 +386,14 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testEnvelopingSignature() throws Exception {
         setupMock();
-        sendBody("direct:enveloping", payload);
+        TestSupport.sendBody(this.template, "direct:enveloping", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testEnvelopedSignatureWithTransformHeader() throws Exception {
         setupMock(payload);
-        sendBody("direct:enveloped", payload, Collections.<String, Object> singletonMap(
+        TestSupport.sendBody(this.template, "direct:enveloped", payload, Collections.<String, Object> singletonMap(
                 XmlSignatureConstants.HEADER_TRANSFORM_METHODS,
                 "http://www.w3.org/2000/09/xmldsig#enveloped-signature,http://www.w3.org/TR/2001/REC-xml-c14n-20010315"));
         MockEndpoint.assertIsSatisfied(context);
@@ -402,7 +403,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testEnvelopingSignatureWithPlainText() throws Exception {
         String text = "plain test text";
         setupMock(text);
-        sendBody("direct:plaintext", text);
+        TestSupport.sendBody(this.template, "direct:plaintext", text);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -413,7 +414,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         headers.put(XmlSignatureConstants.HEADER_PLAIN_TEXT_ENCODING, "UTF-8");
-        sendBody("direct:enveloping", text, headers);
+        TestSupport.sendBody(this.template, "direct:enveloping", text, headers);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -424,7 +425,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         headers.put(XmlSignatureConstants.HEADER_PLAIN_TEXT_ENCODING, "wrongEncoding");
-        sendBody("direct:enveloping", text, headers);
+        TestSupport.sendBody(this.template, "direct:enveloping", text, headers);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, UnsupportedEncodingException.class);
     }
@@ -432,7 +433,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testEnvelopedSignature() throws Exception {
         setupMock(payload);
-        sendBody("direct:enveloped", payload);
+        TestSupport.sendBody(this.template, "direct:enveloped", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -444,7 +445,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><a xmlns=\"http://test/test\"><test>Test Message</test></a>";
 
         MockEndpoint mock = setupExceptionMock();
-        sendBody("direct:enveloped", payload);
+        TestSupport.sendBody(this.template, "direct:enveloped", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureFormatException.class, null);
     }
@@ -457,7 +458,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<>(1);
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         MockEndpoint mock = setupExceptionMock();
-        sendBody("direct:enveloped", payload, headers);
+        TestSupport.sendBody(this.template, "direct:enveloped", payload, headers);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureFormatException.class, null);
     }
@@ -474,21 +475,21 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchelementname", payload, headers);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchelementname", payload, headers);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testkeyAccessorKeySelectorDefault() throws Exception {
         setupMock();
-        sendBody("direct:keyAccessorKeySelectorDefault", payload);
+        TestSupport.sendBody(this.template, "direct:keyAccessorKeySelectorDefault", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test
     public void testSetCanonicalizationMethodInRouteDefinition() throws Exception {
         setupMock();
-        sendBody("direct:canonicalization", payload);
+        TestSupport.sendBody(this.template, "direct:canonicalization", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -496,7 +497,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testSetDigestAlgorithmInRouteDefinition() throws Exception {
 
         setupMock();
-        sendBody("direct:signaturedigestalgorithm", payload);
+        TestSupport.sendBody(this.template, "direct:signaturedigestalgorithm", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -524,7 +525,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                          + " </ToBeSigned>                                                   " + "</Document>";
 
         setupMock(payload);
-        sendBody("direct:transformsXPath2", payload);
+        TestSupport.sendBody(this.template, "direct:transformsXPath2", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -536,7 +537,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         // String payload =
         // "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root xmlns=\"http://test/test\"><test></test></root>";
         MockEndpoint mock = setupExceptionMock();
-        sendBody("direct:transformsXsltXPath", payload);
+        TestSupport.sendBody(this.template, "direct:transformsXsltXPath", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
     }
@@ -544,7 +545,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testProperties() throws Exception {
         setupMock();
-        sendBody("direct:props", payload);
+        TestSupport.sendBody(this.template, "direct:props", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -554,7 +555,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchelementname", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchelementname", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -569,7 +570,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchelementname", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchelementname", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
     }
@@ -585,7 +586,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchelementname", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchelementname", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
     }
@@ -596,7 +597,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopingDigSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchelementname", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchelementname", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
     }
@@ -608,7 +609,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 .getResourceAsStream(
                         "/org/apache/camel/component/xmlsecurity/ExampleEnvelopingDigSigWithSeveralElementsWithNameRoot.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchelementname", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchelementname", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
     }
@@ -619,7 +620,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchxpath", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchxpath", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -629,7 +630,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopingDigSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchxpath", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchxpath", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
     }
@@ -641,7 +642,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 .getResourceAsStream(
                         "/org/apache/camel/component/xmlsecurity/ExampleEnvelopingDigSigWithSeveralElementsWithNameRoot.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:outputnodesearchxpath", payload);
+        TestSupport.sendBody(this.template, "direct:outputnodesearchxpath", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, null);
     }
@@ -654,7 +655,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         context.getEndpoint(
                 "xmlsecurity-sign:signexceptioninvalidkey?signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
                 XmlSignerEndpoint.class).getConfiguration().setKeyAccessor(getKeyAccessor(keyPair.getPrivate()));
-        sendBody("direct:signexceptioninvalidkey", payload);
+        TestSupport.sendBody(this.template, "direct:signexceptioninvalidkey", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureInvalidKeyException.class, null);
     }
@@ -662,7 +663,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testSignatureFormatException() throws Exception {
         MockEndpoint mock = setupExceptionMock();
-        sendBody("direct:signexceptions", "wrongFormatedPayload");
+        TestSupport.sendBody(this.template, "direct:signexceptions", "wrongFormatedPayload");
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureFormatException.class, null);
     }
@@ -670,7 +671,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testNoSuchAlgorithmException() throws Exception {
         MockEndpoint mock = setupExceptionMock();
-        sendBody("direct:noSuchAlgorithmException", payload);
+        TestSupport.sendBody(this.template, "direct:noSuchAlgorithmException", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class, NoSuchAlgorithmException.class);
     }
@@ -678,7 +679,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testVerifyFormatExceptionNoXml() throws Exception {
         MockEndpoint mock = setupExceptionMock();
-        sendBody("direct:verifyexceptions", "wrongFormatedPayload");
+        TestSupport.sendBody(this.template, "direct:verifyexceptions", "wrongFormatedPayload");
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureFormatException.class, null);
     }
@@ -686,7 +687,8 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testVerifyFormatExceptionNoXmlWithoutSignatureElement() throws Exception {
         MockEndpoint mock = setupExceptionMock();
-        sendBody("direct:verifyexceptions", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><NoSignature></NoSignature>");
+        TestSupport.sendBody(this.template, "direct:verifyexceptions",
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><NoSignature></NoSignature>");
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureFormatException.class, null);
     }
@@ -698,7 +700,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload
                 = XmlSignatureTest.class.getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleDetached.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:invalidhash", payload);
+        TestSupport.sendBody(this.template, "direct:invalidhash", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureInvalidContentHashException.class, null);
     }
@@ -709,7 +711,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ManifestTest_TamperedContent.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:invalidhash", payload);
+        TestSupport.sendBody(this.template, "direct:invalidhash", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureInvalidContentHashException.class, null);
     }
@@ -724,7 +726,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ManifestTest_TamperedContent.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:cryptocontextprops", payload);
+        TestSupport.sendBody(this.template, "direct:cryptocontextprops", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -739,7 +741,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopingDigSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:verifyexceptions", payload);
+        TestSupport.sendBody(this.template, "direct:verifyexceptions", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureInvalidValueException.class, null);
     }
@@ -750,7 +752,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopingDigSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:verifyInvalidKeyException", payload);
+        TestSupport.sendBody(this.template, "direct:verifyInvalidKeyException", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureInvalidKeyException.class, null);
     }
@@ -758,7 +760,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testUriDereferencerAndBaseUri() throws Exception {
         setupMock();
-        sendBody("direct:uridereferencer", payload);
+        TestSupport.sendBody(this.template, "direct:uridereferencer", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -768,7 +770,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:xmlSignatureChecker", payload);
+        TestSupport.sendBody(this.template, "direct:xmlSignatureChecker", payload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureInvalidException.class, null);
     }
@@ -779,7 +781,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ManifestTest_TamperedContent.xml");
         assertNotNull(payload, "Cannot load payload");
-        sendBody("direct:validationFailedHandler", payload);
+        TestSupport.sendBody(this.template, "direct:validationFailedHandler", payload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -791,7 +793,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                                       + "\"http://www.w3.org/2000/09/xmldsig#\"> ]>"
                                       + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
 
-        sendBody("direct:furtherparams", payloadWithDTDoctype);
+        TestSupport.sendBody(this.template, "direct:furtherparams", payloadWithDTDoctype);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -808,7 +810,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                                  + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendBody("direct:detached", detachedPayload,
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload,
                 Collections.singletonMap(XmlSignatureConstants.HEADER_CONTENT_REFERENCE_URI, (Object) "#myID"));
         MockEndpoint.assertIsSatisfied(context);
         String expectedPartContent = "<ds:Reference URI=\"#myID\">";
@@ -874,7 +876,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
         mockVerified.expectedBodiesReceived(detachedPayload);
-        sendBody("direct:detached", detachedPayload, headers);
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload, headers);
         MockEndpoint.assertIsSatisfied(context);
         Map<String, String> namespaceMap = new TreeMap<>();
         namespaceMap.put("ns", "http://test");
@@ -927,7 +929,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         xpaths.add(xpath1);
         xpaths.add(xpath2);
         headers.put(XmlSignatureConstants.HEADER_XPATHS_TO_ID_ATTRIBUTES, xpaths);
-        sendBody("direct:detached", detachedPayload, headers);
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload, headers);
         MockEndpoint.assertIsSatisfied(context);
         Map<String, String> namespaceMap2 = new TreeMap<>();
         namespaceMap2.put("ns", "http://test");
@@ -946,7 +948,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         endpoint.getConfiguration().setParentLocalName(parentLocalName);
         MockEndpoint mock = setupExceptionMock();
         mock.expectedMessageCount(1);
-        sendBody("direct:detached", detachedPayload);
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(
                 mock,
@@ -964,7 +966,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                                  + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><error>bValue</error></a></ns:root>";
         MockEndpoint mock = setupExceptionMock();
         mock.expectedMessageCount(1);
-        sendBody("direct:detached", detachedPayload);
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, SchemaValidationException.class, null);
     }
@@ -978,7 +980,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         endpoint.getConfiguration().setSchemaResourceUri(null);
         MockEndpoint mock = setupExceptionMock();
         mock.expectedMessageCount(1);
-        sendBody("direct:detached", detachedPayload);
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload);
         MockEndpoint.assertIsSatisfied(context);
         checkThrownException(mock, XmlSignatureException.class,
                 "The configruation of the XML Signature component is wrong: No XML schema specified in the detached case",
@@ -1045,7 +1047,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         MockEndpoint mock = setupExceptionMock();
         mock.expectedMessageCount(1);
         List<XPathFilterParameterSpec> list = Collections.singletonList(XmlSignatureHelper.getXpathFilter(xPath, null));
-        sendBody("direct:detached", detachedPayload,
+        TestSupport.sendBody(this.template, "direct:detached", detachedPayload,
                 Collections.singletonMap(XmlSignatureConstants.HEADER_XPATHS_TO_ID_ATTRIBUTES, (Object) list));
         MockEndpoint.assertIsSatisfied(context);
         return mock;
@@ -1130,7 +1132,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         try {
             endpoint.getConfiguration().setParentXpath(getNodeSerachXPath());
             endpoint.getConfiguration().setParentLocalName("root");
-            sendBody("direct:signexceptions", payload);
+            TestSupport.sendBody(this.template, "direct:signexceptions", payload);
             MockEndpoint.assertIsSatisfied(context);
             checkThrownException(mock, XmlSignatureException.class, "The configuration of the XML signer component is wrong. " + //
                                                                     "The parent local name root and the parent XPath //pre:root are specified. You must not specify both parameters.",
@@ -1151,7 +1153,7 @@ public class XmlSignatureTest extends CamelTestSupport {
             List<XPathFilterParameterSpec> xpaths
                     = Collections.singletonList(XmlSignatureHelper.getXpathFilter("/ns:root/a/@ID", null));
             endpoint.getConfiguration().setXpathsToIdAttributes(xpaths);
-            sendBody("direct:signexceptions", payload);
+            TestSupport.sendBody(this.template, "direct:signexceptions", payload);
             MockEndpoint.assertIsSatisfied(context);
             checkThrownException(
                     mock,
@@ -1172,7 +1174,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         MockEndpoint mock = setupExceptionMock();
         try {
             endpoint.getConfiguration().setParentXpath(XmlSignatureHelper.getXpathFilter("//pre:root", null)); // invalid xpath: namespace-prefix mapping is missing
-            sendBody("direct:signexceptions", payload);
+            TestSupport.sendBody(this.template, "direct:signexceptions", payload);
             MockEndpoint.assertIsSatisfied(context);
             checkThrownException(mock, XmlSignatureException.class,
                     "The parent XPath //pre:root is wrongly configured: The XPath //pre:root is invalid.", null);
@@ -1188,7 +1190,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         MockEndpoint mock = setupExceptionMock();
         try {
             endpoint.getConfiguration().setParentXpath(XmlSignatureHelper.getXpathFilter("//root", null)); // xpath with no result
-            sendBody("direct:signexceptions", payload);
+            TestSupport.sendBody(this.template, "direct:signexceptions", payload);
             MockEndpoint.assertIsSatisfied(context);
             checkThrownException(mock, XmlSignatureException.class,
                     "The parent XPath //root returned no result. Check the configuration of the XML signer component.", null);
@@ -1215,7 +1217,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                                + "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"></ns:root>";
             endpoint.getConfiguration().setParentXpath(
                     XmlSignatureHelper.getXpathFilter("/pre:root/@ID", Collections.singletonMap("pre", "http://test"))); // xpath with no element result
-            sendBody("direct:signexceptions", myPayload);
+            TestSupport.sendBody(this.template, "direct:signexceptions", myPayload);
             MockEndpoint.assertIsSatisfied(context);
             checkThrownException(mock, XmlSignatureException.class,
                     "The parent XPath /pre:root/@ID returned no element. Check the configuration of the XML signer component.",
@@ -1231,7 +1233,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                            + (includeNewLine ? "\n" : "")
                            + "<ns:root xmlns:ns=\"http://test\"><a>a1</a><a/><test>Test Message</test></ns:root>";
         setupMock(myPayload);
-        sendBody("direct:envelopedParentXpath", myPayload);
+        TestSupport.sendBody(this.template, "direct:envelopedParentXpath", myPayload);
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -1261,7 +1263,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         try {
             endpointSigner.getConfiguration().setOutputXmlEncoding(signerEncoding);
             endpoinVerifier.getConfiguration().setOutputXmlEncoding(outputEncoding);
-            sendBody(directStart, inputPayload);
+            TestSupport.sendBody(this.template, directStart, inputPayload);
             MockEndpoint.assertIsSatisfied(context);
             Message signedMessage = mockSigned.getExchanges().get(0).getIn();
             byte[] signedBytes = signedMessage.getBody(byte[].class);
@@ -1294,7 +1296,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         XPath xpath = xpathFactory.newXPath();
         NamespaceContext nc = new NamespaceContext() {
 
-            @SuppressWarnings("rawtypes")
+            @SuppressWarnings({ "rawtypes", "unchecked" })
             @Override
             public Iterator getPrefixes(String namespaceURI) {
                 return null;
@@ -1388,8 +1390,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        try {
+        try (CamelContext context = new DefaultCamelContext()) {
             context.addRoutes(builder);
             context.start();
 

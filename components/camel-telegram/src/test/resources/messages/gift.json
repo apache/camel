@@ -1,0 +1,31 @@
+{
+    "id": "gift_12345",
+    "sticker": {
+        "file_id": "CAACAgIAAxkBAAIBZ2XXXXXX",
+        "file_unique_id": "AgADXXXXXXXX",
+        "type": "regular",
+        "width": 512,
+        "height": 512,
+        "is_animated": false,
+        "is_video": false
+    },
+    "star_count": 100,
+    "upgrade_star_count": 500,
+    "is_premium": true,
+    "has_colors": true,
+    "total_count": 1000,
+    "remaining_count": 750,
+    "personal_total_count": 50,
+    "personal_remaining_count": 45,
+    "background": {
+        "center_color": 16711680,
+        "edge_color": 255,
+        "text_color": 16777215
+    },
+    "unique_gift_variant_count": 10,
+    "publisher_chat": {
+        "id": "-1001234567890",
+        "title": "Gift Shop",
+        "type": "channel"
+    }
+}

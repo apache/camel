@@ -17,6 +17,12 @@
 
 [NOTE]
 ====
+This component is deprecated since Camel 4.18 and will be removed in a future release.
+Apache Olingo project has been moved to the Apache Attic and is no longer maintained.
+====
+
+[NOTE]
+====
 Starting with Camel 4.0, our project has migrated to JakartaEE. Some parts of Apache Olingo2 may depend on J2EE, which may
 result in unexpected behavior and other runtime problems.
 ====

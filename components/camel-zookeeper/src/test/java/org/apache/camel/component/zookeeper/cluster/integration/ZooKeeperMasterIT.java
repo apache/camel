@@ -71,7 +71,7 @@ public final class ZooKeeperMasterIT {
     // ************************************
 
     private static void run(String connectString, String id) {
-        try {
+        try (DefaultCamelContext context = new DefaultCamelContext()) {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
 
@@ -80,7 +80,6 @@ public final class ZooKeeperMasterIT {
             service.setNodes(connectString);
             service.setBasePath("/camel/master");
 
-            DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.getCamelContextExtension().setName("context-" + id);
             context.addService(service);

@@ -72,6 +72,33 @@ import static org.apache.camel.util.StringHelper.between;
 public class ExpressionBuilder {
 
     /**
+     * Trims the result of the given expression
+     */
+    public static Expression trimExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object answer = expression.evaluate(exchange, Object.class);
+                if (answer instanceof String str) {
+                    answer = str.trim();
+                }
+                return answer;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                expression.init(context);
+            }
+
+            @Override
+            public String toString() {
+                return "trim(" + expression + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for the header value with the given name
      * <p/>
      * Will fallback and look in properties if not found in headers.

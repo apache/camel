@@ -12,7 +12,7 @@
     "output": false
   },
   "properties": {
-    "expression": { "index": 0, "kind": "expression", "displayName": "Expression", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "java", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false },
+    "expression": { "index": 0, "kind": "expression", "displayName": "Expression", "group": "common", "required": true, "type": "object", "javaType": "org.apache.camel.model.language.ExpressionDefinition", "oneOf": [ "constant", "csimple", "datasonnet", "exchangeProperty", "groovy", "header", "hl7terser", "java", "joor", "jq", "js", "jsonpath", "language", "method", "mvel", "ognl", "python", "ref", "simple", "spel", "tokenize", "variable", "wasm", "xpath", "xquery", "xtokenize" ], "deprecated": false, "autowired": false, "secret": false, "description": "The predicate to use for validation." },
     "type": { "index": 1, "kind": "attribute", "displayName": "Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Set the data type name. If you specify 'xml:XYZ', the validator will be picked up if message type is 'xml:XYZ'. If you specify just 'xml', the validator matches with all of 'xml' message type like 'xml:ABC' or 'xml:DEF'." }
   }
 }

@@ -252,7 +252,8 @@ public class HttpRouteTest extends BaseJettyTest {
                     }
                 });
 
-                from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true").noStreamCaching()
+                from("jetty:http://localhost:" + port3 + "/noStreamCache?disableStreamCache=true")
+                        .streamCache(false)
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 InputStream is = (InputStream) exchange.getIn().getBody();

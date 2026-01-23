@@ -34,23 +34,52 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.iam.IamClient;
+import software.amazon.awssdk.services.iam.model.AddRoleToInstanceProfileRequest;
 import software.amazon.awssdk.services.iam.model.AddUserToGroupRequest;
+import software.amazon.awssdk.services.iam.model.AttachGroupPolicyRequest;
+import software.amazon.awssdk.services.iam.model.AttachRolePolicyRequest;
+import software.amazon.awssdk.services.iam.model.AttachUserPolicyRequest;
 import software.amazon.awssdk.services.iam.model.CreateAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.CreateGroupRequest;
 import software.amazon.awssdk.services.iam.model.CreateGroupResponse;
+import software.amazon.awssdk.services.iam.model.CreateInstanceProfileRequest;
+import software.amazon.awssdk.services.iam.model.CreateInstanceProfileResponse;
+import software.amazon.awssdk.services.iam.model.CreatePolicyRequest;
+import software.amazon.awssdk.services.iam.model.CreatePolicyResponse;
+import software.amazon.awssdk.services.iam.model.CreateRoleRequest;
+import software.amazon.awssdk.services.iam.model.CreateRoleResponse;
 import software.amazon.awssdk.services.iam.model.CreateUserRequest;
 import software.amazon.awssdk.services.iam.model.CreateUserResponse;
 import software.amazon.awssdk.services.iam.model.DeleteAccessKeyRequest;
 import software.amazon.awssdk.services.iam.model.DeleteGroupRequest;
+import software.amazon.awssdk.services.iam.model.DeleteInstanceProfileRequest;
+import software.amazon.awssdk.services.iam.model.DeletePolicyRequest;
+import software.amazon.awssdk.services.iam.model.DeleteRoleRequest;
 import software.amazon.awssdk.services.iam.model.DeleteUserRequest;
+import software.amazon.awssdk.services.iam.model.DetachGroupPolicyRequest;
+import software.amazon.awssdk.services.iam.model.DetachRolePolicyRequest;
+import software.amazon.awssdk.services.iam.model.DetachUserPolicyRequest;
+import software.amazon.awssdk.services.iam.model.GetInstanceProfileRequest;
+import software.amazon.awssdk.services.iam.model.GetInstanceProfileResponse;
+import software.amazon.awssdk.services.iam.model.GetPolicyRequest;
+import software.amazon.awssdk.services.iam.model.GetPolicyResponse;
+import software.amazon.awssdk.services.iam.model.GetRoleRequest;
+import software.amazon.awssdk.services.iam.model.GetRoleResponse;
 import software.amazon.awssdk.services.iam.model.GetUserRequest;
 import software.amazon.awssdk.services.iam.model.GetUserResponse;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 import software.amazon.awssdk.services.iam.model.ListAccessKeysResponse;
 import software.amazon.awssdk.services.iam.model.ListGroupsRequest;
 import software.amazon.awssdk.services.iam.model.ListGroupsResponse;
+import software.amazon.awssdk.services.iam.model.ListInstanceProfilesRequest;
+import software.amazon.awssdk.services.iam.model.ListInstanceProfilesResponse;
+import software.amazon.awssdk.services.iam.model.ListPoliciesRequest;
+import software.amazon.awssdk.services.iam.model.ListPoliciesResponse;
+import software.amazon.awssdk.services.iam.model.ListRolesRequest;
+import software.amazon.awssdk.services.iam.model.ListRolesResponse;
 import software.amazon.awssdk.services.iam.model.ListUsersRequest;
 import software.amazon.awssdk.services.iam.model.ListUsersResponse;
+import software.amazon.awssdk.services.iam.model.RemoveRoleFromInstanceProfileRequest;
 import software.amazon.awssdk.services.iam.model.RemoveUserFromGroupRequest;
 import software.amazon.awssdk.services.iam.model.StatusType;
 import software.amazon.awssdk.services.iam.model.UpdateAccessKeyRequest;
@@ -63,6 +92,12 @@ public class IAM2Producer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(IAM2Producer.class);
     public static final String MISSING_GROUP_NAME = "Group Name must be specified";
     public static final String MISSING_USER_NAME = "User Name must be specified";
+    public static final String MISSING_ROLE_NAME = "Role Name must be specified";
+    public static final String MISSING_POLICY_ARN = "Policy ARN must be specified";
+    public static final String MISSING_POLICY_NAME = "Policy Name must be specified";
+    public static final String MISSING_POLICY_DOCUMENT = "Policy Document must be specified";
+    public static final String MISSING_ASSUME_ROLE_POLICY_DOCUMENT = "Assume Role Policy Document must be specified";
+    public static final String MISSING_INSTANCE_PROFILE_NAME = "Instance Profile Name must be specified";
     private transient String iamProducerToString;
     private HealthCheck producerHealthCheck;
     private WritableHealthCheckRepository healthCheckRepository;
@@ -117,6 +152,70 @@ public class IAM2Producer extends DefaultProducer {
                 break;
             case removeUserFromGroup:
                 removeUserFromGroup(getEndpoint().getIamClient(), exchange);
+                break;
+            // Role operations
+            case createRole:
+                createRole(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteRole:
+                deleteRole(getEndpoint().getIamClient(), exchange);
+                break;
+            case getRole:
+                getRole(getEndpoint().getIamClient(), exchange);
+                break;
+            case listRoles:
+                listRoles(getEndpoint().getIamClient(), exchange);
+                break;
+            // Policy operations
+            case createPolicy:
+                createPolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case deletePolicy:
+                deletePolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case getPolicy:
+                getPolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case listPolicies:
+                listPolicies(getEndpoint().getIamClient(), exchange);
+                break;
+            // Policy attachment operations
+            case attachUserPolicy:
+                attachUserPolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case detachUserPolicy:
+                detachUserPolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case attachGroupPolicy:
+                attachGroupPolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case detachGroupPolicy:
+                detachGroupPolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case attachRolePolicy:
+                attachRolePolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            case detachRolePolicy:
+                detachRolePolicy(getEndpoint().getIamClient(), exchange);
+                break;
+            // Instance profile operations
+            case createInstanceProfile:
+                createInstanceProfile(getEndpoint().getIamClient(), exchange);
+                break;
+            case deleteInstanceProfile:
+                deleteInstanceProfile(getEndpoint().getIamClient(), exchange);
+                break;
+            case getInstanceProfile:
+                getInstanceProfile(getEndpoint().getIamClient(), exchange);
+                break;
+            case listInstanceProfiles:
+                listInstanceProfiles(getEndpoint().getIamClient(), exchange);
+                break;
+            case addRoleToInstanceProfile:
+                addRoleToInstanceProfile(getEndpoint().getIamClient(), exchange);
+                break;
+            case removeRoleFromInstanceProfile:
+                removeRoleFromInstanceProfile(getEndpoint().getIamClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -399,6 +498,423 @@ public class IAM2Producer extends DefaultProducer {
                             .build());
                 },
                 "Remove User From Group");
+    }
+
+    // Role operations
+
+    private void createRole(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                CreateRoleRequest.class,
+                iamClient::createRole,
+                () -> {
+                    String roleName
+                            = getRequiredHeader(exchange, IAM2Constants.ROLE_NAME, String.class, MISSING_ROLE_NAME);
+                    String assumeRolePolicyDocument = getRequiredHeader(exchange,
+                            IAM2Constants.ASSUME_ROLE_POLICY_DOCUMENT, String.class, MISSING_ASSUME_ROLE_POLICY_DOCUMENT);
+                    CreateRoleRequest.Builder builder = CreateRoleRequest.builder()
+                            .roleName(roleName)
+                            .assumeRolePolicyDocument(assumeRolePolicyDocument);
+                    String rolePath = getOptionalHeader(exchange, IAM2Constants.ROLE_PATH, String.class);
+                    if (rolePath != null) {
+                        builder.path(rolePath);
+                    }
+                    String description = getOptionalHeader(exchange, IAM2Constants.ROLE_DESCRIPTION, String.class);
+                    if (description != null) {
+                        builder.description(description);
+                    }
+                    return iamClient.createRole(builder.build());
+                },
+                "Create Role",
+                (CreateRoleResponse response, Message message) -> {
+                    if (response.role() != null) {
+                        message.setHeader(IAM2Constants.ROLE_ARN, response.role().arn());
+                        message.setHeader(IAM2Constants.ROLE_ID, response.role().roleId());
+                    }
+                });
+    }
+
+    private void deleteRole(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DeleteRoleRequest.class,
+                iamClient::deleteRole,
+                () -> {
+                    String roleName
+                            = getRequiredHeader(exchange, IAM2Constants.ROLE_NAME, String.class, MISSING_ROLE_NAME);
+                    return iamClient.deleteRole(DeleteRoleRequest.builder().roleName(roleName).build());
+                },
+                "Delete Role");
+    }
+
+    private void getRole(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                GetRoleRequest.class,
+                iamClient::getRole,
+                () -> {
+                    String roleName
+                            = getRequiredHeader(exchange, IAM2Constants.ROLE_NAME, String.class, MISSING_ROLE_NAME);
+                    return iamClient.getRole(GetRoleRequest.builder().roleName(roleName).build());
+                },
+                "Get Role",
+                (GetRoleResponse response, Message message) -> {
+                    if (response.role() != null) {
+                        message.setHeader(IAM2Constants.ROLE_ARN, response.role().arn());
+                        message.setHeader(IAM2Constants.ROLE_ID, response.role().roleId());
+                    }
+                });
+    }
+
+    private void listRoles(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                ListRolesRequest.class,
+                iamClient::listRoles,
+                () -> {
+                    ListRolesRequest.Builder builder = ListRolesRequest.builder();
+                    String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
+                    if (marker != null) {
+                        builder.marker(marker);
+                    }
+                    Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
+                    if (maxItems != null) {
+                        builder.maxItems(maxItems);
+                    }
+                    return iamClient.listRoles(builder.build());
+                },
+                "List Roles",
+                (ListRolesResponse response, Message message) -> {
+                    message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
+                    if (response.marker() != null) {
+                        message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
+                    }
+                });
+    }
+
+    // Policy operations
+
+    private void createPolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                CreatePolicyRequest.class,
+                iamClient::createPolicy,
+                () -> {
+                    String policyName
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_NAME, String.class, MISSING_POLICY_NAME);
+                    String policyDocument
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_DOCUMENT, String.class, MISSING_POLICY_DOCUMENT);
+                    CreatePolicyRequest.Builder builder = CreatePolicyRequest.builder()
+                            .policyName(policyName)
+                            .policyDocument(policyDocument);
+                    String policyPath = getOptionalHeader(exchange, IAM2Constants.POLICY_PATH, String.class);
+                    if (policyPath != null) {
+                        builder.path(policyPath);
+                    }
+                    String description = getOptionalHeader(exchange, IAM2Constants.POLICY_DESCRIPTION, String.class);
+                    if (description != null) {
+                        builder.description(description);
+                    }
+                    return iamClient.createPolicy(builder.build());
+                },
+                "Create Policy",
+                (CreatePolicyResponse response, Message message) -> {
+                    if (response.policy() != null) {
+                        message.setHeader(IAM2Constants.POLICY_ARN, response.policy().arn());
+                        message.setHeader(IAM2Constants.POLICY_ID, response.policy().policyId());
+                    }
+                });
+    }
+
+    private void deletePolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DeletePolicyRequest.class,
+                iamClient::deletePolicy,
+                () -> {
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.deletePolicy(DeletePolicyRequest.builder().policyArn(policyArn).build());
+                },
+                "Delete Policy");
+    }
+
+    private void getPolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                GetPolicyRequest.class,
+                iamClient::getPolicy,
+                () -> {
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.getPolicy(GetPolicyRequest.builder().policyArn(policyArn).build());
+                },
+                "Get Policy",
+                (GetPolicyResponse response, Message message) -> {
+                    if (response.policy() != null) {
+                        message.setHeader(IAM2Constants.POLICY_ARN, response.policy().arn());
+                        message.setHeader(IAM2Constants.POLICY_ID, response.policy().policyId());
+                    }
+                });
+    }
+
+    private void listPolicies(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                ListPoliciesRequest.class,
+                iamClient::listPolicies,
+                () -> {
+                    ListPoliciesRequest.Builder builder = ListPoliciesRequest.builder();
+                    String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
+                    if (marker != null) {
+                        builder.marker(marker);
+                    }
+                    Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
+                    if (maxItems != null) {
+                        builder.maxItems(maxItems);
+                    }
+                    return iamClient.listPolicies(builder.build());
+                },
+                "List Policies",
+                (ListPoliciesResponse response, Message message) -> {
+                    message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
+                    if (response.marker() != null) {
+                        message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
+                    }
+                });
+    }
+
+    // Policy attachment operations
+
+    private void attachUserPolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                AttachUserPolicyRequest.class,
+                iamClient::attachUserPolicy,
+                () -> {
+                    String userName
+                            = getRequiredHeader(exchange, IAM2Constants.USERNAME, String.class, MISSING_USER_NAME);
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.attachUserPolicy(AttachUserPolicyRequest.builder()
+                            .userName(userName)
+                            .policyArn(policyArn)
+                            .build());
+                },
+                "Attach User Policy");
+    }
+
+    private void detachUserPolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DetachUserPolicyRequest.class,
+                iamClient::detachUserPolicy,
+                () -> {
+                    String userName
+                            = getRequiredHeader(exchange, IAM2Constants.USERNAME, String.class, MISSING_USER_NAME);
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.detachUserPolicy(DetachUserPolicyRequest.builder()
+                            .userName(userName)
+                            .policyArn(policyArn)
+                            .build());
+                },
+                "Detach User Policy");
+    }
+
+    private void attachGroupPolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                AttachGroupPolicyRequest.class,
+                iamClient::attachGroupPolicy,
+                () -> {
+                    String groupName
+                            = getRequiredHeader(exchange, IAM2Constants.GROUP_NAME, String.class, MISSING_GROUP_NAME);
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.attachGroupPolicy(AttachGroupPolicyRequest.builder()
+                            .groupName(groupName)
+                            .policyArn(policyArn)
+                            .build());
+                },
+                "Attach Group Policy");
+    }
+
+    private void detachGroupPolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DetachGroupPolicyRequest.class,
+                iamClient::detachGroupPolicy,
+                () -> {
+                    String groupName
+                            = getRequiredHeader(exchange, IAM2Constants.GROUP_NAME, String.class, MISSING_GROUP_NAME);
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.detachGroupPolicy(DetachGroupPolicyRequest.builder()
+                            .groupName(groupName)
+                            .policyArn(policyArn)
+                            .build());
+                },
+                "Detach Group Policy");
+    }
+
+    private void attachRolePolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                AttachRolePolicyRequest.class,
+                iamClient::attachRolePolicy,
+                () -> {
+                    String roleName
+                            = getRequiredHeader(exchange, IAM2Constants.ROLE_NAME, String.class, MISSING_ROLE_NAME);
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.attachRolePolicy(AttachRolePolicyRequest.builder()
+                            .roleName(roleName)
+                            .policyArn(policyArn)
+                            .build());
+                },
+                "Attach Role Policy");
+    }
+
+    private void detachRolePolicy(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DetachRolePolicyRequest.class,
+                iamClient::detachRolePolicy,
+                () -> {
+                    String roleName
+                            = getRequiredHeader(exchange, IAM2Constants.ROLE_NAME, String.class, MISSING_ROLE_NAME);
+                    String policyArn
+                            = getRequiredHeader(exchange, IAM2Constants.POLICY_ARN, String.class, MISSING_POLICY_ARN);
+                    return iamClient.detachRolePolicy(DetachRolePolicyRequest.builder()
+                            .roleName(roleName)
+                            .policyArn(policyArn)
+                            .build());
+                },
+                "Detach Role Policy");
+    }
+
+    // Instance profile operations
+
+    private void createInstanceProfile(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                CreateInstanceProfileRequest.class,
+                iamClient::createInstanceProfile,
+                () -> {
+                    String instanceProfileName = getRequiredHeader(exchange,
+                            IAM2Constants.INSTANCE_PROFILE_NAME, String.class, MISSING_INSTANCE_PROFILE_NAME);
+                    CreateInstanceProfileRequest.Builder builder
+                            = CreateInstanceProfileRequest.builder().instanceProfileName(instanceProfileName);
+                    String path = getOptionalHeader(exchange, IAM2Constants.INSTANCE_PROFILE_PATH, String.class);
+                    if (path != null) {
+                        builder.path(path);
+                    }
+                    return iamClient.createInstanceProfile(builder.build());
+                },
+                "Create Instance Profile",
+                (CreateInstanceProfileResponse response, Message message) -> {
+                    if (response.instanceProfile() != null) {
+                        message.setHeader(IAM2Constants.INSTANCE_PROFILE_ARN, response.instanceProfile().arn());
+                        message.setHeader(IAM2Constants.INSTANCE_PROFILE_ID, response.instanceProfile().instanceProfileId());
+                    }
+                });
+    }
+
+    private void deleteInstanceProfile(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                DeleteInstanceProfileRequest.class,
+                iamClient::deleteInstanceProfile,
+                () -> {
+                    String instanceProfileName = getRequiredHeader(exchange,
+                            IAM2Constants.INSTANCE_PROFILE_NAME, String.class, MISSING_INSTANCE_PROFILE_NAME);
+                    return iamClient.deleteInstanceProfile(
+                            DeleteInstanceProfileRequest.builder().instanceProfileName(instanceProfileName).build());
+                },
+                "Delete Instance Profile");
+    }
+
+    private void getInstanceProfile(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                GetInstanceProfileRequest.class,
+                iamClient::getInstanceProfile,
+                () -> {
+                    String instanceProfileName = getRequiredHeader(exchange,
+                            IAM2Constants.INSTANCE_PROFILE_NAME, String.class, MISSING_INSTANCE_PROFILE_NAME);
+                    return iamClient.getInstanceProfile(
+                            GetInstanceProfileRequest.builder().instanceProfileName(instanceProfileName).build());
+                },
+                "Get Instance Profile",
+                (GetInstanceProfileResponse response, Message message) -> {
+                    if (response.instanceProfile() != null) {
+                        message.setHeader(IAM2Constants.INSTANCE_PROFILE_ARN, response.instanceProfile().arn());
+                        message.setHeader(IAM2Constants.INSTANCE_PROFILE_ID, response.instanceProfile().instanceProfileId());
+                    }
+                });
+    }
+
+    private void listInstanceProfiles(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                ListInstanceProfilesRequest.class,
+                iamClient::listInstanceProfiles,
+                () -> {
+                    ListInstanceProfilesRequest.Builder builder = ListInstanceProfilesRequest.builder();
+                    String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
+                    if (marker != null) {
+                        builder.marker(marker);
+                    }
+                    Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
+                    if (maxItems != null) {
+                        builder.maxItems(maxItems);
+                    }
+                    return iamClient.listInstanceProfiles(builder.build());
+                },
+                "List Instance Profiles",
+                (ListInstanceProfilesResponse response, Message message) -> {
+                    message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
+                    if (response.marker() != null) {
+                        message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
+                    }
+                });
+    }
+
+    private void addRoleToInstanceProfile(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                AddRoleToInstanceProfileRequest.class,
+                iamClient::addRoleToInstanceProfile,
+                () -> {
+                    String instanceProfileName = getRequiredHeader(exchange,
+                            IAM2Constants.INSTANCE_PROFILE_NAME, String.class, MISSING_INSTANCE_PROFILE_NAME);
+                    String roleName
+                            = getRequiredHeader(exchange, IAM2Constants.ROLE_NAME, String.class, MISSING_ROLE_NAME);
+                    return iamClient.addRoleToInstanceProfile(AddRoleToInstanceProfileRequest.builder()
+                            .instanceProfileName(instanceProfileName)
+                            .roleName(roleName)
+                            .build());
+                },
+                "Add Role To Instance Profile");
+    }
+
+    private void removeRoleFromInstanceProfile(IamClient iamClient, Exchange exchange) throws InvalidPayloadException {
+        executeOperation(
+                exchange,
+                RemoveRoleFromInstanceProfileRequest.class,
+                iamClient::removeRoleFromInstanceProfile,
+                () -> {
+                    String instanceProfileName = getRequiredHeader(exchange,
+                            IAM2Constants.INSTANCE_PROFILE_NAME, String.class, MISSING_INSTANCE_PROFILE_NAME);
+                    String roleName
+                            = getRequiredHeader(exchange, IAM2Constants.ROLE_NAME, String.class, MISSING_ROLE_NAME);
+                    return iamClient.removeRoleFromInstanceProfile(RemoveRoleFromInstanceProfileRequest.builder()
+                            .instanceProfileName(instanceProfileName)
+                            .roleName(roleName)
+                            .build());
+                },
+                "Remove Role From Instance Profile");
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {

@@ -113,6 +113,7 @@ public class Sqs2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setHeader(Sqs2Constants.MESSAGE_ID, result.messageId());
         message.setHeader(Sqs2Constants.MD5_OF_BODY, result.md5OfMessageBody());
+        message.setHeader(Sqs2Constants.SEQUENCE_NUMBER, result.sequenceNumber());
     }
 
     private void sendBatchMessage(SqsClient amazonSQS, Exchange exchange) {
@@ -134,6 +135,10 @@ public class Sqs2Producer extends DefaultProducer {
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(request.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT,
+                    result.failed() != null ? result.failed().size() : 0);
+            message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    result.successful() != null ? result.successful().size() : 0);
         } else if (exchange.getIn().getBody() instanceof String) {
             String c = exchange.getIn().getBody(String.class);
             String[] elements = c.split(getConfiguration().getBatchSeparator());
@@ -150,11 +155,19 @@ public class Sqs2Producer extends DefaultProducer {
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(request.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT,
+                    result.failed() != null ? result.failed().size() : 0);
+            message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    result.successful() != null ? result.successful().size() : 0);
         } else {
             SendMessageBatchRequest req = exchange.getIn().getBody(SendMessageBatchRequest.class);
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(req);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT,
+                    result.failed() != null ? result.failed().size() : 0);
+            message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    result.successful() != null ? result.successful().size() : 0);
         }
     }
 
@@ -173,12 +186,23 @@ public class Sqs2Producer extends DefaultProducer {
 
     private void listQueues(SqsClient amazonSQS, Exchange exchange) {
         ListQueuesRequest.Builder request = ListQueuesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX))) {
-            request.queueNamePrefix(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX, String.class));
+        String prefix = exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX, String.class);
+        if (prefix != null) {
+            request.queueNamePrefix(prefix);
+        }
+        String nextToken = exchange.getIn().getHeader(Sqs2Constants.NEXT_TOKEN, String.class);
+        if (nextToken != null) {
+            request.nextToken(nextToken);
+        }
+        Integer maxResults = exchange.getIn().getHeader(Sqs2Constants.MAX_RESULTS, Integer.class);
+        if (maxResults != null) {
+            request.maxResults(maxResults);
         }
         ListQueuesResponse result = amazonSQS.listQueues(request.build());
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Sqs2Constants.NEXT_TOKEN, result.nextToken());
+        message.setHeader(Sqs2Constants.IS_TRUNCATED, result.nextToken() != null);
     }
 
     private void purgeQueue(SqsClient amazonSQS, Exchange exchange) {

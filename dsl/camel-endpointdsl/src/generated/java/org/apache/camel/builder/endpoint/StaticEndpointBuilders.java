@@ -7383,6 +7383,48 @@ public class StaticEndpointBuilders {
         return WatsonTextToSpeechEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM watsonx.ai (camel-ibm-watsonx-ai)
+     * Interact with IBM watsonx.ai foundation models for text generation, chat,
+     * embeddings, and more.
+     * 
+     * Category: ai,cloud
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
+     * 
+     * Syntax: <code>ibm-watsonx-ai:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String path) {
+        return ibmWatsonxAi("ibm-watsonx-ai", path);
+    }
+    /**
+     * IBM watsonx.ai (camel-ibm-watsonx-ai)
+     * Interact with IBM watsonx.ai foundation models for text generation, chat,
+     * embeddings, and more.
+     * 
+     * Category: ai,cloud
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
+     * 
+     * Syntax: <code>ibm-watsonx-ai:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String componentName, String path) {
+        return WatsonxAiEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
@@ -11967,6 +12009,46 @@ public class StaticEndpointBuilders {
         return OnceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * OpenAI (camel-openai)
+     * OpenAI endpoint for chat completion.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>openai:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform (currently only chat-completion is supported)
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String path) {
+        return openai("openai", path);
+    }
+    /**
+     * OpenAI (camel-openai)
+     * OpenAI endpoint for chat completion.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>openai:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform (currently only chat-completion is supported)
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String componentName, String path) {
+        return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
      * 
@@ -13963,6 +14045,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String path) {
         return service("service", path);
     }
@@ -13985,6 +14068,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String componentName, String path) {
         return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

@@ -11,15 +11,17 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-core-languages",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "modelName": "simple",
     "modelJavaType": "org.apache.camel.model.language.SimpleExpression"
   },
   "properties": {
     "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the id of this node" },
     "expression": { "index": 1, "kind": "value", "displayName": "Expression", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
-    "resultType": { "index": 2, "kind": "attribute", "displayName": "Result Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class of the result type (type from output)" },
-    "trim": { "index": 3, "kind": "attribute", "displayName": "Trim", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks" }
+    "trimResult": { "index": 2, "kind": "attribute", "displayName": "Trim Result", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether to trim the returned values when this language are in use. For example the output result may contain unwanted line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be backwards compatible with existing behavior." },
+    "pretty": { "index": 3, "kind": "attribute", "displayName": "Pretty", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To pretty format the output (only JSon or XML supported)" },
+    "resultType": { "index": 4, "kind": "attribute", "displayName": "Result Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the class of the result type (type from output)" },
+    "trim": { "index": 5, "kind": "attribute", "displayName": "Trim", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end." }
   },
   "functions": {
     "file:name": { "index": 0, "kind": "function", "displayName": "File", "group": "function", "label": "function", "required": false, "javaType": "String", "prefix": "${", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The file name (relative from starting directory)", "ognl": false, "suffix": "}" },

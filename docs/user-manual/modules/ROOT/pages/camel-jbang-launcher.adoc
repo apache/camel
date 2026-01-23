@@ -59,6 +59,19 @@ bin\camel.bat [command] [options]
 - Each self-executing JAR is its own release, avoiding version complexity
 - Can still be used with JBang if preferred
 
+== Limitations
+
+The following features are not supported when running from camel-launcher:
+
+=== --camel-version option
+
+The `--camel-version` option requires JBang to dynamically download and run a different Camel version.
+
+Alternatives:
+
+- Use a different camel-launcher JAR version
+- Install Camel CLI via JBang: `jbang app install camel@apache/camel`
+
 == More Information
 
 See the general xref:camel-jbang.adoc[Camel JBang] documentation.

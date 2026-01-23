@@ -16,16 +16,19 @@
  */
 package org.apache.camel.language.simple;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -37,7 +40,9 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.bean.MethodNotFoundException;
+import org.apache.camel.converter.stream.FileInputStreamCache;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.myconverter.MyCustomDate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -56,6 +61,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -1965,6 +1971,76 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testCollateDynamic() {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        data.add("G");
+        exchange.getIn().setBody(data);
+
+        exchange.getIn().setHeader("num", 3);
+
+        Iterator it = (Iterator) evaluateExpression("${collate(${header.num})}", null);
+        List chunk = (List) it.next();
+        List chunk2 = (List) it.next();
+        List chunk3 = (List) it.next();
+        assertFalse(it.hasNext());
+
+        assertEquals(3, chunk.size());
+        assertEquals(3, chunk2.size());
+        assertEquals(1, chunk3.size());
+
+        assertEquals("A", chunk.get(0));
+        assertEquals("B", chunk.get(1));
+        assertEquals("C", chunk.get(2));
+        assertEquals("D", chunk2.get(0));
+        assertEquals("E", chunk2.get(1));
+        assertEquals("F", chunk2.get(2));
+        assertEquals("G", chunk3.get(0));
+    }
+
+    @Test
+    public void testSkip() {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        exchange.getIn().setBody(data);
+
+        Iterator it = (Iterator) evaluateExpression("${skip(2)}", null);
+        assertEquals("C", it.next());
+        assertEquals("D", it.next());
+        assertEquals("E", it.next());
+        assertEquals("F", it.next());
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testSkipDynamic() {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        data.add("D");
+        data.add("E");
+        data.add("F");
+        exchange.getIn().setBody(data);
+        exchange.getIn().setHeader("num", 4);
+
+        Iterator it = (Iterator) evaluateExpression("${skip(${header.num})}", null);
+        assertEquals("E", it.next());
+        assertEquals("F", it.next());
+        assertFalse(it.hasNext());
+    }
+
+    @Test
     public void testJoinBody() {
         List<Object> data = new ArrayList<>();
         data.add("A");
@@ -2188,6 +2264,14 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testBodyType() {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${bodyType}", String.class);
+        exchange.getIn().setBody(123);
+        assertExpression("${bodyType}", Integer.class);
+    }
+
+    @Test
     public void testJsonPrettyPrint() {
 
         StringBuilder expectedJson = new StringBuilder();
@@ -2398,6 +2482,532 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testHashStreamCache() throws Exception {
+        File f = new File("src/test/resources/log4j2.properties");
+        StreamCache sc = new FileInputStreamCache(f);
+        assertEquals(-1, sc.position());
+        exchange.getMessage().setBody(sc);
+        Expression expression = context.resolveLanguage("simple").createExpression("${hash(${body})}");
+        String s = expression.evaluate(exchange, String.class);
+        assertNotNull(s);
+        // should reset so we can read it again
+        assertEquals(-1, sc.position());
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] arr = context.getTypeConverter().convertTo(byte[].class, f);
+        byte[] bytes = digest.digest(arr);
+        String expected = StringHelper.bytesToHex(bytes);
+        assertEquals(expected, s);
+    }
+
+    @Test
+    public void testSize() {
+        exchange.getMessage().setBody(new int[] { 4, 7, 9 });
+        Expression expression = context.resolveLanguage("simple").createExpression("${size()}");
+        int len = expression.evaluate(exchange, int.class);
+        assertEquals(3, len);
+
+        exchange.getMessage().setBody("Hello World");
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(11, len);
+
+        exchange.getMessage().setBody(List.of("A", "B", "C", "D"));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(4, len);
+
+        exchange.getMessage().setBody(Map.of("A", 1, "B", 2, "C", 3));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(3, len);
+
+        File f = new File("src/test/resources/log4j2.properties");
+        exchange.getMessage().setBody(f);
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(f.length(), len);
+    }
+
+    @Test
+    public void testLength() {
+        exchange.getMessage().setBody(new int[] { 4, 7, 9 });
+        Expression expression = context.resolveLanguage("simple").createExpression("${length()}");
+        int len = expression.evaluate(exchange, int.class);
+        assertEquals(3, len);
+
+        exchange.getMessage().setBody("Hello World");
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(11, len);
+
+        exchange.getMessage().setBody(List.of("A", "BB", "CCC", "DDDD"));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(18, len);
+
+        exchange.getMessage().setBody(Map.of("A", 1, "BB", 22, "CC", 333));
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(20, len);
+
+        File f = new File("src/test/resources/log4j2.properties");
+        exchange.getMessage().setBody(f);
+        len = expression.evaluate(exchange, int.class);
+        assertEquals(f.length(), len);
+    }
+
+    @Test
+    public void testConvertTo() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${convertTo(byte[])}");
+        Object s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(byte[].class, s);
+
+        // ognl
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(String).repeat(2)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(String.class, s);
+        assertEquals("Hello WorldHello World", s);
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(${body},String).substring(2)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(String.class, s);
+        assertEquals("llo World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(${body},byte[])}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(byte[].class, s);
+
+        exchange.getMessage().setBody("987");
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(int)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, s);
+        assertEquals(987, s);
+
+        exchange.getMessage().setBody("true");
+        expression = context.resolveLanguage("simple").createExpression("${convertTo(boolean)}");
+        s = expression.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Boolean.class, s);
+        assertEquals(Boolean.TRUE, s);
+    }
+
+    @Test
+    public void testConvertToOGNL() {
+        exchange.getIn().setBody(new OrderLine(123, "Camel in Action"));
+
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getId}", 123);
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getName}",
+                "Camel in Action");
+    }
+
+    @Test
+    public void testConvertToOGNLArray() {
+        exchange.getIn().setBody(new SimpleTest.OrderLine(123, "Camel in Action"));
+
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getId}", 123);
+        assertExpression("${convertTo(${body},org.apache.camel.language.simple.SimpleTest$OrderLine).getName}",
+                "Camel in Action");
+    }
+
+    @Test
+    public void testSplit() {
+        String body = "A,B,C,D,E";
+        String[] arr = body.split(",");
+        exchange.getMessage().setBody(body);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${split()}");
+        String[] s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals(arr, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${split(',')}");
+        s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals(arr, s);
+
+        expression = context.resolveLanguage("simple").createExpression("${split(';')}");
+        s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals("A,B,C,D,E".split(";"), s);
+
+        String head = "1;2;3;4";
+        String[] arr2 = head.split(";");
+        exchange.getIn().setHeader("myHead", head);
+        expression = context.resolveLanguage("simple").createExpression("${split(${header.myHead},;)}");
+        s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals(arr2, s);
+    }
+
+    @Test
+    public void testCapitalize() {
+        exchange.getMessage().setBody("hello world how are you");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${capitalize()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World How Are You", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${capitalize(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World How Are You", s);
+
+        exchange.getMessage().setHeader("beer", "carlsberg is a Beer");
+        expression = context.resolveLanguage("simple").createExpression("${capitalize(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Carlsberg Is A Beer", s);
+    }
+
+    @Test
+    public void testPad() {
+        exchange.getMessage().setBody("foo");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${pad(${body},5)}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("foo  ", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${pad(${body},-5)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("  foo", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${pad(${body},5,#)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("foo##", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${pad(${body},-5,#)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("##foo", s);
+
+        exchange.getMessage().setBody("Hello World");
+        expression = context.resolveLanguage("simple").createExpression("${pad(${body},5)}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+    }
+
+    @Test
+    public void testIsEmpty() {
+        exchange.getMessage().setBody("");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${isEmpty()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty(${body})}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty(' ')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty('   ')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty('Hello World')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty(${empty(map)})}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody(Collections.EMPTY_MAP);
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody(List.of("A", "B"));
+        expression = context.resolveLanguage("simple").createExpression("${isEmpty()}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+    }
+
+    @Test
+    public void testIsAlpha() {
+        exchange.getMessage().setBody("HelloWorld");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${isAlpha()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha(${body})}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha(3)}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha('')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha(' ')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha('HiIamHere')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha('Hi_I_am_here')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha('Hi I am here!')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello123".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${isAlpha()}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+    }
+
+    @Test
+    public void testIsAlphaNumeric() {
+        exchange.getMessage().setBody("Hello123");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric(${body})}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric(3)}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric('A')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric('')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric('!')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric('HiIamHere')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric('Hi_I_am_here')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric('Hi I am here!')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello123".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello123!".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${isAlphaNumeric()}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+    }
+
+    @Test
+    public void testIsNumeric() {
+        exchange.getMessage().setBody(123L);
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${isNumeric()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric(${body})}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric(3)}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric('-4')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric('1.99')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric('')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric('Hello')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric()}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("123".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${isNumeric()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+    }
+
+    @Test
+    public void testTrim() {
+        exchange.getMessage().setBody("   Hello World ");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${trim()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(' Hi  ')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hi", s);
+
+        exchange.getMessage().setHeader("beer", "  Carlsberg");
+        expression = context.resolveLanguage("simple").createExpression("${trim(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Carlsberg", s);
+    }
+
+    @Test
+    public void testSubstringBefore() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${substringBefore('World')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello ", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBefore(' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(${substringBefore('World')})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBefore(${body},'World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello ", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBefore('Unknown')}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+
+        exchange.getMessage().setHeader("place", "World");
+        expression = context.resolveLanguage("simple").createExpression("${substringBefore(${body},${header.place})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello ", s);
+    }
+
+    @Test
+    public void testSubstringAfter() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${substringAfter('Hello')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals(" World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringAfter('Hello ')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringAfter(${body},'Hello')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals(" World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(${substringAfter(${body},'Hello')})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringAfter('Unknown')}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+
+        exchange.getMessage().setHeader("place", "Hello");
+        expression = context.resolveLanguage("simple").createExpression("${substringAfter(${body},${header.place})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals(" World", s);
+    }
+
+    @Test
+    public void testSubstringBetween() {
+        exchange.getMessage().setBody("Hello big great World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${substringBetween('Hello','World')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals(" big great ", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBetween('Hello ',' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("big great", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBetween(${body},'big ',' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("great", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${trim(${substringBetween(${body},'big','World')})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("great", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${substringBetween('Hello','Unknown')}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+
+        exchange.getMessage().setHeader("place", "Hello");
+        exchange.getMessage().setHeader("place2", "great");
+        expression = context.resolveLanguage("simple")
+                .createExpression("${substringBetween(${body},${header.place},${header.place2})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals(" big ", s);
+    }
+
+    @Test
+    public void testConcat() {
+        exchange.getMessage().setBody("Hello");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${concat(' World')}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${concat(${body}, ' World')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${concat(${body}, 'World', '_')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello_World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${concat('World ', ${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("World Hello", s);
+
+        exchange.getMessage().setHeader("beer", "Carlsberg");
+        expression = context.resolveLanguage("simple").createExpression("${concat(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("HelloCarlsberg", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${concat(${body}, ${header.beer}, ' ')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello Carlsberg", s);
+    }
+
+    @Test
+    public void testUppercase() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${uppercase()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("HELLO WORLD", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${uppercase(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("HELLO WORLD", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${uppercase('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("HI", s);
+
+        exchange.getMessage().setHeader("beer", "Carlsberg");
+        expression = context.resolveLanguage("simple").createExpression("${uppercase(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("CARLSBERG", s);
+    }
+
+    @Test
+    public void testLowercase() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${lowercase()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("hello world", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${lowercase(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("hello world", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${lowercase('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("hi", s);
+
+        exchange.getMessage().setHeader("beer", "Carlsberg");
+        expression = context.resolveLanguage("simple").createExpression("${lowercase(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("carlsberg", s);
+    }
+
+    @Test
     public void testNewEmpty() {
         assertExpressionCreateNewEmpty("list", List.class, v -> ((List) v).isEmpty());
         assertExpressionCreateNewEmpty("LIST", List.class, v -> ((List) v).isEmpty());
@@ -2408,12 +3018,15 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpressionCreateNewEmpty("string", String.class, v -> ((String) v).isEmpty());
         assertExpressionCreateNewEmpty("STRING", String.class, v -> ((String) v).isEmpty());
         assertExpressionCreateNewEmpty("String", String.class, v -> ((String) v).isEmpty());
+        assertExpressionCreateNewEmpty("set", Set.class, v -> ((Set) v).isEmpty());
+        assertExpressionCreateNewEmpty("SET", Set.class, v -> ((Set) v).isEmpty());
+        assertExpressionCreateNewEmpty("Set", Set.class, v -> ((Set) v).isEmpty());
 
-        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty(falseSyntax}", null));
-        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty()}", null));
-        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty(}", null));
-        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty}", null));
-        assertThrows(IllegalArgumentException.class, () -> evaluateExpression("${empty(unknownType)}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${newEmpty(falseSyntax}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${newEmpty()}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${newEmpty(}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${newEmpty}", null));
+        assertThrows(IllegalArgumentException.class, () -> evaluateExpression("${newEmpty(unknownType)}", null));
     }
 
     @Test
@@ -2425,12 +3038,416 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression(exchange, "${pretty(${body})}", "{\n\t\"name\": \"Jack\",\n\t\"id\": 123\n}\n");
     }
 
+    @Test
+    public void testTrimResult() {
+        exchange.getMessage().setBody("Camel  ");
+
+        SimpleLanguage sl = (SimpleLanguage) context.resolveLanguage("simple");
+
+        Expression expression = sl.createExpression("  Hi ${body}", Object.class, false, false);
+        String out = expression.evaluate(exchange, String.class);
+        assertEquals("  Hi Camel  ", out);
+
+        expression = sl.createExpression("  Hi ${body}", Object.class, false, true);
+        out = expression.evaluate(exchange, String.class);
+        assertEquals("Hi Camel", out);
+    }
+
+    @Test
+    public void testSetHeader() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${setHeader(foo,${body})}");
+        Object s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertEquals("Hello World", exchange.getMessage().getHeader("foo"));
+
+        exchange.getMessage().setBody("123");
+        expression = context.resolveLanguage("simple").createExpression("${setHeader(bar,int,${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertIsInstanceOf(Integer.class, exchange.getMessage().getHeader("bar"));
+        assertEquals(123, exchange.getMessage().getHeader("bar"));
+
+        // null should remove the variable
+        expression = context.resolveLanguage("simple").createExpression("${setHeader(bar,${null})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertNull(exchange.getMessage().getHeader("bar"));
+    }
+
+    @Test
+    public void testSetVariable() {
+        exchange.getVariables().clear();
+        assertEquals(0, exchange.getVariables().size());
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${setVariable(foo,${body})}");
+        Object s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertEquals("Hello World", exchange.getVariable("foo"));
+        assertEquals(1, exchange.getVariables().size());
+
+        exchange.getMessage().setBody("123");
+        expression = context.resolveLanguage("simple").createExpression("${setVariable(bar,int,${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertIsInstanceOf(Integer.class, exchange.getVariable("bar"));
+        assertEquals(123, exchange.getVariable("bar"));
+        assertEquals(2, exchange.getVariables().size());
+
+        // null should remove the variable
+        expression = context.resolveLanguage("simple").createExpression("${setVariable(bar,${null})}");
+        s = expression.evaluate(exchange, String.class);
+        assertNull(s);
+        assertNull(exchange.getVariable("bar"));
+        assertEquals(1, exchange.getVariables().size());
+    }
+
+    @Test
+    public void testSetVariableMapping() {
+        exchange.getVariables().clear();
+        assertEquals(0, exchange.getVariables().size());
+        exchange.getMessage().setBody("Hello World");
+
+        String map = """
+                ${setVariable(count,${body.length})}
+                Input: ${body}
+                Bytes: ${variable.count}
+                """;
+        String exp = """
+
+                Input: Hello World
+                Bytes: 11
+                """;
+
+        Expression expression = context.resolveLanguage("simple").createExpression(map);
+        String out = expression.evaluate(exchange, String.class);
+        assertEquals(exp, out);
+    }
+
     private void assertExpressionCreateNewEmpty(
             String type, Class<?> expectedClass, java.util.function.Predicate<Object> isEmptyAssertion) {
-        Object value = evaluateExpression("${empty(%s)}".formatted(type), null);
+        Object value = evaluateExpression("${newEmpty(%s)}".formatted(type), null);
         assertNotNull(value);
         assertIsInstanceOf(expectedClass, value);
         assertTrue(isEmptyAssertion.test(value));
+    }
+
+    @Test
+    public void testAbs() {
+        exchange.getMessage().setBody("-987");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${abs()}");
+        Long l = expression.evaluate(exchange, Long.class);
+        assertEquals(987L, l);
+
+        expression = context.resolveLanguage("simple").createExpression("${abs()}");
+        Integer i = expression.evaluate(exchange, Integer.class);
+        assertEquals(987, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${abs(${body})}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("987", s);
+
+        exchange.getMessage().setHeader("myVal", "0");
+        expression = context.resolveLanguage("simple").createExpression("${abs(${header.myVal})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("0", s);
+
+        exchange.getMessage().setHeader("myVal", -222);
+        expression = context.resolveLanguage("simple").createExpression("${abs(${header.myVal})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("222", s);
+    }
+
+    @Test
+    public void testFloor() {
+        exchange.getMessage().setBody("5.3");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${floor()}");
+        int i = expression.evaluate(exchange, Integer.class);
+        assertEquals(5, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${floor(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(5, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${floor(6)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${floor(6.0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${floor(6.8)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${floor(-12.9)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(-13, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${floor(0.0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(0, i);
+
+        exchange.getMessage().setHeader("myNum", "234.56");
+        expression = context.resolveLanguage("simple").createExpression("${floor(${header.myNum})}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("234", s);
+    }
+
+    @Test
+    public void testCeil() {
+        exchange.getMessage().setBody("5.3");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${ceil()}");
+        int i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${ceil(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${ceil(6)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${ceil(6.0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${ceil(6.1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(7, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${ceil(-12.9)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(-12, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${ceil(0.0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(0, i);
+
+        exchange.getMessage().setHeader("myNum", "234.56");
+        expression = context.resolveLanguage("simple").createExpression("${ceil(${header.myNum})}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("235", s);
+    }
+
+    @Test
+    public void testSum() {
+        exchange.getMessage().setBody("4");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${sum(1,2,3)}");
+        int i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${sum(${body},1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(5, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${sum(${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(3, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${sum(${body},0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(4, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${sum(${body},${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(7, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${sum(1,2,3,4,5,6,7,8,9)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(45, i);
+
+        exchange.getMessage().setBody(new int[] { 4, 7, 9 });
+        expression = context.resolveLanguage("simple").createExpression("${sum(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(20, i);
+
+        exchange.getMessage().setBody("4,7,8");
+        expression = context.resolveLanguage("simple").createExpression("${sum(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(19, i);
+
+        exchange.getMessage().setBody(List.of("4", "7", "7"));
+        expression = context.resolveLanguage("simple").createExpression("${sum(${body},-8)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(10, i);
+    }
+
+    @Test
+    public void testMax() {
+        exchange.getMessage().setBody("4");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${max(1,2,6,4)}");
+        int i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${max(${body},2)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(4, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${max(${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(4, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${max(${body},0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(4, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${max(${body},${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(4, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${max(1,2,3,4,5,6,7,8,9)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(9, i);
+
+        exchange.getMessage().setBody(new int[] { 4, 9, 7 });
+        expression = context.resolveLanguage("simple").createExpression("${max(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(9, i);
+
+        exchange.getMessage().setBody(List.of("4", "7", "7"));
+        expression = context.resolveLanguage("simple").createExpression("${max(${body},-8,11,6)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(11, i);
+    }
+
+    @Test
+    public void testMin() {
+        exchange.getMessage().setBody("4");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${min(1,2,6,4)}");
+        int i = expression.evaluate(exchange, Integer.class);
+        assertEquals(1, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${min(${body},2)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(2, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${min(${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(-1, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${min(${body},0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(0, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${min(${body},${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(-1, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${min(1,2,3,4,5,6,7,8,9)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(1, i);
+
+        exchange.getMessage().setBody(new int[] { 4, 9, 7 });
+        expression = context.resolveLanguage("simple").createExpression("${min(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(4, i);
+
+        exchange.getMessage().setBody(List.of("4", "7", "7"));
+        expression = context.resolveLanguage("simple").createExpression("${min(${body},-8,11,6)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(-8, i);
+    }
+
+    @Test
+    public void testAverage() {
+        exchange.getMessage().setBody("4");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${average(1,2,3)}");
+        int i = expression.evaluate(exchange, Integer.class);
+        assertEquals(2, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${average(${body},1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(2, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${average(${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(1, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${average(${body},0)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(2, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${average(${body},${body},-1)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(2, i);
+
+        expression = context.resolveLanguage("simple").createExpression("${average(1,2,3,4,5,6,7,8,9)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(5, i);
+
+        exchange.getMessage().setBody(new int[] { 4, 7, 9 });
+        expression = context.resolveLanguage("simple").createExpression("${average(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        exchange.getMessage().setBody("4,7,8");
+        expression = context.resolveLanguage("simple").createExpression("${average(${body})}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(6, i);
+
+        exchange.getMessage().setBody(List.of("4", "7", "7"));
+        expression = context.resolveLanguage("simple").createExpression("${average(${body},-8)}");
+        i = expression.evaluate(exchange, Integer.class);
+        assertEquals(2, i);
+    }
+
+    @Test
+    public void testDistinct() {
+        exchange.getMessage().setBody("1,2,3,3,4,3,5");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${distinct()}");
+        Set set = expression.evaluate(exchange, Set.class);
+        assertEquals(5, set.size());
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("[1, 2, 3, 4, 5]", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${join(',','',${distinct()})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("1,2,3,4,5", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${distinct('Z','X','Z','A','B','A','C','D','B','E')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("[Z, X, A, B, C, D, E]", s);
+
+        expression = context.resolveLanguage("simple")
+                .createExpression("${distinct('Z','4',${body},'A','B','A','C','D','B','E')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("[Z, 4, 1, 2, 3, 5, A, B, C, D, E]", s);
+
+        exchange.getMessage().setBody(null);
+        expression = context.resolveLanguage("simple").createExpression("${distinct()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("[]", s);
+    }
+
+    @Test
+    public void testNot() {
+        exchange.getMessage().setBody("");
+        Expression expression = context.resolveLanguage("simple").createExpression("${not()}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Hello");
+        expression = context.resolveLanguage("simple").createExpression("${not()}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        expression = context.resolveLanguage("simple").createExpression("${not(${body} == 'Hello')}");
+        assertFalse(expression.evaluate(exchange, Boolean.class));
+
+        exchange.getMessage().setBody("Bye");
+        expression = context.resolveLanguage("simple").createExpression("${not(${body} == 'Hello')}");
+        assertTrue(expression.evaluate(exchange, Boolean.class));
     }
 
     @Override

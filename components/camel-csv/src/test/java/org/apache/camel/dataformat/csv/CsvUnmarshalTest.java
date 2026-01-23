@@ -94,9 +94,9 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:lazy", CSV_SAMPLE);
         line.assertIsSatisfied();
 
-        List body1 = line.getExchanges().get(0).getIn().getBody(List.class);
-        List body2 = line.getExchanges().get(1).getIn().getBody(List.class);
-        List body3 = line.getExchanges().get(2).getIn().getBody(List.class);
+        List<?> body1 = line.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> body2 = line.getExchanges().get(1).getIn().getBody(List.class);
+        List<?> body3 = line.getExchanges().get(2).getIn().getBody(List.class);
         assertEquals(Arrays.asList("A", "B", "C"), body1);
         assertEquals(Arrays.asList("1", "2", "3"), body2);
         assertEquals(Arrays.asList("one", "two", "three"), body3);
@@ -150,8 +150,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         template.sendBody("direct:lazy_map", CSV_SAMPLE);
         line.assertIsSatisfied();
 
-        Map map1 = line.getExchanges().get(0).getIn().getBody(Map.class);
-        Map map2 = line.getExchanges().get(1).getIn().getBody(Map.class);
+        Map<?, ?> map1 = line.getExchanges().get(0).getIn().getBody(Map.class);
+        Map<?, ?> map2 = line.getExchanges().get(1).getIn().getBody(Map.class);
 
         assertEquals(asMap("A", "1", "B", "2", "C", "3"), map1);
         assertEquals(asMap("A", "one", "B", "two", "C", "three"), map2);
@@ -174,6 +174,8 @@ public class CsvUnmarshalTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
+            @SuppressWarnings("resource")
+            // resource will be managed by framework lifecyle
             public void configure() {
                 // Default format
                 from("direct:default")

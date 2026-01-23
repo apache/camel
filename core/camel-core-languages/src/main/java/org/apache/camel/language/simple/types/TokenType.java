@@ -33,6 +33,7 @@ public enum TokenType {
     functionStart,
     functionEnd,
     binaryOperator,
+    otherOperator,
     unaryOperator,
     logicalOperator,
     eol

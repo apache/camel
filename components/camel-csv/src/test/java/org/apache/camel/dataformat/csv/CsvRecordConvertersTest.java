@@ -38,8 +38,8 @@ public class CsvRecordConvertersTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        CSVFormat format = CSVFormat.DEFAULT.withHeader("A", "B", "C");
-        CSVParser parser = new CSVParser(new StringReader("1,2,3"), format);
+        CSVFormat format = CSVFormat.DEFAULT.builder().setHeader("A", "B", "C").get();
+        CSVParser parser = CSVParser.builder().setReader(new StringReader("1,2,3")).setFormat(format).get();
         List<CSVRecord> records = parser.getRecords();
         record = records.get(0);
     }

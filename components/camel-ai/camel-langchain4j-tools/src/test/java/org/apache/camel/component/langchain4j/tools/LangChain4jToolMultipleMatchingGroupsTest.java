@@ -113,7 +113,9 @@ public class LangChain4jToolMultipleMatchingGroupsTest extends CamelTestSupport 
 
         Assertions.assertThat(message).isNotNull();
         final String responseContent = message.getMessage().getBody().toString();
-        Assertions.assertThat(responseContent).containsIgnoringCase(nameFromDB);
+        // Normalize U+202F (narrow no-break space) to ASCII space - Granite4 may substitute spaces
+        final String normalizedContent = responseContent.replace('\u202F', ' ');
+        Assertions.assertThat(normalizedContent).containsIgnoringCase(nameFromDB);
         Assertions.assertThat(responseContent).containsIgnoringCase("engineering");
     }
 }

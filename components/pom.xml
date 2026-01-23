@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -114,8 +114,8 @@
         <module>camel-crypto</module>
         <module>camel-crypto-pgp</module>
         <module>camel-csimple-joor</module>
-	<module>camel-csv</module>
-	<module>camel-cyberark-vault</module>
+	    <module>camel-csv</module>
+	    <module>camel-cyberark-vault</module>
         <module>camel-dapr</module>
         <module>camel-datasonnet</module>
         <module>camel-debug</module>

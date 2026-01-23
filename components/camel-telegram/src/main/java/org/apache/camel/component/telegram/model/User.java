@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * An user inside the Telegram network.
+ * This object represents a Telegram user or bot.
+ *
+ * @see <a href="https://core.telegram.org/bots/api#user">https://core.telegram.org/bots/api#user</a>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
@@ -41,6 +43,33 @@ public class User implements Serializable {
 
     @JsonProperty("is_bot")
     private boolean isBot;
+
+    @JsonProperty("language_code")
+    private String languageCode;
+
+    @JsonProperty("is_premium")
+    private Boolean isPremium;
+
+    @JsonProperty("added_to_attachment_menu")
+    private Boolean addedToAttachmentMenu;
+
+    @JsonProperty("can_join_groups")
+    private Boolean canJoinGroups;
+
+    @JsonProperty("can_read_all_group_messages")
+    private Boolean canReadAllGroupMessages;
+
+    @JsonProperty("supports_inline_queries")
+    private Boolean supportsInlineQueries;
+
+    @JsonProperty("can_connect_to_business")
+    private Boolean canConnectToBusiness;
+
+    @JsonProperty("has_main_web_app")
+    private Boolean hasMainWebApp;
+
+    @JsonProperty("has_topics_enabled")
+    private Boolean hasTopicsEnabled;
 
     public User() {
     }
@@ -85,6 +114,78 @@ public class User implements Serializable {
         isBot = bot;
     }
 
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
+    public Boolean getIsPremium() {
+        return isPremium;
+    }
+
+    public void setIsPremium(Boolean isPremium) {
+        this.isPremium = isPremium;
+    }
+
+    public Boolean getAddedToAttachmentMenu() {
+        return addedToAttachmentMenu;
+    }
+
+    public void setAddedToAttachmentMenu(Boolean addedToAttachmentMenu) {
+        this.addedToAttachmentMenu = addedToAttachmentMenu;
+    }
+
+    public Boolean getCanJoinGroups() {
+        return canJoinGroups;
+    }
+
+    public void setCanJoinGroups(Boolean canJoinGroups) {
+        this.canJoinGroups = canJoinGroups;
+    }
+
+    public Boolean getCanReadAllGroupMessages() {
+        return canReadAllGroupMessages;
+    }
+
+    public void setCanReadAllGroupMessages(Boolean canReadAllGroupMessages) {
+        this.canReadAllGroupMessages = canReadAllGroupMessages;
+    }
+
+    public Boolean getSupportsInlineQueries() {
+        return supportsInlineQueries;
+    }
+
+    public void setSupportsInlineQueries(Boolean supportsInlineQueries) {
+        this.supportsInlineQueries = supportsInlineQueries;
+    }
+
+    public Boolean getCanConnectToBusiness() {
+        return canConnectToBusiness;
+    }
+
+    public void setCanConnectToBusiness(Boolean canConnectToBusiness) {
+        this.canConnectToBusiness = canConnectToBusiness;
+    }
+
+    public Boolean getHasMainWebApp() {
+        return hasMainWebApp;
+    }
+
+    public void setHasMainWebApp(Boolean hasMainWebApp) {
+        this.hasMainWebApp = hasMainWebApp;
+    }
+
+    public Boolean getHasTopicsEnabled() {
+        return hasTopicsEnabled;
+    }
+
+    public void setHasTopicsEnabled(Boolean hasTopicsEnabled) {
+        this.hasTopicsEnabled = hasTopicsEnabled;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("User{");
@@ -93,6 +194,15 @@ public class User implements Serializable {
         sb.append(", firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
         sb.append(", username='").append(username).append('\'');
+        sb.append(", languageCode='").append(languageCode).append('\'');
+        sb.append(", isPremium=").append(isPremium);
+        sb.append(", addedToAttachmentMenu=").append(addedToAttachmentMenu);
+        sb.append(", canJoinGroups=").append(canJoinGroups);
+        sb.append(", canReadAllGroupMessages=").append(canReadAllGroupMessages);
+        sb.append(", supportsInlineQueries=").append(supportsInlineQueries);
+        sb.append(", canConnectToBusiness=").append(canConnectToBusiness);
+        sb.append(", hasMainWebApp=").append(hasMainWebApp);
+        sb.append(", hasTopicsEnabled=").append(hasTopicsEnabled);
         sb.append('}');
         return sb.toString();
     }

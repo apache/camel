@@ -39,30 +39,32 @@ public class CxfRsEndpointTest extends CamelTestSupport {
                              + "&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService,"
                              + "java.lang.String,org.apache.camel.component.cxf.jaxrs.testbean.Order";
 
-        CxfRsComponent component = new CxfRsComponent(context);
-        CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
+        try (CxfRsComponent component = new CxfRsComponent(context)) {
+            CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
 
-        assertNotNull(endpoint, "The endpoint should not be null");
-        assertEquals(endpointUri, endpoint.getEndpointUri(), "Get a wrong address");
-        assertEquals(3, endpoint.getResourceClasses().size(), "Get a wrong size of resouces classes");
-        assertEquals(CustomerService.class, endpoint.getResourceClasses().get(0), "Get a wrong resources class");
-        assertEquals(true, endpoint.isLoggingFeatureEnabled(), "Get a wrong loggingFeatureEnabled setting");
-        assertEquals(200, endpoint.getLoggingSizeLimit(), "Get a wrong loggingSizeLimit setting");
+            assertNotNull(endpoint, "The endpoint should not be null");
+            assertEquals(endpointUri, endpoint.getEndpointUri(), "Get a wrong address");
+            assertEquals(3, endpoint.getResourceClasses().size(), "Get a wrong size of resouces classes");
+            assertEquals(CustomerService.class, endpoint.getResourceClasses().get(0), "Get a wrong resources class");
+            assertEquals(true, endpoint.isLoggingFeatureEnabled(), "Get a wrong loggingFeatureEnabled setting");
+            assertEquals(200, endpoint.getLoggingSizeLimit(), "Get a wrong loggingSizeLimit setting");
+        }
     }
 
     @Test
     public void testCxfRsEndpointParameters() throws Exception {
-        CxfRsComponent component = new CxfRsComponent(context);
-        String endpointUri = "cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?"
-                             + "continuationTimeout=80000&httpClientAPI=true&loggingFeatureEnabled=true&loggingSizeLimit=200&q1=11&q2=12";
+        try (CxfRsComponent component = new CxfRsComponent(context)) {
+            String endpointUri = "cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?"
+                                 + "continuationTimeout=80000&httpClientAPI=true&loggingFeatureEnabled=true&loggingSizeLimit=200&q1=11&q2=12";
 
-        CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
+            CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
 
-        assertEquals(endpointUri, endpoint.getEndpointUri(), "Get a wrong URI");
-        assertEquals(true, endpoint.isHttpClientAPI(), "Get a wrong usingClientAPI option");
-        assertNotNull(endpoint.getParameters(), "The Parameter should not be null");
-        assertEquals("{q1=11, q2=12}", endpoint.getParameters().toString(), "Get a wrong parameter map");
-        assertEquals(80000, endpoint.getContinuationTimeout(), "Get a wrong continucationTimeout");
+            assertEquals(endpointUri, endpoint.getEndpointUri(), "Get a wrong URI");
+            assertEquals(true, endpoint.isHttpClientAPI(), "Get a wrong usingClientAPI option");
+            assertNotNull(endpoint.getParameters(), "The Parameter should not be null");
+            assertEquals("{q1=11, q2=12}", endpoint.getParameters().toString(), "Get a wrong parameter map");
+            assertEquals(80000, endpoint.getContinuationTimeout(), "Get a wrong continucationTimeout");
+        }
     }
 
     @Test
@@ -70,15 +72,16 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         String endpointUri = "cxfrs://http://localhost:" + CTX + ""
                              + "?resourceClass=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
-        CxfRsComponent component = new CxfRsComponent(context);
-        CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
+        try (CxfRsComponent component = new CxfRsComponent(context)) {
+            CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
 
-        assertNotNull(endpoint, "The endpoint should not be null");
-        assertEquals(endpointUri, endpoint.getEndpointUri(), "Get a wrong address");
-        assertEquals(1, endpoint.getResourceClasses().size(), "Get a wrong size of resouces classes");
-        assertEquals(CustomerService.class, endpoint.getResourceClasses().get(0), "Get a wrong resources class");
-        // check the default continuation value
-        assertEquals(30000, endpoint.getContinuationTimeout(), "Get a wrong continucationTimeout");
+            assertNotNull(endpoint, "The endpoint should not be null");
+            assertEquals(endpointUri, endpoint.getEndpointUri(), "Get a wrong address");
+            assertEquals(1, endpoint.getResourceClasses().size(), "Get a wrong size of resouces classes");
+            assertEquals(CustomerService.class, endpoint.getResourceClasses().get(0), "Get a wrong resources class");
+            // check the default continuation value
+            assertEquals(30000, endpoint.getContinuationTimeout(), "Get a wrong continucationTimeout");
+        }
     }
 
     @Test
@@ -87,16 +90,17 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         String endpointUri = "cxfrs://http://localhost:" + CTX + ""
                              + "?resourceClass=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
-        CxfRsComponent component = new CxfRsComponent(context);
-        CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
-        JSONProvider<?> jsonProvider = new JSONProvider<>();
-        jsonProvider.setDropRootElement(true);
-        jsonProvider.setSupportUnwrapped(true);
-        endpoint.setProvider(jsonProvider);
-        JAXRSServerFactoryBean sfb = endpoint.createJAXRSServerFactoryBean();
-        assertEquals(1, sfb.getProviders().size(), "Get a wrong proider size");
-        JAXRSClientFactoryBean cfb = endpoint.createJAXRSClientFactoryBean();
-        assertEquals(1, cfb.getProviders().size(), "Get a wrong proider size");
+        try (CxfRsComponent component = new CxfRsComponent(context)) {
+            CxfRsEndpoint endpoint = (CxfRsEndpoint) component.createEndpoint(endpointUri);
+            JSONProvider<?> jsonProvider = new JSONProvider<>();
+            jsonProvider.setDropRootElement(true);
+            jsonProvider.setSupportUnwrapped(true);
+            endpoint.setProvider(jsonProvider);
+            JAXRSServerFactoryBean sfb = endpoint.createJAXRSServerFactoryBean();
+            assertEquals(1, sfb.getProviders().size(), "Get a wrong proider size");
+            JAXRSClientFactoryBean cfb = endpoint.createJAXRSClientFactoryBean();
+            assertEquals(1, cfb.getProviders().size(), "Get a wrong proider size");
+        }
     }
 
     @Test

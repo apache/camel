@@ -23,7 +23,6 @@ import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.apache.commons.lang3.SystemUtils;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.commons.api.BasicCache;
-import org.infinispan.configuration.cache.CacheMode;
 import org.jgroups.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -47,12 +46,7 @@ public class InfinispanRemoteConfigurationIT {
         try (CamelContext context = new DefaultCamelContext();
              InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            manager.getCacheContainer().administration()
-                    .getOrCreateCache(
-                            "misc_cache",
-                            new org.infinispan.configuration.cache.ConfigurationBuilder()
-                                    .clustering()
-                                    .cacheMode(CacheMode.DIST_SYNC).build());
+            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 5000);
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);
@@ -88,12 +82,7 @@ public class InfinispanRemoteConfigurationIT {
         try (CamelContext context = new DefaultCamelContext();
              InfinispanRemoteManager manager = new InfinispanRemoteManager(context, configuration)) {
             manager.start();
-            manager.getCacheContainer().administration()
-                    .getOrCreateCache(
-                            "misc_cache",
-                            new org.infinispan.configuration.cache.ConfigurationBuilder()
-                                    .clustering()
-                                    .cacheMode(CacheMode.DIST_SYNC).build());
+            InfinispanRemoteTestSupport.waitForCacheReady(manager.getCacheContainer(), "misc_cache", 5000);
 
             BasicCache<Object, Object> cache = manager.getCache("misc_cache");
             assertNotNull(cache);
@@ -104,4 +93,5 @@ public class InfinispanRemoteConfigurationIT {
             assertNotNull(cache.put(key, "val2"));
         }
     }
+
 }

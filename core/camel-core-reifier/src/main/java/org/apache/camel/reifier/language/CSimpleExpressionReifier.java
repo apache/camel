@@ -32,4 +32,14 @@ public class CSimpleExpressionReifier extends TypedExpressionReifier<CSimpleExpr
         return false;
     }
 
+    @Override
+    protected Object[] createProperties() {
+        Object[] properties = new Object[4];
+        properties[0] = asResultType();
+        properties[1] = parseBoolean(definition.getTrim());
+        properties[2] = parseBoolean(definition.getPretty());
+        properties[3] = parseBoolean(definition.getTrimResult());
+        return properties;
+    }
+
 }

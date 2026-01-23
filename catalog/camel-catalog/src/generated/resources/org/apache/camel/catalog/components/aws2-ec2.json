@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-ec2",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "scheme": "aws2-ec2",
     "extendsScheme": "",
     "syntax": "aws2-ec2:label",
@@ -62,7 +62,10 @@
     "CamelAwsEC2InstancesClientToken": { "index": 11, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Unique, case-sensitive identifier you provide to ensure the idempotency of the request.", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#INSTANCES_CLIENT_TOKEN" },
     "CamelAwsEC2InstancesPlacement": { "index": 12, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "software.amazon.awssdk.services.ec2.model.Placement", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The placement for the instance.", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#INSTANCES_PLACEMENT" },
     "CamelAwsEC2InstancesTags": { "index": 13, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "Collection<Tag>", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "A collection of tags to add or remove from EC2 resources", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#INSTANCES_TAGS" },
-    "CamelAwsEC2SubnetId": { "index": 14, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ID of the subnet to launch the instance into.", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#SUBNET_ID" }
+    "CamelAwsEC2SubnetId": { "index": 14, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ID of the subnet to launch the instance into.", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#SUBNET_ID" },
+    "CamelAwsEC2NextToken": { "index": 15, "kind": "header", "displayName": "", "group": "describeInstances describeInstancesStatus", "label": "describeInstances describeInstancesStatus", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The token for the next set of results.", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#NEXT_TOKEN" },
+    "CamelAwsEC2MaxResults": { "index": 16, "kind": "header", "displayName": "", "group": "describeInstances describeInstancesStatus", "label": "describeInstances describeInstancesStatus", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The maximum number of results to return.", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#MAX_RESULTS" },
+    "CamelAwsEC2IsTruncated": { "index": 17, "kind": "header", "displayName": "", "group": "describeInstances describeInstancesStatus", "label": "describeInstances describeInstancesStatus", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Whether the response has more results (is truncated).", "constantName": "org.apache.camel.component.aws2.ec2.AWS2EC2Constants#IS_TRUNCATED" }
   },
   "properties": {
     "label": { "index": 0, "kind": "path", "displayName": "Label", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.ec2.AWS2EC2Configuration", "configurationField": "configuration", "description": "Logical name" },

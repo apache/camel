@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
 
+import org.apache.camel.util.HomeHelper;
 import org.jline.builtins.ClasspathResourceUtil;
 import org.jline.builtins.ConfigurationPath;
 import org.jline.console.SystemRegistry;
@@ -76,7 +77,7 @@ public class Shell extends CamelCommand {
             systemRegistry.setCommandRegistries(builtins, commands);
             systemRegistry.register("help", commands);
 
-            String history = Paths.get(System.getProperty("user.home"), ".camel-jbang-history").toString();
+            String history = Paths.get(HomeHelper.resolveHomeDir(), ".camel-jbang-history").toString();
             LineReader reader = LineReaderBuilder.builder()
                     .terminal(terminal)
                     .completer(systemRegistry.completer())

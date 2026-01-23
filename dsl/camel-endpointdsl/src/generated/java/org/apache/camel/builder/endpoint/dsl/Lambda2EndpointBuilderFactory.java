@@ -987,6 +987,92 @@ public interface Lambda2EndpointBuilderFactory {
         public String awsLambdaAliasFunctionDescription() {
             return "CamelAwsLambdaAliasFunctionDescription";
         }
+        /**
+         * The marker for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listFunctions listVersions listAliases listEventSourceMapping
+         * listTags
+         * 
+         * @return the name of the header {@code AwsLambdaMarker}.
+         */
+        public String awsLambdaMarker() {
+            return "CamelAwsLambdaMarker";
+        }
+        /**
+         * The maximum number of results to return.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: listFunctions listVersions listAliases listEventSourceMapping
+         * 
+         * @return the name of the header {@code AwsLambdaMaxItems}.
+         */
+        public String awsLambdaMaxItems() {
+            return "CamelAwsLambdaMaxItems";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: listFunctions listVersions listAliases listEventSourceMapping
+         * 
+         * @return the name of the header {@code AwsLambdaIsTruncated}.
+         */
+        public String awsLambdaIsTruncated() {
+            return "CamelAwsLambdaIsTruncated";
+        }
+        /**
+         * The Amazon Resource Name (ARN) of the function.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction getFunction publishVersion createAlias getAlias
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionArn}.
+         */
+        public String awsLambdaFunctionArn() {
+            return "CamelAwsLambdaFunctionArn";
+        }
+        /**
+         * The HTTP status code of the function invocation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaStatusCode}.
+         */
+        public String awsLambdaStatusCode() {
+            return "CamelAwsLambdaStatusCode";
+        }
+        /**
+         * If present, indicates that an error occurred during function
+         * execution.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionError}.
+         */
+        public String awsLambdaFunctionError() {
+            return "CamelAwsLambdaFunctionError";
+        }
+        /**
+         * The last 4 KB of the execution log.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaLogResult}.
+         */
+        public String awsLambdaLogResult() {
+            return "CamelAwsLambdaLogResult";
+        }
     }
     static Lambda2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Lambda2EndpointBuilderImpl extends AbstractEndpointBuilder implements Lambda2EndpointBuilder, AdvancedLambda2EndpointBuilder {

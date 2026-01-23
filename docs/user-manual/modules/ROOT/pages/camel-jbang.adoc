@@ -128,6 +128,8 @@ TIP: The first time you run this command, it may cause dependencies to be cached
 
 All the commands support the `--help` and will display the appropriate help if that flag is provided.
 
+TIP: For a complete reference of all commands and their options, see the xref:jbang-commands/camel-jbang-commands.adoc[Camel JBang Command Reference].
+
 === Enable shell completion
 
 Camel JBang provides shell completion for bash and zsh out of the box. To enable shell completion for Camel JBang, run:

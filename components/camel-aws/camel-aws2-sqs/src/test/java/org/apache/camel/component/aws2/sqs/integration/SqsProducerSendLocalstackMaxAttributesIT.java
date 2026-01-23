@@ -56,7 +56,8 @@ public class SqsProducerSendLocalstackMaxAttributesIT extends Aws2SQSBaseTest {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-        Assertions.assertEquals(13, result.getExchanges().get(0).getMessage().getHeaders().size());
+        // 13 original headers + 1 new SEQUENCE_NUMBER header (null for non-FIFO queues)
+        Assertions.assertEquals(14, result.getExchanges().get(0).getMessage().getHeaders().size());
     }
 
     @Override

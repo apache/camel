@@ -4,7 +4,7 @@
 :artifactid: camel-ibm-watson-discovery
 :description: Perform document understanding and search using IBM Watson Discovery
 :since: 4.16
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
