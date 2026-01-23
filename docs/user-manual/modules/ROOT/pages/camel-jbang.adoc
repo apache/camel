@@ -1552,7 +1552,7 @@ $ camel cmd send --body=file:payload.json --uri='kamelet:mqtt-sink?brokerUrl=tcp
 
 ==== Sending messages to infrastructure services
 
-*Available since Camel 4.17*
+*Available since Camel 4.18*
 
 In Camel 4.17, you can use `camel cmd send` to send messages directly to infrastructure services that are started with `camel infra run`.
 This eliminates the need to manually specify server connection details, as the command automatically reads connection information from JSON files created by infrastructure services.
