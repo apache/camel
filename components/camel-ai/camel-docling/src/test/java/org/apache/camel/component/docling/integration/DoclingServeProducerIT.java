@@ -20,22 +20,13 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docling.ConversionStatus;
-import org.apache.camel.component.docling.DoclingComponent;
-import org.apache.camel.component.docling.DoclingConfiguration;
 import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DoclingOperations;
-import org.apache.camel.test.infra.docling.services.DoclingService;
-import org.apache.camel.test.infra.docling.services.DoclingServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,29 +39,10 @@ import static org.junit.jupiter.api.Assertions.fail;
  * container for testing without manual setup.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
-public class DoclingServeProducerIT extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DoclingServeProducerIT.class);
-
-    @RegisterExtension
-    static DoclingService doclingService = DoclingServiceFactory.createService();
+class DoclingServeProducerIT extends DoclingITestSupport {
 
     @TempDir
     Path outputDir;
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DoclingComponent docling = context.getComponent("docling", DoclingComponent.class);
-        DoclingConfiguration conf = new DoclingConfiguration();
-        conf.setUseDoclingServe(true);
-        conf.setDoclingServeUrl(doclingService.doclingServerUrl());
-        docling.setConfiguration(conf);
-
-        LOG.info("Testing Docling-Serve at: {}", doclingService.doclingServerUrl());
-
-        return context;
-    }
 
     @Test
     public void testMarkdownConversionWithDoclingServe() throws Exception {
