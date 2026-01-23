@@ -104,7 +104,6 @@
         -->
         <checker-framework-version>3.53.0</checker-framework-version>
         <chicory-version>1.6.1</chicory-version>
-        <chromadb-client-version>0.1.7</chromadb-client-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>4.9.1</citrus-version>
         <classgraph-version>4.8.184</classgraph-version>
