@@ -17,29 +17,29 @@
 package org.apache.camel.language.simple.types;
 
 /**
- * Classifications of known token types.
+ * Types of init operators supported
  */
-public enum TokenType {
+public enum InitOperatorType {
 
-    ignore,
-    whiteSpace,
-    character,
-    booleanValue,
-    numericValue,
-    nullValue,
-    singleQuote,
-    doubleQuote,
-    minusValue,
-    escape,
-    functionStart,
-    functionEnd,
-    binaryOperator,
-    otherOperator,
-    unaryOperator,
-    logicalOperator,
-    initOperator,
-    initVariable,
-    ternaryOperator,
-    eol
+    ASSIGNMENT;
+
+    public static InitOperatorType asOperator(String text) {
+        if (":=".equals(text)) {
+            return ASSIGNMENT;
+        }
+        throw new IllegalArgumentException("Operator not supported: " + text);
+    }
+
+    public static String getOperatorText(InitOperatorType operator) {
+        if (operator == ASSIGNMENT) {
+            return ":=";
+        }
+        return "";
+    }
+
+    @Override
+    public String toString() {
+        return getOperatorText(this);
+    }
 
 }

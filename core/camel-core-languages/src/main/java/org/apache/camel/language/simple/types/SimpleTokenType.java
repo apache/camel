@@ -48,6 +48,13 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is ignore token
+     */
+    public boolean isIgnore() {
+        return type == TokenType.ignore;
+    }
+
+    /**
      * Whether the type is whitespace
      */
     public boolean isWhitespace() {
@@ -122,6 +129,20 @@ public final class SimpleTokenType {
      */
     public boolean isLogical() {
         return type == TokenType.logicalOperator;
+    }
+
+    /**
+     * Whether the type is init operator
+     */
+    public boolean isInit() {
+        return type == TokenType.initOperator;
+    }
+
+    /**
+     * Whether the type is init variable
+     */
+    public boolean isInitVariable() {
+        return type == TokenType.initVariable;
     }
 
     /**

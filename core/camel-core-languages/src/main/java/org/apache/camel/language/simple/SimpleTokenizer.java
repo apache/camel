@@ -24,16 +24,16 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Tokenizer to create {@link SimpleToken} from the input.
  */
-public final class SimpleTokenizer {
+public class SimpleTokenizer {
 
     // keep this number in sync with tokens list
     private static final int NUMBER_OF_TOKENS = 52;
 
     private static final SimpleTokenType[] KNOWN_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
-    // optimise to be able to quick check for start functions
+    // optimize to be able to quick check for start functions
     private static final String[] FUNCTION_START = new String[] { "${", "$simple{" };
-    // optimise to be able to quick check for end function
+    // optimize to be able to quick check for end function
     private static final String FUNCTION_END = "}";
 
     static {
@@ -106,10 +106,6 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[51] = new SimpleTokenType(TokenType.minusValue, "-");
     }
 
-    private SimpleTokenizer() {
-        // static methods
-    }
-
     /**
      * Does the expression include a simple function.
      *
@@ -146,7 +142,7 @@ public final class SimpleTokenizer {
      * @param  filter      defines the accepted token types to be returned (character is always used as fallback)
      * @return             the created token, will always return a token
      */
-    public static SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
+    public SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
         return doNextToken(expression, index, allowEscape, filter);
     }
 
@@ -158,11 +154,11 @@ public final class SimpleTokenizer {
      * @param  allowEscape whether to allow escapes
      * @return             the created token will always return a token
      */
-    public static SimpleToken nextToken(String expression, int index, boolean allowEscape) {
+    public SimpleToken nextToken(String expression, int index, boolean allowEscape) {
         return doNextToken(expression, index, allowEscape);
     }
 
-    private static SimpleToken doNextToken(String expression, int index, boolean allowEscape, TokenType... filters) {
+    private SimpleToken doNextToken(String expression, int index, boolean allowEscape, TokenType... filters) {
         boolean numericAllowed = acceptType(TokenType.numericValue, filters);
         if (numericAllowed) {
             // is it a numeric value
@@ -192,9 +188,18 @@ public final class SimpleTokenizer {
             }
         }
 
+        SimpleToken custom = customToken(expression, index, allowEscape, filters);
+        if (custom != null) {
+            return custom;
+        }
+
         // fallback and create a character token
         char ch = expression.charAt(index);
         return new SimpleToken(new SimpleTokenType(TokenType.character, String.valueOf(ch)), index);
+    }
+
+    protected SimpleToken customToken(String expression, int index, boolean allowEscape, TokenType... filters) {
+        return null;
     }
 
     private static int repositionIndex(String expression, int index, StringBuilder sb) {
@@ -249,7 +254,7 @@ public final class SimpleTokenizer {
         return new SimpleToken(new SimpleTokenType(TokenType.character, sb.toString()), index, special ? 2 : 1);
     }
 
-    private static boolean acceptType(TokenType type, TokenType... filters) {
+    protected static boolean acceptType(TokenType type, TokenType... filters) {
         if (filters == null || filters.length == 0) {
             return true;
         }
@@ -261,7 +266,7 @@ public final class SimpleTokenizer {
         return false;
     }
 
-    private static boolean acceptToken(SimpleTokenType token, String text, String expression, int index) {
+    protected static boolean acceptToken(SimpleTokenType token, String text, String expression, int index) {
         if (token.isUnary() && text.startsWith(token.getValue())) {
             return evalUnary(token, text, expression, index);
         }

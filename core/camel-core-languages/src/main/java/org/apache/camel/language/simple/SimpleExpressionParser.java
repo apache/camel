@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.ast.InitBlockExpression;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.OtherExpression;
@@ -63,10 +64,45 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         this.skipFileFunctions = skipFileFunctions;
     }
 
+    public SimpleExpressionParser(CamelContext camelContext, String expression,
+                                  boolean allowEscape, boolean skipFileFunctions,
+                                  Map<String, Expression> cacheExpression, SimpleTokenizer tokenizer) {
+        super(camelContext, expression, allowEscape, tokenizer);
+        this.cacheExpression = cacheExpression;
+        this.skipFileFunctions = skipFileFunctions;
+    }
+
     public Expression parseExpression() {
         try {
+            Expression init = null;
+            // are there init block then parse this part only, and change the expression to clip out the init block afterwards
+            if (SimpleInitBlockTokenizer.hasInitBlock(expression)) {
+                SimpleInitBlockParser initParser
+                        = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
+                // the init block should be parsed in predicate mode as that is needed to fully parse with all the operators and functions
+                init = initParser.parseExpression();
+                if (init != null) {
+                    String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
+                    if (part.startsWith("\n")) {
+                        // skip newline after ending init block
+                        part = part.substring(1);
+                    }
+                    this.expression = part;
+                    // use $$key as local variable in the expression afterwards
+                    for (String key : initParser.getInitKeys()) {
+                        this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
+                    }
+                }
+            }
+
+            // parse simple expression
             parseTokens();
-            return doParseExpression();
+            Expression exp = doParseExpression();
+            // include init block in expression
+            if (init != null) {
+                exp = ExpressionBuilder.concatExpression(List.of(init, exp));
+            }
+            return exp;
         } catch (SimpleParserException e) {
             // catch parser exception and turn that into a syntax exceptions
             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
@@ -147,24 +183,47 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     }
 
     /**
+     * Second step parsing into an expression
+     */
+    protected Expression doParseInitExpression() {
+        // create and return as a Camel expression
+        List<Expression> expressions = createExpressions();
+        if (expressions.isEmpty()) {
+            return null;
+        } else if (expressions.size() == 1) {
+            return expressions.get(0);
+        } else {
+            return ExpressionBuilder.eval(expressions);
+        }
+    }
+
+    /**
      * Removes any ignorable whitespace tokens before and after other operators.
      * <p/>
      * During the initial parsing (input -> tokens), then there may be excessive whitespace tokens, which can safely be
      * removed, which makes the succeeding parsing easier.
      */
-    private void removeIgnorableWhiteSpaceTokens() {
+    protected void removeIgnorableWhiteSpaceTokens() {
+        // remove all ignored
+        tokens.removeIf(t -> t.getType().isIgnore());
+
         // white space should be removed before and after the other operator
         List<SimpleToken> toRemove = new ArrayList<>();
         for (int i = 1; i < tokens.size() - 1; i++) {
             SimpleToken prev = tokens.get(i - 1);
             SimpleToken cur = tokens.get(i);
             SimpleToken next = tokens.get(i + 1);
-            if (cur.getType().isOther()) {
+            if (cur.getType().isOther() || cur.getType().isInit()) {
                 if (prev.getType().isWhitespace()) {
                     toRemove.add(prev);
                 }
                 if (next.getType().isWhitespace()) {
                     toRemove.add(next);
+                }
+            }
+            if (cur.getType().isInitVariable()) {
+                if (prev.getType().isWhitespace()) {
+                    toRemove.add(prev);
                 }
             }
         }
@@ -234,6 +293,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             return new TernaryExpression(token);
         } else if (token.getType().isOther()) {
             return new OtherExpression(token);
+        } else if (token.getType().isInit()) {
+            return new InitBlockExpression(token);
         }
 
         // by returning null, we will let the parser determine what to do
