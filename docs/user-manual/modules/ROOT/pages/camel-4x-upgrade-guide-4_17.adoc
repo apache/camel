@@ -88,8 +88,8 @@ to not use the newly introduced checks in `camel-ftp` to have same behavior as p
 `camel-infinispan` has been upgraded to https://infinispan.org/blog/2025/11/10/infinispan-16-0[Infinispan 16].
 Virtual threads are enabled by default for embedded mode with `camel-infinispan-embedded`.
 
-If you choose to listen for cache events on the `infinispan-embedded` consumer, it is possible that events are not processed in a predicatable order.
-Disabling virtual threads by setting system property `org.infinispan.threads.virtual` to `false` leads to more predicatable event order processing.
+If you choose to listen for cache events on the `infinispan-embedded` consumer, it is possible that events are not processed in a predictable order.
+Disabling virtual threads by setting system property `org.infinispan.threads.virtual` to `false` leads to more predictable event order processing.
 
 === camel-tika
 
