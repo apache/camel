@@ -182,3 +182,127 @@ YAML::
             embeddingModel: "#myEmbeddingModel"
 ----
 ====
+
+=== Integration with Vector Stores
+
+The LangChain4j Embeddings component works seamlessly with vector databases for RAG (Retrieval-Augmented Generation) workflows.
+
+==== Using with Qdrant
+
+This example shows how to embed text and store it in Qdrant vector database:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:store")
+    .to("langchain4j-embeddings:embed")
+    .setHeader(Qdrant.Headers.ACTION).constant(QdrantAction.UPSERT)
+    .setHeader(Qdrant.Headers.POINT_ID).constant(1)
+    .transformDataType(new DataType("qdrant:embeddings"))
+    .to("qdrant:myCollection");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:store"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - setHeader:
+          name: CamelQdrantAction
+          constant: UPSERT
+      - setHeader:
+          name: CamelQdrantPointId
+          constant: 1
+      - transform:
+          dataType: "qdrant:embeddings"
+      - to: "qdrant:myCollection"
+----
+====
+
+==== Similarity Search for RAG
+
+Retrieve relevant content using similarity search:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:search")
+    .to("langchain4j-embeddings:embed")
+    .transformDataType(new DataType("qdrant:embeddings"))
+    .setHeader(Qdrant.Headers.ACTION, constant(QdrantAction.SIMILARITY_SEARCH))
+    .setHeader(Qdrant.Headers.INCLUDE_PAYLOAD, constant(true))
+    .to("qdrant:myCollection")
+    .transformDataType(new DataType("qdrant:rag"));
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:search"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - transform:
+          dataType: "qdrant:embeddings"
+      - setHeader:
+          name: CamelQdrantAction
+          constant: SIMILARITY_SEARCH
+      - setHeader:
+          name: CamelQdrantIncludePayload
+          constant: true
+      - to: "qdrant:myCollection"
+      - transform:
+          dataType: "qdrant:rag"
+----
+====
+
+==== Using with LangChain4j Embedding Store Component
+
+For a simpler integration, use the `langchain4j-embeddingstore` component which provides a unified interface:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:store")
+    .to("langchain4j-embeddings:embed")
+    .to("langchain4j-embeddingstore:myStore?action=ADD");
+
+from("direct:search")
+    .to("langchain4j-embeddings:embed")
+    .to("langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&returnTextContent=true");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:store"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - to: "langchain4j-embeddingstore:myStore?action=ADD"
+
+- route:
+    from:
+      uri: "direct:search"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&returnTextContent=true"
+----
+====

@@ -51,6 +51,19 @@ public class LangChain4jEmbeddingStoreConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private EmbeddingStoreFactory embeddingStoreFactory;
 
+    @UriParam(description = "The operation to perform: ADD, REMOVE, or SEARCH", enums = "ADD,REMOVE,SEARCH")
+    private LangChain4jEmbeddingStoreAction action;
+
+    @UriParam(description = "Maximum number of results to return for SEARCH operation", defaultValue = "5")
+    private Integer maxResults = 5;
+
+    @UriParam(description = "Minimum similarity score threshold for SEARCH operation (0.0 to 1.0)")
+    private Double minScore;
+
+    @UriParam(description = "When true, SEARCH returns List<String> with text content instead of List<EmbeddingMatch>",
+              defaultValue = "false")
+    private boolean returnTextContent = false;
+
     public EmbeddingStore<TextSegment> getEmbeddingStore() {
         return embeddingStore;
     }
@@ -73,6 +86,38 @@ public class LangChain4jEmbeddingStoreConfiguration implements Cloneable {
 
     public void setEmbeddingStoreFactory(EmbeddingStoreFactory embeddingStoreFactory) {
         this.embeddingStoreFactory = embeddingStoreFactory;
+    }
+
+    public LangChain4jEmbeddingStoreAction getAction() {
+        return action;
+    }
+
+    public void setAction(LangChain4jEmbeddingStoreAction action) {
+        this.action = action;
+    }
+
+    public Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public Double getMinScore() {
+        return minScore;
+    }
+
+    public void setMinScore(Double minScore) {
+        this.minScore = minScore;
+    }
+
+    public boolean isReturnTextContent() {
+        return returnTextContent;
+    }
+
+    public void setReturnTextContent(boolean returnTextContent) {
+        this.returnTextContent = returnTextContent;
     }
 
     // ************************
