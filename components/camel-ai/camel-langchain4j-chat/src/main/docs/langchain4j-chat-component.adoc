@@ -58,39 +58,154 @@ The Camel LangChain4j chat component provides an abstraction for interacting wit
 To integrate with a specific LLM, users should follow the steps described below, which explain
 how to integrate with OpenAI.
 
-Add the dependency for LangChain4j OpenAI support:
+===== Using LangChain4j Spring Boot Starters (Recommended for Spring Boot)
 
-.Example
+When using Camel with Spring Boot, you can leverage LangChain4j's Spring Boot starters for automatic configuration.
+
+Add the dependency for LangChain4j OpenAI Spring Boot starter:
+
+.pom.xml
 [source,xml]
 ----
 <dependency>
-      <groupId>dev.langchain4j</groupId>
-      <artifactId>langchain4j-open-ai</artifactId>
-    <version>x.x.x</version>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
+</dependency>
+----
+
+Configure the OpenAI Chat Model in `application.properties` or `application.yml`:
+
+.application.properties
+[source,properties]
+----
+langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
+langchain4j.open-ai.chat-model.model-name=gpt-3.5-turbo
+langchain4j.open-ai.chat-model.temperature=0.3
+langchain4j.open-ai.chat-model.timeout=3000s
+----
+
+.application.yml
+[source,yaml]
+----
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: gpt-3.5-turbo
+      temperature: 0.3
+      timeout: 3000s
+----
+
+The `ChatLanguageModel` bean will be automatically configured and available in the Spring context. Use it in your Camel routes:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:chat")
+    .to("langchain4j-chat:test?chatModel=#chatLanguageModel");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:chat"
+    steps:
+      - to:
+          uri: "langchain4j-chat:test"
+          parameters:
+            chatModel: "#chatLanguageModel"
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:chat"/>
+  <to uri="langchain4j-chat:test?chatModel=#chatLanguageModel"/>
+</route>
+----
+====
+
+[NOTE]
+====
+LangChain4j Spring Boot starters provide auto-configuration for various LLM providers including:
+
+* `langchain4j-open-ai-spring-boot-starter` - OpenAI
+* `langchain4j-azure-open-ai-spring-boot-starter` - Azure OpenAI
+* `langchain4j-google-ai-gemini-spring-boot-starter` - Google Gemini
+* `langchain4j-ollama-spring-boot-starter` - Ollama
+* `langchain4j-anthropic-spring-boot-starter` - Anthropic Claude
+* `langchain4j-mistral-ai-spring-boot-starter` - Mistral AI
+* `langchain4j-hugging-face-spring-boot-starter` - Hugging Face
+
+For a complete list of available starters and their configuration options, refer to the https://docs.langchain4j.dev/tutorials/spring-boot-integration[LangChain4j Spring Boot Integration documentation].
+====
+
+===== Manual Configuration (Alternative)
+
+Alternatively, you can manually initialize the Chat Model and add it to the Camel Registry:
+
+Add the dependency for LangChain4j OpenAI support:
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai</artifactId>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
 </dependency>
 ----
 
 Initialize the OpenAI Chat Model, and add it to the Camel Registry:
 
-[source, java]
+[source,java]
 ----
-ChatModel model = OpenAiChatModel.builder()
-                .apiKey(openApiKey)
-                .modelName(GPT_3_5_TURBO)
-                .temperature(0.3)
-                .timeout(ofSeconds(3000))
-                .build();
-context.getRegistry().bind("chatModel", model);
+ChatLanguageModel model = OpenAiChatModel.builder()
+    .apiKey(openApiKey)
+    .modelName(GPT_3_5_TURBO)
+    .temperature(0.3)
+    .timeout(ofSeconds(3000))
+    .build();
+context.getRegistry().bind("myChatModel", model);
 ----
 
-Use the model in the Camel LangChain4j Chat Producer
+Use the model in the Camel LangChain4j Chat Producer:
 
-[source, java]
+[tabs]
+====
+Java::
++
+[source,java]
 ----
- from("direct:chat")
-      .to("langchain4j-chat:test?chatModel=#chatModel")
+from("direct:chat")
+    .to("langchain4j-chat:test?chatModel=#myChatModel");
+----
 
+YAML::
++
+[source,yaml]
 ----
+- route:
+    from:
+      uri: "direct:chat"
+    steps:
+      - to:
+          uri: "langchain4j-chat:test"
+          parameters:
+            chatModel: "#myChatModel"
+----
+====
 
 [NOTE]
 ====

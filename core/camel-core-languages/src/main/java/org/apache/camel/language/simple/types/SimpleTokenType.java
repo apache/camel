@@ -173,6 +173,13 @@ public final class SimpleTokenType {
         return type == TokenType.numericValue;
     }
 
+    /**
+     * Whether the type is ternary operator
+     */
+    public boolean isTernary() {
+        return type == TokenType.ternaryOperator;
+    }
+
     @Override
     public String toString() {
         return value;

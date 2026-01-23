@@ -17,29 +17,34 @@
 package org.apache.camel.language.simple.types;
 
 /**
- * Classifications of known token types.
+ * Types of ternary operators supported
  */
-public enum TokenType {
+public enum TernaryOperatorType {
 
-    ignore,
-    whiteSpace,
-    character,
-    booleanValue,
-    numericValue,
-    nullValue,
-    singleQuote,
-    doubleQuote,
-    minusValue,
-    escape,
-    functionStart,
-    functionEnd,
-    binaryOperator,
-    otherOperator,
-    unaryOperator,
-    logicalOperator,
-    initOperator,
-    initVariable,
-    ternaryOperator,
-    eol
+    QUESTION,
+    COLON;
+
+    public static TernaryOperatorType asOperator(String text) {
+        if ("?".equals(text)) {
+            return QUESTION;
+        } else if (":".equals(text)) {
+            return COLON;
+        }
+        throw new IllegalArgumentException("Operator not supported: " + text);
+    }
+
+    public static String getOperatorText(TernaryOperatorType operator) {
+        if (operator == QUESTION) {
+            return "?";
+        } else if (operator == COLON) {
+            return ":";
+        }
+        return "";
+    }
+
+    @Override
+    public String toString() {
+        return getOperatorText(this);
+    }
 
 }

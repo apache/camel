@@ -30,6 +30,7 @@ import org.apache.camel.language.simple.ast.OtherExpression;
 import org.apache.camel.language.simple.ast.SimpleFunctionEnd;
 import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
+import org.apache.camel.language.simple.ast.TernaryExpression;
 import org.apache.camel.language.simple.ast.UnaryExpression;
 import org.apache.camel.language.simple.types.OtherOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -135,10 +136,11 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         // parse the expression using the following grammar
         nextToken();
         while (!token.getType().isEol()) {
-            // an expression supports just template (eg text), functions, unary, or other operator
+            // an expression supports just template (eg text), functions, unary, ternary, or other operator
             templateText();
             functionText();
             unaryOperator();
+            ternaryOperator();
             otherOperator();
             nextToken();
         }
@@ -155,6 +157,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         prepareBlocks();
         // compact and stack unary operators
         prepareUnaryExpressions();
+        // compact and stack ternary expressions
+        prepareTernaryExpressions();
         // compact and stack other expressions
         prepareOtherExpressions();
 
@@ -271,7 +275,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     }
 
     private SimpleNode createNode(SimpleToken token, AtomicInteger functions) {
-        // expression only support functions and unary operators
+        // expression only support functions, unary operators, ternary operators, and other operators
         if (token.getType().isFunctionStart()) {
             // starting a new function
             functions.incrementAndGet();
@@ -285,6 +289,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             if (!nodes.isEmpty() && nodes.get(nodes.size() - 1) instanceof SimpleFunctionEnd) {
                 return new UnaryExpression(token);
             }
+        } else if (token.getType().isTernary()) {
+            return new TernaryExpression(token);
         } else if (token.getType().isOther()) {
             return new OtherExpression(token);
         } else if (token.getType().isInit()) {
@@ -369,9 +375,9 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     // - other operator = operator attached to both the left and right hand side nodes
 
     protected void templateText() {
-        // for template, we accept anything but functions / other operator
+        // for template, we accept anything but functions / ternary operator / other operator
         while (!token.getType().isFunctionStart() && !token.getType().isFunctionEnd() && !token.getType().isEol()
-                && !token.getType().isOther()) {
+                && !token.getType().isTernary() && !token.getType().isOther()) {
             nextToken();
         }
     }
@@ -420,6 +426,33 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             } else {
                 throw new SimpleParserException(
                         "Other operator " + operatorType + " does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean ternaryOperator() {
+        if (accept(TokenType.ternaryOperator)) {
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expect(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Ternary operator does not support token " + token, token.getIndex());
             }
             return true;
         }
