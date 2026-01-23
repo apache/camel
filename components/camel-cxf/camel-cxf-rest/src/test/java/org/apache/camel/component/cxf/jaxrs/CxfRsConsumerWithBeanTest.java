@@ -18,13 +18,13 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource;
 import org.apache.camel.component.cxf.jaxrs.testbean.ServiceUtil;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -76,10 +76,12 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
         StringEntity entity = new StringEntity("string", ContentType.TEXT_PLAIN);
         put.setEntity(entity);
 
-        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-             CloseableHttpResponse response = httpclient.execute(put)) {
-            assertEquals(200, response.getCode());
-            assertEquals("c20string", EntityUtils.toString(response.getEntity()));
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build()) {
+            MyResponse httpResponse = httpclient.execute(put, response -> {
+                return new MyResponse(response.getCode(), EntityUtils.toString(response.getEntity()));
+            });
+            assertEquals(200, httpResponse.status());
+            assertEquals("c20string", httpResponse.content());
         }
     }
 }

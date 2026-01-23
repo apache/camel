@@ -22,6 +22,7 @@ camel cmd send [options]
 | `--body` | Message body to send (prefix with file: to refer to loading message body from file) |  | String
 | `--endpoint,--uri` | Endpoint where to send the message (can be uri, pattern, or refer to a route id) |  | String
 | `--header` | Message header (key=value) |  | List
+| `--infra` | Send to infrastructure service (e.g., nats, kafka) |  | String
 | `--logging-color` | Use colored logging | true | boolean
 | `--poll` | Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue. |  | boolean
 | `--pretty` | Pretty print response message body (InOut) when using JSon or XML format |  | boolean

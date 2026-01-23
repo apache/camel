@@ -27,10 +27,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
@@ -57,6 +59,7 @@ import org.apache.camel.support.RandomUuidGenerator;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
+import org.apache.camel.support.builder.PredicateBuilder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -368,6 +371,216 @@ public final class SimpleExpressionBuilder {
                     return "ceil(" + expression + ")";
                 } else {
                     return "ceil()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Whether the expression is empty or having a list/map which has no elements.
+     */
+    public static Expression isEmptyExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, Object.class);
+                } else {
+                    body = exchange.getMessage().getBody(Object.class);
+                }
+                // this may be an object that we can iterate
+                Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(body);
+                for (Object o : it) {
+                    if (o != null) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isEmpty(" + expression + ")";
+                } else {
+                    return "isEmpty()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Whether the expression is an alphabetic String
+     */
+    public static Expression isAlphaExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, String.class);
+                } else {
+                    body = exchange.getMessage().getBody(String.class);
+                }
+                if (body == null || body.isBlank()) {
+                    return false;
+                }
+                for (int i = 0; i < body.length(); i++) {
+                    char ch = body.charAt(i);
+                    if (!Character.isLetter(ch)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isAlpha(" + expression + ")";
+                } else {
+                    return "isAlpha()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Whether the expression is a number (integral or floating)
+     */
+    public static Expression isNumericExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, String.class);
+                } else {
+                    body = exchange.getMessage().getBody(String.class);
+                }
+                if (body == null || body.isBlank()) {
+                    return false;
+                }
+                for (int i = 0; i < body.length(); i++) {
+                    char ch = body.charAt(i);
+                    if (!Character.isDigit(ch)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isNumeric(" + expression + ")";
+                } else {
+                    return "isNumeric()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Whether the expression is an alphabetic or numeric String
+     */
+    public static Expression isAlphaNumericExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String body;
+                if (exp != null) {
+                    body = exp.evaluate(exchange, String.class);
+                } else {
+                    body = exchange.getMessage().getBody(String.class);
+                }
+                if (body == null || body.isBlank()) {
+                    return false;
+                }
+                for (int i = 0; i < body.length(); i++) {
+                    char ch = body.charAt(i);
+                    if (!Character.isLetterOrDigit(ch)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "isAlphaNumeric(" + expression + ")";
+                } else {
+                    return "isAlphaNumeric()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns the opposite result of the predicate
+     */
+    public static Expression isNotPredicate(final String predicate) {
+        return new ExpressionAdapter() {
+            private Predicate pred;
+
+            @Override
+            public void init(CamelContext context) {
+                pred = PredicateBuilder.not(context.resolveLanguage("simple").createPredicate(predicate));
+                pred.init(context);
+            }
+
+            public Object evaluate(Exchange exchange) {
+                return pred.matches(exchange);
+            }
+
+            @Override
+            public String toString() {
+                if (predicate != null) {
+                    return "not(" + predicate + ")";
+                } else {
+                    return "not()";
                 }
             }
         };
@@ -857,6 +1070,44 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * An expression that returns the distinct values from the expressions
+     */
+    public static Expression distinctExpression(String[] values) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[values != null ? values.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; values != null && i < values.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(values[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Set<Object> answer = new LinkedHashSet<>();
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        answer.add(i);
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "distinct(" + Arrays.toString(values) + ")";
+            }
+        };
+    }
+
+    /**
      * An expression that converts the expressions to number and sum the values
      */
     public static Expression sumExpression(String[] numbers) {
@@ -875,7 +1126,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                Long sum = null;
+                Long answer = null;
                 for (Expression exp : exps) {
                     Object o = exp.evaluate(exchange, Object.class);
                     // this may be an object that we can iterate
@@ -883,19 +1134,153 @@ public final class SimpleExpressionBuilder {
                     for (Object i : it) {
                         Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
                         if (val != null) {
-                            if (sum == null) {
-                                sum = 0L;
+                            if (answer == null) {
+                                answer = 0L;
                             }
-                            sum += val;
+                            answer += val;
                         }
                     }
                 }
-                return sum;
+                return answer;
             }
 
             @Override
             public String toString() {
                 return "sum(" + Arrays.toString(numbers) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that converts the expressions to number and returns the maximum number
+     */
+    public static Expression maxExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long answer = null;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (answer == null) {
+                                answer = val;
+                            }
+                            answer = Math.max(answer, val);
+                        }
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "max(" + Arrays.toString(numbers) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that converts the expressions to number and returns the minimum number
+     */
+    public static Expression minExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long answer = null;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (answer == null) {
+                                answer = val;
+                            }
+                            answer = Math.min(answer, val);
+                        }
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "min(" + Arrays.toString(numbers) + ")";
+            }
+        };
+    }
+
+    /**
+     * An expression that converts the expressions to number and returns the average number
+     */
+    public static Expression averageExpression(String[] numbers) {
+        return new ExpressionAdapter() {
+
+            private final Expression[] exps = new Expression[numbers != null ? numbers.length : 0];
+
+            @Override
+            public void init(CamelContext context) {
+                for (int i = 0; numbers != null && i < numbers.length; i++) {
+                    Expression exp = context.resolveLanguage("simple").createExpression(numbers[i]);
+                    exp.init(context);
+                    exps[i] = exp;
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Long answer = null;
+                int counter = 0;
+                for (Expression exp : exps) {
+                    Object o = exp.evaluate(exchange, Object.class);
+                    // this may be an object that we can iterate
+                    Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                    for (Object i : it) {
+                        Long val = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, i);
+                        if (val != null) {
+                            if (answer == null) {
+                                answer = 0L;
+                            }
+                            answer += val;
+                            counter++;
+                        }
+                    }
+                }
+                return answer != null ? answer / counter : null;
+            }
+
+            @Override
+            public String toString() {
+                return "average(" + Arrays.toString(numbers) + ")";
             }
         };
     }
@@ -1405,6 +1790,8 @@ public final class SimpleExpressionBuilder {
                     return "";
                 } else if ("list".equalsIgnoreCase(type)) {
                     return new ArrayList<>();
+                } else if ("set".equalsIgnoreCase(type)) {
+                    return new LinkedHashSet<>();
                 }
                 throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
             }

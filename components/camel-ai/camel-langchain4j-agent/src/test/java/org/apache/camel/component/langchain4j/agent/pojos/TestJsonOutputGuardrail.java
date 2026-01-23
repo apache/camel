@@ -27,6 +27,7 @@ import dev.langchain4j.guardrail.OutputGuardrailResult;
 public class TestJsonOutputGuardrail extends JsonExtractorOutputGuardrail<Object> {
 
     private static volatile boolean wasValidated = false;
+    private static volatile boolean allowReprompt = true;
 
     public TestJsonOutputGuardrail() {
         super(Object.class);
@@ -78,8 +79,28 @@ public class TestJsonOutputGuardrail extends JsonExtractorOutputGuardrail<Object
         return null;
     }
 
+    @Override
+    protected OutputGuardrailResult invokeInvalidJson(AiMessage aiMessage, String json) {
+        if (allowReprompt) {
+            // Default behavior: reprompt to get valid JSON
+            return super.invokeInvalidJson(aiMessage, json);
+        }
+        // Fail immediately without reprompting
+        return fatal("Output validation failed: Invalid JSON format");
+    }
+
+    /**
+     * Sets whether reprompting is allowed when JSON validation fails.
+     *
+     * @param allow true to allow reprompting (default), false to fail immediately
+     */
+    public static void setAllowReprompt(boolean allow) {
+        allowReprompt = allow;
+    }
+
     public static void reset() {
         wasValidated = false;
+        allowReprompt = true;
     }
 
     /**

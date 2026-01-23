@@ -149,6 +149,7 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
     public Expression createExpression(String expression, Object[] properties) {
         Class<?> resultType = property(Class.class, properties, 0, null);
         boolean pretty = property(boolean.class, properties, 2, false);
+        boolean trimResult = property(boolean.class, properties, 3, false);
         if (Boolean.class == resultType || boolean.class == resultType) {
             // we want it compiled as a predicate
             return (Expression) createPredicate(expression);
@@ -156,6 +157,9 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
             Expression exp = createExpression(expression);
             if (resultType != null) {
                 exp = ExpressionBuilder.convertToExpression(exp, resultType);
+            }
+            if (trimResult) {
+                exp = ExpressionBuilder.trimExpression(exp);
             }
             if (pretty) {
                 exp = ExpressionBuilder.prettyExpression(exp);

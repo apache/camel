@@ -46,15 +46,16 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
     private Server rsServer;
 
     @Override
+    @Deprecated
     protected boolean useJmx() {
         return false;
     }
 
     @Override
+    @Deprecated
     protected void doPreSetup() throws Exception {
         port = AvailablePortFinder.getNextAvailable();
         startRsEchoServer();
-
     }
 
     @AfterEach
@@ -107,8 +108,7 @@ public class CxfRsProducerStreamCacheTest extends CamelTestSupport {
                         .to(cxfrsUri)
                         // 2) read response after cxfrs call multiple times
                         .process(e -> {
-                            String body = e.getIn().getBody(String.class);
-
+                            e.getIn().getBody(String.class);
                         })
                         .log("The body is ===> ${body}");
 

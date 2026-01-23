@@ -40,4 +40,16 @@ public interface AzureInfraService extends InfrastructureService {
     default String credentialType() {
         return "SHARED_KEY_CREDENTIAL";
     }
+
+    default String containerName() {
+        return "testcontainer";
+    }
+
+    default String endpointUri() {
+        return String.format("azure-storage-blob:%s/%s", accountName(), containerName());
+    }
+
+    default String connectionBase() {
+        return String.format("azure-storage-blob:%s", accountName());
+    }
 }

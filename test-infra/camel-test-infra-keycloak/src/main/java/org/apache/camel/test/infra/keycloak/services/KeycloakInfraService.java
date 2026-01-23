@@ -24,12 +24,16 @@ import org.keycloak.admin.client.Keycloak;
  */
 public interface KeycloakInfraService extends InfrastructureService {
 
+    @Deprecated
     String getKeycloakServerUrl();
 
+    @Deprecated
     String getKeycloakRealm();
 
+    @Deprecated
     String getKeycloakUsername();
 
+    @Deprecated
     String getKeycloakPassword();
 
     /**
@@ -38,4 +42,20 @@ public interface KeycloakInfraService extends InfrastructureService {
      * @return Keycloak admin client instance
      */
     Keycloak getKeycloakAdminClient();
+
+    default String serverUrl() {
+        return getKeycloakServerUrl();
+    }
+
+    default String realm() {
+        return getKeycloakRealm();
+    }
+
+    default String username() {
+        return getKeycloakUsername();
+    }
+
+    default String password() {
+        return getKeycloakPassword();
+    }
 }

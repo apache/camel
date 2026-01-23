@@ -43,6 +43,7 @@ import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.ast.SingleQuoteEnd;
 import org.apache.camel.language.simple.ast.SingleQuoteStart;
+import org.apache.camel.language.simple.ast.TernaryExpression;
 import org.apache.camel.language.simple.ast.UnaryExpression;
 import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
@@ -53,6 +54,7 @@ import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.support.ObjectHelper.isFloatingNumber;
 import static org.apache.camel.support.ObjectHelper.isNumber;
@@ -82,8 +84,33 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     public Predicate parsePredicate() {
         try {
+            Expression init = null;
+            // are there init block then parse this part only, and change the expression to clip out the init block afterwards
+            if (SimpleInitBlockTokenizer.hasInitBlock(expression)) {
+                SimpleInitBlockParser initParser
+                        = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
+                init = initParser.parseExpression();
+                if (init != null) {
+                    String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
+                    if (part.startsWith("\n")) {
+                        // skip newline after ending init block
+                        part = part.substring(1);
+                    }
+                    this.expression = part;
+                    // use $$key as local variable in the expression afterwards
+                    for (String key : initParser.getInitKeys()) {
+                        this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
+                    }
+                }
+            }
+
             parseTokens();
-            return doParsePredicate();
+            Predicate pre = doParsePredicate();
+            // include init block in expression
+            if (init != null) {
+                pre = PredicateBuilder.and(PredicateBuilder.alwaysTrue(init), pre);
+            }
+            return pre;
         } catch (SimpleParserException e) {
             // catch parser exception and turn that into a syntax exceptions
             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
@@ -122,6 +149,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     && !functionText()
                     && !unaryOperator()
                     && !binaryOperator()
+                    && !ternaryOperator()
                     && !otherOperator()
                     && !logicalOperator()
                     && !isBooleanValue()
@@ -149,6 +177,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
         prepareUnaryExpressions();
         // compact and stack binary expressions
         prepareBinaryExpressions();
+        // compact and stack ternary expressions
+        prepareTernaryExpressions();
         // compact and stack other expressions
         prepareOtherExpressions();
         // compact and stack logical expressions
@@ -340,6 +370,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
             return new UnaryExpression(token);
         } else if (token.getType().isBinary()) {
             return new BinaryExpression(token);
+        } else if (token.getType().isTernary()) {
+            return new TernaryExpression(token);
         } else if (token.getType().isOther()) {
             return new OtherExpression(token);
         } else if (token.getType().isLogical()) {
@@ -387,6 +419,9 @@ public class SimplePredicateParser extends BaseSimpleParser {
      * removed, which makes the succeeding parsing easier.
      */
     private void removeIgnorableWhiteSpaceTokens() {
+        // remove all ignored
+        tokens.removeIf(t -> t.getType().isIgnore());
+
         // white space can be removed if its not part of a quoted text or within function(s)
         boolean quote = false;
         int functionCount = 0;
@@ -726,6 +761,33 @@ public class SimplePredicateParser extends BaseSimpleParser {
             } else {
                 throw new SimpleParserException(
                         "Binary operator " + operatorType + " does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean ternaryOperator() {
+        if (accept(TokenType.ternaryOperator)) {
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expect(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Ternary operator does not support token " + token, token.getIndex());
             }
             return true;
         }

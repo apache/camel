@@ -23,7 +23,17 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  */
 public interface PulsarInfraService extends InfrastructureService {
 
+    @Deprecated
     String getPulsarAdminUrl();
 
+    @Deprecated
     String getPulsarBrokerUrl();
+
+    default String serviceUrl() {
+        return getPulsarBrokerUrl();
+    }
+
+    default String adminUrl() {
+        return getPulsarAdminUrl();
+    }
 }

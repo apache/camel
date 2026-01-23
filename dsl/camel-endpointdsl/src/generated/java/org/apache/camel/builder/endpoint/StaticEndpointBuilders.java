@@ -14045,6 +14045,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String path) {
         return service("service", path);
     }
@@ -14067,6 +14068,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String componentName, String path) {
         return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

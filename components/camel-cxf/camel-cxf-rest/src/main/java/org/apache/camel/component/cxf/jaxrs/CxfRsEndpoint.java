@@ -32,7 +32,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
 import org.apache.camel.component.cxf.common.NullFaultListener;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.base.cookie.CookieHandler;
@@ -76,7 +75,7 @@ import static org.apache.camel.component.cxf.common.message.CxfConstants.SCHEME_
 @Metadata(annotations = {
         "protocol=http",
 })
-public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
+public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
 

@@ -35,7 +35,7 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
+@Deprecated(since = "4.7.0")
 public class ZooKeeperServiceDiscovery extends DefaultServiceDiscovery {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperServiceDiscovery.class);
 

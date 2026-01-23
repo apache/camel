@@ -24,10 +24,12 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -507,15 +509,17 @@ public final class CSimpleHelper {
         }
     }
 
-    public static Object empty(Exchange exchange, String type) {
+    public static Object newEmpty(Exchange exchange, String type) {
         if ("map".equalsIgnoreCase(type)) {
             return new LinkedHashMap<>();
         } else if ("string".equalsIgnoreCase(type)) {
             return "";
         } else if ("list".equalsIgnoreCase(type)) {
             return new ArrayList<>();
+        } else if ("set".equalsIgnoreCase(type)) {
+            return new LinkedHashSet<>();
         }
-        throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
+        throw new IllegalArgumentException("function newEmpty(%s) has unknown type".formatted(type));
     }
 
     public static List<Object> list(Exchange exchange, Object... args) {
@@ -527,21 +531,89 @@ public final class CSimpleHelper {
     }
 
     public static Long sum(Exchange exchange, Object... args) {
-        Long sum = null;
+        Long answer = null;
         for (Object o : args) {
             // this may be an object that we can iterate
             Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
             for (Object i : it) {
                 Long val = tryConvertTo(exchange, Long.class, i);
                 if (val != null) {
-                    if (sum == null) {
-                        sum = 0L;
+                    if (answer == null) {
+                        answer = 0L;
                     }
-                    sum += val;
+                    answer += val;
                 }
             }
         }
-        return sum;
+        return answer;
+    }
+
+    public static Long max(Exchange exchange, Object... args) {
+        Long answer = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = val;
+                    }
+                    answer = Math.max(answer, val);
+                }
+            }
+        }
+        return answer;
+    }
+
+    public static Long min(Exchange exchange, Object... args) {
+        Long answer = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = val;
+                    }
+                    answer = Math.min(answer, val);
+                }
+            }
+        }
+        return answer;
+    }
+
+    public static Long average(Exchange exchange, Object... args) {
+        Long answer = null;
+        int counter = 0;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = 0L;
+                    }
+                    answer += val;
+                    counter++;
+                }
+            }
+        }
+        return answer != null ? answer / counter : null;
+    }
+
+    public static Set<Object> distinct(Exchange exchange, Object... args) {
+        Set<Object> answer = new LinkedHashSet<>();
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                answer.add(i);
+            }
+        }
+        return answer;
     }
 
     public static Map<String, Object> map(Exchange exchange, Object... args) {
@@ -891,6 +963,59 @@ public final class CSimpleHelper {
         return null;
     }
 
+    public static boolean isAlpha(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isLetter(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAlphaNumeric(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isLetterOrDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNumeric(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isEmpty(Exchange exchange, Object value) {
+        // this may be an object that we can iterate
+        Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(value);
+        for (Object o : it) {
+            if (o != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static String trim(Exchange exchange, Object value) {
         String body;
         if (value != null) {
@@ -1035,6 +1160,18 @@ public final class CSimpleHelper {
         }
     }
 
+    public static Object ternary(Exchange exchange, Object condition, Object trueValue, Object falseValue) {
+        boolean result;
+        if (condition instanceof Boolean b) {
+            result = b;
+        } else {
+            // Try to convert to boolean - treat null, empty, and "false" as false
+            result = condition != null && !ObjectHelper.isEmpty(condition)
+                    && !Boolean.FALSE.equals(condition) && !"false".equalsIgnoreCase(String.valueOf(condition));
+        }
+        return result ? trueValue : falseValue;
+    }
+
     public static Object setHeader(Exchange exchange, String name, Class<?> type, Object value) {
         if (type != null && value != null) {
             value = convertTo(exchange, type, value);
@@ -1057,6 +1194,30 @@ public final class CSimpleHelper {
             exchange.removeVariable(name);
         }
         return null;
+    }
+
+    public static boolean isNot(Exchange exchange, Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String s) {
+            if (s.isEmpty()) {
+                return true;
+            }
+            if ("false".equalsIgnoreCase(s)) {
+                return true;
+            } else if ("true".equalsIgnoreCase(s)) {
+                return false;
+            } else {
+                return false;
+            }
+        }
+        Boolean b = convertTo(exchange, Boolean.class, value);
+        if (b == null) {
+            return true;
+        } else {
+            return !b;
+        }
     }
 
 }

@@ -29,6 +29,7 @@ import org.apache.camel.language.simple.ast.BlockEnd;
 import org.apache.camel.language.simple.ast.BlockStart;
 import org.apache.camel.language.simple.ast.OtherExpression;
 import org.apache.camel.language.simple.ast.SimpleNode;
+import org.apache.camel.language.simple.ast.TernaryExpression;
 import org.apache.camel.language.simple.ast.UnaryExpression;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -54,18 +55,26 @@ public abstract class BaseSimpleParser {
     public static final String CODE_END = "]]code@@\"";
 
     protected final CamelContext camelContext;
-    protected final String expression;
+    protected String expression;
+    protected final SimpleTokenizer tokenizer;
+    // regular simple expression
     protected final List<SimpleToken> tokens = new ArrayList<>();
     protected final List<SimpleNode> nodes = new ArrayList<>();
+    // tokenizer state
     protected SimpleToken token;
     protected int previousIndex;
     protected int index;
     protected final boolean allowEscape;
 
     protected BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape) {
+        this(camelContext, expression, allowEscape, new SimpleTokenizer());
+    }
+
+    public BaseSimpleParser(CamelContext camelContext, String expression, boolean allowEscape, SimpleTokenizer tokenizer) {
         this.camelContext = camelContext;
         this.expression = expression;
         this.allowEscape = allowEscape;
+        this.tokenizer = tokenizer;
     }
 
     /**
@@ -73,7 +82,7 @@ public abstract class BaseSimpleParser {
      */
     protected void nextToken() {
         if (index < expression.length()) {
-            SimpleToken next = SimpleTokenizer.nextToken(expression, index, allowEscape);
+            SimpleToken next = tokenizer.nextToken(expression, index, allowEscape);
             // add token
             tokens.add(next);
             token = next;
@@ -93,7 +102,7 @@ public abstract class BaseSimpleParser {
      */
     protected void nextToken(TokenType... filter) {
         if (index < expression.length()) {
-            SimpleToken next = SimpleTokenizer.nextToken(expression, index, allowEscape, filter);
+            SimpleToken next = tokenizer.nextToken(expression, index, allowEscape, filter);
             // add token
             tokens.add(next);
             token = next;
@@ -268,6 +277,82 @@ public abstract class BaseSimpleParser {
         nodes.addAll(stack);
         // must reverse as it was added from a stack that is reverse
         Collections.reverse(nodes);
+    }
+
+    /**
+     * Prepares ternary expressions.
+     * <p/>
+     * This process prepares the ternary expressions in the AST. This is done by linking the ternary operator (condition
+     * ? trueValue : falseValue) with all three parts: condition, trueValue, and falseValue.
+     * <p/>
+     * The ternary operator consists of two tokens: ? and : We need to find the pattern: condition ? trueValue :
+     * falseValue
+     */
+    protected void prepareTernaryExpressions() {
+        List<SimpleNode> answer = new ArrayList<>();
+
+        for (int i = 0; i < nodes.size(); i++) {
+            SimpleNode token = nodes.get(i);
+
+            if (token instanceof TernaryExpression ternary && "?".equals(token.getToken().getText())) {
+                // We found the ? operator
+                // Get the condition (left side)
+                if (answer.isEmpty()) {
+                    throw new SimpleParserException(
+                            "Ternary operator ? has no condition", token.getToken().getIndex());
+                }
+                SimpleNode condition = answer.remove(answer.size() - 1);
+
+                // Get the true value (right side of ?)
+                if (i >= nodes.size() - 1) {
+                    throw new SimpleParserException(
+                            "Ternary operator ? has no true value", token.getToken().getIndex());
+                }
+                SimpleNode trueValue = nodes.get(++i);
+
+                // Find the : operator
+                if (i >= nodes.size() - 1) {
+                    throw new SimpleParserException(
+                            "Ternary operator ? has no : operator", token.getToken().getIndex());
+                }
+                SimpleNode colonToken = nodes.get(++i);
+                if (!(colonToken instanceof TernaryExpression) || !":".equals(colonToken.getToken().getText())) {
+                    throw new SimpleParserException(
+                            "Ternary operator ? must be followed by :", token.getToken().getIndex());
+                }
+
+                // Get the false value (right side of :)
+                if (i >= nodes.size() - 1) {
+                    throw new SimpleParserException(
+                            "Ternary operator : has no false value", token.getToken().getIndex());
+                }
+                SimpleNode falseValue = nodes.get(++i);
+
+                // Link all parts to the ternary expression
+                if (!ternary.acceptCondition(condition)) {
+                    throw new SimpleParserException(
+                            "Ternary operator does not support condition token " + condition.getToken(),
+                            token.getToken().getIndex());
+                }
+                if (!ternary.acceptTrueValue(trueValue)) {
+                    throw new SimpleParserException(
+                            "Ternary operator does not support true value token " + trueValue.getToken(),
+                            token.getToken().getIndex());
+                }
+                if (!ternary.acceptFalseValue(falseValue)) {
+                    throw new SimpleParserException(
+                            "Ternary operator does not support false value token " + falseValue.getToken(),
+                            token.getToken().getIndex());
+                }
+
+                answer.add(ternary);
+            } else {
+                answer.add(token);
+            }
+        }
+
+        nodes.clear();
+        nodes.addAll(answer);
     }
 
     // --------------------------------------------------------------

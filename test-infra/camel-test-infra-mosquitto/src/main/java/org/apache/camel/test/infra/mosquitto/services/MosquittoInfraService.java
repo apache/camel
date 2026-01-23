@@ -23,5 +23,18 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
  */
 public interface MosquittoInfraService extends InfrastructureService {
 
+    @Deprecated
     Integer getPort();
+
+    default String host() {
+        return "localhost";
+    }
+
+    default int port() {
+        return getPort();
+    }
+
+    default String brokerUrl() {
+        return String.format("tcp://%s:%d", host(), port());
+    }
 }

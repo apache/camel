@@ -28,4 +28,8 @@ public interface HashicorpVaultInfraService extends InfrastructureService {
     int port();
 
     String host();
+
+    default String scheme() {
+        return "http";
+    }
 }

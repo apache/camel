@@ -36,7 +36,13 @@ Once you have created your key, it is convenient you add it to the `KEYS` file i
 gpg --list-sigs "pcongiusti@apache.org" >> KEYS && gpg --armor --export "pcongiusti@apache.org" >> KEYS
 ----
 
-At this stage you should commit the change and provide a PR to the project with the changes done in the KEYS file.
+In order to verify you haven't introduced any change which is breaking the integrity of the file, you need to make sure that an import is working correctly. To validate that you need to run:
+
+----
+gpg --import-options show-only --verbose --import --dry-run KEYS
+----
+
+Check that all the keys are listed. Just check that the latest entry you've added is listed and that will be enough. At this stage you should commit the change and provide a PR to the project with the changes done in the KEYS file.
 
 === Sync GPG keys
 

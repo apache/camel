@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.component.zookeeper.operations.GetChildrenOperation;
+import org.apache.camel.test.junit5.TestSupport;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.Test;
@@ -93,7 +94,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         mock.expectedMessageCount(1);
         pipeline.expectedMessageCount(1);
 
-        Exchange e = createExchangeWithBody(testPayload);
+        Exchange e = TestSupport.createExchangeWithBody(this.context, testPayload);
         e.setPattern(ExchangePattern.InOut);
         template.send("direct:roundtrip", e);
 
@@ -105,7 +106,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         MockEndpoint mock = getMockEndpoint("mock:consumed-from-node");
         mock.expectedMessageCount(1);
 
-        Exchange e = createExchangeWithBody(testPayload);
+        Exchange e = TestSupport.createExchangeWithBody(this.context, testPayload);
         template.send("direct:roundtrip", e);
 
         MockEndpoint.assertIsSatisfied(context);
@@ -115,7 +116,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
     public void setUsingCreateModeFromHeader() throws Exception {
         client.createPersistent("/modes-test", "parent for modes");
 
-        Exchange exchange = createExchangeWithBody(testPayload);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, testPayload);
         exchange.getIn().setHeader(ZOOKEEPER_CREATE_MODE, CreateMode.EPHEMERAL.name());
         exchange.getIn().setHeader(ZOOKEEPER_NODE, "/modes-test/" + CreateMode.EPHEMERAL.name());
         exchange.setPattern(ExchangePattern.InOut);
@@ -130,7 +131,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         MockEndpoint mock = getMockEndpoint("mock:create-mode");
         mock.expectedMessageCount(1);
 
-        Exchange e = createExchangeWithBody(testPayload);
+        Exchange e = TestSupport.createExchangeWithBody(this.context, testPayload);
         e.setPattern(ExchangePattern.InOut);
 
         template.send("direct:create-mode", e);
@@ -147,7 +148,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         mock.expectedMessageCount(1);
 
         client.createPersistent("/to-be-deleted", "to be deleted");
-        Exchange e = createExchangeWithBody(null);
+        Exchange e = TestSupport.createExchangeWithBody(this.context, null);
         e.setPattern(ExchangePattern.InOut);
         e.getIn().setHeader(ZOOKEEPER_OPERATION, "DELETE");
         template.send("direct:delete", e);
@@ -161,7 +162,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
     public void setAndGetListing() throws Exception {
         client.createPersistent("/set-listing", "parent for set and list test");
 
-        Exchange exchange = createExchangeWithBody(testPayload);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, testPayload);
         exchange.getIn().setHeader(ZOOKEEPER_NODE, "/set-listing/firstborn");
         exchange.setPattern(ExchangePattern.InOut);
         template.send(
@@ -177,7 +178,7 @@ public class ZooKeeperProducerIT extends ZooKeeperITSupport {
         MockEndpoint mock = getMockEndpoint("mock:consumed-from-node");
         mock.expectedMessageCount(1);
 
-        Exchange exchange = createExchangeWithBody(testPayload);
+        Exchange exchange = TestSupport.createExchangeWithBody(this.context, testPayload);
         template.send("direct:roundtrip", exchange);
 
         MockEndpoint.assertIsSatisfied(context);

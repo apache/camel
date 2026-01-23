@@ -13881,8 +13881,14 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
+            },
+            "trimResult" : {
+              "type" : "boolean",
+              "title" : "Trim Result",
+              "description" : "Whether to trim the returned values when this language are in use. For example the output result may contain unwanted line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be backwards compatible with existing behavior.",
+              "default" : false
             }
           }
         } ],
@@ -13915,7 +13921,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -13964,7 +13970,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -13993,7 +13999,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14269,7 +14275,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14298,7 +14304,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14337,7 +14343,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14383,7 +14389,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14417,7 +14423,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14464,7 +14470,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14503,7 +14509,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14566,7 +14572,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             },
             "unpackArray" : {
@@ -14609,7 +14615,7 @@
           "trim" : {
             "type" : "boolean",
             "title" : "Trim",
-            "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
             "default" : true
           }
         },
@@ -14659,7 +14665,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             },
             "validate" : {
@@ -14698,7 +14704,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14733,7 +14739,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14767,7 +14773,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14801,7 +14807,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14841,8 +14847,14 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
+            },
+            "trimResult" : {
+              "type" : "boolean",
+              "title" : "Trim Result",
+              "description" : "Whether to trim the returned values when this language are in use. For example the output result may contain unwanted line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be backwards compatible with existing behavior.",
+              "default" : false
             }
           }
         } ],
@@ -14875,7 +14887,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14952,7 +14964,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             },
             "xml" : {
@@ -14987,7 +14999,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15026,7 +15038,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15085,7 +15097,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15178,7 +15190,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15230,7 +15242,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }

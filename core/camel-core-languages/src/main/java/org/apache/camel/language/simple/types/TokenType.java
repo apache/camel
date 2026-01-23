@@ -21,6 +21,7 @@ package org.apache.camel.language.simple.types;
  */
 public enum TokenType {
 
+    ignore,
     whiteSpace,
     character,
     booleanValue,
@@ -36,6 +37,9 @@ public enum TokenType {
     otherOperator,
     unaryOperator,
     logicalOperator,
+    initOperator,
+    initVariable,
+    ternaryOperator,
     eol
 
 }

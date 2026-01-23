@@ -31,5 +31,10 @@ public interface InfinispanInfraService extends InfrastructureService {
 
     String host();
 
+    @Deprecated
     String getServiceAddress();
+
+    default String hosts() {
+        return String.format("%s:%d", host(), port());
+    }
 }

@@ -29,8 +29,10 @@ import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
 import org.apache.camel.test.infra.infinispan.services.InfinispanServiceFactory;
 import org.apache.commons.lang3.SystemUtils;
+import org.awaitility.Awaitility;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.infinispan.client.hotrod.exceptions.RemoteIllegalLifecycleStateException;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.junit.jupiter.api.Assumptions;
@@ -140,5 +142,23 @@ public class InfinispanRemoteTestSupport extends InfinispanTestSupport {
         return ComponentCustomizer.forType(
                 InfinispanRemoteComponent.class,
                 component -> component.getConfiguration().setCacheContainer(cacheContainer));
+    }
+
+    public static void waitForCacheReady(RemoteCacheManager manager, String cacheName, int timeoutMs) {
+        Awaitility.await()
+                .atMost(Duration.ofMillis(timeoutMs))
+                .pollInterval(Duration.ofMillis(250))
+                .ignoreExceptionsMatching(e -> e instanceof RemoteIllegalLifecycleStateException)
+                .until(() -> {
+                    // Attempt to create/get the cache
+                    manager.administration()
+                            .getOrCreateCache(
+                                    cacheName,
+                                    new org.infinispan.configuration.cache.ConfigurationBuilder()
+                                            .clustering()
+                                            .cacheMode(CacheMode.DIST_SYNC)
+                                            .build());
+                    return true; // success means cache is ready
+                });
     }
 }

@@ -239,7 +239,14 @@ public abstract class BuilderSupport implements CamelContextAware {
      * Returns a simple expression value builder
      */
     public ValueBuilder simple(String value, boolean pretty) {
-        return simple(value, null, false);
+        return simple(value, null, pretty);
+    }
+
+    /**
+     * Returns a simple expression value builder
+     */
+    public ValueBuilder simple(String value, boolean pretty, boolean trimResult) {
+        return simple(value, null, pretty, trimResult);
     }
 
     /**
@@ -254,6 +261,13 @@ public abstract class BuilderSupport implements CamelContextAware {
      */
     public ValueBuilder simple(String value, Class<?> resultType, boolean pretty) {
         return Builder.simple(value, resultType, pretty);
+    }
+
+    /**
+     * Returns a simple expression value builder
+     */
+    public ValueBuilder simple(String value, Class<?> resultType, boolean pretty, boolean trimResult) {
+        return Builder.simple(value, resultType, pretty, trimResult);
     }
 
     /**

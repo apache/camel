@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed Service Consumer")
+@Deprecated(since = "4.8.0")
 public class ServiceConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(ServiceConsumer.class);
 

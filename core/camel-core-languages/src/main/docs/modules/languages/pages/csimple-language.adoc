@@ -187,7 +187,9 @@ include::partial$language-options.adoc[]
 Currently, the csimple language does **not** support:
 
 - nested functions (aka functions inside functions)
-- the _null safe_ operator (`?`).
+- the _null safe_ operator (`?.`).
+
+NOTE: The ternary operator (`? :`) IS supported in csimple. The limitation above refers only to the null-safe operator used in OGNL expressions (e.g., `${body?.address}`).
 
 For example the following scripts cannot compile:
 

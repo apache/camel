@@ -1550,6 +1550,60 @@ for components like Kafka or AWS. So for these you may want to use a kamelet ins
 $ camel cmd send --body=file:payload.json --uri='kamelet:mqtt-sink?brokerUrl=tcp://mybroker:1883&topic=temperature'
 ----
 
+==== Sending messages to infrastructure services
+
+*Available since Camel 4.18*
+
+In Camel 4.17, you can use `camel cmd send` to send messages directly to infrastructure services that are started with `camel infra run`.
+This eliminates the need to manually specify server connection details, as the command automatically reads connection information from JSON files created by infrastructure services.
+
+This is done by using the `--infra` option to specify which infrastructure service to send to:
+
+[source,bash]
+----
+$ camel infra run nats
+$ camel cmd send --body=file:payload.json --infra=nats
+----
+
+The command automatically discovers the running infrastructure service, reads its connection details from the JSON file (stored in `~/.camel/`), and constructs the appropriate endpoint URI with the server information using the Camel Catalog.
+
+===== Specifying a custom endpoint
+
+If you don't specify an `--endpoint`, the command automatically creates a default endpoint based on the infrastructure service type (e.g., `kafka:default`, `nats:default`).
+
+You can also combine the `--infra` option with a specific endpoint to customize the destination:
+
+[source,bash]
+----
+$ camel cmd send --endpoint='kafka:myTopic' --body=file:payload.json --infra=kafka
+$ camel cmd send --endpoint='nats:mySubject' --body=file:payload.json --infra=nats
+----
+
+NOTE: If your endpoint already contains query parameters (e.g., `kafka:myTopic?groupId=myGroup`), the connection details from the infrastructure service will not override them.
+
+===== Automatic credential handling
+
+For services that support authentication (such as artemis, ftp, sftp), the command automatically appends credentials from the connection details to the endpoint URI if the Camel component supports them:
+
+[source,bash]
+----
+$ camel infra run artemis
+$ camel cmd send --endpoint='jms:myQueue' --body='Hello' --infra=artemis
+----
+
+The resulting endpoint will automatically include authentication parameters like `username` and `password=RAW(...)`.
+
+===== Multiple service detection
+
+If multiple instances of the same infrastructure service are running, the command will display an error and ask you to be more specific:
+
+[source,bash]
+----
+Multiple running infrastructure services found for: kafka. Found 2 services.
+----
+
+In this case, stop the unwanted service or specify the exact PID.
+
 ==== Poll messages via Camel
 
 *Available since Camel 4.8*

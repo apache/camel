@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs.simplebinding;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import jakarta.xml.bind.JAXBContext;
@@ -24,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.component.cxf.jaxrs.response.MyResponse;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerList;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
@@ -32,8 +34,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
@@ -97,9 +99,11 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     public void testGetCustomerOnlyHeaders() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/123");
         get.addHeader("Accept", "text/xml");
-        CloseableHttpResponse response = httpclient.execute(get);
-        assertEquals(200, response.getCode());
-        Customer entity = (Customer) jaxb.createUnmarshaller().unmarshal(response.getEntity().getContent());
+        MyResponse httpResponse = httpclient.execute(get, response -> {
+            return new MyResponse(response.getCode(), EntityUtils.toString(response.getEntity()));
+        });
+        assertEquals(200, httpResponse.status());
+        Customer entity = (Customer) jaxb.createUnmarshaller().unmarshal(new StringReader(httpResponse.content()));
         assertEquals(123, entity.getId());
     }
 
@@ -111,7 +115,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
         post.setEntity(new StringEntity(sw.toString()));
         post.addHeader("Content-Type", "text/xml");
         post.addHeader("Accept", "text/xml");
-        CloseableHttpResponse response = httpclient.execute(post);
-        assertEquals(200, response.getCode());
+        Integer status = httpclient.execute(post, response -> response.getCode());
+        assertEquals(200, status);
     }
 }
