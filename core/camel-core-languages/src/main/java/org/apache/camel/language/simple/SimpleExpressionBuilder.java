@@ -1501,6 +1501,48 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * For each value in the source expression then apply the function and return a list of responses from each function
+     */
+    public static Expression forEachExpression(final String source, final String function) {
+        return new ExpressionAdapter() {
+            private CamelContext context;
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                this.context = context;
+                exp1 = context.resolveLanguage("simple").createExpression(source);
+                exp1.init(context);
+                exp2 = context.resolveLanguage("simple").createExpression(function);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                List<Object> answer = new ArrayList<>();
+                Object o = exp1.evaluate(exchange, Object.class);
+                Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                for (Object i : it) {
+                    // use a dummy exchange as the input is to be the message body
+                    Exchange dummy = ExchangeHelper.createCopy(exchange, true);
+                    dummy.getMessage().setBody(i);
+                    Object out = exp2.evaluate(dummy, Object.class);
+                    if (out != null) {
+                        answer.add(out);
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "forEach(" + source + ", " + function + ")";
+            }
+        };
+    }
+
+    /**
      * Sets the message header with the given expression value
      */
     public static Expression setHeaderExpression(final String name, final String type, final String expression) {
