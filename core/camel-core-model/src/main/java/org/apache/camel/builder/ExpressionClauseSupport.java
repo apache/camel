@@ -785,6 +785,22 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
      *
      * @param  text       the expression to be evaluated
+     * @param  pretty     format pretty (only XML or JSon output supported)
+     * @param  trimResult whether to trim the result from the simple language
+     * @return            the builder to continue processing the DSL
+     */
+    public T simple(String text, boolean pretty, boolean trimResult) {
+        SimpleExpression expression = new SimpleExpression(text);
+        expression.setPretty(Boolean.toString(pretty));
+        expression.setTrimResult(Boolean.toString(trimResult));
+        expression(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
+     *
+     * @param  text       the expression to be evaluated
      * @param  resultType the result type
      * @return            the builder to continue processing the DSL
      */
@@ -804,6 +820,23 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * @return            the builder to continue processing the DSL
      */
     public T simple(String text, Class<?> resultType, boolean pretty) {
+        SimpleExpression expression = new SimpleExpression(text);
+        expression.setResultType(resultType);
+        expression.setPretty(Boolean.toString(pretty));
+        expression(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
+     *
+     * @param  text       the expression to be evaluated
+     * @param  resultType the result type
+     * @param  pretty     format pretty (only XML or JSon output supported)
+     * @param  trimResult whether to trim the result from the simple language
+     * @return            the builder to continue processing the DSL
+     */
+    public T simple(String text, Class<?> resultType, boolean pretty, boolean trimResult) {
         SimpleExpression expression = new SimpleExpression(text);
         expression.setResultType(resultType);
         expression.setPretty(Boolean.toString(pretty));

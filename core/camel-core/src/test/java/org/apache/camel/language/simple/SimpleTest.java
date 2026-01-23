@@ -3039,6 +3039,21 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testTrimResult() {
+        exchange.getMessage().setBody("Camel  ");
+
+        SimpleLanguage sl = (SimpleLanguage) context.resolveLanguage("simple");
+
+        Expression expression = sl.createExpression("  Hi ${body}", Object.class, false, false);
+        String out = expression.evaluate(exchange, String.class);
+        assertEquals("  Hi Camel  ", out);
+
+        expression = sl.createExpression("  Hi ${body}", Object.class, false, true);
+        out = expression.evaluate(exchange, String.class);
+        assertEquals("Hi Camel", out);
+    }
+
+    @Test
     public void testSetHeader() {
         exchange.getMessage().setBody("Hello World");
 
