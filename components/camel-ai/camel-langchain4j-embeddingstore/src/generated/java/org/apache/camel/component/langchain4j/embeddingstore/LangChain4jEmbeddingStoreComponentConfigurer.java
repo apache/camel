@@ -30,6 +30,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         LangChain4jEmbeddingStoreComponent target = (LangChain4jEmbeddingStoreComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": getOrCreateConfiguration(target).setAction(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration.class, value)); return true;
@@ -39,6 +40,12 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
         case "embeddingStoreFactory": getOrCreateConfiguration(target).setEmbeddingStoreFactory(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxresults":
+        case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "minscore":
+        case "minScore": getOrCreateConfiguration(target).setMinScore(property(camelContext, java.lang.Double.class, value)); return true;
+        case "returntextcontent":
+        case "returnTextContent": getOrCreateConfiguration(target).setReturnTextContent(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -51,6 +58,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "configuration": return org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration.class;
@@ -60,6 +68,12 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
         case "embeddingStoreFactory": return org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
+        case "minscore":
+        case "minScore": return java.lang.Double.class;
+        case "returntextcontent":
+        case "returnTextContent": return boolean.class;
         default: return null;
         }
     }
@@ -68,6 +82,7 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         LangChain4jEmbeddingStoreComponent target = (LangChain4jEmbeddingStoreComponent) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return getOrCreateConfiguration(target).getAction();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "configuration": return target.getConfiguration();
@@ -77,6 +92,12 @@ public class LangChain4jEmbeddingStoreComponentConfigurer extends PropertyConfig
         case "embeddingStoreFactory": return getOrCreateConfiguration(target).getEmbeddingStoreFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxresults":
+        case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
+        case "minscore":
+        case "minScore": return getOrCreateConfiguration(target).getMinScore();
+        case "returntextcontent":
+        case "returnTextContent": return getOrCreateConfiguration(target).isReturnTextContent();
         default: return null;
         }
     }

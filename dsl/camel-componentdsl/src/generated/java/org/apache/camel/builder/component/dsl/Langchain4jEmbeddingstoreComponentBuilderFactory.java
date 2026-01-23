@@ -51,6 +51,22 @@ public interface Langchain4jEmbeddingstoreComponentBuilderFactory {
     interface Langchain4jEmbeddingstoreComponentBuilder extends ComponentBuilder<LangChain4jEmbeddingStoreComponent> {
     
         /**
+         * The operation to perform: ADD, REMOVE, or SEARCH.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jEmbeddingstoreComponentBuilder action(org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+    
+        /**
          * The configuration;.
          * 
          * The option is a:
@@ -126,6 +142,55 @@ public interface Langchain4jEmbeddingstoreComponentBuilderFactory {
     
         
         /**
+         * Maximum number of results to return for SEARCH operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jEmbeddingstoreComponentBuilder maxResults(java.lang.Integer maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+    
+        /**
+         * Minimum similarity score threshold for SEARCH operation (0.0 to 1.0).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param minScore the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jEmbeddingstoreComponentBuilder minScore(java.lang.Double minScore) {
+            doSetProperty("minScore", minScore);
+            return this;
+        }
+    
+        
+        /**
+         * When true, SEARCH returns List with text content instead of List.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param returnTextContent the value to set
+         * @return the dsl builder
+         */
+        default Langchain4jEmbeddingstoreComponentBuilder returnTextContent(boolean returnTextContent) {
+            doSetProperty("returnTextContent", returnTextContent);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -166,10 +231,14 @@ public interface Langchain4jEmbeddingstoreComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "action": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setAction((org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction) value); return true;
             case "configuration": ((LangChain4jEmbeddingStoreComponent) component).setConfiguration((org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration) value); return true;
             case "embeddingStore": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setEmbeddingStore((dev.langchain4j.store.embedding.EmbeddingStore) value); return true;
             case "embeddingStoreFactory": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setEmbeddingStoreFactory((org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory) value); return true;
             case "lazyStartProducer": ((LangChain4jEmbeddingStoreComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxResults": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setMaxResults((java.lang.Integer) value); return true;
+            case "minScore": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setMinScore((java.lang.Double) value); return true;
+            case "returnTextContent": getOrCreateConfiguration((LangChain4jEmbeddingStoreComponent) component).setReturnTextContent((boolean) value); return true;
             case "autowiredEnabled": ((LangChain4jEmbeddingStoreComponent) component).setAutowiredEnabled((boolean) value); return true;
             default: return false;
             }
