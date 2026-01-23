@@ -503,9 +503,9 @@
         <spring-ai-version>1.1.2</spring-ai-version>
         <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
         <spring-batch-version>5.2.4</spring-batch-version>
-        <spring-boot-version>3.5.9</spring-boot-version>
+        <spring-boot-version>3.5.10</spring-boot-version>
         <spring-data-redis-version>3.5.5</spring-data-redis-version>
-        <spring-ldap-version>3.3.4</spring-ldap-version>
+        <spring-ldap-version>3.3.5</spring-ldap-version>
         <spring-vault-core-version>3.2.0</spring-vault-core-version>
         <spring-version>6.2.15</spring-version>
         <spring-rabbitmq-version>3.2.8</spring-rabbitmq-version>
