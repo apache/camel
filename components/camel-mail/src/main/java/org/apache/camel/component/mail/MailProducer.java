@@ -87,8 +87,13 @@ public class MailProducer extends DefaultAsyncProducer {
     }
 
     protected JavaMailSender getSender(Exchange exchange) {
-        // do we have special headers
-        Map<String, Object> additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), "mail.smtp.");
+        // do we have special headers (try both smpt and smtps)
+        String prefix = "mail.smtp.";
+        Map<String, Object> additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), prefix);
+        if (additional.isEmpty()) {
+            prefix = "mail.smtps.";
+            additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), prefix);
+        }
         if (additional.isEmpty()) {
             // no then use default sender
             LOG.trace("Using default JavaMailSender");
@@ -98,10 +103,11 @@ public class MailProducer extends DefaultAsyncProducer {
             LOG.debug("Creating new JavaMailSender to include additional {} java mail properties", additional.size());
             JavaMailSender customSender
                     = getEndpoint().getConfiguration().createJavaMailSender(getEndpoint().getCamelContext());
+            final String scheme = prefix;
             additional.forEach((k, v) -> {
                 if (v != null) {
                     // add with prefix so we dont loose that
-                    customSender.addAdditionalJavaMailProperty("mail.smtp." + k, v.toString());
+                    customSender.addAdditionalJavaMailProperty(scheme + k, v.toString());
                 }
             });
             return customSender;
