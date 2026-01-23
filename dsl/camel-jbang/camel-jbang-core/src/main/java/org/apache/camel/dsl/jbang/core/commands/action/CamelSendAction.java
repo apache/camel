@@ -607,26 +607,28 @@ public class CamelSendAction extends ActionBaseCommand {
     }
 
     private String buildPathBasedEndpoint(String path, JsonObject connectionDetails) {
-
-        Object endpointUri = connectionDetails.get("endpointUri");
-        if (endpointUri != null) {
-            String uri = String.valueOf(endpointUri);
-
-            if (path != null && !path.isEmpty()) {
-                Object connectionBase = connectionDetails.get("connectionBase");
-                if (connectionBase != null) {
-                    String queryPart = "";
-                    if (uri.contains("?")) {
-                        queryPart = uri.substring(uri.indexOf("?"));
-                    }
-                    uri = connectionBase + (path.startsWith("/") ? path : "/" + path) + queryPart;
-                }
-            }
-
-            return uri;
+        String uri = connectionDetails.getString("endpointUri");
+        if (uri == null) {
+            return null;
         }
 
-        return null;
+        if (path != null && !path.isEmpty()) {
+            String connectionBase = connectionDetails.getString("connectionBase");
+            if (connectionBase != null) {
+                String queryPart = StringHelper.after(uri, "?");
+                if (queryPart != null) {
+                    queryPart = "?" + queryPart;
+                } else {
+                    queryPart = "";
+                }
+
+                String newPath = path.startsWith("/") ? path : "/" + path;
+                return connectionBase + newPath + queryPart;
+            }
+        }
+
+        // fallback to original URI
+        return uri;
     }
 
     private String buildEndpointManually(String endpoint, Map<String, String> properties) {
