@@ -35,8 +35,6 @@
 
     <modules>
         <module>camel-chatscript</module>
-        <!-- This is only supported in certain architectures (see profiles) -->
-        <!-- module>camel-chroma</module -->
         <module>camel-djl</module>
         <module>camel-docling</module>
         <module>camel-kserve</module>
@@ -59,23 +57,5 @@
         <module>camel-torchserve</module>
         <module>camel-weaviate</module>
     </modules>
-
-    <profiles>
-        <!--
-        IMPORTANT: this is used to detect unsupported modules which cannot be compiled for certain architectures.
-        It can be eventually extended to include more modules which suffer the same kind of problem.
-        -->
-        <profile>
-            <id>unsupported-arch</id>
-            <activation>
-                <property>
-                    <name>!unsupported-arch</name>
-                </property>
-            </activation>
-            <modules>
-                <module>camel-chroma</module>
-            </modules>
-        </profile>
-    </profiles>
 
 </project>

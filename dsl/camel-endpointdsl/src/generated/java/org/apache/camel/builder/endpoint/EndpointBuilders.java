@@ -54,7 +54,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ChatScriptEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.ChromaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ChunkEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.CinderEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory,

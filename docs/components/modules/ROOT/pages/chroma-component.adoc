@@ -1,1 +1,0 @@
-../../../../../components/camel-ai/camel-chroma/src/main/docs/chroma-component.adoc
