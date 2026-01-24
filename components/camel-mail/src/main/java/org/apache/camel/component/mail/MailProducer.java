@@ -87,7 +87,7 @@ public class MailProducer extends DefaultAsyncProducer {
     }
 
     protected JavaMailSender getSender(Exchange exchange) {
-        // do we have special headers (try both smpt and smtps)
+        // do we have special headers (try both smtp and smtps)
         String prefix = "mail.smtp.";
         Map<String, Object> additional = URISupport.extractProperties(exchange.getMessage().getHeaders(), prefix);
         if (additional.isEmpty()) {
