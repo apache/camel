@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FhirXmlDataformatErrorHandlerSpringTest extends CamelSpringTestSupport {
 
@@ -42,12 +42,10 @@ public class FhirXmlDataformatErrorHandlerSpringTest extends CamelSpringTestSupp
 
     @Test
     public void unmarshalParserErrorHandler() {
-        try {
-            template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT);
-            fail("Expected a DataFormatException");
-        } catch (CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof DataFormatException);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:unmarshalErrorHandlerStrict", INPUT),
+                "Expected a DataFormatException");
+        assertTrue(e.getCause() instanceof DataFormatException);
     }
 
     @Test
