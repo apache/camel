@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSupport {
     private MockEndpoint gradeA;
@@ -36,12 +36,7 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
         gradeA.expectedMessageCount(0);
         otherGrade.expectedMessageCount(0);
 
-        try {
-            template.sendBody(endpointUri, new Student(95));
-            fail();
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        assertThrows(CamelExecutionException.class, () -> template.sendBody(endpointUri, new Student(95)));
         assertMockEndpointsSatisfied();
     }
 
@@ -51,12 +46,7 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
         gradeA.expectedMessageCount(0);
         otherGrade.expectedMessageCount(0);
 
-        try {
-            template.sendBody(endpointUri, new Student(60));
-            fail();
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        assertThrows(CamelExecutionException.class, () -> template.sendBody(endpointUri, new Student(60)));
 
         assertMockEndpointsSatisfied();
     }

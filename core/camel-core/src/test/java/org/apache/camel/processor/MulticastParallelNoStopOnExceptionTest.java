@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MulticastParallelNoStopOnExceptionTest extends ContextTestSupport {
     private ExecutorService service;
@@ -69,13 +69,10 @@ public class MulticastParallelNoStopOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:baz").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced", cause.getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Kaboom"));
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertEquals("Forced", cause.getMessage());
 
         assertMockEndpointsSatisfied();
     }

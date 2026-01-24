@@ -21,18 +21,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CamelContextLogExhaustedMessageBodyTest extends ContextTestSupport {
 
     @Test
     public void testLogExhaustedMessageHistoryWithMessageBody() {
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("should fail");
-        } catch (Exception e) {
-            // expected and the message body should be in logged
-        }
+        // expected and the message body should be in logged
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"));
     }
 
     @Override

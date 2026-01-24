@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTestSupport {
 
@@ -38,16 +38,13 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            // we tried to handle that exception but then another exception
-            // occurred
-            // so this exchange failed with an exception
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            ConnectException cause = assertIsInstanceOf(ConnectException.class, e.getCause());
-            assertEquals("Cannot connect to bar server", cause.getMessage());
-        }
+        // we tried to handle that exception but then another exception
+        // occurred
+        // so this exchange failed with an exception
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        ConnectException cause = assertIsInstanceOf(ConnectException.class, exception.getCause());
+        assertEquals("Cannot connect to bar server", cause.getMessage());
 
         assertMockEndpointsSatisfied();
 

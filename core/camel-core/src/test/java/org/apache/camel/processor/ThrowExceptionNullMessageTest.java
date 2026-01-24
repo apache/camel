@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ThrowExceptionNullMessageTest extends ContextTestSupport {
 
@@ -31,13 +31,11 @@ public class ThrowExceptionNullMessageTest extends ContextTestSupport {
         getMockEndpoint("mock:start").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertNull(e.getCause().getMessage());
-        }
+        });
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertNull(e.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

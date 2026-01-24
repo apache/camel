@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class LoopCopyErrorTest extends ContextTestSupport {
 
@@ -32,12 +32,8 @@ public class LoopCopyErrorTest extends ContextTestSupport {
         getMockEndpoint("mock:loop").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "A");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertEquals("Forced", e.getCause().getMessage());
-        }
+        Exception exception = assertThrows(Exception.class, () -> template.sendBody("direct:start", "A"));
+        assertEquals("Forced", exception.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

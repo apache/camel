@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteIdClashTest extends ContextTestSupport {
 
@@ -41,14 +41,10 @@ public class RouteIdClashTest extends ContextTestSupport {
                 from("direct:in3").routeId("myroute").to("mock:test3");
             }
         });
-        try {
-            context.start();
-            fail();
-        } catch (FailedToStartRouteException e) {
-            Assertions.assertEquals("myroute", e.getRouteId());
-            Assertions.assertEquals(
-                    "Failed to start route: myroute because: Duplicate id detected: myroute. Please correct ids to be unique among all your routes.",
-                    e.getMessage());
-        }
+        FailedToStartRouteException e = assertThrows(FailedToStartRouteException.class, () -> context.start());
+        Assertions.assertEquals("myroute", e.getRouteId());
+        Assertions.assertEquals(
+                "Failed to start route: myroute because: Duplicate id detected: myroute. Please correct ids to be unique among all your routes.",
+                e.getMessage());
     }
 }

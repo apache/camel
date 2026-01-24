@@ -24,21 +24,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
 
     @Test
     public void testAggregateRepositoryReturnNull() {
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello World", "id", 123);
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("AggregationStrategy"));
-            assertTrue(e.getCause().getMessage().contains("returned null which is not allowed"));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello World", "id", 123));
+        assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+        assertTrue(e.getCause().getMessage().startsWith("AggregationStrategy"));
+        assertTrue(e.getCause().getMessage().contains("returned null which is not allowed"));
     }
 
     @Override

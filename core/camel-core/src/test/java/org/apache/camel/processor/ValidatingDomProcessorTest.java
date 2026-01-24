@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -37,12 +37,10 @@ public class ValidatingDomProcessorTest extends ValidatingProcessorTest {
         String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>"
                      + "  <username>davsclaus</username>";
 
-        try {
-            template.sendBody("direct:start", xml);
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(SchemaValidationException.class, e.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", xml),
+                "Should have thrown a RuntimeCamelException");
+        assertIsInstanceOf(SchemaValidationException.class, e.getCause());
 
         assertMockEndpointsSatisfied();
     }

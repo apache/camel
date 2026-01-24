@@ -107,15 +107,13 @@ public class ServiceSupportTest extends TestSupport {
         ServiceSupportTestExOnStart service = new ServiceSupportTestExOnStart();
         // forced not being stopped at start
         assertFalse(service.isStopped());
-        try {
-            service.start();
-            fail("RuntimeException expected");
-        } catch (RuntimeException e) {
-            assertTrue(service.isStopped());
-            assertFalse(service.isStopping());
-            assertFalse(service.isStarted());
-            assertFalse(service.isStarting());
-        }
+
+        assertThrows(RuntimeException.class, () -> service.start(), "RuntimeException expected");
+
+        assertTrue(service.isStopped());
+        assertFalse(service.isStopping());
+        assertFalse(service.isStarted());
+        assertFalse(service.isStarting());
     }
 
     @Test

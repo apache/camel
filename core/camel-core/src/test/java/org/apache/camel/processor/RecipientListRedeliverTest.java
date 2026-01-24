@@ -23,7 +23,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -49,12 +52,9 @@ public class RecipientListRedeliverTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello World", "mySlip", "mock:a,direct:a,mock:b");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Forced", e.getCause().getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello World", "mySlip", "mock:a,direct:a,mock:b"));
+        assertEquals("Forced", exception.getCause().getCause().getMessage());
 
         assertMockEndpointsSatisfied();
 
@@ -70,12 +70,9 @@ public class RecipientListRedeliverTest extends ContextTestSupport {
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:c").expectedMessageCount(0);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello World", "mySlip", "mock:a,mock:b,direct:b,mock:c");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Forced", e.getCause().getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello World", "mySlip", "mock:a,mock:b,direct:b,mock:c"));
+        assertEquals("Forced", exception.getCause().getCause().getMessage());
 
         assertMockEndpointsSatisfied();
 

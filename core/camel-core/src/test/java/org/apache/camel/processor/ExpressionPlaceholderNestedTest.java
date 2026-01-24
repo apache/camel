@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
 
@@ -54,19 +54,16 @@ public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
 
     @Test
     public void testPlaceholderOn() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:on")
-                            .setBody().constant("{{query?nested=true}}")
-                            .to("mock:result");
-                }
-            });
-            fail();
-        } catch (FailedToCreateRouteException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        FailedToCreateRouteException exception
+                = assertThrows(FailedToCreateRouteException.class, () -> context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:on")
+                                .setBody().constant("{{query?nested=true}}")
+                                .to("mock:result");
+                    }
+                }));
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
 
     @Test

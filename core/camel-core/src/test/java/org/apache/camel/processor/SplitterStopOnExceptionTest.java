@@ -25,7 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SplitterStopOnExceptionTest extends ContextTestSupport {
 
@@ -46,14 +48,11 @@ public class SplitterStopOnExceptionTest extends ContextTestSupport {
         // only receive 1 message
         mock.expectedBodiesReceived("Hello World");
 
-        try {
-            template.sendBody("direct:start", "Hello World,Kaboom,Bye World");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Multicast processing failed for number 1."));
-            assertEquals("Forced", cause.getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World,Kaboom,Bye World"));
+        CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, exception.getCause());
+        assertTrue(cause.getMessage().startsWith("Multicast processing failed for number 1."));
+        assertEquals("Forced", cause.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

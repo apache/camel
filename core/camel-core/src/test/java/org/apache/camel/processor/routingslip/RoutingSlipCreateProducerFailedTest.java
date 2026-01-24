@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
 
@@ -38,13 +38,11 @@ public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
         assertEquals(0, context.getInflightRepository().size());
 
         // those 2 options not allowed together
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBodyAndHeader("direct:start", "Hello World", "foo",
                     fileUri("?fileExist=Append&tempPrefix=hello"));
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
-        }
+        });
+        assertIsInstanceOf(FailedToCreateProducerException.class, e.getCause());
 
         // no inflight
         assertEquals(0, context.getInflightRepository().size());

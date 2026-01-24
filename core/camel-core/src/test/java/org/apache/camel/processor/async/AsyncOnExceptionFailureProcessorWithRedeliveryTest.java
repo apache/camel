@@ -24,7 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AsyncOnExceptionFailureProcessorWithRedeliveryTest extends ContextTestSupport {
 
@@ -36,13 +38,11 @@ public class AsyncOnExceptionFailureProcessorWithRedeliveryTest extends ContextT
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody("direct:start", "Hello Camel", String.class);
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Simulated error at attempt 1."));
-        }
+        });
+        CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+        assertTrue(cause.getMessage().startsWith("Simulated error at attempt 1."));
 
         assertMockEndpointsSatisfied();
 

@@ -22,8 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport {
 
@@ -48,13 +48,11 @@ public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport 
         MockEndpoint endpointA = getMockEndpoint("mock:endpointA");
         endpointA.expectedMessageCount(0);
 
-        try {
-            template.requestBody("direct:startB", "Hello World", String.class);
-            fail("Expect the exception here.");
-        } catch (Exception ex) {
-            boolean b = ex.getCause() instanceof NoSuchEndpointException;
-            assertTrue(b, "Get a wrong cause of the exception");
-        }
+        Exception ex = assertThrows(Exception.class,
+                () -> template.requestBody("direct:startB", "Hello World", String.class),
+                "Expect the exception here.");
+        boolean b = ex.getCause() instanceof NoSuchEndpointException;
+        assertTrue(b, "Get a wrong cause of the exception");
 
         assertMockEndpointsSatisfied();
     }

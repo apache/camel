@@ -54,12 +54,9 @@ public class ValidatingProcessorFromUrlTest extends ValidatingProcessorTest {
         assertNotNull(validating.getSchemaLanguage());
         assertNotNull(validating.getSchemaUrl());
 
-        try {
-            assertNotNull(validating.getSchemaSource());
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+                () -> validating.getSchemaSource(),
+                "Should have thrown an exception");
     }
 
 }
