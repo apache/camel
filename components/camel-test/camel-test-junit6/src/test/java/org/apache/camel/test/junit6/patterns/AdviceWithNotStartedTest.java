@@ -28,7 +28,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AdviceWithNotStartedTest extends CamelTestSupport {
 
@@ -48,12 +48,10 @@ public class AdviceWithNotStartedTest extends CamelTestSupport {
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:start", "Hello World");
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(RejectedExecutionException.class, e.getCause());
-        }
+        });
+        assertIsInstanceOf(RejectedExecutionException.class, e.getCause());
 
         // start Camel
         context.start();
