@@ -21,23 +21,21 @@ import java.nio.file.Paths;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FileWatchComponentNegativeTest extends FileWatchComponentTestBase {
 
     @Test
     public void testNonExistentDirectory() throws Exception {
         String nonExistentDirectory = Paths.get(testPath(), "nonExistentDirectory").toString();
-        try {
+        assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
                     from("file-watch://" + nonExistentDirectory + "?autoCreate=false").to("mock:watchAll");
                 }
             });
-            fail("Should throw exception");
-        } catch (Exception ignored) {
-        }
+        });
 
         context.addRoutes(new RouteBuilder() {
             @Override
