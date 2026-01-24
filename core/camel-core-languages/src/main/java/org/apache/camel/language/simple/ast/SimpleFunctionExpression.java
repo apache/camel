@@ -1627,6 +1627,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return createCodeFileExpression(remainder);
         }
 
+        if ("date:millis".equals(function)) {
+            return "System.currentTimeMillis()";
+        }
         // date: prefix
         remainder = ifStartsWithReturnRemainder("date:", function);
         if (remainder != null) {

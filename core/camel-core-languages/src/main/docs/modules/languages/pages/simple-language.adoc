@@ -324,6 +324,7 @@ And the `not` function is function to inverse the boolean value.
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
+|`date:millis` | `long` | Returns the current timestamp as millis in unix epoch.
 |`date:command` | `Date` | Evaluates to a `java.util.Date` object. Supported commands are: `now` for current timestamp, `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the `Long/Date` object in the header with the key xxx. `variable.xxx` to use the `Long/Date` in the variable with the key xxx. `exchangeProperty.xxx` to use the `Long/Date` object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (only available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or `now+1h30m-100`.
 |`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `data:command` function for additional documentation on the commands.
 |`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `data:command` function for additional documentation on the commands.
@@ -332,6 +333,8 @@ And the `not` function is function to inverse the boolean value.
 The date functions is used for parsing and formatting with date and times.
 
 For example to get the current time use `${date:now}` which is returned as a `java.util.Date` object.
+And you can use `${date:millis}` to get unix epoch timestamp as a long value.
+
 If you want to format this to a String value, you can use the pattern command, such as `${date:now:hh:mm:ss}`.
 And to get the time 8 hours in the future `${date:now+8h:hh:mm:ss}`.
 
@@ -386,7 +389,7 @@ This will get the `Date` object from the header with key birthday, and format th
 |`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
 |`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
 |`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator (uses comma by default).
-|`join(separator,prefix,exp` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
+|`join(separator,prefix,exp)` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
 |`lowercase()` | `String` | Lowercases the message body
 |`lowercase(exp)` | `String` | Lowercases the expression
 |`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.

@@ -406,6 +406,8 @@ public final class CSimpleHelper {
             date = LanguageHelper.dateFromExchangeCreated(exchange);
         } else if (command.startsWith("header.")) {
             date = LanguageHelper.dateFromHeader(exchange, command, (e, o) -> failDueToMissingObjectAtCommand(command));
+        } else if (command.startsWith("variable.")) {
+            date = LanguageHelper.dateFromVariable(exchange, command, (e, o) -> failDueToMissingObjectAtCommand(command));
         } else if (command.startsWith("exchangeProperty.")) {
             date = LanguageHelper.dateFromExchangeProperty(exchange, command,
                     (e, o) -> failDueToMissingObjectAtCommand(command));

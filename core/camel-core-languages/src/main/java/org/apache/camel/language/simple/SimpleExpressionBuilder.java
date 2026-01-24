@@ -2239,8 +2239,11 @@ public final class SimpleExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Date date = evalDate(exchange, command);
-
-                return LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
+                Object answer = LanguageHelper.applyDateOffsets(date, offsets, pattern, timezone);
+                if ("millis".equals(command) && answer instanceof Date d) {
+                    answer = d.getTime();
+                }
+                return answer;
             }
 
             @Override
@@ -2258,7 +2261,7 @@ public final class SimpleExpressionBuilder {
 
     private static Date evalDate(Exchange exchange, String command) {
         Date date;
-        if ("now".equals(command)) {
+        if ("now".equals(command) || "millis".equals(command)) {
             date = new Date();
         } else if ("exchangeCreated".equals(command)) {
             date = LanguageHelper.dateFromExchangeCreated(exchange);

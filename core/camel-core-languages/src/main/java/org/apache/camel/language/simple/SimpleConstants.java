@@ -107,7 +107,7 @@ public final class SimpleConstants {
               displayName = "Convert To")
     public static final String CONVERT_TO = "convertTo(exp,type)";
 
-    @Metadata(description = "Evaluates to a java.util.Date object. Supported commands are: `now` for current timestamp, `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the Long/Date object in the header with the key xxx. `variable.xxx` to use the Long/Date in the variable with the key xxx. `exchangeProperty.xxx` to use the Long/Date object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or even `now+1h30m-100`.",
+    @Metadata(description = "Evaluates to a java.util.Date object. Supported commands are: `now` for current timestamp, `millis` for current timestamp in millis (unix epoch), `exchangeCreated` for the timestamp when the current exchange was created, `header.xxx` to use the Long/Date object in the header with the key xxx. `variable.xxx` to use the Long/Date in the variable with the key xxx. `exchangeProperty.xxx` to use the Long/Date object in the exchange property with the key xxx. `file` for the last modified timestamp of the file (available with a File consumer). Command accepts offsets such as: `now-24h` or `header.xxx+1h` or even `now+1h30m-100`.",
               label = "function", javaType = "java.util.Date", displayName = "Parse Date")
     public static final String DATE = "date(command)";
 
