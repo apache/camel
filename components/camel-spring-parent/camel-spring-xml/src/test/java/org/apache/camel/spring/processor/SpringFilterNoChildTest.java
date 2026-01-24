@@ -25,20 +25,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringFilterNoChildTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        try (ClassPathXmlApplicationContext x
-                = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/filterNoChild.xml")) {
-            fail("Should thrown an exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
-            assertEquals("Definition has no children on Filter[xpath{$foo = 'bar'} -> []]", iae.getMessage());
-        }
+        Exception e = assertThrows(Exception.class, () -> {
+            try (ClassPathXmlApplicationContext x
+                    = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/filterNoChild.xml")) {
+            }
+        });
+        FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, cause.getCause());
+        assertEquals("Definition has no children on Filter[xpath{$foo = 'bar'} -> []]", iae.getMessage());
         return null;
     }
 

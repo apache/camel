@@ -32,7 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Transactional client test with rollback in the DSL.
@@ -66,13 +66,11 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
 
     @Test
     public void testTransactionRollback() throws Exception {
-        try {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> {
             template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown a RollbackExchangeException");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            assertTrue(e.getCause().getCause() instanceof RollbackExchangeException);
-        }
+        });
+        assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+        assertTrue(e.getCause().getCause() instanceof RollbackExchangeException);
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(1, count, "Number of books");

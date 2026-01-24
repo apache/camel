@@ -26,7 +26,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport {
@@ -38,14 +38,14 @@ public class SpringCamelContextStartingFailedEventTest extends SpringTestSupport
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        try (ClassPathXmlApplicationContext x = new ClassPathXmlApplicationContext(
-                "org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml")) {
-            fail("Should thrown an exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            assertIsInstanceOf(NoSuchEndpointException.class, ftcre.getCause());
-            // expected
-        }
+        Exception e = assertThrows(Exception.class, () -> {
+            try (ClassPathXmlApplicationContext x = new ClassPathXmlApplicationContext(
+                    "org/apache/camel/spring/management/SpringCamelContextStartingFailedEventTest.xml")) {
+            }
+        });
+        FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        assertIsInstanceOf(NoSuchEndpointException.class, ftcre.getCause());
+        // expected
 
         // fallback to load another file that works
         return new ClassPathXmlApplicationContext("/org/apache/camel/spring/disableJmxConfig.xml");
