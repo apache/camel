@@ -25,7 +25,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GroovyLogEipTest extends CamelTestSupport {
 
@@ -43,12 +43,10 @@ public class GroovyLogEipTest extends CamelTestSupport {
 
     @Test
     public void testLogFail() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             template.sendBody("direct:fail", 4);
-            fail("Should fail");
-        } catch (Exception e) {
-            Assertions.assertInstanceOf(MissingPropertyException.class, e.getCause());
-        }
+        });
+        Assertions.assertInstanceOf(MissingPropertyException.class, e.getCause());
     }
 
     @Override
