@@ -29,7 +29,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProducerBatchInvalidTest extends CamelTestSupport {
 
@@ -69,16 +69,13 @@ public class ProducerBatchInvalidTest extends CamelTestSupport {
                 from("direct:query").to("sql-stored:BATCHFN(INTEGER :#num)?batch=true&batch=true").to("mock:query");
             }
         });
-        try {
-            context.start();
-            fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
-            ResolveEndpointFailedException refe = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, refe.getCause());
-            assertEquals("batch", pbe.getPropertyName());
-            assertIsInstanceOf(TypeConversionException.class, pbe.getCause());
-            assertEquals("[true, true]", pbe.getValue().toString());
-        }
+        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class,
+                () -> context.start());
+        ResolveEndpointFailedException refe = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+        PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, refe.getCause());
+        assertEquals("batch", pbe.getPropertyName());
+        assertIsInstanceOf(TypeConversionException.class, pbe.getCause());
+        assertEquals("[true, true]", pbe.getValue().toString());
     }
 
 }
