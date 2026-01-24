@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
     private Jt400Component component;
@@ -30,14 +30,10 @@ public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
     public void doPostSetup() {
         component = new Jt400Component();
         component.setCamelContext(context);
-        try {
-            // Use an invalid object type so that endpoints are never created
-            // and actual connections are never requested
-            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            /* Expected */
-        }
+        // Use an invalid object type so that endpoints are never created
+        // and actual connections are never requested
+        assertThrows(Exception.class,
+                () -> component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx"));
     }
 
     @Override
