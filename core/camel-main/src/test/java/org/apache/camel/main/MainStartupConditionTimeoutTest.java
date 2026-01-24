@@ -21,7 +21,7 @@ import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MainStartupConditionTimeoutTest {
 
@@ -34,9 +34,7 @@ public class MainStartupConditionTimeoutTest {
                     .withOnTimeout("fail")
                     .withTimeout(250)
                     .withCustomClassNames("org.apache.camel.main.MainStartupConditionTimeoutTest$MyEnvCondition");
-            main.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
+            Exception e = assertThrows(Exception.class, () -> main.start());
             Assertions.assertEquals(
                     "Startup condition: ENV cannot continue due to: OS Environment Variable: MY_ENV does not exist",
                     e.getCause().getMessage());
