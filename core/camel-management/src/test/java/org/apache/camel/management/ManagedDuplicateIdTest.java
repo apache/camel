@@ -22,7 +22,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedDuplicateIdTest extends ManagementTestSupport {
@@ -47,14 +47,10 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
                         .to("mock:bar");
             }
         });
-        try {
-            context.start();
-            fail("Should fail");
-        } catch (Exception e) {
-            assertEquals(
-                    "Failed to start route: foo because: Duplicate id detected: clash. Please correct ids to be unique among all your routes.",
-                    e.getMessage());
-        }
+        Exception e = assertThrows(Exception.class, () -> context.start());
+        assertEquals(
+                "Failed to start route: foo because: Duplicate id detected: clash. Please correct ids to be unique among all your routes.",
+                e.getMessage());
     }
 
     @Test
@@ -71,14 +67,10 @@ public class ManagedDuplicateIdTest extends ManagementTestSupport {
                         .to("mock:foo");
             }
         });
-        try {
-            context.start();
-            fail("Should fail");
-        } catch (Exception e) {
-            assertEquals(
-                    "Failed to start route: foo because: Duplicate id detected: clash. Please correct ids to be unique among all your routes.",
-                    e.getMessage());
-        }
+        Exception e = assertThrows(Exception.class, () -> context.start());
+        assertEquals(
+                "Failed to start route: foo because: Duplicate id detected: clash. Please correct ids to be unique among all your routes.",
+                e.getMessage());
     }
 
     @Override

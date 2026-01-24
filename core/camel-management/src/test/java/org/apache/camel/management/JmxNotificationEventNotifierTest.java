@@ -30,7 +30,7 @@ import org.junit.jupiter.api.condition.OS;
 
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_EVENT_NOTIFIER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
@@ -94,13 +94,8 @@ public class JmxNotificationEventNotifierTest extends ManagementTestSupport {
                     }
                 }, null);
 
-        try {
-            template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:fail", "Hello World"));
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
 
         assertEquals(4, listener.getEventCounter(), "Get a wrong number of events");
 

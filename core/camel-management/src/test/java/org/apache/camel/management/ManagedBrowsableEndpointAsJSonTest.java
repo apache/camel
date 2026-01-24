@@ -31,8 +31,8 @@ import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TY
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
@@ -184,14 +184,12 @@ public class ManagedBrowsableEndpointAsJSonTest extends ManagementTestSupport {
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             mbeanServer.invoke(name, "browseRangeMessagesAsJSon", new Object[] { 3, 1, false },
                     new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" });
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("From index cannot be larger than to index, was: 3 > 1", e.getCause().getMessage());
-        }
+        });
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("From index cannot be larger than to index, was: 3 > 1", e.getCause().getMessage());
     }
 
     @Override

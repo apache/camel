@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class LoggingEventNotifierTest extends ContextTestSupport {
@@ -61,13 +61,8 @@ public class LoggingEventNotifierTest extends ContextTestSupport {
 
     @Test
     public void testExchangeFailed() {
-        try {
-            template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class, () -> template.sendBody("direct:fail", "Hello World"));
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
 
         context.stop();
     }

@@ -32,8 +32,8 @@ import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TY
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
@@ -85,12 +85,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         // reset
         mbeanServer.invoke(name, "resetTypeConversionCounters", null, null);
 
-        try {
-            template.sendBody("direct:start", "foo");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "foo"));
 
         // should now have a failed
         failed = (Long) mbeanServer.getAttribute(name, "FailedCounter");

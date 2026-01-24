@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NoErrorHandlerTest extends ContextTestSupport {
 
@@ -54,18 +54,8 @@ public class NoErrorHandlerTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Goodday World");
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-        }
-        try {
-            template.sendBody("direct:start", "Bye World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"));
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Bye World"));
         template.sendBody("direct:start", "Goodday World");
 
         assertMockEndpointsSatisfied();

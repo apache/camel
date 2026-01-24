@@ -31,7 +31,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedStartupFailedTest extends ManagementTestSupport {
@@ -77,12 +77,7 @@ public class ManagedStartupFailedTest extends ManagementTestSupport {
             }
         });
 
-        try {
-            context.start();
-            fail("Startup failure expected");
-        } catch (Exception ex) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> context.start());
 
         MBeanServer server = getMBeanServer();
         assertNull(server);

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
@@ -132,14 +132,12 @@ public class ManagedRouteUpdateRouteFromXmlTest extends ManagementTestSupport {
                      + "  <to uri=\"mock:changed\"/>"
                      + "</route>";
 
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             mbeanServer.invoke(on, "updateRouteFromXml", new Object[] { xml }, new String[] { "java.lang.String" });
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Cannot update route from XML as routeIds does not match. routeId: myRoute, routeId from XML: foo",
-                    e.getCause().getMessage());
-        }
+        });
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Cannot update route from XML as routeIds does not match. routeId: myRoute, routeId from XML: foo",
+                e.getCause().getMessage());
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
