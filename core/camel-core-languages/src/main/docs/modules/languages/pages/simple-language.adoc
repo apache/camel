@@ -714,7 +714,7 @@ Yes you can use the full power of the simple language and all its functions, suc
 ----
 $init{
   $foo := ${upper('Hello $body}'}
-  $bar := ${iif(${header.code} > 999,'Gold','Silver')}
+  $bar := ${header.code > 999 ? 'Gold' : 'Silver'}
 }init$
 ----
 
@@ -727,7 +727,7 @@ For example as below where we do a basic JSon mapping:
 ----
 $init{
   $greeting := ${upper('Hello $body}'}
-  $level := ${iif(${header.code} > 999,'Gold','Silver')}
+  $level := ${header.code > 999 ? 'Gold' : 'Silver'}
 }init$
 {
   "message": "$greeting",
@@ -751,7 +751,7 @@ from("direct:welcome")
           """
             $init{
               $greeting := ${upper('Hello $body}'}
-              $level := ${iif(${header.code} > 999,'Gold','Silver')}
+              $level := ${header.code > 999 ? 'Gold' : 'Silver'}
             }init$
             {
               "message": "$greeting",
@@ -772,7 +772,7 @@ XML::
         <simple>
             $init{
               $greeting := ${upper('Hello $body}'}
-              $level := ${iif(${header.code} > 999,'Gold','Silver')}
+              $level := ${header.code > 999 ? 'Gold' : 'Silver'}
             }init$
             {
               "message": "$greeting",
@@ -797,7 +797,7 @@ YAML::
             expression: |-
                 $init{
                   $greeting := ${upper('Hello $body}'}
-                  $level := ${iif(${header.code} > 999,'Gold','Silver')}
+                  $level := ${header.code > 999 ? 'Gold' : 'Silver'}
                 }init$
                 {
                   "message": "$greeting",
