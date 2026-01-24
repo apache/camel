@@ -35,7 +35,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregationTestSupport {
 
@@ -111,8 +110,7 @@ public class JdbcRemoveConfirmOrderAggregateTest extends AbstractJdbcAggregation
                     .executeQuery("SELECT * FROM aggregationRepo1_completed");
             return !rs.next();
         } catch (SQLException e) {
-            fail(e);
-            return false;
+            throw new AssertionError(e);
         }
 
     }
