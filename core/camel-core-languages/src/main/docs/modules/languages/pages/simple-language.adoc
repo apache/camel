@@ -300,6 +300,24 @@ this into a `String[]` separated by new-line.
 |`not(predicate)` | `boolean` | Evaluates the predicate and returns the opposite.
 |====
 
+The `iif` (_inlined if_) function is from Camel 4.18 also available as a ternary operator (predicate `?` trueExp `:` falseExp), see further below.
+An example with `iif` could be `${iif(${header.foo} > 0,'positive','negative')}`. This example is also used further below with the ternary operator.
+Instead of returning a fixed string as response, you can also use functions such as: `${iif(${header.foo} > 0,$\{body},$\{null})}`
+
+The remainder boolean functions are basic functions to check a value and return either `true` or `false`.
+
+The `isEmpty` is primary for checking if a value is either `null` or empty string or empty list/map/array types. For any other values then `false` is returned.
+
+The `isAlpha` / `isAlphaNumeric` and `isNumeric` is for checking if a value only contains `A..Z` or `A.Z0..9`, or `0..9` characters.
+Camel will use from the JDK `Character.isLetter` / `Character.isLetterOrDigit`, or `Character.isDigit` methods internally.
+
+So `${isAlpha('Hello World'}` will actually return `false` because there is a whitespace. However `${isAlpha('HelloWorld'}` returns `true`.
+
+TIP: You can use the `regex` operator to use regular expressions for more advanced tests.
+
+And the `not` function is function to inverse the boolean value.
+
+
 === Date & Time Functions
 
 [width="100%",cols="10%,10%,80%",options="header",]
