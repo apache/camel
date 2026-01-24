@@ -186,12 +186,54 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`variables.size` | `int` | The number of `Exchange` variables
 |====
 
+The Camel functions are as the name implies specific to Apache Camel and these functions are primary used
+to access Camel functionality and content of the message being routed.
+
+These functions are powerful to give easy access to the current `Exchange` / `Message` being routed so
+you can get the message body, headers, variables and exchange properties.
+
+During routing, you can use the xref:eips:log-eip.adoc[LogEIP] to write to the log, for example:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:email")
+  .log("Sending welcome email to customer ${header.id} with status ${variable.level}");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:email"/>
+    <log message="Sending welcome email to customer ${header.id} with status ${variable.level}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:email
+    steps:
+      - log:
+          message: "Sending welcome email to customer ${header.id} with status ${variable.level}"
+----
+====
+
+NOTE: The Camel functions are often also used for basic data mapping to easily get the part of the message payload you desire.
+
 === Array & List Functions
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
-|`collate(size)` | `List` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
+|`collate(size)` | `Iterator<List>` | The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists. This method works similar to the collate method in Groovy.
 |`distinct(val1,val2,...)` | `Set` | Returns a set of all the values with duplicates removed
 |`empty(kind)` | `<T>` | *Deprecated* Use `createEmpty` instead.
 |`forEach(exp,fun)` | `<List>` | Returns a List containing the values returned by the function when applied to each value from the input expression. This function is not supported when using csimple.
@@ -204,6 +246,42 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`split(separator)` | `String[]` | Splits the message body as a `String` value using the separator into a `String` array. The separator is comma by default.
 |`split(exp,separator)` | `String[]` | Splits the expression as a `String` value using the separator into a `String` array. The separator is comma by default.
 |====
+
+The array and list functions are less commonly used as they are more advanced and require to work with data that are structured
+in arrays or lists.
+
+The `collate` function is used for grouping together data into smaller subgroups. Suppose you have a message body containing a list of 9 elements.
+Then by using `${collate(2)}` will transform this into an `java.util.Iterator` that will return each sub list.
+As there are 9 elements as input then the output will be 5 sub lists with 2 2 2 2 and 1 element each.
+
+The `distinct` function takes one or more values as input and then returns a `Set` with only the unique values.
+The input values can single objects or arrays or lists as well. If no values is provided then the `${distinct()}` function will use the message body as input.
+For example `${distinct('Z','X','Z','A','B','A','C','D','B','E')}` will return a `Set` with values `[Z, X, A, B, C, D, E]`.
+
+The `forEach` function is like a for loop that loops the input values and apply the function to each item, and aggregates their responses into a `List` as result.
+
+For example suppose the message body contains a comma separated String with `Camel,World,Cheese` then
+executing `${forEach($\{body},'Hello $\{body}')}` will return a List with 3 values: `["Hello Camel", "Hello World", "Hello Cheese"]`.
+
+The `list` function is used for taking all input values and putting them into a single `List` as response.
+For example if the message body contains '4' then `${list(1,2,3,$\{body})}` will return a list with 4 elements. `[1,2,3,4]`.
+
+The `map` function is similar to the `list` function but for creating a `Map` instead where the values are grouped in pairs 2 by 2.
+For example `${map(1,a,2,b,3,c)}` will return a map with 3 elements `{1=a, 2=b, 3=c}`.
+
+The `createEmpty` function is for creating an empty object which can either be an empty `String` or a `List`, `Map` or `Set`.
+To create an empty `Map` use `${createEmpty(map)}`.
+
+The `reverse` function is to reverse the order of the values.
+For example `${reverse(1,2,3,4,5)}` will return a `List` with the values `5,4,3,2,1`.
+And the `shuffle` function will randomize the order of the values.
+
+The `skip` function is used for skipping the first number of elements. For example suppose you have a CSV file that contains a header line,
+and you want to skip this line, then you can use `${skip(1)}` that then returns an `Iterator` that starts at the 2nd line.
+
+The `split` function is as the name implies used for splitting the message body or the value (using a separator) into an array of sub elements.
+For example if the message body a CSV payload then using `${split(\\n)}` (you need to escape the new-line character) will split
+this into a `String[]` separated by new-line.
 
 === Boolean Functions
 

@@ -29,7 +29,7 @@ import org.apache.camel.util.IOHelper;
  * Group based {@link Iterator} which groups the given {@link Iterator} a number of times and then return a combined
  * response as a <tt>List</tt>.
  * <p/>
- * This implementation uses a internal array list, to combine the response.
+ * This implementation uses an internal array list, to combine the response.
  *
  * @see GroupTokenIterator
  */

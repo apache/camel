@@ -2713,6 +2713,13 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${split(${header.myHead},;)}");
         s = expression.evaluate(exchange, String[].class);
         assertArrayEquals(arr2, s);
+
+        body = "A1,B1,C1\nA2,B2,C2\nA3,B3,C3";
+        arr = body.split("\n");
+        exchange.getMessage().setBody(body);
+        expression = context.resolveLanguage("simple").createExpression("${split(\\n)}");
+        s = expression.evaluate(exchange, String[].class);
+        assertArrayEquals(arr, s);
     }
 
     @Test

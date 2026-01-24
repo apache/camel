@@ -1068,6 +1068,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 } else {
                     separator = tokens[0];
                 }
+            } else if ("\n".equals(values)) {
+                separator = values;
             }
             return SimpleExpressionBuilder.splitStringExpression(exp, separator);
         }
