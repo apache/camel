@@ -24,7 +24,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class WorkdayReportProducerTest extends CamelTestSupport {
 
@@ -53,21 +53,14 @@ public class WorkdayReportProducerTest extends CamelTestSupport {
     public void createProducerNoHostConfiguration() {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-        try {
-
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
                     .createEndpoint("workday:report:/ISU_Camel/Custom_Report_Employees?" + "tenant=camel"
                                     + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
                                     + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
                                     + "&format=json");
-        } catch (Exception exception) {
-
-            assertEquals(IllegalArgumentException.class, exception.getClass());
-            assertEquals("Host must be specified", exception.getMessage());
-            return;
-        }
-
-        fail("Required parameters validation failed.");
+        });
+        assertEquals("Host must be specified", exception.getMessage());
     }
 
     @Test
