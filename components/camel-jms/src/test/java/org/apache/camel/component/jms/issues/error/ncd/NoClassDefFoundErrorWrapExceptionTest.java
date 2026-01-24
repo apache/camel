@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
 
@@ -43,15 +43,15 @@ public class NoClassDefFoundErrorWrapExceptionTest extends AbstractJMSTest {
 
     @Test
     public void testNoClassDef() {
-        try {
-            template.requestBody("activemq:NoClassDefFoundErrorWrapExceptionTest?transferException=true", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            final String s = ExceptionHelper.stackTraceToString(e);
-            assertTrue(s.contains("java.lang.LinkageError"));
-            assertTrue(s.contains("Cannot do this"));
-            assertTrue(s.contains("org.apache.camel.component.jms.issues.error.ncd.ProcessorFail.process"));
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.requestBody("activemq:NoClassDefFoundErrorWrapExceptionTest?transferException=true",
+                        "Hello World"),
+                "Should throw exception");
+
+        final String s = ExceptionHelper.stackTraceToString(e);
+        assertTrue(s.contains("java.lang.LinkageError"));
+        assertTrue(s.contains("Cannot do this"));
+        assertTrue(s.contains("org.apache.camel.component.jms.issues.error.ncd.ProcessorFail.process"));
     }
 
     @Override
