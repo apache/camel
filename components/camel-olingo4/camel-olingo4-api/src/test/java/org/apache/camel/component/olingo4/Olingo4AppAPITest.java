@@ -80,6 +80,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -481,17 +482,15 @@ public class Olingo4AppAPITest {
         HttpStatusCode statusCode = statusHandler.await();
         LOG.info("Deletion of Entity was successful:  {}: {}", statusCode.getStatusCode(), statusCode.getInfo());
 
-        try {
-            LOG.info("Verify Delete Entity");
+        LOG.info("Verify Delete Entity");
 
-            entryHandler.reset();
-            olingoApp.read(edm, TEST_CREATE_PEOPLE, null, null, entryHandler);
+        entryHandler.reset();
+        olingoApp.read(edm, TEST_CREATE_PEOPLE, null, null, entryHandler);
 
+        assertThrows(Exception.class, () -> {
             entryHandler.await();
             fail("Entity not deleted!");
-        } catch (Exception e) {
-            LOG.info("Deleted entity not found: {}", e.getMessage());
-        }
+        });
     }
 
     @Test
