@@ -56,7 +56,7 @@ import static org.apache.camel.component.jira.Utils.createIssueWithWorkLogs;
 import static org.apache.camel.component.jira.Utils.newWorkLog;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -150,13 +150,10 @@ public class AddWorkLogProducerTest extends CamelTestSupport {
         headers.put(MINUTES_SPENT, minutesSpent);
         String comment = "A new test comment " + new Date();
 
-        try {
-            template.sendBodyAndHeaders(comment, headers);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertStringContains(cause.getMessage(), ISSUE_KEY);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeaders(comment, headers));
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertStringContains(cause.getMessage(), ISSUE_KEY);
 
         mockResult.expectedMessageCount(0);
         mockResult.assertIsSatisfied();
@@ -171,13 +168,10 @@ public class AddWorkLogProducerTest extends CamelTestSupport {
         headers.put(ISSUE_KEY, backendIssue.getKey());
         String comment = "A new test comment " + new Date();
 
-        try {
-            template.sendBodyAndHeaders(comment, headers);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertStringContains(cause.getMessage(), MINUTES_SPENT);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeaders(comment, headers));
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertStringContains(cause.getMessage(), MINUTES_SPENT);
 
         mockResult.expectedMessageCount(0);
         mockResult.assertIsSatisfied();
@@ -193,13 +187,10 @@ public class AddWorkLogProducerTest extends CamelTestSupport {
         headers.put(ISSUE_KEY, backendIssue.getKey());
         headers.put(MINUTES_SPENT, minutesSpent);
 
-        try {
-            template.sendBodyAndHeaders(null, headers);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertStringContains(cause.getMessage(), "Missing exchange body");
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeaders(null, headers));
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertStringContains(cause.getMessage(), "Missing exchange body");
 
         mockResult.expectedMessageCount(0);
         mockResult.assertIsSatisfied();
