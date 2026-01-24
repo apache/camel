@@ -63,8 +63,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ModelParserTest {
 
@@ -439,16 +439,14 @@ public class ModelParserTest {
         Path dir = getResourceFolder();
         Path path = new File(dir.toFile() + "/invalid", "convertBodyParseError.xml").toPath();
         Resource resource = ResourceHelper.fromString("file:convertBodyParseError.xml", Files.readString(path));
-        try {
+        XmlPullParserLocationException e = assertThrows(XmlPullParserLocationException.class, () -> {
             ModelParser parser = new ModelParser(resource, NAMESPACE);
             parser.parseRoutesDefinition();
-            fail("Should throw exception");
-        } catch (XmlPullParserLocationException e) {
-            assertEquals(22, e.getLineNumber());
-            assertEquals(25, e.getColumnNumber());
-            assertEquals("file:convertBodyParseError.xml", e.getResource().getLocation());
-            assertTrue(e.getMessage().startsWith("Unexpected attribute '{}ref'"));
-        }
+        });
+        assertEquals(22, e.getLineNumber());
+        assertEquals(25, e.getColumnNumber());
+        assertEquals("file:convertBodyParseError.xml", e.getResource().getLocation());
+        assertTrue(e.getMessage().startsWith("Unexpected attribute '{}ref'"));
     }
 
     private Path getResourceFolder() {
