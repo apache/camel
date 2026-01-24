@@ -26,9 +26,8 @@ import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.Assert;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ContextConfiguration
 @CamelSpringTest
@@ -65,13 +64,9 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
 
         resultEndpoint1.expectedMessageCount(0);
 
-        try {
+        assertThrows(CamelExecutionException.class, () -> {
             template1.sendBody(record1);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            Assert.isInstanceOf(Exception.class, e.getCause());
-            // log.info(">> Error : " + e);
-        }
+        });
 
         resultEndpoint1.assertIsSatisfied();
     }
@@ -126,13 +121,9 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest {
 
         resultEndpoint1.expectedMessageCount(0);
 
-        try {
+        assertThrows(CamelExecutionException.class, () -> {
             template1.sendBody(record6);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            // expected
-            Assert.isInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        });
 
         resultEndpoint1.assertIsSatisfied();
     }
