@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestNettyHttpBindingModeXmlTest extends BaseNettyTestSupport {
 
@@ -52,12 +52,9 @@ public class RestNettyHttpBindingModeXmlTest extends BaseNettyTestSupport {
 
         // we bind to xml, but send in json, which is not possible
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        try {
-            template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body),
+                "Should have thrown exception");
 
         MockEndpoint.assertIsSatisfied(context);
     }

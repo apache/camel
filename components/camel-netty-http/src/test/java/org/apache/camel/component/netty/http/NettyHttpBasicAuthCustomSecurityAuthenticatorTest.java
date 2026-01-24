@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTestSupport {
 
@@ -39,13 +39,11 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
 
     @Test
     public void testBasicAuth() throws Exception {
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
-            fail("Should send back 401");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(401, cause.getStatusCode());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class),
+                "Should send back 401");
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(401, cause.getStatusCode());
 
         // wait a little bit before next as the connection was closed when
         // denied
