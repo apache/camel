@@ -22,8 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
 
@@ -35,15 +35,12 @@ public class SaxonXsltFeatureRouteTest extends CamelTestSupport {
     }
 
     public void sendXmlMessage(String uri, String message) {
-        try {
+        Exception ex = assertThrows(Exception.class, () -> {
             template.sendBody("direct:start1", message);
-            fail("expect an exception here");
-        } catch (Exception ex) {
-            // expect an exception here
-            assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
-            assertTrue(ex.getCause() instanceof XPathException, "Get a wrong exception cause");
-        }
-
+        });
+        // expect an exception here
+        assertTrue(ex instanceof CamelExecutionException, "Get a wrong exception");
+        assertTrue(ex.getCause() instanceof XPathException, "Get a wrong exception cause");
     }
 
     @Override
