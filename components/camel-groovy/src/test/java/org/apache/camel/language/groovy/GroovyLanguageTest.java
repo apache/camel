@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class GroovyLanguageTest extends LanguageTestSupport {
 
@@ -65,16 +65,14 @@ public class GroovyLanguageTest extends LanguageTestSupport {
             assertTrue(g.validateExpression("exchange.getExchangeId()"));
             assertTrue(g.validatePredicate("2 * 3 > 4"));
 
-            try {
+            GroovyValidationException e = assertThrows(GroovyValidationException.class, () -> {
                 g.validateExpression("""
                         var a = 123;
                         println a */ 2;
                         """);
-                fail("Should throw error");
-            } catch (GroovyValidationException e) {
-                assertEquals(23, e.getIndex());
-                assertInstanceOf(MultipleCompilationErrorsException.class, e.getCause());
-            }
+            });
+            assertEquals(23, e.getIndex());
+            assertInstanceOf(MultipleCompilationErrorsException.class, e.getCause());
         }
     }
 
