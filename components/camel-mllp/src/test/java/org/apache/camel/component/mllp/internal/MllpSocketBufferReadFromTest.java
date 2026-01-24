@@ -24,7 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for the class.
@@ -52,14 +52,12 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
         inputStreamStub
                 .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
 
-        try {
-            endpoint.setReceiveTimeout(500);
-            endpoint.setReadTimeout(100);
+        endpoint.setReceiveTimeout(500);
+        endpoint.setReadTimeout(100);
+        assertThrows(SocketTimeoutException.class, () -> {
             instance.readFrom(socketStub);
-            fail("Should have thrown and exception");
-        } catch (SocketTimeoutException expectedEx) {
-            assertNull(instance.toByteArray());
-        }
+        });
+        assertNull(instance.toByteArray());
     }
 
     /**
@@ -74,13 +72,11 @@ public class MllpSocketBufferReadFromTest extends SocketBufferTestSupport {
                 .addPacket("BAR".getBytes())
                 .addPacket(new SocketTimeoutException("Fake Timeout Exception"));
 
-        try {
-            endpoint.setReceiveTimeout(500);
-            endpoint.setReadTimeout(100);
+        endpoint.setReceiveTimeout(500);
+        endpoint.setReadTimeout(100);
+        assertThrows(SocketTimeoutException.class, () -> {
             instance.readFrom(socketStub);
-            fail("Should have thrown and exception");
-        } catch (SocketTimeoutException expectedEx) {
-            assertNull(instance.toByteArray());
-        }
+        });
+        assertNull(instance.toByteArray());
     }
 }
