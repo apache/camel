@@ -24,7 +24,7 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -37,12 +37,9 @@ public class TransactionalClientDataSourceWithOnExceptionHandledAndRollbackTest 
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        try {
+        assertThrows(CamelExecutionException.class, () -> {
             template.requestBody("direct:fail", "Hello World", String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        });
 
         assertMockEndpointsSatisfied();
 

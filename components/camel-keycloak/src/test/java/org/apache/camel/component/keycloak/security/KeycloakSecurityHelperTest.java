@@ -132,23 +132,19 @@ public class KeycloakSecurityHelperTest {
     }
 
     @Test
-    void testParseAndVerifyAccessTokenWithInvalidToken() {
+    void testParseAndVerifyAccessTokenWithInvalidToken() throws Exception {
         // Test that verification fails with invalid token
         String invalidToken = "invalid.jwt.token";
         String expectedIssuer = "http://localhost:8080/realms/test";
 
-        try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048);
-            KeyPair keyPair = keyGen.generateKeyPair();
-            PublicKey publicKey = keyPair.getPublic();
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
 
-            assertThrows(VerificationException.class, () -> {
-                KeycloakSecurityHelper.parseAndVerifyAccessToken(invalidToken, publicKey, expectedIssuer);
-            });
-        } catch (Exception e) {
-            fail("Failed to generate test keys: " + e.getMessage());
-        }
+        assertThrows(VerificationException.class, () -> {
+            KeycloakSecurityHelper.parseAndVerifyAccessToken(invalidToken, publicKey, expectedIssuer);
+        });
     }
 
     @Test

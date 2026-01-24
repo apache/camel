@@ -25,7 +25,7 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -38,15 +38,13 @@ public class TransactionalClientDataSourceWithOnExceptionRollbackTest extends Tr
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        try {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> {
             template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected as we fail
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            RollbackExchangeException rollback = assertIsInstanceOf(RollbackExchangeException.class, e.getCause().getCause());
-            assertEquals("Donkey in Action", rollback.getExchange().getIn().getBody());
-        }
+        });
+        // expected as we fail
+        assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+        RollbackExchangeException rollback = assertIsInstanceOf(RollbackExchangeException.class, e.getCause().getCause());
+        assertEquals("Donkey in Action", rollback.getExchange().getIn().getBody());
 
         assertMockEndpointsSatisfied();
 
