@@ -34,7 +34,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "/HandlersSpringTest.xml" })
@@ -76,19 +76,12 @@ public class UndertowHandlersSpringTest {
         mockEndpoint.expectedBodiesReceived("Hello World");
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2Vjc";
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
                     "Authorization", auth, String.class);
-            fail("Should send back 401");
-            assertEquals("Bye World", out);
-
-            mockEndpoint.assertIsSatisfied();
-
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
-            assertEquals(401, cause.getStatusCode());
-        }
-
+        });
+        HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
+        assertEquals(401, cause.getStatusCode());
     }
 
     public Integer getPort() {
