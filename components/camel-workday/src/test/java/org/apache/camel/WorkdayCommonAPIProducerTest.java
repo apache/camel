@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
@@ -56,21 +55,14 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
     public void createProducerNoHostConfiguration() {
         WorkdayComponent workdayComponent = context.getComponent("workday", WorkdayComponent.class);
 
-        try {
-
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             WorkdayEndpoint workdayEndpoint = (WorkdayEndpoint) workdayComponent
                     .createEndpoint(
                             "workday:commonAPI:/workers?" + "tenant=camel" + "&clientId=f7014d38-99d2-4969-b740-b5b62db6b46a"
                                     + "&clientSecret=7dbaf280-3cea-11ea-b77f-2e728ce88125" + "&tokenRefresh=88689ab63cda"
                                     + "&format=json");
-        } catch (Exception exception) {
-
-            assertEquals(exception.getClass(), IllegalArgumentException.class);
-            assertEquals("Host must be specified", exception.getMessage());
-            return;
-        }
-
-        fail("Required parameters validation failed.");
+        });
+        assertEquals("Host must be specified", exception.getMessage());
     }
 
     @Test
@@ -85,17 +77,10 @@ public class WorkdayCommonAPIProducerTest extends CamelTestSupport {
 
         WorkdayCommonAPIProducer workdayProducer = new WorkdayCommonAPIProducer(workdayEndpoint);
 
-        try {
-
+        Exception exception = assertThrows(MalformedURLException.class, () -> {
             String workdayUri = workdayProducer.prepareUri(workdayEndpoint.getWorkdayConfiguration());
-        } catch (Exception exception) {
-
-            assertEquals(exception.getClass(), MalformedURLException.class);
-            assertEquals("An invalid Workday Common endpoint: '/worker' was provided.", exception.getMessage());
-            return;
-        }
-
-        fail("Required parameters validation failed.");
+        });
+        assertEquals("An invalid Workday Common endpoint: '/worker' was provided.", exception.getMessage());
     }
 
     @Test
