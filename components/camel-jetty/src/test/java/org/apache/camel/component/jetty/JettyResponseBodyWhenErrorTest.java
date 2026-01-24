@@ -26,8 +26,8 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for HttpOperationFailedException should contain response body
@@ -36,19 +36,18 @@ public class JettyResponseBodyWhenErrorTest extends BaseJettyTest {
 
     @Test
     public void testResponseBodyWhenError() {
-        try {
-            template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123");
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(500, cause.getStatusCode());
-            String body = context.getTypeConverter().convertTo(String.class, cause.getResponseBody());
-            assertTrue(body.indexOf("Damm") > -1);
-            assertTrue(body.indexOf("IllegalArgumentException") > -1);
-            assertNotNull(cause.getResponseHeaders());
-            String type = cause.getResponseHeaders().get(Exchange.CONTENT_TYPE);
-            assertTrue(type.startsWith("text/plain"));
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("http://localhost:{{port}}/myapp/myservice", "bookid=123"),
+                "Should have thrown an exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(500, cause.getStatusCode());
+        String body = context.getTypeConverter().convertTo(String.class, cause.getResponseBody());
+        assertTrue(body.indexOf("Damm") > -1);
+        assertTrue(body.indexOf("IllegalArgumentException") > -1);
+        assertNotNull(cause.getResponseHeaders());
+        String type = cause.getResponseHeaders().get(Exchange.CONTENT_TYPE);
+        assertTrue(type.startsWith("text/plain"));
     }
 
     @Override

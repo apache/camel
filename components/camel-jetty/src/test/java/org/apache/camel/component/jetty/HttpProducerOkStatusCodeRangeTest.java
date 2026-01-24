@@ -24,34 +24,32 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpProducerOkStatusCodeRangeTest extends BaseJettyTest {
 
     @Test
     public void testNoOk() {
         byte[] data = "Hello World".getBytes();
-        try {
-            template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200-200", data, String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(209, cause.getStatusCode());
-            assertEquals("Not allowed", cause.getResponseBody());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200-200", data, String.class),
+                "Should have thrown exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(209, cause.getStatusCode());
+        assertEquals("Not allowed", cause.getResponseBody());
     }
 
     @Test
     public void testNoOkSingleValue() {
         byte[] data = "Hello World".getBytes();
-        try {
-            template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200", data, String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(209, cause.getStatusCode());
-            assertEquals("Not allowed", cause.getResponseBody());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("http://localhost:{{port}}/test?okStatusCodeRange=200", data, String.class),
+                "Should have thrown exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(209, cause.getStatusCode());
+        assertEquals("Not allowed", cause.getResponseBody());
     }
 
     @Test

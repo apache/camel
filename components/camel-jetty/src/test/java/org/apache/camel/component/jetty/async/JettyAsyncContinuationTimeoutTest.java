@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
 
@@ -40,20 +40,19 @@ public class JettyAsyncContinuationTimeoutTest extends BaseJettyTest {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         StopWatch watch = new StopWatch();
-        try {
-            template.requestBody("http://localhost:{{port}}/myservice", null, String.class);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            LOG.info("Timeout hit and client got reply with failure status code");
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("http://localhost:{{port}}/myservice", null, String.class),
+                "Should have thrown an exception");
 
-            long taken = watch.taken();
+        LOG.info("Timeout hit and client got reply with failure status code");
 
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(504, cause.getStatusCode());
+        long taken = watch.taken();
 
-            // should be approx 3-4 sec.
-            assertTrue(taken < 4500, "Timeout should occur faster than " + taken);
-        }
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(504, cause.getStatusCode());
+
+        // should be approx 3-4 sec.
+        assertTrue(taken < 4500, "Timeout should occur faster than " + taken);
 
         MockEndpoint.assertIsSatisfied(context);
     }
