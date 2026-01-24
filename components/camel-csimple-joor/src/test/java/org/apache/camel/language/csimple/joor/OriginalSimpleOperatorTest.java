@@ -23,7 +23,7 @@ import org.apache.camel.test.junit5.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OriginalSimpleOperatorTest extends LanguageTestSupport {
 
@@ -587,12 +587,9 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} is 'String'", true);
         assertPredicate("${in.header.foo} is 'Integer'", false);
 
-        try {
-            assertPredicate("${in.header.foo} is com.mycompany.DoesNotExist", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(20, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e0 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} is com.mycompany.DoesNotExist", false));
+        assertEquals(20, e0.getIndex());
     }
 
     @Test
@@ -607,18 +604,13 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.foo} !is 'String'", false);
         assertPredicate("${in.header.foo} !is 'Integer'", true);
 
-        try {
-            assertPredicate("${in.header.foo} not is com.mycompany.DoesNotExist", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(24, e.getIndex());
-        }
-        try {
-            assertPredicate("${in.header.foo} !is com.mycompany.DoesNotExist", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(21, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e1 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} not is com.mycompany.DoesNotExist", false));
+        assertEquals(24, e1.getIndex());
+
+        SimpleIllegalSyntaxException e2 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} !is com.mycompany.DoesNotExist", false));
+        assertEquals(21, e2.getIndex());
     }
 
     @Test
@@ -632,26 +624,17 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${bean:generator.generateId} range '120..122'", false);
         assertPredicate("${bean:generator.generateId} range '124..130'", false);
 
-        try {
-            assertPredicate("${in.header.foo} range abc..200", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(23, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e1 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} range abc..200", false));
+        assertEquals(23, e1.getIndex());
 
-        try {
-            assertPredicate("${in.header.foo} range abc..", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(23, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e2 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} range abc..", false));
+        assertEquals(23, e2.getIndex());
 
-        try {
-            assertPredicate("${in.header.foo} range 100.200", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(30, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e3 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} range 100.200", false));
+        assertEquals(30, e3.getIndex());
 
         assertPredicate("${in.header.bar} range '100..200' && ${in.header.foo} == 'abc'", true);
         assertPredicate("${in.header.bar} range '200..300' && ${in.header.foo} == 'abc'", false);
@@ -677,44 +660,29 @@ public class OriginalSimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${bean:generator.generateId} !range '120..122'", true);
         assertPredicate("${bean:generator.generateId} !range '124..130'", true);
 
-        try {
-            assertPredicate("${in.header.foo} not range abc..200", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(27, e.getIndex());
-        }
-        try {
-            assertPredicate("${in.header.foo} !range abc..200", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(24, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e1 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} not range abc..200", false));
+        assertEquals(27, e1.getIndex());
 
-        try {
-            assertPredicate("${in.header.foo} not range abc..", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(27, e.getIndex());
-        }
-        try {
-            assertPredicate("${in.header.foo} !range abc..", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(24, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e2 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} !range abc..200", false));
+        assertEquals(24, e2.getIndex());
 
-        try {
-            assertPredicate("${in.header.foo} not range 100.200", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(34, e.getIndex());
-        }
-        try {
-            assertPredicate("${in.header.foo} !range 100.200", false);
-            fail("Should have thrown an exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(31, e.getIndex());
-        }
+        SimpleIllegalSyntaxException e3 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} not range abc..", false));
+        assertEquals(27, e3.getIndex());
+
+        SimpleIllegalSyntaxException e4 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} !range abc..", false));
+        assertEquals(24, e4.getIndex());
+
+        SimpleIllegalSyntaxException e5 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} not range 100.200", false));
+        assertEquals(34, e5.getIndex());
+
+        SimpleIllegalSyntaxException e6 = assertThrows(SimpleIllegalSyntaxException.class,
+                () -> assertPredicate("${in.header.foo} !range 100.200", false));
+        assertEquals(31, e6.getIndex());
     }
 
     @Test
