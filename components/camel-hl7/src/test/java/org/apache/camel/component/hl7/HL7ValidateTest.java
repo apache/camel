@@ -40,8 +40,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HL7ValidateTest extends CamelTestSupport {
 
@@ -54,15 +54,13 @@ public class HL7ValidateTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         String body = createHL7AsString();
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:unmarshalFailed", body);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(HL7Exception.class, e.getCause());
-            assertIsInstanceOf(DataTypeException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("ca.uhn.hl7v2.validation.ValidationException: Validation failed:"),
-                    "Should be a validation error message");
-        }
+        });
+        assertIsInstanceOf(HL7Exception.class, e.getCause());
+        assertIsInstanceOf(DataTypeException.class, e.getCause());
+        assertTrue(e.getCause().getMessage().startsWith("ca.uhn.hl7v2.validation.ValidationException: Validation failed:"),
+                "Should be a validation error message");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -95,16 +93,14 @@ public class HL7ValidateTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         Message message = createADT01Message();
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:start1", message);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(HL7Exception.class, e.getCause());
-            assertIsInstanceOf(ValidationException.class, e.getCause().getCause());
-            LOG.error("Validation failed", e.getCause().getCause());
-            assertTrue(e.getCause().getCause().getMessage().startsWith("Validation failed:"),
-                    "Should be a validation error message");
-        }
+        });
+        assertIsInstanceOf(HL7Exception.class, e.getCause());
+        assertIsInstanceOf(ValidationException.class, e.getCause().getCause());
+        LOG.error("Validation failed", e.getCause().getCause());
+        assertTrue(e.getCause().getCause().getMessage().startsWith("Validation failed:"),
+                "Should be a validation error message");
 
         MockEndpoint.assertIsSatisfied(context);
     }
