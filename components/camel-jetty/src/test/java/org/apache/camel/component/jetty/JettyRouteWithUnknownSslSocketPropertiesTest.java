@@ -24,8 +24,8 @@ import org.eclipse.jetty.server.Server;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest {
@@ -54,14 +54,12 @@ public class JettyRouteWithUnknownSslSocketPropertiesTest extends BaseJettyTest 
                 from("jetty:https://localhost:{{port}}/myapp/myservice").to("log:foo");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"),
-                    "Actual message: " + iae.getMessage());
-        }
+
+        Exception e = assertThrows(Exception.class, () -> context.start(), "Should have thrown exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(iae.getMessage().endsWith("Unknown parameters=[{doesNotExist=2000}]"),
+                "Actual message: " + iae.getMessage());
     }
 
 }

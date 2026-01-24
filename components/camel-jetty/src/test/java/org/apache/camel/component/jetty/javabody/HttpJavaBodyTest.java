@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpJavaBodyTest extends BaseJettyTest {
 
@@ -177,12 +177,9 @@ public class HttpJavaBodyTest extends BaseJettyTest {
         });
         context.start();
 
-        try {
-            template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
-            fail("Should fail");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class,
+                () -> template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class),
+                "Should fail");
     }
 
     @Test
@@ -214,15 +211,14 @@ public class HttpJavaBodyTest extends BaseJettyTest {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        try {
-            template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
-                    HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
-                    MyCoolBean.class);
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(415, cause.getStatusCode());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBodyAndHeader("http://localhost:{{port}}/myapp/myservice", cool, Exchange.CONTENT_TYPE,
+                        HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT,
+                        MyCoolBean.class),
+                "Should fail");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(415, cause.getStatusCode());
     }
 
 }

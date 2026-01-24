@@ -45,8 +45,8 @@ import static org.apache.camel.component.jetty.BaseJettyTest.SSL_SYSPROPS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @ResourceLock(SSL_SYSPROPS)
 @DisabledOnOs(OS.WINDOWS)
@@ -120,11 +120,10 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Test
     public void testEndpointWithoutHttps() {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
-        try {
-            template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
-            fail("expect exception on access to https endpoint via http");
-        } catch (RuntimeCamelException expected) {
-        }
+        assertThrows(RuntimeCamelException.class,
+                () -> template.sendBodyAndHeader("http://localhost:" + port1 + "/test", expectedBody, "Content-Type",
+                        "application/xml"),
+                "expect exception on access to https endpoint via http");
         assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
 
@@ -147,11 +146,8 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Override
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
-        try {
-            new URL("http://localhost:" + port1 + "/hello").openStream();
-            fail("expected SocketException on use ot http");
-        } catch (SocketException expected) {
-        }
+        assertThrows(SocketException.class, () -> new URL("http://localhost:" + port1 + "/hello").openStream(),
+                "expected SocketException on use ot http");
     }
 
     @Override

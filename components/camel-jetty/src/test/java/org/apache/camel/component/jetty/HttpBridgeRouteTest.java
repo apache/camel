@@ -25,8 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpBridgeRouteTest extends BaseJettyTest {
 
@@ -40,12 +40,10 @@ public class HttpBridgeRouteTest extends BaseJettyTest {
         response = template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
         assertEquals("/hello/world", response, "Get a wrong response");
 
-        try {
-            template.requestBody("http://localhost:" + port2 + "/hello/world", "hello", String.class);
-            fail("Expect exception here!");
-        } catch (Exception ex) {
-            assertTrue(ex instanceof RuntimeCamelException, "We should get a RuntimeCamelException");
-        }
+        Exception ex = assertThrows(Exception.class,
+                () -> template.requestBody("http://localhost:" + port2 + "/hello/world", "hello", String.class),
+                "Expect exception here!");
+        assertTrue(ex instanceof RuntimeCamelException, "We should get a RuntimeCamelException");
     }
 
     @Override

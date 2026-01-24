@@ -28,8 +28,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JettyXsltTest extends CamelTestSupport {
 
@@ -46,13 +46,12 @@ public class JettyXsltTest extends CamelTestSupport {
 
     @Test
     void testClasspathInvalidParameter() {
-        try {
-            template.requestBody("xslt:org/apache/camel/component/jetty/greeting.xsl?name=greeting.xsl", "<hello>Camel</hello>",
-                    String.class);
-            fail("Should have thrown exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getMessage().endsWith("Unknown parameters=[{name=greeting.xsl}]"));
-        }
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> template.requestBody("xslt:org/apache/camel/component/jetty/greeting.xsl?name=greeting.xsl",
+                        "<hello>Camel</hello>", String.class),
+                "Should have thrown exception");
+
+        assertTrue(e.getMessage().endsWith("Unknown parameters=[{name=greeting.xsl}]"));
     }
 
     @Test

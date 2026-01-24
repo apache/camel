@@ -29,7 +29,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpStreamCacheFileTest extends BaseJettyTest {
 
@@ -50,14 +50,13 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
 
     @Test
     public void testStreamCacheToFileShouldBeDeletedInCaseOfException() {
-        try {
-            template.requestBody("direct:start", null, String.class);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            String s = context.getTypeConverter().convertTo(String.class, hofe.getResponseBody());
-            assertEquals(responseBody, s, "Response body");
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", null, String.class),
+                "Should have thrown an exception");
+
+        HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        String s = context.getTypeConverter().convertTo(String.class, hofe.getResponseBody());
+        assertEquals(responseBody, s, "Response body");
 
         // the temporary files should have been deleted
         String[] files = testDirectory.list();

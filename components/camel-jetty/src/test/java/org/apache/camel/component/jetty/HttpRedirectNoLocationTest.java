@@ -26,23 +26,22 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpRedirectNoLocationTest extends BaseJettyTest {
 
     @Test
     public void testHttpRedirectNoLocation() {
-        try {
-            template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(302, cause.getStatusCode());
-            assertTrue(cause.isRedirectError());
-            assertFalse(cause.hasRedirectLocation());
-            assertNull(cause.getRedirectLocation());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class),
+                "Should have thrown an exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(302, cause.getStatusCode());
+        assertTrue(cause.isRedirectError());
+        assertFalse(cause.hasRedirectLocation());
+        assertNull(cause.getRedirectLocation());
     }
 
     @Override
