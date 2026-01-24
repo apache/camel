@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for no recipients
@@ -32,13 +32,12 @@ public class MailNoRecipientsTest extends CamelTestSupport {
 
     @Test
     public void testMailNoRecipients() {
-        try {
-            template.sendBody("direct:a", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("The mail message does not have any recipients set.", iae.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:a", "Hello World"),
+                "Should have thrown exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The mail message does not have any recipients set.", iae.getMessage());
     }
 
     @Override

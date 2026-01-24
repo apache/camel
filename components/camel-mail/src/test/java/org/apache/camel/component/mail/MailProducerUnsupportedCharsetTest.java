@@ -29,7 +29,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
     private static final MailboxUser jones = Mailbox.getOrCreateUser("jones", "secret");
@@ -94,13 +94,13 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         headers.clear();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain; charset=XXX");
-        try {
-            template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false", "Bye World",
-                    headers);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(UnsupportedEncodingException.class, e.getCause());
-        }
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBodyAndHeaders(jones.uriPrefix(Protocol.smtp) + "&ignoreUnsupportedCharset=false",
+                        "Bye World",
+                        headers),
+                "Should have thrown an exception");
+        assertIsInstanceOf(UnsupportedEncodingException.class, e.getCause());
 
         mock.assertIsSatisfied();
     }

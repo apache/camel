@@ -32,8 +32,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test of integration between the mail component and JSSE Configuration Utility. This test does not easily automate.
@@ -99,14 +99,12 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         headers.put(MailConstants.MAIL_REPLY_TO, email);
         headers.put("Subject", "SSL/TLS Test");
 
-        try {
-            template.sendBodyAndHeaders("direct:in", "Test Email Body", headers);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertTrue(e.getCause().getCause() instanceof SSLHandshakeException);
-            assertTrue(e.getCause().getCause().getMessage()
-                    .contains("unable to find valid certification path to requested target"));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeaders("direct:in", "Test Email Body", headers),
+                "Should have thrown exception");
+        assertTrue(e.getCause().getCause() instanceof SSLHandshakeException);
+        assertTrue(e.getCause().getCause().getMessage()
+                .contains("unable to find valid certification path to requested target"));
     }
 
     /**
