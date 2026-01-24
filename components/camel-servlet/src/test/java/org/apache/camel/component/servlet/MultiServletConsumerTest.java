@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
 
@@ -37,19 +37,13 @@ public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
 
     @Test
     public void testMultiServletsConsumersCannotAccessEachOther() throws Exception {
-        try {
-            getService("/services2/hello?name=Camel");
-            fail("Should have thrown an exception");
-        } catch (HttpNotFoundException e) {
-            assertEquals(404, e.getResponseCode());
-        }
+        HttpNotFoundException e = assertThrows(HttpNotFoundException.class,
+                () -> getService("/services2/hello?name=Camel"));
+        assertEquals(404, e.getResponseCode());
 
-        try {
-            getService("/services1/echo?name=Camel");
-            fail("Should have thrown an exception");
-        } catch (HttpNotFoundException e) {
-            assertEquals(404, e.getResponseCode());
-        }
+        e = assertThrows(HttpNotFoundException.class,
+                () -> getService("/services1/echo?name=Camel"));
+        assertEquals(404, e.getResponseCode());
     }
 
     public String getService(String path) throws Exception {
