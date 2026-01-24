@@ -21,7 +21,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for various invalid configurations etc.
@@ -32,24 +32,18 @@ public class InvalidConfigurationTest extends CamelTestSupport {
     public void testSMTPCanNotBeUsedForConsumingMails() throws Exception {
         Endpoint endpoint = context.getEndpoint("smtp://localhost?username=james");
         PollingConsumer consumer = endpoint.createPollingConsumer();
-        try {
-            consumer.start();
-            fail("Should have thrown NoSuchProviderException as smtp protocol cannot be used for consuming mails");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+                () -> consumer.start(),
+                "Should have thrown NoSuchProviderException as smtp protocol cannot be used for consuming mails");
     }
 
     @Test
     public void testSMTPSCanNotBeUsedForConsumingMails() throws Exception {
         Endpoint endpoint = context.getEndpoint("smtps://localhost?username=james");
         PollingConsumer consumer = endpoint.createPollingConsumer();
-        try {
-            consumer.start();
-            fail("Should have thrown NoSuchProviderException as smtp protocol cannot be used for consuming mails");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+                () -> consumer.start(),
+                "Should have thrown NoSuchProviderException as smtp protocol cannot be used for consuming mails");
     }
 
 }
