@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
@@ -42,12 +42,7 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Kaboom"));
 
         assertMockEndpointsSatisfied();
     }
@@ -58,12 +53,7 @@ public class ManagedRouteWithOnExceptionTest extends ManagementTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:start", "Kaboom"));
 
         assertMockEndpointsSatisfied();
     }
