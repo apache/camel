@@ -96,14 +96,12 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "<user xmlns=\"http://foo.com/bar\">"
                      + "  <username>someone</username>" + "</user>";
 
-        try {
-            template.sendBody("direct:start", xml);
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof SchemaValidationException;
-            assertTrue(b);
-            // expected
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:start", xml),
+                "Should have thrown a RuntimeCamelException");
+
+        boolean b = e.getCause() instanceof SchemaValidationException;
+        assertTrue(b);
 
         assertMockEndpointsSatisfied();
     }
@@ -116,14 +114,12 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" + "user xmlns=\"http://foo.com/bar\">" + "  <id>1</id>"
                      + "  <username>davsclaus</username>";
 
-        try {
-            template.sendBody("direct:start", xml);
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof SchemaValidationException;
-            assertTrue(b);
-            // expected
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:start", xml),
+                "Should have thrown a RuntimeCamelException");
+
+        boolean b = e.getCause() instanceof SchemaValidationException;
+        assertTrue(b);
 
         assertMockEndpointsSatisfied();
     }
@@ -133,12 +129,11 @@ public class ValidatingProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", null);
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(NoXmlBodyValidationException.class, e.getCause());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:start", null),
+                "Should have thrown a RuntimeCamelException");
+
+        assertIsInstanceOf(NoXmlBodyValidationException.class, e.getCause());
 
         assertMockEndpointsSatisfied();
     }
@@ -153,12 +148,9 @@ public class ValidatingProcessorTest extends ContextTestSupport {
 
         assertNull(validating.getSchemaUrl());
 
-        try {
-            assertNotNull(validating.getSchemaSource());
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+                () -> assertNotNull(validating.getSchemaSource()),
+                "Should have thrown an exception");
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AsyncRouteWithErrorTest extends ContextTestSupport {
 
@@ -44,13 +44,11 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         // send a request reply to the direct start endpoint
-        try {
-            template.requestBody("direct:start", "Hello");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            // expected an execution exception
-            assertEquals("Damn forced by unit test", e.getCause().getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "Hello"),
+                "Should have thrown exception");
+        // expected an execution exception
+        assertEquals("Damn forced by unit test", e.getCause().getMessage());
 
         // we should run before the async processor that sets B
         route += "A";
@@ -67,13 +65,11 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
 
         // send a request reply to the direct start endpoint, but will use
         // future type converter that will wait for the response
-        try {
-            template.requestBody("direct:start", "Hello", String.class);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            // expected an execution exception
-            assertEquals("Damn forced by unit test", e.getCause().getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:start", "Hello", String.class),
+                "Should have thrown an exception");
+        // expected an execution exception
+        assertEquals("Damn forced by unit test", e.getCause().getMessage());
 
         // we should wait for the async response as we ask for the result as a
         // String body

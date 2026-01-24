@@ -25,7 +25,7 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultErrorHandlerRedeliveryRefTest extends ContextTestSupport {
 
@@ -35,12 +35,7 @@ public class DefaultErrorHandlerRedeliveryRefTest extends ContextTestSupport {
     public void testRedeliveryRefTest() {
         counter = 0;
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:start", "Hello World"));
 
         // One call + 2 re-deliveries
         assertEquals(3, counter);

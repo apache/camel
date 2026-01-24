@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to verify that error handling using async() also works as expected.
@@ -52,12 +52,10 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
 
-        try {
-            template.requestBody("direct:in", "Hello World");
-            fail("Should have thrown a CamelExecutionException");
-        } catch (CamelExecutionException e) {
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:in", "Hello World"),
+                "Should have thrown a CamelExecutionException");
+        assertEquals("Forced exception by unit test", e.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

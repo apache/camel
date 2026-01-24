@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSupport {
 
@@ -71,13 +71,10 @@ public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSu
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Forced", e.getCause().getMessage());
-            assertIsInstanceOf(IOException.class, e.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"), "Should have thrown exception");
+        assertEquals("Forced", e.getCause().getMessage());
+        assertIsInstanceOf(IOException.class, e.getCause());
 
         assertMockEndpointsSatisfied();
     }

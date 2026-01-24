@@ -22,8 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
 
@@ -45,13 +45,11 @@ public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
         result.expectedMessageCount(0);
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(0);
-        try {
+        Exception ex = assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("direct:b", "Hello", "myHeader", "direct:start,fail:endpoint,mock:result");
-            fail("Expect the exception here.");
-        } catch (Exception ex) {
-            boolean b = ex.getCause() instanceof NoSuchEndpointException;
-            assertTrue(b, "Get a wrong cause of the exception");
-        }
+        });
+        boolean b = ex.getCause() instanceof NoSuchEndpointException;
+        assertTrue(b, "Get a wrong cause of the exception");
         assertMockEndpointsSatisfied();
     }
 

@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for try .. handle with onWhen.
@@ -77,13 +77,10 @@ public class TryProcessorOnWhenTest extends ContextTestSupport {
         getMockEndpoint("mock:catchCamel").expectedMessageCount(0);
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Other Bug");
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertEquals("Other Bug", e.getCause().getMessage());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.sendBody("direct:start", "Other Bug"), "Should have thrown a RuntimeCamelException");
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
+        assertEquals("Other Bug", e.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

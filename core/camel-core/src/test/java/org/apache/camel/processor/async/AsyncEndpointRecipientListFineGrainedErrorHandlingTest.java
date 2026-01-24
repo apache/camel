@@ -23,7 +23,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -79,12 +79,9 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:baz").expectedMessageCount(0);
 
-        try {
+        assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo,mock:bar,bean:fail,mock:baz");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
+        });
 
         assertMockEndpointsSatisfied();
 

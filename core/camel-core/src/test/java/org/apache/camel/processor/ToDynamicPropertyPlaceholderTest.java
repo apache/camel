@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ToDynamicPropertyPlaceholderTest extends ContextTestSupport {
 
@@ -53,13 +53,9 @@ public class ToDynamicPropertyPlaceholderTest extends ContextTestSupport {
 
     @Test
     public void testToDynamicNoHeader() {
-        try {
-            template.sendBody("direct:start", "Hello Camel");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            ResolveEndpointFailedException ref = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            assertEquals("mock:", ref.getUri());
-        }
+        Exception exception = assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello Camel"));
+        ResolveEndpointFailedException ref = assertIsInstanceOf(ResolveEndpointFailedException.class, exception.getCause());
+        assertEquals("mock:", ref.getUri());
     }
 
     @Override

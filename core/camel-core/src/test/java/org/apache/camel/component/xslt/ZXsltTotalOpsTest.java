@@ -23,8 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
 public class ZXsltTotalOpsTest extends ContextTestSupport {
@@ -46,14 +46,13 @@ public class ZXsltTotalOpsTest extends ContextTestSupport {
                         .to("xslt:org/apache/camel/component/xslt/example.xsl?output=bytes").to("mock:result");
             }
         });
-        try {
-            context.start();
-            fail("Should fail due to low total ops");
-        } catch (Exception e) {
-            TransformerConfigurationException tce
-                    = assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause().getCause());
-            assertTrue(tce.getMessage().endsWith("operators that exceeds the '1' limit set by 'system property'."));
-        }
+
+        Exception e = assertThrows(Exception.class, () -> context.start(),
+                "Should fail due to low total ops");
+
+        TransformerConfigurationException tce
+                = assertIsInstanceOf(TransformerConfigurationException.class, e.getCause().getCause().getCause());
+        assertTrue(tce.getMessage().endsWith("operators that exceeds the '1' limit set by 'system property'."));
     }
 
 }

@@ -29,7 +29,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
     private ExecutorService service;
@@ -70,17 +72,14 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
         // we should not complete and thus 0
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Multicast processing failed for number "));
-            assertEquals("Forced", cause.getCause().getMessage());
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Kaboom"));
+        CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, exception.getCause());
+        assertTrue(cause.getMessage().startsWith("Multicast processing failed for number "));
+        assertEquals("Forced", cause.getCause().getMessage());
 
-            String body = cause.getExchange().getIn().getBody(String.class);
-            assertTrue(body.contains("Kaboom"));
-        }
+        String body = cause.getExchange().getIn().getBody(String.class);
+        assertTrue(body.contains("Kaboom"));
 
         assertMockEndpointsSatisfied();
     }

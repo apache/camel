@@ -24,7 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSupport {
 
@@ -37,13 +38,10 @@ public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSuppo
 
     @Test
     public void testDeadLetterChannelNotHandleNewException() {
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            RuntimeException cause = assertIsInstanceOf(RuntimeException.class, e.getCause());
-            assertEquals("error in errorhandler", cause.getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        RuntimeException cause = assertInstanceOf(RuntimeException.class, exception.getCause());
+        assertEquals("error in errorhandler", cause.getMessage());
     }
 
     @Override

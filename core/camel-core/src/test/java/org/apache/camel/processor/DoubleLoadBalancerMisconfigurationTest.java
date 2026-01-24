@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
@@ -32,49 +32,43 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
     @Test
     public void testMisconfiguration() throws Exception {
-        try {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
                     from("direct:start").loadBalance().failover().roundRobin().to("mock:a", "mock:b");
                 }
             });
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RoundRobinLoadBalancer",
-                    e.getMessage());
-        }
+        });
+        assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RoundRobinLoadBalancer",
+                exception.getMessage());
     }
 
     @Test
     public void testMisconfiguration2() throws Exception {
-        try {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
                     from("direct:start").loadBalance().failover().random().to("mock:a", "mock:b");
                 }
             });
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RandomLoadBalancer",
-                    e.getMessage());
-        }
+        });
+        assertEquals("Loadbalancer already configured to: FailoverLoadBalancer. Cannot set it to: RandomLoadBalancer",
+                exception.getMessage());
     }
 
     @Test
     public void testMisconfiguration3() throws Exception {
-        try {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
                     from("direct:start").loadBalance().random().failover().to("mock:a", "mock:b");
                 }
             });
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: FailoverLoadBalancer",
-                    e.getMessage());
-        }
+        });
+        assertEquals("Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: FailoverLoadBalancer",
+                exception.getMessage());
     }
 }

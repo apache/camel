@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RecipientListStopOnExceptionTest extends ContextTestSupport {
 
@@ -34,14 +34,11 @@ public class RecipientListStopOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:c").expectedMessageCount(0);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("Damn", e.getCause().getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c"));
+        assertIsInstanceOf(CamelExchangeException.class, exception.getCause());
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause().getCause());
+        assertEquals("Damn", exception.getCause().getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

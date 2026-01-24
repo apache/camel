@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
@@ -67,12 +67,9 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(0);
 
-        try {
+        assertThrows(Exception.class, () -> {
             template.sendBody("direct:start", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
+        });
 
         assertMockEndpointsSatisfied();
     }

@@ -24,7 +24,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RollbackTest extends ContextTestSupport {
 
@@ -43,13 +45,10 @@ public class RollbackTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:rollback").expectedMessageCount(1);
 
-        try {
-            template.requestBody("direct:start", "bad");
-            fail("Should have thrown a RollbackExchangeException");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof RollbackExchangeException;
-            assertTrue(b);
-        }
+        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("direct:start", "bad"));
+        boolean b = exception.getCause() instanceof RollbackExchangeException;
+        assertTrue(b);
 
         assertMockEndpointsSatisfied();
     }

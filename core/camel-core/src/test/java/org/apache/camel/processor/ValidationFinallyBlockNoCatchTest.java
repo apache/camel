@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * No catch blocks but handle all should work
@@ -55,12 +55,9 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         // regular error handler is disbled for try .. catch .. finally
         deadEndpoint.expectedMessageCount(0);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue"),
+                "Should have thrown an exception");
 
         assertMockEndpointsSatisfied();
     }

@@ -33,8 +33,8 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
@@ -87,13 +87,10 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
     @Test
     public void testRollback() throws Exception {
-        try {
-            template.sendBodyAndHeader("direct:confirm", "bumper", "to", "FATAL");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Simulated fatal error", e.getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:confirm", "bumper", "to", "FATAL"));
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertEquals("Simulated fatal error", exception.getCause().getMessage());
 
         oneExchangeDone.matchesWaitTime();
 

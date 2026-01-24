@@ -22,8 +22,8 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.Abort;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadsInvalidConfigTest extends ContextTestSupport {
 
@@ -42,22 +42,18 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
 
     @Test
     public void testFailIfThreadNameAndExecutorServiceRef() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorService(threadPoolProfile.getId()).threadName("foo")
-                            .to("mock:test");
-                }
-            });
-        } catch (Exception e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertTrue(e.getCause().getMessage().startsWith("ThreadName"));
-            return;
-        }
-        fail();
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
+                from("direct:start").threads().executorService(threadPoolProfile.getId()).threadName("foo")
+                        .to("mock:test");
+            }
+        }));
+
+        boolean b = exception.getCause() instanceof IllegalArgumentException;
+        assertTrue(b);
+        assertTrue(exception.getCause().getMessage().startsWith("ThreadName"));
     }
 
     @Test
@@ -73,100 +69,80 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
 
     @Test
     public void testFailIfPoolSizeAndExecutorServiceRef() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorService(threadPoolProfile.getId()).poolSize(1).to("mock:test");
-                }
-            });
-        } catch (Exception e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertTrue(e.getCause().getMessage().startsWith("PoolSize"));
-            return;
-        }
-        fail();
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
+                from("direct:start").threads().executorService(threadPoolProfile.getId()).poolSize(1).to("mock:test");
+            }
+        }));
+
+        boolean b = exception.getCause() instanceof IllegalArgumentException;
+        assertTrue(b);
+        assertTrue(exception.getCause().getMessage().startsWith("PoolSize"));
     }
 
     @Test
     public void testFailIfMaxPoolSizeAndExecutorServiceRef() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorService(threadPoolProfile.getId()).maxPoolSize(1).to("mock:test");
-                }
-            });
-        } catch (Exception e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertTrue(e.getCause().getMessage().startsWith("MaxPoolSize"));
-            return;
-        }
-        fail();
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
+                from("direct:start").threads().executorService(threadPoolProfile.getId()).maxPoolSize(1).to("mock:test");
+            }
+        }));
+
+        boolean b = exception.getCause() instanceof IllegalArgumentException;
+        assertTrue(b);
+        assertTrue(exception.getCause().getMessage().startsWith("MaxPoolSize"));
     }
 
     @Test
     public void testFailIfKeepAliveTimeAndExecutorServiceRef() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorService(threadPoolProfile.getId()).keepAliveTime(1)
-                            .to("mock:test");
-                }
-            });
-        } catch (Exception e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertTrue(e.getCause().getMessage().startsWith("KeepAliveTime"));
-            return;
-        }
-        fail();
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
+                from("direct:start").threads().executorService(threadPoolProfile.getId()).keepAliveTime(1)
+                        .to("mock:test");
+            }
+        }));
+
+        boolean b = exception.getCause() instanceof IllegalArgumentException;
+        assertTrue(b);
+        assertTrue(exception.getCause().getMessage().startsWith("KeepAliveTime"));
     }
 
     @Test
     public void testFailIfMaxQueueSizeAndExecutorServiceRef() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorService(threadPoolProfile.getId()).maxQueueSize(1)
-                            .to("mock:test");
-                }
-            });
-        } catch (Exception e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertTrue(e.getCause().getMessage().startsWith("MaxQueueSize"));
-            return;
-        }
-        fail();
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
+                from("direct:start").threads().executorService(threadPoolProfile.getId()).maxQueueSize(1)
+                        .to("mock:test");
+            }
+        }));
+
+        boolean b = exception.getCause() instanceof IllegalArgumentException;
+        assertTrue(b);
+        assertTrue(exception.getCause().getMessage().startsWith("MaxQueueSize"));
     }
 
     @Test
     public void testFailIfRejectedPolicyAndExecutorServiceRef() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
-                    from("direct:start").threads().executorService(threadPoolProfile.getId()).rejectedPolicy(Abort)
-                            .to("mock:test");
-                }
-            });
-        } catch (Exception e) {
-            boolean b = e.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-            assertTrue(e.getCause().getMessage().startsWith("RejectedPolicy"));
-            return;
-        }
-        fail();
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                context.getExecutorServiceManager().registerThreadPoolProfile(threadPoolProfile);
+                from("direct:start").threads().executorService(threadPoolProfile.getId()).rejectedPolicy(Abort)
+                        .to("mock:test");
+            }
+        }));
+
+        boolean b = exception.getCause() instanceof IllegalArgumentException;
+        assertTrue(b);
+        assertTrue(exception.getCause().getMessage().startsWith("RejectedPolicy"));
     }
 
 }

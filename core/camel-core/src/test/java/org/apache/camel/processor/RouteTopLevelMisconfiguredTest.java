@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
@@ -32,47 +32,38 @@ public class RouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
     @Test
     public void testInvalidOnException() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").split(body()).onException(IllegalArgumentException.class).to("mock:illegal").end()
-                            .to("mock:split").end();
-                }
-            });
-            fail("Should fail");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("The output must be added as top-level on the route."));
-        }
+        IllegalArgumentException exception
+                = assertThrows(IllegalArgumentException.class, () -> context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:start").split(body()).onException(IllegalArgumentException.class).to("mock:illegal").end()
+                        .to("mock:split").end();
+                    }
+                }));
+        assertTrue(exception.getMessage().startsWith("The output must be added as top-level on the route."));
     }
 
     @Test
     public void testInvalidOnCompletion() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").split(body()).onCompletion().to("mock:done").end().to("mock:split").end();
-                }
-            });
-            fail("Should fail");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("The output must be added as top-level on the route."));
-        }
+        IllegalArgumentException exception
+                = assertThrows(IllegalArgumentException.class, () -> context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:start").split(body()).onCompletion().to("mock:done").end().to("mock:split").end();
+                    }
+                }));
+        assertTrue(exception.getMessage().startsWith("The output must be added as top-level on the route."));
     }
 
     @Test
     public void testInvalidTransacted() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").split(body()).transacted().to("mock:split").end();
-                }
-            });
-            fail("Should fail");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("The output must be added as top-level on the route."));
-        }
+        IllegalArgumentException exception
+                = assertThrows(IllegalArgumentException.class, () -> context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:start").split(body()).transacted().to("mock:split").end();
+                    }
+                }));
+        assertTrue(exception.getMessage().startsWith("The output must be added as top-level on the route."));
     }
 }

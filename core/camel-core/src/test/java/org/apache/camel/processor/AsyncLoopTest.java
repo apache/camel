@@ -28,7 +28,7 @@ import org.apache.camel.processor.async.MyAsyncComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AsyncLoopTest extends ContextTestSupport {
 
@@ -61,12 +61,9 @@ public class AsyncLoopTest extends ContextTestSupport {
 
     @Test
     public void testLoopWithInvalidExpression() throws Exception {
-        try {
-            performLoopTest("direct:b", 4, "invalid");
-            fail("Exception expected for invalid expression");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        assertThrows(RuntimeCamelException.class,
+                () -> performLoopTest("direct:b", 4, "invalid"),
+                "Exception expected for invalid expression");
     }
 
     @Test

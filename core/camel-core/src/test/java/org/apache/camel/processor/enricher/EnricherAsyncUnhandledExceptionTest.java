@@ -33,8 +33,8 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
 
@@ -43,32 +43,29 @@ public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:pickedUp");
         mock.expectedMessageCount(1);
         // this direct endpoint should receive an exception
-        try {
+        // if we receive an exception, the async routing engine is working
+        // correctly
+        // before the Enricher was fixed for cases where routing was async
+        // and the AggregationStrategy
+        // threw an exception, the call to requestBody would stall
+        // indefinitely
+        Exception e = assertThrows(Exception.class, () -> {
             Future<Object> obj = template.asyncRequestBody("direct:in", "Hello World");
             // wait five seconds at most; else, let's assume something went
             // wrong
             obj.get(5000, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            // if we receive an exception, the async routing engine is working
-            // correctly
-            // before the Enricher was fixed for cases where routing was async
-            // and the AggregationStrategy
-            // threw an exception, the call to requestBody would stall
-            // indefinitely
-            // unwrap the exception chain
-            boolean b3 = e instanceof ExecutionException;
-            assertTrue(b3);
-            boolean b2 = e.getCause() instanceof CamelExecutionException;
-            assertTrue(b2);
-            boolean b1 = e.getCause().getCause() instanceof CamelExchangeException;
-            assertTrue(b1);
-            boolean b = e.getCause().getCause().getCause() instanceof RuntimeException;
-            assertTrue(b);
-            assertEquals("Bang! Unhandled exception", e.getCause().getCause().getCause().getMessage());
-            mock.assertIsSatisfied();
-            return;
-        }
-        fail("Expected an RuntimeException");
+        });
+        // unwrap the exception chain
+        boolean b3 = e instanceof ExecutionException;
+        assertTrue(b3);
+        boolean b2 = e.getCause() instanceof CamelExecutionException;
+        assertTrue(b2);
+        boolean b1 = e.getCause().getCause() instanceof CamelExchangeException;
+        assertTrue(b1);
+        boolean b = e.getCause().getCause().getCause() instanceof RuntimeException;
+        assertTrue(b);
+        assertEquals("Bang! Unhandled exception", e.getCause().getCause().getCause().getMessage());
+        mock.assertIsSatisfied();
     }
 
     @Override

@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
@@ -36,21 +36,18 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
     @Test
     public void testThreadsCoreBeZero() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start")
-                            // will use a a custom thread pool with -1 in core and 2
-                            // max
-                            .threads(-1, 2).to("mock:result");
-                }
-            });
-            fail("Expect FailedToCreateRouteException exception here");
-        } catch (Exception ex) {
-            boolean b = ex.getCause() instanceof IllegalArgumentException;
-            assertTrue(b);
-        }
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start")
+                        // will use a a custom thread pool with -1 in core and 2
+                        // max
+                        .threads(-1, 2).to("mock:result");
+            }
+        }));
+
+        boolean b = exception.getCause() instanceof IllegalArgumentException;
+        assertTrue(b);
     }
 
     @Test

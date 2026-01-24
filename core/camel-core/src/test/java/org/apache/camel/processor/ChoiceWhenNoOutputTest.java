@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChoiceWhenNoOutputTest extends ContextTestSupport {
 
@@ -33,13 +33,10 @@ public class ChoiceWhenNoOutputTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "Hello World", "test", "1");
         template.sendBodyAndHeader("direct:start", "Bye World", "test", "2");
-        try {
-            template.sendBodyAndHeader("direct:start", "Hi World", "test", "3");
-            fail();
-        } catch (Exception e) {
-            Assertions.assertInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Validation error!", e.getCause().getMessage());
-        }
+        Exception exception = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hi World", "test", "3"));
+        Assertions.assertInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertEquals("Validation error!", exception.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

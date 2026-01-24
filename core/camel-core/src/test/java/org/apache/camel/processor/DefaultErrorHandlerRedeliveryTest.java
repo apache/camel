@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test to verify that redelivery counters is working as expected.
@@ -37,12 +37,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
     public void testRedeliveryTest() {
         counter = 0;
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:start", "Hello World"));
 
         // One call + 2 re-deliveries
         assertEquals(3, counter);
@@ -52,12 +47,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
     public void testNoRedeliveriesTest() {
         counter = 0;
 
-        try {
-            template.sendBody("direct:no", "Hello World");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:no", "Hello World"));
 
         // One call
         assertEquals(1, counter);
@@ -66,12 +56,7 @@ public class DefaultErrorHandlerRedeliveryTest extends ContextTestSupport {
     @Test
     public void testOneRedeliveryTest() {
         counter = 0;
-        try {
-            template.sendBody("direct:one", "Hello World");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:one", "Hello World"));
 
         // One call + 1 re-delivery
         assertEquals(2, counter);

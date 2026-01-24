@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SplitterNoStopOnExceptionTest extends ContextTestSupport {
 
@@ -46,13 +46,10 @@ public class SplitterNoStopOnExceptionTest extends ContextTestSupport {
         // messages
         mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
 
-        try {
-            template.sendBody("direct:start", "Hello World,Kaboom,Bye World,Hi World");
-            fail("Should thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced", e.getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World,Kaboom,Bye World,Hi World"));
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertEquals("Forced", exception.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
 
@@ -89,13 +89,10 @@ public class FailOverNotCatchedExceptionTest extends ContextTestSupport {
         // loadbalancer
         // do not catch then the exception is propagated back
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Illegal", e.getCause().getMessage());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        assertEquals("Illegal", exception.getCause().getMessage());
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
 
         assertMockEndpointsSatisfied();
     }

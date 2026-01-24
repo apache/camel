@@ -26,7 +26,7 @@ import org.apache.camel.spi.Language;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class XPathLanguageValidateTest extends ContextTestSupport {
 
@@ -42,13 +42,11 @@ public class XPathLanguageValidateTest extends ContextTestSupport {
         Expression exp = lan.createExpression("/path/to");
         exp.init(context);
 
-        try {
-            exp = lan.createExpression("\\/path/to");
-            exp.init(context);
-            fail();
-        } catch (Exception e) {
-            assertIsInstanceOf(XPathExpressionException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class, () -> {
+            Expression exp2 = lan.createExpression("\\/path/to");
+            exp2.init(context);
+        });
+        assertIsInstanceOf(XPathExpressionException.class, e.getCause());
     }
 
     @Test

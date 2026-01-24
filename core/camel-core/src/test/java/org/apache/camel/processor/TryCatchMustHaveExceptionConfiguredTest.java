@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
@@ -35,13 +35,11 @@ public class TryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport 
             }
         });
 
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("At least one Exception must be configured to catch", e.getCause().getMessage());
-        }
+        });
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("At least one Exception must be configured to catch", e.getCause().getMessage());
     }
 
     @Override

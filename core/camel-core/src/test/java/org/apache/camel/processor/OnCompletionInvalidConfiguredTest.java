@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class OnCompletionInvalidConfiguredTest extends ContextTestSupport {
 
@@ -32,20 +32,17 @@ public class OnCompletionInvalidConfiguredTest extends ContextTestSupport {
 
     @Test
     public void testInvalidConfigured() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    onCompletion().onFailureOnly().onCompleteOnly().to("mock:foo");
+        IllegalArgumentException exception
+                = assertThrows(IllegalArgumentException.class, () -> context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        onCompletion().onFailureOnly().onCompleteOnly().to("mock:foo");
 
-                    from("direct:start").to("mock:result");
-                }
-            });
-            fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                    "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: onCompletion[[]]",
-                    e.getMessage());
-        }
+                        from("direct:start").to("mock:result");
+                    }
+                }));
+        assertEquals(
+                "Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: onCompletion[[]]",
+                exception.getMessage());
     }
 }

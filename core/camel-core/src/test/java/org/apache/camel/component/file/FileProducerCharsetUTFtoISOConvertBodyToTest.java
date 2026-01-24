@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,9 +30,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
 
@@ -46,20 +45,17 @@ class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSupport {
 
     @BeforeEach
     void writeTestData() {
-        try (OutputStream fos = Files.newOutputStream(testFile(INPUT_FILE))) {
-            fos.write(DATA.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            fail("The test cannot run due to: " + e.getMessage());
-        }
+        assertDoesNotThrow(() -> {
+            try (OutputStream fos = Files.newOutputStream(testFile(INPUT_FILE))) {
+                fos.write(DATA.getBytes(StandardCharsets.UTF_8));
+            }
+        }, "The test cannot run due to an I/O error");
     }
 
     @AfterEach
     void cleanupFile() {
-        try {
-            Files.delete(testFile(OUTPUT_FILE));
-        } catch (IOException e) {
-            fail("The test cannot run due to an error cleaning up: " + e.getMessage());
-        }
+        assertDoesNotThrow(() -> Files.delete(testFile(OUTPUT_FILE)),
+                "The test cannot run due to an error cleaning up");
     }
 
     @Test
