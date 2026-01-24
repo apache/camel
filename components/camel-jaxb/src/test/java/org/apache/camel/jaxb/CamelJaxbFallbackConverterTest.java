@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
@@ -62,19 +62,13 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
     public void testFallbackConverterUnmarshalWithNonJAXBComplaintValue() {
         TypeConverter converter = context.getTypeConverter();
 
-        try {
-            converter.convertTo(Foo.class, "Not every String is XML");
-            fail("Should have thrown exception");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+        assertThrows(TypeConversionException.class,
+                () -> converter.convertTo(Foo.class, "Not every String is XML"),
+                "Should have thrown exception");
 
-        try {
-            converter.convertTo(Bar.class, "<bar></bar");
-            fail("Should have thrown exception");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+        assertThrows(TypeConversionException.class,
+                () -> converter.convertTo(Bar.class, "<bar></bar"),
+                "Should have thrown exception");
     }
 
     @Test
@@ -93,12 +87,9 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
 
         byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
         InputStream is = new ByteArrayInputStream(buffers);
-        try {
-            converter.convertTo(PersonType.class, exchange, is);
-            fail("Should have thrown exception");
-        } catch (TypeConversionException e) {
-            // expected
-        }
+        assertThrows(TypeConversionException.class,
+                () -> converter.convertTo(PersonType.class, exchange, is),
+                "Should have thrown exception");
     }
 
     @Test
