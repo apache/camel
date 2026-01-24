@@ -37,12 +37,10 @@ class MllpMutualTlsConnectionAndHeaderRequiresClientAuthenticationTest extends M
      */
     @Test
     void testSendingTlsWithNoClientCertificateToMllpConsumerWhichRequiresClientAuthentication() {
-        try {
+        CamelExecutionException e = Assertions.assertThrows(CamelExecutionException.class, () -> {
             template.sendBody(assembleEndpointUri(WITH_ONLY_TRUSTSTORE), TEST_PAYLOAD);
-            Assertions.fail("Should not be able to connect without a client certificate");
-        } catch (CamelExecutionException e) {
-            Assertions.assertInstanceOf(SSLHandshakeException.class, e.getCause().getCause().getCause());
-        }
+        });
+        Assertions.assertInstanceOf(SSLHandshakeException.class, e.getCause().getCause().getCause());
     }
 
     /**

@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the MllpSocketBuffer class.
@@ -36,12 +36,10 @@ public class MllpSocketBufferTest extends SocketBufferTestSupport {
      */
     @Test
     public void testConstructorWithNullEndpoing() {
-        try {
+        IllegalArgumentException expectedEx = assertThrows(IllegalArgumentException.class, () -> {
             new MllpSocketBuffer(null);
-            fail("Constructor should have thrown an exception with a null Endpoint argument");
-        } catch (IllegalArgumentException expectedEx) {
-            assertEquals("MllpEndpoint cannot be null", expectedEx.getMessage());
-        }
+        });
+        assertEquals("MllpEndpoint cannot be null", expectedEx.getMessage());
     }
 
     /**
