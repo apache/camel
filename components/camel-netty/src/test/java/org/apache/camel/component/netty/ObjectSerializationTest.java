@@ -33,7 +33,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Object Serialization is not allowed by default. However it can be enabled by adding specific encoders/decoders.
@@ -50,12 +50,9 @@ public class ObjectSerializationTest extends BaseNettyTest {
     @Test
     public void testObjectSerializationFailureByDefault() {
         Date date = new Date();
-        try {
-            Object o = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            // expected
-        }
+        assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty:tcp://localhost:{{port}}?sync=true&encoders=#encoder", date, Date.class),
+                "Should have thrown exception");
     }
 
     @Test

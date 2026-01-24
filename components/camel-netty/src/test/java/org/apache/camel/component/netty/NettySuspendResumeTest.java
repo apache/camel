@@ -21,7 +21,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettySuspendResumeTest extends BaseNettyTest {
 
@@ -34,12 +34,9 @@ public class NettySuspendResumeTest extends BaseNettyTest {
 
         context.getRouteController().suspendRoute("foo");
 
-        try {
-            template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "World", String.class);
-            fail("Should not allow connecting as its suspended");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class,
+                () -> template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "World", String.class),
+                "Should not allow connecting as its suspended");
 
         context.getRouteController().resumeRoute("foo");
 
