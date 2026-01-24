@@ -37,8 +37,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfProducerSessionTest extends CamelTestSupport {
     private static final int PORT = CXFTestSupport.getPort1();
@@ -115,12 +115,9 @@ public class CxfProducerSessionTest extends CamelTestSupport {
 
     @Test
     public void testSessionWithInvalidPayload() throws Throwable {
-        try {
-            template.requestBody("direct:invalid", "World", String.class);
-            fail("Expected an exception");
-        } catch (CamelExecutionException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:invalid", "World", String.class));
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
     }
 
     @Override
