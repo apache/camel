@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DisruptorTimeoutTest extends CamelTestSupport {
     private int timeout = 100;
@@ -52,20 +52,18 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
 
         final Future<String> out = template
                 .asyncRequestBody("disruptor:foo?timeout=" + timeout, "World", String.class);
-        try {
+        ExecutionException e = assertThrows(ExecutionException.class, () -> {
             out.get();
-            fail("Should have thrown an exception");
-        } catch (ExecutionException e) {
-            assertIsInstanceOf(CamelExecutionException.class, e.getCause());
-            assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
+        });
+        assertIsInstanceOf(CamelExecutionException.class, e.getCause());
+        assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
 
-            final DisruptorEndpoint de = (DisruptorEndpoint) context.getRoute("disruptor").getEndpoint();
-            assertNotNull(de, "Consumer endpoint cannot be null");
-            //we can't remove the exchange from a Disruptor once it is published, but it should never reach the
-            //mock:result endpoint because it should be filtered out by the DisruptorConsumer
-            result.await(1, TimeUnit.SECONDS);
-            MockEndpoint.assertIsSatisfied(context);
-        }
+        final DisruptorEndpoint de = (DisruptorEndpoint) context.getRoute("disruptor").getEndpoint();
+        assertNotNull(de, "Consumer endpoint cannot be null");
+        //we can't remove the exchange from a Disruptor once it is published, but it should never reach the
+        //mock:result endpoint because it should be filtered out by the DisruptorConsumer
+        result.await(1, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Test

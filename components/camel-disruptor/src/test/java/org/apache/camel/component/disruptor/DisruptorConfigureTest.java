@@ -22,7 +22,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DisruptorConfigureTest extends CamelTestSupport {
     @Test
@@ -35,14 +35,12 @@ public class DisruptorConfigureTest extends CamelTestSupport {
 
     @Test
     void testIllegalSizeZeroConfigured() {
-        try {
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class, () -> {
             resolveMandatoryEndpoint("disruptor:foo?size=0", DisruptorEndpoint.class);
-            fail("Should have thrown exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertEquals(
-                    "Failed to resolve endpoint: disruptor://foo?size=0 due to: size found to be 0, must be greater than 0",
-                    e.getMessage());
-        }
+        });
+        assertEquals(
+                "Failed to resolve endpoint: disruptor://foo?size=0 due to: size found to be 0, must be greater than 0",
+                e.getMessage());
     }
 
     @Test

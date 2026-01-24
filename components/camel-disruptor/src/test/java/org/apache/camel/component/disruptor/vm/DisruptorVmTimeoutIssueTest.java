@@ -25,32 +25,28 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
 
     @Test
     void testDisruptorVmTimeoutWithAnotherDisruptorVm() {
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template2.requestBody("disruptor-vm:start1?timeout=4000", "Hello");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
-            assertEquals(2000, cause.getTimeout());
-        }
+        });
+        ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
+                e.getCause());
+        assertEquals(2000, cause.getTimeout());
     }
 
     @Test
     void testDisruptorVmTimeoutWithProcessor() {
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template2.requestBody("disruptor-vm:start2?timeout=4000", "Hello");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
-            assertEquals(2000, cause.getTimeout());
-        }
+        });
+        ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
+                e.getCause());
+        assertEquals(2000, cause.getTimeout());
     }
 
     @Override

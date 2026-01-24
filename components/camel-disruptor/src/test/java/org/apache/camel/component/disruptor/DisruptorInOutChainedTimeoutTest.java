@@ -25,22 +25,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
     @Test
     void testDisruptorInOutChainedTimeout() {
         // time timeout after 2 sec should trigger a immediately reply
         final StopWatch watch = new StopWatch();
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody("disruptor:a?timeout=5000", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            final ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
-            assertEquals(2000, cause.getTimeout());
-        }
+        });
+        final ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
+                e.getCause());
+        assertEquals(2000, cause.getTimeout());
         final long delta = watch.taken();
 
         assertTrue(delta < 4000, "Should be faster than 4000 millis, was: " + delta);
