@@ -19,12 +19,12 @@ package org.apache.camel.component.platform.http.vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlatformHttpRestOpenApiConsumerTest {
 
@@ -136,23 +136,20 @@ public class PlatformHttpRestOpenApiConsumerTest {
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
 
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("rest-openapi:classpath:openapi-v3.json?missingOperation=fail")
-                            .log("dummy");
+            assertThrows(Exception.class, () -> {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("rest-openapi:classpath:openapi-v3.json?missingOperation=fail")
+                                .log("dummy");
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
-                }
-            });
+                        from("direct:getPetById")
+                                .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    }
+                });
 
-            context.start();
-            fail();
-        } catch (Exception e) {
-            Assertions.assertTrue(
-                    e.getCause().getMessage()
-                            .startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
+                context.start();
+            }, "OpenAPI specification has 18 unmapped operations to corresponding routes");
         } finally {
             context.stop();
         }
