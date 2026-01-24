@@ -665,6 +665,10 @@ public class SimpleTest extends LanguageTestSupport {
     public void testDateNow() {
         Object out = evaluateExpression("${date:now:hh:mm:ss a}", null);
         assertNotNull(out);
+        out = evaluateExpression("${date:now:hh:mm:ss}", null);
+        assertNotNull(out);
+        out = evaluateExpression("${date:now-2h:hh:mm:ss}", null);
+        assertNotNull(out);
     }
 
     @Test
