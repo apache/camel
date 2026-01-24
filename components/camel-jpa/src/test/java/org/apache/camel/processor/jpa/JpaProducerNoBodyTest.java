@@ -23,19 +23,17 @@ import org.apache.camel.examples.SendEmail;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JpaProducerNoBodyTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     @Test
     public void testRouteJpa() {
-        try {
-            template.sendBody("direct:start", null);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(InvalidPayloadRuntimeException.class, e.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", null),
+                "Should have thrown an exception");
+        assertIsInstanceOf(InvalidPayloadRuntimeException.class, e.getCause());
     }
 
     @Override
