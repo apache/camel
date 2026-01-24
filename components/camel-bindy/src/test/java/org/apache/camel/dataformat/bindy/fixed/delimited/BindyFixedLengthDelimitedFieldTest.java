@@ -33,8 +33,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test validates the marshalling / unmarshalling of delimited, variable-length fields within a 'fixed-length'
@@ -85,15 +85,11 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
         unmarshallResult.reset();
         unmarshallResult.expectedMessageCount(0);
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD_WITH_EXTRA_CHARS);
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertTrue(e.getCause().getMessage().contains("unmapped characters"));
-            return;
-        }
-
-        fail("An error is expected when unmapped characters are encountered in the fixed length record");
+        });
+        assertTrue(exception.getCause() instanceof IllegalArgumentException);
+        assertTrue(exception.getCause().getMessage().contains("unmapped characters"));
     }
 
     @Test
@@ -101,15 +97,11 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
         unmarshallResult.reset();
         unmarshallResult.expectedMessageCount(0);
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD_WITH_WHITSPACE_THEN_EXTRA_CHAR);
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertTrue(e.getCause().getMessage().contains("unmapped characters"));
-            return;
-        }
-
-        fail("An error is expected when unmapped characters are encountered in the fixed length record");
+        });
+        assertTrue(exception.getCause() instanceof IllegalArgumentException);
+        assertTrue(exception.getCause().getMessage().contains("unmapped characters"));
     }
 
     @Test
@@ -117,15 +109,11 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
 
         unmarshallResult.reset();
         unmarshallResult.expectedMessageCount(0);
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             template.sendBody(URI_DIRECT_UNMARSHALL, TEST_RECORD_WITH_SINGLE_EXTRA_CHAR);
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertTrue(e.getCause().getMessage().contains("unmapped characters"));
-            return;
-        }
-
-        fail("An error is expected when unmapped characters are encountered in the fixed length record");
+        });
+        assertTrue(exception.getCause() instanceof IllegalArgumentException);
+        assertTrue(exception.getCause().getMessage().contains("unmapped characters"));
     }
 
     @Test
