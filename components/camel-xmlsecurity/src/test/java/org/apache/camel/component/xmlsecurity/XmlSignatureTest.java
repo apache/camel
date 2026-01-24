@@ -108,7 +108,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class XmlSignatureTest extends CamelTestSupport {
 
@@ -1341,21 +1340,18 @@ public class XmlSignatureTest extends CamelTestSupport {
             throws Exception {
         Exception e = (Exception) mock.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT);
         assertNotNull(e, "Expected excpetion " + cl.getName() + " missing");
-        if (e.getClass() != cl) {
-            String stackTrace = ExceptionHelper.stackTraceToString(e);
-            fail("Exception  " + cl.getName() + " excpected, but was " + e.getClass().getName() + ": " + stackTrace);
-        }
+        assertEquals(cl, e.getClass(),
+                () -> "Exception  " + cl.getName() + " excpected, but was " + e.getClass().getName() + ": "
+                      + ExceptionHelper.stackTraceToString(e));
         if (expectedMessage != null) {
             assertEquals(expectedMessage, e.getMessage());
         }
         if (expectedCauseClass != null) {
             Throwable cause = e.getCause();
             assertNotNull(cause, "Expected cause exception" + expectedCauseClass.getName() + " missing");
-            if (expectedCauseClass != cause.getClass()) {
-                fail("Cause exception " + expectedCauseClass.getName() + " expected, but was " + cause.getClass().getName()
-                     + ": "
-                     + ExceptionHelper.stackTraceToString(e));
-            }
+            assertEquals(expectedCauseClass, cause.getClass(),
+                    () -> "Cause exception " + expectedCauseClass.getName() + " expected, but was "
+                          + cause.getClass().getName() + ": " + ExceptionHelper.stackTraceToString(e));
         }
     }
 
