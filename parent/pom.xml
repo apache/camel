@@ -316,7 +316,7 @@
         <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
         <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
         <jira-rest-client-api-version>6.0.2</jira-rest-client-api-version>
-        <jline-version>3.30.8</jline-version>
+        <jline-version>3.30.6</jline-version>
         <libthrift-version>0.22.0</libthrift-version>
         <jodatime2-version>2.14.0</jodatime2-version>
         <jolokia-version>2.4.3</jolokia-version>
