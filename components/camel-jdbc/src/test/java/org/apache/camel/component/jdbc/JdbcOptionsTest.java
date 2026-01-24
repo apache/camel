@@ -27,8 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JdbcOptionsTest extends AbstractJdbcTestSupport {
 
@@ -76,13 +76,11 @@ public class JdbcOptionsTest extends AbstractJdbcTestSupport {
 
     @Test
     public void testNoDataSourceInRegistry() {
-        try {
-            template.sendBody("jdbc:xxx", "Hello World");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            assertEquals("No bean could be found in the registry for: xxx of type: javax.sql.DataSource",
-                    e.getCause().getMessage());
-        }
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> template.sendBody("jdbc:xxx", "Hello World"),
+                "Should have thrown a ResolveEndpointFailedException");
+        assertEquals("No bean could be found in the registry for: xxx of type: javax.sql.DataSource",
+                e.getCause().getMessage());
     }
 
     @Test
