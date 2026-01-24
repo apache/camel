@@ -28,8 +28,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class EndpointReferenceTest extends SpringTestSupport {
     protected static Object body = "<hello>world!</hello>";
@@ -78,13 +78,11 @@ public class EndpointReferenceTest extends SpringTestSupport {
     @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
-        try {
+        NoSuchEndpointException exception = assertThrows(NoSuchEndpointException.class, () -> {
             CamelContextHelper.resolveEndpoint(context, null, "endpoint1");
-            fail("Should have thrown exception");
-        } catch (NoSuchEndpointException exception) {
-            assertTrue(exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"),
-                    "Get a wrong exception message");
-        }
+        });
+        assertTrue(exception.getMessage().contains("make sure the endpoint has the same camel context as the route does"),
+                "Get a wrong exception message");
     }
 
     @Override

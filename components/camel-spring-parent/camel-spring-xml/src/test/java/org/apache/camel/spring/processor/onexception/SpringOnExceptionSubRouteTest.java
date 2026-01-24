@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for onException with the spring DSL.
@@ -77,12 +77,10 @@ public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(0);
 
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             template.requestBodyAndHeader("direct:start_with_no_handler", "Order: kaboom", "customerid", "555");
-            fail("Should throw an Exception");
-        } catch (Exception e) {
-            assertEquals("Cannot order: kaboom", e.getCause().getMessage());
-        }
+        });
+        assertEquals("Cannot order: kaboom", e.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

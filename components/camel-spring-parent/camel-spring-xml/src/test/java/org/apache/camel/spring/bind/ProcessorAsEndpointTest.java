@@ -26,7 +26,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProcessorAsEndpointTest extends SpringTestSupport {
     protected Object body = "<hello>world!</hello>";
@@ -46,12 +46,9 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
     @Test
     public void testSendingToNonExistentEndpoint() throws Exception {
         String uri = "unknownEndpoint";
-        try {
+        assertThrows(NoSuchEndpointException.class, () -> {
             template.sendBody(uri, body);
-            fail("We should have failed as this is a bad endpoint URI");
-        } catch (NoSuchEndpointException e) {
-            log.debug("Caught expected exception: {}", e.getMessage(), e);
-        }
+        });
     }
 
     @Override
