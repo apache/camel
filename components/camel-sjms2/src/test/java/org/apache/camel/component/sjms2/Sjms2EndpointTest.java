@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class Sjms2EndpointTest extends CamelTestSupport {
 
@@ -98,36 +97,24 @@ public class Sjms2EndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testDefaultExchangePattern() {
-        try {
-            Sjms2Endpoint sjms = (Sjms2Endpoint) context.getEndpoint("sjms2:queue:test");
-            assertNotNull(sjms);
-            assertEquals(ExchangePattern.InOnly, sjms.getExchangePattern());
-        } catch (Exception e) {
-            fail("Exception thrown: " + e.getLocalizedMessage());
-        }
+    public void testDefaultExchangePattern() throws Exception {
+        Sjms2Endpoint sjms = (Sjms2Endpoint) context.getEndpoint("sjms2:queue:test");
+        assertNotNull(sjms);
+        assertEquals(ExchangePattern.InOnly, sjms.getExchangePattern());
     }
 
     @Test
-    public void testInOnlyExchangePattern() {
-        try {
-            Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOnly);
-            assertNotNull(sjms);
-            assertEquals(ExchangePattern.InOnly, sjms.createExchange().getPattern());
-        } catch (Exception e) {
-            fail("Exception thrown: " + e.getLocalizedMessage());
-        }
+    public void testInOnlyExchangePattern() throws Exception {
+        Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOnly);
+        assertNotNull(sjms);
+        assertEquals(ExchangePattern.InOnly, sjms.createExchange().getPattern());
     }
 
     @Test
-    public void testInOutExchangePattern() {
-        try {
-            Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOut);
-            assertNotNull(sjms);
-            assertEquals(ExchangePattern.InOut, sjms.createExchange().getPattern());
-        } catch (Exception e) {
-            fail("Exception thrown: " + e.getLocalizedMessage());
-        }
+    public void testInOutExchangePattern() throws Exception {
+        Endpoint sjms = context.getEndpoint("sjms2:queue:test?exchangePattern=" + ExchangePattern.InOut);
+        assertNotNull(sjms);
+        assertEquals(ExchangePattern.InOut, sjms.createExchange().getPattern());
     }
 
     @Test
