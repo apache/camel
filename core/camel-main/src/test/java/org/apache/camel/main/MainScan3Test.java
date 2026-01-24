@@ -20,7 +20,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MainScan3Test {
 
@@ -28,14 +28,10 @@ public class MainScan3Test {
     public void testScan3() {
         Main main = new Main();
         main.configure().withBasePackageScan("org.apache.camel.main.scan3");
-        try {
-            main.start();
-            fail();
-        } catch (FailedToCreateRouteException e) {
-            assertEquals(
-                    "Failed to create route because: Duplicate route ids detected: foo2. Please correct ids to be unique among all your routes.",
-                    e.getMessage());
-        }
+        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class, () -> main.start());
+        assertEquals(
+                "Failed to create route because: Duplicate route ids detected: foo2. Please correct ids to be unique among all your routes.",
+                e.getMessage());
 
         main.stop();
     }

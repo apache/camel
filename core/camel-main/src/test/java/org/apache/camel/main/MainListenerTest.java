@@ -24,8 +24,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.util.CollectionHelper.propertiesOf;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MainListenerTest {
 
@@ -40,13 +40,7 @@ public class MainListenerTest {
                     events.add(method.getName());
                     return null;
                 }));
-        Thread thread = new Thread(() -> {
-            try {
-                main.run();
-            } catch (Exception e) {
-                fail("Unexpected exception: " + e);
-            }
-        });
+        Thread thread = new Thread(() -> assertDoesNotThrow(() -> main.run()));
         thread.start();
         Thread.sleep(100);
         main.completed();
