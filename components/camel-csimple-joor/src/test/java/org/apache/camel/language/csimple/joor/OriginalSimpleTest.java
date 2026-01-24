@@ -17,6 +17,7 @@
 package org.apache.camel.language.csimple.joor;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -3283,6 +3284,29 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Bye");
         expression = context.resolveLanguage("csimple").createExpression("${not(${body} == 'Hello')}");
         assertTrue(expression.evaluate(exchange, Boolean.class));
+    }
+
+    @Test
+    public void testThrowException() {
+        try {
+            Expression expression = context.resolveLanguage("csimple").createExpression("${throwException('Forced error')}");
+            expression.evaluate(exchange, Object.class);
+            fail();
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("Forced error", e.getCause().getCause().getMessage());
+        }
+
+        try {
+            Expression expression
+                    = context.resolveLanguage("csimple")
+                            .createExpression("${throwException('Some IO error','java.io.IOException')}");
+            expression.evaluate(exchange, Object.class);
+            fail();
+        } catch (Exception e) {
+            assertIsInstanceOf(IOException.class, e.getCause().getCause().getCause());
+            assertEquals("Some IO error", e.getCause().getCause().getCause().getMessage());
+        }
     }
 
     @Override

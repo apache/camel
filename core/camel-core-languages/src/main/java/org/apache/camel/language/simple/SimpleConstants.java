@@ -370,6 +370,10 @@ public final class SimpleConstants {
               label = "function")
     public static final String THREAD_NAME = "threadName";
 
+    @Metadata(description = "Deliberately throws an error. Uses IllegalArgumentException by default if no type is specified (use fully qualified classname).",
+              javaType = "java.lang.Exception", label = "function")
+    public static final String THROW_EXCEPTION = "throwException(type,msg)";
+
     @Metadata(description = "The trim function trims the message body (or expression) by removing all leading and trailing white spaces.",
               label = "function", javaType = "String", displayName = "Trim")
     public static final String TRIM = "trim(exp)";

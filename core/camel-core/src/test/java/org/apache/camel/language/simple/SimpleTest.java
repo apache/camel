@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SimpleTest extends LanguageTestSupport {
 
@@ -3618,6 +3620,29 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getMessage().setBody("Bye");
         expression = context.resolveLanguage("simple").createExpression("${not(${body} == 'Hello')}");
         assertTrue(expression.evaluate(exchange, Boolean.class));
+    }
+
+    @Test
+    public void testThrowException() {
+        try {
+            Expression expression = context.resolveLanguage("simple").createExpression("${throwException('Forced error')}");
+            expression.evaluate(exchange, Object.class);
+            fail();
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced error", e.getCause().getMessage());
+        }
+
+        try {
+            Expression expression
+                    = context.resolveLanguage("simple")
+                            .createExpression("${throwException('Some IO error','java.io.IOException')}");
+            expression.evaluate(exchange, Object.class);
+            fail();
+        } catch (Exception e) {
+            assertIsInstanceOf(IOException.class, e.getCause().getCause());
+            assertEquals("Some IO error", e.getCause().getCause().getMessage());
+        }
     }
 
     @Override

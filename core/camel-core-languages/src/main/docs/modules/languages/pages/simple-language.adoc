@@ -177,6 +177,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`setHeader(name,type,exp)` | `null` | Sets a message header with the given expression (optional converting to the given type).
 |`setVariable(name,type,exp)` | `null` | Sets a variable with the given expression (optional converting to the given type).
 |`stepId` | `String` | Returns the id of the current step the `Exchange` is being routed. Returns `null` if there are no steps.
+|`throwException(type,msg)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
 |`type:name.field` | `Object` | To refer to a type or field by its fully qualified classname. For example: `type:org.apache.camel.Exchange.FILE_NAME`.
 |`variable.key` | `Object` | To look up the variable with the given key.
 |`variable.key._OGNL_` | `Object` | To look up the variable with the given key and then invoke Camel _OGNL syntax_.
