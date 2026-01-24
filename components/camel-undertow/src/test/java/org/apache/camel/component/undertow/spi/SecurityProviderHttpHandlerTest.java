@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Basic tests with securityProvider, tests whether securityProvider allows or denies access.
@@ -42,14 +42,9 @@ public class SecurityProviderHttpHandlerTest extends AbstractSecurityProviderTes
     public void testNullHttpHandler() {
         securityConfiguration.setRoleToAssign("user");
 
-        try {
-            template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
-
-            fail("Should throw exception");
-
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(StatusCodes.METHOD_NOT_ALLOWED, he.getStatusCode());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class));
+        HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(StatusCodes.METHOD_NOT_ALLOWED, he.getStatusCode());
     }
 }

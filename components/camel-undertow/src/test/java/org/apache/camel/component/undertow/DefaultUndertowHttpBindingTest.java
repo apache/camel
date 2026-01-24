@@ -31,7 +31,6 @@ import org.xnio.channels.EmptyStreamSourceChannel;
 import org.xnio.channels.StreamSourceChannel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultUndertowHttpBindingTest {
 
@@ -100,7 +99,7 @@ public class DefaultUndertowHttpBindingTest {
             @Override
             public int read(ByteBuffer dst) {
                 if (mustWait) {
-                    fail("must wait before reading");
+                    throw new AssertionError("must wait before reading");
                 }
                 if (chunk < delayedPayloads.length) {
                     byte[] delayedPayload = delayedPayloads[chunk].getBytes();

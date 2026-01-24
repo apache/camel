@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UndertowPrefixMatchingTest extends BaseUndertowTest {
 
@@ -36,13 +36,10 @@ public class UndertowPrefixMatchingTest extends BaseUndertowTest {
 
     @Test
     public void failsOnPrefixPath() {
-        try {
-            template.requestBody("http://localhost:{{port}}/myapp", "Hello Camel!");
-            fail("Should fail, something is wrong");
-        } catch (CamelExecutionException ex) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
-            assertEquals(404, cause.getStatusCode());
-        }
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("http://localhost:{{port}}/myapp", "Hello Camel!"));
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(404, cause.getStatusCode());
     }
 
     @Test

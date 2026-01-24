@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UndertowError500Test extends BaseUndertowTest {
 
@@ -30,12 +30,8 @@ public class UndertowError500Test extends BaseUndertowTest {
     public void testHttp500Error() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        try {
-            template.requestBody("http://localhost:{{port}}/foo", "Hello World", String.class);
-            fail("Should have failed");
-        } catch (CamelExecutionException e) {
-
-        }
+        assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("http://localhost:{{port}}/foo", "Hello World", String.class));
 
         MockEndpoint.assertIsSatisfied(context);
     }
