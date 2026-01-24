@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSupport {
 
@@ -81,14 +80,10 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelSpringTestSuppor
         greeter.greetMeOneWay("call greetMe OneWay !");
 
         // test throw the exception
-        try {
-            greeter.testDocLitFault("NoSuchCodeLitFault");
-            // should get the exception here
-            fail("Should get the NoSuchCodeLitFault here.");
-        } catch (NoSuchCodeLitFault fault) {
-            // expect the fault here
-            assertNotNull(fault.getFaultInfo(), "The fault info should not be null");
-        }
+        NoSuchCodeLitFault fault = assertThrows(NoSuchCodeLitFault.class,
+                () -> greeter.testDocLitFault("NoSuchCodeLitFault"));
+        // expect the fault here
+        assertNotNull(fault.getFaultInfo(), "The fault info should not be null");
 
     }
 

@@ -57,7 +57,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CxfRsConsumerTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
@@ -170,36 +170,16 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         URL url;
 
         url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/789");
-        try {
-            url.openStream();
-            fail("Expect to get exception here");
-        } catch (IOException exception) {
-            // expect the Internal error exception
-        }
+        assertThrows(IOException.class, url::openStream);
 
         url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/456");
-        try {
-            url.openStream();
-            fail("Expect to get exception here");
-        } catch (FileNotFoundException exception) {
-            // do nothing here
-        }
+        assertThrows(FileNotFoundException.class, url::openStream);
 
         url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/234");
-        try {
-            url.openStream();
-            fail("Expect to get exception here");
-        } catch (FileNotFoundException exception) {
-            // do nothing here
-        }
+        assertThrows(FileNotFoundException.class, url::openStream);
 
         url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/256");
-        try {
-            url.openStream();
-            fail("Expect to get exception here");
-        } catch (IOException exception) {
-            // expect the Internal error exception
-        }
+        assertThrows(IOException.class, url::openStream);
 
     }
 

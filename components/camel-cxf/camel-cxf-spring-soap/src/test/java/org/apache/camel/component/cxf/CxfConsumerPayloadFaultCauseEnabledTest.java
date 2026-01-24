@@ -43,8 +43,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned
@@ -92,14 +92,10 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelSpringTestSupp
         personId.value = "";
         Holder<String> ssn = new Holder<>();
         Holder<String> name = new Holder<>();
-        try {
-            client.getPerson(personId, ssn, name);
-            fail("SOAPFault expected!");
-        } catch (Exception e) {
-            assertTrue(e instanceof SOAPFaultException);
-            SOAPFault fault = ((SOAPFaultException) e).getFault();
-            assertEquals("Someone messed up the service. Caused by: Homer", fault.getFaultString());
-        }
+        Exception e = assertThrows(Exception.class, () -> client.getPerson(personId, ssn, name));
+        assertTrue(e instanceof SOAPFaultException);
+        SOAPFault fault = ((SOAPFaultException) e).getFault();
+        assertEquals("Someone messed up the service. Caused by: Homer", fault.getFaultString());
     }
 
     @Override

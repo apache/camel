@@ -44,8 +44,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
 
@@ -148,13 +148,8 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         personId.value = "";
         Holder<String> ssn = new Holder<>();
         Holder<String> name = new Holder<>();
-        Throwable t = null;
-        try {
-            client.getPerson(personId, ssn, name);
-            fail("expect UnknownPersonFault");
-        } catch (UnknownPersonFault e) {
-            t = e;
-        }
+        Throwable t = assertThrows(UnknownPersonFault.class,
+                () -> client.getPerson(personId, ssn, name));
 
         assertNotNull(t);
         assertTrue(t instanceof UnknownPersonFault);

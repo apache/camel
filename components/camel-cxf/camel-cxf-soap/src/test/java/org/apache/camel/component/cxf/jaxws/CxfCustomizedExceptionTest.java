@@ -46,8 +46,8 @@ import org.apache.cxf.interceptor.Fault;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
@@ -139,17 +139,13 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
         HelloService client = (HelloService) proxyFactory.create();
 
-        try {
-            client.echo("hello world");
-            fail("Expect to get an exception here");
-        } catch (Exception e) {
-            assertEquals(EXCEPTION_MESSAGE, e.getMessage(), "Expect to get right exception message");
-            assertTrue(e instanceof SoapFault, "Exception is not instance of SoapFault");
-            assertEquals(DETAIL_TEXT, ((SoapFault) e).getDetail().getTextContent(), "Expect to get right detail message");
-            //In CXF 2.1.2 , the fault code is per spec , the below fault-code is for SOAP 1.1
-            assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault) e).getFaultCode().toString(),
-                    "Expect to get right fault-code");
-        }
+        Exception e = assertThrows(Exception.class, () -> client.echo("hello world"));
+        assertEquals(EXCEPTION_MESSAGE, e.getMessage(), "Expect to get right exception message");
+        assertTrue(e instanceof SoapFault, "Exception is not instance of SoapFault");
+        assertEquals(DETAIL_TEXT, ((SoapFault) e).getDetail().getTextContent(), "Expect to get right detail message");
+        //In CXF 2.1.2 , the fault code is per spec , the below fault-code is for SOAP 1.1
+        assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault) e).getFaultCode().toString(),
+                "Expect to get right fault-code");
 
     }
 
@@ -170,12 +166,8 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         out.flush();
         is.close();
         // check the response code
-        try {
-            urlConnection.getInputStream();
-            fail("We except an IOException here");
-        } catch (IOException exception) {
-            assertTrue(exception.getMessage().contains("500"));
-        }
+        IOException exception = assertThrows(IOException.class, urlConnection::getInputStream);
+        assertTrue(exception.getMessage().contains("500"));
 
     }
 

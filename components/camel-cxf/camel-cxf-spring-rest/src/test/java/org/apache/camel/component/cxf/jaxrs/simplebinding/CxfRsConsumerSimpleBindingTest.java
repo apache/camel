@@ -56,7 +56,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests for the Simple Binding style of CXF JAX-RS consumers.
@@ -99,7 +98,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
                         } else if (id == 456) {
                             exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
                         } else {
-                            fail();
+                            throw new AssertionError("Unexpected customer ID: " + id);
                         }
                     }
                 });

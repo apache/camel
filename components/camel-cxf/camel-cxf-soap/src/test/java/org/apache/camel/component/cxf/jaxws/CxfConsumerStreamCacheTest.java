@@ -32,8 +32,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 //Modified from https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
 public class CxfConsumerStreamCacheTest extends CamelTestSupport {
@@ -99,12 +99,7 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
         String response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
         assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
         assertTrue(response.endsWith(RESPONSE_MESSAGE_END), "Get a wrong response");
-        try {
-            template.requestBody(simpleEndpointAddress, null, String.class);
-            fail("Excpetion to get exception here");
-        } catch (Exception ex) {
-            // do nothing here
-        }
+        assertThrows(Exception.class, () -> template.requestBody(simpleEndpointAddress, null, String.class));
 
         response = template.requestBody(simpleEndpointAddress, REQUEST_MESSAGE, String.class);
         assertTrue(response.startsWith(RESPONSE_MESSAGE_BEGINE), "Get a wrong response");
