@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tags({ @Tag("not-parallel"), @Tag("spring"), @Tag("tx") })
 public class JMSTXInOutPersistentQueueIT extends AbstractSpringJMSITSupport {
@@ -44,20 +44,14 @@ public class JMSTXInOutPersistentQueueIT extends AbstractSpringJMSITSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World", "World", "World");
         getMockEndpoint("mock:reply").expectedBodiesReceived("Bye World", "Bye World", "Bye World");
 
-        try {
-            template.sendBody("direct:start", "World");
-            fail("Should thrown an exception");
-        } catch (Exception e) {
-            // ignore
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBody("direct:start", "World"),
+                "Should thrown an exception");
 
         // let client re-try
-        try {
-            template.sendBody("direct:start", "World");
-            fail("Should thrown an exception");
-        } catch (Exception e) {
-            // ignore
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBody("direct:start", "World"),
+                "Should thrown an exception");
 
         // now we succeed
         template.sendBody("direct:start", "World");
