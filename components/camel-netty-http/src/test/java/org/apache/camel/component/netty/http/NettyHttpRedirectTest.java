@@ -23,23 +23,21 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpRedirectTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpRedirect() {
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/test", "Hello World", String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(301, cause.getStatusCode());
-            assertTrue(cause.isRedirectError());
-            assertTrue(cause.hasRedirectLocation());
-            assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/test", "Hello World", String.class),
+                "Should have thrown an exception");
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(301, cause.getStatusCode());
+        assertTrue(cause.isRedirectError());
+        assertTrue(cause.hasRedirectLocation());
+        assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
     }
 
     @Override

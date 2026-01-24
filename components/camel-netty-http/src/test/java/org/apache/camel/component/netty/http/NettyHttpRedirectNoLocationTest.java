@@ -27,8 +27,8 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class NettyHttpRedirectNoLocationTest extends BaseNettyTestSupport {
 
@@ -37,16 +37,14 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpRedirectNoLocation() {
-        try {
-            template.requestBody("netty-http:http://localhost:" + nextPort + "/test", "Hello World", String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(302, cause.getStatusCode());
-            assertTrue(cause.isRedirectError());
-            assertFalse(cause.hasRedirectLocation());
-            assertNull(cause.getRedirectLocation());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("netty-http:http://localhost:" + nextPort + "/test", "Hello World", String.class),
+                "Should have thrown an exception");
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(302, cause.getStatusCode());
+        assertTrue(cause.isRedirectError());
+        assertFalse(cause.hasRedirectLocation());
+        assertNull(cause.getRedirectLocation());
     }
 
     @Override

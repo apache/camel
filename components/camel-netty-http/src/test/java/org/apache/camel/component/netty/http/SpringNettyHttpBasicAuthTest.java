@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @CamelSpringTest
 @ContextConfiguration(locations = { "/org/apache/camel/component/netty/http/SpringNettyHttpBasicAuthTest.xml" })
@@ -86,13 +86,11 @@ public class SpringNettyHttpBasicAuthTest {
 
         mockEndpoint.assertIsSatisfied();
 
-        try {
-            template.requestBody("netty-http:http://localhost:" + port + "/foo", "Hello Foo", String.class);
-            fail("Should send back 401");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) e.getCause();
-            assertEquals(401, cause.getStatusCode());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:" + port + "/foo", "Hello Foo", String.class),
+                "Should send back 401");
+        NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) e.getCause();
+        assertEquals(401, cause.getStatusCode());
 
     }
 
@@ -110,14 +108,12 @@ public class SpringNettyHttpBasicAuthTest {
         assertEquals("Bye /foo", out);
 
         // accessing admin is restricted for guest user
-        try {
-            template.requestBodyAndHeader("netty-http:http://localhost:" + port + "/foo/admin/users", "Hello Admin",
-                    "Authorization", auth, String.class);
-            fail("Should send back 401");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) e.getCause();
-            assertEquals(401, cause.getStatusCode());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBodyAndHeader("netty-http:http://localhost:" + port + "/foo/admin/users", "Hello Admin",
+                        "Authorization", auth, String.class),
+                "Should send back 401");
+        NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) e.getCause();
+        assertEquals(401, cause.getStatusCode());
     }
 
 }

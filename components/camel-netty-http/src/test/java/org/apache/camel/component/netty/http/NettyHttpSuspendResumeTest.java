@@ -26,8 +26,8 @@ import org.junit.jupiter.api.condition.OS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @DisabledOnOs(OS.WINDOWS)
 public class NettyHttpSuspendResumeTest extends BaseNettyTestSupport {
@@ -49,12 +49,10 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTestSupport {
         // suspend
         consumer.suspend();
 
-        try {
-            template.requestBody(serverUri, "Moon", String.class);
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().startsWith("Cannot connect to localhost"));
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.requestBody(serverUri, "Moon", String.class),
+                "Should throw exception");
+        assertTrue(e.getCause().getMessage().startsWith("Cannot connect to localhost"));
 
         // resume
         consumer.resume();

@@ -22,34 +22,30 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NettyHttpProducerThrowExceptionOnFailureTest extends BaseNettyTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpProducerThrowExceptionOnFailureTest.class);
 
     @Test
     public void testFailWithoutException() {
-        try {
+        assertDoesNotThrow(() -> {
             String out = template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=false", null,
                     String.class);
             assertEquals("Fail", out);
-        } catch (Throwable t) {
-            LOG.error("Unexpected exception: {}", t.getMessage(), t);
-            fail("Should not throw an exception");
-        }
+        }, "Should not throw an exception");
     }
 
     @Test
     public void testFailWithException() {
-        try {
-            template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null,
-                    String.class);
-            fail("Should throw an exception");
-        } catch (Throwable t) {
-            NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) t.getCause();
-            assertEquals(404, cause.getStatusCode());
-        }
+        Throwable t = assertThrows(Throwable.class,
+                () -> template().requestBody("netty-http:http://localhost:{{port}}/fail?throwExceptionOnFailure=true", null,
+                        String.class),
+                "Should throw an exception");
+        NettyHttpOperationFailedException cause = (NettyHttpOperationFailedException) t.getCause();
+        assertEquals(404, cause.getStatusCode());
     }
 
     @Override
