@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class ServiceInterfaceStrategyTest {
@@ -58,12 +59,9 @@ public class ServiceInterfaceStrategyTest {
                 null);
         assertNull(elName4);
 
-        try {
-            elName = strategy.findQNameForSoapActionOrType("test", Class.class);
-            fail();
-        } catch (RuntimeCamelException e) {
-            LOG.debug("Caught expected message: {}", e.getMessage());
-        }
+        Exception e = assertThrows(RuntimeCamelException.class,
+                () -> strategy.findQNameForSoapActionOrType("test", Class.class));
+        LOG.debug("Caught expected message: {}", e.getMessage());
     }
 
     @Test
@@ -83,12 +81,9 @@ public class ServiceInterfaceStrategyTest {
 
         // this tests the case that the soap action as well as the type are not
         // found
-        try {
-            elName = strategy.findQNameForSoapActionOrType("test", Class.class);
-            fail();
-        } catch (RuntimeCamelException e) {
-            LOG.debug("Caught expected message: {}", e.getMessage());
-        }
+        Exception e = assertThrows(RuntimeCamelException.class,
+                () -> strategy.findQNameForSoapActionOrType("test", Class.class));
+        LOG.debug("Caught expected message: {}", e.getMessage());
     }
 
     @Test
@@ -99,22 +94,17 @@ public class ServiceInterfaceStrategyTest {
         assertEquals("http://customerservice2.example.com/", elName.getNamespaceURI());
         assertEquals("getCustomersByName", elName.getLocalPart());
 
-        try {
-            elName = strategy.findQNameForSoapActionOrType("test", Class.class);
-            fail();
-        } catch (RuntimeCamelException e) {
-            LOG.debug("Caught expected message: {}", e.getMessage());
-        }
+        Exception e = assertThrows(RuntimeCamelException.class,
+                () -> strategy.findQNameForSoapActionOrType("test", Class.class));
+        LOG.debug("Caught expected message: {}", e.getMessage());
     }
 
     @Test
     public void testWithNonWebservice() {
-        try {
-            new ServiceInterfaceStrategy(Object.class, true);
-            fail("Should throw an exception for a class that is no webservice");
-        } catch (IllegalArgumentException e) {
-            LOG.debug("Caught expected message: {}", e.getMessage());
-        }
+        Exception e = assertThrows(IllegalArgumentException.class,
+                () -> new ServiceInterfaceStrategy(Object.class, true),
+                "Should throw an exception for a class that is no webservice");
+        LOG.debug("Caught expected message: {}", e.getMessage());
     }
 
     @Test

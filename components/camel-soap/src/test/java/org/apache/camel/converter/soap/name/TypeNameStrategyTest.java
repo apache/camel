@@ -23,7 +23,7 @@ import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TypeNameStrategyTest {
 
@@ -38,12 +38,8 @@ public class TypeNameStrategyTest {
     @Test
     public void testNoAnnotation() {
         TypeNameStrategy strategy = new TypeNameStrategy();
-        try {
-            strategy.findQNameForSoapActionOrType("", String.class);
-            fail();
-        } catch (RuntimeException e) {
-            // Expected here
-        }
+        assertThrows(RuntimeException.class,
+                () -> strategy.findQNameForSoapActionOrType("", String.class));
     }
 
     @Test
