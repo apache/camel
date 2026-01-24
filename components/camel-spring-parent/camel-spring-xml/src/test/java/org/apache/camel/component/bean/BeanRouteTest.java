@@ -22,7 +22,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class BeanRouteTest extends SpringTestSupport {
     protected Object body = "James";
@@ -50,12 +50,9 @@ public class BeanRouteTest extends SpringTestSupport {
 
     @Test
     public void testAmbiguousMethodCallFails() throws Exception {
-        try {
+        assertThrows(Exception.class, () -> {
             Object value = template.requestBody("bean:myBean", body);
-            fail("We should have failed to invoke an ambiguous method but instead got: " + value);
-        } catch (Exception e) {
-            log.info("Caught expected failure: {}", e.getMessage(), e);
-        }
+        });
     }
 
     @Override

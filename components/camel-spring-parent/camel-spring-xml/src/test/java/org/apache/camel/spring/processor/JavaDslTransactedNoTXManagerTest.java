@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -39,15 +39,13 @@ public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
                         .to("mock:result");
             }
         });
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.start();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals(
-                    "No bean could be found in the registry for: org.springframework.transaction.PlatformTransactionManager",
-                    cause.getMessage());
-        }
+        });
+        NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
+        assertEquals(
+                "No bean could be found in the registry for: org.springframework.transaction.PlatformTransactionManager",
+                cause.getMessage());
     }
 
     @Override

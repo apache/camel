@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringRoutesConfigurationBuilderIdOrPatternTest extends SpringTestSupport {
 
@@ -34,12 +34,9 @@ public class SpringRoutesConfigurationBuilderIdOrPatternTest extends SpringTestS
     public void testRoutesConfigurationOnException() throws Exception {
         getMockEndpoint("mock:error").expectedBodiesReceived("Bye World");
 
-        try {
+        assertThrows(Exception.class, () -> {
             template.sendBody("direct:start", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
+        });
         template.sendBody("direct:start2", "Bye World");
 
         assertMockEndpointsSatisfied();

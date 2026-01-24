@@ -23,7 +23,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TwoRouteRefReverseOnExceptionTest extends SpringTestSupport {
 
@@ -32,13 +32,11 @@ public class TwoRouteRefReverseOnExceptionTest extends SpringTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:foo", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Damn", e.getCause().getMessage());
-        }
+        });
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Damn", e.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

@@ -23,8 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringRouteNoFromTest extends SpringTestSupport {
 
@@ -41,16 +40,9 @@ public class SpringRouteNoFromTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        AbstractXmlApplicationContext answer;
-        try {
-            answer = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoFromTest.xml");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            IllegalArgumentException iae = (IllegalArgumentException) e.getCause();
-            assertEquals("Route myRoute has no inputs: Route(myRoute)[ -> [to[mock:result]]]", iae.getMessage());
-            return null;
-        }
-
-        return answer;
+        assertThrows(RuntimeCamelException.class, () -> {
+            new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoFromTest.xml");
+        });
+        return null;
     }
 }

@@ -28,7 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
@@ -76,14 +76,12 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         // we failed so no message to result
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:start", "Donkey in Action");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
-        }
+        });
+        assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+        assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
 
         assertMockEndpointsSatisfied();
 

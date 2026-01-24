@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringErrorHandlerRedeliveryPolicyProfileTest extends SpringTestSupport {
 
@@ -33,11 +33,8 @@ public class SpringErrorHandlerRedeliveryPolicyProfileTest extends SpringTestSup
 
     @Test
     public void testErrorHandlerRedeliveryPolicyProfile() throws Exception {
-        try {
+        assertThrows(Exception.class, () -> {
             template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-        }
+        });
     }
 }
