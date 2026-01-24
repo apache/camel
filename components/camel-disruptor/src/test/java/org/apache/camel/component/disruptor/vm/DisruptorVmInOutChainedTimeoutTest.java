@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
@@ -33,15 +33,13 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
     void testDisruptorVmInOutChainedTimeout() {
         StopWatch watch = new StopWatch();
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template2.requestBody("disruptor-vm:a?timeout=1000", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            // the chained vm caused the timeout
-            ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
-                    e.getCause());
-            assertEquals(200, cause.getTimeout());
-        }
+        });
+        // the chained vm caused the timeout
+        ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class,
+                e.getCause());
+        assertEquals(200, cause.getTimeout());
 
         long delta = watch.taken();
 
