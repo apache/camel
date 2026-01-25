@@ -494,6 +494,26 @@ If width is a positive number, then the string is padded to the right; if negati
 The optional separator specifies the padding character(s) to use. If not specified, it defaults to the space character.
 If the message body contains `foo` then `${pad(5)}` return `"foo  "` and `${pad(-5)}` returns `"  foo"`, and `${pad(-5,'@')}` returns `@@foo`.
 
+The `replace` function is used for finding a given text in a string and replacing it with another.
+For example the message body contains `Hello a how are you`, then `${replace(a,b)}` returns `Hello b how bre you`.
+The replace function has special support for xref:_replacing_double_and_single_quotes[replacing double and single quotes].
+
+The `substring`, `substringBefore`, and `substringAfter` functions are all similar functions to return a substring of a given value.
+
+Suppose the message body contains `ABCDEFGHIJK` then `${substring(3)}` returns `DEFGHIJK`, and `${substring(-3)}` returns `ABCDEFGH`.
+If you want to clip the first and last character you can use `${substring(1,-1)}` returning `BCDEFGHIJ`.
+
+Now suppose the message body contains `Hello great big World how are you`.
+
+Then `${substringBefore('World')}` return `"Hello great big "`.
+And `${substringAfter('World')}` returns `" how are you"`.
+And `${substringBetween('great','how')}` would return `" big World "`.
+
+The `trim` function trims the value by removing leading and trailing whitespaces.
+So the previous example can also be trimmed by nesting the function as follows:
+`${trim(${substringBetween('great','how')})}` which would return `"big World"`.
+
+And of course `${trim('  hello world  ')}` returns `hello world`.
 
 
 === XML & JSon Functions
@@ -1340,35 +1360,6 @@ Instead of the message body then a simple expression can be nested as input, for
 <setBody>
   <simple>${substring(1,-1,${variable.foo})}</simple>
 </setBody>
-----
-
-=== Substring Before, After, or Between
-
-In *Camel 4.18* there are additional substring methods to make it easier to select a part of a string.
-
-For example suppose the message body contains 'Hello great big World how are you', then you select different parts:
-
-[source,java]
-----
-// select text before `World` -> `Hello great big `
-.setHeader("foo", simple("${substringBefore('World'}"))
-
-// select text after `World` -> ` how are you`
-.setHeader("foo2", simple("${substringAfter('World'}"))
-
-// select text between `great` ... `how` -> ` big World `
-.setHeader("foo2", simple("${substringBetween('great', 'how'}"))
-
-// NOTE: and you can wrap this with trim to remove spaces:
-
-// select text before `World` -> `Hello great big`
-.setHeader("foo", simple("$trim{${substringBefore('World'}}")})
-
-// select text after `World` -> `how are you`
-.setHeader("foo2", simple("$trim{${substringAfter('World'}}"))
-
-// select text between `great` ... `how` -> `big World`
-.setHeader("foo2", simple("$trim{${substringBetween('great', 'how'}}"))
 ----
 
 == Replacing double and single quotes
