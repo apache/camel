@@ -441,13 +441,13 @@ The generator supports different kinds `default`, `classic`, `short`, `simple` a
 |Function |Response Type |Description
 |`capitalize()` | `String` | Capitalizes the message body as a String value (upper case every words)
 |`capitalize(exp)` | `String` | Capitalizes the expression as a String value (upper case every words)
-|`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator (uses comma by default).
+|`concat(exp,exp,separator)` | `String` | Performs a string concat using two expressions (message body as default) with optional separator.
 |`join(separator,prefix,exp)` | `String` | The join function iterates the message body (by default) and joins the data into a `String`. The separator is by default a comma. The prefix is optional. The join uses the message body as source by default. It is possible to refer to another source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`
 |`lowercase()` | `String` | Lowercases the message body
 |`lowercase(exp)` | `String` | Lowercases the expression
 |`normalizeWhitespace()` | `String` | Normalizes the whitespace in the message body by cleaning up excess whitespaces.
 |`normalizeWhitespace(exp)` | `String` | Normalizes the whitespace in the expression by cleaning up excess whitespaces.
-|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
+|`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
 |`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`replace(from,to,exp)` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
@@ -464,6 +464,25 @@ The generator supports different kinds `default`, `classic`, `short`, `simple` a
 |`uppercase()` | `String` | Uppercases the message body
 |`uppercase(exp)` | `String` | Uppercases the expression
 |====
+
+The string functions is various functions to work with values that are String and text based.
+
+The `capitalize` function is used for _capitalizing_ words, by upper-casing the first letter in every words.
+For example `${capitalize('hello world')}` returns `Hello World`.
+
+The `concat` function is used for putting together two values as a single String result.
+In Java, you would use the `+` operator such as `String s = "Hello" + " world";`.
+
+The simple function works like `${concat('Hello ',$\{body})}`. Notice how you can use nested functions so the 2nd parameter is the `$\{body}` function.
+In the example we had to add a space after `"Hello "`, but you can also use the separator parameter, such as `${concat('Hello',$\{body},' ')}`.
+
+The `join` function is a more complex function to join together a set of values, separated by comma (by default) as a single combined String.
+For example if the message body contains a list of [A, B, C] then `${join()}` would return `A,B,C`.
+To use semicolon as separator you would use `${join(;)}`. The `prefix` argument can be used to prefix each value, so for example
+`${join(&,id=)}` would return `id=A&id=B&id=C`.
+
+The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
+So `${lowercase('Hello World`)}` returns `hello world` and `${uppercase('Hello World`)}` returns `HELLO WORLD`.
 
 === XML & JSon Functions
 
