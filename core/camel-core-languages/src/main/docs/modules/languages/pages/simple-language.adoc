@@ -417,6 +417,23 @@ You can also use the `sum` function to add or subtract numbers. For example if y
 |`uuid(kind)` | `String` | Returns a UUID using the Camel `UuidGenerator`. You can choose kind between `default`, `classic`, `short`, `simple` and `random` as the kind. If no kind is given, then `default` is used. It is also possible to use a custom `UuidGenerator` and bind the bean to the xref:manual::registry.adoc[Registry] with an id. For example `${uuid(myGenerator)}` where the id is `myGenerator`.
 |====
 
+To use OS environment variables you use the `${env.key}` function, such as `${env.PATH}` or `${env.HOME}`, or `${env.JAVA_HOME}`.
+Notice how the key should be in uppercase, as required by OS environment variables.
+
+The `hash` function is used for calculating a hash value of the given value. The `${hash()}` would use the message body and SHA-256 as algorithm and
+return a hash value as String hex-decimal.
+
+The `hostname` function returns the OS hostname and does not require using parenthesis, so just use `$\{hostname}`.
+
+The `null` function returns a `null` value such as `$\{null}`.
+
+To use JVM system properties you use the `${sysenv.key}` function, such as `${sysenv.java.version}` or `${sysenv.java.io.tmpdir}`.
+
+You can get the current thread id by the `$\{threadId}` function, and the name via `$\{threadName}`.
+
+And you can generate unique IDs with the xref:manual::uuidgenerator.adoc[Camel UUID Generator] by the `uuid` function.
+The generator supports different kinds `default`, `classic`, `short`, `simple` and `random`, such as `${uuid(random)}`.
+
 === String Functions
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -506,11 +523,14 @@ The following special symbols can be used when escaped with `\` as below:
 [width="100%",cols="50%,50%",options="header",]
 |====
 |Symbol |Description
-|`\n` | To use newline character.
-|`\t` | To use tab character.
-|`\r` | To use carriage return character.
-|`\}` | To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
+|`\\n` | To use newline character.
+|`\\t` | To use tab character.
+|`\\r` | To use carriage return character.
+|`\\}` | To use the `}` character as text. This may be needed when building a JSon structure with the simple language.
 |====
+
+For example to use a new-line character in the split function `${split(\\n)}`.
+
 
 == Built-in Operators
 
