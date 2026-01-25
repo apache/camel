@@ -259,6 +259,10 @@ public final class SimpleConstants {
               label = "function", javaType = "Object", displayName = "Create Empty Object")
     public static final String NEW_EMPTY = "newEmpty(type)";
 
+    @Metadata(description = "Normalizes the whitespace in the message body (or expression) by cleaning up excess whitespaces.",
+              label = "function", javaType = "String", displayName = "Normalize Whitespace")
+    public static final String NORMALIZE_WHITESPACE = "normalizeWhitespace(exp)";
+
     @Metadata(description = "Evaluates the predicate and returns the opposite.", label = "function", javaType = "boolean")
     public static final String NOT = "not";
 

@@ -1090,6 +1090,46 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Normalizes the whitespaces in the given expressions (uses message body if expression is null)
+     */
+    public static Expression normalizeWhitespaceExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = StringHelper.normalizeWhitespace(value);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "normalizeWhitespace(" + expression + ")";
+                } else {
+                    return "normalizeWhitespace()";
+                }
+            }
+        };
+    }
+
+    /**
      * A ternary condition expression
      */
     public static Expression iifExpression(final String predicate, final String trueValue, final String falseValue) {
@@ -1816,7 +1856,9 @@ public final class SimpleExpressionBuilder {
     /**
      * Returns the substring from the given expression that are between after and before
      */
-    public static Expression substringBetweenExpression(final String expression, final String after, final String before) {
+    public static Expression substringBetweenExpression(
+            final String expression, final String after,
+            final String before) {
         return new ExpressionAdapter() {
             private Expression exp;
             private Expression expAfter;
@@ -2235,7 +2277,9 @@ public final class SimpleExpressionBuilder {
         return dateExpression(command, null, pattern);
     }
 
-    public static Expression dateExpression(final String commandWithOffsets, final String timezone, final String pattern) {
+    public static Expression dateExpression(
+            final String commandWithOffsets, final String timezone,
+            final String pattern) {
         final String command = commandWithOffsets.split("[+-]", 2)[0].trim();
         final List<Long> offsets = LanguageHelper.captureOffsets(commandWithOffsets, OFFSET_PATTERN);
 

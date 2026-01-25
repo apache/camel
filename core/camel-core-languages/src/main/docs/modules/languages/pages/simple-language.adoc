@@ -434,6 +434,7 @@ You can get the current thread id by the `$\{threadId}` function, and the name v
 And you can generate unique IDs with the xref:manual::uuidgenerator.adoc[Camel UUID Generator] by the `uuid` function.
 The generator supports different kinds `default`, `classic`, `short`, `simple` and `random`, such as `${uuid(random)}`.
 
+[#_string_functions]
 === String Functions
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -483,6 +484,11 @@ To use semicolon as separator you would use `${join(;)}`. The `prefix` argument 
 
 The `lowercase` and `uppercase` functions are as the name implies used for lower and uppercasing.
 So `${lowercase('Hello World`)}` returns `hello world` and `${uppercase('Hello World`)}` returns `HELLO WORLD`.
+
+You can use the `normalizeWhitespace` function to _clean up_ a value by removing extra whitespaces. This is done by ensuring that
+there are exactly only 1 whitespace between words. And as well trimming the value for empty whitespace
+in the beginning and end. Suppose the message body is a String value with `"   Hello  big   World      "`, then `${normalizeWhitespace()}` will return `Hello big World`.
+
 
 === XML & JSon Functions
 

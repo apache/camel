@@ -1271,4 +1271,17 @@ public final class CSimpleHelper {
         }
     }
 
+    public static String normalizeWhitespace(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = StringHelper.normalizeWhitespace(body);
+        }
+        return body;
+    }
+
 }

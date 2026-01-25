@@ -3338,6 +3338,28 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         }
     }
 
+    @Test
+    public void testNormalizeWhitespace() {
+        exchange.getMessage().setBody("   Hello  big   World      ");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${normalizeWhitespace()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello big World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${normalizeWhitespace(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello big World", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${normalizeWhitespace(' Hi   from    me  ')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hi from me", s);
+
+        exchange.getMessage().setHeader("beer", "  Carlsberg    is a    beer ");
+        expression = context.resolveLanguage("csimple").createExpression("${normalizeWhitespace(${header.beer})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Carlsberg is a beer", s);
+    }
+
     @Override
     protected String getLanguageName() {
         return "csimple";
