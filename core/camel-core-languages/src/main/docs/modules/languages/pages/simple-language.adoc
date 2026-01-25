@@ -489,6 +489,12 @@ You can use the `normalizeWhitespace` function to _clean up_ a value by removing
 there are exactly only 1 whitespace between words. And as well trimming the value for empty whitespace
 in the beginning and end. Suppose the message body is a String value with `"   Hello  big   World      "`, then `${normalizeWhitespace()}` will return `Hello big World`.
 
+The `pad` function returns a copy of the string with extra padding, if necessary, so that its total number of characters is at least the absolute value of the width parameter.
+If width is a positive number, then the string is padded to the right; if negative, it is padded to the left.
+The optional separator specifies the padding character(s) to use. If not specified, it defaults to the space character.
+If the message body contains `foo` then `${pad(5)}` return `"foo  "` and `${pad(-5)}` returns `"  foo"`, and `${pad(-5,'@')}` returns `@@foo`.
+
+
 
 === XML & JSon Functions
 
