@@ -349,21 +349,57 @@ This will get the `Date` object from the header with key birthday, and format th
 |Function |Response Type |Description
 |`abs()` | `long` | Converts the message body to a long number and return the absolute value.
 |`abs(exp)` | `Long` | Converts the message body (or expression) to a long number and return the absolute value.
-|`average(val1,val2,...)` | `long` | Returns the average number from all the values.
+|`average(val1,val2,...)` | `long` | Returns the average number from all the values  (integral numbers only).
 |`ceil()` | `int` | Converts the message body to a floating number and return the ceil value (rounded up to nearest integer).
 |`ceil(exp)` | `int` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
 |`floor()` | `int` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
 |`floor(exp)` | `int` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
 |`length()` | `int` | The payload length (number of bytes) of the message body
 |`length(exp)` | `int` | The payload length (number of bytes) of the expression.
-|`max(val1,val2,...)` | `long` | Returns the maximum number from all the values.
-|`min(val1,val2,...)` | `long` | Returns the minimum number from all the values.
+|`max(val1,val2,...)` | `long` | Returns the maximum number from all the values (integral numbers only).
+|`min(val1,val2,...)` | `long` | Returns the minimum number from all the values (integral numbers only).
 |`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).
 |`random(min,max)` | `int` | Returns a random `Integer` between min (included) and max (excluded),
-|`size()` | `int` | The size of the message body. If the payload is `java.util.Collection` or `java.util.Map` based then the size is the number of elements; otherwise the payload size in bytes.
-|`size(exp)` | `int` | The size of the expression. If the payload is `java.util.Collection` or `java.util.Map` based then the size is the number of elements; otherwise the payload size in bytes.
+|`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
+|`size(exp)` | `int` | Returns the number of elements in collection or array based value. If the value is null then 0 is returned, otherwise 1.
 |`sum(val1,val2,...)` | `long` | Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.
 |====
+
+The `abs` function returns the absolute value of a numeric value. It converts the input (either the message body or the result of an expression) to a long number and computes its absolute value.
+A few examples `${abs(-5)}` returns `5`, and `${abs(5)}` also returns `5`.
+
+The `average` function calculates the average (mean) of integral numbers (not floating point).
+Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${avg()}` results in `20`
+
+The `ceil` functions returns the value of number rounded up to the nearest integer that is greater than or equal to number.
+For example `${ceil(5.7)}` returns `6`, and `${ceil(5.1)}` also returns `6`.
+
+The `floor` functions returns the value of number rounded down to the nearest integer that is smaller or equal to number.
+For example `${ceil(5.7)}` returns `5`, and `${ceil(5.1)}` also returns `5`.
+
+The `length` function calculates the payload size in bytes (if possible). This is calculated by
+(if necessary) converting the payload into String to use for determine the byte length.
+For example `${length('Hello World')}` returns `11`. For larger payloads, then when using xref:manual::stream-caching.adoc[stream caching]
+the length is pre-computed and usually does not require to load the content into memory.
+
+The `max` and `min` functions in are used to find the maximum or minimum value among a set of numeric integral values.
+For example message body contains a list `[10, 5, 30, 15]` then `${max()}` returns `30` and `${min()}` returns `5`.
+
+The `random` functions returns a random number between min and max (exclusive).
+For example `${random(10)}` returns a random number 0..9. And `${random(18,50)}` returns a random number between 18..49.
+
+The `size` functions is used to determine the number of elements, when using `Collection` or array based payloads.
+If not then either 0 or 1 is returned whether the body is `null` or not.
+For example if the message body contains a `List` with 7 elements then `${size()}` returns `7`.
+On the other hand if the message body contains a `InputStream` then the result is `1`, and when body is `null` then `0` is returned.
+And for String payloads such as `${size('Hello World')}` then `1` is always returned.
+
+TIP: Use the `length` function to return the payload length in bytes.
+
+The `sum` function adds up numeric values (not floating point) and returns the result as a long.
+Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${sum()}` results in `60`
+You can also use the `sum` function to add or subtract numbers. For example if you want to add 2 to a number, you can do
+`$sum($\{body},2)}`, and likewise to subtract you use negative number, such as `$sum($\{body},-2)}`.
 
 === Other Functions
 

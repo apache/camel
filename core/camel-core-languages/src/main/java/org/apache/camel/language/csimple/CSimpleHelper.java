@@ -56,6 +56,7 @@ import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
@@ -1130,11 +1131,28 @@ public final class CSimpleHelper {
                 return arr.length;
             } else if (value instanceof double[] arr) {
                 return arr.length;
-            }
-
-            String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
-            if (data != null) {
-                return data.length();
+            } else if (value instanceof StreamCache sc) {
+                return (int) sc.length();
+            } else {
+                // first read as stream
+                InputStream is = null;
+                try {
+                    is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, value);
+                    int len = 0;
+                    while (is.read() != -1) {
+                        len++;
+                    }
+                    return len;
+                } catch (Exception e) {
+                    // ignore
+                } finally {
+                    IOHelper.close(is);
+                }
+                // fallback to use string based
+                String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+                if (data != null) {
+                    return data.length();
+                }
             }
         } finally {
             if (value instanceof StreamCache streamCache) {
@@ -1145,8 +1163,7 @@ public final class CSimpleHelper {
     }
 
     public static int size(Exchange exchange, Object value) {
-        try {
-            // calculate length
+        if (value != null) {
             if (value instanceof byte[] arr) {
                 return arr.length;
             } else if (value instanceof char[] arr) {
@@ -1157,26 +1174,14 @@ public final class CSimpleHelper {
                 return arr.length;
             } else if (value instanceof double[] arr) {
                 return arr.length;
-            } else if (value instanceof String s) {
-                return s.length();
+            } else if (value instanceof String[] arr) {
+                return arr.length;
             } else if (value instanceof Collection<?> c) {
                 return c.size();
             } else if (value instanceof Map<?, ?> m) {
                 return m.size();
             } else {
-                // fall back to stream to read
-                InputStream is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, value);
-                int len = 0;
-                while (is.read() != -1) {
-                    len++;
-                }
-                return len;
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            if (value instanceof StreamCache streamCache) {
-                streamCache.reset();
+                return 1;
             }
         }
         return 0;

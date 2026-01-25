@@ -400,7 +400,7 @@ public final class SimpleExpressionBuilder {
                 if (exp != null) {
                     body = exp.evaluate(exchange, Object.class);
                 } else {
-                    body = exchange.getMessage().getBody(Object.class);
+                    body = exchange.getMessage().getBody();
                 }
                 // this may be an object that we can iterate
                 Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(body);
@@ -954,7 +954,7 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
-     * Returns the size of the expression (number of elements in collection/map; otherwise size of payload in bytes)
+     * Returns the size of the expression (number of elements in collection/map; otherwise 1)
      */
     public static Expression sizeExpression(final String expression) {
         return new ExpressionAdapter() {
@@ -974,46 +974,30 @@ public final class SimpleExpressionBuilder {
                 if (exp != null) {
                     body = exp.evaluate(exchange, Object.class);
                 } else {
-                    body = exchange.getMessage().getBody(Object.class);
+                    body = exchange.getMessage().getBody();
                 }
                 if (body != null) {
-                    try {
-                        // calculate length
-                        if (body instanceof byte[] arr) {
-                            return arr.length;
-                        } else if (body instanceof char[] arr) {
-                            return arr.length;
-                        } else if (body instanceof int[] arr) {
-                            return arr.length;
-                        } else if (body instanceof long[] arr) {
-                            return arr.length;
-                        } else if (body instanceof double[] arr) {
-                            return arr.length;
-                        } else if (body instanceof String s) {
-                            return s.length();
-                        } else if (body instanceof Collection<?> c) {
-                            return c.size();
-                        } else if (body instanceof Map<?, ?> m) {
-                            return m.size();
-                        } else {
-                            // fall back to stream to read
-                            InputStream is
-                                    = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
-                            int len = 0;
-                            while (is.read() != -1) {
-                                len++;
-                            }
-                            return len;
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    } finally {
-                        if (body instanceof StreamCache streamCache) {
-                            streamCache.reset();
-                        }
+                    if (body instanceof byte[] arr) {
+                        return arr.length;
+                    } else if (body instanceof char[] arr) {
+                        return arr.length;
+                    } else if (body instanceof int[] arr) {
+                        return arr.length;
+                    } else if (body instanceof long[] arr) {
+                        return arr.length;
+                    } else if (body instanceof double[] arr) {
+                        return arr.length;
+                    } else if (body instanceof String[] arr) {
+                        return arr.length;
+                    } else if (body instanceof Collection<?> c) {
+                        return c.size();
+                    } else if (body instanceof Map<?, ?> m) {
+                        return m.size();
+                    } else {
+                        return 1;
                     }
                 }
-                return null;
+                return 0;
             }
 
             @Override
@@ -1048,7 +1032,7 @@ public final class SimpleExpressionBuilder {
                 if (exp != null) {
                     body = exp.evaluate(exchange, Object.class);
                 } else {
-                    body = exchange.getMessage().getBody(Object.class);
+                    body = exchange.getMessage().getBody();
                 }
                 try {
                     if (body instanceof byte[] arr) {
@@ -1061,10 +1045,30 @@ public final class SimpleExpressionBuilder {
                         return arr.length;
                     } else if (body instanceof double[] arr) {
                         return arr.length;
-                    }
-                    String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
-                    if (data != null) {
-                        return data.length();
+                    } else if (body instanceof String[] arr) {
+                        return arr.length;
+                    } else if (body instanceof StreamCache sc) {
+                        return (int) sc.length();
+                    } else {
+                        // first read as stream
+                        InputStream is = null;
+                        try {
+                            is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, body);
+                            int len = 0;
+                            while (is.read() != -1) {
+                                len++;
+                            }
+                            return len;
+                        } catch (Exception e) {
+                            // ignore
+                        } finally {
+                            IOHelper.close(is);
+                        }
+                        // fallback to use string based
+                        String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
+                        if (data != null) {
+                            return data.length();
+                        }
                     }
                 } finally {
                     if (body instanceof StreamCache streamCache) {
