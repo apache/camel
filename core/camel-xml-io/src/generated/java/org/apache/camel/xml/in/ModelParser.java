@@ -2086,6 +2086,20 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected OcsfDataFormat doParseOcsfDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new OcsfDataFormat(), (def, key, val) -> switch (key) {
+                case "allowUnmarshallType": def.setAllowUnmarshallType(val); yield true;
+                case "collectionType": def.setCollectionTypeName(val); yield true;
+                case "disableFeatures": def.setDisableFeatures(val); yield true;
+                case "enableFeatures": def.setEnableFeatures(val); yield true;
+                case "objectMapper": def.setObjectMapper(val); yield true;
+                case "prettyPrint": def.setPrettyPrint(val); yield true;
+                case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
+                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); yield true;
+                case "useList": def.setUseList(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected PGPDataFormat doParsePGPDataFormat() throws IOException, XmlPullParserException {
         return doParse(new PGPDataFormat(), (def, key, val) -> switch (key) {
                 case "algorithm": def.setAlgorithm(val); yield true;
@@ -2992,6 +3006,7 @@ public class ModelParser extends BaseParser {
             case "json": return doParseJsonDataFormat();
             case "lzf": return doParseLZFDataFormat();
             case "mimeMultipart": return doParseMimeMultipartDataFormat();
+            case "ocsf": return doParseOcsfDataFormat();
             case "pgp": return doParsePGPDataFormat();
             case "pqc": return doParsePQCDataFormat();
             case "parquetAvro": return doParseParquetAvroDataFormat();

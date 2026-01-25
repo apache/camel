@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/os",
+  "title": "Os",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Os",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "build": {
+      "type": "string",
+      "title": "OS Build"
+    },
+    "country": {
+      "type": "string",
+      "title": "Country"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "lang": {
+      "type": "string",
+      "title": "Language"
+    },
+    "cpe_name": {
+      "type": "string",
+      "title": "The product CPE identifier"
+    },
+    "cpu_bits": {
+      "type": "integer",
+      "title": "CPU Bits"
+    },
+    "edition": {
+      "type": "string",
+      "title": "OS Edition"
+    },
+    "kernel_release": {
+      "type": "string",
+      "title": "Kernel Release"
+    },
+    "sp_name": {
+      "type": "string",
+      "title": "OS Service Pack"
+    },
+    "sp_ver": {
+      "type": "integer",
+      "title": "OS Service Pack Version"
+    }
+  },
+  "description": "The Operating System (OS) object."
+}

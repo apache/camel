@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/process_activity",
+  "title": "ProcessActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.ProcessActivity",
+  "additionalProperties": true,
+  "description": "ProcessActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "actor": {
+      "$ref": "Actor.json"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "process": {
+      "$ref": "Process.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "module": {
+      "$ref": "Module.json"
+    },
+    "exit_code": {
+      "type": "integer",
+      "title": "Exit Code"
+    },
+    "actual_permissions": {
+      "type": "integer",
+      "title": "Actual Permissions"
+    },
+    "injection_type_id": {
+      "type": "integer",
+      "title": "Injection Type ID"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "launch_type_id": {
+      "type": "integer",
+      "title": "Launch Type ID"
+    },
+    "injection_type": {
+      "type": "string",
+      "title": "Injection Type"
+    },
+    "requested_permissions": {
+      "type": "integer",
+      "title": "Requested Permissions"
+    },
+    "launch_type": {
+      "type": "string",
+      "title": "Launch Type"
+    }
+  }
+}

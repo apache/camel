@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/logger",
+  "title": "Logger",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Logger",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "product": {
+      "$ref": "Product.json"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "log_level": {
+      "type": "string",
+      "title": "Log Level"
+    },
+    "event_uid": {
+      "type": "string",
+      "title": "Event UID"
+    },
+    "is_truncated": {
+      "type": "boolean",
+      "title": "Is Truncated"
+    },
+    "log_format": {
+      "type": "string",
+      "title": "Log Format"
+    },
+    "log_name": {
+      "type": "string",
+      "title": "Log Name"
+    },
+    "log_provider": {
+      "type": "string",
+      "title": "Log Provider"
+    },
+    "log_version": {
+      "type": "string",
+      "title": "Log Version"
+    },
+    "logged_time": {
+      "type": "integer",
+      "title": "Logged Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "transmit_time": {
+      "type": "integer",
+      "title": "Transmission Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "untruncated_size": {
+      "type": "integer",
+      "title": "Untruncated Size"
+    }
+  },
+  "description": "The Logger object."
+}

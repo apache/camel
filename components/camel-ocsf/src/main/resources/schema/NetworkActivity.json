@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/network_activity",
+  "title": "NetworkActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.NetworkActivity",
+  "additionalProperties": true,
+  "description": "NetworkActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "url": {
+      "$ref": "Url.json"
+    },
+    "is_src_dst_assignment_known": {
+      "type": "boolean",
+      "title": "Source/Destination Assignment Known"
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    }
+  }
+}

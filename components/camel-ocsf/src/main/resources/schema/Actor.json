@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/actor",
+  "title": "Actor",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Actor",
+  "additionalProperties": true,
+  "properties": {
+    "process": {
+      "$ref": "Process.json"
+    },
+    "session": {
+      "$ref": "Session.json"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "app_uid": {
+      "type": "string",
+      "title": "Application ID"
+    },
+    "authorizations": {
+      "type": "array",
+      "title": "Authorization Information",
+      "items": {
+        "$ref": "Authorization.json"
+      }
+    },
+    "idp": {
+      "$ref": "Idp.json"
+    },
+    "invoked_by": {
+      "type": "string",
+      "title": "Invoked by"
+    }
+  },
+  "description": "The Actor object."
+}

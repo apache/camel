@@ -192,6 +192,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new LZFDataFormatReifier(camelContext, definition);
         } else if (definition instanceof MimeMultipartDataFormat) {
             return new MimeMultipartDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof OcsfDataFormat) {
+            return new OcsfDataFormatReifier(camelContext, definition);
         } else if (definition instanceof ParquetAvroDataFormat) {
             return new ParquetAvroDataFormatReifier(camelContext, definition);
         } else if (definition instanceof PGPDataFormat) {

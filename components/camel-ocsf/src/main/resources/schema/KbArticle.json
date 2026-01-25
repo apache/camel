@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/kb_article",
+  "title": "KbArticle",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.KbArticle",
+  "additionalProperties": true,
+  "properties": {
+    "size": {
+      "type": "integer",
+      "title": "Size"
+    },
+    "os": {
+      "$ref": "Os.json"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "product": {
+      "$ref": "Product.json"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "severity": {
+      "type": "string",
+      "title": "Severity"
+    },
+    "avg_timespan": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "bulletin": {
+      "type": "string",
+      "title": "Patch Bulletin"
+    },
+    "classification": {
+      "type": "string",
+      "title": "Classification"
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "install_state": {
+      "type": "string",
+      "title": "Install State"
+    },
+    "install_state_id": {
+      "type": "integer",
+      "title": "Install State ID"
+    },
+    "is_superseded": {
+      "type": "boolean",
+      "title": "The patch is superseded."
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    }
+  },
+  "description": "The KB Article object."
+}

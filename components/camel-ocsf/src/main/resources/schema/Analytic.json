@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/analytic",
+  "title": "Analytic",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Analytic",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "state": {
+      "type": "string",
+      "title": "State"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category"
+    },
+    "algorithm": {
+      "type": "string",
+      "title": "Algorithm"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "related_analytics": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Analytic.json"
+      }
+    },
+    "state_id": {
+      "type": "integer",
+      "title": "State ID"
+    }
+  },
+  "description": "The Analytic object."
+}

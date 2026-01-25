@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/http_response",
+  "title": "HttpResponse",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.HttpResponse",
+  "additionalProperties": true,
+  "properties": {
+    "code": {
+      "type": "integer",
+      "title": "Response Code"
+    },
+    "message": {
+      "type": "string",
+      "title": "Message"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status"
+    },
+    "length": {
+      "type": "integer",
+      "title": "Response Length"
+    },
+    "content_type": {
+      "type": "string",
+      "title": "HTTP Content Type"
+    },
+    "body_length": {
+      "type": "integer",
+      "title": "Response Body Length"
+    },
+    "http_headers": {
+      "type": "array",
+      "title": "HTTP Headers",
+      "items": {
+        "$ref": "HttpHeader.json"
+      }
+    },
+    "latency": {
+      "type": "integer",
+      "title": "Latency"
+    }
+  },
+  "description": "The HTTP Response object."
+}

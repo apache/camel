@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/smb_activity",
+  "title": "SmbActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.SmbActivity",
+  "additionalProperties": true,
+  "description": "SmbActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "client_dialects": {
+      "type": "array",
+      "title": "Client Dialects",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "share": {
+      "type": "string",
+      "title": "Share"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "open_type": {
+      "type": "string",
+      "title": "Open Type"
+    },
+    "file": {
+      "$ref": "File.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "share_type": {
+      "type": "string",
+      "title": "Share Type"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "share_type_id": {
+      "type": "integer",
+      "title": "Share Type ID"
+    },
+    "command": {
+      "type": "string",
+      "title": "Command"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "response": {
+      "$ref": "Response.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "tree_uid": {
+      "type": "string",
+      "title": "Tree UID"
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "dialect": {
+      "type": "string",
+      "title": "Dialect"
+    },
+    "dce_rpc": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    }
+  }
+}

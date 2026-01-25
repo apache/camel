@@ -3058,9 +3058,13 @@
               }, {
                 "required" : [ "mimeMultipart" ]
               }, {
+                "required" : [ "ocsf" ]
+              }, {
                 "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
+              }, {
+                "required" : [ "pqc" ]
               }, {
                 "required" : [ "protobuf" ]
               }, {
@@ -3305,6 +3309,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ocsf" ],
+            "properties" : {
+              "ocsf" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "parquetAvro" ],
             "properties" : {
               "parquetAvro" : {
@@ -3317,6 +3329,14 @@
             "properties" : {
               "pgp" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "pqc" ],
+            "properties" : {
+              "pqc" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
               }
             }
           }, {
@@ -3508,8 +3528,10 @@
           "jsonApi" : { },
           "lzf" : { },
           "mimeMultipart" : { },
+          "ocsf" : { },
           "parquetAvro" : { },
           "pgp" : { },
+          "pqc" : { },
           "protobuf" : { },
           "rss" : { },
           "smooks" : { },
@@ -8392,8 +8414,10 @@
           "jsonApi" : { },
           "lzf" : { },
           "mimeMultipart" : { },
+          "ocsf" : { },
           "parquetAvro" : { },
           "pgp" : { },
+          "pqc" : { },
           "protobuf" : { },
           "rss" : { },
           "smooks" : { },
@@ -8477,9 +8501,13 @@
               }, {
                 "required" : [ "mimeMultipart" ]
               }, {
+                "required" : [ "ocsf" ]
+              }, {
                 "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
+              }, {
+                "required" : [ "pqc" ]
               }, {
                 "required" : [ "protobuf" ]
               }, {
@@ -8724,6 +8752,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ocsf" ],
+            "properties" : {
+              "ocsf" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "parquetAvro" ],
             "properties" : {
               "parquetAvro" : {
@@ -8736,6 +8772,14 @@
             "properties" : {
               "pgp" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "pqc" ],
+            "properties" : {
+              "pqc" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
               }
             }
           }, {
@@ -12360,6 +12404,68 @@
             "type" : "boolean",
             "title" : "Multipart Without Attachment",
             "description" : "Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false.",
+            "default" : false
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.OcsfDataFormat" : {
+        "title" : "OCSF",
+        "description" : "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "allowUnmarshallType" : {
+            "type" : "boolean",
+            "title" : "Allow Unmarshall Type",
+            "description" : "If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled when desired to be used.",
+            "default" : false
+          },
+          "collectionType" : {
+            "type" : "string",
+            "title" : "Collection Type",
+            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default."
+          },
+          "disableFeatures" : {
+            "type" : "string",
+            "title" : "Disable Features",
+            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+          },
+          "enableFeatures" : {
+            "type" : "string",
+            "title" : "Enable Features",
+            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "objectMapper" : {
+            "type" : "string",
+            "title" : "Object Mapper",
+            "description" : "Lookup and use the existing ObjectMapper with the given id when using Jackson."
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "To enable pretty printing output nicely formatted. Is by default false.",
+            "default" : false
+          },
+          "unmarshalType" : {
+            "type" : "string",
+            "title" : "Unmarshal Type",
+            "description" : "Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent."
+          },
+          "useDefaultObjectMapper" : {
+            "type" : "boolean",
+            "title" : "Use Default Object Mapper",
+            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+            "default" : true
+          },
+          "useList" : {
+            "type" : "boolean",
+            "title" : "Use List",
+            "description" : "To unmarshal to a List of OCSF events.",
             "default" : false
           }
         }

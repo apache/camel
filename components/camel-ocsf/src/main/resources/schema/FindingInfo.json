@@ -1,0 +1,128 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/finding_info",
+  "title": "FindingInfo",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.FindingInfo",
+  "additionalProperties": true,
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "product": {
+      "$ref": "Product.json"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "types": {
+      "type": "array",
+      "title": "Types",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "title": "Tags",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "attacks": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Attack.json"
+      }
+    },
+    "analytic": {
+      "$ref": "Analytic.json"
+    },
+    "attack_graph": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "data_sources": {
+      "type": "array",
+      "title": "Data Sources",
+      "items": {
+        "type": "string"
+      }
+    },
+    "first_seen_time": {
+      "type": "integer",
+      "title": "First Seen",
+      "existingJavaType": "java.lang.Long"
+    },
+    "kill_chain": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "KillChainPhase.json"
+      }
+    },
+    "last_seen_time": {
+      "type": "integer",
+      "title": "Last Seen",
+      "existingJavaType": "java.lang.Long"
+    },
+    "modified_time": {
+      "type": "integer",
+      "title": "Modified Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "product_uid": {
+      "type": "string",
+      "title": "Product Identifier"
+    },
+    "related_analytics": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Analytic.json"
+      }
+    },
+    "related_events": {
+      "type": "array",
+      "title": "Related Events/Findings",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "related_events_count": {
+      "type": "integer",
+      "title": "Related Events/Findings Count"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    },
+    "traits": {
+      "type": "array",
+      "title": "Traits",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "uid_alt": {
+      "type": "string",
+      "title": "Alternate ID"
+    }
+  },
+  "description": "The Finding Information object."
+}

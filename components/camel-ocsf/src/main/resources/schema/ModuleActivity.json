@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/module_activity",
+  "title": "ModuleActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.ModuleActivity",
+  "additionalProperties": true,
+  "description": "ModuleActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "actor": {
+      "$ref": "Actor.json"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "module": {
+      "$ref": "Module.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    }
+  }
+}

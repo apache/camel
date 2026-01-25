@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/tactic",
+  "title": "Tactic",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Tactic",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    }
+  },
+  "description": "The MITRE Tactic object."
+}

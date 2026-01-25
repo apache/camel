@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/authentication",
+  "title": "Authentication",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Authentication",
+  "additionalProperties": true,
+  "description": "Authentication event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "account_switch_type_id": {
+      "type": "integer",
+      "title": "Account Switch Type ID"
+    },
+    "actor": {
+      "$ref": "Actor.json"
+    },
+    "service": {
+      "$ref": "Service.json"
+    },
+    "auth_protocol_id": {
+      "type": "integer",
+      "title": "Auth Protocol ID"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "http_response": {
+      "$ref": "HttpResponse.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "logon_process": {
+      "$ref": "Process.json"
+    },
+    "http_request": {
+      "$ref": "HttpRequest.json"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "is_mfa": {
+      "type": "boolean",
+      "title": "Multi Factor Authentication"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "session": {
+      "$ref": "Session.json"
+    },
+    "auth_factors": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "AuthFactor.json"
+      }
+    },
+    "logon_type": {
+      "type": "string",
+      "title": "Logon Type"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "certificate": {
+      "$ref": "Certificate.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "logon_type_id": {
+      "type": "integer",
+      "title": "Logon Type ID"
+    },
+    "is_remote": {
+      "type": "boolean",
+      "title": "Remote"
+    },
+    "is_new_logon": {
+      "type": "boolean",
+      "title": "New Logon"
+    },
+    "authentication_token": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "auth_protocol": {
+      "type": "string",
+      "title": "Auth Protocol"
+    },
+    "account_switch_type": {
+      "type": "string",
+      "title": "Account Switch Type"
+    },
+    "is_cleartext": {
+      "type": "boolean",
+      "title": "Cleartext Credentials"
+    }
+  }
+}

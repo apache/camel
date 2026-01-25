@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/incident_finding",
+  "title": "IncidentFinding",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.IncidentFinding",
+  "additionalProperties": true,
+  "description": "IncidentFinding event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "verdict_id": {
+      "type": "integer",
+      "title": "Verdict ID"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "impact": {
+      "type": "string",
+      "title": "Impact"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "ticket": {
+      "$ref": "Ticket.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "confidence_score": {
+      "type": "integer",
+      "title": "Confidence Score"
+    },
+    "impact_id": {
+      "type": "integer",
+      "title": "Impact ID"
+    },
+    "verdict": {
+      "type": "string",
+      "title": "Verdict"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    },
+    "assignee": {
+      "$ref": "User.json"
+    },
+    "finding_info_list": {
+      "type": "array",
+      "title": "Finding Information List",
+      "items": {
+        "$ref": "FindingInfo.json"
+      }
+    },
+    "confidence_id": {
+      "type": "integer",
+      "title": "Confidence ID"
+    },
+    "comment": {
+      "type": "string",
+      "title": "Comment"
+    },
+    "assignee_group": {
+      "$ref": "Group.json"
+    },
+    "priority_id": {
+      "type": "integer",
+      "title": "Priority ID"
+    },
+    "vendor_attributes": {
+      "$ref": "VendorAttributes.json"
+    },
+    "tickets": {
+      "type": "array",
+      "title": "Tickets",
+      "items": {
+        "$ref": "Ticket.json"
+      }
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "attacks": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Attack.json"
+      }
+    },
+    "priority": {
+      "type": "string",
+      "title": "Priority"
+    },
+    "is_suspected_breach": {
+      "type": "boolean",
+      "title": "Suspected Breach"
+    },
+    "impact_score": {
+      "type": "integer",
+      "title": "Impact Score"
+    },
+    "confidence": {
+      "type": "string",
+      "title": "Confidence"
+    }
+  }
+}

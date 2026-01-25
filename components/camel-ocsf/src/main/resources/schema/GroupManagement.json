@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/group_management",
+  "title": "GroupManagement",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.GroupManagement",
+  "additionalProperties": true,
+  "description": "GroupManagement event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "privileges": {
+      "type": "array",
+      "title": "Privileges",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actor": {
+      "$ref": "Actor.json"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "http_response": {
+      "$ref": "HttpResponse.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "http_request": {
+      "$ref": "HttpRequest.json"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "group": {
+      "$ref": "Group.json"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "subgroup": {
+      "$ref": "Group.json"
+    },
+    "resource": {
+      "$ref": "ResourceDetails.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    }
+  }
+}

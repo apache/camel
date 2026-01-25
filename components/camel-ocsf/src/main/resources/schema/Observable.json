@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/observable",
+  "title": "Observable",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Observable",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "value": {
+      "type": "string",
+      "title": "Value"
+    },
+    "type_uid": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "event_uid": {
+      "type": "string",
+      "title": "Event UID"
+    },
+    "reputation": {
+      "$ref": "Reputation.json"
+    }
+  },
+  "description": "The Observable object."
+}

@@ -43,6 +43,7 @@ import org.apache.camel.model.dataformat.JsonApiDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
+import org.apache.camel.model.dataformat.OcsfDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
@@ -254,6 +255,13 @@ public final class DataFormatBuilderFactory {
      */
     public MimeMultipartDataFormat.Builder mimeMultipart() {
         return new MimeMultipartDataFormat.Builder();
+    }
+
+    /**
+     * Uses the OCSF (Open Cybersecurity Schema Framework) data format
+     */
+    public OcsfDataFormat.Builder ocsf() {
+        return new OcsfDataFormat.Builder();
     }
 
     /**

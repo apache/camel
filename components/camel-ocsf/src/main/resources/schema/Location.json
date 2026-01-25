@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/location",
+  "title": "Location",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Location",
+  "additionalProperties": true,
+  "properties": {
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "long": {
+      "type": "number",
+      "title": "Longitude"
+    },
+    "city": {
+      "type": "string",
+      "title": "City"
+    },
+    "country": {
+      "type": "string",
+      "title": "Country"
+    },
+    "coordinates": {
+      "type": "array",
+      "title": "Coordinates",
+      "items": {
+        "type": "number"
+      }
+    },
+    "continent": {
+      "type": "string",
+      "title": "Continent"
+    },
+    "aerial_height": {
+      "type": "string",
+      "title": "Aerial Height"
+    },
+    "geodetic_altitude": {
+      "type": "string",
+      "title": "Geodetic Altitude"
+    },
+    "geodetic_vertical_accuracy": {
+      "type": "string",
+      "title": "Geodetic Vertical Accuracy"
+    },
+    "geohash": {
+      "type": "string",
+      "title": "Geohash"
+    },
+    "horizontal_accuracy": {
+      "type": "string",
+      "title": "Horizontal Accuracy"
+    },
+    "is_on_premises": {
+      "type": "boolean",
+      "title": "On Premises"
+    },
+    "isp": {
+      "type": "string",
+      "title": "ISP Name"
+    },
+    "lat": {
+      "type": "number",
+      "title": "Latitude"
+    },
+    "postal_code": {
+      "type": "string",
+      "title": "Postal Code"
+    },
+    "pressure_altitude": {
+      "type": "string",
+      "title": "Pressure Altitude"
+    },
+    "provider": {
+      "type": "string",
+      "title": "Provider"
+    },
+    "region": {
+      "type": "string",
+      "title": "Region"
+    }
+  },
+  "description": "The Geo Location object."
+}

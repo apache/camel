@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/detection_finding",
+  "title": "DetectionFinding",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.DetectionFinding",
+  "additionalProperties": true,
+  "description": "DetectionFinding event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "impact": {
+      "type": "string",
+      "title": "Impact"
+    },
+    "resources": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "ResourceDetails.json"
+      }
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "risk_score": {
+      "type": "integer",
+      "title": "Risk Score"
+    },
+    "finding_info": {
+      "$ref": "FindingInfo.json"
+    },
+    "malware_scan_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "evidences": {
+      "type": "array",
+      "title": "Evidence Artifacts",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "confidence_score": {
+      "type": "integer",
+      "title": "Confidence Score"
+    },
+    "impact_id": {
+      "type": "integer",
+      "title": "Impact ID"
+    },
+    "malware": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Malware.json"
+      }
+    },
+    "confidence_id": {
+      "type": "integer",
+      "title": "Confidence ID"
+    },
+    "comment": {
+      "type": "string",
+      "title": "Comment"
+    },
+    "is_alert": {
+      "type": "boolean",
+      "title": "Alert"
+    },
+    "remediation": {
+      "$ref": "Remediation.json"
+    },
+    "risk_details": {
+      "type": "string",
+      "title": "Risk Details"
+    },
+    "vulnerabilities": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Vulnerability.json"
+      }
+    },
+    "vendor_attributes": {
+      "$ref": "VendorAttributes.json"
+    },
+    "risk_level_id": {
+      "type": "integer",
+      "title": "Risk Level ID"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "impact_score": {
+      "type": "integer",
+      "title": "Impact Score"
+    },
+    "confidence": {
+      "type": "string",
+      "title": "Confidence"
+    },
+    "anomaly_analyses": {
+      "type": "array",
+      "title": "Anomaly Analyses",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "risk_level": {
+      "type": "string",
+      "title": "Risk Level"
+    }
+  }
+}

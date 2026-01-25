@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/reputation",
+  "title": "Reputation",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Reputation",
+  "additionalProperties": true,
+  "properties": {
+    "base_score": {
+      "type": "number",
+      "title": "Reputation Score"
+    },
+    "provider": {
+      "type": "string",
+      "title": "Provider"
+    },
+    "score": {
+      "type": "string",
+      "title": "Reputation Score"
+    },
+    "score_id": {
+      "type": "integer",
+      "title": "Reputation Score ID"
+    }
+  },
+  "description": "The Reputation object."
+}

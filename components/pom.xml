@@ -239,6 +239,7 @@
         <module>camel-oaipmh</module>
         <module>camel-oauth</module>
         <module>camel-observation</module>
+        <module>camel-ocsf</module>
         <module>camel-ognl</module>
         <module>camel-olingo2</module>
         <module>camel-olingo4</module>

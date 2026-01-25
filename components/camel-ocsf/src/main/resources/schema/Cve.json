@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/cve",
+  "title": "Cve",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Cve",
+  "additionalProperties": true,
+  "properties": {
+    "type": {
+      "type": "string",
+      "title": "Vulnerability Type"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "product": {
+      "$ref": "Product.json"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "uid": {
+      "type": "string",
+      "title": "CVE ID"
+    },
+    "references": {
+      "type": "array",
+      "title": "References",
+      "items": {
+        "type": "string"
+      }
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "cvss": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Cvss.json"
+      }
+    },
+    "cwe": {
+      "$ref": "Cwe.json"
+    },
+    "cwe_uid": {
+      "type": "string",
+      "title": "CWE UID"
+    },
+    "cwe_url": {
+      "type": "string",
+      "title": "CWE URL"
+    },
+    "epss": {
+      "$ref": "Epss.json"
+    },
+    "modified_time": {
+      "type": "integer",
+      "title": "Modified Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "related_cwes": {
+      "type": "array",
+      "title": "Related CWEs",
+      "items": {
+        "$ref": "Cwe.json"
+      }
+    }
+  },
+  "description": "The CVE object."
+}

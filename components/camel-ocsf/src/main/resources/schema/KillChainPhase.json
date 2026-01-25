@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/kill_chain_phase",
+  "title": "KillChainPhase",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.KillChainPhase",
+  "additionalProperties": true,
+  "properties": {
+    "phase": {
+      "type": "string",
+      "title": "Kill Chain Phase"
+    },
+    "phase_id": {
+      "type": "integer",
+      "title": "Kill Chain Phase ID"
+    }
+  },
+  "description": "The Kill Chain Phase object."
+}

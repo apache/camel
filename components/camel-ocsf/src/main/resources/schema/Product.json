@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/product",
+  "title": "Product",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Product",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "path": {
+      "type": "string",
+      "title": "Path"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "feature": {
+      "$ref": "Feature.json"
+    },
+    "lang": {
+      "type": "string",
+      "title": "Language"
+    },
+    "cpe_name": {
+      "type": "string",
+      "title": "The product CPE identifier"
+    },
+    "url_string": {
+      "type": "string",
+      "title": "URL String"
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    }
+  },
+  "description": "The Product object."
+}

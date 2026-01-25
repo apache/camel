@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/enrichment",
+  "title": "Enrichment",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Enrichment",
+  "additionalProperties": true,
+  "properties": {
+    "data": {
+      "type": [
+        "object",
+        "string",
+        "integer",
+        "number",
+        "boolean",
+        "array",
+        "null"
+      ],
+      "title": "Data"
+    },
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "value": {
+      "type": "string",
+      "title": "Value"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "provider": {
+      "type": "string",
+      "title": "Provider"
+    },
+    "reputation": {
+      "$ref": "Reputation.json"
+    },
+    "short_desc": {
+      "type": "string",
+      "title": "Short Description"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    }
+  },
+  "description": "The Enrichment object."
+}

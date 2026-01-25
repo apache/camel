@@ -1,0 +1,1 @@
+../../../../../components/camel-ocsf/src/main/docs/ocsf-dataformat.adoc
