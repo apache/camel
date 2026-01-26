@@ -309,13 +309,14 @@ public class Neo4jProducer extends DefaultProducer {
 
         final String databaseName = getEndpoint().getName();
 
-        String query = String.format("CREATE VECTOR INDEX %s IF NOT EXISTS\n" +
-                                     "FOR (%s:%s)\n" +
-                                     "ON %s.embedding\n" +
-                                     "OPTIONS { indexConfig: {\n" +
-                                     " `vector.dimensions`: %s,\n" +
-                                     " `vector.similarity_function`: '%s'\n" +
-                                     "}}",
+        String query = String.format("""
+                CREATE VECTOR INDEX %s IF NOT EXISTS
+                FOR (%s:%s)
+                ON %s.embedding
+                OPTIONS { indexConfig: {
+                 `vector.dimensions`: %s,
+                 `vector.similarity_function`: '%s'
+                }}""",
                 vectorIndexName, alias, label, alias, dimension, similarityFunction.name());
 
         executeWriteQuery(exchange, query, null, databaseName, Neo4Operation.CREATE_VECTOR_INDEX);
