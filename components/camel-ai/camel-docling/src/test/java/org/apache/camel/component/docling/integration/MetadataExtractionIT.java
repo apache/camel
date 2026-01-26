@@ -248,15 +248,22 @@ public class MetadataExtractionIT extends DoclingITestSupport {
     private Path createTestMarkdownFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-metadata-test", ".md");
         Files.write(tempFile,
-                ("# Test Document for Metadata Extraction\n\n" +
-                 "This is a test document for metadata extraction.\n\n" +
-                 "## Section 1\n\n" +
-                 "Some content here.\n\n" +
-                 "- List item 1\n" +
-                 "- List item 2\n\n" +
-                 "## Section 2\n\n" +
-                 "More content with some **bold** text and *italic* text.\n")
-                        .getBytes());
+                """
+                        # Test Document for Metadata Extraction
+
+                        This is a test document for metadata extraction.
+
+                        ## Section 1
+
+                        Some content here.
+
+                        - List item 1
+                        - List item 2
+
+                        ## Section 2
+
+                        More content with some **bold** text and *italic* text.
+                        """.getBytes());
         return tempFile;
     }
 
