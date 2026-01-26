@@ -86,8 +86,8 @@ public class SecretsReloadTriggerTask extends ServiceSupport implements CamelCon
         // auto-detect secrets in-use
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         PropertiesFunction pf = pc.getPropertiesFunction("secret");
-        if (pf instanceof SecretPropertiesFunction) {
-            propertiesFunction = (SecretPropertiesFunction) pf;
+        if (pf instanceof SecretPropertiesFunction secretpropertiesfunction) {
+            propertiesFunction = secretpropertiesfunction;
             LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
         }
         // specific secrets

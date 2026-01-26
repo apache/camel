@@ -50,8 +50,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
         if (getCamelContext().getPropertiesComponent().hasPropertiesFunction("secret")) {
             PropertiesFunction pf = getCamelContext().getPropertiesComponent().getPropertiesFunction("secret");
-            if (pf instanceof SecretPropertiesFunction) {
-                propertiesFunction = (SecretPropertiesFunction) pf;
+            if (pf instanceof SecretPropertiesFunction secretpropertiesfunction) {
+                propertiesFunction = secretpropertiesfunction;
             }
         }
         KubernetesVaultConfiguration kubernetes = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();

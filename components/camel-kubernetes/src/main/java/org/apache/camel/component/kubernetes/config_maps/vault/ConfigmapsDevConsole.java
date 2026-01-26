@@ -51,8 +51,8 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
 
         if (getCamelContext().getPropertiesComponent().hasPropertiesFunction("configmap")) {
             PropertiesFunction pf = getCamelContext().getPropertiesComponent().getPropertiesFunction("configmap");
-            if (pf instanceof ConfigMapPropertiesFunction) {
-                propertiesFunction = (ConfigMapPropertiesFunction) pf;
+            if (pf instanceof ConfigMapPropertiesFunction configmappropertiesfunction) {
+                propertiesFunction = configmappropertiesfunction;
             }
         }
         KubernetesConfigMapVaultConfiguration kubernetes
