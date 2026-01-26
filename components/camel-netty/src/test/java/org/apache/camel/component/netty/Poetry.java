@@ -21,21 +21,21 @@ import java.io.Serializable;
 public class Poetry implements Serializable {
     private static final long serialVersionUID = 1L;
     private String poet = "?";
-    private String poem = "ONCE in the dream of a night I stood\n"
-                          + "Lone in the light of a magical wood,\n"
-                          + "Soul-deep in visions that poppy-like sprang;\n"
-                          + "And spirits of Truth were the birds that sang,\n"
-                          + "And spirits of Love were the stars that glowed,\n"
-                          + "And spirits of Peace were the streams that flowed\n"
-                          + "In that magical wood in the land of sleep."
-                          + "\n"
-                          + "Lone in the light of that magical grove,\n"
-                          + "I felt the stars of the spirits of Love\n"
-                          + "Gather and gleam round my delicate youth,\n"
-                          + "And I heard the song of the spirits of Truth;\n"
-                          + "To quench my longing I bent me low\n"
-                          + "By the streams of the spirits of Peace that flow\n"
-                          + "In that magical wood in the land of sleep.";
+    private String poem = """
+            ONCE in the dream of a night I stood
+            Lone in the light of a magical wood,
+            Soul-deep in visions that poppy-like sprang;
+            And spirits of Truth were the birds that sang,
+            And spirits of Love were the stars that glowed,
+            And spirits of Peace were the streams that flowed
+            In that magical wood in the land of sleep.
+            Lone in the light of that magical grove,
+            I felt the stars of the spirits of Love
+            Gather and gleam round my delicate youth,
+            And I heard the song of the spirits of Truth;
+            To quench my longing I bent me low
+            By the streams of the spirits of Peace that flow
+            In that magical wood in the land of sleep.""";
 
     public String getPoet() {
         return poet;
