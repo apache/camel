@@ -71,13 +71,13 @@ public class ActiveMQMessageConverter {
 
     private static ActiveMQMessage createActiveMQMessage(Exchange exchange) throws JMSException {
         Object body = exchange.getIn().getBody();
-        if (body instanceof String) {
+        if (body instanceof String str) {
             ActiveMQTextMessage answer = new ActiveMQTextMessage();
-            answer.setText((String) body);
+            answer.setText(str);
             return answer;
-        } else if (body instanceof Serializable) {
+        } else if (body instanceof Serializable serializable) {
             ActiveMQObjectMessage answer = new ActiveMQObjectMessage();
-            answer.setObject((Serializable) body);
+            answer.setObject(serializable);
             return answer;
         } else {
             return new ActiveMQMessage();
