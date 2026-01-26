@@ -319,9 +319,11 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         template.requestBodyAndHeaders("direct:start", List.of(map1, map2), headers, String.class);
 
         // No match
-        String query = "{\n"
-                       + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"bar\" }}\n"
-                       + "}\n";
+        String query = """
+                {
+                    "query" : { "match" : { "testSearchWithStringQuery1" : "bar" }}
+                }
+                """;
 
         HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
         assertNotNull(response, "response should not be null");
@@ -329,9 +331,11 @@ class ElasticsearchGetSearchDeleteExistsUpdateIT extends ElasticsearchTestSuppor
         assertEquals(0, response.total().value(), "response hits should be == 0");
 
         // Match
-        String q = "{\n"
-                   + "    \"query\" : { \"match\" : { \"testSearchWithStringQuery1\" : \"foo\" }}\n"
-                   + "}\n";
+        String q = """
+                {
+                    "query" : { "match" : { "testSearchWithStringQuery1" : "foo" }}
+                }
+                """;
         // the result may see stale data so use Awaitility
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             HitsMetadata<?> resp = template.requestBody("direct:search", q, HitsMetadata.class);
