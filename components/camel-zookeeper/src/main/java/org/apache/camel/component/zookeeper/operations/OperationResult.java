@@ -61,10 +61,10 @@ public class OperationResult<ResultType> {
     }
 
     public boolean failedDueTo(Code... codes) {
-        if (exception instanceof KeeperException) {
+        if (exception instanceof KeeperException keeperException) {
 
             for (Code code : codes) {
-                if (code.equals(((KeeperException) exception).code())) {
+                if (code.equals(keeperException.code())) {
                     return true;
                 }
             }
