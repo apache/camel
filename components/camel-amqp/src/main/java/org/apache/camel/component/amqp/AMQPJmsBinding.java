@@ -72,8 +72,8 @@ public class AMQPJmsBinding extends JmsBinding {
 
     private AmqpJmsMessageFacade getMessageFacade(Message message) {
         if (message instanceof JmsMessage jmsMessage) {
-            if (jmsMessage.getFacade() instanceof AmqpJmsMessageFacade) {
-                return (AmqpJmsMessageFacade) jmsMessage.getFacade();
+            if (jmsMessage.getFacade() instanceof AmqpJmsMessageFacade amqpJmsMessageFacade) {
+                return amqpJmsMessageFacade;
             }
         }
         return null;
