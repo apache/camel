@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/ticket",
+  "title": "Ticket",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Ticket",
+  "additionalProperties": true,
+  "properties": {
+    "status": {
+      "type": "string",
+      "title": "Ticket Status"
+    },
+    "type": {
+      "type": "string",
+      "title": "Ticket Type"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Ticket Type ID"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    },
+    "status_details": {
+      "type": "array",
+      "title": "Status Details",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status_id": {
+      "type": "integer",
+      "title": "Ticket Status ID"
+    }
+  },
+  "description": "The Ticket object."
+}

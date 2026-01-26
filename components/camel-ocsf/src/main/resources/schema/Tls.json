@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/tls",
+  "title": "Tls",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Tls",
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "alert": {
+      "type": "integer",
+      "title": "Client TLS Alert"
+    },
+    "key_length": {
+      "type": "integer",
+      "title": "Key Length"
+    },
+    "certificate": {
+      "$ref": "Certificate.json"
+    },
+    "cipher": {
+      "type": "string",
+      "title": "Cipher Suite"
+    },
+    "certificate_chain": {
+      "type": "array",
+      "title": "Certificate Chain",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sni": {
+      "type": "string",
+      "title": "Server Name Indication"
+    },
+    "client_ciphers": {
+      "type": "array",
+      "title": "Client Cipher Suites",
+      "items": {
+        "type": "string"
+      }
+    },
+    "extension_list": {
+      "type": "array",
+      "title": "Extension List",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "handshake_dur": {
+      "type": "integer",
+      "title": "Handshake Duration"
+    },
+    "ja3_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "ja3s_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "sans": {
+      "type": "array",
+      "title": "Subject Alternative Names",
+      "items": {
+        "$ref": "San.json"
+      }
+    },
+    "server_ciphers": {
+      "type": "array",
+      "title": "Server Cipher Suites",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tls_extension_list": {
+      "type": "array",
+      "title": "TLS Extension List",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "description": "The Transport Layer Security (TLS) object."
+}

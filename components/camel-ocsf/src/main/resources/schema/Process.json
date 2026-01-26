@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/process",
+  "title": "Process",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Process",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "pid": {
+      "type": "integer",
+      "title": "Process ID"
+    },
+    "session": {
+      "$ref": "Session.json"
+    },
+    "file": {
+      "$ref": "File.json"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "path": {
+      "type": "string",
+      "title": "Path"
+    },
+    "tid": {
+      "type": "integer",
+      "title": "Thread ID"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "loaded_modules": {
+      "type": "array",
+      "title": "Loaded Modules",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ancestry": {
+      "type": "array",
+      "title": "Ancestry",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "cmd_line": {
+      "type": "string",
+      "title": "Command Line"
+    },
+    "cpid": {
+      "type": "string",
+      "title": "Common Process Identifier",
+      "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "environment_variables": {
+      "type": "array",
+      "title": "Environment Variables",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "integrity": {
+      "type": "string",
+      "title": "Integrity"
+    },
+    "integrity_id": {
+      "type": "integer",
+      "title": "Integrity Level"
+    },
+    "lineage": {
+      "type": "array",
+      "title": "Lineage",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parent_process": {
+      "$ref": "Process.json"
+    },
+    "ptid": {
+      "type": "integer",
+      "title": "Process Thread ID"
+    },
+    "sandbox": {
+      "type": "string",
+      "title": "Sandbox"
+    },
+    "terminated_time": {
+      "type": "integer",
+      "title": "Terminated Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "working_directory": {
+      "type": "string",
+      "title": "Working Directory"
+    },
+    "xattributes": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "hosted_services": {
+      "type": "array",
+      "title": "Hosted Services",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "description": "The Process object."
+}

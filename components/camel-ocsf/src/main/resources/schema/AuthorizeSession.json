@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/authorize_session",
+  "title": "AuthorizeSession",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.AuthorizeSession",
+  "additionalProperties": true,
+  "description": "AuthorizeSession event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "privileges": {
+      "type": "array",
+      "title": "Privileges",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actor": {
+      "$ref": "Actor.json"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "http_response": {
+      "$ref": "HttpResponse.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "http_request": {
+      "$ref": "HttpRequest.json"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "group": {
+      "$ref": "Group.json"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "session": {
+      "$ref": "Session.json"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    }
+  }
+}

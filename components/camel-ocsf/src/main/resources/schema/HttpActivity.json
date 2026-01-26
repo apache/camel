@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/http_activity",
+  "title": "HttpActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.HttpActivity",
+  "additionalProperties": true,
+  "description": "HttpActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "http_response": {
+      "$ref": "HttpResponse.json"
+    },
+    "file": {
+      "$ref": "File.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "http_cookies": {
+      "type": "array",
+      "title": "HTTP Cookies",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "http_request": {
+      "$ref": "HttpRequest.json"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "http_status": {
+      "type": "integer",
+      "title": "HTTP Status"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    }
+  }
+}

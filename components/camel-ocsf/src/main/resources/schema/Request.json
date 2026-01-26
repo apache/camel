@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/request",
+  "title": "Request",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Request",
+  "additionalProperties": true,
+  "properties": {
+    "data": {
+      "type": [
+        "object",
+        "string",
+        "integer",
+        "number",
+        "boolean",
+        "array",
+        "null"
+      ],
+      "title": "Data"
+    },
+    "flags": {
+      "type": "array",
+      "title": "Flags",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "containers": {
+      "type": "array",
+      "title": "Containers",
+      "items": {
+        "$ref": "Container.json"
+      }
+    }
+  },
+  "description": "The Request Elements object."
+}

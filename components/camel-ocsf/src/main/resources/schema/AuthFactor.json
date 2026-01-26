@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/auth_factor",
+  "title": "AuthFactor",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.AuthFactor",
+  "additionalProperties": true,
+  "properties": {
+    "device": {
+      "$ref": "Device.json"
+    },
+    "email_addr": {
+      "type": "string",
+      "title": "Email Address",
+      "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+    },
+    "factor_type": {
+      "type": "string",
+      "title": "Factor Type"
+    },
+    "factor_type_id": {
+      "type": "integer",
+      "title": "Factor Type ID"
+    },
+    "is_hotp": {
+      "type": "boolean",
+      "title": "HMAC-based One-time Password (HOTP)"
+    },
+    "is_totp": {
+      "type": "boolean",
+      "title": "Time-based One-time Password (TOTP)"
+    },
+    "phone_number": {
+      "type": "string",
+      "title": "Phone Number"
+    },
+    "provider": {
+      "type": "string",
+      "title": "Provider"
+    },
+    "security_questions": {
+      "type": "array",
+      "title": "Security Questions",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "description": "The Authentication Factor object."
+}

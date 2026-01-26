@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/scan_activity",
+  "title": "ScanActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.ScanActivity",
+  "additionalProperties": true,
+  "description": "ScanActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "schedule_uid": {
+      "type": "string",
+      "title": "Schedule UID"
+    },
+    "total": {
+      "type": "integer",
+      "title": "Total"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "num_processes": {
+      "type": "integer",
+      "title": "Scanned Processes"
+    },
+    "num_skipped_items": {
+      "type": "integer",
+      "title": "Skipped"
+    },
+    "num_registry_items": {
+      "type": "integer",
+      "title": "Scanned Registry Items"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "scan": {
+      "$ref": "Scan.json"
+    },
+    "num_resolutions": {
+      "type": "integer",
+      "title": "Resolutions"
+    },
+    "num_network_items": {
+      "type": "integer",
+      "title": "Scanned Network Items"
+    },
+    "command_uid": {
+      "type": "string",
+      "title": "Command UID"
+    },
+    "num_files": {
+      "type": "integer",
+      "title": "Scanned Files"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "num_trusted_items": {
+      "type": "integer",
+      "title": "Trusted"
+    },
+    "policy": {
+      "$ref": "Policy.json"
+    },
+    "num_detections": {
+      "type": "integer",
+      "title": "Detections"
+    },
+    "num_folders": {
+      "type": "integer",
+      "title": "Scanned Folders"
+    }
+  }
+}

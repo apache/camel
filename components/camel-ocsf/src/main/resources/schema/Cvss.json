@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/cvss",
+  "title": "Cvss",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Cvss",
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "depth": {
+      "type": "string",
+      "title": "CVSS Depth",
+      "enum": [
+        "Base",
+        "Environmental",
+        "Temporal"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "title": "Severity"
+    },
+    "metrics": {
+      "type": "array",
+      "title": "Metrics",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "base_score": {
+      "type": "number",
+      "title": "Base Score"
+    },
+    "overall_score": {
+      "type": "number",
+      "title": "Overall Score"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    },
+    "vector_string": {
+      "type": "string",
+      "title": "Vector String"
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    }
+  },
+  "description": "The CVSS Score object."
+}

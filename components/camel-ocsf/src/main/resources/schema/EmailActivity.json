@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/email_activity",
+  "title": "EmailActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.EmailActivity",
+  "additionalProperties": true,
+  "description": "EmailActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "email": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "protocol_name": {
+      "type": "string",
+      "title": "Protocol Name"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "attempt": {
+      "type": "integer",
+      "title": "Attempt"
+    },
+    "smtp_hello": {
+      "type": "string",
+      "title": "SMTP Hello"
+    },
+    "message_trace_uid": {
+      "type": "string",
+      "title": "Message Trace UID"
+    },
+    "direction": {
+      "type": "string",
+      "title": "Direction"
+    },
+    "from": {
+      "type": "string",
+      "title": "From",
+      "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "command": {
+      "type": "string",
+      "title": "Command"
+    },
+    "to": {
+      "type": "array",
+      "title": "To",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+      }
+    },
+    "banner": {
+      "type": "string",
+      "title": "Protocol Banner"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "direction_id": {
+      "type": "integer",
+      "title": "Direction ID"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "email_auth": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

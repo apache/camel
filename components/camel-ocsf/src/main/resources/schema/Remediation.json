@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/remediation",
+  "title": "Remediation",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Remediation",
+  "additionalProperties": true,
+  "properties": {
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "references": {
+      "type": "array",
+      "title": "References",
+      "items": {
+        "type": "string"
+      }
+    },
+    "cis_controls": {
+      "type": "array",
+      "title": "CIS Controls",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "kb_article_list": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "KbArticle.json"
+      }
+    },
+    "kb_articles": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "KbArticle.json"
+      }
+    }
+  },
+  "description": "The Remediation object."
+}

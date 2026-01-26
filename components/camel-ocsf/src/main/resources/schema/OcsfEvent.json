@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/base_event",
+  "title": "OcsfEvent",
+  "description": "Base OCSF Event - contains common attributes shared by all event classes",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.OcsfEvent",
+  "additionalProperties": true,
+  "properties": {
+    "activity_id": {
+      "type": "integer",
+      "description": "The normalized identifier of the activity that triggered the event."
+    },
+    "activity_name": {
+      "type": "string",
+      "description": "The event activity name, as defined by the activity_id."
+    },
+    "category_name": {
+      "type": "string",
+      "description": "The event category name, as defined by category_uid value."
+    },
+    "category_uid": {
+      "type": "integer",
+      "description": "The category unique identifier of the event."
+    },
+    "class_name": {
+      "type": "string",
+      "description": "The event class name, as defined by class_uid value."
+    },
+    "class_uid": {
+      "type": "integer",
+      "description": "The unique identifier of a class."
+    },
+    "count": {
+      "type": "integer",
+      "description": "The number of times that events in the same logical group occurred during the event Start Time to End Time period."
+    },
+    "duration": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "description": "The event duration or aggregate time, in milliseconds."
+    },
+    "end_time": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "description": "The end time of a time period, or the time of the most recent event included in the aggregate event."
+    },
+    "end_time_dt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The end time as a datetime string."
+    },
+    "message": {
+      "type": "string",
+      "description": "The description of the event, as defined by the event source."
+    },
+    "raw_data": {
+      "type": "string",
+      "description": "The event data as received from the event source."
+    },
+    "severity": {
+      "type": "string",
+      "description": "The event severity, normalized to the caption of the severity_id value."
+    },
+    "severity_id": {
+      "type": "integer",
+      "description": "The normalized identifier of the event severity."
+    },
+    "start_time": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "description": "The start time of a time period, or the time of the least recent event included in the aggregate event."
+    },
+    "start_time_dt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The start time as a datetime string."
+    },
+    "status": {
+      "type": "string",
+      "description": "The event status, normalized to the caption of the status_id value."
+    },
+    "status_code": {
+      "type": "string",
+      "description": "The event status code, as reported by the event source."
+    },
+    "status_detail": {
+      "type": "string",
+      "description": "The status details contains additional information about the event outcome."
+    },
+    "status_id": {
+      "type": "integer",
+      "description": "The normalized identifier of the event status."
+    },
+    "time": {
+      "type": "integer",
+      "existingJavaType": "java.lang.Long",
+      "description": "The normalized event occurrence time, in milliseconds since epoch."
+    },
+    "time_dt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The time as a datetime string."
+    },
+    "timezone_offset": {
+      "type": "integer",
+      "description": "The number of minutes that the reported event time is ahead or behind UTC."
+    },
+    "type_name": {
+      "type": "string",
+      "description": "The event type name."
+    },
+    "type_uid": {
+      "type": "integer",
+      "description": "The event type ID."
+    },
+    "version": {
+      "type": "string",
+      "description": "The version of the OCSF schema."
+    },
+    "metadata": {
+      "$ref": "Metadata.json"
+    },
+    "observables": {
+      "type": "array",
+      "description": "The observables associated with the event.",
+      "items": {
+        "$ref": "Observable.json"
+      }
+    },
+    "unmapped": {
+      "type": "object",
+      "description": "The attributes that are not mapped to the event schema.",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "class_uid",
+    "category_uid",
+    "type_uid",
+    "time",
+    "severity_id"
+  ]
+}

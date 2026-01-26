@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/compliance",
+  "title": "Compliance",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Compliance",
+  "additionalProperties": true,
+  "properties": {
+    "control": {
+      "type": "string",
+      "title": "Security Control"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category"
+    },
+    "assessments": {
+      "type": "array",
+      "title": "Assessments",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "checks": {
+      "type": "array",
+      "title": "Compliance Checks",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "compliance_references": {
+      "type": "array",
+      "title": "Compliance Standard References",
+      "items": {
+        "$ref": "KbArticle.json"
+      }
+    },
+    "compliance_standards": {
+      "type": "array",
+      "title": "Compliance Standards: Details",
+      "items": {
+        "$ref": "KbArticle.json"
+      }
+    },
+    "control_parameters": {
+      "type": "array",
+      "title": "Control Parameters",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "title": "Compliance Requirements",
+      "items": {
+        "type": "string"
+      }
+    },
+    "standards": {
+      "type": "array",
+      "title": "Compliance Standards: List",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status_code": {
+      "type": "string",
+      "title": "Status Code"
+    },
+    "status_detail": {
+      "type": "string",
+      "title": "Status Detail"
+    },
+    "status_details": {
+      "type": "array",
+      "title": "Status Details",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status_id": {
+      "type": "integer",
+      "title": "Status ID"
+    }
+  },
+  "description": "The Compliance object."
+}

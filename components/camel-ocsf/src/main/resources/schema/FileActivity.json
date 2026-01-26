@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/file_activity",
+  "title": "FileActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.FileActivity",
+  "additionalProperties": true,
+  "description": "FileActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "actor": {
+      "$ref": "Actor.json"
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "file": {
+      "$ref": "File.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "file_diff": {
+      "type": "string",
+      "title": "File Diff"
+    },
+    "file_result": {
+      "$ref": "File.json"
+    },
+    "access_mask": {
+      "type": "integer",
+      "title": "Access Mask"
+    },
+    "connection_uid": {
+      "type": "string",
+      "title": "Connection Identifier"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "create_mask": {
+      "type": "string",
+      "title": "Create Mask"
+    },
+    "component": {
+      "type": "string",
+      "title": "Component"
+    }
+  }
+}

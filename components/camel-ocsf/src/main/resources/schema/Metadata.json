@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/metadata",
+  "title": "Metadata",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Metadata",
+  "additionalProperties": true,
+  "properties": {
+    "uid": {
+      "type": "string",
+      "title": "Event UID"
+    },
+    "log_format": {
+      "type": "string",
+      "title": "Log Source Format"
+    },
+    "product": {
+      "$ref": "Product.json"
+    },
+    "log_name": {
+      "type": "string",
+      "title": "Log Name"
+    },
+    "extension": {
+      "$ref": "Extension.json"
+    },
+    "extensions": {
+      "type": "array",
+      "title": "Schema Extensions",
+      "items": {
+        "$ref": "Extension.json"
+      }
+    },
+    "tenant_uid": {
+      "type": "string",
+      "title": "Tenant UID"
+    },
+    "labels": {
+      "type": "array",
+      "title": "Labels",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transmit_time": {
+      "type": "integer",
+      "title": "Transmission Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "tags": {
+      "type": "array",
+      "title": "Tags",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "source": {
+      "type": "string",
+      "title": "Source"
+    },
+    "profiles": {
+      "type": "array",
+      "title": "Profiles",
+      "items": {
+        "type": "string"
+      }
+    },
+    "correlation_uid": {
+      "type": "string",
+      "title": "Correlation UID"
+    },
+    "sequence": {
+      "type": "integer",
+      "title": "Sequence Number"
+    },
+    "log_source": {
+      "type": "string",
+      "title": "Log Source"
+    },
+    "log_provider": {
+      "type": "string",
+      "title": "Log Provider"
+    },
+    "log_version": {
+      "type": "string",
+      "title": "Log Version"
+    },
+    "event_code": {
+      "type": "string",
+      "title": "Event Code"
+    },
+    "debug": {
+      "type": "array",
+      "title": "Debug Information",
+      "items": {
+        "type": "string"
+      }
+    },
+    "logged_time": {
+      "type": "integer",
+      "title": "Logged Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "reporter": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "original_time": {
+      "type": "string",
+      "title": "Original Time"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "modified_time": {
+      "type": "integer",
+      "title": "Modified Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "original_event_uid": {
+      "type": "string",
+      "title": "Original Event ID"
+    },
+    "transformation_info_list": {
+      "type": "array",
+      "title": "Transformation Info",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "is_truncated": {
+      "type": "boolean",
+      "title": "Is Truncated"
+    },
+    "processed_time": {
+      "type": "integer",
+      "title": "Processed Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "loggers": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Logger.json"
+      }
+    },
+    "untruncated_size": {
+      "type": "integer",
+      "title": "Untruncated Size"
+    },
+    "log_level": {
+      "type": "string",
+      "title": "Log Level"
+    }
+  },
+  "description": "The Metadata object."
+}

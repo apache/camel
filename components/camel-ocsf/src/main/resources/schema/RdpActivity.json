@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/rdp_activity",
+  "title": "RdpActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.RdpActivity",
+  "additionalProperties": true,
+  "description": "RdpActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "keyboard_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "protocol_ver": {
+      "type": "string",
+      "title": "RDP Version"
+    },
+    "device": {
+      "$ref": "Device.json"
+    },
+    "remote_display": {
+      "$ref": "Display.json"
+    },
+    "file": {
+      "$ref": "File.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "capabilities": {
+      "type": "array",
+      "title": "Capabilities",
+      "items": {
+        "type": "string"
+      }
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "identifier_cookie": {
+      "type": "string",
+      "title": "Identifier Cookie"
+    },
+    "user": {
+      "$ref": "User.json"
+    },
+    "certificate_chain": {
+      "type": "array",
+      "title": "Certificate Chain",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "response": {
+      "$ref": "Response.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "request": {
+      "$ref": "Request.json"
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    }
+  }
+}

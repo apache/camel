@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/rule",
+  "title": "Rule",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Rule",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "category": {
+      "type": "string",
+      "title": "Category"
+    }
+  },
+  "description": "The Rule object."
+}

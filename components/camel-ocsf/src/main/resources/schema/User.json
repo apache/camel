@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/user",
+  "title": "User",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.User",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "domain": {
+      "type": "string",
+      "title": "Domain"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "org": {
+      "$ref": "Organization.json"
+    },
+    "groups": {
+      "type": "array",
+      "title": "Groups",
+      "items": {
+        "$ref": "Group.json"
+      }
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "full_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "account": {
+      "$ref": "Account.json"
+    },
+    "credential_uid": {
+      "type": "string",
+      "title": "User Credential ID"
+    },
+    "display_name": {
+      "type": "string",
+      "title": "Display Name"
+    },
+    "email_addr": {
+      "type": "string",
+      "title": "Email Address",
+      "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+    },
+    "forward_addr": {
+      "type": "string",
+      "title": "Forwarding Address",
+      "pattern": "^[a-zA-Z0-9!#$%&'*+-/=?^_`{|}~.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"
+    },
+    "has_mfa": {
+      "type": "boolean",
+      "title": "MFA Assigned"
+    },
+    "ldap_person": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "phone_number": {
+      "type": "string",
+      "title": "Telephone Number"
+    },
+    "programmatic_credentials": {
+      "type": "array",
+      "title": "Programmatic Credentials",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "risk_level": {
+      "type": "string",
+      "title": "Risk Level"
+    },
+    "risk_level_id": {
+      "type": "integer",
+      "title": "Risk Level ID"
+    },
+    "risk_score": {
+      "type": "integer",
+      "title": "Risk Score"
+    },
+    "uid_alt": {
+      "type": "string",
+      "title": "Alternate ID"
+    }
+  },
+  "description": "The User object."
+}

@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/package",
+  "title": "Package",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Package",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Package UID"
+    },
+    "hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "release": {
+      "type": "string",
+      "title": "Software Release Details"
+    },
+    "epoch": {
+      "type": "integer",
+      "title": "Epoch"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "license": {
+      "type": "string",
+      "title": "Software License"
+    },
+    "architecture": {
+      "type": "string",
+      "title": "Architecture"
+    },
+    "cpe_name": {
+      "type": "string",
+      "title": "The product CPE identifier"
+    },
+    "license_url": {
+      "type": "string",
+      "title": "Software License URL"
+    },
+    "package_manager": {
+      "type": "string",
+      "title": "Package Manager"
+    },
+    "package_manager_url": {
+      "type": "string",
+      "title": "Package Manager URL"
+    },
+    "purl": {
+      "type": "string",
+      "title": "Package URL"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    }
+  },
+  "description": "The Software Package object."
+}

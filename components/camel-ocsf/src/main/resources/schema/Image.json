@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/image",
+  "title": "Image",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Image",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "tag": {
+      "type": "string",
+      "title": "Image Tag"
+    },
+    "path": {
+      "type": "string",
+      "title": "Path"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "labels": {
+      "type": "array",
+      "title": "Labels",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "title": "Tags",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    }
+  },
+  "description": "The Image object."
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/idp",
+  "title": "Idp",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Idp",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "state": {
+      "type": "string",
+      "title": "State"
+    },
+    "domain": {
+      "type": "string",
+      "title": "Domain"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "protocol_name": {
+      "type": "string",
+      "title": "Supported Protocol"
+    },
+    "issuer": {
+      "type": "string",
+      "title": "Issuer Details"
+    },
+    "fingerprint": {
+      "$ref": "Fingerprint.json"
+    },
+    "auth_factors": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "AuthFactor.json"
+      }
+    },
+    "has_mfa": {
+      "type": "boolean",
+      "title": "MFA Enforced"
+    },
+    "scim": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sso": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "state_id": {
+      "type": "integer",
+      "title": "State ID"
+    },
+    "tenant_uid": {
+      "type": "string",
+      "title": "Tenant UID"
+    },
+    "url_string": {
+      "type": "string",
+      "title": "Configuration URL"
+    }
+  },
+  "description": "The Identity Provider object."
+}

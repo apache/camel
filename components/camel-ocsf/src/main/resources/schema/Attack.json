@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/attack",
+  "title": "Attack",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Attack",
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "tactics": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Tactic.json"
+      }
+    },
+    "technique": {
+      "$ref": "Technique.json"
+    },
+    "mitigation": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sub_technique": {
+      "$ref": "SubTechnique.json"
+    },
+    "tactic": {
+      "$ref": "Tactic.json"
+    }
+  },
+  "description": "The MITRE ATT&CK\u00ae & ATLAS\u2122 object."
+}

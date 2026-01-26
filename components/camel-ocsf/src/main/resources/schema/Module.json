@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/module",
+  "title": "Module",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Module",
+  "additionalProperties": true,
+  "properties": {
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "file": {
+      "$ref": "File.json"
+    },
+    "base_address": {
+      "type": "string",
+      "title": "Base Address"
+    },
+    "function_invocation": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "function_name": {
+      "type": "string",
+      "title": "Function Name"
+    },
+    "load_type": {
+      "type": "string",
+      "title": "Load Type"
+    },
+    "load_type_id": {
+      "type": "integer",
+      "title": "Load Type ID"
+    },
+    "start_address": {
+      "type": "string",
+      "title": "Start Address"
+    }
+  },
+  "description": "The Module object."
+}

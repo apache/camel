@@ -165,6 +165,7 @@ import org.apache.camel.model.dataformat.JsonApiDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
+import org.apache.camel.model.dataformat.OcsfDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.PQCDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
@@ -9986,8 +9987,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "mimeMultipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
+                    @YamlProperty(name = "ocsf", type = "object:org.apache.camel.model.dataformat.OcsfDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "parquetAvro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "pqc", type = "object:org.apache.camel.model.dataformat.PQCDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat", oneOf = "dataFormatType"),
@@ -10163,6 +10166,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "ocsf": {
+                    org.apache.camel.model.dataformat.OcsfDataFormat val = asType(node, org.apache.camel.model.dataformat.OcsfDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "parquetAvro": {
                     org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
                     target.setDataFormatType(val);
@@ -10235,6 +10243,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "pgp": {
                     org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "pqc": {
+                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -10809,6 +10822,99 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "tokenUrl": {
                     String val = asText(node);
                     target.setTokenUrl(val);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "ocsf",
+            types = org.apache.camel.model.dataformat.OcsfDataFormat.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            displayName = "OCSF",
+            description = "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.",
+            deprecated = false,
+            properties = {
+                    @YamlProperty(name = "allowUnmarshallType", type = "boolean", defaultValue = "false", description = "If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled when desired to be used.", displayName = "Allow Unmarshall Type"),
+                    @YamlProperty(name = "collectionType", type = "string", description = "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.", displayName = "Collection Type"),
+                    @YamlProperty(name = "disableFeatures", type = "string", description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma", displayName = "Disable Features"),
+                    @YamlProperty(name = "enableFeatures", type = "string", description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma", displayName = "Enable Features"),
+                    @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
+                    @YamlProperty(name = "objectMapper", type = "string", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.", displayName = "Object Mapper"),
+                    @YamlProperty(name = "prettyPrint", type = "boolean", defaultValue = "false", description = "To enable pretty printing output nicely formatted. Is by default false.", displayName = "Pretty Print"),
+                    @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent.", displayName = "Unmarshal Type"),
+                    @YamlProperty(name = "useDefaultObjectMapper", type = "boolean", defaultValue = "true", description = "Whether to lookup and use default Jackson ObjectMapper from the registry.", displayName = "Use Default Object Mapper"),
+                    @YamlProperty(name = "useList", type = "boolean", defaultValue = "false", description = "To unmarshal to a List of OCSF events.", displayName = "Use List")
+            }
+    )
+    public static class OcsfDataFormatDeserializer extends YamlDeserializerBase<OcsfDataFormat> {
+        public OcsfDataFormatDeserializer() {
+            super(OcsfDataFormat.class);
+        }
+
+        @Override
+        protected OcsfDataFormat newInstance() {
+            return new OcsfDataFormat();
+        }
+
+        @Override
+        protected boolean setProperty(OcsfDataFormat target, String propertyKey,
+                String propertyName, Node node) {
+            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
+            switch(propertyKey) {
+                case "allowUnmarshallType": {
+                    String val = asText(node);
+                    target.setAllowUnmarshallType(val);
+                    break;
+                }
+                case "collectionType": {
+                    String val = asText(node);
+                    target.setCollectionTypeName(val);
+                    break;
+                }
+                case "disableFeatures": {
+                    String val = asText(node);
+                    target.setDisableFeatures(val);
+                    break;
+                }
+                case "enableFeatures": {
+                    String val = asText(node);
+                    target.setEnableFeatures(val);
+                    break;
+                }
+                case "id": {
+                    String val = asText(node);
+                    target.setId(val);
+                    break;
+                }
+                case "objectMapper": {
+                    String val = asText(node);
+                    target.setObjectMapper(val);
+                    break;
+                }
+                case "prettyPrint": {
+                    String val = asText(node);
+                    target.setPrettyPrint(val);
+                    break;
+                }
+                case "unmarshalType": {
+                    String val = asText(node);
+                    target.setUnmarshalTypeName(val);
+                    break;
+                }
+                case "useDefaultObjectMapper": {
+                    String val = asText(node);
+                    target.setUseDefaultObjectMapper(val);
+                    break;
+                }
+                case "useList": {
+                    String val = asText(node);
+                    target.setUseList(val);
                     break;
                 }
                 default: {
@@ -20680,8 +20786,10 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "lzf", type = "object:org.apache.camel.model.dataformat.LZFDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "mimeMultipart", type = "object:org.apache.camel.model.dataformat.MimeMultipartDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
+                    @YamlProperty(name = "ocsf", type = "object:org.apache.camel.model.dataformat.OcsfDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "parquetAvro", type = "object:org.apache.camel.model.dataformat.ParquetAvroDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "pgp", type = "object:org.apache.camel.model.dataformat.PGPDataFormat", oneOf = "dataFormatType"),
+                    @YamlProperty(name = "pqc", type = "object:org.apache.camel.model.dataformat.PQCDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "protobuf", type = "object:org.apache.camel.model.dataformat.ProtobufDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "rss", type = "object:org.apache.camel.model.dataformat.RssDataFormat", oneOf = "dataFormatType"),
                     @YamlProperty(name = "smooks", type = "object:org.apache.camel.model.dataformat.SmooksDataFormat", oneOf = "dataFormatType"),
@@ -20862,6 +20970,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setDataFormatType(val);
                     break;
                 }
+                case "ocsf": {
+                    org.apache.camel.model.dataformat.OcsfDataFormat val = asType(node, org.apache.camel.model.dataformat.OcsfDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
                 case "parquetAvro": {
                     org.apache.camel.model.dataformat.ParquetAvroDataFormat val = asType(node, org.apache.camel.model.dataformat.ParquetAvroDataFormat.class);
                     target.setDataFormatType(val);
@@ -20934,6 +21047,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "pgp": {
                     org.apache.camel.model.dataformat.PGPDataFormat val = asType(node, org.apache.camel.model.dataformat.PGPDataFormat.class);
+                    target.setDataFormatType(val);
+                    break;
+                }
+                case "pqc": {
+                    org.apache.camel.model.dataformat.PQCDataFormat val = asType(node, org.apache.camel.model.dataformat.PQCDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }

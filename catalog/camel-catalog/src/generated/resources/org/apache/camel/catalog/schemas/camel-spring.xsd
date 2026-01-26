@@ -1124,6 +1124,15 @@ Rest security OAuth2 definition
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="ocsf" type="tns:ocsfDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="ognl" type="tns:ognlExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -7619,6 +7628,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
             <xs:element ref="tns:mimeMultipart"/>
+            <xs:element ref="tns:ocsf"/>
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
@@ -7634,6 +7644,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:pgp"/>
+            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -9835,6 +9846,102 @@ false. Default value: false
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="ocsfDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="objectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Lookup and use the existing ObjectMapper with the given id when using Jackson.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useDefaultObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to lookup and use default Jackson ObjectMapper from the registry. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="unmarshalType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="collectionType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to
+use different collection types than java.util.Collection based as default.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useList" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To unmarshal to a List of OCSF events. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowUnmarshallType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled
+when desired to be used. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To enable pretty printing output nicely formatted. Is by default false. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="enableFeatures" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
+matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
+com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
+can be separated by comma.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="disableFeatures" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
+that matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
+com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
+can be separated by comma.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="parquetAvroDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
@@ -10865,6 +10972,78 @@ required: The PGP message must contain at least one signature; if this is not th
 thrown. A signature verification is executed. ignore: Contained signatures in the PGP message are ignored; no signature
 verification is executed. no_signature_allowed: The PGP message must not contain a signature; otherwise an exception
 (PGPException) is thrown.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="pqcDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="keyEncapsulationAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
+NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
+CAST5, CAST6, CHACHA7539, etc. Default value: AES
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyLength" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The length (in bits) of the symmetric key. Default value: 128
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyPair" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to the KeyPair to lookup from the register to use for KEM operations.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bufferSize" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The size of the buffer used for streaming encryption/decryption. Default value: 4096
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The JCE security provider to use.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyGenerator" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a custom KeyGenerator to lookup from the register for KEM operations.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -14967,6 +15146,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
             <xs:element ref="tns:mimeMultipart"/>
+            <xs:element ref="tns:ocsf"/>
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
@@ -14982,6 +15162,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:pgp"/>
+            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -17263,78 +17444,6 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="pqcDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="keyEncapsulationAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
-NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="symmetricKeyAlgorithm" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
-CAST5, CAST6, CHACHA7539, etc. Default value: AES
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="symmetricKeyLength" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The length (in bits) of the symmetric key. Default value: 128
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyPair" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to the KeyPair to lookup from the register to use for KEM operations.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="bufferSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The size of the buffer used for streaming encryption/decryption. Default value: 4096
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="provider" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The JCE security provider to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyGenerator" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to a custom KeyGenerator to lookup from the register for KEM operations.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>

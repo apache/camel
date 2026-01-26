@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/fingerprint",
+  "title": "Fingerprint",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Fingerprint",
+  "additionalProperties": true,
+  "properties": {
+    "value": {
+      "type": "string",
+      "title": "Value",
+      "pattern": "^[a-fA-F0-9]+$"
+    },
+    "algorithm": {
+      "type": "string",
+      "title": "Algorithm"
+    },
+    "algorithm_id": {
+      "type": "integer",
+      "title": "Algorithm ID"
+    }
+  },
+  "description": "The Fingerprint object."
+}

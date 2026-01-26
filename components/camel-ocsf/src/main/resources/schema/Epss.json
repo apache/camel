@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/epss",
+  "title": "Epss",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Epss",
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "percentile": {
+      "type": "number",
+      "title": "EPSS Percentile"
+    },
+    "score": {
+      "type": "string",
+      "title": "EPPS Score"
+    }
+  },
+  "description": "The EPSS object."
+}
