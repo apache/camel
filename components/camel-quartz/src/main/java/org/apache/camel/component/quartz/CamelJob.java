@@ -96,8 +96,8 @@ public class CamelJob implements Job, InterruptableJob {
             }
 
             // and rethrow to let quartz handle it
-            if (e instanceof JobExecutionException) {
-                throw (JobExecutionException) e;
+            if (e instanceof JobExecutionException jobexecutionexception) {
+                throw jobexecutionexception;
             }
             throw new JobExecutionException(e);
         }
@@ -156,11 +156,10 @@ public class CamelJob implements Job, InterruptableJob {
         // as we prefer to use the existing endpoint from the routes
         for (Route route : camelContext.getRoutes()) {
             Endpoint endpoint = route.getEndpoint();
-            if (endpoint instanceof DelegateEndpoint) {
-                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
+            if (endpoint instanceof DelegateEndpoint delegateendpoint) {
+                endpoint = delegateendpoint.getEndpoint();
             }
-            if (endpoint instanceof QuartzEndpoint) {
-                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) endpoint;
+            if (endpoint instanceof QuartzEndpoint quartzEndpoint) {
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);

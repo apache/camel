@@ -47,8 +47,8 @@ public class QuartzScheduledPollConsumerJob extends CamelJob {
                 for (Route route : camelContext.getRoutes()) {
                     if (route.getId().equals(routeId)) {
                         Consumer consumer = route.getConsumer();
-                        if (consumer instanceof Runnable) {
-                            task = (Runnable) consumer;
+                        if (consumer instanceof Runnable runnable) {
+                            task = runnable;
                             break;
                         }
                     }
