@@ -643,8 +643,7 @@ public class MockValueBuilder implements Expression, Predicate {
         // Primitives that are valid JSON values
         if (value instanceof String || value instanceof Number || value instanceof Boolean) {
             // For strings, we need to check if it's a JSON string or a plain string
-            if (value instanceof String) {
-                String str = (String) value;
+            if (value instanceof String str) {
                 str = str.trim();
                 // Check if it looks like JSON
                 if (str.startsWith("{") || str.startsWith("[") || str.equals("null")
@@ -662,16 +661,16 @@ public class MockValueBuilder implements Expression, Predicate {
         }
 
         // byte[] input
-        if (value instanceof byte[]) {
-            try (InputStream is = new ByteArrayInputStream((byte[]) value);
+        if (value instanceof byte[] byteArray) {
+            try (InputStream is = new ByteArrayInputStream(byteArray);
                  Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
                 return Jsoner.deserialize(reader);
             }
         }
 
         // InputStream input
-        if (value instanceof InputStream) {
-            try (Reader reader = new InputStreamReader((InputStream) value, StandardCharsets.UTF_8)) {
+        if (value instanceof InputStream inputstream) {
+            try (Reader reader = new InputStreamReader(inputstream, StandardCharsets.UTF_8)) {
                 return Jsoner.deserialize(reader);
             }
         }
@@ -708,8 +707,8 @@ public class MockValueBuilder implements Expression, Predicate {
         }
 
         // JsonObject comparison
-        if (expected instanceof JsonObject && actual instanceof JsonObject) {
-            return jsonObjectEquals((JsonObject) expected, (JsonObject) actual, ignoreOrder);
+        if (expected instanceof JsonObject jsonobject && actual instanceof JsonObject) {
+            return jsonObjectEquals(jsonobject, (JsonObject) actual, ignoreOrder);
         }
 
         // Map comparison (in case of deserialized maps)
@@ -718,8 +717,8 @@ public class MockValueBuilder implements Expression, Predicate {
         }
 
         // JsonArray comparison
-        if (expected instanceof JsonArray && actual instanceof JsonArray) {
-            return jsonArrayEquals((JsonArray) expected, (JsonArray) actual, ignoreOrder);
+        if (expected instanceof JsonArray jsonarray && actual instanceof JsonArray) {
+            return jsonArrayEquals(jsonarray, (JsonArray) actual, ignoreOrder);
         }
 
         // List comparison (in case of deserialized lists)
