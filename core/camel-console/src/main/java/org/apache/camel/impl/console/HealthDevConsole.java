@@ -49,13 +49,13 @@ public class HealthDevConsole extends AbstractDevConsole {
         results.forEach(res -> {
             boolean ok = res.getState().equals(HealthCheck.State.UP);
             if (ok) {
-                sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
+                sb.append(String.format("%n    %s: %s", res.getCheck().getId(), res.getState()));
             } else {
                 if (res.getMessage().isPresent()) {
                     sb.append(
-                            String.format("\n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage().get()));
+                            String.format("%n    %s: %s (%s)", res.getCheck().getId(), res.getState(), res.getMessage().get()));
                 } else {
-                    sb.append(String.format("\n    %s: %s", res.getCheck().getId(), res.getState()));
+                    sb.append(String.format("%n    %s: %s", res.getCheck().getId(), res.getState()));
                 }
                 if ("full".equals(exposureLevel)) {
                     if (res.getError().isPresent()) {

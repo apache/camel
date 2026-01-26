@@ -70,30 +70,30 @@ public class DebugDevConsole extends AbstractDevConsole {
         BacklogDebugger backlog = getCamelContext().hasService(BacklogDebugger.class);
         if (backlog != null) {
             sb.append("Settings:");
-            sb.append(String.format("\n    Enabled: %s", backlog.isEnabled()));
-            sb.append(String.format("\n    Standby: %s", backlog.isStandby()));
-            sb.append(String.format("\n    Suspended Mode: %s", backlog.isSuspendMode()));
-            sb.append(String.format("\n    Fallback Timeout: %ss", backlog.getFallbackTimeout())); // is in seconds
-            sb.append(String.format("\n    Logging Level: %s", backlog.getLoggingLevel()));
-            sb.append(String.format("\n    Include Exchange Properties: %s", backlog.isIncludeExchangeProperties()));
-            sb.append(String.format("\n    Include Files: %s", backlog.isBodyIncludeFiles()));
-            sb.append(String.format("\n    Include Streams: %s", backlog.isBodyIncludeStreams()));
-            sb.append(String.format("\n    Max Chars: %s", backlog.getBodyMaxChars()));
+            sb.append(String.format("%n    Enabled: %s", backlog.isEnabled()));
+            sb.append(String.format("%n    Standby: %s", backlog.isStandby()));
+            sb.append(String.format("%n    Suspended Mode: %s", backlog.isSuspendMode()));
+            sb.append(String.format("%n    Fallback Timeout: %ss", backlog.getFallbackTimeout())); // is in seconds
+            sb.append(String.format("%n    Logging Level: %s", backlog.getLoggingLevel()));
+            sb.append(String.format("%n    Include Exchange Properties: %s", backlog.isIncludeExchangeProperties()));
+            sb.append(String.format("%n    Include Files: %s", backlog.isBodyIncludeFiles()));
+            sb.append(String.format("%n    Include Streams: %s", backlog.isBodyIncludeStreams()));
+            sb.append(String.format("%n    Max Chars: %s", backlog.getBodyMaxChars()));
 
             sb.append("\n\nBreakpoints:");
-            sb.append(String.format("\n    Debug Counter: %s", backlog.getDebugCounter()));
-            sb.append(String.format("\n    Single Step Mode: %s", backlog.isSingleStepMode()));
+            sb.append(String.format("%n    Debug Counter: %s", backlog.getDebugCounter()));
+            sb.append(String.format("%n    Single Step Mode: %s", backlog.isSingleStepMode()));
             for (String n : backlog.getBreakpoints()) {
                 boolean suspended = backlog.getSuspendedBreakpointNodeIds().contains(n);
                 if (suspended) {
-                    sb.append(String.format("\n    Breakpoint: %s (suspended)", n));
+                    sb.append(String.format("%n    Breakpoint: %s (suspended)", n));
                 } else {
-                    sb.append(String.format("\n    Breakpoint: %s", n));
+                    sb.append(String.format("%n    Breakpoint: %s", n));
                 }
             }
             sb.append("\n\nSuspended:");
             for (String n : backlog.getSuspendedBreakpointNodeIds()) {
-                sb.append(String.format("\n    Node: %s (suspended)", n));
+                sb.append(String.format("%n    Node: %s (suspended)", n));
                 BacklogTracerEventMessage trace = backlog.getSuspendedBreakpointMessage(n);
                 if (trace != null) {
                     sb.append("\n");

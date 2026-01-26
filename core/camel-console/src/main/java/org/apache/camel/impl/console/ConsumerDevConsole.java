@@ -59,26 +59,26 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                     if (!sb.isEmpty()) {
                         sb.append("\n");
                     }
-                    sb.append(String.format("\n    Id: %s", id));
-                    sb.append(String.format("\n    Uri: %s", mc.getEndpointUri()));
-                    sb.append(String.format("\n    State: %s", mc.getState()));
-                    sb.append(String.format("\n    Class: %s", mc.getServiceType()));
-                    sb.append(String.format("\n    Remote: %b", mc.isRemoteEndpoint()));
-                    sb.append(String.format("\n    Hosted: %b", mc.isHostedService()));
-                    sb.append(String.format("\n    Inflight: %d", inflight));
+                    sb.append(String.format("%n    Id: %s", id));
+                    sb.append(String.format("%n    Uri: %s", mc.getEndpointUri()));
+                    sb.append(String.format("%n    State: %s", mc.getState()));
+                    sb.append(String.format("%n    Class: %s", mc.getServiceType()));
+                    sb.append(String.format("%n    Remote: %b", mc.isRemoteEndpoint()));
+                    sb.append(String.format("%n    Hosted: %b", mc.isHostedService()));
+                    sb.append(String.format("%n    Inflight: %d", inflight));
                     if (mcc instanceof ManagedSchedulePollConsumerMBean mpc) {
-                        sb.append(String.format("\n    Polling: %s", mpc.isPolling()));
-                        sb.append(String.format("\n    First Poll Done: %s", mpc.isFirstPollDone()));
-                        sb.append(String.format("\n    Scheduler Started: %s", mpc.isSchedulerStarted()));
-                        sb.append(String.format("\n    Scheduler Class: %s", mpc.getSchedulerClassName()));
-                        sb.append(String.format("\n    Repeat Count: %s", mpc.getRepeatCount()));
-                        sb.append(String.format("\n    Fixed Delay: %s", mpc.isUseFixedDelay()));
-                        sb.append(String.format("\n    Greedy: %s", mpc.isGreedy()));
-                        sb.append(String.format("\n    Running Logging Level: %s", mpc.getRunningLoggingLevel()));
-                        sb.append(String.format("\n    Send Empty Message When Idle: %s", mpc.isSendEmptyMessageWhenIdle()));
-                        sb.append(String.format("\n    Counter (total: %d success: %d error: %d)",
+                        sb.append(String.format("%n    Polling: %s", mpc.isPolling()));
+                        sb.append(String.format("%n    First Poll Done: %s", mpc.isFirstPollDone()));
+                        sb.append(String.format("%n    Scheduler Started: %s", mpc.isSchedulerStarted()));
+                        sb.append(String.format("%n    Scheduler Class: %s", mpc.getSchedulerClassName()));
+                        sb.append(String.format("%n    Repeat Count: %s", mpc.getRepeatCount()));
+                        sb.append(String.format("%n    Fixed Delay: %s", mpc.isUseFixedDelay()));
+                        sb.append(String.format("%n    Greedy: %s", mpc.isGreedy()));
+                        sb.append(String.format("%n    Running Logging Level: %s", mpc.getRunningLoggingLevel()));
+                        sb.append(String.format("%n    Send Empty Message When Idle: %s", mpc.isSendEmptyMessageWhenIdle()));
+                        sb.append(String.format("%n    Counter (total: %d success: %d error: %d)",
                                 mpc.getCounter(), mpc.getSuccessCounter(), mpc.getErrorCounter()));
-                        sb.append(String.format("\n    Delay (initial: %d delay: %d unit: %s)",
+                        sb.append(String.format("%n    Delay (initial: %d delay: %d unit: %s)",
                                 mpc.getInitialDelay(), mpc.getDelay(), mpc.getTimeUnit()));
                         sb.append(String.format(
                                 "\n    Backoff(counter: %d multiplier: %d errorThreshold: %d, idleThreshold: %d )",
@@ -102,20 +102,20 @@ public class ConsumerDevConsole extends AbstractDevConsole {
                                 Long repeatCount = (Long) ms.getAttribute(on, "RepeatCount");
                                 String runLoggingLevel = (String) ms.getAttribute(on, "RunLoggingLevel");
 
-                                sb.append(String.format("\n    Timer Name: %s", timerName));
-                                sb.append(String.format("\n    Polling: %s", polling));
-                                sb.append(String.format("\n    Fixed Rate: %s", fixedRate));
+                                sb.append(String.format("%n    Timer Name: %s", timerName));
+                                sb.append(String.format("%n    Polling: %s", polling));
+                                sb.append(String.format("%n    Fixed Rate: %s", fixedRate));
                                 if (delay != null) {
-                                    sb.append(String.format("\n    Delay: %s", delay));
+                                    sb.append(String.format("%n    Delay: %s", delay));
                                 }
                                 if (period != null) {
-                                    sb.append(String.format("\n    Period: %s", period));
+                                    sb.append(String.format("%n    Period: %s", period));
                                 }
                                 if (repeatCount != null) {
-                                    sb.append(String.format("\n    Repeat Count: %s", repeatCount));
+                                    sb.append(String.format("%n    Repeat Count: %s", repeatCount));
                                 }
-                                sb.append(String.format("\n    Running Logging Level: %s", runLoggingLevel));
-                                sb.append(String.format("\n    Counter (total: %s)", counter));
+                                sb.append(String.format("%n    Running Logging Level: %s", runLoggingLevel));
+                                sb.append(String.format("%n    Counter (total: %s)", counter));
 
                             }
                         } catch (Exception e) {

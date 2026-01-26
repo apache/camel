@@ -37,10 +37,10 @@ public class TransformerConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         TransformerRegistry reg = getCamelContext().getTransformerRegistry();
-        sb.append(String.format("\n    Size: %s", reg.size()));
-        sb.append(String.format("\n    Dynamic Size: %s", reg.dynamicSize()));
-        sb.append(String.format("\n    Static Size: %s", reg.staticSize()));
-        sb.append(String.format("\n    Maximum Cache Size: %s", reg.getMaximumCacheSize()));
+        sb.append(String.format("%n    Size: %s", reg.size()));
+        sb.append(String.format("%n    Dynamic Size: %s", reg.dynamicSize()));
+        sb.append(String.format("%n    Static Size: %s", reg.staticSize()));
+        sb.append(String.format("%n    Maximum Cache Size: %s", reg.getMaximumCacheSize()));
 
         sb.append("\n");
         sb.append("\nTransformers:\n");
@@ -48,7 +48,7 @@ public class TransformerConsole extends AbstractDevConsole {
             Transformer t = entry.getValue();
             String from = t.getFrom() != null ? t.getFrom().getFullName() : "*";
             String to = t.getTo() != null ? t.getTo().getFullName() : "*";
-            sb.append(String.format("\n        %s (from: %s to: %s)", t.getName(), from, to));
+            sb.append(String.format("%n        %s (from: %s to: %s)", t.getName(), from, to));
         }
         sb.append("\n");
 

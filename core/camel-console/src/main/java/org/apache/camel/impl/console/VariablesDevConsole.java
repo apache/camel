@@ -46,7 +46,7 @@ public class VariablesDevConsole extends AbstractDevConsole {
                 String k = entry.getKey();
                 Object v = entry.getValue();
                 String t = v != null ? v.getClass().getName() : "<null>";
-                sb.append(String.format("\n    %s (%s) = %s", k, t, v));
+                sb.append(String.format("%n    %s (%s) = %s", k, t, v));
             }
             sb.append("\n");
         }

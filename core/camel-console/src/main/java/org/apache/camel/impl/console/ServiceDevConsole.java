@@ -42,16 +42,16 @@ public class ServiceDevConsole extends AbstractDevConsole {
             if (!sb.isEmpty()) {
                 sb.append("\n");
             }
-            sb.append(String.format("\n    Component: %s", es.getComponent()));
-            sb.append(String.format("\n    Direction: %s", es.getDirection()));
-            sb.append(String.format("\n    Hosted: %b", es.isHostedService()));
-            sb.append(String.format("\n    Protocol: %s", es.getServiceProtocol()));
-            sb.append(String.format("\n    Service: %s", es.getServiceUrl()));
-            sb.append(String.format("\n    Endpoint: %s", URISupport.sanitizeUri(es.getServiceUrl())));
+            sb.append(String.format("%n    Component: %s", es.getComponent()));
+            sb.append(String.format("%n    Direction: %s", es.getDirection()));
+            sb.append(String.format("%n    Hosted: %b", es.isHostedService()));
+            sb.append(String.format("%n    Protocol: %s", es.getServiceProtocol()));
+            sb.append(String.format("%n    Service: %s", es.getServiceUrl()));
+            sb.append(String.format("%n    Endpoint: %s", URISupport.sanitizeUri(es.getServiceUrl())));
             if (es.getRouteId() != null) {
-                sb.append(String.format("\n    Route Id: %s", es.getRouteId()));
+                sb.append(String.format("%n    Route Id: %s", es.getRouteId()));
             }
-            sb.append(String.format("\n    Total Messages: %d", es.getHits()));
+            sb.append(String.format("%n    Total Messages: %d", es.getHits()));
         }
         sb.append("\n");
 

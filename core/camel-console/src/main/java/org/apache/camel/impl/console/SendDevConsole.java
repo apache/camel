@@ -157,14 +157,14 @@ public class SendDevConsole extends AbstractDevConsole {
         }
 
         if (target != null) {
-            sb.append(String.format("\n    Endpoint: %s", target));
+            sb.append(String.format("%n    Endpoint: %s", target));
         } else if (endpoint != null) {
-            sb.append(String.format("\n    Endpoint: %s", endpoint));
+            sb.append(String.format("%n    Endpoint: %s", endpoint));
         }
-        sb.append(String.format("\n    Status: %s", status));
-        sb.append(String.format("\n    Elapsed: %s", TimeUtils.printDuration(taken)));
+        sb.append(String.format("%n    Status: %s", status));
+        sb.append(String.format("%n    Elapsed: %s", TimeUtils.printDuration(taken)));
         if (cause != null) {
-            sb.append(String.format("\n    Error Message: %s", cause.getMessage()));
+            sb.append(String.format("%n    Error Message: %s", cause.getMessage()));
             final String stackTrace = ExceptionHelper.stackTraceToString(cause);
             sb.append("\n\n");
             sb.append(stackTrace);

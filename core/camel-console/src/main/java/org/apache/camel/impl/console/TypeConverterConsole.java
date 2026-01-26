@@ -35,16 +35,16 @@ public class TypeConverterConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         TypeConverterRegistry reg = getCamelContext().getTypeConverterRegistry();
-        sb.append(String.format("\n    Converters: %s", reg.size()));
-        sb.append(String.format("\n    Exists: %s", reg.getTypeConverterExists().name()));
-        sb.append(String.format("\n    Exists LoggingLevel: %s", reg.getTypeConverterExistsLoggingLevel()));
+        sb.append(String.format("%n    Converters: %s", reg.size()));
+        sb.append(String.format("%n    Exists: %s", reg.getTypeConverterExists().name()));
+        sb.append(String.format("%n    Exists LoggingLevel: %s", reg.getTypeConverterExistsLoggingLevel()));
         final TypeConverterRegistry.Statistics statistics = reg.getStatistics();
 
-        statistics.computeIfEnabled(statistics::getAttemptCounter, v -> sb.append(String.format("\n    Attempts: %s", v)));
-        statistics.computeIfEnabled(statistics::getHitCounter, v -> sb.append(String.format("\n    Hit: %s", v)));
-        statistics.computeIfEnabled(statistics::getMissCounter, v -> sb.append(String.format("\n    Miss: %s", v)));
-        statistics.computeIfEnabled(statistics::getFailedCounter, v -> sb.append(String.format("\n    Failed: %s", v)));
-        statistics.computeIfEnabled(statistics::getNoopCounter, v -> sb.append(String.format("\n    Noop: %s", v)));
+        statistics.computeIfEnabled(statistics::getAttemptCounter, v -> sb.append(String.format("%n    Attempts: %s", v)));
+        statistics.computeIfEnabled(statistics::getHitCounter, v -> sb.append(String.format("%n    Hit: %s", v)));
+        statistics.computeIfEnabled(statistics::getMissCounter, v -> sb.append(String.format("%n    Miss: %s", v)));
+        statistics.computeIfEnabled(statistics::getFailedCounter, v -> sb.append(String.format("%n    Failed: %s", v)));
+        statistics.computeIfEnabled(statistics::getNoopCounter, v -> sb.append(String.format("%n    Noop: %s", v)));
 
         return sb.toString();
     }

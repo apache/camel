@@ -52,12 +52,12 @@ public class InflightConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         InflightRepository repo = getCamelContext().getInflightRepository();
-        sb.append(String.format("\n    Inflight: %s", repo.size()));
-        sb.append(String.format("\n    InflightBrowseEnabled: %s", repo.isInflightBrowseEnabled()));
+        sb.append(String.format("%n    Inflight: %s", repo.size()));
+        sb.append(String.format("%n    InflightBrowseEnabled: %s", repo.isInflightBrowseEnabled()));
         if (repo.isInflightBrowseEnabled()) {
             for (InflightRepository.InflightExchange ie : repo.browse(filter, max, false)) {
                 String age = TimeUtils.printDuration(ie.getDuration(), true);
-                sb.append(String.format("\n    %s (from: %s at: %s/%s remote: %b age: %s)",
+                sb.append(String.format("%n    %s (from: %s at: %s/%s remote: %b age: %s)",
                         ie.getExchange().getExchangeId(), ie.getFromRouteId(), ie.getAtRouteId(), ie.getNodeId(),
                         ie.isFromRemoteEndpoint(), age));
             }

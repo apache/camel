@@ -45,7 +45,7 @@ public class SystemPropertiesDevConsole extends AbstractDevConsole {
         sb.append("System Properties:");
         sb.append("\n");
         for (String k : keys) {
-            sb.append(String.format("    %s = %s\n", k, System.getProperty(k)));
+            sb.append(String.format("    %s = %s%n", k, System.getProperty(k)));
         }
         sb.append("\n");
 

@@ -81,53 +81,53 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
                 sb.append("\n");
             }
             sb.append(String.format("    Group: %s", mrg.getRouteGroup()));
-            sb.append(String.format("\n    Size: %s", mrg.getGroupSize()));
-            sb.append(String.format("\n    State: %s", mrg.getState()));
-            sb.append(String.format("\n    Uptime: %s", mrg.getUptime()));
+            sb.append(String.format("%n    Size: %s", mrg.getGroupSize()));
+            sb.append(String.format("%n    State: %s", mrg.getState()));
+            sb.append(String.format("%n    Uptime: %s", mrg.getUptime()));
             String coverage = calculateRouteCoverage(mrg, true);
             if (coverage != null) {
-                sb.append(String.format("\n    Coverage: %s", coverage));
+                sb.append(String.format("%n    Coverage: %s", coverage));
             }
             String load1 = getLoad1(mrg);
             String load5 = getLoad5(mrg);
             String load15 = getLoad15(mrg);
             if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                sb.append(String.format("\n    Load Average: %s %s %s", load1, load5, load15));
+                sb.append(String.format("%n    Load Average: %s %s %s", load1, load5, load15));
             }
             String thp = getThroughput(mrg);
             if (!thp.isEmpty()) {
-                sb.append(String.format("\n    Messages/Sec: %s", thp));
+                sb.append(String.format("%n    Messages/Sec: %s", thp));
             }
-            sb.append(String.format("\n    Total: %s", mrg.getExchangesTotal()));
-            sb.append(String.format("\n    Failed: %s", mrg.getExchangesFailed()));
-            sb.append(String.format("\n    Inflight: %s", mrg.getExchangesInflight()));
+            sb.append(String.format("%n    Total: %s", mrg.getExchangesTotal()));
+            sb.append(String.format("%n    Failed: %s", mrg.getExchangesFailed()));
+            sb.append(String.format("%n    Inflight: %s", mrg.getExchangesInflight()));
             long idle = mrg.getIdleSince();
             if (idle > 0) {
-                sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
+                sb.append(String.format("%n    Idle Since: %s", TimeUtils.printDuration(idle)));
             } else {
-                sb.append(String.format("\n    Idle Since: %s", ""));
+                sb.append(String.format("%n    Idle Since: %s", ""));
             }
-            sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrg.getMeanProcessingTime(), true)));
-            sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrg.getMaxProcessingTime(), true)));
-            sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrg.getMinProcessingTime(), true)));
+            sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mrg.getMeanProcessingTime(), true)));
+            sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mrg.getMaxProcessingTime(), true)));
+            sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mrg.getMinProcessingTime(), true)));
             if (mrg.getExchangesTotal() > 0) {
-                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mrg.getLastProcessingTime(), true)));
-                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrg.getDeltaProcessingTime(), true)));
+                sb.append(String.format("%n    Last Time: %s", TimeUtils.printDuration(mrg.getLastProcessingTime(), true)));
+                sb.append(String.format("%n    Delta Time: %s", TimeUtils.printDuration(mrg.getDeltaProcessingTime(), true)));
             }
             Date last = mrg.getLastExchangeCreatedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n    Since Last Started: %s", ago));
+                sb.append(String.format("%n    Since Last Started: %s", ago));
             }
             last = mrg.getLastExchangeCompletedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n    Since Last Completed: %s", ago));
+                sb.append(String.format("%n    Since Last Completed: %s", ago));
             }
             last = mrg.getLastExchangeFailureTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n    Since Last Failed: %s", ago));
+                sb.append(String.format("%n    Since Last Failed: %s", ago));
             }
             sb.append("\n");
             return null;
