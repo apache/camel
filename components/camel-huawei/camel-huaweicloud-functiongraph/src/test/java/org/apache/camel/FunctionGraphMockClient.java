@@ -31,20 +31,20 @@ public class FunctionGraphMockClient extends FunctionGraphClient {
         InvokeFunctionResponse response = new InvokeFunctionResponse()
                 .withRequestId("1939bbbb-4009-4685-bcc0-2ff0381fa911")
                 .withResult(
-                        "{\"headers\":{\"Content-Type\":\"application/json\"},\"statusCode\":200,\"isBase64Encoded\":false,\"body\":{\"orderId\":1621950031517,"
-                            +
-                            "\"department\":\"sales\",\"vendor\":\"huawei\",\"product\":\"monitors\",\"price\":20.13,\"quantity\":20,\"status\":\"order submitted successfully\"}}\n")
+                        """
+                                {"headers":{"Content-Type":"application/json"},"statusCode":200,"isBase64Encoded":false,"body":{"orderId":1621950031517,"department":"sales","vendor":"huawei","product":"monitors","price":20.13,"quantity":20,"status":"order submitted successfully"}}
+                                """)
                 .withStatus(200);
         if (request.getXCffLogType().equals("tail")) {
             response.withLog(
-                    "2021-05-25 21:40:31.472+08:00 Start invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', version: latest\n"
-                             +
-                             "    { product: 'monitors',\n" +
-                             "      quantity: 20,\n" +
-                             "      vendor: 'huawei',\n" +
-                             "      price: 20.13,\n" +
-                             "      department: 'sales' }\n" +
-                             "    2021-05-25 21:40:31.518+08:00 Finish invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', duration: 45.204ms, billing duration: 100ms, memory used: 64.383MB.");
+                    """
+                            2021-05-25 21:40:31.472+08:00 Start invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', version: latest
+                                { product: 'monitors',
+                                  quantity: 20,
+                                  vendor: 'huawei',
+                                  price: 20.13,
+                                  department: 'sales' }
+                                2021-05-25 21:40:31.518+08:00 Finish invoke request '1939bbbb-4009-4685-bcc0-2ff0381fa911', duration: 45.204ms, billing duration: 100ms, memory used: 64.383MB.""");
         }
         return response;
     }
