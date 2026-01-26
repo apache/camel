@@ -50,11 +50,14 @@ public interface GrpcConstants {
                                    description = "If provided, the given agent will prepend the gRPC library's user agent information",
                                    javaType = "String")
     String GRPC_USER_AGENT_HEADER = "CamelGrpcUserAgent";
-    @org.apache.camel.spi.Metadata(label = "consumer", description = "Received event type from the sent request.\n\n" +
-                                                                     "Possible values:\n\n" +
-                                                                     "* onNext\n" +
-                                                                     "* onCompleted\n" +
-                                                                     "* onError",
+    @org.apache.camel.spi.Metadata(label = "consumer", description = """
+            Received event type from the sent request.
+
+            Possible values:
+
+            * onNext
+            * onCompleted
+            * onError""",
                                    javaType = "String")
     String GRPC_EVENT_TYPE_HEADER = "CamelGrpcEventType";
 
