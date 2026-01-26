@@ -27,8 +27,9 @@ public final class HttpConstants {
     public static final ContentType JAVA_SERIALIZED_OBJECT = ContentType.create(CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
     public static final String CONTENT_TYPE_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
-    @Metadata(description = "The HTTP content encoding. Is set on both the IN and OUT message to\n" +
-                            "provide a content encoding, such as `gzip`.",
+    @Metadata(description = """
+            The HTTP content encoding. Is set on both the IN and OUT message to
+            provide a content encoding, such as `gzip`.""",
               javaType = "String")
     public static final String CONTENT_ENCODING = Exchange.CONTENT_ENCODING;
     @Metadata(description = "The HTTP response code from the external server. Is 200 for OK.", javaType = "int",
@@ -36,8 +37,9 @@ public final class HttpConstants {
     public static final String HTTP_RESPONSE_CODE = Exchange.HTTP_RESPONSE_CODE;
     @Metadata(description = "The HTTP response text from the external server.", javaType = "String", important = true)
     public static final String HTTP_RESPONSE_TEXT = Exchange.HTTP_RESPONSE_TEXT;
-    @Metadata(label = "producer", description = "URI parameters. Will override existing URI parameters set directly on\n" +
-                                                "the endpoint.",
+    @Metadata(label = "producer", description = """
+            URI parameters. Will override existing URI parameters set directly on
+            the endpoint.""",
               javaType = "String")
     public static final String HTTP_QUERY = Exchange.HTTP_QUERY;
     @Metadata(label = "producer", description = "The version of the http protocol used.", javaType = "String")
@@ -46,15 +48,17 @@ public final class HttpConstants {
     public static final String HTTP_HEADER_HOST = HttpHeaders.HOST;
     @Metadata(label = "producer", description = "The rest http URI.", javaType = "String")
     public static final String REST_HTTP_URI = Exchange.REST_HTTP_URI;
-    @Metadata(label = "producer", description = "URI to call. Will override existing URI set directly on the endpoint.\n" +
-                                                "This uri is the uri of the http server to call. Its not the same as the\n" +
-                                                "Camel endpoint uri, where you can configure endpoint options such as\n" +
-                                                "security etc. This header does not support that, its only the uri of the\n" +
-                                                "http server.",
+    @Metadata(label = "producer", description = """
+            URI to call. Will override existing URI set directly on the endpoint.
+            This uri is the uri of the http server to call. Its not the same as the
+            Camel endpoint uri, where you can configure endpoint options such as
+            security etc. This header does not support that, its only the uri of the
+            http server.""",
               javaType = "String")
     public static final String HTTP_URI = Exchange.HTTP_URI;
-    @Metadata(label = "producer", description = "Request URI's path, the header will be used to build the request URI\n" +
-                                                "with the HTTP_URI.",
+    @Metadata(label = "producer", description = """
+            Request URI's path, the header will be used to build the request URI
+            with the HTTP_URI.""",
               javaType = "String")
     public static final String HTTP_PATH = Exchange.HTTP_PATH;
     @Metadata(label = "producer", description = "The rest http query.", javaType = "String")
@@ -66,8 +70,9 @@ public final class HttpConstants {
     public static final String HTTP_METHOD = Exchange.HTTP_METHOD;
     @Metadata(description = "The character encoding.", javaType = "String")
     public static final String HTTP_CHARACTER_ENCODING = Exchange.HTTP_CHARACTER_ENCODING;
-    @Metadata(description = "The HTTP content type. Is set on both the IN and OUT message to provide\n" +
-                            "a content type, such as `text/html`.",
+    @Metadata(description = """
+            The HTTP content type. Is set on both the IN and OUT message to provide
+            a content type, such as `text/html`.""",
               javaType = "String", important = true)
     public static final String CONTENT_TYPE = Exchange.CONTENT_TYPE;
 
