@@ -58,8 +58,8 @@ public class XMLTokenizeLanguage extends SingleInputTypedLanguageSupport {
         Object obj = properties[4];
         if (obj != null) {
             Namespaces ns;
-            if (obj instanceof Namespaces) {
-                ns = (Namespaces) obj;
+            if (obj instanceof Namespaces namespaces) {
+                ns = namespaces;
             } else if (obj instanceof Map) {
                 ns = new Namespaces();
                 ((Map<String, String>) obj).forEach(ns::add);
