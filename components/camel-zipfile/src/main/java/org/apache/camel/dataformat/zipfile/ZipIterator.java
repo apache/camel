@@ -53,8 +53,8 @@ public class ZipIterator implements Iterator<Message>, Closeable {
 
         Objects.requireNonNull(inputStream);
 
-        if (inputStream instanceof ZipArchiveInputStream) {
-            zipInputStream = (ZipArchiveInputStream) inputStream;
+        if (inputStream instanceof ZipArchiveInputStream zipArchiveInputStream) {
+            zipInputStream = zipArchiveInputStream;
         } else {
             try {
                 ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP,
