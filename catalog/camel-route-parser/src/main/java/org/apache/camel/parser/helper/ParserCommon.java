@@ -82,8 +82,8 @@ public final class ParserCommon {
             if (node instanceof MethodDeclaration) {
                 node = node.getParent();
             }
-            if (node instanceof AnonymousClassDeclaration) {
-                List<?> declarations = ((AnonymousClassDeclaration) node).bodyDeclarations();
+            if (node instanceof AnonymousClassDeclaration anonymousclassdeclaration) {
+                List<?> declarations = (anonymousclassdeclaration).bodyDeclarations();
                 for (Object dec : declarations) {
                     if (dec instanceof FieldDeclaration fd) {
                         final Type type = fd.getType();
@@ -118,8 +118,8 @@ public final class ParserCommon {
     public static boolean isNumericOperator(JavaClassSource clazz, Block block, Expression expression) {
         if (expression instanceof NumberLiteral) {
             return true;
-        } else if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
+        } else if (expression instanceof SimpleName simplename) {
+            FieldSource<JavaClassSource> field = getField(clazz, block, simplename);
             if (field != null) {
                 return field.getType().isType("int") || field.getType().isType("long")
                         || field.getType().isType("Integer") || field.getType().isType("Long");

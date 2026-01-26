@@ -188,8 +188,8 @@ public final class CamelXmlHelper {
         Element selectedElement = null;
         if (root != null) {
             Node selectedNode = findCamelNodeInDocument(root, key);
-            if (selectedNode instanceof Element) {
-                selectedElement = (Element) selectedNode;
+            if (selectedNode instanceof Element element) {
+                selectedElement = element;
             }
         }
         return selectedElement;

@@ -344,8 +344,8 @@ public final class CamelJavaParserHelper {
                 return;
             }
         }
-        if (fields && arg instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, (SimpleName) arg);
+        if (fields && arg instanceof SimpleName simplename) {
+            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, simplename);
             if (field != null) {
                 // find the endpoint uri from the annotation
                 AnnotationSource<JavaClassSource> annotation = field.getAnnotation("org.apache.camel.EndpointInject");
@@ -360,8 +360,8 @@ public final class CamelJavaParserHelper {
                 } else {
                     // the field may be initialized using variables, so we need to evaluate those expressions
                     Object fi = field.getInternal();
-                    if (fi instanceof VariableDeclaration) {
-                        Expression exp = ((VariableDeclaration) fi).getInitializer();
+                    if (fi instanceof VariableDeclaration variabledeclaration) {
+                        Expression exp = (variabledeclaration).getInitializer();
                         String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
                         if (!Strings.isNullOrEmpty(uri)) {
                             // we want the position of the field, and not in the route
@@ -444,8 +444,8 @@ public final class CamelJavaParserHelper {
                         if (list != null && list.size() == 1) {
                             ASTNode o = (ASTNode) list.get(0);
                             ASTNode p = o.getParent();
-                            if (p instanceof MethodInvocation) {
-                                String pName = ((MethodInvocation) p).getName().getIdentifier();
+                            if (p instanceof MethodInvocation methodinvocation) {
+                                String pName = (methodinvocation).getName().getIdentifier();
                                 if (language.equals(pName)) {
                                     // okay find the parent of the language which is the method that uses the language
                                     parent = (Expression) p.getParent();
@@ -490,8 +490,8 @@ public final class CamelJavaParserHelper {
 
     public static String getLiteralValue(JavaClassSource clazz, Block block, Expression expression) {
         // unwrap parenthesis
-        if (expression instanceof ParenthesizedExpression) {
-            expression = ((ParenthesizedExpression) expression).getExpression();
+        if (expression instanceof ParenthesizedExpression parenthesizedexpression) {
+            expression = (parenthesizedexpression).getExpression();
         }
 
         if (expression instanceof StringLiteral stringLiteral) {
@@ -518,8 +518,8 @@ public final class CamelJavaParserHelper {
             return "{{" + name + "}}";
         }
 
-        if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, (SimpleName) expression);
+        if (expression instanceof SimpleName simplename) {
+            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, simplename);
             if (field != null) {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
