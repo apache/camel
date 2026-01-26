@@ -152,7 +152,7 @@
         <disruptor-version>3.4.4</disruptor-version>
         <dnsjava-version>3.6.4</dnsjava-version>
         <djl-version>0.36.0</djl-version>
-        <docling-java-version>0.4.2</docling-java-version>
+        <docling-java-version>0.4.3</docling-java-version>
         <docker-java-version>3.7.0</docker-java-version>
         <dropbox-version>7.0.0</dropbox-version>
         <eddsa-version>0.3.0</eddsa-version>
