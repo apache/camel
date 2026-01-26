@@ -33,9 +33,10 @@ class HoistFieldTest {
 
     private HoistField processor;
 
-    private final String baseJson = "{" + "\n" +
-                                    "  \"name\" : \"Rajesh Koothrappali\"" + "\n" +
-                                    "}";
+    private final String baseJson = """
+            {
+              "name" : "Rajesh Koothrappali"
+            }""";
 
     @BeforeEach
     void setup() {
