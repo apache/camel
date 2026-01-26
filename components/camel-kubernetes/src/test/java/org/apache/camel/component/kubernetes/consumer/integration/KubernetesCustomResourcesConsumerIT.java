@@ -55,16 +55,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
 
     private static final KubernetesClient CLIENT = new KubernetesClientBuilder().build();
-    private static final String CRD_SOURCE_STRING = "{\n" +
-                                                    "  \"apiVersion\": \"camel.apache.org/v1\",\n" +
-                                                    "  \"kind\": \"CamelTest\",\n" +
-                                                    "  \"metadata\": {\n" +
-                                                    "    \"name\": \"camel-crd-itest\"\n" +
-                                                    "  },\n" +
-                                                    "  \"spec\": {\n" +
-                                                    "    \"message\": \"Apache Camel Rocks!\"\n" +
-                                                    "  }\n" +
-                                                    "}";
+    private static final String CRD_SOURCE_STRING = """
+            {
+              "apiVersion": "camel.apache.org/v1",
+              "kind": "CamelTest",
+              "metadata": {
+                "name": "camel-crd-itest"
+              },
+              "spec": {
+                "message": "Apache Camel Rocks!"
+              }
+            }""";
     private static CustomResourceDefinition crd;
 
     @EndpointInject("mock:result")
