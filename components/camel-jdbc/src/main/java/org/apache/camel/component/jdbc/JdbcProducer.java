@@ -173,10 +173,10 @@ public class JdbcProducer extends DefaultProducer {
                 Object expectedGeneratedColumns = exchange.getIn().getHeader(JdbcConstants.JDBC_GENERATED_COLUMNS);
                 if (expectedGeneratedColumns == null) {
                     ps = conn.prepareStatement(preparedQuery, Statement.RETURN_GENERATED_KEYS);
-                } else if (expectedGeneratedColumns instanceof String[]) {
-                    ps = conn.prepareStatement(preparedQuery, (String[]) expectedGeneratedColumns);
-                } else if (expectedGeneratedColumns instanceof int[]) {
-                    ps = conn.prepareStatement(preparedQuery, (int[]) expectedGeneratedColumns);
+                } else if (expectedGeneratedColumns instanceof String[] stringArray) {
+                    ps = conn.prepareStatement(preparedQuery, stringArray);
+                } else if (expectedGeneratedColumns instanceof int[] intArray) {
+                    ps = conn.prepareStatement(preparedQuery, intArray);
                 } else {
                     throw new IllegalArgumentException(
                             "Header specifying expected returning columns isn't an instance of String[] or int[] but "
@@ -256,10 +256,10 @@ public class JdbcProducer extends DefaultProducer {
                 Object expectedGeneratedColumns = exchange.getIn().getHeader(JdbcConstants.JDBC_GENERATED_COLUMNS);
                 if (expectedGeneratedColumns == null) {
                     stmtExecutionResult = stmt.execute(sql, Statement.RETURN_GENERATED_KEYS);
-                } else if (expectedGeneratedColumns instanceof String[]) {
-                    stmtExecutionResult = stmt.execute(sql, (String[]) expectedGeneratedColumns);
-                } else if (expectedGeneratedColumns instanceof int[]) {
-                    stmtExecutionResult = stmt.execute(sql, (int[]) expectedGeneratedColumns);
+                } else if (expectedGeneratedColumns instanceof String[] stringArray) {
+                    stmtExecutionResult = stmt.execute(sql, stringArray);
+                } else if (expectedGeneratedColumns instanceof int[] intArray) {
+                    stmtExecutionResult = stmt.execute(sql, intArray);
                 } else {
                     throw new IllegalArgumentException(
                             "Header specifying expected returning columns isn't an instance of String[] or int[] but "
