@@ -189,7 +189,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
             emailAlias = testUser.addEmailAlias(CAMEL_TEST_USER_EMAIL_ALIAS);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         }
 
         final Map<String, Object> headers = new HashMap<>();

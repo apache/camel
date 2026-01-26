@@ -103,7 +103,7 @@ public class BoxCollaborationsManagerIT extends AbstractBoxITSupport {
             LOG.debug("addFolderCollaboration: {}", result);
         } catch (BoxAPIException e) {
             throw new RuntimeCamelException(
-                    String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);
+                    String.format("Box API returned the error code %d%n%n%s", e.getResponseCode(), e.getResponse()), e);
         } finally {
             if (user != null) {
                 user.delete(false, true);
