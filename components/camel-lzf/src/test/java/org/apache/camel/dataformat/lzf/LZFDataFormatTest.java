@@ -30,12 +30,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LZFDataFormatTest extends CamelTestSupport {
-    private static final String TEXT = "Hamlet by William Shakespeare\n"
-                                       + "To be, or not to be: that is the question:\n"
-                                       + "Whether 'tis nobler in the mind to suffer\n"
-                                       + "The slings and arrows of outrageous fortune,\n"
-                                       + "Or to take arms against a sea of troubles,\n"
-                                       + "And by opposing end them? To die: to sleep;";
+    private static final String TEXT = """
+            Hamlet by William Shakespeare
+            To be, or not to be: that is the question:
+            Whether 'tis nobler in the mind to suffer
+            The slings and arrows of outrageous fortune,
+            Or to take arms against a sea of troubles,
+            And by opposing end them? To die: to sleep;""";
 
     @Test
     public void testMarshalTextToLzf() throws Exception {
