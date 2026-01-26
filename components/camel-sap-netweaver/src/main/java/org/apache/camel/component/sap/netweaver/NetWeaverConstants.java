@@ -21,9 +21,10 @@ import org.apache.camel.spi.Metadata;
 
 public final class NetWeaverConstants {
 
-    @Metadata(description = "The command to execute in\n" +
-                            "http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data\n" +
-                            "Service] format.",
+    @Metadata(description = """
+            The command to execute in
+            http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
+            Service] format.""",
               javaType = "String", required = true)
     public static final String COMMAND = "CamelNetWeaverCommand";
     @Metadata(description = "The http path.", javaType = "String")
