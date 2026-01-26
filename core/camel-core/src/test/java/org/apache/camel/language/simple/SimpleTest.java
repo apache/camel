@@ -54,6 +54,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.VariableRepository;
 import org.apache.camel.spi.VariableRepositoryFactory;
+import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.util.InetAddressUtil;
@@ -3693,6 +3694,71 @@ public class SimpleTest extends LanguageTestSupport {
         expression = context.resolveLanguage("simple").createExpression("${normalizeWhitespace(${header.beer})}");
         s = expression.evaluate(exchange, String.class);
         assertEquals("Carlsberg is a beer", s);
+    }
+
+    @Test
+    public void testKindOfType() {
+        exchange.getMessage().setBody(null);
+        Expression expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("null", s);
+
+        exchange.getMessage().setBody("Hello");
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("string", s);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("string", s);
+
+        exchange.getMessage().setBody(123);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("number", s);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("number", s);
+
+        exchange.getMessage().setBody(98.76d);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("number", s);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("number", s);
+
+        exchange.getMessage().setBody(true);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("boolean", s);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("boolean", s);
+        exchange.getMessage().setBody("Hello");
+
+        exchange.getMessage().setBody(List.of("A", "B"));
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("array", s);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("array", s);
+
+        exchange.getMessage().setBody("abc".getBytes());
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("array", s);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("array", s);
+
+        exchange.getMessage().setBody(new DefaultUuidGenerator());
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("object", s);
+        expression = context.resolveLanguage("simple").createExpression("${kindOfType(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("object", s);
     }
 
     @Override

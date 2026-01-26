@@ -590,6 +590,58 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * What kind of type is the expression
+     */
+    public static Expression kindOfTypeExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Object.class);
+                } else {
+                    value = exchange.getMessage().getBody();
+                }
+                if (value != null) {
+                    Class<?> type = value.getClass();
+                    if (ObjectHelper.isNumericType(type)) {
+                        return "number";
+                    } else if (boolean.class == type || Boolean.class == type) {
+                        return "boolean";
+                    } else if (value instanceof CharSequence) {
+                        return "string";
+                    } else if (ObjectHelper.isPrimitiveArrayType(type) || value instanceof Collection
+                            || value instanceof Map<?, ?>) {
+                        return "array";
+                    } else {
+                        return "object";
+                    }
+                }
+                return "null";
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "kindOfType(" + expression + ")";
+                } else {
+                    return "kindOfType()";
+                }
+            }
+        };
+    }
+
+    /**
      * Trims the given expressions (uses message body if expression is null)
      */
     public static Expression trimExpression(final String expression) {

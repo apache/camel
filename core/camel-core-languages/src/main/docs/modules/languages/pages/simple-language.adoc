@@ -160,6 +160,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`headers[key]` | `Object` | *Deprecated* The message header with the given key.
 |`headers` | `Map` | All the message headers as a `java.util.Map`.
 |`id` | `String` | The message id
+|`kindOfType(exp)` | `String` | What kind of type is the value (null,number,string,boolean,array,object).
 |`logExchange` | `String` | Dumps the exchange for logging purpose (uses `ExchangeFormatter` to format the output).
 |`mandatoryBodyAs(type)` | `<T>` | Converts the message body to the given type determined by its classname. If the body is `null` then an exception is thrown.
 |`mandatoryBodyAs(type)._OGNL_` | `Object` | Same as `mandatoryBodyAs(type)` and then invoke Camel _OGNL syntax_.

@@ -1143,6 +1143,17 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.isNotPredicate(exp);
         }
 
+        // whichKind function
+        remainder = ifStartsWithReturnRemainder("kindOfType(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.kindOfTypeExpression(exp);
+        }
+
         // trim function
         remainder = ifStartsWithReturnRemainder("trim(", function);
         if (remainder != null) {
@@ -2841,6 +2852,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "Object value = " + tokens[0] + ";\n        " + "Object width = " + tokens[1]
                    + ";\n        String separator = " + separator
                    + ";\n        return pad(exchange, value, width, separator);";
+        }
+
+        // kindOfType function
+        remainder = ifStartsWithReturnRemainder("kindOfType(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${kindOfType(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return kindOfType(exchange, o);";
         }
 
         // trim function

@@ -1284,4 +1284,22 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static String kindOfType(Exchange exchange, Object value) {
+        if (value != null) {
+            Class<?> type = value.getClass();
+            if (ObjectHelper.isNumericType(type)) {
+                return "number";
+            } else if (boolean.class == type || Boolean.class == type) {
+                return "boolean";
+            } else if (value instanceof CharSequence) {
+                return "string";
+            } else if (ObjectHelper.isPrimitiveArrayType(type) || value instanceof Collection || value instanceof Map<?, ?>) {
+                return "array";
+            } else {
+                return "object";
+            }
+        }
+        return "null";
+    }
+
 }

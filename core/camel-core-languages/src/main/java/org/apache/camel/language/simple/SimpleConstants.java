@@ -389,6 +389,10 @@ public final class SimpleConstants {
               label = "function", javaType = "Object", displayName = "Java Field Value")
     public static final String TYPE = "type:name.field";
 
+    @Metadata(description = "What kind of type is the value (null,number,string,boolean,array,object)",
+              label = "function", javaType = "Object", displayName = "Kind of Type")
+    public static final String KIND_OF_TYPE = "kindOfType(exp)";
+
     @Metadata(description = "Uppercases the message body (or expression)", label = "function", javaType = "String",
               displayName = "Uppercase")
     public static final String UPPERCASE = "uppercase(exp)";
