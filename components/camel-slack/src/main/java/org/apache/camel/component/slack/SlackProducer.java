@@ -75,10 +75,10 @@ public class SlackProducer extends DefaultAsyncProducer {
         Object payload = exchange.getIn().getBody();
 
         try {
-            if (payload instanceof SlackMessage) {
-                response = sendLegacySlackMessage((SlackMessage) payload);
-            } else if (payload instanceof Message) {
-                response = sendMessage((Message) payload);
+            if (payload instanceof SlackMessage slackmessage2) {
+                response = sendLegacySlackMessage(slackmessage2);
+            } else if (payload instanceof Message message2) {
+                response = sendMessage(message2);
             } else {
                 SlackMessage slackMessage = new SlackMessage();
                 slackMessage.setText(exchange.getIn().getBody(String.class));
@@ -121,10 +121,10 @@ public class SlackProducer extends DefaultAsyncProducer {
     private boolean sendMessageByWebhookURL(Exchange exchange, AsyncCallback callback) {
         String json;
         Object payload = exchange.getIn().getBody();
-        if (payload instanceof SlackMessage) {
-            json = GSON.toJson(addEndPointOptions((SlackMessage) payload));
-        } else if (payload instanceof Message) {
-            json = GSON.toJson(addEndPointOptions((Message) payload));
+        if (payload instanceof SlackMessage slackmessage) {
+            json = GSON.toJson(addEndPointOptions(slackmessage));
+        } else if (payload instanceof Message message) {
+            json = GSON.toJson(addEndPointOptions(message));
         } else {
             SlackMessage slackMessage = new SlackMessage();
             slackMessage.setText(exchange.getIn().getBody(String.class));
