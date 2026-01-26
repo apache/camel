@@ -56,7 +56,7 @@ public class FaultToleranceConsole extends AbstractDevConsole {
             String id = cb.getId();
             String rid = cb.getRouteId();
             String state = cb.getCircuitBreakerState();
-            sb.append(String.format("    %s/%s: %s\n", rid, id, state));
+            sb.append(String.format("    %s/%s: %s%n", rid, id, state));
         }
 
         return sb.toString();
