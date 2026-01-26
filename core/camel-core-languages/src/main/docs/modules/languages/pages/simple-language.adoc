@@ -676,6 +676,14 @@ This requires having `camel-base64` JAR on the classpath.
 |`base64Encode(exp)` | `String` |Base64 encodes the expression
 |====
 
+Camel comes with functions to use `camel-base64` JAR for base64 encoding and decoding.
+
+For example `${base64Encode(Camel)}` returns `Q2FtZWw=` and you can reverse
+this by `${base64Decode(Q2FtZWw=)}` which then returns `Camel`.
+
+If you want to encode the message body then use `${base64Encode()}`, but you can also
+provide a nested function such as `${base64Encode(${header.myKey})}` to encode a header.
+
 
 == Built-in Symbols
 
