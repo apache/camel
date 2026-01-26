@@ -93,106 +93,120 @@ public class FaceRecognitionEndpoint extends DefaultEndpoint {
     private String endpoint;
 
     @UriParam(
-              description = "This param can be used when operation is faceDetection or faceVerification, indicating the Base64 character string converted from an image.\n"
-                            + "Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.\n"
-                            + "The Image size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.\n"
-                            + "The supported image formats include JPG, PNG, and BMP. \n",
+              description = """
+                      This param can be used when operation is faceDetection or faceVerification, indicating the Base64 character string converted from an image.
+                      Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.
+                      The Image size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.
+                      The supported image formats include JPG, PNG, and BMP.\s
+                      """,
               displayName = "Image in Base64")
     @Metadata(required = false)
     private String imageBase64;
 
-    @UriParam(description = "This param can be used when operation is faceDetection or faceVerification, indicating the URL of an image.\n"
-                            + "Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.\n"
-                            + "The options are as follows:\n"
-                            + "1.HTTP/HTTPS URLs on the public network\n"
-                            + "2.OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS. \n",
+    @UriParam(description = """
+            This param can be used when operation is faceDetection or faceVerification, indicating the URL of an image.
+            Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.
+            The options are as follows:
+            1.HTTP/HTTPS URLs on the public network
+            2.OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS.\s
+            """,
               displayName = "Image Url")
     @Metadata(required = false)
     private String imageUrl;
 
-    @UriParam(description = "This param can be used when operation is faceDetection or faceVerification, indicating the local image file path.\n"
-                            + "Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.\n"
-                            + "Image size cannot exceed 8 MB, and it is recommended that the image size be less than 1 MB.",
+    @UriParam(description = """
+            This param can be used when operation is faceDetection or faceVerification, indicating the local image file path.
+            Any one of imageBase64, imageUrl and imageFilePath needs to be set, and the priority is imageBase64 > imageUrl > imageFilePath.
+            Image size cannot exceed 8 MB, and it is recommended that the image size be less than 1 MB.""",
               displayName = "Image File Path")
     @Metadata(required = false)
     private String imageFilePath;
 
     @UriParam(
-              description = "This param can be used when operation is faceVerification, indicating the Base64 character string converted from the other image.\n"
-                            + "It needs to be configured if imageBase64 is set.\n"
-                            + "The image size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.\n"
-                            + "The supported image formats include JPG, PNG, and BMP.",
+              description = """
+                      This param can be used when operation is faceVerification, indicating the Base64 character string converted from the other image.
+                      It needs to be configured if imageBase64 is set.
+                      The image size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.
+                      The supported image formats include JPG, PNG, and BMP.""",
               displayName = "Another Image in Base64")
     @Metadata(required = false)
     private String anotherImageBase64;
 
-    @UriParam(description = "This param can be used when operation is faceVerification, indicating the URL of the other image.\n"
-                            + "It needs to be configured if imageUrl is set.\n"
-                            + "The options are as follows:\n"
-                            + "1.HTTP/HTTPS URLs on the public network\n"
-                            + "2.OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS. \n",
+    @UriParam(description = """
+            This param can be used when operation is faceVerification, indicating the URL of the other image.
+            It needs to be configured if imageUrl is set.
+            The options are as follows:
+            1.HTTP/HTTPS URLs on the public network
+            2.OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS.\s
+            """,
               displayName = "Another Image Url")
     @Metadata(required = false)
     private String anotherImageUrl;
 
-    @UriParam(description = "This param can be used when operation is faceVerification, indicating the local file path of the other image.\n"
-                            + "It needs to be configured if imageFilePath is set.\n"
-                            + "Image size cannot exceed 8 MB, and it is recommended that the image size be less than 1 MB.",
+    @UriParam(description = """
+            This param can be used when operation is faceVerification, indicating the local file path of the other image.
+            It needs to be configured if imageFilePath is set.
+            Image size cannot exceed 8 MB, and it is recommended that the image size be less than 1 MB.""",
               displayName = "Another Image File Path")
     @Metadata(required = false)
     private String anotherImageFilePath;
 
     @UriParam(
-              description = "This param can be used when operation is faceLiveDetection, indicating the Base64 character string converted from a video.\n"
-                            + "Any one of videoBase64, videoUrl and videoFilePath needs to be set, and the priority is videoBase64 > videoUrl > videoFilePath.\n"
-                            + "Requirements are as follows: \n"
-                            + "1.The video size after Base64 encoding cannot exceed 8 MB. It is recommended that the video file be compressed to 200 KB to 2 MB on the client. \n"
-                            + "2.The video duration must be 1 to 15 seconds. \n"
-                            + "3.The recommended frame rate is 10 fps to 30 fps. \n"
-                            + "4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV. \n"
-                            + "5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.",
+              description = """
+                      This param can be used when operation is faceLiveDetection, indicating the Base64 character string converted from a video.
+                      Any one of videoBase64, videoUrl and videoFilePath needs to be set, and the priority is videoBase64 > videoUrl > videoFilePath.
+                      Requirements are as follows:\s
+                      1.The video size after Base64 encoding cannot exceed 8 MB. It is recommended that the video file be compressed to 200 KB to 2 MB on the client.\s
+                      2.The video duration must be 1 to 15 seconds.\s
+                      3.The recommended frame rate is 10 fps to 30 fps.\s
+                      4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.\s
+                      5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.""",
               displayName = "Video in Base64")
     @Metadata(required = false)
     private String videoBase64;
 
-    @UriParam(description = "This param can be used when operation is faceLiveDetection, indicating the URL of a video.\n"
-                            + "Any one of videoBase64, videoUrl and videoFilePath needs to be set, and the priority is videoBase64 > videoUrl > videoFilePath.\n"
-                            + "Currently, only the URL of an OBS bucket on HUAWEI CLOUD is supported and FRS must have the permission to read data in the OBS bucket. For details about how to enable the read permission, see Service Authorization.\n"
-                            + "The video requirements are as follows: \n"
-                            + "1.The video size after Base64 encoding cannot exceed 8 MB.\n"
-                            + "2.The video duration must be 1 to 15 seconds.\n"
-                            + "3.The recommended frame rate is 10 fps to 30 fps.\n"
-                            + "4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.\n"
-                            + "5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.",
+    @UriParam(description = """
+            This param can be used when operation is faceLiveDetection, indicating the URL of a video.
+            Any one of videoBase64, videoUrl and videoFilePath needs to be set, and the priority is videoBase64 > videoUrl > videoFilePath.
+            Currently, only the URL of an OBS bucket on HUAWEI CLOUD is supported and FRS must have the permission to read data in the OBS bucket. For details about how to enable the read permission, see Service Authorization.
+            The video requirements are as follows:\s
+            1.The video size after Base64 encoding cannot exceed 8 MB.
+            2.The video duration must be 1 to 15 seconds.
+            3.The recommended frame rate is 10 fps to 30 fps.
+            4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.
+            5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.""",
               displayName = "Video Url")
     @Metadata(required = false)
     private String videoUrl;
 
-    @UriParam(description = "This param can be used when operation is faceLiveDetection, indicating the local video file path.\n"
-                            + "Any one of videoBase64, videoUrl and videoFilePath needs to be set, and the priority is videoBase64 > videoUrl > videoFilePath.\n"
-                            + "The video requirements are as follows:\n"
-                            + "1.The size of a video file cannot exceed 8 MB. It is recommended that the video file be compressed to 200 KB to 2 MB on the client.\n"
-                            + "2.The video duration must be 1 to 15 seconds.\n"
-                            + "3.The recommended frame rate is 10 fps to 30 fps.\n"
-                            + "4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.\n"
-                            + "5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.",
+    @UriParam(description = """
+            This param can be used when operation is faceLiveDetection, indicating the local video file path.
+            Any one of videoBase64, videoUrl and videoFilePath needs to be set, and the priority is videoBase64 > videoUrl > videoFilePath.
+            The video requirements are as follows:
+            1.The size of a video file cannot exceed 8 MB. It is recommended that the video file be compressed to 200 KB to 2 MB on the client.
+            2.The video duration must be 1 to 15 seconds.
+            3.The recommended frame rate is 10 fps to 30 fps.
+            4.The encapsulation format can be MP4, AVI, FLV, WEBM, ASF, or MOV.
+            5.The video encoding format can be H.261, H.263, H.264, HEVC, VC-1, VP8, VP9, or WMV3.""",
               displayName = "Video File Path")
     @Metadata(required = false)
     private String videoFilePath;
 
-    @UriParam(description = "This param is mandatory when the operation is faceLiveDetection, indicating the action code sequence list.\n"
-                            + "Actions are separated by commas (,). Currently, the following actions are supported:\n"
-                            + "1: Shake the head to the left.\n"
-                            + "2: Shake the head to the right.\n"
-                            + "3: Nod the head.\n"
-                            + "4: Mouth movement.",
+    @UriParam(description = """
+            This param is mandatory when the operation is faceLiveDetection, indicating the action code sequence list.
+            Actions are separated by commas (,). Currently, the following actions are supported:
+            1: Shake the head to the left.
+            2: Shake the head to the right.
+            3: Nod the head.
+            4: Mouth movement.""",
               displayName = "Actions")
     @Metadata(required = false)
     private String actions;
 
-    @UriParam(description = "This param can be used when the operation is faceLiveDetection, indicating the action time array.\n"
-                            + "The length of the array is the same as the number of actions.\n"
-                            + "Each item contains the start time and end time of the action in the corresponding sequence. The unit is the milliseconds from the video start time.",
+    @UriParam(description = """
+            This param can be used when the operation is faceLiveDetection, indicating the action time array.
+            The length of the array is the same as the number of actions.
+            Each item contains the start time and end time of the action in the corresponding sequence. The unit is the milliseconds from the video start time.""",
               displayName = "Action Time")
     @Metadata(required = false)
     private String actionTimes;
