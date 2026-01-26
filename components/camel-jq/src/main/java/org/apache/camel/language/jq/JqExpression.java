@@ -131,8 +131,8 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     public boolean matches(Exchange exchange) {
         final Object value = evaluate(exchange, Object.class);
 
-        if (value instanceof BooleanNode) {
-            return ((BooleanNode) value).asBoolean();
+        if (value instanceof BooleanNode booleanNode) {
+            return booleanNode.asBoolean();
         }
         if (value instanceof Collection) {
             return !((Collection<?>) value).isEmpty();
