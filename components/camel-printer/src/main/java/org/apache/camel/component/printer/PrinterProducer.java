@@ -100,8 +100,7 @@ public class PrinterProducer extends DefaultProducer {
             return null;
         } else {
             for (Media media : medias) {
-                if (media instanceof MediaTray) {
-                    MediaTray mediaTray = (MediaTray) media;
+                if (media instanceof MediaTray mediaTray) {
                     String trayName = mediaTray.toString().trim();
                     if (trayName.contains(" ")) {
                         trayName = trayName.replace(' ', '_');
