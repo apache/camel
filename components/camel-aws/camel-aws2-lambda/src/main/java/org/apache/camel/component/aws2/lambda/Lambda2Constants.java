@@ -26,8 +26,10 @@ public interface Lambda2Constants {
     @Metadata(label = "all", description = "The operation we want to perform. Override operation passed as query parameter",
               javaType = "String", required = true)
     String OPERATION = "CamelAwsLambdaOperation";
-    @Metadata(label = "createFunction", description = "Amazon S3 bucket name where the .zip file containing\n" +
-                                                      "your deployment package is stored. This bucket must reside in the same AWS region where you are creating the Lambda function.",
+    @Metadata(label = "createFunction",
+              description = """
+                      Amazon S3 bucket name where the .zip file containing
+                      your deployment package is stored. This bucket must reside in the same AWS region where you are creating the Lambda function.""",
               javaType = "String")
     String S3_BUCKET = "CamelAwsLambdaS3Bucket";
     @Metadata(label = "createFunction", description = "The Amazon S3 object (the deployment package) key name\n" +
