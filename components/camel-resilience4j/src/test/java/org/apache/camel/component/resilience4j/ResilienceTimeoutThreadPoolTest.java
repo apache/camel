@@ -24,7 +24,6 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,12 +83,10 @@ public class ResilienceTimeoutThreadPoolTest extends CamelTestSupport {
     }
 
     @Test
-    @Disabled("manual testing")
     public void testSlowLoop() {
         // this calls the slow route and therefore causes a timeout which
         // triggers an exception
         for (int i = 0; i < 10; i++) {
-            log.info(">>> test run {} <<<", i);
             Exception exception = assertThrows(Exception.class,
                     () -> template.requestBody("direct:start", "slow"),
                     "Should fail due to timeout");

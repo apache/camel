@@ -516,12 +516,8 @@ public class ResilienceProcessor extends BaseProcessorSupport
             Callable<Exchange> callable;
 
             if (timeLimiter != null) {
-                Supplier<CompletableFuture<Exchange>> futureSupplier;
-                if (executorService == null) {
-                    futureSupplier = () -> CompletableFuture.supplyAsync(ftask);
-                } else {
-                    futureSupplier = () -> CompletableFuture.supplyAsync(ftask, executorService);
-                }
+                Supplier<CompletableFuture<Exchange>> futureSupplier
+                        = () -> CompletableFuture.supplyAsync(ftask, executorService);
                 callable = TimeLimiter.decorateFutureSupplier(timeLimiter, futureSupplier);
             } else {
                 callable = task;
