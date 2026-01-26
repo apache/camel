@@ -104,13 +104,14 @@ public class RestOpenApiRequestValidationTest extends CamelTestSupport {
                 .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_CREATED)
                         .withBody(validationEnabledPetJson)));
 
-        String validationEnabledPetXml
-                = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                  "<Pet>\n" +
-                  "    <id>10</id>\n" +
-                  "    <name>doggie</name>\n" +
-                  "    <photoUrls>https://test.photos.org/doggie.gif</photoUrls>\n" +
-                  "</Pet>\n";
+        String validationEnabledPetXml = """
+                <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                <Pet>
+                    <id>10</id>
+                    <name>doggie</name>
+                    <photoUrls>https://test.photos.org/doggie.gif</photoUrls>
+                </Pet>
+                """;
         wireMockServer.stubFor(post(urlEqualTo(urlBasePath))
                 .withHeader("Content-Type", equalTo("application/xml"))
                 .withRequestBody(equalTo(
