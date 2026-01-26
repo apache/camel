@@ -59,10 +59,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String prettyPrint;
-    @XmlAttribute
-    private String enableFeatures;
-    @XmlAttribute
-    private String disableFeatures;
 
     public OcsfDataFormat() {
         super("ocsf");
@@ -79,8 +75,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         this.useList = source.useList;
         this.allowUnmarshallType = source.allowUnmarshallType;
         this.prettyPrint = source.prettyPrint;
-        this.enableFeatures = source.enableFeatures;
-        this.disableFeatures = source.disableFeatures;
     }
 
     public OcsfDataFormat(Class<?> unmarshalType) {
@@ -102,8 +96,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         this.useList = builder.useList;
         this.allowUnmarshallType = builder.allowUnmarshallType;
         this.prettyPrint = builder.prettyPrint;
-        this.enableFeatures = builder.enableFeatures;
-        this.disableFeatures = builder.disableFeatures;
     }
 
     @Override
@@ -212,42 +204,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         this.allowUnmarshallType = allowUnmarshallType;
     }
 
-    public String getEnableFeatures() {
-        return enableFeatures;
-    }
-
-    /**
-     * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
-    public void setEnableFeatures(String enableFeatures) {
-        this.enableFeatures = enableFeatures;
-    }
-
-    public String getDisableFeatures() {
-        return disableFeatures;
-    }
-
-    /**
-     * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-     * <p/>
-     * The features should be a name that matches a enum from
-     * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-     * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-     * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-     * <p/>
-     * Multiple features can be separated by comma
-     */
-    public void setDisableFeatures(String disableFeatures) {
-        this.disableFeatures = disableFeatures;
-    }
-
     /**
      * {@code Builder} is a specific builder for {@link OcsfDataFormat}.
      */
@@ -263,8 +219,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
         private String useList;
         private String allowUnmarshallType;
         private String prettyPrint;
-        private String enableFeatures;
-        private String disableFeatures;
 
         /**
          * Lookup and use the existing ObjectMapper with the given id when using Jackson.
@@ -373,36 +327,6 @@ public class OcsfDataFormat extends DataFormatDefinition {
          */
         public Builder allowUnmarshallType(boolean allowUnmarshallType) {
             this.allowUnmarshallType = Boolean.toString(allowUnmarshallType);
-            return this;
-        }
-
-        /**
-         * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-         * <p/>
-         * Multiple features can be separated by comma
-         */
-        public Builder enableFeatures(String enableFeatures) {
-            this.enableFeatures = enableFeatures;
-            return this;
-        }
-
-        /**
-         * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-         * <p/>
-         * Multiple features can be separated by comma
-         */
-        public Builder disableFeatures(String disableFeatures) {
-            this.disableFeatures = disableFeatures;
             return this;
         }
 

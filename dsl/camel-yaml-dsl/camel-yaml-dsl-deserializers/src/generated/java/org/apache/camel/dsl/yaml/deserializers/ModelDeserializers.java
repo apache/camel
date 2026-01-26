@@ -10842,8 +10842,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             properties = {
                     @YamlProperty(name = "allowUnmarshallType", type = "boolean", defaultValue = "false", description = "If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled when desired to be used.", displayName = "Allow Unmarshall Type"),
                     @YamlProperty(name = "collectionType", type = "string", description = "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.", displayName = "Collection Type"),
-                    @YamlProperty(name = "disableFeatures", type = "string", description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma", displayName = "Disable Features"),
-                    @YamlProperty(name = "enableFeatures", type = "string", description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma", displayName = "Enable Features"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "objectMapper", type = "string", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.", displayName = "Object Mapper"),
                     @YamlProperty(name = "prettyPrint", type = "boolean", defaultValue = "false", description = "To enable pretty printing output nicely formatted. Is by default false.", displayName = "Pretty Print"),
@@ -10875,16 +10873,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "collectionType": {
                     String val = asText(node);
                     target.setCollectionTypeName(val);
-                    break;
-                }
-                case "disableFeatures": {
-                    String val = asText(node);
-                    target.setDisableFeatures(val);
-                    break;
-                }
-                case "enableFeatures": {
-                    String val = asText(node);
-                    target.setEnableFeatures(val);
                     break;
                 }
                 case "id": {
