@@ -71,9 +71,9 @@ public class StAXProcessor implements Processor {
         } finally {
             if (stream != null) {
                 stream.close();
-                if (stream instanceof ValidatingStreamReader) {
+                if (stream instanceof ValidatingStreamReader validatingStreamReader) {
                     // didn't find any method without using the woodstox package
-                    ((ValidatingStreamReader) stream).closeCompletely();
+                    validatingStreamReader.closeCompletely();
                 }
             }
         }
