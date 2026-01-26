@@ -82,68 +82,74 @@ public class EntityParserTest {
     public static final String REPORT_TYPE_HEADER_VALUE
             = "disposition-notification; boundary=\"----=_Part_56_1672293592.1028122454656\"\r\n";
 
-    public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT = "\r\n"
-                                                                         + "------=_Part_56_1672293592.1028122454656\r\n"
-                                                                         + "Content-Type: text/plain\r\n"
-                                                                         + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n"
-                                                                         + "MDN for -\r\n"
-                                                                         + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                                         + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-                                                                         + "  To: \"0123456780000\""
-                                                                         + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
-                                                                         + " Status: processed\r\n"
-                                                                         + " Comment: This is not a guarantee that the message has\r\n"
-                                                                         + "  been completely processed or &understood by the receiving\r\n"
-                                                                         + "  translator\r\n" + "\r\n"
-                                                                         + "------=_Part_56_1672293592.1028122454656\r\n"
-                                                                         + "Content-Type: message/disposition-notification\r\n"
-                                                                         + "Content-Transfer-Encoding: 7bit\r\n" + "\r\n"
-                                                                         + "Reporting-UA: AS2 Server\r\n"
-                                                                         + "MDN-Gateway: dns; example.com\r\n"
-                                                                         + "Original-Recipient: rfc822; 0123456780000\r\n"
-                                                                         + "Final-Recipient: rfc822; 0123456780000\r\n"
-                                                                         + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                                         + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
-                                                                         + "  processed/warning: you're awesome\r\n"
-                                                                         + "Failure: oops-a-failure\r\n"
-                                                                         + "Error: oops-an-error\r\n"
-                                                                         + "Warning: oops-a-warning\r\n"
-                                                                         + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
-                                                                         + "\r\n"
-                                                                         + "------=_Part_56_1672293592.1028122454656--\r\n";
+    public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT = """
+            \r
+            ------=_Part_56_1672293592.1028122454656\r
+            Content-Type: text/plain\r
+            Content-Transfer-Encoding: 7bit\r
+            \r
+            MDN for -\r
+             Message ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+              From: "\\"  as2Name  \\""\r
+              To: "0123456780000"  Received on: 2002-07-31 at 09:34:14 (EDT)\r
+             Status: processed\r
+             Comment: This is not a guarantee that the message has\r
+              been completely processed or &understood by the receiving\r
+              translator\r
+            \r
+            ------=_Part_56_1672293592.1028122454656\r
+            Content-Type: message/disposition-notification\r
+            Content-Transfer-Encoding: 7bit\r
+            \r
+            Reporting-UA: AS2 Server\r
+            MDN-Gateway: dns; example.com\r
+            Original-Recipient: rfc822; 0123456780000\r
+            Final-Recipient: rfc822; 0123456780000\r
+            Original-Message-ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+            Disposition: automatic-action/MDN-sent-automatically;\r
+              processed/warning: you're awesome\r
+            Failure: oops-a-failure\r
+            Error: oops-an-error\r
+            Warning: oops-a-warning\r
+            Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r
+            \r
+            ------=_Part_56_1672293592.1028122454656--\r
+            """;
 
     // version of the Disposition Notification Report without any folded body parts that would be unfolded when the entity is parsed
     // modifying the report
-    public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED = "\r\n"
-                                                                                  + "------=_Part_56_1672293592.1028122454656\r\n"
-                                                                                  + "Content-Type: text/plain\r\n"
-                                                                                  + "Content-Transfer-Encoding: 7bit\r\n"
-                                                                                  + "\r\n"
-                                                                                  + "MDN for -\r\n"
-                                                                                  + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                                                  + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-                                                                                  + "  To: \"0123456780000\""
-                                                                                  + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
-                                                                                  + " Status: processed\r\n"
-                                                                                  + " Comment: This is not a guarantee that the message has\r\n"
-                                                                                  + "  been completely processed or &understood by the receiving\r\n"
-                                                                                  + "  translator\r\n" + "\r\n"
-                                                                                  + "------=_Part_56_1672293592.1028122454656\r\n"
-                                                                                  + "Content-Type: message/disposition-notification\r\n"
-                                                                                  + "Content-Transfer-Encoding: 7bit\r\n"
-                                                                                  + "\r\n"
-                                                                                  + "Reporting-UA: AS2 Server\r\n"
-                                                                                  + "MDN-Gateway: dns; example.com\r\n"
-                                                                                  + "Original-Recipient: rfc822; 0123456780000\r\n"
-                                                                                  + "Final-Recipient: rfc822; 0123456780000\r\n"
-                                                                                  + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                                                  + "Disposition: automatic-action/MDN-sent-automatically; rocessed/warning: you're awesome\r\n"
-                                                                                  + "Failure: oops-a-failure\r\n"
-                                                                                  + "Error: oops-an-error\r\n"
-                                                                                  + "Warning: oops-a-warning\r\n"
-                                                                                  + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
-                                                                                  + "\r\n"
-                                                                                  + "------=_Part_56_1672293592.1028122454656--\r\n";
+    public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_UNFOLDED = """
+            \r
+            ------=_Part_56_1672293592.1028122454656\r
+            Content-Type: text/plain\r
+            Content-Transfer-Encoding: 7bit\r
+            \r
+            MDN for -\r
+             Message ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+              From: "\\"  as2Name  \\""\r
+              To: "0123456780000"  Received on: 2002-07-31 at 09:34:14 (EDT)\r
+             Status: processed\r
+             Comment: This is not a guarantee that the message has\r
+              been completely processed or &understood by the receiving\r
+              translator\r
+            \r
+            ------=_Part_56_1672293592.1028122454656\r
+            Content-Type: message/disposition-notification\r
+            Content-Transfer-Encoding: 7bit\r
+            \r
+            Reporting-UA: AS2 Server\r
+            MDN-Gateway: dns; example.com\r
+            Original-Recipient: rfc822; 0123456780000\r
+            Final-Recipient: rfc822; 0123456780000\r
+            Original-Message-ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+            Disposition: automatic-action/MDN-sent-automatically; rocessed/warning: you're awesome\r
+            Failure: oops-a-failure\r
+            Error: oops-an-error\r
+            Warning: oops-a-warning\r
+            Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r
+            \r
+            ------=_Part_56_1672293592.1028122454656--\r
+            """;
 
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_BOUNDARY = "----=_Part_56_1672293592.1028122454656";
 
@@ -151,17 +157,18 @@ public class EntityParserTest {
 
     public static final String DISPOSITION_NOTIFICATION_REPORT_CONTENT_TRANSFER_ENCODING = "7bit";
 
-    public static final String TEXT_PLAIN_CONTENT = "MDN for -\r\n"
-                                                    + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                    + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-                                                    + "  To: \"0123456780000\""
-                                                    + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
-                                                    + " Status: processed\r\n"
-                                                    + " Comment: This is not a guarantee that the message has\r\n"
-                                                    + "  been completely processed or &understood by the receiving\r\n"
-                                                    + "  translator\r\n"
-                                                    + "\r\n"
-                                                    + "------=_Part_56_1672293592.1028122454656--\r\n";
+    public static final String TEXT_PLAIN_CONTENT = """
+            MDN for -\r
+             Message ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+              From: "\\"  as2Name  \\""\r
+              To: "0123456780000"  Received on: 2002-07-31 at 09:34:14 (EDT)\r
+             Status: processed\r
+             Comment: This is not a guarantee that the message has\r
+              been completely processed or &understood by the receiving\r
+              translator\r
+            \r
+            ------=_Part_56_1672293592.1028122454656--\r
+            """;
 
     public static final String TEXT_PLAIN_CONTENT_BOUNDARY = "----=_Part_56_1672293592.1028122454656";
 
@@ -169,28 +176,32 @@ public class EntityParserTest {
 
     public static final String TEXT_PLAIN_CONTENT_TRANSFER_ENCODING = "7bit";
 
-    public static final String EXPECTED_TEXT_PLAIN_CONTENT = "MDN for -\r\n"
-                                                             + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                             + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-                                                             + "  To: \"0123456780000\""
-                                                             + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
-                                                             + " Status: processed\r\n"
-                                                             + " Comment: This is not a guarantee that the message has\r\n"
-                                                             + "  been completely processed or &understood by the receiving\r\n"
-                                                             + "  translator\r\n";
+    public static final String EXPECTED_TEXT_PLAIN_CONTENT = """
+            MDN for -\r
+             Message ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+              From: "\\"  as2Name  \\""\r
+              To: "0123456780000"  Received on: 2002-07-31 at 09:34:14 (EDT)\r
+             Status: processed\r
+             Comment: This is not a guarantee that the message has\r
+              been completely processed or &understood by the receiving\r
+              translator\r
+            """;
 
-    public static final String DISPOSITION_NOTIFICATION_CONTENT = "Reporting-UA: AS2 Server\r\n"
-                                                                  + "MDN-Gateway: dns; example.com\r\n"
-                                                                  + "Original-Recipient: rfc822; 0123456780000\r\n"
-                                                                  + "Final-Recipient: rfc822; 0123456780000\r\n"
-                                                                  + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                                  + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
-                                                                  + "  processed/warning: you're awesome\r\n"
-                                                                  + "Failure: oops-a-failure\r\n" + "Error: oops-an-error\r\n"
-                                                                  + "Warning: oops-a-warning\r\n"
-                                                                  + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
-                                                                  + "\r\n"
-                                                                  + "------=_Part_56_1672293592.1028122454656--\r\n";
+    public static final String DISPOSITION_NOTIFICATION_CONTENT = """
+            Reporting-UA: AS2 Server\r
+            MDN-Gateway: dns; example.com\r
+            Original-Recipient: rfc822; 0123456780000\r
+            Final-Recipient: rfc822; 0123456780000\r
+            Original-Message-ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+            Disposition: automatic-action/MDN-sent-automatically;\r
+              processed/warning: you're awesome\r
+            Failure: oops-a-failure\r
+            Error: oops-an-error\r
+            Warning: oops-a-warning\r
+            Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r
+            \r
+            ------=_Part_56_1672293592.1028122454656--\r
+            """;
 
     public static final String DISPOSITION_NOTIFICATION_CONTENT_BOUNDARY = "----=_Part_56_1672293592.1028122454656";
 
