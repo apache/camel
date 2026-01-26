@@ -119,8 +119,8 @@ public class XsltBuilder implements Processor {
 
             source = prepareSource(source);
 
-            if (source instanceof SAXSource) {
-                tryAddEntityResolver((SAXSource) source);
+            if (source instanceof SAXSource saxSource) {
+                tryAddEntityResolver(saxSource);
             }
 
             LOG.trace("Using {} as source", source);

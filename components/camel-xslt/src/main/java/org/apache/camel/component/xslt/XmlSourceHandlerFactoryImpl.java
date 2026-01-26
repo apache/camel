@@ -114,8 +114,8 @@ public class XmlSourceHandlerFactoryImpl implements SourceHandlerFactory {
      */
     protected Source getSource(Exchange exchange, Object body) {
         // body may already be a source
-        if (body instanceof Source) {
-            return (Source) body;
+        if (body instanceof Source source) {
+            return source;
         }
         Source source = null;
         if (body != null) {
