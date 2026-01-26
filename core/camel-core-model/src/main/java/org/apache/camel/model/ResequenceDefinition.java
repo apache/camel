@@ -331,15 +331,17 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
     }
 
     public BatchResequencerConfig getBatchConfig() {
-        if (batchConfig == null && resequencerConfig != null && resequencerConfig instanceof BatchResequencerConfig) {
-            return (BatchResequencerConfig) resequencerConfig;
+        if (batchConfig == null && resequencerConfig != null
+                && resequencerConfig instanceof BatchResequencerConfig batchresequencerconfig) {
+            return batchresequencerconfig;
         }
         return batchConfig;
     }
 
     public StreamResequencerConfig getStreamConfig() {
-        if (streamConfig == null && resequencerConfig != null && resequencerConfig instanceof StreamResequencerConfig) {
-            return (StreamResequencerConfig) resequencerConfig;
+        if (streamConfig == null && resequencerConfig != null
+                && resequencerConfig instanceof StreamResequencerConfig streamresequencerconfig) {
+            return streamresequencerconfig;
         }
         return streamConfig;
     }
