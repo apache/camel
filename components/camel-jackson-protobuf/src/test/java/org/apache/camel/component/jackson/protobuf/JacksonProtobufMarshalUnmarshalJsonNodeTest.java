@@ -60,9 +60,11 @@ public class JacksonProtobufMarshalUnmarshalJsonNodeTest extends CamelTestSuppor
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        String protobufStr = "message Pojo {\n"
-                             + " required string text = 1;\n"
-                             + "}\n";
+        String protobufStr = """
+                message Pojo {
+                 required string text = 1;
+                }
+                """;
         ProtobufSchema schema = ProtobufSchemaLoader.std.parse(protobufStr);
         SchemaResolver resolver = ex -> schema;
         registry.bind("schema-resolver", SchemaResolver.class, resolver);
