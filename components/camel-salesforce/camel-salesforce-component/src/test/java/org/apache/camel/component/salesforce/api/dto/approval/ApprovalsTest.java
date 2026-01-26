@@ -38,17 +38,18 @@ public class ApprovalsTest {
     public void shouldDeserialize() throws JsonProcessingException, IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Object read = mapper.readerFor(Approvals.class).readValue("{\n" + //
-                                                                        "  \"approvals\" : {\n" + //
-                                                                        "   \"Account\" : [ {\n" + //
-                                                                        "     \"description\" : null,\n" + //
-                                                                        "     \"id\" : \"04aD00000008Py9\",\n" + //
-                                                                        "     \"name\" : \"Account Approval Process\",\n" + //
-                                                                        "     \"object\" : \"Account\",\n" + //
-                                                                        "     \"sortOrder\" : 1\n" + //
-                                                                        "   } ]\n" + //
-                                                                        "  }\n" + //
-                                                                        "}");
+        final Object read = mapper.readerFor(Approvals.class).readValue("""
+                {
+                  "approvals" : {
+                   "Account" : [ {
+                     "description" : null,
+                     "id" : "04aD00000008Py9",
+                     "name" : "Account Approval Process",
+                     "object" : "Account",
+                     "sortOrder" : 1
+                   } ]
+                  }
+                }""");
 
         assertThat("Should deserialize Approvals", read, instanceOf(Approvals.class));
 

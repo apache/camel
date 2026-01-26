@@ -34,24 +34,25 @@ public class SObjectBatchResponseTest {
     @Test
     public void shouldDeserializeFromJson() throws IOException {
 
-        final String json = "{\n"//
-                            + "   \"hasErrors\" : false,\n"//
-                            + "   \"results\" : [{\n"//
-                            + "      \"statusCode\" : 204,\n"//
-                            + "      \"result\" : null\n"//
-                            + "      },{\n"//
-                            + "      \"statusCode\" : 200,\n"//
-                            + "      \"result\": {\n"//
-                            + "         \"attributes\" : {\n"//
-                            + "            \"type\" : \"Account\",\n"//
-                            + "            \"url\" : \"/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ\"\n"//
-                            + "         },\n"//
-                            + "         \"Name\" : \"NewName\",\n"//
-                            + "         \"BillingPostalCode\" : \"94105\",\n"//
-                            + "         \"Id\" : \"001D000000K0fXOIAZ\"\n"//
-                            + "      }\n"//
-                            + "   }]\n"//
-                            + "}";
+        final String json = """
+                {
+                   "hasErrors" : false,
+                   "results" : [{
+                      "statusCode" : 204,
+                      "result" : null
+                      },{
+                      "statusCode" : 200,
+                      "result": {
+                         "attributes" : {
+                            "type" : "Account",
+                            "url" : "/services/data/v34.0/sobjects/Account/001D000000K0fXOIAZ"
+                         },
+                         "Name" : "NewName",
+                         "BillingPostalCode" : "94105",
+                         "Id" : "001D000000K0fXOIAZ"
+                      }
+                   }]
+                }""";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
