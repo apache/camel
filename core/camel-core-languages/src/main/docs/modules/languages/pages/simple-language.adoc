@@ -229,6 +229,7 @@ YAML::
 
 NOTE: The Camel functions are often also used for basic data mapping to easily get the part of the message payload you desire.
 
+
 === Array & List Functions
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -283,6 +284,7 @@ and you want to skip this line, then you can use `${skip(1)}` that then returns 
 The `split` function is as the name implies used for splitting the message body or the value (using a separator) into an array of sub elements.
 For example if the message body a CSV payload then using `${split(\\n)}` (you need to escape the new-line character) will split
 this into a `String[]` separated by new-line.
+
 
 === Boolean Functions
 
@@ -434,7 +436,7 @@ You can get the current thread id by the `$\{threadId}` function, and the name v
 And you can generate unique IDs with the xref:manual::uuidgenerator.adoc[Camel UUID Generator] by the `uuid` function.
 The generator supports different kinds `default`, `classic`, `short`, `simple` and `random`, such as `${uuid(random)}`.
 
-[#_string_functions]
+
 === String Functions
 
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -531,6 +533,98 @@ And of course `${trim('  hello world  ')}` returns `hello world`.
 |`xpath(input,exp)` | `Object` | When working with XML data, then this allows using the XPath language, for example, to extract data from the message body (in XML format). This requires having camel-xpath JAR on the classpath. For input you can choose `header:key`, `exchangeProperty:key` or `variable:key` to use as input for the JSon payload instead of the message body.
 |====
 
+The simple language has support for working with XML and JSon data by offering functions that leverage the
+xref:languages:jsonpath-language.adoc[JSonPath], xref:languages:jq-language.adoc[JQ], xref:languages:xpath-language.adoc[XPath] languages.
+This also mean that you must include the required JARs on the classpath.
+
+The `jq` function (JSon Query) is used for using the JQ language to obtain data from an existing JSon payload.
+For example given this payload:
+
+[source,json]
+----
+{"id": 123, "age": 42, "name": "scott"}
+----
+
+Then `${jq(.id)}` will return `123`.
+
+You can also use this for basic data mapping such as:
+
+[source,java]
+----
+from("direct:map")
+        .transform().simple("""
+            {
+              "roll": ${jq(.id)},
+              "country": "${jq(.country // constant(sweden))}",
+              "fullname": "${jq(.name)}"
+            }""")
+        .to("log:data");
+----
+
+The `jsonpath` function works similar to `jq` but uses JSonPath.
+When using `${jsonpath($.id)}` will also return `123`.
+
+And the data mapping can be done as follows with JSonPath instead of JQ:
+
+[source,java]
+----
+from("direct:map")
+        .transform().simple("""
+            {
+              "roll": ${jsonpath($.id)},
+              "years": ${jsonpath($.age)},
+              "fullname": "${jsonpath($.name)}"
+            }""")
+        .to("log:data");
+----
+
+The `xpath` function is for working with XML and using XPath expressions to extract data from XML payloads.
+
+Given the following XML payload:
+
+[source,xml]
+----
+<order id="123">
+  <item>Brake</item>
+  <first>scott</first>
+  <last>jackson</last>
+  <address>
+    <co>sweden</co>
+    <zip>12345</zip>
+  </address>
+</order>
+----
+
+Then `${xpath(/order/@id)}` will return `123`.
+
+And the data mapping can be done with XPath as follows:
+
+[source,java]
+----
+from("direct:map")
+    .transform().simple("""
+        {
+          "roll": ${jsonpath($.id)},
+          "years": ${jsonpath($.age)},
+          "fullname": "${jsonpath($.name)}"
+        }""")
+    .to("log:data");
+----
+
+The `pretty` function is used for pretty printing JSon or XML data as a String value.
+For example given the following JSon payload (in a single line): `{"id": 123, "age": 42, "name": "scott"}`
+then `$\{pretty}` will output this nicely formatted:
+
+[source,json]
+----
+{
+  "id": 123,
+  "age": 42,
+  "name": "scott"
+}
+----
+
+
 === Attachment Functions
 
 From *Camel 4.10* onwards then Camel has built-in attachment functions making it easy to obtain
@@ -552,6 +646,7 @@ This requires having `camel-attachments` JAR on the classpath.
 |`attachments` | `Map` | All the attachments as a `Map<String,jakarta.activation.DataHandler>`.
 |====
 
+
 === Base64 Functions
 
 From *Camel 4.18* onwards then Camel has built-in base64 functions to make it easy to encode/decode.
@@ -566,6 +661,7 @@ This requires having `camel-base64` JAR on the classpath.
 |`base64Encode()` | `String` |Base64 encodes the message body
 |`base64Encode(exp)` | `String` |Base64 encodes the expression
 |====
+
 
 == Built-in Symbols
 
