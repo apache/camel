@@ -139,8 +139,8 @@ public class MustacheEndpoint extends ResourceEndpoint {
                 Thread.currentThread().setContextClassLoader(apcl);
             }
             Mustache newMustache;
-            if (startDelimiter != null && endDelimiter != null && mustacheFactory instanceof DefaultMustacheFactory) {
-                DefaultMustacheFactory defaultMustacheFactory = (DefaultMustacheFactory) mustacheFactory;
+            if (startDelimiter != null && endDelimiter != null
+                    && mustacheFactory instanceof DefaultMustacheFactory defaultMustacheFactory) {
                 newMustache = defaultMustacheFactory.compile(resourceReader, resourceUri, startDelimiter, endDelimiter);
             } else {
                 newMustache = mustacheFactory.compile(resourceReader, resourceUri);
