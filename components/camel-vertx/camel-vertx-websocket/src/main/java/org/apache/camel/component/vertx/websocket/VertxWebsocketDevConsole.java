@@ -49,11 +49,11 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
 
         for (Map.Entry<VertxWebsocketHostKey, List<VertxWebsocketConsumer>> hostEntry : consumersByHost.entrySet()) {
             VertxWebsocketHostKey hostKey = hostEntry.getKey();
-            sb.append(String.format("\n    Host: %s", hostKey.toString()));
+            sb.append(String.format("%n    Host: %s", hostKey.toString()));
 
             for (VertxWebsocketConsumer consumer : hostEntry.getValue()) {
                 String path = consumer.getEndpoint().getConfiguration().getWebsocketURI().getPath();
-                sb.append(String.format("\n        Path: %s", path));
+                sb.append(String.format("%n        Path: %s", path));
 
                 List<VertxWebsocketPeer> pathPeers = consumer.getEndpoint().getVertxHostRegistry()
                         .values()
@@ -62,24 +62,24 @@ public class VertxWebsocketDevConsole extends AbstractDevConsole {
                         .filter(peer -> peer.getRawPath().equals(path))
                         .toList();
 
-                sb.append(String.format("\n            Connected Peers (%d): ", pathPeers.size()));
+                sb.append(String.format("%n            Connected Peers (%d): ", pathPeers.size()));
 
                 for (VertxWebsocketPeer peer : pathPeers) {
-                    sb.append(String.format("\n                ID: %s", peer.getConnectionKey()));
-                    sb.append(String.format("\n                Path: %s", peer.getPath()));
-                    sb.append(String.format("\n                Raw Path: %s", peer.getRawPath()));
+                    sb.append(String.format("%n                ID: %s", peer.getConnectionKey()));
+                    sb.append(String.format("%n                Path: %s", peer.getPath()));
+                    sb.append(String.format("%n                Raw Path: %s", peer.getRawPath()));
 
                     ServerWebSocket webSocket = peer.getWebSocket();
                     SocketAddress socketAddress = webSocket.localAddress();
                     String hostAddress = socketAddress == null ? "Unknown" : socketAddress.hostAddress();
-                    sb.append(String.format("\n                Host Address: %s", hostAddress));
+                    sb.append(String.format("%n                Host Address: %s", hostAddress));
 
                     if (webSocket.subProtocol() != null) {
-                        sb.append(String.format("\n                Sub Protocol: %s", webSocket.subProtocol()));
+                        sb.append(String.format("%n                Sub Protocol: %s", webSocket.subProtocol()));
                     }
 
                     if (includeHeaders) {
-                        sb.append(String.format("\n                Headers: %s", webSocket.headers().entries().stream()
+                        sb.append(String.format("%n                Headers: %s", webSocket.headers().entries().stream()
                                 .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(", "))));
                     }
                 }
