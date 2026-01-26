@@ -218,16 +218,16 @@ public class JsltEndpoint extends ResourceEndpoint {
         if (body instanceof WrappedFile) {
             body = ((WrappedFile<?>) body).getFile();
         }
-        if (body instanceof String) {
-            input = objectMapper.readTree((String) body);
-        } else if (body instanceof Reader) {
-            input = objectMapper.readTree((Reader) body);
-        } else if (body instanceof File) {
-            input = objectMapper.readTree((File) body);
-        } else if (body instanceof byte[]) {
-            input = objectMapper.readTree((byte[]) body);
-        } else if (body instanceof InputStream) {
-            input = objectMapper.readTree((InputStream) body);
+        if (body instanceof String string) {
+            input = objectMapper.readTree(string);
+        } else if (body instanceof Reader reader) {
+            input = objectMapper.readTree(reader);
+        } else if (body instanceof File file) {
+            input = objectMapper.readTree(file);
+        } else if (body instanceof byte[] byteArray) {
+            input = objectMapper.readTree(byteArray);
+        } else if (body instanceof InputStream inputstream) {
+            input = objectMapper.readTree(inputstream);
         } else {
             throw new ValidationException(exchange, "Allowed body types are String, Reader, File, byte[] or InputStream.");
         }
