@@ -80,8 +80,7 @@ public abstract class CsvMarshaller {
             throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
-            if (object instanceof Map) {
-                Map map = (Map) object;
+            if (object instanceof Map map) {
                 printer.printRecord(getMapRecordValues(map));
             } else {
                 Iterator it = ObjectHelper.createIterator(object);
