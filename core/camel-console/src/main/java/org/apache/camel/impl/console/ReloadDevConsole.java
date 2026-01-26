@@ -70,12 +70,12 @@ public class ReloadDevConsole extends AbstractDevConsole {
                     }
                 }
             } else {
-                sb.append(String.format("\nReloadStrategy: %s", r.getClass().getName()));
-                sb.append(String.format("\n    Reloaded: %s", r.getReloadCounter()));
-                sb.append(String.format("\n    Failed: %s", r.getFailedCounter()));
+                sb.append(String.format("%nReloadStrategy: %s", r.getClass().getName()));
+                sb.append(String.format("%n    Reloaded: %s", r.getReloadCounter()));
+                sb.append(String.format("%n    Failed: %s", r.getFailedCounter()));
                 Exception cause = r.getLastError();
                 if (cause != null) {
-                    sb.append(String.format("\n    Error Message: %s", cause.getMessage()));
+                    sb.append(String.format("%n    Error Message: %s", cause.getMessage()));
                     final String stackTrace = ExceptionHelper.stackTraceToString(cause);
                     sb.append("\n\n");
                     sb.append(stackTrace);

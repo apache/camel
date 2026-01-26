@@ -38,7 +38,7 @@ public class TaskRegistryDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         TaskManagerRegistry reg = PluginHelper.getTaskManagerRegistry(getCamelContext().getCamelContextExtension());
-        sb.append(String.format("\nTasks: %s", reg.getSize()));
+        sb.append(String.format("%nTasks: %s", reg.getSize()));
         int id = 0;
         for (Task task : reg.getTasks()) {
             String failure = task.getException() != null ? task.getException().getMessage() : "";

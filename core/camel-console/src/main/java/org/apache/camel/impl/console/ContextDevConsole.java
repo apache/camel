@@ -51,7 +51,7 @@ public class ContextDevConsole extends AbstractDevConsole {
                 getCamelContext().getStatus().name().toLowerCase(Locale.ROOT), getCamelContext().getName(),
                 profile, CamelContextHelper.getUptime(getCamelContext())));
         if (getCamelContext().getDescription() != null) {
-            sb.append(String.format("\n    %s", getCamelContext().getDescription()));
+            sb.append(String.format("%n    %s", getCamelContext().getDescription()));
         }
         sb.append("\n");
 
@@ -61,7 +61,7 @@ public class ContextDevConsole extends AbstractDevConsole {
             if (mb != null) {
                 int total = mb.getTotalRoutes();
                 int started = mb.getStartedRoutes();
-                sb.append(String.format("\n    Routes: %s (started: %s)", total, started));
+                sb.append(String.format("%n    Routes: %s (started: %s)", total, started));
 
                 int reloaded = 0;
                 int reloadedFailed = 0;
@@ -74,44 +74,44 @@ public class ContextDevConsole extends AbstractDevConsole {
                 String load5 = getLoad5(mb);
                 String load15 = getLoad15(mb);
                 if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                    sb.append(String.format("\n    Load Average: %s %s %s", load1, load5, load15));
+                    sb.append(String.format("%n    Load Average: %s %s %s", load1, load5, load15));
                 }
                 String thp = getThroughput(mb);
                 if (!thp.isEmpty()) {
-                    sb.append(String.format("\n    Messages/Sec: %s", thp));
+                    sb.append(String.format("%n    Messages/Sec: %s", thp));
                 }
-                sb.append(String.format("\n    Total: %s/%s", mb.getRemoteExchangesTotal(), mb.getExchangesTotal()));
-                sb.append(String.format("\n    Failed: %s/%s", mb.getRemoteExchangesFailed(), mb.getExchangesFailed()));
-                sb.append(String.format("\n    Inflight: %s/%s", mb.getRemoteExchangesInflight(), mb.getExchangesInflight()));
+                sb.append(String.format("%n    Total: %s/%s", mb.getRemoteExchangesTotal(), mb.getExchangesTotal()));
+                sb.append(String.format("%n    Failed: %s/%s", mb.getRemoteExchangesFailed(), mb.getExchangesFailed()));
+                sb.append(String.format("%n    Inflight: %s/%s", mb.getRemoteExchangesInflight(), mb.getExchangesInflight()));
                 long idle = mb.getIdleSince();
                 if (idle > 0) {
-                    sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
+                    sb.append(String.format("%n    Idle Since: %s", TimeUtils.printDuration(idle)));
                 } else {
-                    sb.append(String.format("\n    Idle Since: %s", ""));
+                    sb.append(String.format("%n    Idle Since: %s", ""));
                 }
-                sb.append(String.format("\n    Reloaded: %s/%s", reloaded, reloadedFailed));
-                sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
-                sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
-                sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
+                sb.append(String.format("%n    Reloaded: %s/%s", reloaded, reloadedFailed));
+                sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mb.getMeanProcessingTime(), true)));
+                sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mb.getMaxProcessingTime(), true)));
+                sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mb.getMinProcessingTime(), true)));
                 if (mb.getExchangesTotal() > 0) {
-                    sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mb.getLastProcessingTime(), true)));
+                    sb.append(String.format("%n    Last Time: %s", TimeUtils.printDuration(mb.getLastProcessingTime(), true)));
                     sb.append(
-                            String.format("\n    Delta Time: %s", TimeUtils.printDuration(mb.getDeltaProcessingTime(), true)));
+                            String.format("%n    Delta Time: %s", TimeUtils.printDuration(mb.getDeltaProcessingTime(), true)));
                 }
                 Date last = mb.getLastExchangeCreatedTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
-                    sb.append(String.format("\n    Since Last Started: %s", ago));
+                    sb.append(String.format("%n    Since Last Started: %s", ago));
                 }
                 last = mb.getLastExchangeCompletedTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
-                    sb.append(String.format("\n    Since Last Completed: %s", ago));
+                    sb.append(String.format("%n    Since Last Completed: %s", ago));
                 }
                 last = mb.getLastExchangeFailureTimestamp();
                 if (last != null) {
                     String ago = TimeUtils.printSince(last.getTime());
-                    sb.append(String.format("\n    Since Last Failed: %s", ago));
+                    sb.append(String.format("%n    Since Last Failed: %s", ago));
                 }
                 sb.append("\n");
             }

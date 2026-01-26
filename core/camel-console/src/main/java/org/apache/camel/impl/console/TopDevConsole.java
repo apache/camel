@@ -76,22 +76,22 @@ public class TopDevConsole extends AbstractDevConsole {
                         sb.append("\n");
                     }
                     sb.append(String.format("    Route Id: %s", mrb.getRouteId()));
-                    sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
+                    sb.append(String.format("%n    From: %s", mrb.getEndpointUri()));
                     if (mrb.getSourceLocation() != null) {
-                        sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                        sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
                     }
-                    sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
-                    sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
-                    sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
-                    sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
-                    sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
-                    sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
+                    sb.append(String.format("%n    Total: %s", mrb.getExchangesTotal()));
+                    sb.append(String.format("%n    Failed: %s", mrb.getExchangesFailed()));
+                    sb.append(String.format("%n    Inflight: %s", mrb.getExchangesInflight()));
+                    sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
+                    sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
+                    sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
                     sb.append(
-                            String.format("\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
+                            String.format("%n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
                     sb.append(
-                            String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
+                            String.format("%n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
                     sb.append(
-                            String.format("\n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
+                            String.format("%n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
                     sb.append("\n");
                     return null;
                 };
@@ -102,7 +102,7 @@ public class TopDevConsole extends AbstractDevConsole {
                         sb.append("\n");
                     }
                     sb.append(String.format("    Route Id: %s", mpb.getRouteId()));
-                    sb.append(String.format("\n    Processor Id: %s", mpb.getProcessorId()));
+                    sb.append(String.format("%n    Processor Id: %s", mpb.getProcessorId()));
                     String loc = mpb.getSourceLocation();
                     StringBuilder code = new StringBuilder();
                     if (loc != null && mpb.getSourceLineNumber() != null) {
@@ -119,7 +119,7 @@ public class TopDevConsole extends AbstractDevConsole {
                                         int high = line + 4;
                                         if (i >= low && i <= high) {
                                             String arrow = i == line ? "-->" : "   ";
-                                            code.append(String.format("\n        %s #%s %s", arrow, i, t));
+                                            code.append(String.format("%n        %s #%s %s", arrow, i, t));
                                         }
                                     }
                                 }
@@ -131,23 +131,23 @@ public class TopDevConsole extends AbstractDevConsole {
                         }
                     }
                     if (loc != null) {
-                        sb.append(String.format("\n    Source: %s", loc));
+                        sb.append(String.format("%n    Source: %s", loc));
                         if (!code.isEmpty()) {
                             sb.append(code);
                         }
                     }
-                    sb.append(String.format("\n    Total: %s", mpb.getExchangesTotal()));
-                    sb.append(String.format("\n    Failed: %s", mpb.getExchangesFailed()));
-                    sb.append(String.format("\n    Inflight: %s", mpb.getExchangesInflight()));
-                    sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mpb.getMeanProcessingTime(), true)));
-                    sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mpb.getMaxProcessingTime(), true)));
-                    sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mpb.getMinProcessingTime(), true)));
+                    sb.append(String.format("%n    Total: %s", mpb.getExchangesTotal()));
+                    sb.append(String.format("%n    Failed: %s", mpb.getExchangesFailed()));
+                    sb.append(String.format("%n    Inflight: %s", mpb.getExchangesInflight()));
+                    sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mpb.getMeanProcessingTime(), true)));
+                    sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mpb.getMaxProcessingTime(), true)));
+                    sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mpb.getMinProcessingTime(), true)));
                     sb.append(
-                            String.format("\n    Last Time: %s", TimeUtils.printDuration(mpb.getLastProcessingTime(), true)));
+                            String.format("%n    Last Time: %s", TimeUtils.printDuration(mpb.getLastProcessingTime(), true)));
                     sb.append(
-                            String.format("\n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
+                            String.format("%n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
                     sb.append(
-                            String.format("\n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
+                            String.format("%n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
                     sb.append("\n");
                     return null;
                 };

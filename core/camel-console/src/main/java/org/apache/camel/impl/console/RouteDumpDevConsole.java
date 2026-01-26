@@ -89,7 +89,7 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
             }
             sb.append(String.format("    Id: %s", mrb.getRouteId()));
             if (mrb.getSourceLocation() != null) {
-                sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
             }
             if (dump != null && !dump.isEmpty()) {
                 sb.append("\n\n");

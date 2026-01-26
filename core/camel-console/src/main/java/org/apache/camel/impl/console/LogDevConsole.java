@@ -45,7 +45,7 @@ public class LogDevConsole extends AbstractDevConsole {
         Map<String, String> levels = fetchLoggingLevels();
         if (!levels.isEmpty()) {
             sb.append("Logging Levels:\n");
-            levels.forEach((k, v) -> sb.append(String.format("\n    %s = %s", k, v)));
+            levels.forEach((k, v) -> sb.append(String.format("%n    %s = %s", k, v)));
         }
         sb.append("\n");
 

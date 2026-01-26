@@ -53,23 +53,23 @@ public class RestDevConsole extends AbstractDevConsole {
                 if (!sb.isEmpty()) {
                     sb.append("\n");
                 }
-                sb.append(String.format("\n    Url: %s", rs.getUrl()));
-                sb.append(String.format("\n    Method: %s", rs.getMethod()));
-                sb.append(String.format("\n    State: %s", rs.getState()));
+                sb.append(String.format("%n    Url: %s", rs.getUrl()));
+                sb.append(String.format("%n    Method: %s", rs.getMethod()));
+                sb.append(String.format("%n    State: %s", rs.getState()));
                 if (rs.getConsumes() != null) {
-                    sb.append(String.format("\n    Consumes: %s", rs.getConsumes()));
+                    sb.append(String.format("%n    Consumes: %s", rs.getConsumes()));
                 }
                 if (rs.getProduces() != null) {
-                    sb.append(String.format("\n    Produces: %s", rs.getProduces()));
+                    sb.append(String.format("%n    Produces: %s", rs.getProduces()));
                 }
                 if (rs.getInType() != null) {
-                    sb.append(String.format("\n    In Type: %s", rs.getInType()));
+                    sb.append(String.format("%n    In Type: %s", rs.getInType()));
                 }
                 if (rs.getOutType() != null) {
-                    sb.append(String.format("\n    Out Type: %s", rs.getOutType()));
+                    sb.append(String.format("%n    Out Type: %s", rs.getOutType()));
                 }
                 if (rs.getDescription() != null) {
-                    sb.append(String.format("\n    Description: %s", rs.getDescription()));
+                    sb.append(String.format("%n    Description: %s", rs.getDescription()));
                 }
             }
             sb.append("\n");

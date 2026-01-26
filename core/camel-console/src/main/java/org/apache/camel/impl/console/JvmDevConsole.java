@@ -52,11 +52,11 @@ public class JvmDevConsole extends AbstractDevConsole {
 
         RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
         if (mb != null) {
-            sb.append(String.format("Java Name: %s\n", mb.getVmName()));
-            sb.append(String.format("Java Version: %s\n", mb.getVmVersion()));
-            sb.append(String.format("Java Vendor: %s\n", mb.getVmVendor()));
-            sb.append(String.format("Uptime: %s\n", TimeUtils.printDuration(mb.getUptime())));
-            sb.append(String.format("PID: %s\n", mb.getPid()));
+            sb.append(String.format("Java Name: %s%n", mb.getVmName()));
+            sb.append(String.format("Java Version: %s%n", mb.getVmVersion()));
+            sb.append(String.format("Java Vendor: %s%n", mb.getVmVendor()));
+            sb.append(String.format("Uptime: %s%n", TimeUtils.printDuration(mb.getUptime())));
+            sb.append(String.format("PID: %s%n", mb.getPid()));
             if (!mb.getInputArguments().isEmpty()) {
                 sb.append("Input Arguments:");
                 String arg = String.join("\n    ", mb.getInputArguments());

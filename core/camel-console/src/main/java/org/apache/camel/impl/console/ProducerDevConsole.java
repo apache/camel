@@ -57,13 +57,13 @@ public class ProducerDevConsole extends AbstractDevConsole {
                         if (!sb.isEmpty()) {
                             sb.append("\n");
                         }
-                        sb.append(String.format("\n    Uri: %s", mp.getEndpointUri()));
-                        sb.append(String.format("\n    State: %s", mp.getState()));
-                        sb.append(String.format("\n    Class: %s", mp.getServiceType()));
-                        sb.append(String.format("\n    Remote: %b", mp.isRemoteEndpoint()));
-                        sb.append(String.format("\n    Singleton: %b", mp.isSingleton()));
+                        sb.append(String.format("%n    Uri: %s", mp.getEndpointUri()));
+                        sb.append(String.format("%n    State: %s", mp.getState()));
+                        sb.append(String.format("%n    Class: %s", mp.getServiceType()));
+                        sb.append(String.format("%n    Remote: %b", mp.isRemoteEndpoint()));
+                        sb.append(String.format("%n    Singleton: %b", mp.isSingleton()));
                         if (mp.getRouteId() != null) {
-                            sb.append(String.format("\n    Route Id: %s", mp.getRouteId()));
+                            sb.append(String.format("%n    Route Id: %s", mp.getRouteId()));
                         }
                     }
                 }

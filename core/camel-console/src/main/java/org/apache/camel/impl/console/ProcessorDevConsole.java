@@ -121,64 +121,64 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 return;
             }
             sb.append("\n");
-            sb.append(String.format("\n        Route Id: %s", mp.getRouteId()));
-            sb.append(String.format("\n        Id: %s", mp.getProcessorId()));
+            sb.append(String.format("%n        Route Id: %s", mp.getRouteId()));
+            sb.append(String.format("%n        Id: %s", mp.getProcessorId()));
             if (mp.getNodePrefixId() != null) {
-                sb.append(String.format("\n        Node Prefix Id: %s", mp.getNodePrefixId()));
+                sb.append(String.format("%n        Node Prefix Id: %s", mp.getNodePrefixId()));
             }
             if (mp.getDescription() != null) {
-                sb.append(String.format("\n        Description: %s", mp.getDescription()));
+                sb.append(String.format("%n        Description: %s", mp.getDescription()));
             }
             if (mp.getNote() != null) {
-                sb.append(String.format("\n        Note: %s", mp.getNote()));
+                sb.append(String.format("%n        Note: %s", mp.getNote()));
             }
-            sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
+            sb.append(String.format("%n        Processor: %s", mp.getProcessorName()));
             if (mp.getStepId() != null) {
-                sb.append(String.format("\n        Step Id: %s", mp.getStepId()));
+                sb.append(String.format("%n        Step Id: %s", mp.getStepId()));
             }
-            sb.append(String.format("\n        Level: %d", mp.getLevel()));
+            sb.append(String.format("%n        Level: %d", mp.getLevel()));
             if (mp.getSourceLocation() != null) {
                 String loc = mp.getSourceLocation();
                 if (mp.getSourceLineNumber() != null) {
                     loc += ":" + mp.getSourceLineNumber();
                 }
-                sb.append(String.format("\n        Source: %s", loc));
+                sb.append(String.format("%n        Source: %s", loc));
             }
 
             // processors which can send to a destination (such as to/toD/poll etc)
             String destination = getDestination(camelContext, mp);
             if (destination != null) {
-                sb.append(String.format("\n        Uri: %s", destination));
+                sb.append(String.format("%n        Uri: %s", destination));
             }
 
-            sb.append(String.format("\n        State: %s", mp.getState()));
-            sb.append(String.format("\n        Disabled: %s", mp.getDisabled()));
-            sb.append(String.format("\n        Total: %s", mp.getExchangesTotal()));
-            sb.append(String.format("\n        Failed: %s", mp.getExchangesFailed()));
-            sb.append(String.format("\n        Inflight: %s", mp.getExchangesInflight()));
+            sb.append(String.format("%n        State: %s", mp.getState()));
+            sb.append(String.format("%n        Disabled: %s", mp.getDisabled()));
+            sb.append(String.format("%n        Total: %s", mp.getExchangesTotal()));
+            sb.append(String.format("%n        Failed: %s", mp.getExchangesFailed()));
+            sb.append(String.format("%n        Inflight: %s", mp.getExchangesInflight()));
             long idle = mp.getIdleSince();
             if (idle > 0) {
-                sb.append(String.format("\n        Idle Since: %s", TimeUtils.printDuration(idle)));
+                sb.append(String.format("%n        Idle Since: %s", TimeUtils.printDuration(idle)));
             } else {
-                sb.append(String.format("\n        Idle Since: %s", ""));
+                sb.append(String.format("%n        Idle Since: %s", ""));
             }
-            sb.append(String.format("\n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
-            sb.append(String.format("\n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
-            sb.append(String.format("\n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
+            sb.append(String.format("%n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
+            sb.append(String.format("%n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
+            sb.append(String.format("%n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
             if (mp.getExchangesTotal() > 0) {
-                sb.append(String.format("\n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
+                sb.append(String.format("%n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
                 sb.append(
-                        String.format("\n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
+                        String.format("%n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
             }
             Date last = mp.getLastExchangeCompletedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n        Since Last Completed: %s", ago));
+                sb.append(String.format("%n        Since Last Completed: %s", ago));
             }
             last = mp.getLastExchangeFailureTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n        Since Last Failed: %s", ago));
+                sb.append(String.format("%n        Since Last Failed: %s", ago));
             }
         }
     }
