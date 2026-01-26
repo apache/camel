@@ -83,8 +83,8 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         try {
             Map<String, Object> row = new LinkedHashMap<>();
             for (Column column : columns) {
-                if (useGetBytes && column instanceof BlobColumn) {
-                    row.put(column.getName(), ((BlobColumn) column).getBytes(resultSet));
+                if (useGetBytes && column instanceof BlobColumn blobcolumn) {
+                    row.put(column.getName(), blobcolumn.getBytes(resultSet));
                 } else {
                     row.put(column.getName(), column.getValue(resultSet));
                 }
