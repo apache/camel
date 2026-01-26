@@ -41,8 +41,9 @@ public final class MongoDbConstants {
               javaType = "Integer")
     public static final String NUM_TO_SKIP = "CamelMongoDbNumToSkip";
     public static final String INSERT_RECORDS_AFFECTED = "CamelMongoDbInsertRecordsAffected";
-    @Metadata(label = "producer update", description = "If the update should be applied to all objects matching. See\n" +
-                                                       "http://www.mongodb.org/display/DOCS/Atomic+Operations[Atomic Operations]",
+    @Metadata(label = "producer update", description = """
+            If the update should be applied to all objects matching. See
+            http://www.mongodb.org/display/DOCS/Atomic+Operations[Atomic Operations]""",
               javaType = "Boolean")
     public static final String MULTIUPDATE = "CamelMongoDbMultiUpdate";
     @Metadata(label = "producer update", description = "If the database should create the element if it does not exist",
@@ -71,32 +72,37 @@ public final class MongoDbConstants {
     @Metadata(label = "producer", description = "The specified field name fow which we want to get the distinct values.",
               javaType = "String")
     public static final String DISTINCT_QUERY_FIELD = "CamelMongoDbDistinctQueryField";
-    @Metadata(label = "producer findAll aggregate", description = "Sets allowDiskUse MongoDB flag.\n" +
-                                                                  "This is supported since MongoDB Server 4.3.1. Using this header with older MongoDB Server version can cause query to fail.",
+    @Metadata(label = "producer findAll aggregate",
+              description = """
+                      Sets allowDiskUse MongoDB flag.
+                      This is supported since MongoDB Server 4.3.1. Using this header with older MongoDB Server version can cause query to fail.""",
               javaType = "Boolean")
     public static final String ALLOW_DISK_USE = "CamelMongoDbAllowDiskUse";
     @Metadata(label = "producer bulkWrite", description = "Perform an ordered or unordered operation execution. ",
               javaType = "Boolean", defaultValue = "TRUE")
     public static final String BULK_ORDERED = "CamelMongoDbBulkOrdered";
     @Metadata(label = "consumer changeStreams",
-              description = "A document that contains the _id of the document created or modified by the insert,\n" +
-                            "replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for\n"
-                            +
-                            "the document. The _id field is not repeated if it is already a part of the shard key.",
+              description = """
+                      A document that contains the _id of the document created or modified by the insert,
+                      replace, delete, update operations (i.e. CRUD operations). For sharded collections, also displays the full shard key for
+                      the document. The _id field is not repeated if it is already a part of the shard key.""",
               javaType = "org.bson.types.ObjectId")
     public static final String MONGO_ID = "_id"; // default id field
-    @Metadata(label = "consumer changeStreams", description = "The type of operation that occurred. Can\n" +
-                                                              "be any of the following values: insert, delete, replace, update, drop, rename, dropDatabase, invalidate.",
+    @Metadata(label = "consumer changeStreams", description = """
+            The type of operation that occurred. Can
+            be any of the following values: insert, delete, replace, update, drop, rename, dropDatabase, invalidate.""",
               javaType = "String")
     public static final String STREAM_OPERATION_TYPE = "CamelMongoDbStreamOperationType";
 
-    @Metadata(label = "producer update one and return", description = "Indicates which document to return,\n" +
-                                                                      "the document before or after an update and return atomic operation.",
+    @Metadata(label = "producer update one and return", description = """
+            Indicates which document to return,
+            the document before or after an update and return atomic operation.""",
               javaType = "com.mongodb.client.model.ReturnDocument")
     public static final String RETURN_DOCUMENT = "CamelMongoDbReturnDocumentType";
 
-    @Metadata(label = "producer update one and options", description = "Options to use.\n" +
-                                                                       "When set, options set in the headers will be ignored.",
+    @Metadata(label = "producer update one and options", description = """
+            Options to use.
+            When set, options set in the headers will be ignored.""",
               javaType = "Object")
     public static final String OPTIONS = "CamelMongoDbOperationOption";
 
