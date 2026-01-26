@@ -29,31 +29,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CompressedEntityTest {
 
-    public static final String TEXT_PLAIN_CONTENT = "MDN for -\r\n"
-                                                    + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                    + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-                                                    + "  To: \"0123456780000\""
-                                                    + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
-                                                    + " Status: processed\r\n"
-                                                    + " Comment: This is not a guarantee that the message has\r\n"
-                                                    + "  been completely processed or &understood by the receiving\r\n"
-                                                    + "  translator\r\n"
-                                                    + "\r\n";
+    public static final String TEXT_PLAIN_CONTENT = """
+            MDN for -\r
+             Message ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+              From: "\\"  as2Name  \\""\r
+              To: "0123456780000"  Received on: 2002-07-31 at 09:34:14 (EDT)\r
+             Status: processed\r
+             Comment: This is not a guarantee that the message has\r
+              been completely processed or &understood by the receiving\r
+              translator\r
+            \r
+            """;
 
     public static final String TEXT_PLAIN_CONTENT_CHARSET_NAME = "US-ASCII";
 
     public static final String TEXT_PLAIN_CONTENT_TRANSFER_ENCODING = "7bit";
 
-    public static final String EXPECTED_TEXT_PLAIN_CONTENT = "MDN for -\r\n"
-                                                             + " Message ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                             + "  From: \"\\\"  as2Name  \\\"\"\r\n"
-                                                             + "  To: \"0123456780000\""
-                                                             + "  Received on: 2002-07-31 at 09:34:14 (EDT)\r\n"
-                                                             + " Status: processed\r\n"
-                                                             + " Comment: This is not a guarantee that the message has\r\n"
-                                                             + "  been completely processed or &understood by the receiving\r\n"
-                                                             + "  translator\r\n"
-                                                             + "\r\n";
+    public static final String EXPECTED_TEXT_PLAIN_CONTENT = """
+            MDN for -\r
+             Message ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+              From: "\\"  as2Name  \\""\r
+              To: "0123456780000"  Received on: 2002-07-31 at 09:34:14 (EDT)\r
+             Status: processed\r
+             Comment: This is not a guarantee that the message has\r
+              been completely processed or &understood by the receiving\r
+              translator\r
+            \r
+            """;
 
     public static final String APPLICATION_PKCS7_MIME_COMPRESSED_TRANSFER_ENCODING = "base64";
 
