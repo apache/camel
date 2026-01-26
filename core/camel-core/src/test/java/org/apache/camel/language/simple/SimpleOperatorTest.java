@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Registry;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -858,6 +859,41 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${body} ?: 'World'", "World");
         exchange.getIn().setBody(1);
         assertExpression("${body} ?: 'World'", 1);
+    }
+
+    @Test
+    public void testTernary() {
+        exchange.getIn().setBody(false);
+        assertPredicate("${body == true ? 'true' : 'false'}", false);
+        assertPredicate("${body == true ? 'false' : 'true'}", true);
+        exchange.getIn().setBody("Hello");
+        assertPredicate("${body != null ? 'true' : 'false'}", true);
+        assertPredicate("${body != null ? 'false' : 'true'}", false);
+        exchange.getIn().setBody(0);
+        assertPredicate("${body == 0 ? 'true' : 'false'}", true);
+        assertPredicate("${body == 0 ? 'false' : 'true'}", false);
+        exchange.getIn().setBody(1);
+        assertPredicate("${body > 0 ? 'true' : 'false'}", true);
+        assertPredicate("${body > 0 ? 'false' : 'true'}", false);
+
+        exchange.getIn().setBody(null);
+        assertExpression("${body != null ? 'A' : 'B'}", "B");
+        exchange.getIn().setBody("");
+        assertExpression("${body == '' ? 'A' : 'B'}", "A");
+        exchange.getIn().setBody("Hello");
+        assertExpression("${body != 'Hello' ? 'A' : 'B'}", "B");
+        exchange.getIn().setBody(false);
+        assertExpression("${body == true ? 'A' : 'B'}", "B");
+        exchange.getIn().setBody(false);
+        assertExpression("${body != true ? 'A' : 'B'}", "A");
+    }
+
+    @Test
+    @Disabled("TODO: CAMEL-22904")
+    public void testTernaryLog() {
+        exchange.getIn().setBody("Hello World");
+        assertExpression(">>> Message received from WebSocket Client : ${body}",
+                ">>> Message received from WebSocket Client : Hello World");
     }
 
     @Override
