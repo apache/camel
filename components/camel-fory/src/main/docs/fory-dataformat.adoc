@@ -4,7 +4,7 @@
 :artifactid: camel-fory
 :description: Serialize and deserialize messages using Apache Fory
 :since: 4.9
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: fory 

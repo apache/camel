@@ -33,7 +33,6 @@
 
     <properties>
         <skipTests.s390x>true</skipTests.s390x>
-        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencies>
