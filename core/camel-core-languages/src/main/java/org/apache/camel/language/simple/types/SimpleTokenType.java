@@ -180,6 +180,20 @@ public final class SimpleTokenType {
         return type == TokenType.ternaryOperator;
     }
 
+    /**
+     * Whether the type is ternary start operator (?)
+     */
+    public boolean isTernaryStart() {
+        return type == TokenType.ternaryOperator && "?".equals(value);
+    }
+
+    /**
+     * Whether the type is ternary start operator (:)
+     */
+    public boolean isTernaryEnd() {
+        return type == TokenType.ternaryOperator && ":".equals(value);
+    }
+
     @Override
     public String toString() {
         return value;

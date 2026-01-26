@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Registry;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -889,7 +888,6 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
-    @Disabled("TODO: CAMEL-22904")
     public void testTernaryLog() {
         exchange.getIn().setBody("Hello World");
         assertExpression(">>> Message received from WebSocket Client : ${body}",

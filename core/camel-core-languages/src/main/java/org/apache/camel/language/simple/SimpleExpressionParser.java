@@ -238,6 +238,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
 
         // counter to keep track of number of functions in the tokens
         AtomicInteger functions = new AtomicInteger();
+        AtomicInteger ternary = new AtomicInteger();
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
@@ -247,7 +248,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             }
 
             // create a node from the token
-            SimpleNode node = createNode(token, functions);
+            SimpleNode node = createNode(token, functions, ternary);
             if (node != null) {
                 // a new token was created so the current image token need to be added first
                 if (imageToken != null) {
@@ -274,14 +275,14 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
     }
 
-    private SimpleNode createNode(SimpleToken token, AtomicInteger functions) {
+    private SimpleNode createNode(SimpleToken token, AtomicInteger functions, AtomicInteger ternary) {
         // expression only support functions, unary operators, ternary operators, and other operators
         if (token.getType().isFunctionStart()) {
             // starting a new function
             functions.incrementAndGet();
             return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
         } else if (functions.get() > 0 && token.getType().isFunctionEnd()) {
-            // there must be a start function already, to let this be a end function
+            // there must be a start function already, to let this be an end function
             functions.decrementAndGet();
             return new SimpleFunctionEnd(token);
         } else if (token.getType().isUnary()) {
@@ -289,7 +290,13 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             if (!nodes.isEmpty() && nodes.get(nodes.size() - 1) instanceof SimpleFunctionEnd) {
                 return new UnaryExpression(token);
             }
-        } else if (token.getType().isTernary()) {
+        } else if (token.getType().isTernaryStart()) {
+            // starting a new ternary
+            ternary.incrementAndGet();
+            return new TernaryExpression(token);
+        } else if (ternary.get() > 0 && token.getType().isTernaryEnd()) {
+            // there must be a start ternary already, to let this be an end ternary
+            ternary.decrementAndGet();
             return new TernaryExpression(token);
         } else if (token.getType().isOther()) {
             return new OtherExpression(token);
