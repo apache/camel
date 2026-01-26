@@ -41,12 +41,12 @@ public final class WebhookUtils {
         RestConsumerFactory factory = null;
         if (configuration.getWebhookComponentName() != null) {
             Object comp = context.getRegistry().lookupByName(configuration.getWebhookComponentName());
-            if (comp instanceof RestConsumerFactory) {
-                factory = (RestConsumerFactory) comp;
+            if (comp instanceof RestConsumerFactory restconsumerfactory4) {
+                factory = restconsumerfactory4;
             } else {
                 comp = context.getComponent(configuration.getWebhookComponentName());
-                if (comp instanceof RestConsumerFactory) {
-                    factory = (RestConsumerFactory) comp;
+                if (comp instanceof RestConsumerFactory restconsumerfactory3) {
+                    factory = restconsumerfactory3;
                 }
             }
 
@@ -64,8 +64,8 @@ public final class WebhookUtils {
         if (factory == null) {
             for (String name : context.getComponentNames()) {
                 Component comp = context.getComponent(name);
-                if (comp instanceof RestConsumerFactory) {
-                    factory = (RestConsumerFactory) comp;
+                if (comp instanceof RestConsumerFactory restconsumerfactory2) {
+                    factory = restconsumerfactory2;
                     break;
                 }
             }
@@ -85,9 +85,9 @@ public final class WebhookUtils {
             RestConsumerFactory found = null;
             for (String name : DEFAULT_REST_CONSUMER_COMPONENTS) {
                 Object comp = context.getComponent(name, true);
-                if (comp instanceof RestConsumerFactory) {
+                if (comp instanceof RestConsumerFactory restconsumerfactory) {
                     if (found == null) {
-                        found = (RestConsumerFactory) comp;
+                        found = restconsumerfactory;
                     } else {
                         throw new IllegalArgumentException(
                                 "Multiple RestConsumerFactory found on classpath. Configure explicit which component to use");

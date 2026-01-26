@@ -35,8 +35,7 @@ class WebhookRoutePolicy extends RoutePolicySupport {
         super.onInit(route);
         route.setAutoStartup(false);
 
-        if (route.getEndpoint() instanceof WebhookEndpoint) {
-            WebhookEndpoint webhook = (WebhookEndpoint) route.getEndpoint();
+        if (route.getEndpoint() instanceof WebhookEndpoint webhook) {
             if (webhook.getConfiguration() != null && webhook.getConfiguration().isWebhookAutoRegister()) {
                 throw new IllegalStateException(
                         "Webhook auto-register is enabled on endpoint " + webhook
