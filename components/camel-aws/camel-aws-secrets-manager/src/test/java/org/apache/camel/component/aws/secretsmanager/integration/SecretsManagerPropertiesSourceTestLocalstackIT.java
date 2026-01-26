@@ -39,31 +39,34 @@ public class SecretsManagerPropertiesSourceTestLocalstackIT extends AwsSecretsMa
         // Json multifield Secret
         builder = CreateSecretRequest.builder();
         builder.name("testJson");
-        builder.secretString("{\n" +
-                             "  \"username\": \"admin\",\n" +
-                             "  \"password\": \"password\",\n" +
-                             "  \"host\": \"myhost.com\"\n" +
-                             "}");
+        builder.secretString("""
+                {
+                  "username": "admin",
+                  "password": "password",
+                  "host": "myhost.com"
+                }""");
         getSecretManagerClient().createSecret(builder.build());
 
         // Json multifield Secret
         builder = CreateSecretRequest.builder();
         builder.name("testJsonVersioned");
-        builder.secretString("{\n" +
-                             "  \"username\": \"admin\",\n" +
-                             "  \"password\": \"password\",\n" +
-                             "  \"host\": \"myhost.com\"\n" +
-                             "}");
+        builder.secretString("""
+                {
+                  "username": "admin",
+                  "password": "password",
+                  "host": "myhost.com"
+                }""");
         getSecretManagerClient().createSecret(builder.build());
 
         // Json versioned multifield Secret
         PutSecretValueRequest.Builder builderPutSecValue = PutSecretValueRequest.builder();
         builderPutSecValue.secretId("testJsonVersioned");
-        builderPutSecValue.secretString("{\n" +
-                                        "  \"username\": \"admin\",\n" +
-                                        "  \"password\": \"admin123\",\n" +
-                                        "  \"host\": \"myhost.com\"\n" +
-                                        "}");
+        builderPutSecValue.secretString("""
+                {
+                  "username": "admin",
+                  "password": "admin123",
+                  "host": "myhost.com"
+                }""");
         PutSecretValueResponse resp = getSecretManagerClient().putSecretValue(builderPutSecValue.build());
         secretVersion = resp.versionId();
     }
