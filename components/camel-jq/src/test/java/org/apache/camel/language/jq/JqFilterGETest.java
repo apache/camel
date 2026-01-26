@@ -55,20 +55,23 @@ public class JqFilterGETest extends JqTestSupport {
 
     @Test
     public void testFilterStringPayload() throws Exception {
-        String b0 = "{\n"
-                    + "    \"branch\": \"BRANCH0\",\n"
-                    + "    \"amount\": 1234\n"
-                    + "}";
+        String b0 = """
+                {
+                    "branch": "BRANCH0",
+                    "amount": 1234
+                }""";
 
-        String b1 = "{\n"
-                    + "    \"branch\": \"BRANCH1\",\n"
-                    + "    \"amount\": 499\n"
-                    + "}";
+        String b1 = """
+                {
+                    "branch": "BRANCH1",
+                    "amount": 499
+                }""";
 
-        String b2 = "{\n"
-                    + "    \"branch\": \"BRANCH2\",\n"
-                    + "    \"amount\": 4444\n"
-                    + "}";
+        String b2 = """
+                {
+                    "branch": "BRANCH2",
+                    "amount": 4444
+                }""";
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:result").message(0).body().isEqualTo(b0);
