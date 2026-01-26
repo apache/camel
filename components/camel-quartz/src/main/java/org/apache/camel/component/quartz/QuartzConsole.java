@@ -44,71 +44,71 @@ public class QuartzConsole extends AbstractDevConsole {
         if (quartz != null) {
             Scheduler scheduler = quartz.getScheduler();
             try {
-                sb.append(String.format("    Scheduler Name: %s\n", scheduler.getSchedulerName()));
-                sb.append(String.format("    Scheduler Id: %s\n", scheduler.getSchedulerInstanceId()));
+                sb.append(String.format("    Scheduler Name: %s%n", scheduler.getSchedulerName()));
+                sb.append(String.format("    Scheduler Id: %s%n", scheduler.getSchedulerInstanceId()));
                 SchedulerMetaData meta = scheduler.getMetaData();
                 if (meta != null) {
-                    sb.append(String.format("    Quartz Version: %s\n", meta.getVersion()));
+                    sb.append(String.format("    Quartz Version: %s%n", meta.getVersion()));
                     String since = SimpleDateFormat.getDateTimeInstance().format(meta.getRunningSince());
-                    sb.append(String.format("    Running Since: %s\n", since));
-                    sb.append(String.format("    Total Counter: %s\n", meta.getNumberOfJobsExecuted()));
-                    sb.append(String.format("    Started: %s\n", meta.isStarted()));
-                    sb.append(String.format("    Shutdown: %s\n", meta.isShutdown()));
-                    sb.append(String.format("    In Standby Mode: %s\n", meta.isInStandbyMode()));
-                    sb.append(String.format("    Thread Pool Class: %s\n", meta.getThreadPoolClass().getName()));
-                    sb.append(String.format("    Thread Pool Size: %d\n", meta.getThreadPoolSize()));
-                    sb.append(String.format("    Job Store Class: %s\n", meta.getJobStoreClass().getName()));
-                    sb.append(String.format("    Job Store Clustered: %s\n", meta.isJobStoreClustered()));
-                    sb.append(String.format("    Job Store Supports Persistence: %s\n", meta.isJobStoreSupportsPersistence()));
+                    sb.append(String.format("    Running Since: %s%n", since));
+                    sb.append(String.format("    Total Counter: %s%n", meta.getNumberOfJobsExecuted()));
+                    sb.append(String.format("    Started: %s%n", meta.isStarted()));
+                    sb.append(String.format("    Shutdown: %s%n", meta.isShutdown()));
+                    sb.append(String.format("    In Standby Mode: %s%n", meta.isInStandbyMode()));
+                    sb.append(String.format("    Thread Pool Class: %s%n", meta.getThreadPoolClass().getName()));
+                    sb.append(String.format("    Thread Pool Size: %d%n", meta.getThreadPoolSize()));
+                    sb.append(String.format("    Job Store Class: %s%n", meta.getJobStoreClass().getName()));
+                    sb.append(String.format("    Job Store Clustered: %s%n", meta.isJobStoreClustered()));
+                    sb.append(String.format("    Job Store Supports Persistence: %s%n", meta.isJobStoreSupportsPersistence()));
                 }
 
                 List<JobExecutionContext> jobs = scheduler.getCurrentlyExecutingJobs();
-                sb.append(String.format("    Currently Executing Jobs: %d\n", jobs.size()));
+                sb.append(String.format("    Currently Executing Jobs: %d%n", jobs.size()));
                 if (!jobs.isEmpty()) {
                     sb.append("\n");
                     sb.append("Jobs:\n");
                     sb.append("\n");
                     for (JobExecutionContext job : jobs) {
-                        sb.append(String.format("        Job Id: %s\n", job.getFireInstanceId()));
+                        sb.append(String.format("        Job Id: %s%n", job.getFireInstanceId()));
 
                         String type = (String) job.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE);
-                        sb.append(String.format("        Trigger Type: %s\n", type));
+                        sb.append(String.format("        Trigger Type: %s%n", type));
                         String cron = (String) job.getJobDetail().getJobDataMap()
                                 .get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION);
                         if (cron != null) {
-                            sb.append(String.format("        Cron: %s\n", cron));
+                            sb.append(String.format("        Cron: %s%n", cron));
                         }
                         String routeId = (String) job.getJobDetail().getJobDataMap().get("routeId");
                         if (routeId != null) {
-                            sb.append(String.format("        Route Id: %s\n", routeId));
+                            sb.append(String.format("        Route Id: %s%n", routeId));
                         }
                         String uri = (String) job.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT_URI);
                         if (cron != null) {
-                            sb.append(String.format("        Endpoint Uri: %s\n", uri));
+                            sb.append(String.format("        Endpoint Uri: %s%n", uri));
                         }
                         Date d = job.getTrigger().getPreviousFireTime();
                         if (d != null) {
-                            sb.append(String.format("        Prev Fire Time: %s\n",
+                            sb.append(String.format("        Prev Fire Time: %s%n",
                                     SimpleDateFormat.getDateTimeInstance().format(d)));
                         }
                         d = job.getFireTime();
                         if (d != null) {
                             sb.append(
-                                    String.format("        Fire Time: %s\n", SimpleDateFormat.getDateTimeInstance().format(d)));
+                                    String.format("        Fire Time: %s%n", SimpleDateFormat.getDateTimeInstance().format(d)));
                         }
                         d = job.getTrigger().getNextFireTime();
                         if (d != null) {
-                            sb.append(String.format("        Next Fire Time: %s\n",
+                            sb.append(String.format("        Next Fire Time: %s%n",
                                     SimpleDateFormat.getDateTimeInstance().format(d)));
                         }
                         d = job.getTrigger().getFinalFireTime();
                         if (d != null) {
-                            sb.append(String.format("        Final Fire Time: %s\n",
+                            sb.append(String.format("        Final Fire Time: %s%n",
                                     SimpleDateFormat.getDateTimeInstance().format(d)));
                         }
-                        sb.append(String.format("        Recovering: %s\n", job.isRecovering()));
-                        sb.append(String.format("        Refire Count: %s\n", job.getRefireCount()));
-                        sb.append(String.format("        Misfire Instruction: %s\n", job.getTrigger().getMisfireInstruction()));
+                        sb.append(String.format("        Recovering: %s%n", job.isRecovering()));
+                        sb.append(String.format("        Refire Count: %s%n", job.getRefireCount()));
+                        sb.append(String.format("        Misfire Instruction: %s%n", job.getTrigger().getMisfireInstruction()));
 
                         sb.append("\n");
                     }
