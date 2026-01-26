@@ -719,8 +719,7 @@ public class JmsConfiguration implements Cloneable {
     public JmsOperations createInOutTemplate(
             JmsEndpoint endpoint, boolean pubSubDomain, String destination, long requestTimeout) {
         JmsOperations answer = createInOnlyTemplate(endpoint, pubSubDomain, destination);
-        if (answer instanceof JmsTemplate && requestTimeout > 0) {
-            JmsTemplate jmsTemplate = (JmsTemplate) answer;
+        if (answer instanceof JmsTemplate jmsTemplate && requestTimeout > 0) {
             jmsTemplate.setExplicitQosEnabled(true);
 
             // prefer to use timeToLive over requestTimeout if both specified
