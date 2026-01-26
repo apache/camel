@@ -61,7 +61,7 @@ public class MicrometerConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         MeterRegistry mr = lookupMeterRegistry();
-        sb.append(String.format("MeterRegistry: %s\n\n", mr.getClass().getName()));
+        sb.append(String.format("MeterRegistry: %s%n%n", mr.getClass().getName()));
 
         List<Meter> meters = mr.getMeters()
                 .stream()
@@ -82,7 +82,7 @@ public class MicrometerConsole extends AbstractDevConsole {
                 if (cnt.endsWith(".0") || cnt.endsWith(",0")) {
                     cnt = cnt.substring(0, cnt.length() - 2);
                 }
-                sb.append(String.format("    %s: %s\n", name, cnt));
+                sb.append(String.format("    %s: %s%n", name, cnt));
                 if (tags) {
                     addTags(sb, c.getId());
                 }
@@ -98,7 +98,7 @@ public class MicrometerConsole extends AbstractDevConsole {
                 i++;
                 String name = g.getId().getName();
                 double cnt = g.value();
-                sb.append(String.format("    %s: %s\n", name, cnt));
+                sb.append(String.format("    %s: %s%n", name, cnt));
                 if (tags) {
                     addTags(sb, g.getId());
                 }
@@ -117,7 +117,7 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long mean = Math.round(t.mean(TimeUnit.MILLISECONDS));
                 long max = Math.round(t.max(TimeUnit.MILLISECONDS));
                 long total = Math.round(t.totalTime(TimeUnit.MILLISECONDS));
-                sb.append(String.format("    %s: %d (total: %dms mean: %dms max: %dms)\n", name, count, total, mean, max));
+                sb.append(String.format("    %s: %d (total: %dms mean: %dms max: %dms)%n", name, count, total, mean, max));
                 if (tags) {
                     addTags(sb, t.getId());
                 }
@@ -137,7 +137,7 @@ public class MicrometerConsole extends AbstractDevConsole {
                 long max = Math.round(t.max(TimeUnit.MILLISECONDS));
                 long duration = Math.round(t.duration(TimeUnit.MILLISECONDS));
                 sb.append(
-                        String.format("    %s: %d (duration: %dms mean: %dms max: %dms)\n", name, tasks, duration, mean, max));
+                        String.format("    %s: %d (duration: %dms mean: %dms max: %dms)%n", name, tasks, duration, mean, max));
                 if (tags) {
                     addTags(sb, t.getId());
                 }
@@ -156,7 +156,7 @@ public class MicrometerConsole extends AbstractDevConsole {
                 double mean = d.mean();
                 double max = d.max();
                 double total = d.totalAmount();
-                sb.append(String.format("    %s: %d (total: %f mean: %f max: %f)\n", name, count, total, mean, max));
+                sb.append(String.format("    %s: %d (total: %f mean: %f max: %f)%n", name, count, total, mean, max));
                 if (tags) {
                     addTags(sb, d.getId());
                 }
@@ -172,7 +172,7 @@ public class MicrometerConsole extends AbstractDevConsole {
             sj.add(tag.getKey() + "=" + tag.getValue());
         }
         if (sj.length() > 0) {
-            sb.append(String.format("        %s\n", sj));
+            sb.append(String.format("        %s%n", sj));
         }
     }
 
