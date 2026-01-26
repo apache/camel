@@ -24,8 +24,6 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AllowUnmarshallType", boolean.class);
         map.put("CollectionType", java.lang.Class.class);
-        map.put("DisableFeatures", java.lang.String.class);
-        map.put("EnableFeatures", java.lang.String.class);
         map.put("ObjectMapper", com.fasterxml.jackson.databind.ObjectMapper.class);
         map.put("PrettyPrint", boolean.class);
         map.put("UnmarshalType", java.lang.Class.class);
@@ -42,10 +40,6 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         case "allowUnmarshallType": target.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "collectiontype":
         case "collectionType": target.setCollectionType(property(camelContext, java.lang.Class.class, value)); return true;
-        case "disablefeatures":
-        case "disableFeatures": target.setDisableFeatures(property(camelContext, java.lang.String.class, value)); return true;
-        case "enablefeatures":
-        case "enableFeatures": target.setEnableFeatures(property(camelContext, java.lang.String.class, value)); return true;
         case "objectmapper":
         case "objectMapper": target.setObjectMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
         case "prettyprint":
@@ -72,10 +66,6 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         case "allowUnmarshallType": return boolean.class;
         case "collectiontype":
         case "collectionType": return java.lang.Class.class;
-        case "disablefeatures":
-        case "disableFeatures": return java.lang.String.class;
-        case "enablefeatures":
-        case "enableFeatures": return java.lang.String.class;
         case "objectmapper":
         case "objectMapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
         case "prettyprint":
@@ -98,10 +88,6 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
         case "allowUnmarshallType": return target.isAllowUnmarshallType();
         case "collectiontype":
         case "collectionType": return target.getCollectionType();
-        case "disablefeatures":
-        case "disableFeatures": return target.getDisableFeatures();
-        case "enablefeatures":
-        case "enableFeatures": return target.getEnableFeatures();
         case "objectmapper":
         case "objectMapper": return target.getObjectMapper();
         case "prettyprint":

@@ -9915,30 +9915,6 @@ To enable pretty printing output nicely formatted. Is by default false. Default 
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="enableFeatures" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="disableFeatures" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

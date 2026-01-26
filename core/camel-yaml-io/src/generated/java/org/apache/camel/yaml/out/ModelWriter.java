@@ -2812,9 +2812,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("objectMapper", def.getObjectMapper(), null);
         doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
         doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
-        doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
         doWriteAttribute("useList", def.getUseList(), "false");
-        doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
         endElement(name);
     }
     protected void doWritePGPDataFormat(String name, PGPDataFormat def) throws IOException {

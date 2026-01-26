@@ -32,12 +32,12 @@ public class OcsfDataFormatReifier extends DataFormatReifier<OcsfDataFormat> {
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         // must be a reference value
         properties.put("objectMapper", asRef(definition.getObjectMapper()));
+        properties.put("useDefaultObjectMapper", definition.getUseDefaultObjectMapper());
         properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
         properties.put("useList", definition.getUseList());
+        properties.put("allowUnmarshallType", definition.getAllowUnmarshallType());
         properties.put("prettyPrint", definition.getPrettyPrint());
-        properties.put("enableFeatures", definition.getEnableFeatures());
-        properties.put("disableFeatures", definition.getDisableFeatures());
     }
 
 }

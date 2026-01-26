@@ -2090,8 +2090,6 @@ public class ModelParser extends BaseParser {
         return doParse(new OcsfDataFormat(), (def, key, val) -> switch (key) {
                 case "allowUnmarshallType": def.setAllowUnmarshallType(val); yield true;
                 case "collectionType": def.setCollectionTypeName(val); yield true;
-                case "disableFeatures": def.setDisableFeatures(val); yield true;
-                case "enableFeatures": def.setEnableFeatures(val); yield true;
                 case "objectMapper": def.setObjectMapper(val); yield true;
                 case "prettyPrint": def.setPrettyPrint(val); yield true;
                 case "unmarshalType": def.setUnmarshalTypeName(val); yield true;

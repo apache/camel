@@ -12425,16 +12425,6 @@
             "title" : "Collection Type",
             "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default."
           },
-          "disableFeatures" : {
-            "type" : "string",
-            "title" : "Disable Features",
-            "description" : "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
-          },
-          "enableFeatures" : {
-            "type" : "string",
-            "title" : "Enable Features",
-            "description" : "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature, com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma"
-          },
           "id" : {
             "type" : "string",
             "title" : "Id",
