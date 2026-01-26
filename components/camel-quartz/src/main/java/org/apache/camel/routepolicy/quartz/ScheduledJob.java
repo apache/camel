@@ -47,8 +47,8 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
         List<RoutePolicy> policyList = storedRoute.getRoutePolicyList();
         for (RoutePolicy policy : policyList) {
             try {
-                if (policy instanceof ScheduledRoutePolicy) {
-                    ((ScheduledRoutePolicy) policy).onJobExecute(storedAction, storedRoute);
+                if (policy instanceof ScheduledRoutePolicy scheduledroutepolicy) {
+                    scheduledroutepolicy.onJobExecute(storedAction, storedRoute);
                 }
             } catch (Exception e) {
                 throw new JobExecutionException(

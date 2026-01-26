@@ -326,13 +326,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport
     }
 
     private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
-        if (newTrigger instanceof CronTrigger && oldTrigger instanceof CronTrigger) {
-            CronTrigger newCron = (CronTrigger) newTrigger;
-            CronTrigger oldCron = (CronTrigger) oldTrigger;
+        if (newTrigger instanceof CronTrigger newCron && oldTrigger instanceof CronTrigger oldCron) {
             return !newCron.getCronExpression().equals(oldCron.getCronExpression());
-        } else if (newTrigger instanceof SimpleTrigger && oldTrigger instanceof SimpleTrigger) {
-            SimpleTrigger newSimple = (SimpleTrigger) newTrigger;
-            SimpleTrigger oldSimple = (SimpleTrigger) oldTrigger;
+        } else if (newTrigger instanceof SimpleTrigger newSimple && oldTrigger instanceof SimpleTrigger oldSimple) {
             return newSimple.getRepeatInterval() != oldSimple.getRepeatInterval()
                     || newSimple.getRepeatCount() != oldSimple.getRepeatCount();
         } else {
