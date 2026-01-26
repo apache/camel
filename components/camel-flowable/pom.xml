@@ -32,10 +32,6 @@
     <name>Camel :: Flowable</name>
     <description>Camel Flowable support</description>
 
-    <properties>
-        <supportLevel>Preview</supportLevel>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
