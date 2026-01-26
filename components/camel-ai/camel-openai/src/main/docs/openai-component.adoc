@@ -9,7 +9,7 @@
 :component-header: Only producer is supported
 //Manually maintained attributes
 :group: AI
-:camel-spring-boot-name: openapi
+:camel-spring-boot-name: openai
 
 *Since Camel {since}*
 
@@ -317,3 +317,5 @@ The component may throw the following exceptions:
   ** When unsupported file type is provided (only text and image files are supported)
   ** When invalid JSON schema string is provided
 * API-specific exceptions from the OpenAI SDK for network errors, authentication failures, rate limiting, etc.
+
+include::spring-boot:partial$starter.adoc[]
