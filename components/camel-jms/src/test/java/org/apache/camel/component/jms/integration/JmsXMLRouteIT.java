@@ -92,12 +92,12 @@ public class JmsXMLRouteIT extends AbstractJMSTest {
         mock.message(0).body(String.class).contains("James");
 
         Source source = new StringSource(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                         + "<person user=\"james\">\n"
-                                         + "  <firstName>James</firstName>\n"
-                                         + "  <lastName>Strachan</lastName>\n"
-                                         + "  <city>London</city>\n"
-                                         + "</person>");
+                """
+                        <?xml version="1.0" encoding="UTF-8"?><person user="james">
+                          <firstName>James</firstName>
+                          <lastName>Strachan</lastName>
+                          <city>London</city>
+                        </person>""");
         assertNotNull(source);
 
         template.sendBody(endpointUri, source);
