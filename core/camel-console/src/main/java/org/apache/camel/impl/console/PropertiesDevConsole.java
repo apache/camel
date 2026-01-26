@@ -47,8 +47,8 @@ public class PropertiesDevConsole extends AbstractDevConsole {
 
         Properties p = pc.loadProperties();
         OrderedLocationProperties olp = null;
-        if (p instanceof OrderedLocationProperties) {
-            olp = (OrderedLocationProperties) p;
+        if (p instanceof OrderedLocationProperties orderedlocationproperties2) {
+            olp = orderedlocationproperties2;
         }
         for (var entry : p.entrySet()) {
             String k = entry.getKey().toString();
@@ -75,8 +75,8 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         JsonArray arr = new JsonArray();
         Properties p = pc.loadProperties();
         OrderedLocationProperties olp = null;
-        if (p instanceof OrderedLocationProperties) {
-            olp = (OrderedLocationProperties) p;
+        if (p instanceof OrderedLocationProperties orderedlocationproperties) {
+            olp = orderedlocationproperties;
         }
         for (var entry : p.entrySet()) {
             String k = entry.getKey().toString();
