@@ -37,9 +37,12 @@ import org.springframework.test.context.ContextConfiguration;
 public class BindySimpleCsvOneToManyMarshallTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
-    private String result
-            = "Charles,Moulliard,Camel in Action 1,2010,43\r\n" + "Charles,Moulliard,Camel in Action 2,2012,43\r\n"
-              + "Charles,Moulliard,Camel in Action 3,2013,43\r\n" + "Charles,Moulliard,Camel in Action 4,,43\r\n";
+    private String result = """
+            Charles,Moulliard,Camel in Action 1,2010,43\r
+            Charles,Moulliard,Camel in Action 2,2012,43\r
+            Charles,Moulliard,Camel in Action 3,2013,43\r
+            Charles,Moulliard,Camel in Action 4,,43\r
+            """;
 
     @Produce("direct:start")
     private ProducerTemplate template;

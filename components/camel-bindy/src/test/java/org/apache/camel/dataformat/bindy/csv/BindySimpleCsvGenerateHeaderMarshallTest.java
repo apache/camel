@@ -40,8 +40,10 @@ public class BindySimpleCsvGenerateHeaderMarshallTest {
 
     private List<Map<String, Object>> models = new ArrayList<>();
     private String result
-            = "Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r\n"
-              + "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
+            = """
+                    Order Nr,Client Nr,First Name,Last Name,Instrument Code,Instrument Nr,Order Type,Instrument Type,amount,currency,Order Date\r
+                    1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r
+                    """;
 
     @Produce("direct:start")
     private ProducerTemplate template;
