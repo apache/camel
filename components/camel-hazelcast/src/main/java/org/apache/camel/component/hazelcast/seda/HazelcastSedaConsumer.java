@@ -94,8 +94,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 final Object body = queue.poll(endpoint.getConfiguration().getPollTimeout(), TimeUnit.MILLISECONDS);
 
                 if (body != null) {
-                    if (body instanceof DefaultExchangeHolder) {
-                        DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) body);
+                    if (body instanceof DefaultExchangeHolder defaultExchangeHolder) {
+                        DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
                     } else {
                         exchange.getIn().setBody(body);
                     }
