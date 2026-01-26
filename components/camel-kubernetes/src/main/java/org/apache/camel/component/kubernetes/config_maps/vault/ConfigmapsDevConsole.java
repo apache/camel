@@ -69,17 +69,17 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
 
         if (propertiesFunction != null) {
             sb.append("Kubernetes Config maps Cluster:");
-            sb.append(String.format("\n    Master Url: %s", propertiesFunction.getClient().getMasterUrl()));
+            sb.append(String.format("%n    Master Url: %s", propertiesFunction.getClient().getMasterUrl()));
             sb.append("\n    Login: OAuth Token");
             KubernetesVaultConfiguration kubernetes
                     = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
             if (kubernetes != null) {
-                sb.append(String.format("\n    Refresh Enabled: %s", kubernetes.isRefreshEnabled()));
+                sb.append(String.format("%n    Refresh Enabled: %s", kubernetes.isRefreshEnabled()));
             }
             if (cmRefreshTask != null) {
                 Instant start = cmRefreshTask.getStartingTime();
                 String s = start != null ? TimeUtils.printSince(start.toEpochMilli()) : "none";
-                sb.append(String.format("\n    Running Since: %s", s));
+                sb.append(String.format("%n    Running Since: %s", s));
             }
             List<String> sorted = new ArrayList<>();
             if (kubernetes != null) {
@@ -90,7 +90,7 @@ public class ConfigmapsDevConsole extends AbstractDevConsole {
             }
 
             for (String sec : sorted) {
-                sb.append(String.format("\n    %s", sec));
+                sb.append(String.format("%n    %s", sec));
             }
         }
 

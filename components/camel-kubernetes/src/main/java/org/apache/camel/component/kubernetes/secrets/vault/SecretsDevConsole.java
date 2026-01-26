@@ -69,18 +69,18 @@ public class SecretsDevConsole extends AbstractDevConsole {
             sb.append("Kubernetes Secrets Cluster:");
             KubernetesClient client = propertiesFunction.getClient();
             if (client != null && client.getMasterUrl() != null) {
-                sb.append(String.format("\n    Master Url: %s", client.getMasterUrl().toString()));
+                sb.append(String.format("%n    Master Url: %s", client.getMasterUrl().toString()));
                 sb.append("\n    Login: OAuth Token");
             }
             KubernetesVaultConfiguration kubernetes
                     = getCamelContext().getVaultConfiguration().getKubernetesVaultConfiguration();
             if (kubernetes != null) {
-                sb.append(String.format("\n    Refresh Enabled: %s", kubernetes.isRefreshEnabled()));
+                sb.append(String.format("%n    Refresh Enabled: %s", kubernetes.isRefreshEnabled()));
             }
             if (secretsRefreshTask != null) {
                 Instant start = secretsRefreshTask.getStartingTime();
                 String s = start != null ? TimeUtils.printSince(start.toEpochMilli()) : "none";
-                sb.append(String.format("\n    Running Since: %s", s));
+                sb.append(String.format("%n    Running Since: %s", s));
             }
             List<String> sorted = new ArrayList<>();
             if (kubernetes != null) {
@@ -91,7 +91,7 @@ public class SecretsDevConsole extends AbstractDevConsole {
             }
 
             for (String sec : sorted) {
-                sb.append(String.format("\n    %s", sec));
+                sb.append(String.format("%n    %s", sec));
             }
         }
 
