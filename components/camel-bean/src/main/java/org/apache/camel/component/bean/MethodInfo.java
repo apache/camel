@@ -251,8 +251,8 @@ public class MethodInfo {
      */
     public void setErrorHandler(Processor errorHandler) {
         // special for @RecipientList which needs to be injected with error handler it should use
-        if (recipientList instanceof ErrorHandlerAware) {
-            ((ErrorHandlerAware) recipientList).setErrorHandler(errorHandler);
+        if (recipientList instanceof ErrorHandlerAware errorhandleraware) {
+            errorhandleraware.setErrorHandler(errorHandler);
         }
     }
 
@@ -309,9 +309,9 @@ public class MethodInfo {
                 Object result = invoke(method, pojo, arguments, exchange);
 
                 // the method may be a closure or chained method returning a callable which should be called
-                if (result instanceof Callable) {
+                if (result instanceof Callable callable) {
                     LOG.trace("Method returned Callback which will be called: {}", result);
-                    Object callableResult = ((Callable) result).call();
+                    Object callableResult = (callable).call();
                     if (callableResult != null) {
                         result = callableResult;
                     } else {
@@ -611,9 +611,9 @@ public class MethodInfo {
         private Object[] evaluateParameterExpressions(Exchange exchange, Object body, Iterator<?> it) {
             Object[] answer = new Object[expressions != null ? expressions.length : 1];
             for (int i = 0; expressions == null || i < expressions.length; i++) {
-                if (body instanceof StreamCache) {
+                if (body instanceof StreamCache streamcache2) {
                     // need to reset stream cache for each expression as you may access the message body in multiple parameters
-                    ((StreamCache) body).reset();
+                    (streamcache2).reset();
                 }
 
                 // whether its vararg
@@ -654,9 +654,9 @@ public class MethodInfo {
          */
         private Object evaluateVarargsParameterExpressions(Exchange exchange, Object body, Iterator<?> it) {
             // special for varargs
-            if (body instanceof StreamCache) {
+            if (body instanceof StreamCache streamcache) {
                 // need to reset stream cache for each expression as you may access the message body in multiple parameters
-                ((StreamCache) body).reset();
+                (streamcache).reset();
             }
             List<Object> answer = new ArrayList<>();
             int i = 0;
@@ -758,8 +758,8 @@ public class MethodInfo {
 
                 if (valid) {
                     // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
-                    if (parameterValue instanceof String) {
-                        parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
+                    if (parameterValue instanceof String string) {
+                        parameterValue = StringHelper.removeLeadingAndEndingQuotes(string);
                     }
                     if (varargs) {
                         // use the value as-is

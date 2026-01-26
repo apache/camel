@@ -239,8 +239,8 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         if (cause != null) {
             Throwable found = findSuitableException(cause, method);
             if (found != null) {
-                if (found instanceof Exception) {
-                    throw (Exception) found;
+                if (found instanceof Exception exception) {
+                    throw exception;
                 } else {
                     // wrap as exception
                     throw new CamelExchangeException("Error processing exchange", exchange, cause);
@@ -250,8 +250,8 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
             if (cause instanceof RuntimeCamelException) {
                 // if the inner cause is a runtime exception we can throw it
                 // directly
-                if (cause.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException) cause.getCause();
+                if (cause.getCause() instanceof RuntimeException runtimeexception) {
+                    throw runtimeexception;
                 }
                 throw cause;
             }
