@@ -25,8 +25,9 @@ public interface Ddb2Constants {
     @Metadata(label = "DeleteItem GetItem PutItem UpdateItem",
               description = "The list of attributes returned by the operation.", javaType = "Map<String, AttributeValue>")
     String ATTRIBUTES = "CamelAwsDdbAttributes";
-    @Metadata(description = "If attribute names are not specified then all attributes will be\n" +
-                            "returned.",
+    @Metadata(description = """
+            If attribute names are not specified then all attributes will be
+            returned.""",
               javaType = "Collection<String>")
     String ATTRIBUTE_NAMES = "CamelAwsDdbAttributeNames";
     @Metadata(description = "A map of the table name and corresponding items to get by primary key.",
@@ -35,8 +36,9 @@ public interface Ddb2Constants {
     @Metadata(label = "BatchGetItems", description = "Table names and the respective item attributes from the tables.",
               javaType = "Map<String, BatchResponse>")
     String BATCH_RESPONSE = "CamelAwsDdbBatchResponse";
-    @Metadata(description = "If set to true, then a consistent read is issued, otherwise eventually\n" +
-                            "consistent is used.",
+    @Metadata(description = """
+            If set to true, then a consistent read is issued, otherwise eventually
+            consistent is used.""",
               javaType = "Boolean")
     String CONSISTENT_READ = "CamelAwsDdbConsistentRead";
     @Metadata(label = "Query Scan", description = "The number of Capacity Units of the provisioned throughput of the table\n" +
