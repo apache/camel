@@ -74,8 +74,8 @@ public class KafkaHeaderDeserializer implements Processor {
             return value;
         }
 
-        if (value instanceof byte[]) {
-            return new String((byte[]) value, StandardCharsets.UTF_8);
+        if (value instanceof byte[] byteArray) {
+            return new String(byteArray, StandardCharsets.UTF_8);
         }
 
         return value.toString();
