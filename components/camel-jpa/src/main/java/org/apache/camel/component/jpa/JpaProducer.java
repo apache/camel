@@ -211,8 +211,8 @@ public class JpaProducer extends DefaultProducer {
         if (params != null) {
             params.forEach((key, value) -> {
                 Object resolvedValue = value;
-                if (value instanceof String) {
-                    resolvedValue = simple.createExpression((String) value).evaluate(exchange, Object.class);
+                if (value instanceof String str) {
+                    resolvedValue = simple.createExpression(str).evaluate(exchange, Object.class);
                 }
                 query.setParameter(key, resolvedValue);
             });
