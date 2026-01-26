@@ -42,10 +42,10 @@ public class TimestampRouter {
         Long timestamp = null;
         String topicName = ex.getMessage().getHeader("kafka.TOPIC", String.class);
         Object rawTimestamp = ex.getMessage().getHeader(timestampHeaderName);
-        if (rawTimestamp instanceof Long) {
-            timestamp = (Long) rawTimestamp;
-        } else if (rawTimestamp instanceof Instant) {
-            timestamp = ((Instant) rawTimestamp).toEpochMilli();
+        if (rawTimestamp instanceof Long longValue) {
+            timestamp = longValue;
+        } else if (rawTimestamp instanceof Instant instant) {
+            timestamp = instant.toEpochMilli();
         } else if (ObjectHelper.isNotEmpty(rawTimestamp)) {
             timestamp = Long.parseLong(rawTimestamp.toString());
         }
