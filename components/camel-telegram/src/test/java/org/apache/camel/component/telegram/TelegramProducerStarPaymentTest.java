@@ -76,7 +76,7 @@ public class TelegramProducerStarPaymentTest extends TelegramTestSupport {
         assertThat(firstTxn.getId()).isEqualTo("txn_001");
         assertThat(firstTxn.getAmount()).isEqualTo(100);
         assertThat(firstTxn.getNanostarAmount()).isEqualTo(0);
-        assertThat(firstTxn.getDate()).isEqualTo(1704067200L);
+        assertThat(firstTxn.getDate()).isEqualTo(1704067200);
         assertThat(firstTxn.getSource()).isNotNull();
 
         StarTransaction secondTxn = starTransactions.getTransactions().get(1);
