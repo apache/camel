@@ -59,7 +59,10 @@ public class BindySimpleCsvBooleanUnmarshallTest {
     public void testUnMarshallMessageWithBoolean() throws Exception {
 
         // We suppress the firstName field of the first record
-        expected = "andrew,true\r\n" + "andrew,false\r\n";
+        expected = """
+                andrew,true\r
+                andrew,false\r
+                """;
 
         template.sendBody(expected);
 
@@ -83,7 +86,11 @@ public class BindySimpleCsvBooleanUnmarshallTest {
     public void testUnMarshallMessageWithBooleanMissingFields() throws Exception {
 
         // We suppress the firstName field of the first record
-        expected = "andrew,true\r\n" + "joseph,false\r\n" + "nicholas,\r\n";
+        expected = """
+                andrew,true\r
+                joseph,false\r
+                nicholas,\r
+                """;
 
         template.sendBody(expected);
 
