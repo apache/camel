@@ -17,7 +17,7 @@ The camel-cli-debug enables Camel debugger for Camel CLI (camel-jbang).
 ====
 The camel-cli-debug is only for development purposes, it should **not** be used for production.
 
-Do not use both `camel-debug` and `camel-cli-debug` JARs in the Camel application classpath. Use only `camel-debug` JAR.
+Do not use both `camel-debug` and `camel-cli-debug` JARs in the Camel application classpath. Use only `camel-cli-debug` JAR.
 ====
 
 == Auto-detection from classpath
