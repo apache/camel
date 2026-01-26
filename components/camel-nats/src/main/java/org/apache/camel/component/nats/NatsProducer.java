@@ -135,8 +135,8 @@ public class NatsProducer extends DefaultAsyncProducer {
         exchange.getIn().getHeaders().forEach((key, value) -> {
             if (!filteringStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
                 String headerValue;
-                if (value instanceof byte[]) {
-                    headerValue = new String((byte[]) value, StandardCharsets.UTF_8);
+                if (value instanceof byte[] byteArray) {
+                    headerValue = new String(byteArray, StandardCharsets.UTF_8);
                 } else {
                     headerValue = String.valueOf(value);
                 }
