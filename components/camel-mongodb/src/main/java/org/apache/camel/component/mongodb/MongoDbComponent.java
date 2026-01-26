@@ -72,8 +72,8 @@ public class MongoDbComponent extends DefaultComponent {
     }
 
     public static CamelMongoDbException wrapInCamelMongoDbException(Throwable t) {
-        if (t instanceof CamelMongoDbException) {
-            return (CamelMongoDbException) t;
+        if (t instanceof CamelMongoDbException camelMongoDbException) {
+            return camelMongoDbException;
         } else {
             return new CamelMongoDbException(t);
         }
