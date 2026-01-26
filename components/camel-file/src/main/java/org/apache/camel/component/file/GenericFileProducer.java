@@ -374,7 +374,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             exchange.getIn().setHeader(FileConstants.FILE_NAME, value);
         }
 
-        if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
+        if (value instanceof String str && StringHelper.hasStartToken(str, "simple")) {
             LOG.warn(
                     "Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).",
                     value, FileConstants.FILE_NAME);
