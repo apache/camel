@@ -43,12 +43,13 @@ public abstract class InfinispanConfiguration {
     private String configurationUri;
 
     @UriParam(label = "advanced",
-              description = "Store the operation result in a header instead of the message body. By default,\n" +
-                            "resultHeader == null and the query result is stored in the message body, any \n" +
-                            "existing content in the message body is discarded. If resultHeader is set, the \n" +
-                            "value is used as the name of the header to store the query result and the original \n" +
-                            "message body is preserved. This value can be overridden by an in message header \n" +
-                            "named: CamelInfinispanOperationResultHeader")
+              description = """
+                      Store the operation result in a header instead of the message body. By default,
+                      resultHeader == null and the query result is stored in the message body, any\s
+                      existing content in the message body is discarded. If resultHeader is set, the\s
+                      value is used as the name of the header to store the query result and the original\s
+                      message body is preserved. This value can be overridden by an in message header\s
+                      named: CamelInfinispanOperationResultHeader""")
     private String resultHeader;
 
     @UriParam(label = "advanced", description = "Set a specific remappingFunction to use in a compute operation.")
