@@ -28,26 +28,27 @@ public class JsonTest {
 
     @Test
     public void testJsonParse() {
-        JsonStructure json = JsonParser.parse("{\n"
-                                              + "  \"test\": \"some string\",\n"
-                                              + "  \"otherKey\": true,\n"
-                                              + "  \"nextKey\": 1234,\n"
-                                              + "  \"doubleKey\": 1234.567,\n"
-                                              + "  \"subElement\": {\n"
-                                              + "    \"subKey\": \"some other string\",\n"
-                                              + "    \"complexString\": \"String with JSON syntax elements like .,\\\" { or }\"\n"
-                                              + "  },\n"
-                                              + "  \"arrayElement\": [\n"
-                                              + "    {\n"
-                                              + "      \"id\": 1,\n"
-                                              + "      \"name\": \"test1\"\n"
-                                              + "    },\n"
-                                              + "    {\n"
-                                              + "      \"id\": 2,\n"
-                                              + "      \"name\": \"test2\"\n"
-                                              + "    }\n"
-                                              + "  ]\n"
-                                              + "}");
+        JsonStructure json = JsonParser.parse("""
+                {
+                  "test": "some string",
+                  "otherKey": true,
+                  "nextKey": 1234,
+                  "doubleKey": 1234.567,
+                  "subElement": {
+                    "subKey": "some other string",
+                    "complexString": "String with JSON syntax elements like .,\\" { or }"
+                  },
+                  "arrayElement": [
+                    {
+                      "id": 1,
+                      "name": "test1"
+                    },
+                    {
+                      "id": 2,
+                      "name": "test2"
+                    }
+                  ]
+                }""");
 
         assertThat(json, is(notNullValue()));
         assertThat(json, is(instanceOf(JsonObject.class)));
