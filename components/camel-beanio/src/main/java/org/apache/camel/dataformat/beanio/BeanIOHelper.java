@@ -51,8 +51,7 @@ public final class BeanIOHelper {
         }
         // if the error handler extends BeanIOErrorHandler then its prototype scoped
         // and then inject the current exchange and init
-        if (answer instanceof BeanIOErrorHandler) {
-            BeanIOErrorHandler eh = (BeanIOErrorHandler) answer;
+        if (answer instanceof BeanIOErrorHandler eh) {
             eh.setConfiguration(configuration);
             eh.setExchange(exchange);
             eh.setResults(results);

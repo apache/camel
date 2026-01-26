@@ -87,11 +87,10 @@ public class BeanIOSplitter implements Expression {
         }
 
         BeanReader beanReader = null;
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile) body).getFile();
+        if (body instanceof WrappedFile wrappedfile) {
+            body = wrappedfile.getFile();
         }
-        if (body instanceof File) {
-            File file = (File) body;
+        if (body instanceof File file) {
             beanReader = factory.createReader(getStreamName(), file);
         }
         if (beanReader == null) {
