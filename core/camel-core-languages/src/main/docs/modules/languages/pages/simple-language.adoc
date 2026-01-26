@@ -646,6 +646,20 @@ This requires having `camel-attachments` JAR on the classpath.
 |`attachments` | `Map` | All the attachments as a `Map<String,jakarta.activation.DataHandler>`.
 |====
 
+The attachment functions are only used with components that supports `javax.attachments` APIs
+such as `camel-cxf`, `camel-http`, `camel-mail`, `camel-platform-http`, `camel-spring-ws`, etc.
+
+NOTE: The _key_ is the attachment filename such as `mydata.xml` or an `int` to lookup by index (0 = first).
+
+Suppose you are using `camel-platform-http` to expose a HTTP endpoint that support file uploads via http multipart,
+then you can use `${attachments.size}` to know how many files are attached. The other functions are used
+to access attachment content, headers and metadata.
+
+For example if a XML file was uploaded as `mydata.xml`, then you can access metadata such as
+`${attachment[0].name` returns `mydata.xml`, and `${attachment[0].contentType` return `text/xml`, and
+`${attachment[2].content}` returns the XML payload. You can also use by filename `${attachmentContent(mydata.xml)}`
+or by index `${attachmentContent(0)}`.
+
 
 === Base64 Functions
 

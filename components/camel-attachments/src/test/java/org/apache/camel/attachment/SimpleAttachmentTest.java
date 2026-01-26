@@ -133,5 +133,14 @@ public class SimpleAttachmentTest extends LanguageTestSupport {
         assertExpression("${attachment[2].name}", "123.txt");
         assertExpression("${attachment[2].contentType}", "text/plain");
         assertExpression("${attachment[2].content}", "456");
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("message1.xml").getContent();
+        String xml1 = context.getTypeConverter().convertTo(String.class, is1);
+        assertExpression("${attachmentContent(0)}", xml1);
+
+        Object is2 = map.get("message2.xml").getContent();
+        String xml2 = context.getTypeConverter().convertTo(String.class, is2);
+        assertExpression("${attachmentContent(1)}", xml2);
     }
 }

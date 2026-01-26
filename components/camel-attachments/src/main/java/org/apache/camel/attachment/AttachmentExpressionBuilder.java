@@ -16,6 +16,10 @@
  */
 package org.apache.camel.attachment;
 
+import java.util.Iterator;
+
+import jakarta.activation.DataHandler;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -64,12 +68,14 @@ public class AttachmentExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                Object answer;
-                var dh = toAttachmentMessage(exchange).getAttachment(key);
-                try {
-                    answer = dh.getContent();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                Object answer = null;
+                var dh = lookupDataHandlerByKey(exchange, key);
+                if (dh != null) {
+                    try {
+                        answer = dh.getContent();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 if (answer != null && clazz != null) {
                     try {
@@ -101,7 +107,7 @@ public class AttachmentExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object answer = null;
-                var ao = toAttachmentMessage(exchange).getAttachmentObject(key);
+                var ao = lookupAttachmentObjectByKey(exchange, key);
                 if (ao != null) {
                     answer = ao.getHeader(name);
                     if (answer != null && clazz != null) {
@@ -132,7 +138,7 @@ public class AttachmentExpressionBuilder {
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
-                var dh = toAttachmentMessage(exchange).getAttachment(key);
+                var dh = lookupDataHandlerByKey(exchange, key);
                 if (dh != null) {
                     return dh.getContentType();
                 }
@@ -163,7 +169,7 @@ public class AttachmentExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 String key = attachmentName.evaluate(exchange, String.class);
-                Object answer = toAttachmentMessage(exchange).getAttachment(key);
+                Object answer = lookupAttachmentObjectByKey(exchange, key);
                 if (mandatory && answer == null) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(new NoSuchAttachmentException(exchange, key));
                 }
@@ -193,26 +199,55 @@ public class AttachmentExpressionBuilder {
         return new SimpleExpressionBuilder.KeyedOgnlExpressionAdapter(
                 ognl, "attachmentOgnl(" + ognl + ")",
                 (exchange, exp) -> {
-                    String text = exp.evaluate(exchange, String.class);
-                    var am = toAttachmentMessage(exchange);
-                    var dh = am.getAttachment(text);
-                    if (dh == null && ObjectHelper.isNumber(text)) {
-                        try {
-                            // fallback to lookup by numeric index
-                            int idx = Integer.parseInt(text);
-                            if (idx < am.getAttachments().size()) {
-                                var it = am.getAttachments().values().iterator();
-                                for (int i = 0; i < idx; i++) {
-                                    it.next();
-                                }
-                                dh = it.next();
-                            }
-                        } catch (NumberFormatException e) {
-                            // ignore
-                        }
-                    }
-                    return dh;
+                    String key = exp.evaluate(exchange, String.class);
+                    return lookupDataHandlerByKey(exchange, key);
                 });
+    }
+
+    private static DataHandler lookupDataHandlerByKey(Exchange exchange, String key) {
+        AttachmentMessage am = toAttachmentMessage(exchange);
+        var dh = am.getAttachment(key);
+        if (dh == null && ObjectHelper.isNumber(key)) {
+            Integer idx = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, key);
+            if (idx != null) {
+                Iterator<?> it = ObjectHelper.createIterator(am.getAttachments().keySet());
+                for (int i = 0; i <= idx && it.hasNext(); i++) {
+                    if (i == idx) {
+                        key = it.next().toString();
+                    } else {
+                        key = null;
+                        it.next();
+                    }
+                }
+                if (key != null) {
+                    dh = am.getAttachment(key);
+                }
+            }
+        }
+        return dh;
+    }
+
+    private static Attachment lookupAttachmentObjectByKey(Exchange exchange, String key) {
+        AttachmentMessage am = toAttachmentMessage(exchange);
+        var ao = am.getAttachmentObject(key);
+        if (ao == null && ObjectHelper.isNumber(key)) {
+            Integer idx = exchange.getContext().getTypeConverter().tryConvertTo(Integer.class, key);
+            if (idx != null) {
+                Iterator<?> it = ObjectHelper.createIterator(am.getAttachments().keySet());
+                for (int i = 0; i <= idx && it.hasNext(); i++) {
+                    if (i == idx) {
+                        key = it.next().toString();
+                    } else {
+                        key = null;
+                        it.next();
+                    }
+                }
+                if (key != null) {
+                    ao = am.getAttachmentObject(key);
+                }
+            }
+        }
+        return ao;
     }
 
 }
