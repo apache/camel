@@ -212,17 +212,26 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             return;
         }
 
+        ExecutorService executorService;
+        boolean shutdownThreadPool = false;
+
         if (config.getTimeoutExecutorService() != null) {
             String ref = config.getTimeoutExecutorService();
-            boolean shutdownThreadPool = false;
-            ExecutorService executorService = lookupByNameAndType(ref, ExecutorService.class);
+            executorService = lookupByNameAndType(ref, ExecutorService.class);
             if (executorService == null) {
                 executorService = lookupExecutorServiceRef("CircuitBreaker", definition, ref);
                 shutdownThreadPool = true;
             }
-            processor.setExecutorService(executorService);
-            processor.setShutdownExecutorService(shutdownThreadPool);
+        } else {
+            // A default thread pool if none is provided.
+            executorService = camelContext.getExecutorServiceManager()
+                    .newThreadPool(this, "CircuitBreaker",
+                            camelContext.getExecutorServiceManager().getDefaultThreadPoolProfile());
+            shutdownThreadPool = true;
         }
+
+        processor.setExecutorService(executorService);
+        processor.setShutdownExecutorService(shutdownThreadPool);
     }
 
     // *******************************
