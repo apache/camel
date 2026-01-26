@@ -68,16 +68,16 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
             sb.append("\n    Login: Client Id/Client Secret");
             AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
             if (azure != null) {
-                sb.append(String.format("\n    Refresh Enabled: %s", azure.isRefreshEnabled()));
-                sb.append(String.format("\n    Refresh Period: %s", azure.getRefreshPeriod()));
+                sb.append(String.format("%n    Refresh Enabled: %s", azure.isRefreshEnabled()));
+                sb.append(String.format("%n    Refresh Period: %s", azure.getRefreshPeriod()));
             }
             if (secretsRefreshTask != null) {
                 Instant last = secretsRefreshTask.getLastCheckTime();
                 String s = last != null ? TimeUtils.printSince(last.toEpochMilli()) : "none";
-                sb.append(String.format("\n    Last Check: %s", s));
+                sb.append(String.format("%n    Last Check: %s", s));
                 last = secretsRefreshTask.getLastReloadTime();
                 s = last != null ? TimeUtils.printSince(last.toEpochMilli()) : "none";
-                sb.append(String.format("\n    Last Reload: %s", s));
+                sb.append(String.format("%n    Last Reload: %s", s));
             }
             sb.append("\n\nSecrets in use:");
 
@@ -88,9 +88,9 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
                 Instant last = secretsRefreshTask != null ? secretsRefreshTask.getUpdates().get(sec) : null;
                 String age = last != null ? TimeUtils.printSince(last.toEpochMilli()) : null;
                 if (age != null) {
-                    sb.append(String.format("\n    %s (age: %s)", sec, age));
+                    sb.append(String.format("%n    %s (age: %s)", sec, age));
                 } else {
-                    sb.append(String.format("\n    %s", sec));
+                    sb.append(String.format("%n    %s", sec));
                 }
             }
         }
