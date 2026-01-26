@@ -32,12 +32,13 @@ public class PlatformEventTest {
     public void shouldDeserialize() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final PlatformEvent platformEvent = mapper.readValue("{\n" + //
-                                                             "  \"CreatedDate\": \"2017-04-14T13:35:23Z\", \n" + //
-                                                             "  \"CreatedById\": \"005B00000031mqb\", \n" + //
-                                                             "  \"Order_Number__c\": \"10013\", \n" + //
-                                                             "  \"Type__c\": \"Placed\"\n" + //
-                                                             "}",
+        final PlatformEvent platformEvent = mapper.readValue("""
+                {
+                  "CreatedDate": "2017-04-14T13:35:23Z",\s
+                  "CreatedById": "005B00000031mqb",\s
+                  "Order_Number__c": "10013",\s
+                  "Type__c": "Placed"
+                }""",
                 PlatformEvent.class);
 
         assertThat(platformEvent.getCreated()).isEqualTo(ZonedDateTime.parse("2017-04-14T13:35:23Z"));
