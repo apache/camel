@@ -148,8 +148,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
         if (target instanceof DelegatingConnectionFactory dcf) {
             target = dcf.getTargetConnectionFactory();
         }
-        if (target instanceof ActiveMQConnectionFactory) {
-            acf = (ActiveMQConnectionFactory) target;
+        if (target instanceof ActiveMQConnectionFactory activeMQConnectionFactory) {
+            acf = activeMQConnectionFactory;
         }
 
         if (acf != null) {
