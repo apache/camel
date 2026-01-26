@@ -118,19 +118,19 @@ public class StitchProducerOperations {
         final Collection<StitchMessage> stitchMessages = new LinkedList<>();
 
         inputData.forEach(data -> {
-            if (data instanceof StitchMessage) {
-                stitchMessages.add((StitchMessage) data);
+            if (data instanceof StitchMessage stitchmessage) {
+                stitchMessages.add(stitchmessage);
             } else if (data instanceof Map) {
                 stitchMessages.add(StitchMessage.fromMap(ObjectHelper.cast(Map.class, data)).build());
-            } else if (data instanceof StitchRequestBody) {
-                stitchMessages.addAll(((StitchRequestBody) data).getMessages());
-            } else if (data instanceof Message) {
-                final Message camelNestedMessage = (Message) data;
+            } else if (data instanceof StitchRequestBody stitchrequestbody) {
+                stitchMessages.addAll(stitchrequestbody.getMessages());
+            } else if (data instanceof Message camelNestedMessage2) {
+                final Message camelNestedMessage = camelNestedMessage2;
                 // set all the headers from parent message
                 camelNestedMessage.setHeaders(message.getHeaders());
                 stitchMessages.addAll(createStitchRequestBody(camelNestedMessage).getMessages());
-            } else if (data instanceof Exchange) {
-                final Message camelNestedMessage = ((Exchange) data).getMessage();
+            } else if (data instanceof Exchange exchange) {
+                final Message camelNestedMessage = (exchange).getMessage();
                 // set all the headers from parent message
                 camelNestedMessage.setHeaders(message.getHeaders());
                 stitchMessages.addAll(createStitchRequestBody(camelNestedMessage).getMessages());
