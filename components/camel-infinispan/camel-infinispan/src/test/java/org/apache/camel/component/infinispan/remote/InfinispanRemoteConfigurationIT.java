@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.infra.infinispan.services.InfinispanService;
@@ -60,6 +63,12 @@ public class InfinispanRemoteConfigurationIT {
 
     private static InfinispanRemoteConfiguration getBaseConfiguration() {
         InfinispanRemoteConfiguration configuration = new InfinispanRemoteConfiguration();
+        // We better control the timeout as it can become flaky on CI envs.
+        Map<String, String> cacheContConf = new HashMap<>();
+        cacheContConf.put("socket_timeout", "15000");
+        cacheContConf.put("connection_timeout", "15000");
+        configuration.setConfigurationProperties(cacheContConf);
+
         configuration.setHosts(service.host() + ":" + service.port());
         configuration.setSecure(true);
         configuration.setUsername(service.username());
