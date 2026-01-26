@@ -42,7 +42,7 @@ public class SftpDevConsole extends AbstractDevConsole {
         sb.append("SFTP Configuration\n");
         for (var e : map.entrySet()) {
             String v = e.getValue() != null ? e.getValue().toString() : "";
-            sb.append(String.format("\n    %s = %s", e.getKey(), v));
+            sb.append(String.format("%n    %s = %s", e.getKey(), v));
         }
 
         return sb.toString();
