@@ -62,8 +62,8 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
                 from("as2://server/listen?requestUriPattern=/api/v1.2/endpoint")
                         .to("mock:regexSpecialCharsConsumer");
 
-                // Consumer with wildcard and special characters
-                from("as2://server/listen?requestUriPattern=/api/v2+3/*")
+                // Consumer with wildcard and special characters (using parentheses which are regex special chars)
+                from("as2://server/listen?requestUriPattern=/api/v2(3)/*")
                         .to("mock:regexSpecialCharsWildcardConsumer");
             }
         };
@@ -216,8 +216,8 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
         MockEndpoint regexWildcardEndpoint = getMockEndpoint("mock:regexSpecialCharsWildcardConsumer");
         regexWildcardEndpoint.expectedMessageCount(1);
 
-        // Send to /api/v2+3/orders - the plus should be treated as a literal plus, not regex "one or more"
-        HttpCoreContext context = sendToPath("/api/v2+3/orders", AS2MessageStructure.PLAIN);
+        // Send to /api/v2(3)/orders - the parentheses should be treated as literal chars, not regex grouping
+        HttpCoreContext context = sendToPath("/api/v2(3)/orders", AS2MessageStructure.PLAIN);
 
         verifyOkResponse(context);
         regexWildcardEndpoint.assertIsSatisfied();
@@ -233,8 +233,8 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
         MockEndpoint regexWildcardEndpoint = getMockEndpoint("mock:regexSpecialCharsWildcardConsumer");
         regexWildcardEndpoint.expectedMessageCount(0);
 
-        // Send to /api/v23/orders - should NOT match because plus is literal, not regex "one or more"
-        // If Pattern.quote() wasn't working, this would incorrectly match
+        // Send to /api/v23/orders - should NOT match because parentheses are literal, not regex grouping
+        // If Pattern.quote() wasn't working, /api/v2(3)/* would match /api/v23/orders as a regex
         HttpCoreContext context = sendToPath("/api/v23/orders", AS2MessageStructure.PLAIN);
 
         // This should fail to find a matching consumer, but we're just verifying it doesn't match the wrong one

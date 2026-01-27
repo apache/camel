@@ -92,11 +92,12 @@ public class AS2ServerConnection {
     private final String accessToken;
 
     /**
-     * Stores the configuration for each consumer endpoint path (e.g., "/consumerA").
-     * Uses LinkedHashMap to preserve insertion order, ensuring that when multiple patterns match a request,
-     * the first registered pattern (in route definition order) takes precedence.
+     * Stores the configuration for each consumer endpoint path (e.g., "/consumerA"). Uses LinkedHashMap to preserve
+     * insertion order, ensuring that when multiple patterns match a request, the first registered pattern (in route
+     * definition order) takes precedence.
      */
-    private final Map<String, AS2ConsumerConfiguration> consumerConfigurations = Collections.synchronizedMap(new LinkedHashMap<>());
+    private final Map<String, AS2ConsumerConfiguration> consumerConfigurations
+            = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Cache of compiled regex patterns for wildcard matching. Key is the pattern string, value is the compiled Pattern
@@ -183,8 +184,8 @@ public class AS2ServerConnection {
      * </ul>
      *
      * <p>
-     * When multiple patterns match, the first registered pattern (in route definition order) takes precedence.
-     * Exact matches always take precedence over wildcard matches.
+     * When multiple patterns match, the first registered pattern (in route definition order) takes precedence. Exact
+     * matches always take precedence over wildcard matches.
      *
      * @param  path The canonical request URI path (e.g., "/consumerA").
      * @return      An Optional containing the configuration if a match is found, otherwise empty.
