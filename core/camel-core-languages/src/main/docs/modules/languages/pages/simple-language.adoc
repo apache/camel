@@ -749,8 +749,8 @@ The following comparison operators are supported:
 |`!contains` | For testing if it does not contain in a string-based value
 |`endsWith` | For testing if the left-hand side string ends with the right-hand string.
 |`!endsWith` | For testing if the left-hand side string does not end with the right-hand string.
-|`in` | For matching if in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',, bronze,silver,gold'`, which is a set of four values with an empty value and then the three medals.
-|`!in` | For matching if not in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `',,bronze,silver,gold'`, which is a set of four values with an empty value and then the three medals.
+|`in` | For matching if in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `",,bronze,silver,gold"`, which is a set of four values with an empty value and then the three medals.
+|`!in` | For matching if not in a set of values, each element must be separated by comma. If you want to include an empty value, then it must be defined using double comma, e.g. `",,bronze,silver,gold"`, which is a set of four values with an empty value and then the three medals.
 |`is` | For matching if the left-hand side type is an instance of the value.
 |`!is` | For matching if the left-hand side type is not an instance of the value.
 |`range` | For matching if the left-hand side is within a range of values defined as numbers: `from..to`.
