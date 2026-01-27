@@ -153,10 +153,10 @@ public class RunCommandITCase extends JBangTestSupport {
     @DisabledIfSystemProperty(named = CliProperties.FORCE_RUN_VERSION, matches = ".+", disabledReason = "Due to CAMEL-20426")
     public void runSpecificVersionTest(String version) {
         initFileInDataFolder("cheese.xml");
-        final String pid = executeBackground(String.format("run %s/cheese.xml --camel-version=%s", mountPoint(), version));
+        final String process = executeBackground(String.format("run %s/cheese.xml --camel-version=%s", mountPoint(), version));
         checkLogContainsPattern(String.format(" Apache Camel %s .* started", version));
         checkLogContains(DEFAULT_MSG);
-        execute("stop " + pid);
+        execute("stop " + getPID(process));
     }
 
     @Test

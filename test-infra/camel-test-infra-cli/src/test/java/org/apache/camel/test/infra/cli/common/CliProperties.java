@@ -21,6 +21,10 @@ public final class CliProperties {
 
     public static final String DOCKERFILE = "cli.service.docker.file";
 
+    public static final String MAIN_COMMAND = "cli.service.command";
+
+    public static final String CAMEL_LAUNCHER = "cli.service.camel.launcher";
+
     public static final String REPO = "cli.service.repo";
 
     public static final String BRANCH = "cli.service.branch";

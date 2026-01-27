@@ -25,7 +25,7 @@ public class CamelDebugITCase extends JBangTestSupport {
     @Test
     public void testDebug() throws IOException {
         copyResourceInDataFolder(TestResources.ROUTE2);
-        execInContainer(String.format("nohup camel debug %s/route2.yaml&", mountPoint()));
+        execNohup(String.format("debug %s/route2.yaml", mountPoint()));
         checkLogContains("Debugger JMXConnector listening at:");
     }
 }

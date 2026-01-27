@@ -35,6 +35,7 @@ import org.testcontainers.containers.Container;
 
 public class CliLocalContainerService implements CliService, ContainerService<CliBuiltContainer> {
     public static final String CONTAINER_NAME = "camel-cli";
+    public static final String MAIN_COMMAND = System.getProperty(CliProperties.MAIN_COMMAND, "camel");
     private static final Logger LOG = LoggerFactory.getLogger(CliLocalContainerService.class);
     private final CliBuiltContainer container;
     private String version;
@@ -54,7 +55,9 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
                 .setExtraHosts(getHostsMap())
                 .setTrustedCertPaths(getCertPaths())
                 .setLocalMavenRepo(System.getProperty(CliProperties.MVN_LOCAL_REPO))
-                .setDockerFile(System.getProperty(CliProperties.DOCKERFILE)),
+                .setDockerFile(System.getProperty(CliProperties.DOCKERFILE))
+                .setMainCommand(System.getProperty(CliProperties.MAIN_COMMAND, "camel"))
+                .setCamelLauncher(System.getProperty(CliProperties.CAMEL_LAUNCHER)),
              System.getProperty(CliProperties.FORCE_RUN_VERSION, ""), System.getProperty(CliProperties.MVN_REPOS));
     }
 
@@ -113,7 +116,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String execute(String command) {
-        return executeGenericCommand(String.format("camel %s", command));
+        return executeGenericCommand(MAIN_COMMAND + " " + command);
     }
 
     @Override
@@ -213,6 +216,16 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     @Override
     public String getSshPassword() {
         return container.getSshPassword();
+    }
+
+    @Override
+    public String getMainCommand() {
+        return container.getMainCommand();
+    }
+
+    @Override
+    public String getCamelLauncher() {
+        return System.getProperty(CliProperties.CAMEL_LAUNCHER);
     }
 
     private static Map<String, String> getHostsMap() {

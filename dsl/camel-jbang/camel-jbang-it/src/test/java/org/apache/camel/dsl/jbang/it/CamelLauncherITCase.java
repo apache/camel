@@ -20,13 +20,20 @@ import java.io.IOException;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class RouteFromDirITCase extends JBangTestSupport {
+@EnabledIfSystemProperty(named = "cli.service.camel.launcher", matches = ".*camel-launcher.*",
+                         disabledReason = "Disabled unless link to camel-launcher is specified")
+public class CamelLauncherITCase extends JBangTestSupport {
 
     @Test
-    public void runFromDirTest() throws IOException {
+    public void camelLauncherSmokeTest() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
-        executeBackground(String.format("run --source-dir=%s", mountPoint()));
+        execInContainer(String.format(
+                "curl --output %s/camel-launcher.jar " + getCamelLauncher(),
+                mountPoint()));
+        execInContainer(String.format("java -jar %s/camel-launcher.jar run %s/FromDirectoryRoute.java --background",
+                mountPoint(), mountPoint()));
         checkLogContains("Hello world!");
     }
 }

@@ -63,6 +63,10 @@ public abstract class JBangTestSupport {
 
     private static final String DATA_FOLDER = System.getProperty(CliProperties.DATA_FOLDER);
 
+    private static final String MAIN_COMMAND = System.getProperty(CliProperties.MAIN_COMMAND);
+
+    private static final String CAMEL_LAUNCHER = System.getProperty(CliProperties.CAMEL_LAUNCHER);
+
     protected static final int ASSERTION_WAIT_SECONDS
             = Integer.parseInt(System.getProperty("jbang.it.assert.wait.timeout", "60"));
 
@@ -75,6 +79,7 @@ public abstract class JBangTestSupport {
     @BeforeEach
     protected void beforeEach(TestInfo testInfo) throws IOException {
         Assertions.assertThat(DATA_FOLDER).as("%s need to be set", CliProperties.DATA_FOLDER).isNotBlank();
+        Assertions.assertThat(MAIN_COMMAND).as("%s needs to be set", CliProperties.MAIN_COMMAND).isNotBlank();
         containerDataFolder = Files.createDirectory(Paths.get(DATA_FOLDER, containerService.id())).toAbsolutePath().toString();
         Files.setPosixFilePermissions(Paths.get(containerDataFolder), EnumSet.allOf(PosixFilePermission.class));
         logger.debug("running {}#{} using data folder {}", getClass().getName(), testInfo.getDisplayName(), getDataFolder());
@@ -134,11 +139,15 @@ public abstract class JBangTestSupport {
     }
 
     protected String execute(final String command) {
-        return containerService.execute(command);
+        return containerService.executeGenericCommand(MAIN_COMMAND + " " + command);
     }
 
     protected String executeBackground(final String command) {
-        return containerService.executeBackground(command);
+        return containerService.executeGenericCommand(MAIN_COMMAND + " " + command + " --background");
+    }
+
+    protected String execNohup(final String command) {
+        return containerService.executeGenericCommand("nohup " + MAIN_COMMAND + " " + command + " &");
     }
 
     protected String mountPoint() {
@@ -178,13 +187,13 @@ public abstract class JBangTestSupport {
 
     protected void checkCommandOutputs(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel " + command + " should output " + contains)
+                .as("command  " + MAIN_COMMAND + " " + command + "should output " + contains)
                 .contains(contains);
     }
 
     protected void checkCommandOutputsPattern(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel " + command + " should output pattern " + contains)
+                .as("command  " + MAIN_COMMAND + " " + command + "should output " + contains)
                 .containsPattern(contains);
     }
 
@@ -196,7 +205,7 @@ public abstract class JBangTestSupport {
 
     protected void checkCommandDoesNotOutput(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel " + command + " should not output " + contains)
+                .as("command  " + MAIN_COMMAND + " " + command + "should not output " + contains)
                 .doesNotContain(contains);
     }
 
@@ -289,8 +298,16 @@ public abstract class JBangTestSupport {
         return getLogs(null);
     }
 
+    protected String getPID(String startupMessage) {
+        return startupMessage.split("PID:")[1].split(" ")[1].replaceAll("[^0-9]", "");
+    }
+
     protected String getContainerLogs() {
         return containerService.getContainerLogs();
+    }
+
+    protected String getCamelLauncher() {
+        return containerService.getCamelLauncher();
     }
 
     protected String getLogs(String route) {
@@ -332,6 +349,10 @@ public abstract class JBangTestSupport {
 
     protected String getDataFolder() {
         return containerDataFolder;
+    }
+
+    protected String getMainCommand() {
+        return MAIN_COMMAND;
     }
 
     public String version() {

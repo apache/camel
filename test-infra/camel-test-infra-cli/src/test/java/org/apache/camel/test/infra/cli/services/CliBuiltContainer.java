@@ -48,6 +48,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
     private static final String SSH_PASSWORD_ARG = "SSH_PASSWORD_ARG";
     private static final String FROM_IMAGE_NAME = "mirror.gcr.io/fedora:43";
     private static final String FROM_IMAGE_ARG = "FROMIMAGE";
+    private static final String MAIN_COMMAND = "camel";
     protected static final int DEV_CONSOLE_PORT = 8080;
     protected static final int SSH_PORT = 22;
     protected static final String TRUSTED_CERT_FOLDER = "/etc/pki/ca-trust/source/anchors";
@@ -121,6 +122,10 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
         return sshPassword;
     }
 
+    public String getMainCommand() {
+        return MAIN_COMMAND;
+    }
+
     public static class CliBuiltContainerParams {
 
         private String camelRepo;
@@ -133,6 +138,8 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
         private List<String> trustedCertPaths;
         private String localMavenRepo;
         private String dockerFile;
+        private String mainCommand;
+        private String camelLauncher;
 
         public String getCamelRepo() {
             return camelRepo;
@@ -221,6 +228,24 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
 
         public CliBuiltContainerParams setDockerFile(String dockerFile) {
             this.dockerFile = dockerFile;
+            return this;
+        }
+
+        public String getMainCommand() {
+            return mainCommand;
+        }
+
+        public CliBuiltContainerParams setMainCommand(String mainCommand) {
+            this.mainCommand = mainCommand;
+            return this;
+        }
+
+        public String getCamelLauncher() {
+            return camelLauncher;
+        }
+
+        public CliBuiltContainerParams setCamelLauncher(String camelLauncher) {
+            this.camelLauncher = camelLauncher;
             return this;
         }
     }
