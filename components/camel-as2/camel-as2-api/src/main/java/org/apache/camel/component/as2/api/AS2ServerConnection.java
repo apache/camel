@@ -264,9 +264,9 @@ public class AS2ServerConnection {
         @Override
         public void process(HttpRequest request, EntityDetails entityDetails, HttpContext context)
                 throws HttpException, IOException {
-            if (request instanceof ClassicHttpRequest) {
+            if (request instanceof ClassicHttpRequest classicHttpRequest) {
                 // Now safely calling the method on the outer class instance (AS2ServerConnection.this)
-                AS2ServerConnection.this.setupConfigurationForRequest((ClassicHttpRequest) request, context);
+                AS2ServerConnection.this.setupConfigurationForRequest(classicHttpRequest, context);
             }
         }
     }
