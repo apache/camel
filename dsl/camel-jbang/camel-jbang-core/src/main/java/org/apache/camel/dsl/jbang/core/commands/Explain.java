@@ -458,11 +458,11 @@ public class Explain extends CamelCommand {
     }
 
     private String getModelDescription(Object model) {
-        if (model instanceof ComponentModel) {
-            return ((ComponentModel) model).getDescription();
+        if (model instanceof ComponentModel componentModel) {
+            return componentModel.getDescription();
         }
-        if (model instanceof EipModel) {
-            return ((EipModel) model).getDescription();
+        if (model instanceof EipModel eipModel) {
+            return eipModel.getDescription();
         }
         return null;
     }
