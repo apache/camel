@@ -1307,9 +1307,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof IdentityProviderRepresentation) {
+            if (payload instanceof IdentityProviderRepresentation idpRepresentation) {
                 Response response
-                        = keycloakClient.realm(realmName).identityProviders().create((IdentityProviderRepresentation) payload);
+                        = keycloakClient.realm(realmName).identityProviders().create(idpRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1365,9 +1365,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof IdentityProviderRepresentation) {
+            if (payload instanceof IdentityProviderRepresentation idpRepresentation) {
                 keycloakClient.realm(realmName).identityProviders().get(idpAlias)
-                        .update((IdentityProviderRepresentation) payload);
+                        .update(idpRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Identity provider updated successfully");
             }
@@ -1402,9 +1402,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourceRepresentation) {
+            if (payload instanceof ResourceRepresentation resourceRepresentation) {
                 Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources()
-                        .create((ResourceRepresentation) payload);
+                        .create(resourceRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1475,9 +1475,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourceRepresentation) {
+            if (payload instanceof ResourceRepresentation resourceRepresentation) {
                 keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resource(resourceId)
-                        .update((ResourceRepresentation) payload);
+                        .update(resourceRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Resource updated successfully");
             }
@@ -1516,9 +1516,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation) {
+            if (payload instanceof PolicyRepresentation policyRepresentation) {
                 Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies()
-                        .create((PolicyRepresentation) payload);
+                        .create(policyRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1589,9 +1589,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation) {
+            if (payload instanceof PolicyRepresentation policyRepresentation) {
                 keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(policyId)
-                        .update((PolicyRepresentation) payload);
+                        .update(policyRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Policy updated successfully");
             }
@@ -1630,9 +1630,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourcePermissionRepresentation) {
+            if (payload instanceof ResourcePermissionRepresentation permissionRepresentation) {
                 Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().permissions()
-                        .resource().create((ResourcePermissionRepresentation) payload);
+                        .resource().create(permissionRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1705,10 +1705,10 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation) {
+            if (payload instanceof PolicyRepresentation policyRepresentation) {
                 // Use policy endpoint for permissions
                 keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(permissionId)
-                        .update((PolicyRepresentation) payload);
+                        .update(policyRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Permission updated successfully");
             }
