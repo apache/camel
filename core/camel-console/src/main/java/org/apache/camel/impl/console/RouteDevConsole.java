@@ -439,57 +439,85 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     protected void doAction(CamelContext camelContext, String command, String filter) {
-        if (filter == null) {
-            filter = "*";
-        }
-        String[] patterns = filter.split(",");
-        // find matching IDs
+        String effectiveFilter = filter != null ? filter : "*";
+        String[] patterns = effectiveFilter.split(",");
+
         List<String> ids = camelContext.getRoutes()
                 .stream()
-                .filter(r -> {
-                    for (String p : patterns) {
-                        String source = r.getRouteId();
-                        if (p.startsWith("group:")) {
-                            source = r.getGroup();
-                            p = p.substring(6);
-                        }
-                        if (PatternHelper.matchPattern(source, p)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-                .map(Route::getRouteId).toList();
+                .filter(r -> matchesAnyPattern(r, patterns))
+                .map(Route::getRouteId)
+                .toList();
+
         for (String id : ids) {
-            try {
-                if ("start".equals(command)) {
-                    if ("*".equals(id)) {
-                        camelContext.getRouteController().startAllRoutes();
-                    } else {
-                        camelContext.getRouteController().startRoute(id);
-                    }
-                } else if ("stop".equals(command)) {
-                    if ("*".equals(id)) {
-                        camelContext.getRouteController().stopAllRoutes();
-                    } else {
-                        camelContext.getRouteController().stopRoute(id);
-                    }
-                } else if ("suspend".equals(command)) {
-                    if ("*".equals(id)) {
-                        camelContext.suspend();
-                    } else {
-                        camelContext.getRouteController().suspendRoute(id);
-                    }
-                } else if ("resume".equals(command)) {
-                    if ("*".equals(id)) {
-                        camelContext.resume();
-                    } else {
-                        camelContext.getRouteController().resumeRoute(id);
-                    }
-                }
-            } catch (Exception e) {
-                LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
+            executeRouteCommand(camelContext, command, id);
+        }
+    }
+
+    private boolean matchesAnyPattern(Route route, String[] patterns) {
+        for (String p : patterns) {
+            if (routeMatchesPattern(route, p)) {
+                return true;
             }
+        }
+        return false;
+    }
+
+    private boolean routeMatchesPattern(Route route, String pattern) {
+        String source = route.getRouteId();
+        String effectivePattern = pattern;
+
+        if (pattern.startsWith("group:")) {
+            source = route.getGroup();
+            effectivePattern = pattern.substring(6);
+        }
+
+        return PatternHelper.matchPattern(source, effectivePattern);
+    }
+
+    private void executeRouteCommand(CamelContext camelContext, String command, String id) {
+        try {
+            switch (command) {
+                case "start" -> executeStart(camelContext, id);
+                case "stop" -> executeStop(camelContext, id);
+                case "suspend" -> executeSuspend(camelContext, id);
+                case "resume" -> executeResume(camelContext, id);
+                default -> {
+                }
+            }
+        } catch (Exception e) {
+            LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
+        }
+    }
+
+    private void executeStart(CamelContext camelContext, String id) throws Exception {
+        if ("*".equals(id)) {
+            camelContext.getRouteController().startAllRoutes();
+        } else {
+            camelContext.getRouteController().startRoute(id);
+        }
+    }
+
+    private void executeStop(CamelContext camelContext, String id) throws Exception {
+        if ("*".equals(id)) {
+            camelContext.getRouteController().stopAllRoutes();
+        } else {
+            camelContext.getRouteController().stopRoute(id);
+        }
+    }
+
+    private void executeSuspend(CamelContext camelContext, String id) throws Exception {
+        if ("*".equals(id)) {
+            camelContext.suspend();
+        } else {
+            camelContext.getRouteController().suspendRoute(id);
+        }
+    }
+
+    private void executeResume(CamelContext camelContext, String id) throws Exception {
+        if ("*".equals(id)) {
+            camelContext.resume();
+        } else {
+            camelContext.getRouteController().resumeRoute(id);
         }
     }
 
