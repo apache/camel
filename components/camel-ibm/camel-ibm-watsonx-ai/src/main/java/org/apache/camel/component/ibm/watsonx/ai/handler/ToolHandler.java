@@ -88,9 +88,9 @@ public class ToolHandler extends AbstractWatsonxAiHandler {
             if (body instanceof Map) {
                 // Structured input
                 toolRequest = ToolRequest.structuredInput(toolName, (Map<String, Object>) body, config);
-            } else if (body instanceof String) {
+            } else if (body instanceof String bodyString) {
                 // Unstructured input
-                toolRequest = ToolRequest.unstructuredInput(toolName, (String) body, config);
+                toolRequest = ToolRequest.unstructuredInput(toolName, bodyString, config);
             } else {
                 throw new IllegalArgumentException(
                         "Tool input must be provided as Map (structured) or String (unstructured) in message body");
