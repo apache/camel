@@ -39,7 +39,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -83,8 +84,7 @@ class OcrExtractionIT extends CamelTestSupport {
 
         String result = template.requestBody("direct:ocr-extract-text", testImage.toString(), String.class);
 
-        assertNotNull(result, "OCR result should not be null");
-        assertTrue(result.length() > 0, "OCR result should not be empty");
+        assertThat(result).isNotBlank();
 
         LOG.info("OCR extraction result:\n{}", result);
 
@@ -106,13 +106,12 @@ class OcrExtractionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOcrMarkdownConversionFromImage() throws Exception {
+    void testOcrMarkdownConversionFromImage() throws Exception {
         Path testImage = createTestImageWithText();
 
         String result = template.requestBody("direct:ocr-convert-markdown", testImage.toString(), String.class);
 
-        assertNotNull(result, "Markdown result should not be null");
-        assertTrue(result.length() > 0, "Markdown result should not be empty");
+        assertThat(result).isNotBlank();
 
         checkExtractedText(result);
 
@@ -121,14 +120,13 @@ class OcrExtractionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOcrJsonConversionFromImage() throws Exception {
+    void testOcrJsonConversionFromImage() throws Exception {
         Path testImage = createTestImageWithText();
 
         String result = template.requestBody("direct:ocr-convert-json", testImage.toString(), String.class);
 
-        assertNotNull(result, "JSON result should not be null");
-        assertTrue(result.length() > 0, "JSON result should not be empty");
-        assertTrue(result.contains("{") || result.contains("["), "Result should be valid JSON");
+        assertThatJson(result).node("schema_name").asString().isEqualTo("DoclingDocument");
+        assertThatJson(result).inPath("texts[*].text").isArray().contains("OCR Test Document");
 
         checkExtractedText(result);
 
@@ -137,13 +135,12 @@ class OcrExtractionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOcrWithAsyncMode() throws Exception {
+    void testOcrWithAsyncMode() throws Exception {
         Path testImage = createTestImageWithText();
 
         String result = template.requestBody("direct:ocr-async-extract", testImage.toString(), String.class);
 
-        assertNotNull(result, "Async OCR result should not be null");
-        assertTrue(result.length() > 0, "Async OCR result should not be empty");
+        assertThat(result).isNotBlank();
 
         checkExtractedText(result);
 
@@ -152,14 +149,12 @@ class OcrExtractionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOcrFromPngImage() throws Exception {
+    void testOcrFromPngImage() throws Exception {
         Path testImage = createTestPngImage();
 
         String result = template.requestBody("direct:ocr-extract-text", testImage.toString(), String.class);
 
-        assertNotNull(result, "OCR result from PNG should not be null");
-        assertTrue(result.length() > 0, "OCR result from PNG should not be empty");
-
+        assertThat(result).isNotBlank();
         checkExtractedText(result);
 
         LOG.info("OCR extraction from PNG result:\n{}", result);
@@ -167,13 +162,12 @@ class OcrExtractionIT extends CamelTestSupport {
     }
 
     @Test
-    public void testOcrWithMultipleTextBlocks() throws Exception {
+    void testOcrWithMultipleTextBlocks() throws Exception {
         Path testImage = createImageWithMultipleTextBlocks();
 
         String result = template.requestBody("direct:ocr-extract-text", testImage.toString(), String.class);
 
-        assertNotNull(result, "OCR result should not be null");
-        assertTrue(result.length() > 0, "OCR result should not be empty");
+        assertThat(result).isNotBlank();
 
         // Verify that at least some of the expected text was extracted
         // Note: OCR may not be 100% accurate, so we check for partial matches
