@@ -70,9 +70,9 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
         String inputText = message.getHeader("CamelSpringAiEmbeddingInputText", String.class);
         Object body = message.getBody();
 
-        if (inputText != null && body instanceof float[]) {
+        if (inputText != null && body instanceof float[] floats) {
             // Create document from embedding component output with pre-computed embedding
-            Document doc = createDocumentWithEmbedding(inputText, (float[]) body);
+            Document doc = createDocumentWithEmbedding(inputText, floats);
             documents.add(doc);
         } else if (inputText != null) {
             // Create document from embedding component output (text only, vector store will embed)
@@ -82,8 +82,7 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
             // Check for batch texts and embeddings
             List<String> inputTexts = message.getHeader("CamelSpringAiEmbeddingInputTexts", List.class);
 
-            if (inputTexts != null && !inputTexts.isEmpty() && body instanceof List) {
-                List<?> bodyList = (List<?>) body;
+            if (inputTexts != null && !inputTexts.isEmpty() && body instanceof List<?> bodyList) {
                 // Check if body contains float arrays (pre-computed embeddings)
                 if (!bodyList.isEmpty() && bodyList.get(0) instanceof float[]) {
                     // Create documents with pre-computed embeddings
@@ -107,21 +106,20 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                 }
             } else {
                 // Try to get documents directly from body
-                if (body instanceof Document) {
-                    documents.add((Document) body);
-                } else if (body instanceof List) {
-                    List<?> list = (List<?>) body;
+                if (body instanceof Document doc) {
+                    documents.add(doc);
+                } else if (body instanceof List<?> list) {
                     for (Object item : list) {
-                        if (item instanceof Document) {
-                            documents.add((Document) item);
-                        } else if (item instanceof String) {
+                        if (item instanceof Document doc) {
+                            documents.add(doc);
+                        } else if (item instanceof String str) {
                             // Create document from text (vector store will generate embeddings)
-                            documents.add(new Document((String) item));
+                            documents.add(new Document(str));
                         }
                     }
-                } else if (body instanceof String) {
+                } else if (body instanceof String str) {
                     // Create document from text
-                    documents.add(new Document((String) body));
+                    documents.add(new Document(str));
                 } else {
                     throw new IllegalArgumentException(
                             "Message body must be a Document, List<Document>, String, List<String>, " +
@@ -165,8 +163,8 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
             Object body = message.getBody();
             if (body instanceof List) {
                 documentIds = (List<String>) body;
-            } else if (body instanceof String) {
-                documentIds = List.of((String) body);
+            } else if (body instanceof String str) {
+                documentIds = List.of(str);
             }
         }
 
