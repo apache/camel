@@ -24,6 +24,8 @@ import java.net.SocketException;
 import java.net.URI;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -90,9 +92,11 @@ public class AS2ServerConnection {
     private final String accessToken;
 
     /**
-     * Stores the configuration for each consumer endpoint path (e.g., "/consumerA")
+     * Stores the configuration for each consumer endpoint path (e.g., "/consumerA").
+     * Uses LinkedHashMap to preserve insertion order, ensuring that when multiple patterns match a request,
+     * the first registered pattern (in route definition order) takes precedence.
      */
-    private final Map<String, AS2ConsumerConfiguration> consumerConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, AS2ConsumerConfiguration> consumerConfigurations = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Cache of compiled regex patterns for wildcard matching. Key is the pattern string, value is the compiled Pattern
@@ -179,8 +183,8 @@ public class AS2ServerConnection {
      * </ul>
      *
      * <p>
-     * When multiple patterns match, the longest (most specific) pattern is preferred. Exact matches always take
-     * precedence over wildcard matches.
+     * When multiple patterns match, the first registered pattern (in route definition order) takes precedence.
+     * Exact matches always take precedence over wildcard matches.
      *
      * @param  path The canonical request URI path (e.g., "/consumerA").
      * @return      An Optional containing the configuration if a match is found, otherwise empty.
@@ -195,24 +199,12 @@ public class AS2ServerConnection {
 
         LOG.debug("No exact match for path: {}, trying pattern matching", path);
 
-        // Then try pattern matching for wildcards
-        String bestMatchPattern = null;
-        int bestMatchLength = -1;
-
+        // Then try pattern matching for wildcards - first match wins (in insertion order)
         for (String pattern : consumerConfigurations.keySet()) {
             if (matchesPattern(path, pattern)) {
-                // Prefer longer (more specific) patterns
-                int patternLength = pattern.replace("*", "").length();
-                if (patternLength > bestMatchLength) {
-                    bestMatchPattern = pattern;
-                    bestMatchLength = patternLength;
-                }
+                LOG.debug("Path {} matched pattern: {}", path, pattern);
+                return Optional.ofNullable(consumerConfigurations.get(pattern));
             }
-        }
-
-        if (bestMatchPattern != null) {
-            LOG.debug("Path {} matched pattern: {}", path, bestMatchPattern);
-            return Optional.ofNullable(consumerConfigurations.get(bestMatchPattern));
         }
 
         LOG.debug("No pattern matched for path: {}", path);

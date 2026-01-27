@@ -29,6 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Tests AS2 server wildcard pattern matching for requestUriPattern (CAMEL-22849). This test verifies that wildcard
  * patterns like "/consumer/*" correctly match incoming requests to "/consumer/orders", "/consumer/invoices", etc.
+ *
+ * When multiple patterns match a request, the first registered pattern (in route definition order) takes precedence.
+ * This means more specific patterns should be defined before more general patterns.
  */
 public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
 
@@ -36,17 +39,20 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // Consumer with wildcard pattern - should match /consumer/orders, /consumer/invoices, etc.
-                from("as2://server/listen?requestUriPattern=/consumer/*")
-                        .to("mock:wildcardConsumer");
+                // Routes are registered in order - first matching pattern wins
+                // More specific patterns should be defined first
 
-                // Consumer with exact match - should take precedence over wildcard
+                // Consumer with exact match - takes precedence over all wildcards
                 from("as2://server/listen?requestUriPattern=/consumer/orders")
                         .to("mock:exactConsumer");
 
-                // Consumer with more specific wildcard pattern
+                // Consumer with more specific wildcard pattern - should be before less specific patterns
                 from("as2://server/listen?requestUriPattern=/consumer/orders/*")
                         .to("mock:specificWildcardConsumer");
+
+                // Consumer with general wildcard pattern - matches remaining /consumer/* paths
+                from("as2://server/listen?requestUriPattern=/consumer/*")
+                        .to("mock:wildcardConsumer");
 
                 // Consumer with different path - should not match /consumer/* requests
                 from("as2://server/listen?requestUriPattern=/admin/*")
@@ -127,13 +133,14 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
     }
 
     @Test
-    public void testLongerPatternTakesPrecedence() throws Exception {
+    public void testFirstMatchingPatternWins() throws Exception {
         MockEndpoint specificEndpoint = getMockEndpoint("mock:specificWildcardConsumer");
         MockEndpoint generalEndpoint = getMockEndpoint("mock:wildcardConsumer");
         specificEndpoint.expectedMessageCount(1);
         generalEndpoint.expectedMessageCount(0);
 
-        // Send to /consumer/orders/456 - should match /consumer/orders/*, not /consumer/*
+        // Send to /consumer/orders/456 - should match /consumer/orders/* (first matching pattern)
+        // not /consumer/* (which also matches but is registered later)
         HttpCoreContext context = sendToPath("/consumer/orders/456", AS2MessageStructure.PLAIN);
 
         verifyOkResponse(context);
