@@ -800,8 +800,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteObjectsRequest) {
-                DeleteObjectsResponse result = s3Client.deleteObjects((DeleteObjectsRequest) payload);
+            if (payload instanceof DeleteObjectsRequest deleteObjectsRequest) {
+                DeleteObjectsResponse result = s3Client.deleteObjects(deleteObjectsRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -835,8 +835,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RestoreObjectRequest) {
-                RestoreObjectResponse result = s3Client.restoreObject((RestoreObjectRequest) payload);
+            if (payload instanceof RestoreObjectRequest restoreObjectRequest) {
+                RestoreObjectResponse result = s3Client.restoreObject(restoreObjectRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -873,8 +873,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetObjectTaggingRequest) {
-                GetObjectTaggingResponse result = s3Client.getObjectTagging((GetObjectTaggingRequest) payload);
+            if (payload instanceof GetObjectTaggingRequest getObjectTaggingRequest) {
+                GetObjectTaggingResponse result = s3Client.getObjectTagging(getObjectTaggingRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.tagSet());
             }
@@ -899,8 +899,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutObjectTaggingRequest) {
-                PutObjectTaggingResponse result = s3Client.putObjectTagging((PutObjectTaggingRequest) payload);
+            if (payload instanceof PutObjectTaggingRequest putObjectTaggingRequest) {
+                PutObjectTaggingResponse result = s3Client.putObjectTagging(putObjectTaggingRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -937,8 +937,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteObjectTaggingRequest) {
-                DeleteObjectTaggingResponse result = s3Client.deleteObjectTagging((DeleteObjectTaggingRequest) payload);
+            if (payload instanceof DeleteObjectTaggingRequest deleteObjectTaggingRequest) {
+                DeleteObjectTaggingResponse result = s3Client.deleteObjectTagging(deleteObjectTaggingRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -963,8 +963,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetObjectAclRequest) {
-                GetObjectAclResponse result = s3Client.getObjectAcl((GetObjectAclRequest) payload);
+            if (payload instanceof GetObjectAclRequest getObjectAclRequest) {
+                GetObjectAclResponse result = s3Client.getObjectAcl(getObjectAclRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -989,8 +989,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutObjectAclRequest) {
-                PutObjectAclResponse result = s3Client.putObjectAcl((PutObjectAclRequest) payload);
+            if (payload instanceof PutObjectAclRequest putObjectAclRequest) {
+                PutObjectAclResponse result = s3Client.putObjectAcl(putObjectAclRequest);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
