@@ -66,20 +66,20 @@ public abstract class RevenueWithdrawalState implements Serializable {
      * Returns this object as {@link RevenueWithdrawalStatePending} if it is of that type, null otherwise.
      */
     public RevenueWithdrawalStatePending asPending() {
-        return this instanceof RevenueWithdrawalStatePending ? (RevenueWithdrawalStatePending) this : null;
+        return this instanceof RevenueWithdrawalStatePending pending ? pending : null;
     }
 
     /**
      * Returns this object as {@link RevenueWithdrawalStateSucceeded} if it is of that type, null otherwise.
      */
     public RevenueWithdrawalStateSucceeded asSucceeded() {
-        return this instanceof RevenueWithdrawalStateSucceeded ? (RevenueWithdrawalStateSucceeded) this : null;
+        return this instanceof RevenueWithdrawalStateSucceeded succeeded ? succeeded : null;
     }
 
     /**
      * Returns this object as {@link RevenueWithdrawalStateFailed} if it is of that type, null otherwise.
      */
     public RevenueWithdrawalStateFailed asFailed() {
-        return this instanceof RevenueWithdrawalStateFailed ? (RevenueWithdrawalStateFailed) this : null;
+        return this instanceof RevenueWithdrawalStateFailed failed ? failed : null;
     }
 }

@@ -69,48 +69,48 @@ public abstract class TransactionPartner implements Serializable {
      * Returns this object as {@link TransactionPartnerUser} if it is of that type, null otherwise.
      */
     public TransactionPartnerUser asUser() {
-        return this instanceof TransactionPartnerUser ? (TransactionPartnerUser) this : null;
+        return this instanceof TransactionPartnerUser user ? user : null;
     }
 
     /**
      * Returns this object as {@link TransactionPartnerChat} if it is of that type, null otherwise.
      */
     public TransactionPartnerChat asChat() {
-        return this instanceof TransactionPartnerChat ? (TransactionPartnerChat) this : null;
+        return this instanceof TransactionPartnerChat chat ? chat : null;
     }
 
     /**
      * Returns this object as {@link TransactionPartnerAffiliateProgram} if it is of that type, null otherwise.
      */
     public TransactionPartnerAffiliateProgram asAffiliateProgram() {
-        return this instanceof TransactionPartnerAffiliateProgram ? (TransactionPartnerAffiliateProgram) this : null;
+        return this instanceof TransactionPartnerAffiliateProgram affiliateProgram ? affiliateProgram : null;
     }
 
     /**
      * Returns this object as {@link TransactionPartnerFragment} if it is of that type, null otherwise.
      */
     public TransactionPartnerFragment asFragment() {
-        return this instanceof TransactionPartnerFragment ? (TransactionPartnerFragment) this : null;
+        return this instanceof TransactionPartnerFragment fragment ? fragment : null;
     }
 
     /**
      * Returns this object as {@link TransactionPartnerTelegramAds} if it is of that type, null otherwise.
      */
     public TransactionPartnerTelegramAds asTelegramAds() {
-        return this instanceof TransactionPartnerTelegramAds ? (TransactionPartnerTelegramAds) this : null;
+        return this instanceof TransactionPartnerTelegramAds telegramAds ? telegramAds : null;
     }
 
     /**
      * Returns this object as {@link TransactionPartnerTelegramApi} if it is of that type, null otherwise.
      */
     public TransactionPartnerTelegramApi asTelegramApi() {
-        return this instanceof TransactionPartnerTelegramApi ? (TransactionPartnerTelegramApi) this : null;
+        return this instanceof TransactionPartnerTelegramApi telegramApi ? telegramApi : null;
     }
 
     /**
      * Returns this object as {@link TransactionPartnerOther} if it is of that type, null otherwise.
      */
     public TransactionPartnerOther asOther() {
-        return this instanceof TransactionPartnerOther ? (TransactionPartnerOther) this : null;
+        return this instanceof TransactionPartnerOther other ? other : null;
     }
 }
