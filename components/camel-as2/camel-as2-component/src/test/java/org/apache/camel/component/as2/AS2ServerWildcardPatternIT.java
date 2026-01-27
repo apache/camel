@@ -57,6 +57,14 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
                 // Consumer with different path - should not match /consumer/* requests
                 from("as2://server/listen?requestUriPattern=/admin/*")
                         .to("mock:adminConsumer");
+
+                // Consumer with regex special characters in pattern - should be treated as literals
+                from("as2://server/listen?requestUriPattern=/api/v1.2/endpoint")
+                        .to("mock:regexSpecialCharsConsumer");
+
+                // Consumer with wildcard and special characters
+                from("as2://server/listen?requestUriPattern=/api/v2+3/*")
+                        .to("mock:regexSpecialCharsWildcardConsumer");
             }
         };
     }
@@ -171,6 +179,66 @@ public class AS2ServerWildcardPatternIT extends AS2ServerSecTestBase {
         Exchange exchange = adminEndpoint.getReceivedExchanges().get(0);
         assertNotNull(exchange);
         assertEquals(EDI_MESSAGE, exchange.getIn().getBody(String.class));
+    }
+
+    @Test
+    public void testRegexSpecialCharactersTreatedAsLiterals() throws Exception {
+        MockEndpoint regexEndpoint = getMockEndpoint("mock:regexSpecialCharsConsumer");
+        regexEndpoint.expectedMessageCount(1);
+
+        // Send to /api/v1.2/endpoint - the dot should be treated as a literal dot, not regex "any character"
+        HttpCoreContext context = sendToPath("/api/v1.2/endpoint", AS2MessageStructure.PLAIN);
+
+        verifyOkResponse(context);
+        regexEndpoint.assertIsSatisfied();
+
+        // Verify the message was received
+        Exchange exchange = regexEndpoint.getReceivedExchanges().get(0);
+        assertNotNull(exchange);
+        assertEquals(EDI_MESSAGE, exchange.getIn().getBody(String.class));
+    }
+
+    @Test
+    public void testRegexSpecialCharactersNotMatchedAsRegex() throws Exception {
+        MockEndpoint regexEndpoint = getMockEndpoint("mock:regexSpecialCharsConsumer");
+        regexEndpoint.expectedMessageCount(0);
+
+        // Send to /api/v1X2/endpoint - should NOT match because dot is literal, not regex "any character"
+        // If Pattern.quote() wasn't working, this would incorrectly match
+        HttpCoreContext context = sendToPath("/api/v1X2/endpoint", AS2MessageStructure.PLAIN);
+
+        // This should fail to find a matching consumer, but we're just verifying it doesn't match the wrong one
+        regexEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testRegexSpecialCharactersWithWildcard() throws Exception {
+        MockEndpoint regexWildcardEndpoint = getMockEndpoint("mock:regexSpecialCharsWildcardConsumer");
+        regexWildcardEndpoint.expectedMessageCount(1);
+
+        // Send to /api/v2+3/orders - the plus should be treated as a literal plus, not regex "one or more"
+        HttpCoreContext context = sendToPath("/api/v2+3/orders", AS2MessageStructure.PLAIN);
+
+        verifyOkResponse(context);
+        regexWildcardEndpoint.assertIsSatisfied();
+
+        // Verify the message was received
+        Exchange exchange = regexWildcardEndpoint.getReceivedExchanges().get(0);
+        assertNotNull(exchange);
+        assertEquals(EDI_MESSAGE, exchange.getIn().getBody(String.class));
+    }
+
+    @Test
+    public void testRegexSpecialCharactersWithWildcardNotMatchedAsRegex() throws Exception {
+        MockEndpoint regexWildcardEndpoint = getMockEndpoint("mock:regexSpecialCharsWildcardConsumer");
+        regexWildcardEndpoint.expectedMessageCount(0);
+
+        // Send to /api/v23/orders - should NOT match because plus is literal, not regex "one or more"
+        // If Pattern.quote() wasn't working, this would incorrectly match
+        HttpCoreContext context = sendToPath("/api/v23/orders", AS2MessageStructure.PLAIN);
+
+        // This should fail to find a matching consumer, but we're just verifying it doesn't match the wrong one
+        regexWildcardEndpoint.assertIsSatisfied();
     }
 
     /**
