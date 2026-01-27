@@ -37,10 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Integration test for metadata extraction operations using test-infra for container management.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
-public class MetadataExtractionIT extends DoclingITestSupport {
+class MetadataExtractionIT extends DoclingITestSupport {
 
     @Test
-    public void testBasicMetadataExtraction() throws Exception {
+    void testBasicMetadataExtraction() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
@@ -86,7 +86,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    public void testMetadataExtractionWithHeaders() throws Exception {
+    void testMetadataExtractionWithHeaders() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         // Extract metadata with headers enabled (default behavior)
@@ -96,11 +96,13 @@ public class MetadataExtractionIT extends DoclingITestSupport {
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
 
+        // TODO: verify headers are populated
+
         LOG.info("Successfully extracted metadata with headers: {}", metadata);
     }
 
     @Test
-    public void testMetadataExtractionWithoutHeaders() throws Exception {
+    void testMetadataExtractionWithoutHeaders() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata-no-headers",
@@ -113,7 +115,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    public void testMetadataExtractionWithAllFields() throws Exception {
+    void testMetadataExtractionWithAllFields() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata-all-fields",
@@ -131,7 +133,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    public void testMetadataExtractionWithRawMetadata() throws Exception {
+    void testMetadataExtractionWithRawMetadata() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata-with-raw",
@@ -150,7 +152,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    public void testMetadataExtractionFromUrl() throws Exception {
+    void testMetadataExtractionFromUrl() throws Exception {
         // Test extracting metadata from a URL (if docling-serve supports it)
         String url = "https://arxiv.org/pdf/2501.17887";
 
@@ -164,7 +166,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    public void testMetadataHelperMethods() throws Exception {
+    void testMetadataHelperMethods() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
@@ -173,13 +175,13 @@ public class MetadataExtractionIT extends DoclingITestSupport {
         assertNotNull(metadata, "Metadata should not be null");
 
         // Test helper methods
-        assertTrue(metadata.getFileName() != null, "Should have file name");
+        assertNotNull(metadata.getFileName(), "Should have file name");
 
         LOG.info("Metadata helper methods tested successfully");
     }
 
     @Test
-    public void testMetadataToString() throws Exception {
+    void testMetadataToString() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
@@ -206,11 +208,13 @@ public class MetadataExtractionIT extends DoclingITestSupport {
         assertNotNull(metadata, "Metadata should not be null");
         assertNotNull(metadata.getFileName(), "File name should be extracted");
 
+        // TODO: the headers are not verified if they are really used or not
+
         LOG.info("Successfully verified metadata headers are populated");
     }
 
     @Test
-    public void testMetadataExtractionEmptyCustomFields() throws Exception {
+    void testMetadataExtractionEmptyCustomFields() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         // Extract metadata without extractAllMetadata flag
@@ -228,7 +232,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    public void testMetadataExtractionNoRawMetadata() throws Exception {
+    void testMetadataExtractionNoRawMetadata() throws Exception {
         Path testFile = createTestMarkdownFile();
 
         // Extract metadata without includeRawMetadata flag
@@ -247,7 +251,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
 
     private Path createTestMarkdownFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-metadata-test", ".md");
-        Files.write(tempFile,
+        Files.writeString(tempFile,
                 """
                         # Test Document for Metadata Extraction
 
@@ -263,7 +267,7 @@ public class MetadataExtractionIT extends DoclingITestSupport {
                         ## Section 2
 
                         More content with some **bold** text and *italic* text.
-                        """.getBytes());
+                        """);
         return tempFile;
     }
 
