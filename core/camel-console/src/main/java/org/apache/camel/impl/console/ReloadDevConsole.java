@@ -56,46 +56,43 @@ public class ReloadDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
-        boolean failed = false;
-        for (ReloadStrategy r : rs) {
-            if (trigger) {
-                int before = r.getFailedCounter();
-                Future<?> f = getOrCreateReloadTask().submit(() -> r.onReload("ReloadDevConsole"));
-                if (wait) {
-                    try {
-                        f.get(30, TimeUnit.SECONDS);
-                        failed |= r.getFailedCounter() > before;
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
-            } else {
-                sb.append(String.format("%nReloadStrategy: %s", r.getClass().getName()));
-                sb.append(String.format("%n    Reloaded: %s", r.getReloadCounter()));
-                sb.append(String.format("%n    Failed: %s", r.getFailedCounter()));
-                Exception cause = r.getLastError();
-                if (cause != null) {
-                    sb.append(String.format("%n    Error Message: %s", cause.getMessage()));
-                    final String stackTrace = ExceptionHelper.stackTraceToString(cause);
-                    sb.append("\n\n");
-                    sb.append(stackTrace);
-                    sb.append("\n\n");
-                }
-            }
-        }
+
         if (trigger) {
-            if (wait) {
-                if (failed) {
-                    sb.append("Status: Reload failed");
-                } else {
-                    sb.append("Status: Reload success");
-                }
-            } else {
-                sb.append("Status: Reloading in progress");
-            }
+            boolean failed = triggerReload(rs, wait);
+            sb.append(getReloadStatusText(wait, failed));
+        } else {
+            appendReloadStrategiesText(sb, rs);
         }
+
         sb.append("\n");
         return sb.toString();
+    }
+
+    private void appendReloadStrategiesText(StringBuilder sb, Set<ReloadStrategy> rs) {
+        for (ReloadStrategy r : rs) {
+            sb.append(String.format("%nReloadStrategy: %s", r.getClass().getName()));
+            sb.append(String.format("%n    Reloaded: %s", r.getReloadCounter()));
+            sb.append(String.format("%n    Failed: %s", r.getFailedCounter()));
+            appendLastErrorText(sb, r.getLastError());
+        }
+    }
+
+    private void appendLastErrorText(StringBuilder sb, Exception cause) {
+        if (cause == null) {
+            return;
+        }
+        sb.append(String.format("%n    Error Message: %s", cause.getMessage()));
+        final String stackTrace = ExceptionHelper.stackTraceToString(cause);
+        sb.append("\n\n");
+        sb.append(stackTrace);
+        sb.append("\n\n");
+    }
+
+    private String getReloadStatusText(boolean wait, boolean failed) {
+        if (!wait) {
+            return "Status: Reloading in progress";
+        }
+        return failed ? "Status: Reload failed" : "Status: Reload success";
     }
 
     protected JsonObject doCallJson(Map<String, Object> options) {
@@ -103,55 +100,72 @@ public class ReloadDevConsole extends AbstractDevConsole {
         boolean wait = "true".equals(options.getOrDefault(RELOAD_WAIT, "false"));
         JsonObject root = new JsonObject();
 
-        JsonArray arr = new JsonArray();
         Set<ReloadStrategy> rs = getCamelContext().hasServices(ReloadStrategy.class);
-        boolean failed = false;
-        for (ReloadStrategy r : rs) {
-            if (trigger) {
-                int before = r.getFailedCounter();
-                Future<?> f = getOrCreateReloadTask().submit(() -> r.onReload("ReloadDevConsole"));
-                if (wait) {
-                    try {
-                        f.get(30, TimeUnit.SECONDS);
-                        failed |= r.getFailedCounter() > before;
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
-            } else {
-                if (root.isEmpty()) {
-                    root.put("reloadStrategies", arr);
-                }
-                JsonObject jo = new JsonObject();
-                arr.add(jo);
-                jo.put("className", r.getClass().getName());
-                jo.put("reloaded", r.getReloadCounter());
-                jo.put("failed", r.getFailedCounter());
-                Throwable cause = r.getLastError();
-                if (cause != null) {
-                    JsonObject eo = new JsonObject();
-                    eo.put("message", cause.getMessage());
-                    JsonArray arr2 = new JsonArray();
-                    final String trace = ExceptionHelper.stackTraceToString(cause);
-                    eo.put("stackTrace", arr2);
-                    Collections.addAll(arr2, trace.split("\n"));
-                    jo.put("lastError", eo);
-                }
-            }
-        }
 
         if (trigger) {
+            boolean failed = triggerReload(rs, wait);
+            root.put("status", getReloadStatusValue(wait, failed));
+        } else {
+            addReloadStrategiesJson(root, rs);
+        }
+
+        return root;
+    }
+
+    private boolean triggerReload(Set<ReloadStrategy> rs, boolean wait) {
+        boolean failed = false;
+        for (ReloadStrategy r : rs) {
+            int before = r.getFailedCounter();
+            Future<?> f = getOrCreateReloadTask().submit(() -> r.onReload("ReloadDevConsole"));
             if (wait) {
-                if (failed) {
-                    root.put("status", "failed");
-                } else {
-                    root.put("status", "success");
+                try {
+                    f.get(30, TimeUnit.SECONDS);
+                    failed |= r.getFailedCounter() > before;
+                } catch (Exception e) {
+                    // ignore
                 }
-            } else {
-                root.put("status", "reloading");
             }
         }
-        return root;
+        return failed;
+    }
+
+    private String getReloadStatusValue(boolean wait, boolean failed) {
+        if (!wait) {
+            return "reloading";
+        }
+        return failed ? "failed" : "success";
+    }
+
+    private void addReloadStrategiesJson(JsonObject root, Set<ReloadStrategy> rs) {
+        JsonArray arr = new JsonArray();
+        for (ReloadStrategy r : rs) {
+            arr.add(buildReloadStrategyJson(r));
+        }
+        if (!arr.isEmpty()) {
+            root.put("reloadStrategies", arr);
+        }
+    }
+
+    private JsonObject buildReloadStrategyJson(ReloadStrategy r) {
+        JsonObject jo = new JsonObject();
+        jo.put("className", r.getClass().getName());
+        jo.put("reloaded", r.getReloadCounter());
+        jo.put("failed", r.getFailedCounter());
+        addLastErrorJson(jo, r.getLastError());
+        return jo;
+    }
+
+    private void addLastErrorJson(JsonObject jo, Throwable cause) {
+        if (cause == null) {
+            return;
+        }
+        JsonObject eo = new JsonObject();
+        eo.put("message", cause.getMessage());
+        JsonArray arr2 = new JsonArray();
+        final String trace = ExceptionHelper.stackTraceToString(cause);
+        eo.put("stackTrace", arr2);
+        Collections.addAll(arr2, trace.split("\n"));
+        jo.put("lastError", eo);
     }
 
     protected ExecutorService getOrCreateReloadTask() {
