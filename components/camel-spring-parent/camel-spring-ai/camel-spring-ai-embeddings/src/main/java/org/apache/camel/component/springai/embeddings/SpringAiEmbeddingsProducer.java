@@ -47,8 +47,8 @@ public class SpringAiEmbeddingsProducer extends DefaultProducer {
         List<String> inputTexts;
         Object body = message.getBody();
 
-        if (body instanceof String) {
-            inputTexts = List.of((String) body);
+        if (body instanceof String str) {
+            inputTexts = List.of(str);
         } else if (body instanceof List) {
             inputTexts = (List<String>) body;
         } else {
