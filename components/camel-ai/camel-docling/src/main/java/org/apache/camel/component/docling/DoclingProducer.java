@@ -279,8 +279,8 @@ public class DoclingProducer extends DefaultProducer {
         String taskId = exchange.getIn().getHeader(DoclingHeaders.TASK_ID, String.class);
         if (taskId == null) {
             Object body = exchange.getIn().getBody();
-            if (body instanceof String) {
-                taskId = (String) body;
+            if (body instanceof String bodyString) {
+                taskId = bodyString;
             } else {
                 throw new IllegalArgumentException("Task ID must be provided in header CamelDoclingTaskId or in message body");
             }
@@ -764,14 +764,13 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         // Handle Collection
-        if (body instanceof Collection) {
-            Collection<?> collection = (Collection<?>) body;
+        if (body instanceof Collection<?> collection) {
             return collection.stream()
                     .map(obj -> {
-                        if (obj instanceof String) {
-                            return (String) obj;
-                        } else if (obj instanceof File) {
-                            return ((File) obj).getAbsolutePath();
+                        if (obj instanceof String str) {
+                            return str;
+                        } else if (obj instanceof File file) {
+                            return file.getAbsolutePath();
                         } else {
                             return obj.toString();
                         }
@@ -780,13 +779,12 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         // Handle String array
-        if (body instanceof String[]) {
-            return List.of((String[]) body);
+        if (body instanceof String[] strings) {
+            return List.of(strings);
         }
 
         // Handle File array
-        if (body instanceof File[]) {
-            File[] files = (File[]) body;
+        if (body instanceof File[] files) {
             List<String> paths = new ArrayList<>();
             for (File file : files) {
                 paths.add(file.getAbsolutePath());
@@ -795,8 +793,7 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         // Handle single String (directory path to scan)
-        if (body instanceof String) {
-            String path = (String) body;
+        if (body instanceof String path) {
             File dir = new File(path);
             if (dir.isDirectory()) {
                 File[] files = dir.listFiles();
@@ -874,8 +871,8 @@ public class DoclingProducer extends DefaultProducer {
             throw new IOException("Async conversion was interrupted", e);
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof IOException) {
-                throw (IOException) cause;
+            if (cause instanceof IOException ioException) {
+                throw ioException;
             }
             throw new IOException("Async conversion failed: " + cause.getMessage(), cause);
         }
