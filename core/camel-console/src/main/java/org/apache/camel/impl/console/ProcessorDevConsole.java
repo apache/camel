@@ -121,65 +121,76 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 return;
             }
             sb.append("\n");
-            sb.append(String.format("%n        Route Id: %s", mp.getRouteId()));
-            sb.append(String.format("%n        Id: %s", mp.getProcessorId()));
-            if (mp.getNodePrefixId() != null) {
-                sb.append(String.format("%n        Node Prefix Id: %s", mp.getNodePrefixId()));
-            }
-            if (mp.getDescription() != null) {
-                sb.append(String.format("%n        Description: %s", mp.getDescription()));
-            }
-            if (mp.getNote() != null) {
-                sb.append(String.format("%n        Note: %s", mp.getNote()));
-            }
-            sb.append(String.format("%n        Processor: %s", mp.getProcessorName()));
-            if (mp.getStepId() != null) {
-                sb.append(String.format("%n        Step Id: %s", mp.getStepId()));
-            }
-            sb.append(String.format("%n        Level: %d", mp.getLevel()));
-            if (mp.getSourceLocation() != null) {
-                String loc = mp.getSourceLocation();
-                if (mp.getSourceLineNumber() != null) {
-                    loc += ":" + mp.getSourceLineNumber();
-                }
-                sb.append(String.format("%n        Source: %s", loc));
-            }
+            outputProcessorBasicInfoText(sb, mp);
+            outputProcessorSourceText(sb, mp);
+            outputProcessorDestinationText(sb, camelContext, mp);
+            outputProcessorStateText(sb, mp);
+            outputProcessorStatsText(sb, mp);
+        }
+    }
 
-            // processors which can send to a destination (such as to/toD/poll etc)
-            String destination = getDestination(camelContext, mp);
-            if (destination != null) {
-                sb.append(String.format("%n        Uri: %s", destination));
-            }
+    private static void outputProcessorBasicInfoText(StringBuilder sb, ManagedProcessorMBean mp) {
+        sb.append(String.format("%n        Route Id: %s", mp.getRouteId()));
+        sb.append(String.format("%n        Id: %s", mp.getProcessorId()));
+        appendOptionalText(sb, "Node Prefix Id", mp.getNodePrefixId());
+        appendOptionalText(sb, "Description", mp.getDescription());
+        appendOptionalText(sb, "Note", mp.getNote());
+        sb.append(String.format("%n        Processor: %s", mp.getProcessorName()));
+        appendOptionalText(sb, "Step Id", mp.getStepId());
+        sb.append(String.format("%n        Level: %d", mp.getLevel()));
+    }
 
-            sb.append(String.format("%n        State: %s", mp.getState()));
-            sb.append(String.format("%n        Disabled: %s", mp.getDisabled()));
-            sb.append(String.format("%n        Total: %s", mp.getExchangesTotal()));
-            sb.append(String.format("%n        Failed: %s", mp.getExchangesFailed()));
-            sb.append(String.format("%n        Inflight: %s", mp.getExchangesInflight()));
-            long idle = mp.getIdleSince();
-            if (idle > 0) {
-                sb.append(String.format("%n        Idle Since: %s", TimeUtils.printDuration(idle)));
-            } else {
-                sb.append(String.format("%n        Idle Since: %s", ""));
-            }
-            sb.append(String.format("%n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
-            sb.append(String.format("%n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
-            sb.append(String.format("%n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
-            if (mp.getExchangesTotal() > 0) {
-                sb.append(String.format("%n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
-                sb.append(
-                        String.format("%n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
-            }
-            Date last = mp.getLastExchangeCompletedTimestamp();
-            if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("%n        Since Last Completed: %s", ago));
-            }
-            last = mp.getLastExchangeFailureTimestamp();
-            if (last != null) {
-                String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("%n        Since Last Failed: %s", ago));
-            }
+    private static void outputProcessorSourceText(StringBuilder sb, ManagedProcessorMBean mp) {
+        if (mp.getSourceLocation() == null) {
+            return;
+        }
+        String loc = mp.getSourceLocation();
+        if (mp.getSourceLineNumber() != null) {
+            loc += ":" + mp.getSourceLineNumber();
+        }
+        sb.append(String.format("%n        Source: %s", loc));
+    }
+
+    private static void outputProcessorDestinationText(StringBuilder sb, CamelContext camelContext, ManagedProcessorMBean mp) {
+        String destination = getDestination(camelContext, mp);
+        if (destination != null) {
+            sb.append(String.format("%n        Uri: %s", destination));
+        }
+    }
+
+    private static void outputProcessorStateText(StringBuilder sb, ManagedProcessorMBean mp) {
+        sb.append(String.format("%n        State: %s", mp.getState()));
+        sb.append(String.format("%n        Disabled: %s", mp.getDisabled()));
+        sb.append(String.format("%n        Total: %s", mp.getExchangesTotal()));
+        sb.append(String.format("%n        Failed: %s", mp.getExchangesFailed()));
+        sb.append(String.format("%n        Inflight: %s", mp.getExchangesInflight()));
+    }
+
+    private static void outputProcessorStatsText(StringBuilder sb, ManagedProcessorMBean mp) {
+        long idle = mp.getIdleSince();
+        sb.append(String.format("%n        Idle Since: %s", idle > 0 ? TimeUtils.printDuration(idle) : ""));
+        sb.append(String.format("%n        Mean Time: %s", TimeUtils.printDuration(mp.getMeanProcessingTime(), true)));
+        sb.append(String.format("%n        Max Time: %s", TimeUtils.printDuration(mp.getMaxProcessingTime(), true)));
+        sb.append(String.format("%n        Min Time: %s", TimeUtils.printDuration(mp.getMinProcessingTime(), true)));
+
+        if (mp.getExchangesTotal() > 0) {
+            sb.append(String.format("%n        Last Time: %s", TimeUtils.printDuration(mp.getLastProcessingTime(), true)));
+            sb.append(String.format("%n        Delta Time: %s", TimeUtils.printDuration(mp.getDeltaProcessingTime(), true)));
+        }
+
+        Date lastCompleted = mp.getLastExchangeCompletedTimestamp();
+        if (lastCompleted != null) {
+            sb.append(String.format("%n        Since Last Completed: %s", TimeUtils.printSince(lastCompleted.getTime())));
+        }
+        Date lastFailed = mp.getLastExchangeFailureTimestamp();
+        if (lastFailed != null) {
+            sb.append(String.format("%n        Since Last Failed: %s", TimeUtils.printSince(lastFailed.getTime())));
+        }
+    }
+
+    private static void appendOptionalText(StringBuilder sb, String label, String value) {
+        if (value != null) {
+            sb.append(String.format("%n        %s: %s", label, value));
         }
     }
 
@@ -235,79 +246,110 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     public static void includeProcessorsJSon(
             CamelContext camelContext, JsonArray arr, int max, List<ManagedProcessorMBean> mps) {
         for (int i = 0; i < mps.size(); i++) {
-            ManagedProcessorMBean mp = mps.get(i);
             if (arr.size() > max) {
                 return;
             }
-            JsonObject jo = new JsonObject();
+
+            ManagedProcessorMBean mp = mps.get(i);
+            ManagedProcessorMBean nextMp = i < mps.size() - 1 ? mps.get(i + 1) : null;
+
+            JsonObject jo = buildProcessorJson(camelContext, mp, nextMp);
             arr.add(jo);
+        }
+    }
 
-            jo.put("routeId", mp.getRouteId());
-            jo.put("id", mp.getProcessorId());
-            if (mp.getNodePrefixId() != null) {
-                jo.put("nodePrefixId", mp.getNodePrefixId());
-            }
-            if (mp.getDescription() != null) {
-                jo.put("description", mp.getDescription());
-            }
-            if (mp.getNote() != null) {
-                jo.put("note", mp.getNote());
-            }
-            if (mp.getSourceLocation() != null) {
-                String loc = mp.getSourceLocation();
-                if (mp.getSourceLineNumber() != null) {
-                    loc += ":" + mp.getSourceLineNumber();
-                }
-                jo.put("source", loc);
-            }
-            jo.put("state", mp.getState());
-            jo.put("disabled", mp.getDisabled());
-            if (mp.getStepId() != null) {
-                jo.put("stepId", mp.getStepId());
-            }
+    private static JsonObject buildProcessorJson(
+            CamelContext camelContext, ManagedProcessorMBean mp, ManagedProcessorMBean nextMp) {
+        JsonObject jo = new JsonObject();
 
-            // calculate end line number
-            ManagedProcessorMBean mp2 = i < mps.size() - 1 ? mps.get(i + 1) : null;
-            Integer end = mp2 != null ? mp2.getSourceLineNumber() : null;
-            if (mp.getSourceLineNumber() != null) {
-                if (end == null) {
-                    end = mp.getSourceLineNumber() + 5;
-                } else {
-                    // clip so we do not read ahead to far, as we just want a snippet of the source code
-                    end = Math.min(mp.getSourceLineNumber() + 5, end);
-                }
-            }
+        addProcessorBasicInfoJson(jo, mp);
+        addProcessorSourceJson(jo, mp);
+        addProcessorCodeSnippetJson(jo, camelContext, mp, nextMp);
+        addProcessorDestinationJson(jo, camelContext, mp);
+        jo.put("statistics", getStatsObject(mp));
 
-            JsonArray ca = new JsonArray();
-            List<String> lines
-                    = ConsoleHelper.loadSourceLines(camelContext, mp.getSourceLocation(), mp.getSourceLineNumber(), end);
-            Integer pos = mp.getSourceLineNumber();
-            for (String line : lines) {
-                JsonObject c = new JsonObject();
-                c.put("line", pos);
-                c.put("code", Jsoner.escape(line));
-                if (pos != null && pos.equals(mp.getSourceLineNumber())) {
-                    c.put("match", true);
-                }
-                ca.add(c);
-                if (pos != null) {
-                    pos++;
-                }
-            }
-            if (!ca.isEmpty()) {
-                jo.put("code", ca);
-            }
-            jo.put("processor", mp.getProcessorName());
-            jo.put("level", mp.getLevel());
+        return jo;
+    }
 
-            // processors which can send to a destination (such as to/toD/poll etc)
-            String destination = getDestination(camelContext, mp);
-            if (destination != null) {
-                jo.put("uri", destination);
-            }
+    private static void addProcessorBasicInfoJson(JsonObject jo, ManagedProcessorMBean mp) {
+        jo.put("routeId", mp.getRouteId());
+        jo.put("id", mp.getProcessorId());
+        putIfNotNull(jo, "nodePrefixId", mp.getNodePrefixId());
+        putIfNotNull(jo, "description", mp.getDescription());
+        putIfNotNull(jo, "note", mp.getNote());
+        jo.put("state", mp.getState());
+        jo.put("disabled", mp.getDisabled());
+        putIfNotNull(jo, "stepId", mp.getStepId());
+        jo.put("processor", mp.getProcessorName());
+        jo.put("level", mp.getLevel());
+    }
 
-            final JsonObject stats = getStatsObject(mp);
-            jo.put("statistics", stats);
+    private static void addProcessorSourceJson(JsonObject jo, ManagedProcessorMBean mp) {
+        if (mp.getSourceLocation() == null) {
+            return;
+        }
+        String loc = mp.getSourceLocation();
+        if (mp.getSourceLineNumber() != null) {
+            loc += ":" + mp.getSourceLineNumber();
+        }
+        jo.put("source", loc);
+    }
+
+    private static void addProcessorCodeSnippetJson(
+            JsonObject jo, CamelContext camelContext, ManagedProcessorMBean mp, ManagedProcessorMBean nextMp) {
+        if (mp.getSourceLineNumber() == null) {
+            return;
+        }
+
+        Integer end = calculateCodeSnippetEndLine(mp, nextMp);
+        List<String> lines = ConsoleHelper.loadSourceLines(camelContext, mp.getSourceLocation(), mp.getSourceLineNumber(), end);
+
+        if (lines.isEmpty()) {
+            return;
+        }
+
+        JsonArray ca = buildCodeLinesArray(lines, mp.getSourceLineNumber());
+        if (!ca.isEmpty()) {
+            jo.put("code", ca);
+        }
+    }
+
+    private static Integer calculateCodeSnippetEndLine(ManagedProcessorMBean mp, ManagedProcessorMBean nextMp) {
+        Integer nextLine = nextMp != null ? nextMp.getSourceLineNumber() : null;
+        if (nextLine == null) {
+            return mp.getSourceLineNumber() + 5;
+        }
+        return Math.min(mp.getSourceLineNumber() + 5, nextLine);
+    }
+
+    private static JsonArray buildCodeLinesArray(List<String> lines, Integer startLine) {
+        JsonArray ca = new JsonArray();
+        Integer pos = startLine;
+        for (String line : lines) {
+            JsonObject c = new JsonObject();
+            c.put("line", pos);
+            c.put("code", Jsoner.escape(line));
+            if (pos != null && pos.equals(startLine)) {
+                c.put("match", true);
+            }
+            ca.add(c);
+            if (pos != null) {
+                pos++;
+            }
+        }
+        return ca;
+    }
+
+    private static void addProcessorDestinationJson(JsonObject jo, CamelContext camelContext, ManagedProcessorMBean mp) {
+        String destination = getDestination(camelContext, mp);
+        if (destination != null) {
+            jo.put("uri", destination);
+        }
+    }
+
+    private static void putIfNotNull(JsonObject jo, String key, Object value) {
+        if (value != null) {
+            jo.put(key, value);
         }
     }
 
@@ -366,13 +408,21 @@ public class ProcessorDevConsole extends AbstractDevConsole {
     }
 
     protected void doAction(CamelContext camelContext, String command, String filter) {
-        if (filter == null) {
-            filter = "*";
-        }
-        String[] patterns = filter.split(",");
+        String effectiveFilter = filter != null ? filter : "*";
+        String[] patterns = effectiveFilter.split(",");
 
+        List<ManagedProcessorMBean> mps = collectAllProcessors();
+        List<ManagedProcessorMBean> matchingProcessors = filterProcessorsByPattern(mps, patterns);
+
+        for (ManagedProcessorMBean mp : matchingProcessors) {
+            executeCommand(command, mp);
+        }
+    }
+
+    private List<ManagedProcessorMBean> collectAllProcessors() {
         List<ManagedProcessorMBean> mps = new ArrayList<>();
         ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
+
         for (Route r : getCamelContext().getRoutes()) {
             ManagedRouteMBean mrb = mcc.getManagedRoute(r.getRouteId());
             try {
@@ -383,35 +433,38 @@ public class ProcessorDevConsole extends AbstractDevConsole {
                 // ignore
             }
         }
+        return mps;
+    }
 
-        // find matching IDs
-        mps = mps.stream()
-                .filter(mp -> {
-                    for (String p : patterns) {
-                        if (PatternHelper.matchPattern(mp.getProcessorId(), p)
-                                || PatternHelper.matchPattern(mp.getRouteId(), p)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
+    private List<ManagedProcessorMBean> filterProcessorsByPattern(List<ManagedProcessorMBean> mps, String[] patterns) {
+        return mps.stream()
+                .filter(mp -> matchesAnyPattern(mp, patterns))
                 .toList();
+    }
 
-        for (ManagedProcessorMBean mp : mps) {
-            try {
-                if ("start".equals(command)) {
-                    mp.start();
-                } else if ("stop".equals(command)) {
-                    mp.stop();
-                } else if ("disable".equals(command)) {
-                    mp.disable();
-                } else if ("enable".equals(command)) {
-                    mp.enable();
-                }
-            } catch (Exception e) {
-                LOG.warn("Error {} processor: {} due to: {}. This exception is ignored.", command, mp.getProcessorId(),
-                        e.getMessage(), e);
+    private boolean matchesAnyPattern(ManagedProcessorMBean mp, String[] patterns) {
+        for (String p : patterns) {
+            if (PatternHelper.matchPattern(mp.getProcessorId(), p)
+                    || PatternHelper.matchPattern(mp.getRouteId(), p)) {
+                return true;
             }
+        }
+        return false;
+    }
+
+    private void executeCommand(String command, ManagedProcessorMBean mp) {
+        try {
+            switch (command) {
+                case "start" -> mp.start();
+                case "stop" -> mp.stop();
+                case "disable" -> mp.disable();
+                case "enable" -> mp.enable();
+                default -> {
+                }
+            }
+        } catch (Exception e) {
+            LOG.warn("Error {} processor: {} due to: {}. This exception is ignored.", command, mp.getProcessorId(),
+                    e.getMessage(), e);
         }
     }
 
