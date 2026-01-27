@@ -283,8 +283,7 @@ public class SubscriptionManager {
             return future.thenApply(value -> {
                 final Object rawValue = value.getValue().getValue();
 
-                if (rawValue instanceof String[]) {
-                    final String[] namespaces = (String[]) rawValue;
+                if (rawValue instanceof String[] namespaces) {
                     for (int i = 0; i < namespaces.length; i++) {
                         if (namespaces[i].equals(namespaceUri)) {
                             final UShort result = Unsigned.ushort(i);

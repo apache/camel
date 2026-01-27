@@ -152,10 +152,10 @@ public class CamelServerItem {
     }
 
     public void update(final Object value) {
-        if (value instanceof DataValue) {
-            this.value = (DataValue) value;
-        } else if (value instanceof Variant) {
-            this.value = new DataValue((Variant) value, StatusCode.GOOD, DateTime.now());
+        if (value instanceof DataValue dataValue) {
+            this.value = dataValue;
+        } else if (value instanceof Variant variant) {
+            this.value = new DataValue(variant, StatusCode.GOOD, DateTime.now());
         } else {
             this.value = new DataValue(new Variant(value), StatusCode.GOOD, DateTime.now());
         }

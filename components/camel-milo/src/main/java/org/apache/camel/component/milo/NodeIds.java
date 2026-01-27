@@ -42,14 +42,14 @@ public final class NodeIds {
 
         final Object id = nodeId.getIdentifier();
 
-        if (id instanceof String) {
-            return new NodeId(namespaceIndex, (String) id);
-        } else if (id instanceof UInteger) {
-            return new NodeId(namespaceIndex, (UInteger) id);
-        } else if (id instanceof ByteString) {
-            return new NodeId(namespaceIndex, (ByteString) id);
-        } else if (id instanceof UUID) {
-            return new NodeId(namespaceIndex, (UUID) id);
+        if (id instanceof String str) {
+            return new NodeId(namespaceIndex, str);
+        } else if (id instanceof UInteger uInteger) {
+            return new NodeId(namespaceIndex, uInteger);
+        } else if (id instanceof ByteString byteString) {
+            return new NodeId(namespaceIndex, byteString);
+        } else if (id instanceof UUID uuid) {
+            return new NodeId(namespaceIndex, uuid);
         }
 
         throw new IllegalStateException("Invalid id type: " + id);

@@ -203,11 +203,11 @@ public class MiloServerComponent extends DefaultComponent {
 
         if (certificateValidator != null) {
             LOG.debug("Using validator: {}", certificateValidator);
-            if (certificateValidator instanceof Closeable) {
+            if (certificateValidator instanceof Closeable closeable) {
                 runOnStop(() -> {
                     try {
                         LOG.debug("Closing: {}", certificateValidator);
-                        ((Closeable) certificateValidator).close();
+                        closeable.close();
                     } catch (IOException e) {
                         LOG.debug("Failed to close. This exception is ignored.", e);
                     }
