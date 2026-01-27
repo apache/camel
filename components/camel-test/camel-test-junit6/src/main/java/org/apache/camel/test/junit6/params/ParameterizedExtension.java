@@ -93,8 +93,8 @@ public class ParameterizedExtension implements TestTemplateInvocationContextProv
         }
         // Special treatment for one-dimensional reference arrays.
         // See https://github.com/junit-team/junit6/issues/1665
-        if (item instanceof Object[]) {
-            return arguments((Object[]) item);
+        if (item instanceof Object[] objects) {
+            return arguments(objects);
         }
         // Pass everything else "as is".
         return arguments(item);
