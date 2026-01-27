@@ -86,9 +86,7 @@ public class UpdateHeaderImportantHelper extends AbstractGeneratorMojo {
             try {
                 String json = PackageHelper.loadText(file.toFile());
                 Object jo = Jsoner.deserialize(json);
-                JsonObject obj;
-                if (jo instanceof JsonObject) {
-                    obj = (JsonObject) jo;
+                if (jo instanceof JsonObject obj) {
                 } else {
                     continue;
                 }
