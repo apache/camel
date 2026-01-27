@@ -86,9 +86,9 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             Object body = in.getBody();
             if (body instanceof List) {
                 inputs = (List<String>) body;
-            } else if (body instanceof String) {
+            } else if (body instanceof String bodyString) {
                 // Single string input
-                inputs = List.of((String) body);
+                inputs = List.of(bodyString);
             }
         }
 
@@ -118,8 +118,8 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             // If no USER_MESSAGE header, try body
             if (userMessage == null) {
                 Object body = in.getBody();
-                if (body instanceof String) {
-                    userMessage = (String) body;
+                if (body instanceof String bodyString) {
+                    userMessage = bodyString;
                 } else if (body instanceof List) {
                     // Body is a list of messages
                     return (List<ChatMessage>) body;
@@ -160,9 +160,9 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             WrappedFile<?> wrappedFile = (WrappedFile<?>) body;
             Object fileObject = wrappedFile.getFile();
 
-            if (fileObject instanceof File) {
+            if (fileObject instanceof File file) {
                 // Local file (file:// component)
-                return FileInput.of((File) fileObject);
+                return FileInput.of(file);
             } else {
                 // Remote file (ftp://, sftp://) - use type converter to get InputStream
                 String fileName = resolveFileName(in);
@@ -172,8 +172,8 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
         }
 
         // 2. Check for direct File
-        if (body instanceof File) {
-            return FileInput.of((File) body);
+        if (body instanceof File file) {
+            return FileInput.of(file);
         }
 
         // 3. Check FILE header

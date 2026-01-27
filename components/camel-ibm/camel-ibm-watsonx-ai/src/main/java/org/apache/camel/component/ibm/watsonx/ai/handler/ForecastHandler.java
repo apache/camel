@@ -62,8 +62,7 @@ public class ForecastHandler extends AbstractWatsonxAiHandler {
         // If not in headers, try to get from body as TimeSeriesRequest
         if (inputSchema == null || forecastData == null) {
             Object body = in.getBody();
-            if (body instanceof TimeSeriesRequest) {
-                TimeSeriesRequest request = (TimeSeriesRequest) body;
+            if (body instanceof TimeSeriesRequest request) {
                 inputSchema = request.inputSchema();
                 forecastData = request.data();
             }
