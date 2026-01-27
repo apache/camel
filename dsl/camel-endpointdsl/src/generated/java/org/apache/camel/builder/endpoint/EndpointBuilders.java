@@ -287,6 +287,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.PineconeVectorDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.PlatformHttpEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Plc4XEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.Polly2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.PrinterEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.PubNubEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.PulsarEndpointBuilderFactory,
