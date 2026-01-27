@@ -2131,7 +2131,7 @@ public abstract class BaseMainSupport extends BaseService {
             tmp.setCamelContext(camelContext);
             tmp.setTrustManager(TrustAllTrustManager.INSTANCE);
             LOG.warn(
-                    "Trust all certifications enabled. Using this in production can expose the application to man-in-the-middle attacks");
+                    "Trust all certificates enabled. Using this in production can expose the application to man-in-the-middle attacks");
         } else if (sslConfig.getTrustStore() != null) {
             KeyStoreParameters tsp = new KeyStoreParameters();
             String store = sslConfig.getTrustStore();
