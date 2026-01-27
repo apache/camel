@@ -96,10 +96,10 @@ public interface Agent {
             return payload;
         }
 
-        if (messagePayload instanceof String) {
+        if (messagePayload instanceof String stringPayload) {
             String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
             Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
-            return new AiAgentBody<>((String) messagePayload, systemMessage, memoryId);
+            return new AiAgentBody<>(stringPayload, systemMessage, memoryId);
         }
 
         // Try to convert using TypeConverter (supports WrappedFile, byte[], InputStream, etc.)
