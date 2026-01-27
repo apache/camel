@@ -847,6 +847,34 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Assert the expression
+     */
+    public static Expression assertExpression(String expression, String message) {
+        return new ExpressionAdapter() {
+            private Predicate pred;
+
+            @Override
+            public void init(CamelContext context) {
+                pred = context.resolveLanguage("simple").createPredicate(expression);
+                pred.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                if (!pred.matches(exchange)) {
+                    throw new SimpleAssertionException(message);
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "assert(" + pred + ", " + message + ")";
+            }
+        };
+    }
+
+    /**
      * Converts the result of the expression to the given type
      */
     public static Expression convertToExpression(final String expression, final String type) {

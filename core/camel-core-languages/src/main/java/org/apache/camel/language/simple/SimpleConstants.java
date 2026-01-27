@@ -25,6 +25,10 @@ public final class SimpleConstants {
               label = "function", javaType = "Long", displayName = "Absolute Number")
     public static final String ABS = "abs(exp)";
 
+    @Metadata(description = "Evaluates the expression and throws an exception with the message if the condition is false",
+              javaType = "java.lang.Exception", label = "function")
+    public static final String ASSERT = "assert(exp,msg)";
+
     @Metadata(description = "The DataHandler for the given attachment.", javaType = "jakarta.activation.DataHandler",
               label = "function,ognl")
     public static final String ATTACHMENT = "attachment.name";

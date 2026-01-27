@@ -3675,6 +3675,24 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testAssertExpression() {
+        exchange.getMessage().setBody("Hello");
+        Expression expression
+                = context.resolveLanguage("simple").createExpression("${assert(${body} == 'Hello', 'Must be Hello')}");
+        expression.evaluate(exchange, Object.class);
+
+        try {
+            exchange.getMessage().setBody("Bye");
+            expression = context.resolveLanguage("simple").createExpression("${assert(${body} == 'Hello', 'Must be Hello')}");
+            expression.evaluate(exchange, Object.class);
+            fail();
+        } catch (Exception e) {
+            assertIsInstanceOf(SimpleAssertionException.class, e);
+            assertEquals("Must be Hello", e.getMessage());
+        }
+    }
+
+    @Test
     public void testNormalizeWhitespace() {
         exchange.getMessage().setBody("   Hello  big   World      ");
 

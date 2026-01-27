@@ -1241,7 +1241,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${throwException(msg)} or ${throwException(type,sg)} was: " + function,
+                        "Valid syntax: ${throwException(msg)} or ${throwException(type,msg)} was: " + function,
                         token.getIndex());
             }
             if (values.contains(",")) {
@@ -1257,6 +1257,27 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 msg = StringHelper.removeQuotes(values.trim());
             }
             return SimpleExpressionBuilder.throwExceptionExpression(msg, type);
+        }
+        // assert function
+        remainder = ifStartsWithReturnRemainder("assert(", function);
+        if (remainder != null) {
+            String exp;
+            String msg;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${assert(exp,msg)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length != 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${assert(exp,msg)} was: " + function,
+                        token.getIndex());
+            }
+            exp = tokens[0];
+            msg = StringHelper.removeQuotes(tokens[1]);
+            return SimpleExpressionBuilder.assertExpression(exp, msg);
         }
 
         // convertTo function
@@ -3173,6 +3194,11 @@ public class SimpleFunctionExpression extends LiteralExpression {
             type = appendClass(type);
             type = type.replace('$', '.');
             return "return throwException(exchange, " + msg + ", " + type + ");";
+        }
+        // assertExpression function
+        remainder = ifStartsWithReturnRemainder("assertExpression(", function);
+        if (remainder != null) {
+            throw new UnsupportedOperationException("assertExpression is not supported in csimple language");
         }
 
         // uppercase function
