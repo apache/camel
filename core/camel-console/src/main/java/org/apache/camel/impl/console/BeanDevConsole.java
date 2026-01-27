@@ -101,10 +101,10 @@ public class BeanDevConsole extends AbstractDevConsole {
             if (nulls) {
                 sb.append(String.format("        %s = null%n", pk));
             }
-            return;
+        } else {
+            String t = pv.getClass().getName();
+            sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
         }
-        String t = pv.getClass().getName();
-        sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
     }
 
     @Override
@@ -182,8 +182,10 @@ public class BeanDevConsole extends AbstractDevConsole {
         }
         Object serialized = Jsoner.trySerialize(pv);
         if (serialized == null) {
+            // cannot serialize so escape
             return Jsoner.escape(pv.toString());
         }
+        // okay so use the value as-is
         return pv;
     }
 

@@ -111,46 +111,42 @@ public class BrowseDevConsole extends AbstractDevConsole {
         boolean includeBody = parseBooleanOption(options, INCLUDE_BODY, true);
         int maxChars = parseIntOption(options, BODY_MAX_CHARS, bodyMaxChars);
 
-        Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
-        endpoints.addAll(getCamelContext().getEndpoints());
-        for (Endpoint endpoint : endpoints) {
-            if (!(endpoint instanceof BrowsableEndpoint be)) {
-                continue;
-            }
-            if (!matchesFilter(endpoint.getEndpointUri(), filter)) {
-                continue;
-            }
-
-            if (!dump) {
+        List<BrowsableEndpoint> browsableEndpoints = getBrowsableEndpoints(filter);
+        for (BrowsableEndpoint be : browsableEndpoints) {
+            if (dump) {
+                appendDumpText(sb, be, freshSize, max, pos, includeBody, maxChars);
+            } else {
                 BrowsableEndpoint.BrowseStatus status = be.getBrowseStatus(Integer.MAX_VALUE);
-                sb.append(String.format("Browse: %s (size: %d%n", endpoint.getEndpointUri(), status.size()));
-                continue;
-            }
-
-            List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
-            if (list == null) {
-                continue;
-            }
-
-            int queueSize = list.size();
-            int begin = calculateBeginPosition(list.size(), pos);
-            if (begin > 0) {
-                list = list.subList(begin, list.size());
-            }
-
-            sb.append("\n");
-            sb.append(String.format("Browse: %s (size: %d limit: %d position: %d)%n", endpoint.getEndpointUri(),
-                    queueSize, max, begin));
-            for (Exchange e : list) {
-                String json = MessageHelper.dumpAsJSon(e.getMessage(), false, false, includeBody, 2, true, true, true,
-                        maxChars, true);
-                sb.append(json);
-                sb.append("\n");
+                sb.append(String.format("Browse: %s (size: %d%n", be.getEndpointUri(), status.size()));
             }
         }
         sb.append("\n");
 
         return sb.toString();
+    }
+
+    private void appendDumpText(
+            StringBuilder sb, BrowsableEndpoint be, boolean freshSize, int max, int pos, boolean includeBody, int maxChars) {
+        List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
+        if (list == null) {
+            return;
+        }
+
+        int queueSize = list.size();
+        int begin = calculateBeginPosition(list.size(), pos);
+        if (begin > 0) {
+            list = list.subList(begin, list.size());
+        }
+
+        sb.append("\n");
+        sb.append(String.format("Browse: %s (size: %d limit: %d position: %d)%n", be.getEndpointUri(),
+                queueSize, max, begin));
+        for (Exchange e : list) {
+            String json = MessageHelper.dumpAsJSon(e.getMessage(), false, false, includeBody, 2, true, true, true,
+                    maxChars, true);
+            sb.append(json);
+            sb.append("\n");
+        }
     }
 
     @Override
@@ -166,42 +162,51 @@ public class BrowseDevConsole extends AbstractDevConsole {
         boolean includeBody = parseBooleanOption(options, INCLUDE_BODY, true);
         int maxChars = parseIntOption(options, BODY_MAX_CHARS, bodyMaxChars);
 
-        Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
-        endpoints.addAll(getCamelContext().getEndpoints());
-        for (Endpoint endpoint : endpoints) {
-            if (!(endpoint instanceof BrowsableEndpoint be)) {
-                continue;
+        List<BrowsableEndpoint> browsableEndpoints = getBrowsableEndpoints(filter);
+        for (BrowsableEndpoint be : browsableEndpoints) {
+            if (dump) {
+                JsonObject jo = buildDumpJson(be, freshSize, max, pos, includeBody, maxChars);
+                if (jo != null) {
+                    arr.add(jo);
+                }
+            } else {
+                arr.add(buildStatusOnlyJson(be));
             }
-            if (!matchesFilter(endpoint.getEndpointUri(), filter)) {
-                continue;
-            }
-
-            if (!dump) {
-                arr.add(buildStatusOnlyJson(endpoint, be));
-                continue;
-            }
-
-            List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
-            if (list == null) {
-                continue;
-            }
-
-            int queueSize = list.size();
-            int begin = calculateBeginPosition(list.size(), pos);
-            if (begin > 0) {
-                list = list.subList(begin, list.size());
-            }
-
-            JsonObject jo = buildEndpointJson(endpoint, queueSize, max, begin);
-            addTimestampsFromList(jo, list);
-            arr.add(jo);
-            addMessagesToJson(jo, list, includeBody, maxChars);
         }
         if (!arr.isEmpty()) {
             root.put("browse", arr);
         }
 
         return root;
+    }
+
+    private JsonObject buildDumpJson(
+            BrowsableEndpoint be, boolean freshSize, int max, int pos, boolean includeBody, int maxChars) {
+        List<Exchange> list = freshSize ? be.getExchanges(Integer.MAX_VALUE, null) : be.getExchanges(max, null);
+        if (list == null) {
+            return null;
+        }
+
+        int queueSize = list.size();
+        int begin = calculateBeginPosition(list.size(), pos);
+        if (begin > 0) {
+            list = list.subList(begin, list.size());
+        }
+
+        JsonObject jo = buildEndpointJson(be, queueSize, max, begin);
+        addTimestampsFromList(jo, list);
+        addMessagesToJson(jo, list, includeBody, maxChars);
+        return jo;
+    }
+
+    private List<BrowsableEndpoint> getBrowsableEndpoints(String filter) {
+        Collection<Endpoint> endpoints = new TreeSet<>(Comparator.comparing(Endpoint::getEndpointUri));
+        endpoints.addAll(getCamelContext().getEndpoints());
+        return endpoints.stream()
+                .filter(e -> e instanceof BrowsableEndpoint)
+                .map(e -> (BrowsableEndpoint) e)
+                .filter(be -> matchesFilter(be.getEndpointUri(), filter))
+                .toList();
     }
 
     private boolean matchesFilter(String uri, String filter) {
@@ -224,10 +229,10 @@ public class BrowseDevConsole extends AbstractDevConsole {
         return Math.max(0, listSize - tailPos);
     }
 
-    private JsonObject buildStatusOnlyJson(Endpoint endpoint, BrowsableEndpoint be) {
+    private JsonObject buildStatusOnlyJson(BrowsableEndpoint be) {
         BrowsableEndpoint.BrowseStatus status = be.getBrowseStatus(Integer.MAX_VALUE);
         JsonObject jo = new JsonObject();
-        jo.put("endpointUri", endpoint.getEndpointUri());
+        jo.put("endpointUri", be.getEndpointUri());
         jo.put("queueSize", status.size());
         if (status.firstTimestamp() > 0) {
             jo.put("firstTimestamp", status.firstTimestamp());
@@ -238,9 +243,9 @@ public class BrowseDevConsole extends AbstractDevConsole {
         return jo;
     }
 
-    private JsonObject buildEndpointJson(Endpoint endpoint, int queueSize, int max, int begin) {
+    private JsonObject buildEndpointJson(BrowsableEndpoint be, int queueSize, int max, int begin) {
         JsonObject jo = new JsonObject();
-        jo.put("endpointUri", endpoint.getEndpointUri());
+        jo.put("endpointUri", be.getEndpointUri());
         jo.put("queueSize", queueSize);
         jo.put("limit", max);
         jo.put("position", begin);
