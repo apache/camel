@@ -24,70 +24,75 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class DoclingServeProducerTest extends CamelTestSupport {
+class DoclingServeProducerTest extends CamelTestSupport {
 
     @Test
     @EnabledIfSystemProperty(named = "docling.serve.test.enabled", matches = "true")
-    public void testMarkdownConversionWithDoclingServe() throws Exception {
+    void testMarkdownConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-markdown-serve",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).containsIgnoringCase("Test Document");
     }
 
     @Test
     @EnabledIfSystemProperty(named = "docling.serve.test.enabled", matches = "true")
-    public void testHtmlConversionWithDoclingServe() throws Exception {
+    void testHtmlConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-html-serve",
                 testFile.toString(),
                 DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).containsIgnoringCase("<h1>Test Document</h1>");
     }
 
     @Test
     @EnabledIfSystemProperty(named = "docling.serve.test.enabled", matches = "true")
-    public void testUrlConversionWithDoclingServe() throws Exception {
+    void testUrlConversionWithDoclingServe() throws Exception {
         // Test converting a document from a URL
         String url = "https://arxiv.org/pdf/2501.17887";
 
         String result = template.requestBody("direct:convert-url-serve", url, String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).containsIgnoringCase("An Efficient Open-Source Toolkit");
     }
 
     @Test
     @EnabledIfSystemProperty(named = "docling.serve.test.enabled", matches = "true")
-    public void testJsonConversionWithDoclingServe() throws Exception {
+    void testJsonConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-json-serve",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
-        // JSON response should contain some structure
-        assertTrue(result.contains("{") || result.contains("["));
+        assertThatJson(result).node("schema_name").asString().isEqualTo("DoclingDocument");
+        assertThatJson(result).inPath("texts[*].text").isArray().contains("Test Document",
+                "This is a test document for Docling-Serve processing.");
     }
 
     private Path createTestFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-serve-test", ".md");
-        Files.write(tempFile,
-                "# Test Document\n\nThis is a test document for Docling-Serve processing.\n\n## Section 1\n\nSome content here.\n\n- List item 1\n- List item 2\n"
-                        .getBytes());
-        return tempFile;
+        return Files.writeString(tempFile,
+                """
+                        # Test Document
+
+                        This is a test document for Docling-Serve processing.
+
+                        ## Section 1
+
+                        Some content here.
+
+                        - List item 1
+                        - List item 2
+                        """);
     }
 
     @Override

@@ -24,73 +24,86 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class DoclingProducerTest extends CamelTestSupport {
+class DoclingProducerTest extends CamelTestSupport {
 
     @Test
     @EnabledIfSystemProperty(named = "docling.test.enabled", matches = "true")
-    public void testMarkdownConversion() throws Exception {
+    void testMarkdownConversion() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-markdown",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).endsWith(".md");
+        assertThat(Path.of(result))
+                .exists()
+                .content().containsIgnoringCase("Test Document");
     }
 
     @Test
     @EnabledIfSystemProperty(named = "docling.test.enabled", matches = "true")
-    public void testHtmlConversion() throws Exception {
+    void testHtmlConversion() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-html",
                 testFile.toString(),
                 DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).endsWith(".html");
+        assertThat(Path.of(result))
+                .exists()
+                .content().containsIgnoringCase("<h1>Test Document</h1>");
     }
 
     @Test
     @EnabledIfSystemProperty(named = "docling.test.enabled", matches = "true")
-    public void testContentInBodyEnabled() throws Exception {
+    void testContentInBodyEnabled() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-content-in-body",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
-        // When contentInBody is true, result should contain the actual content, not a file path
-        assertTrue(result.contains("Test Document") || result.contains("test document"));
+        assertThat(result)
+                .describedAs("When contentInBody is true, result should contain the actual content, not a file path")
+                .containsIgnoringCase("Test Document");
     }
 
     @Test
     @EnabledIfSystemProperty(named = "docling.test.enabled", matches = "true")
-    public void testContentInBodyDisabled() throws Exception {
+    void testContentInBodyDisabled() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-file-path",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
-        // When contentInBody is false, result should be a file path
-        assertTrue(result.endsWith(".md") || result.endsWith(".html"));
-        assertTrue(Files.exists(Path.of(result)));
+        assertThat(result)
+                .describedAs("When contentInBody is false, result should be a file path")
+                .endsWith(".md");
+        assertThat(Path.of(result))
+                .exists()
+                .content().containsIgnoringCase("Test Document");
     }
 
     private Path createTestFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-test", ".md");
-        Files.write(tempFile,
-                "# Test Document\n\nThis is a test document for Docling processing.\n\n## Section 1\n\nSome content here.\n\n- List item 1\n- List item 2\n"
-                        .getBytes());
+        Files.writeString(tempFile,
+                """
+                        # Test Document
+
+                        This is a test document for Docling processing.
+
+                        ## Section 1
+
+                        Some content here.
+
+                        - List item 1
+                        - List item 2
+                        """);
         return tempFile;
     }
 
