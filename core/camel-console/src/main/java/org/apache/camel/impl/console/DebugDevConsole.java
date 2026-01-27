@@ -112,89 +112,110 @@ public class DebugDevConsole extends AbstractDevConsole {
             return;
         }
 
-        if ("enable".equalsIgnoreCase(command)) {
-            backlog.enableDebugger();
-        } else if ("disable".equalsIgnoreCase(command)) {
-            backlog.disableDebugger();
-        } else if ("attach".equalsIgnoreCase(command)) {
-            backlog.attach();
-        } else if ("detach".equalsIgnoreCase(command)) {
-            backlog.detach();
-        } else if ("resume".equalsIgnoreCase(command)) {
-            backlog.resumeAll();
-        } else if ("step".equalsIgnoreCase(command)) {
-            if (ObjectHelper.isNotEmpty(breakpoint)) {
-                backlog.stepBreakpoint(breakpoint);
-            } else {
-                if (position < 1 || !stepToPosition(backlog, position)) {
-                    // if we cannot successfully step to a position we must do a step
-                    backlog.stepBreakpoint();
-                }
-            }
-        } else if ("stepover".equalsIgnoreCase(command)) {
-            backlog.stepOver();
-        } else if ("skipover".equalsIgnoreCase(command)) {
-            backlog.skipOver();
-        } else if ("add".equalsIgnoreCase(command) && ObjectHelper.isNotEmpty(breakpoint)) {
-            backlog.addBreakpoint(breakpoint);
-        } else if ("remove".equalsIgnoreCase(command)) {
-            if (ObjectHelper.isNotEmpty(breakpoint)) {
-                backlog.removeBreakpoint(breakpoint);
-            } else {
-                backlog.removeAllBreakpoints();
+        String cmd = command.toLowerCase();
+        switch (cmd) {
+            case "enable" -> backlog.enableDebugger();
+            case "disable" -> backlog.disableDebugger();
+            case "attach" -> backlog.attach();
+            case "detach" -> backlog.detach();
+            case "resume" -> backlog.resumeAll();
+            case "step" -> executeStepCommand(backlog, breakpoint, position);
+            case "stepover" -> backlog.stepOver();
+            case "skipover" -> backlog.skipOver();
+            case "add" -> executeAddCommand(backlog, breakpoint);
+            case "remove" -> executeRemoveCommand(backlog, breakpoint);
+            default -> {
             }
         }
     }
 
+    private void executeStepCommand(BacklogDebugger backlog, String breakpoint, int position) {
+        if (ObjectHelper.isNotEmpty(breakpoint)) {
+            backlog.stepBreakpoint(breakpoint);
+            return;
+        }
+        if (position < 1 || !stepToPosition(backlog, position)) {
+            backlog.stepBreakpoint();
+        }
+    }
+
+    private void executeAddCommand(BacklogDebugger backlog, String breakpoint) {
+        if (ObjectHelper.isNotEmpty(breakpoint)) {
+            backlog.addBreakpoint(breakpoint);
+        }
+    }
+
+    private void executeRemoveCommand(BacklogDebugger backlog, String breakpoint) {
+        if (ObjectHelper.isNotEmpty(breakpoint)) {
+            backlog.removeBreakpoint(breakpoint);
+        } else {
+            backlog.removeAllBreakpoints();
+        }
+    }
+
     private boolean stepToPosition(BacklogDebugger backlog, int position) {
-        if (position < 1) {
+        if (!canStepToPosition(backlog, position)) {
             return false;
         }
-        if (!backlog.isSingleStepMode()) {
-            return false;
-        }
-        if (backlog.getSuspendedBreakpointNodeIds().size() != 1) {
-            return false;
-        }
+
         String id = backlog.getSuspendedBreakpointNodeIds().iterator().next();
-        Exchange exchange = backlog.getSuspendedExchange(id);
-        if (exchange == null) {
-            return false;
-        }
-        List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
-        if (list == null) {
-            return false;
-        }
-        int diff = position - list.size() + 1;
+        int diff = calculateStepDifference(backlog, id, position);
         if (diff <= 0) {
             return false;
         }
 
+        return executeSteps(backlog, diff);
+    }
+
+    private boolean canStepToPosition(BacklogDebugger backlog, int position) {
+        return position >= 1
+                && backlog.isSingleStepMode()
+                && backlog.getSuspendedBreakpointNodeIds().size() == 1;
+    }
+
+    private int calculateStepDifference(BacklogDebugger backlog, String id, int position) {
+        Exchange exchange = backlog.getSuspendedExchange(id);
+        if (exchange == null) {
+            return -1;
+        }
+        List<MessageHistory> list = exchange.getProperty(ExchangePropertyKey.MESSAGE_HISTORY, List.class);
+        if (list == null) {
+            return -1;
+        }
+        return position - list.size() + 1;
+    }
+
+    private boolean executeSteps(BacklogDebugger backlog, int diff) {
         StopWatch watch = new StopWatch();
         for (int i = 0; i < diff; i++) {
-            // if there are no suspended then exit
             if (backlog.getSuspendedBreakpointNodeIds().isEmpty()) {
                 return true;
             }
-            // stop when we hit last
-            id = backlog.getSuspendedBreakpointNodeIds().iterator().next();
+
+            String id = backlog.getSuspendedBreakpointNodeIds().iterator().next();
             var msg = backlog.getSuspendedBreakpointMessage(id);
             if (msg.isLast()) {
                 return true;
             }
 
-            // go to next and wait for debugger to suspend again
-            watch.restart();
-            backlog.stepBreakpoint();
-            while (backlog.isSingleStepMode() && backlog.getSuspendedBreakpointNodeIds().isEmpty()) {
-                if (watch.taken() > 10000) {
-                    return false;
-                }
-                try {
-                    Thread.sleep(10);
-                } catch (Exception e) {
-                    // ignore
-                }
+            if (!stepAndWait(backlog, watch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean stepAndWait(BacklogDebugger backlog, StopWatch watch) {
+        watch.restart();
+        backlog.stepBreakpoint();
+        while (backlog.isSingleStepMode() && backlog.getSuspendedBreakpointNodeIds().isEmpty()) {
+            if (watch.taken() > 10000) {
+                return false;
+            }
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                // ignore
             }
         }
         return true;
