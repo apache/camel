@@ -1114,11 +1114,9 @@ public class BeanInfo {
     }
 
     private void removeNonMatchingMethods(List<MethodInfo> methods, String name) {
-        if (methods == null) {
-            return;
+        if (methods != null) {
+            methods.removeIf(info -> !matchMethod(info.getMethod(), name));
         }
-        // method does not match so remove it
-        methods.removeIf(info -> !matchMethod(info.getMethod(), name));
     }
 
     private void removeAllAbstractMethods(List<MethodInfo> methods) {
