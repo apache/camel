@@ -84,8 +84,7 @@ public class StripeProducer extends DefaultProducer {
             return (Map<String, Object>) body;
         }
 
-        if (body instanceof String) {
-            String json = (String) body;
+        if (body instanceof String json) {
             if (json.trim().isEmpty()) {
                 return Collections.emptyMap();
             }
