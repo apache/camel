@@ -48,70 +48,74 @@ public class RestDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        if (rr != null) {
-            for (RestRegistry.RestService rs : rr.listAllRestServices()) {
-                if (!sb.isEmpty()) {
-                    sb.append("\n");
-                }
-                sb.append(String.format("%n    Url: %s", rs.getUrl()));
-                sb.append(String.format("%n    Method: %s", rs.getMethod()));
-                sb.append(String.format("%n    State: %s", rs.getState()));
-                if (rs.getConsumes() != null) {
-                    sb.append(String.format("%n    Consumes: %s", rs.getConsumes()));
-                }
-                if (rs.getProduces() != null) {
-                    sb.append(String.format("%n    Produces: %s", rs.getProduces()));
-                }
-                if (rs.getInType() != null) {
-                    sb.append(String.format("%n    In Type: %s", rs.getInType()));
-                }
-                if (rs.getOutType() != null) {
-                    sb.append(String.format("%n    Out Type: %s", rs.getOutType()));
-                }
-                if (rs.getDescription() != null) {
-                    sb.append(String.format("%n    Description: %s", rs.getDescription()));
-                }
-            }
-            sb.append("\n");
+        if (rr == null) {
+            return sb.toString();
         }
 
+        for (RestRegistry.RestService rs : rr.listAllRestServices()) {
+            if (!sb.isEmpty()) {
+                sb.append("\n");
+            }
+            appendRestServiceText(sb, rs);
+        }
+        sb.append("\n");
+
         return sb.toString();
+    }
+
+    private void appendRestServiceText(StringBuilder sb, RestRegistry.RestService rs) {
+        sb.append(String.format("%n    Url: %s", rs.getUrl()));
+        sb.append(String.format("%n    Method: %s", rs.getMethod()));
+        sb.append(String.format("%n    State: %s", rs.getState()));
+        appendOptionalText(sb, "Consumes", rs.getConsumes());
+        appendOptionalText(sb, "Produces", rs.getProduces());
+        appendOptionalText(sb, "In Type", rs.getInType());
+        appendOptionalText(sb, "Out Type", rs.getOutType());
+        appendOptionalText(sb, "Description", rs.getDescription());
+    }
+
+    private void appendOptionalText(StringBuilder sb, String label, String value) {
+        if (value != null) {
+            sb.append(String.format("%n    %s: %s", label, value));
+        }
     }
 
     @Override
     protected Map<String, Object> doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        if (rr != null) {
-            List<JsonObject> list = new ArrayList<>();
-            root.put("rests", list);
+        if (rr == null) {
+            return root;
+        }
 
-            for (RestRegistry.RestService rs : rr.listAllRestServices()) {
-                JsonObject jo = new JsonObject();
-                jo.put("url", rs.getUrl());
-                jo.put("method", rs.getMethod());
-                jo.put("contractFirst", rs.isContractFirst());
-                jo.put("state", rs.getState());
-                if (rs.getConsumes() != null) {
-                    jo.put("consumes", rs.getConsumes());
-                }
-                if (rs.getProduces() != null) {
-                    jo.put("produces", rs.getProduces());
-                }
-                if (rs.getInType() != null) {
-                    jo.put("inType", rs.getInType());
-                }
-                if (rs.getOutType() != null) {
-                    jo.put("outType", rs.getOutType());
-                }
-                if (rs.getDescription() != null) {
-                    jo.put("description", rs.getDescription());
-                }
-                list.add(jo);
-            }
+        List<JsonObject> list = new ArrayList<>();
+        root.put("rests", list);
+
+        for (RestRegistry.RestService rs : rr.listAllRestServices()) {
+            list.add(buildRestServiceJson(rs));
         }
 
         return root;
+    }
+
+    private JsonObject buildRestServiceJson(RestRegistry.RestService rs) {
+        JsonObject jo = new JsonObject();
+        jo.put("url", rs.getUrl());
+        jo.put("method", rs.getMethod());
+        jo.put("contractFirst", rs.isContractFirst());
+        jo.put("state", rs.getState());
+        putIfNotNull(jo, "consumes", rs.getConsumes());
+        putIfNotNull(jo, "produces", rs.getProduces());
+        putIfNotNull(jo, "inType", rs.getInType());
+        putIfNotNull(jo, "outType", rs.getOutType());
+        putIfNotNull(jo, "description", rs.getDescription());
+        return jo;
+    }
+
+    private void putIfNotNull(JsonObject jo, String key, String value) {
+        if (value != null) {
+            jo.put(key, value);
+        }
     }
 
 }
