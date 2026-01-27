@@ -443,28 +443,25 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Vector data cannot be null");
         }
 
-        if (obj instanceof List) {
-            List<?> list = (List<?>) obj;
+        if (obj instanceof List<?> list) {
             List<Float> result = new ArrayList<>(list.size());
             for (Object item : list) {
-                if (item instanceof Float) {
-                    result.add((Float) item);
-                } else if (item instanceof Number) {
-                    result.add(((Number) item).floatValue());
+                if (item instanceof Float floatItem) {
+                    result.add(floatItem);
+                } else if (item instanceof Number number) {
+                    result.add(number.floatValue());
                 } else {
                     throw new IllegalArgumentException("Invalid vector data type: " + item.getClass());
                 }
             }
             return result;
-        } else if (obj instanceof float[]) {
-            float[] array = (float[]) obj;
+        } else if (obj instanceof float[] array) {
             List<Float> result = new ArrayList<>(array.length);
             for (float f : array) {
                 result.add(f);
             }
             return result;
-        } else if (obj instanceof double[]) {
-            double[] array = (double[]) obj;
+        } else if (obj instanceof double[] array) {
             List<Float> result = new ArrayList<>(array.length);
             for (double d : array) {
                 result.add((float) d);
@@ -483,12 +480,11 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
         if (obj instanceof List) {
             return (List<String>) obj;
-        } else if (obj instanceof String) {
+        } else if (obj instanceof String str) {
             List<String> result = new ArrayList<>();
-            result.add((String) obj);
+            result.add(str);
             return result;
-        } else if (obj instanceof String[]) {
-            String[] array = (String[]) obj;
+        } else if (obj instanceof String[] array) {
             List<String> result = new ArrayList<>(array.length);
             for (String s : array) {
                 result.add(s);
