@@ -418,8 +418,8 @@ public class BedrockProducer extends DefaultProducer {
             throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof InvokeModelWithResponseStreamRequest) {
-                processStreamingRequest((InvokeModelWithResponseStreamRequest) payload, exchange);
+            if (payload instanceof InvokeModelWithResponseStreamRequest streamRequest) {
+                processStreamingRequest(streamRequest, exchange);
             }
         } else {
             InvokeModelWithResponseStreamRequest.Builder builder = InvokeModelWithResponseStreamRequest.builder();
@@ -527,8 +527,8 @@ public class BedrockProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof ConverseRequest) {
-                request = (ConverseRequest) payload;
+            if (payload instanceof ConverseRequest converseRequest) {
+                request = converseRequest;
             } else {
                 throw new IllegalArgumentException(
                         "Converse operation requires ConverseRequest in POJO mode");
@@ -643,8 +643,8 @@ public class BedrockProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof ConverseStreamRequest) {
-                request = (ConverseStreamRequest) payload;
+            if (payload instanceof ConverseStreamRequest streamRequest) {
+                request = streamRequest;
             } else {
                 throw new IllegalArgumentException(
                         "ConverseStream operation requires ConverseStreamRequest in POJO mode");
@@ -794,8 +794,8 @@ public class BedrockProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getMessage().getMandatoryBody();
-            if (payload instanceof software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest) {
-                request = (software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest) payload;
+            if (payload instanceof software.amazon.awssdk.services.bedrockruntime.model.ApplyGuardrailRequest guardrailRequest) {
+                request = guardrailRequest;
             } else {
                 throw new IllegalArgumentException(
                         "ApplyGuardrail operation requires ApplyGuardrailRequest in POJO mode");
