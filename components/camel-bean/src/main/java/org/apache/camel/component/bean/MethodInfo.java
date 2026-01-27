@@ -692,99 +692,103 @@ public class MethodInfo {
         private Object evaluateParameterValue(
                 Exchange exchange, int index, Object parameterValue, Class<?> parameterType,
                 boolean varargs) {
-            Object answer = null;
-
-            // convert the parameter value to a String
             String exp = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, parameterValue);
-            boolean valid;
-            if (exp != null) {
-                int pos1 = exp.indexOf(' ');
-                int pos2 = exp.indexOf(".class");
-                if (pos1 != -1 && pos2 != -1 && pos1 > pos2) {
-                    exp = exp.substring(pos2 + 7); // clip <space>.class
-                }
-
-                // check if its a valid parameter value (no type declared via .class syntax)
-                valid = BeanHelper.isValidParameterValue(exp);
-                if (!valid && !varargs) {
-                    // it may be a parameter type instead, and if so, then we should return null,
-                    // as this method is only for evaluating parameter values
-                    Boolean isClass = BeanHelper.isAssignableToExpectedType(exchange.getContext().getClassResolver(), exp,
-                            parameterType);
-                    // the method will return a non-null value if exp is a class
-                    if (isClass != null) {
-                        return null;
-                    }
-                }
-
-                // use simple language to evaluate the expression, as it may use the simple language to refer to message body, headers etc.
-                Expression expression = null;
-                try {
-                    expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
-                    parameterValue = expression.evaluate(exchange, Object.class);
-                    // use "null" to indicate the expression returned a null value which is a valid response we need to honor
-                    if (parameterValue == null) {
-                        parameterValue = "null";
-                    }
-                } catch (Exception e) {
-                    throw new ExpressionEvaluationException(
-                            expression, "Cannot create/evaluate simple expression: " + exp
-                                        + " to be bound to parameter at index: " + index + " on method: " + getMethod(),
-                            exchange, e);
-                }
-
-                // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
-                // see method javadoc for details
-                if ("null".equals(parameterValue)) {
-                    return Void.TYPE;
-                }
-
-                // the parameter value may match the expected type, then we use it as-is
-                if (varargs || parameterType.isAssignableFrom(parameterValue.getClass())) {
-                    valid = true;
-                } else {
-                    // String values from the simple language is always valid
-                    if (!valid) {
-                        valid = parameterValue instanceof String;
-                        if (!valid) {
-                            // the parameter value was not already valid, but since the simple language have evaluated the expression
-                            // which may change the parameterValue, so we have to check it again to see if it is now valid
-                            exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
-                            // re-validate if the parameter was not valid the first time
-                            valid = BeanHelper.isValidParameterValue(exp);
-                        }
-                    }
-                }
-
-                if (valid) {
-                    // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
-                    if (parameterValue instanceof String string) {
-                        parameterValue = StringHelper.removeLeadingAndEndingQuotes(string);
-                    }
-                    if (varargs) {
-                        // use the value as-is
-                        answer = parameterValue;
-                    } else {
-                        try {
-                            // it is a valid parameter value, so convert it to the expected type of the parameter
-                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange,
-                                    parameterValue);
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer,
-                                        org.apache.camel.util.ObjectHelper.type(answer));
-                            }
-                        } catch (Exception e) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}",
-                                        org.apache.camel.util.ObjectHelper.type(parameterValue), parameterType, index);
-                            }
-                            throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
-                        }
-                    }
-                }
+            if (exp == null) {
+                return null;
             }
 
-            return answer;
+            exp = clipClassSuffix(exp);
+
+            if (isParameterTypeNotValue(exchange, exp, parameterType, varargs)) {
+                return null;
+            }
+
+            parameterValue = evaluateSimpleExpression(exchange, index, exp);
+
+            if ("null".equals(parameterValue)) {
+                return Void.TYPE;
+            }
+
+            boolean valid = isValidParameterValue(exchange, exp, parameterValue, parameterType, varargs);
+            if (!valid) {
+                return null;
+            }
+
+            return convertParameterValue(exchange, index, parameterValue, parameterType, varargs);
+        }
+
+        private String clipClassSuffix(String exp) {
+            int pos1 = exp.indexOf(' ');
+            int pos2 = exp.indexOf(".class");
+            if (pos1 != -1 && pos2 != -1 && pos1 > pos2) {
+                return exp.substring(pos2 + 7);
+            }
+            return exp;
+        }
+
+        private boolean isParameterTypeNotValue(Exchange exchange, String exp, Class<?> parameterType, boolean varargs) {
+            boolean valid = BeanHelper.isValidParameterValue(exp);
+            if (!valid && !varargs) {
+                Boolean isClass = BeanHelper.isAssignableToExpectedType(
+                        exchange.getContext().getClassResolver(), exp, parameterType);
+                return isClass != null;
+            }
+            return false;
+        }
+
+        private Object evaluateSimpleExpression(Exchange exchange, int index, String exp) {
+            Expression expression = null;
+            try {
+                expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
+                Object result = expression.evaluate(exchange, Object.class);
+                return result != null ? result : "null";
+            } catch (Exception e) {
+                throw new ExpressionEvaluationException(
+                        expression, "Cannot create/evaluate simple expression: " + exp
+                                    + " to be bound to parameter at index: " + index + " on method: " + getMethod(),
+                        exchange, e);
+            }
+        }
+
+        private boolean isValidParameterValue(
+                Exchange exchange, String exp, Object parameterValue, Class<?> parameterType, boolean varargs) {
+            if (varargs || parameterType.isAssignableFrom(parameterValue.getClass())) {
+                return true;
+            }
+            boolean valid = BeanHelper.isValidParameterValue(exp);
+            if (valid) {
+                return true;
+            }
+            if (parameterValue instanceof String) {
+                return true;
+            }
+            String reEvaluated = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
+            return BeanHelper.isValidParameterValue(reEvaluated);
+        }
+
+        private Object convertParameterValue(
+                Exchange exchange, int index, Object parameterValue, Class<?> parameterType, boolean varargs) {
+            if (parameterValue instanceof String string) {
+                parameterValue = StringHelper.removeLeadingAndEndingQuotes(string);
+            }
+            if (varargs) {
+                return parameterValue;
+            }
+            try {
+                Object answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(
+                        parameterType, exchange, parameterValue);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Parameter #{} evaluated as: {} type: {}", index, answer,
+                            org.apache.camel.util.ObjectHelper.type(answer));
+                }
+                return answer;
+            } catch (Exception e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}",
+                            org.apache.camel.util.ObjectHelper.type(parameterValue), parameterType, index);
+                }
+                throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
+            }
         }
 
         /**
