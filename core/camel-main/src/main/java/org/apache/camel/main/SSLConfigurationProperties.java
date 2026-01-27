@@ -275,7 +275,7 @@ public class SSLConfigurationProperties implements BootstrapCloseable {
     /**
      * Allows to trust all SSL certificates without performing certificate validation. This can be used in development
      * environment but may expose the system to security risks. Notice that if the trustAllCertificates option is set to
-     * true then the trustStore/trustStorePassword options are not in use..
+     * true then the trustStore/trustStorePassword options are not in use.
      */
     public void setTrustAllCertificates(boolean trustAllCertificates) {
         this.trustAllCertificates = trustAllCertificates;
