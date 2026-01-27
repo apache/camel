@@ -114,10 +114,10 @@ public class Neo4jProducer extends DefaultProducer {
         var query = String.format("CREATE (%s:%s $props)", alias, label);
         Map<String, Object> properties;
 
-        if (body instanceof String) {
+        if (body instanceof String bodyString) {
             try {
                 // Convert JSON string to Map for parameterized query
-                Map<String, Object> bodyMap = OBJECT_MAPPER.readValue((String) body, MAP_TYPE_REF);
+                Map<String, Object> bodyMap = OBJECT_MAPPER.readValue(bodyString, MAP_TYPE_REF);
                 properties = Map.of("props", bodyMap);
             } catch (Exception e) {
                 exchange.setException(
