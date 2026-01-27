@@ -133,11 +133,11 @@ public class MiloClientConnection implements AutoCloseable {
             return new Variant[0];
         }
 
-        if (value instanceof Variant[]) {
-            return (Variant[]) value;
+        if (value instanceof Variant[] variants) {
+            return variants;
         }
-        if (value instanceof Variant) {
-            return new Variant[] { (Variant) value };
+        if (value instanceof Variant variant) {
+            return new Variant[] { variant };
         }
 
         return new Variant[] { new Variant(value) };
@@ -150,11 +150,11 @@ public class MiloClientConnection implements AutoCloseable {
      * @return       the outgoing value
      */
     private DataValue mapWriteValue(final Object value) {
-        if (value instanceof DataValue) {
-            return (DataValue) value;
+        if (value instanceof DataValue dataValue) {
+            return dataValue;
         }
-        if (value instanceof Variant) {
-            return new DataValue((Variant) value, StatusCode.GOOD, null, null);
+        if (value instanceof Variant variant) {
+            return new DataValue(variant, StatusCode.GOOD, null, null);
         }
         return new DataValue(new Variant(value), StatusCode.GOOD, null, null);
     }

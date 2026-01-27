@@ -131,14 +131,14 @@ public class KeyStoreLoader {
         final Key privateKey
                 = keyStore.getKey(effectiveKeyAlias, this.keyPassword != null ? this.keyPassword.toCharArray() : null);
 
-        if (privateKey instanceof PrivateKey) {
+        if (privateKey instanceof PrivateKey pk) {
             final X509Certificate certificate = (X509Certificate) keyStore.getCertificate(effectiveKeyAlias);
             if (certificate == null) {
                 return null;
             }
 
             final PublicKey publicKey = certificate.getPublicKey();
-            final KeyPair keyPair = new KeyPair(publicKey, (PrivateKey) privateKey);
+            final KeyPair keyPair = new KeyPair(publicKey, pk);
             return new Result(certificate, keyPair);
         }
 
