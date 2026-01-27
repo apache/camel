@@ -235,8 +235,7 @@ public class GoogleVertexAIProducer extends DefaultProducer {
         String publisher = config.getPublisher();
 
         // If body is already a JSON string, use it as-is (but add anthropic_version if needed)
-        if (body instanceof String) {
-            String bodyStr = (String) body;
+        if (body instanceof String bodyStr) {
             if (bodyStr.trim().startsWith("{")) {
                 // It's JSON - add anthropic_version if Anthropic publisher and not already present
                 if ("anthropic".equals(publisher) && !bodyStr.contains("anthropic_version")) {
