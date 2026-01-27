@@ -68,10 +68,10 @@ public class SpringAiRagAggregatorStrategy implements AggregationStrategy {
         // Convert to Spring AI Documents
         List<Document> newDocuments = new ArrayList<>();
         for (Object item : newAugmentedData.get()) {
-            if (item instanceof String) {
-                newDocuments.add(new Document((String) item));
-            } else if (item instanceof Document) {
-                newDocuments.add((Document) item);
+            if (item instanceof String str) {
+                newDocuments.add(new Document(str));
+            } else if (item instanceof Document document) {
+                newDocuments.add(document);
             } else {
                 // Try to convert to string
                 newDocuments.add(new Document(item.toString()));
