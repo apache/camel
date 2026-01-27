@@ -71,14 +71,11 @@ public class BeanDevConsole extends AbstractDevConsole {
             Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
             keys.forEach(k -> {
                 Object bean = beans.get(k);
-                if (!shouldIncludeBean(bean, internal)) {
-                    sb.append("\n");
-                    return;
-                }
-
-                sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
-                if (properties) {
-                    appendBeanPropertiesText(sb, bi, bean, nulls);
+                if (shouldIncludeBean(bean, internal)) {
+                    sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
+                    if (properties) {
+                        appendBeanPropertiesText(sb, bi, bean, nulls);
+                    }
                 }
                 sb.append("\n");
             });
@@ -127,12 +124,10 @@ public class BeanDevConsole extends AbstractDevConsole {
             Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
             keys.forEach(k -> {
                 Object bean = beans.get(k);
-                if (!shouldIncludeBean(bean, internal)) {
-                    return;
+                if (shouldIncludeBean(bean, internal)) {
+                    JsonObject jb = buildBeanJson(k, bean, bi, properties, nulls);
+                    jo.put(k, jb);
                 }
-
-                JsonObject jb = buildBeanJson(k, bean, bi, properties, nulls);
-                jo.put(k, jb);
             });
         } catch (Exception e) {
             // ignore
