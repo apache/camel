@@ -707,8 +707,8 @@ public class MockValueBuilder implements Expression, Predicate {
         }
 
         // JsonObject comparison
-        if (expected instanceof JsonObject jsonobject && actual instanceof JsonObject) {
-            return jsonObjectEquals(jsonobject, (JsonObject) actual, ignoreOrder);
+        if (expected instanceof JsonObject jsonobject && actual instanceof JsonObject actualJsonObject) {
+            return jsonObjectEquals(jsonobject, actualJsonObject, ignoreOrder);
         }
 
         // Map comparison (in case of deserialized maps)
@@ -717,8 +717,8 @@ public class MockValueBuilder implements Expression, Predicate {
         }
 
         // JsonArray comparison
-        if (expected instanceof JsonArray jsonarray && actual instanceof JsonArray) {
-            return jsonArrayEquals(jsonarray, (JsonArray) actual, ignoreOrder);
+        if (expected instanceof JsonArray jsonarray && actual instanceof JsonArray actualJsonArray) {
+            return jsonArrayEquals(jsonarray, actualJsonArray, ignoreOrder);
         }
 
         // List comparison (in case of deserialized lists)
