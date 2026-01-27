@@ -64,20 +64,20 @@ public abstract class PaidMedia implements Serializable {
      * Returns this object as {@link PaidMediaPreview} if it is of that type, null otherwise.
      */
     public PaidMediaPreview asPreview() {
-        return this instanceof PaidMediaPreview ? (PaidMediaPreview) this : null;
+        return this instanceof PaidMediaPreview preview ? preview : null;
     }
 
     /**
      * Returns this object as {@link PaidMediaPhoto} if it is of that type, null otherwise.
      */
     public PaidMediaPhoto asPhoto() {
-        return this instanceof PaidMediaPhoto ? (PaidMediaPhoto) this : null;
+        return this instanceof PaidMediaPhoto photo ? photo : null;
     }
 
     /**
      * Returns this object as {@link PaidMediaVideo} if it is of that type, null otherwise.
      */
     public PaidMediaVideo asVideo() {
-        return this instanceof PaidMediaVideo ? (PaidMediaVideo) this : null;
+        return this instanceof PaidMediaVideo video ? video : null;
     }
 }
