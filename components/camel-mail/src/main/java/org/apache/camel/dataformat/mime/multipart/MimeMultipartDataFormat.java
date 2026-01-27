@@ -124,80 +124,109 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream)
             throws NoTypeConversionAvailableException, MessagingException, IOException {
-        if (multipartWithoutAttachment || headersInline || exchange.getIn(AttachmentMessage.class).hasAttachments()) {
-            ContentType contentType = getContentType(exchange);
-            // remove the Content-Type header. This will be wrong afterwards...
-            exchange.getMessage().removeHeader(Exchange.CONTENT_TYPE);
-            byte[] bodyContent = ExchangeHelper.convertToMandatoryType(exchange, byte[].class, graph);
-            Session session = Session.getInstance(System.getProperties());
-            MimeMessage mm = new MimeMessage(session);
-            MimeMultipart mp = new MimeMultipart(multipartSubType);
-            BodyPart part = new MimeBodyPart();
-            writeBodyPart(bodyContent, part, contentType);
-            mp.addBodyPart(part);
-            if (exchange.getIn(AttachmentMessage.class).hasAttachments()) {
-                List<String> idsToRemove = new ArrayList<>();
-                for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects()
-                        .entrySet()) {
-                    String attachmentFilename = entry.getKey();
-                    Attachment attachment = entry.getValue();
-                    part = new MimeBodyPart();
-                    part.setDataHandler(attachment.getDataHandler());
-                    part.setFileName(MimeUtility.encodeText(attachmentFilename, "UTF-8", null));
-                    String ct = attachment.getDataHandler().getContentType();
-                    contentType = new ContentType(ct);
-                    part.setHeader(CONTENT_TYPE, ct);
-                    if (!contentType.match("text/*") && binaryContent) {
-                        part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
-                    } else {
-                        setContentTransferEncoding(part, contentType);
-                    }
-                    // Set headers to the attachment
-                    for (String headerName : attachment.getHeaderNames()) {
-                        List<String> values = attachment.getHeaderAsList(headerName);
-                        for (String value : values) {
-                            part.setHeader(headerName, value);
-                        }
-                    }
-                    mp.addBodyPart(part);
-                    idsToRemove.add(attachmentFilename);
-                }
-                for (String id : idsToRemove) {
-                    exchange.getMessage(AttachmentMessage.class).removeAttachment(id);
-                }
-            }
-            mm.setContent(mp);
-            // copy headers if required and if the content can be converted into
-            // a String
-            if (headersInline && includeHeadersPattern != null) {
-                for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-                    if (includeHeadersPattern.matcher(entry.getKey()).matches()) {
-                        String headerStr = ExchangeHelper.convertToType(exchange, String.class, entry.getValue());
-                        if (headerStr != null) {
-                            mm.setHeader(entry.getKey(), headerStr);
-                        }
-                    }
-                }
-            }
-            mm.saveChanges();
-            Enumeration<?> hl = mm.getAllHeaders();
-            List<String> headers = new ArrayList<>();
-            if (!headersInline) {
-                while (hl.hasMoreElements()) {
-                    Object ho = hl.nextElement();
-                    if (ho instanceof Header) {
-                        Header h = (Header) ho;
-                        exchange.getMessage().setHeader(h.getName(), h.getValue());
-                        headers.add(h.getName());
-                    }
-                }
-            }
-            mm.writeTo(stream, headers.toArray(new String[0]));
-        } else {
+        if (!shouldMarshalAsMultipart(exchange)) {
             // keep the original data
             InputStream is = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
             IOHelper.copyAndCloseInput(is, stream);
+            return;
         }
+
+        ContentType contentType = getContentType(exchange);
+        // remove the Content-Type header. This will be wrong afterwards...
+        exchange.getMessage().removeHeader(Exchange.CONTENT_TYPE);
+        byte[] bodyContent = ExchangeHelper.convertToMandatoryType(exchange, byte[].class, graph);
+        Session session = Session.getInstance(System.getProperties());
+        MimeMessage mm = new MimeMessage(session);
+        MimeMultipart mp = new MimeMultipart(multipartSubType);
+
+        BodyPart part = new MimeBodyPart();
+        writeBodyPart(bodyContent, part, contentType);
+        mp.addBodyPart(part);
+
+        addAttachmentsToMultipart(exchange, mp);
+
+        mm.setContent(mp);
+        copyInlineHeaders(exchange, mm);
+        mm.saveChanges();
+
+        List<String> headers = extractHeadersToMessage(exchange, mm);
+        mm.writeTo(stream, headers.toArray(new String[0]));
+    }
+
+    private boolean shouldMarshalAsMultipart(Exchange exchange) {
+        return multipartWithoutAttachment || headersInline || exchange.getIn(AttachmentMessage.class).hasAttachments();
+    }
+
+    private void addAttachmentsToMultipart(Exchange exchange, MimeMultipart mp)
+            throws MessagingException, UnsupportedEncodingException, ParseException {
+        if (!exchange.getIn(AttachmentMessage.class).hasAttachments()) {
+            return;
+        }
+        List<String> idsToRemove = new ArrayList<>();
+        for (Map.Entry<String, Attachment> entry : exchange.getIn(AttachmentMessage.class).getAttachmentObjects().entrySet()) {
+            String attachmentFilename = entry.getKey();
+            Attachment attachment = entry.getValue();
+            BodyPart part = createAttachmentBodyPart(attachmentFilename, attachment);
+            mp.addBodyPart(part);
+            idsToRemove.add(attachmentFilename);
+        }
+        for (String id : idsToRemove) {
+            exchange.getMessage(AttachmentMessage.class).removeAttachment(id);
+        }
+    }
+
+    private BodyPart createAttachmentBodyPart(String attachmentFilename, Attachment attachment)
+            throws MessagingException, UnsupportedEncodingException, ParseException {
+        BodyPart part = new MimeBodyPart();
+        part.setDataHandler(attachment.getDataHandler());
+        part.setFileName(MimeUtility.encodeText(attachmentFilename, "UTF-8", null));
+        String ct = attachment.getDataHandler().getContentType();
+        ContentType contentType = new ContentType(ct);
+        part.setHeader(CONTENT_TYPE, ct);
+        if (!contentType.match("text/*") && binaryContent) {
+            part.setHeader(CONTENT_TRANSFER_ENCODING, "binary");
+        } else {
+            setContentTransferEncoding(part, contentType);
+        }
+        // Set headers to the attachment
+        for (String headerName : attachment.getHeaderNames()) {
+            List<String> values = attachment.getHeaderAsList(headerName);
+            for (String value : values) {
+                part.setHeader(headerName, value);
+            }
+        }
+        return part;
+    }
+
+    private void copyInlineHeaders(Exchange exchange, MimeMessage mm)
+            throws MessagingException, NoTypeConversionAvailableException {
+        if (!headersInline || includeHeadersPattern == null) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
+            if (includeHeadersPattern.matcher(entry.getKey()).matches()) {
+                String headerStr = ExchangeHelper.convertToType(exchange, String.class, entry.getValue());
+                if (headerStr != null) {
+                    mm.setHeader(entry.getKey(), headerStr);
+                }
+            }
+        }
+    }
+
+    private List<String> extractHeadersToMessage(Exchange exchange, MimeMessage mm) throws MessagingException {
+        List<String> headers = new ArrayList<>();
+        if (headersInline) {
+            return headers;
+        }
+        Enumeration<?> hl = mm.getAllHeaders();
+        while (hl.hasMoreElements()) {
+            Object ho = hl.nextElement();
+            if (ho instanceof Header h) {
+                exchange.getMessage().setHeader(h.getName(), h.getValue());
+                headers.add(h.getName());
+            }
+        }
+        return headers;
     }
 
     private ContentType getContentType(Exchange exchange) throws ParseException {
@@ -233,90 +262,127 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, MessagingException {
-        MimeBodyPart mimeMessage;
-        String contentType;
-        Message camelMessage;
-        Object content = null;
         if (headersInline) {
-            mimeMessage = new MimeBodyPart(stream);
-            camelMessage = exchange.getMessage();
-            MessageHelper.copyHeaders(exchange.getIn(), camelMessage, true);
-            // write the MIME headers not generated by javamail as Camel headers
-            Enumeration<?> headersEnum = mimeMessage.getNonMatchingHeaders(STANDARD_HEADERS);
-            while (headersEnum.hasMoreElements()) {
-                Object ho = headersEnum.nextElement();
-                if (ho instanceof Header) {
-                    Header header = (Header) ho;
-                    camelMessage.setHeader(header.getName(), header.getValue());
-                }
-            }
-        } else {
-            // check if this a multipart at all. Otherwise do nothing
-            contentType = exchange.getIn().getHeader(CONTENT_TYPE, String.class);
-            if (contentType == null) {
-                return stream;
-            }
-            try {
-                ContentType ct = new ContentType(contentType);
-                if (!ct.match("multipart/*")) {
-                    return stream;
-                }
-            } catch (ParseException e) {
-                LOG.warn("Invalid Content-Type {} ignored", contentType);
-                return stream;
-            }
-            camelMessage = exchange.getMessage();
-            MessageHelper.copyHeaders(exchange.getIn(), camelMessage, true);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            IOHelper.copyAndCloseInput(stream, bos);
-            InternetHeaders headers = new InternetHeaders();
-            extractHeader(CONTENT_TYPE, camelMessage, headers);
-            extractHeader(MIME_VERSION, camelMessage, headers);
-            mimeMessage = new MimeBodyPart(headers, bos.toByteArray());
-            bos.close();
+            return unmarshalWithInlineHeaders(exchange, stream);
         }
-        DataHandler dh;
-        try {
-            dh = mimeMessage.getDataHandler();
-            if (dh != null) {
-                content = dh.getContent();
+        return unmarshalWithExternalHeaders(exchange, stream);
+    }
+
+    private Object unmarshalWithInlineHeaders(Exchange exchange, InputStream stream)
+            throws IOException, MessagingException {
+        MimeBodyPart mimeMessage = new MimeBodyPart(stream);
+        Message camelMessage = exchange.getMessage();
+        MessageHelper.copyHeaders(exchange.getIn(), camelMessage, true);
+        copyNonStandardHeaders(mimeMessage, camelMessage);
+        return processContent(mimeMessage, camelMessage);
+    }
+
+    private void copyNonStandardHeaders(MimeBodyPart mimeMessage, Message camelMessage) throws MessagingException {
+        Enumeration<?> headersEnum = mimeMessage.getNonMatchingHeaders(STANDARD_HEADERS);
+        while (headersEnum.hasMoreElements()) {
+            Object ho = headersEnum.nextElement();
+            if (ho instanceof Header header) {
+                camelMessage.setHeader(header.getName(), header.getValue());
             }
-        } catch (MessagingException e) {
+        }
+    }
+
+    private Object unmarshalWithExternalHeaders(Exchange exchange, InputStream stream)
+            throws IOException, MessagingException {
+        // check if this a multipart at all. Otherwise do nothing
+        String contentType = exchange.getIn().getHeader(CONTENT_TYPE, String.class);
+        if (contentType == null) {
+            return stream;
+        }
+        if (!isMultipartContentType(contentType)) {
+            return stream;
+        }
+
+        Message camelMessage = exchange.getMessage();
+        MessageHelper.copyHeaders(exchange.getIn(), camelMessage, true);
+        MimeBodyPart mimeMessage = createMimeBodyPart(stream, camelMessage);
+        return processContent(mimeMessage, camelMessage);
+    }
+
+    private boolean isMultipartContentType(String contentType) {
+        try {
+            ContentType ct = new ContentType(contentType);
+            return ct.match("multipart/*");
+        } catch (ParseException e) {
+            LOG.warn("Invalid Content-Type {} ignored", contentType);
+            return false;
+        }
+    }
+
+    private MimeBodyPart createMimeBodyPart(InputStream stream, Message camelMessage)
+            throws IOException, MessagingException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(stream, bos);
+        InternetHeaders headers = new InternetHeaders();
+        extractHeader(CONTENT_TYPE, camelMessage, headers);
+        extractHeader(MIME_VERSION, camelMessage, headers);
+        MimeBodyPart mimeMessage = new MimeBodyPart(headers, bos.toByteArray());
+        bos.close();
+        return mimeMessage;
+    }
+
+    private Object processContent(MimeBodyPart mimeMessage, Message camelMessage)
+            throws MessagingException, IOException {
+        Object content = extractContent(mimeMessage);
+        content = extractAttachments(content, camelMessage);
+        setBodyFromContent(content, camelMessage);
+        return camelMessage;
+    }
+
+    private Object extractContent(MimeBodyPart mimeMessage) {
+        try {
+            DataHandler dh = mimeMessage.getDataHandler();
+            if (dh != null) {
+                return dh.getContent();
+            }
+        } catch (MessagingException | IOException e) {
             LOG.warn("cannot parse message, no unmarshalling done");
         }
-        if (content instanceof MimeMultipart) {
-            MimeMultipart mp = (MimeMultipart) content;
-            content = mp.getBodyPart(0);
-            for (int i = 1; i < mp.getCount(); i++) {
-                BodyPart bp = mp.getBodyPart(i);
-                DefaultAttachment camelAttachment = new DefaultAttachment(bp.getDataHandler());
-                @SuppressWarnings("unchecked")
-                Enumeration<Header> headers = bp.getAllHeaders();
-                while (headers.hasMoreElements()) {
-                    Header header = headers.nextElement();
-                    camelAttachment.addHeader(header.getName(), header.getValue());
-                }
-                camelMessage.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(getAttachmentKey(bp),
-                        camelAttachment);
-            }
+        return null;
+    }
+
+    private Object extractAttachments(Object content, Message camelMessage)
+            throws MessagingException, UnsupportedEncodingException {
+        if (!(content instanceof MimeMultipart mp)) {
+            return content;
         }
-        if (content instanceof BodyPart) {
-            BodyPart bp = (BodyPart) content;
-            camelMessage.setBody(bp.getInputStream());
-            contentType = bp.getContentType();
-            if (contentType != null && !DEFAULT_CONTENT_TYPE.equals(contentType)) {
-                camelMessage.setHeader(CONTENT_TYPE, contentType);
-                ContentType ct = new ContentType(contentType);
-                String charset = ct.getParameter("charset");
-                if (charset != null) {
-                    camelMessage.setHeader(Exchange.CONTENT_ENCODING, MimeUtility.javaCharset(charset));
-                }
+        Object bodyPart = mp.getBodyPart(0);
+        for (int i = 1; i < mp.getCount(); i++) {
+            BodyPart bp = mp.getBodyPart(i);
+            DefaultAttachment camelAttachment = new DefaultAttachment(bp.getDataHandler());
+            @SuppressWarnings("unchecked")
+            Enumeration<Header> headers = bp.getAllHeaders();
+            while (headers.hasMoreElements()) {
+                Header header = headers.nextElement();
+                camelAttachment.addHeader(header.getName(), header.getValue());
             }
-        } else {
-            // If we find no body part, try to leave the message alone
+            camelMessage.getExchange().getMessage(AttachmentMessage.class).addAttachmentObject(getAttachmentKey(bp),
+                    camelAttachment);
+        }
+        return bodyPart;
+    }
+
+    private void setBodyFromContent(Object content, Message camelMessage) throws MessagingException, IOException {
+        if (!(content instanceof BodyPart bp)) {
             LOG.info("no MIME part found");
+            return;
         }
-        return camelMessage;
+        camelMessage.setBody(bp.getInputStream());
+        String contentType = bp.getContentType();
+        if (contentType == null || DEFAULT_CONTENT_TYPE.equals(contentType)) {
+            return;
+        }
+        camelMessage.setHeader(CONTENT_TYPE, contentType);
+        ContentType ct = new ContentType(contentType);
+        String charset = ct.getParameter("charset");
+        if (charset != null) {
+            camelMessage.setHeader(Exchange.CONTENT_ENCODING, MimeUtility.javaCharset(charset));
+        }
     }
 
     private void extractHeader(String headerMame, Message camelMessage, InternetHeaders headers) {
