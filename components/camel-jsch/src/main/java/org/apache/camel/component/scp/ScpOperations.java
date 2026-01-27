@@ -161,6 +161,22 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     @Override
+    public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        ByteArrayInputStream bis = null;
+        try {
+            bis = new ByteArrayInputStream(payload.getBytes());
+            ScpConfiguration cfg = endpoint.getConfiguration();
+            channel = (ChannelExec) session.openChannel("exec");
+            write(channel, name, bis, cfg);
+            return true;
+        } catch (JSchException | IOException e) {
+            throw new GenericFileOperationFailedException("Failed to write file " + name, e);
+        } finally {
+            IOHelper.close(bis);
+        }
+    }
+
+    @Override
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         return endpoint.getConfiguration().getDirectory();
     }

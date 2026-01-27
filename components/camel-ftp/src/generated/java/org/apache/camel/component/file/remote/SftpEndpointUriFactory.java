@@ -23,7 +23,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(134);
+        Set<String> props = new HashSet<>(135);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -40,6 +40,7 @@ public class SftpEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("bulkRequests");
         props.add("charset");
         props.add("checksumFileAlgorithm");
+        props.add("checksumWriteFile");
         props.add("chmod");
         props.add("chmodDirectory");
         props.add("ciphers");

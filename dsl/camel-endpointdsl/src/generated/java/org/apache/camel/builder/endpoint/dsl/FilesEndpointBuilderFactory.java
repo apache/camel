@@ -2827,11 +2827,9 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * If provided, then Camel will write a checksum file when the original
-         * file has been written. The checksum file will contain the checksum
-         * created with the provided algorithm for the original file. The
-         * checksum file will always be written in the same folder as the
-         * original file.
+         * If provided, then Camel will calculate a checksum from the file that
+         * has been written, and store the result in the CamelFileChecksum
+         * header.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2842,6 +2840,42 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointProducerBuilder checksumFileAlgorithm(String checksumFileAlgorithm) {
             doSetProperty("checksumFileAlgorithm", checksumFileAlgorithm);
+            return this;
+        }
+        /**
+         * If checksumFileAlgorithm has been configured then this option
+         * controls whether to write a checksum file as well or not. The
+         * checksum file will always be written in the same folder as the
+         * original file.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param checksumWriteFile the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder checksumWriteFile(boolean checksumWriteFile) {
+            doSetProperty("checksumWriteFile", checksumWriteFile);
+            return this;
+        }
+        /**
+         * If checksumFileAlgorithm has been configured then this option
+         * controls whether to write a checksum file as well or not. The
+         * checksum file will always be written in the same folder as the
+         * original file.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param checksumWriteFile the value to set
+         * @return the dsl builder
+         */
+        default FilesEndpointProducerBuilder checksumWriteFile(String checksumWriteFile) {
+            doSetProperty("checksumWriteFile", checksumWriteFile);
             return this;
         }
         /**

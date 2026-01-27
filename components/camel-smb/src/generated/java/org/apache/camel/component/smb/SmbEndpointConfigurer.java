@@ -48,6 +48,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "checksumwritefile":
+        case "checksumWriteFile": target.setChecksumWriteFile(property(camelContext, boolean.class, value)); return true;
         case "copyanddeleteonrenamefail":
         case "copyAndDeleteOnRenameFail": target.getConfiguration().setCopyAndDeleteOnRenameFail(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -226,6 +228,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": return java.lang.String.class;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return java.lang.String.class;
+        case "checksumwritefile":
+        case "checksumWriteFile": return boolean.class;
         case "copyanddeleteonrenamefail":
         case "copyAndDeleteOnRenameFail": return boolean.class;
         case "delay": return long.class;
@@ -400,6 +404,8 @@ public class SmbEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": return target.getCharset();
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
+        case "checksumwritefile":
+        case "checksumWriteFile": return target.isChecksumWriteFile();
         case "copyanddeleteonrenamefail":
         case "copyAndDeleteOnRenameFail": return target.getConfiguration().isCopyAndDeleteOnRenameFail();
         case "delay": return target.getDelay();

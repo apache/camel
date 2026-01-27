@@ -92,6 +92,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
 
         @Override
+        public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+            return false;
+        }
+
+        @Override
         public String getCurrentDirectory() throws GenericFileOperationFailedException {
             return null;
         }

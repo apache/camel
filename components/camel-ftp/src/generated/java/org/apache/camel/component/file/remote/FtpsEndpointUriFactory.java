@@ -23,7 +23,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(124);
+        Set<String> props = new HashSet<>(125);
         props.add("account");
         props.add("activePortRange");
         props.add("allowNullBody");
@@ -40,6 +40,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("bufferSize");
         props.add("charset");
         props.add("checksumFileAlgorithm");
+        props.add("checksumWriteFile");
         props.add("chmod");
         props.add("connectTimeout");
         props.add("delay");

@@ -515,6 +515,21 @@ public class FilesOperations extends NormalizedOperations {
         }
     }
 
+    @Override
+    public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
+        try {
+            var cwd = cwd();
+            var file = cwd.getFileClient(name);
+            storeRemote(file, bis);
+            return true;
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+        } finally {
+            IOHelper.close(bis);
+        }
+    }
+
     private void storeRemote(ShareFileClient file, InputStream is) throws IOException {
         log.trace("> put {}", file.getFilePath());
         // NOTE: here >4MiB is possible (unlike the upload limitation)
