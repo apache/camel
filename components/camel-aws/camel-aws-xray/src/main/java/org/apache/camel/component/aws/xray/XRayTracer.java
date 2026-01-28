@@ -97,7 +97,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             SegmentDecorator existing = decorators.get(d.getComponent());
             // Add segment decorator only if no existing decorator for the component exists yet or if we have have a
             // derived one. This allows custom decorators to be added if they extend the standard decorators
-            if (existing == null || existing.getClass().isInstance(d)) {
+            if (ObjectHelper.isEmpty(existing) || existing.getClass().isInstance(d)) {
                 Logger log = LoggerFactory.getLogger(XRayTracer.class);
                 log.trace("Adding segment decorator {}", d.getComponent());
                 decorators.put(d.getComponent(), d);
@@ -130,7 +130,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             camelContext.addRoutePolicyFactory(this);
         }
 
-        if (null == tracingStrategy) {
+        if (ObjectHelper.isEmpty(tracingStrategy)) {
             LOG.info("No tracing strategy available. Defaulting to no-op strategy");
             tracingStrategy = new NoopTracingStrategy();
         }
@@ -229,7 +229,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
     protected SegmentDecorator getSegmentDecorator(Endpoint endpoint) {
         SegmentDecorator sd = decorators.get(URI.create(endpoint.getEndpointUri()).getScheme());
-        if (null == sd) {
+        if (ObjectHelper.isEmpty(sd)) {
             return SegmentDecorator.DEFAULT;
         }
         return sd;
@@ -237,7 +237,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
 
     protected Entity getTraceEntityFromExchange(Exchange exchange) {
         Entity entity = exchange.getIn().getHeader(XRAY_TRACE_ENTITY, Entity.class);
-        if (entity == null) {
+        if (ObjectHelper.isEmpty(entity)) {
             entity = (Entity) exchange.getProperty(CURRENT_SEGMENT);
         }
         return entity;
@@ -278,7 +278,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 }
 
                 Entity entity = getTraceEntityFromExchange(ese.getExchange());
-                if (entity != null) {
+                if (ObjectHelper.isNotEmpty(entity)) {
                     AWSXRay.setTraceEntity(entity);
                     // AWS XRay does only allow a certain set of characters to appear within a name
                     // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
@@ -381,7 +381,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             }
 
             Entity entity = getTraceEntityFromExchange(exchange);
-            boolean createSegment = entity == null || !Objects.equals(entity.getName(), routeId);
+            boolean createSegment = ObjectHelper.isEmpty(entity) || !Objects.equals(entity.getName(), routeId);
 
             TraceID traceID;
             if (exchange.getIn().getHeaders().containsKey(XRAY_TRACE_ID)) {

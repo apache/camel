@@ -25,6 +25,7 @@ import com.amazonaws.xray.entities.Entity;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aws.xray.SegmentDecorator;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -53,7 +54,7 @@ public abstract class AbstractSegmentDecorator implements SegmentDecorator {
     public void post(Entity segment, Exchange exchange, Endpoint endpoint) {
         if (exchange.isFailed()) {
             segment.setFault(true);
-            if (exchange.getException() != null) {
+            if (ObjectHelper.isNotEmpty(exchange.getException())) {
                 segment.addException(exchange.getException());
             }
         }
