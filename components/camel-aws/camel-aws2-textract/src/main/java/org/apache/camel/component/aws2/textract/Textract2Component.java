@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon Textract SDK v2.
@@ -44,7 +45,7 @@ public class Textract2Component extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Textract2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new Textract2Configuration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Textract2Configuration();
 
         Textract2Endpoint endpoint = new Textract2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
