@@ -217,18 +217,18 @@ public class AWS2S3Producer extends DefaultProducer {
                 = CreateMultipartUploadRequest.builder().bucket(getConfiguration().getBucketName()).key(keyName);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
-        if (storageClass != null) {
+        if (ObjectHelper.isNotEmpty(storageClass)) {
             createMultipartUploadRequest.storageClass(storageClass);
         }
 
         String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
-        if (cannedAcl != null) {
+        if (ObjectHelper.isNotEmpty(cannedAcl)) {
             ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
             createMultipartUploadRequest.acl(objectAcl);
         }
 
         BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
-        if (acl != null) {
+        if (ObjectHelper.isNotEmpty(acl)) {
             // note: if cannedacl and acl are both specified the last one will
             // be used. refer to
             // PutObjectRequest#setAccessControlList for more details
@@ -236,22 +236,22 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
-        if (contentType != null) {
+        if (ObjectHelper.isNotEmpty(contentType)) {
             createMultipartUploadRequest.contentType(contentType);
         }
 
         String cacheControl = exchange.getIn().getHeader(AWS2S3Constants.CACHE_CONTROL, String.class);
-        if (cacheControl != null) {
+        if (ObjectHelper.isNotEmpty(cacheControl)) {
             createMultipartUploadRequest.cacheControl(cacheControl);
         }
 
         String contentDisposition = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_DISPOSITION, String.class);
-        if (contentDisposition != null) {
+        if (ObjectHelper.isNotEmpty(contentDisposition)) {
             createMultipartUploadRequest.contentDisposition(contentDisposition);
         }
 
         String contentEncoding = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING, String.class);
-        if (contentEncoding != null) {
+        if (ObjectHelper.isNotEmpty(contentEncoding)) {
             createMultipartUploadRequest.contentEncoding(contentEncoding);
         }
 
@@ -305,11 +305,11 @@ public class AWS2S3Producer extends DefaultProducer {
         message.setHeader(AWS2S3Constants.E_TAG, uploadResult.eTag());
         message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
         message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
-        if (uploadResult.versionId() != null) {
+        if (ObjectHelper.isNotEmpty(uploadResult.versionId())) {
             message.setHeader(AWS2S3Constants.VERSION_ID, uploadResult.versionId());
         }
 
-        if (filePayload != null && getConfiguration().isDeleteAfterWrite()) {
+        if (ObjectHelper.isNotEmpty(filePayload) && getConfiguration().isDeleteAfterWrite()) {
             FileUtil.deleteFile(filePayload);
         }
     }
@@ -370,33 +370,33 @@ public class AWS2S3Producer extends DefaultProducer {
         putObjectRequest.bucket(bucketName).key(keyName).metadata(objectMetadata);
 
         String storageClass = AWS2S3Utils.determineStorageClass(exchange, getConfiguration());
-        if (storageClass != null) {
+        if (ObjectHelper.isNotEmpty(storageClass)) {
             putObjectRequest.storageClass(storageClass);
         }
 
         String cannedAcl = exchange.getIn().getHeader(AWS2S3Constants.CANNED_ACL, String.class);
-        if (cannedAcl != null) {
+        if (ObjectHelper.isNotEmpty(cannedAcl)) {
             ObjectCannedACL objectAcl = ObjectCannedACL.valueOf(cannedAcl);
             putObjectRequest.acl(objectAcl);
         }
 
         String contentType = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_TYPE, String.class);
-        if (contentType != null) {
+        if (ObjectHelper.isNotEmpty(contentType)) {
             putObjectRequest.contentType(contentType);
         }
 
         String cacheControl = exchange.getIn().getHeader(AWS2S3Constants.CACHE_CONTROL, String.class);
-        if (cacheControl != null) {
+        if (ObjectHelper.isNotEmpty(cacheControl)) {
             putObjectRequest.cacheControl(cacheControl);
         }
 
         String contentDisposition = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_DISPOSITION, String.class);
-        if (contentDisposition != null) {
+        if (ObjectHelper.isNotEmpty(contentDisposition)) {
             putObjectRequest.contentDisposition(contentDisposition);
         }
 
         String contentEncoding = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_ENCODING, String.class);
-        if (contentEncoding != null) {
+        if (ObjectHelper.isNotEmpty(contentEncoding)) {
             putObjectRequest.contentEncoding(contentEncoding);
         }
 
@@ -405,7 +405,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         BucketCannedACL acl = exchange.getIn().getHeader(AWS2S3Constants.ACL, BucketCannedACL.class);
-        if (acl != null) {
+        if (ObjectHelper.isNotEmpty(acl)) {
             // note: if cannedacl and acl are both specified the last one will
             // be used. refer to
             // PutObjectRequest#setAccessControlList for more details
@@ -413,7 +413,7 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         String contentMd5 = exchange.getIn().getHeader(AWS2S3Constants.CONTENT_MD5, String.class);
-        if (contentMd5 != null) {
+        if (ObjectHelper.isNotEmpty(contentMd5)) {
             putObjectRequest.contentMD5(contentMd5);
         }
 
@@ -461,7 +461,7 @@ public class AWS2S3Producer extends DefaultProducer {
         message.setHeader(AWS2S3Constants.E_TAG, putObjectResult.eTag());
         message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
         message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
-        if (putObjectResult.versionId() != null) {
+        if (ObjectHelper.isNotEmpty(putObjectResult.versionId())) {
             message.setHeader(AWS2S3Constants.VERSION_ID, putObjectResult.versionId());
         }
     }
@@ -534,7 +534,7 @@ public class AWS2S3Producer extends DefaultProducer {
             CopyObjectResponse copyObjectResult = s3Client.copyObject(copyObjectRequest.build());
 
             Message message = getMessageForResponse(exchange);
-            if (copyObjectResult.versionId() != null) {
+            if (ObjectHelper.isNotEmpty(copyObjectResult.versionId())) {
                 message.setHeader(AWS2S3Constants.VERSION_ID, copyObjectResult.versionId());
             }
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
@@ -704,7 +704,7 @@ public class AWS2S3Producer extends DefaultProducer {
         long milliSeconds = 0;
 
         Long expirationMillis = exchange.getIn().getHeader(AWS2S3Constants.DOWNLOAD_LINK_EXPIRATION_TIME, Long.class);
-        if (expirationMillis != null) {
+        if (ObjectHelper.isNotEmpty(expirationMillis)) {
             milliSeconds += expirationMillis;
         } else {
             milliSeconds += 1000 * 60 * 60;
@@ -1023,7 +1023,7 @@ public class AWS2S3Producer extends DefaultProducer {
         long milliSeconds = 0;
 
         Long expirationMillis = exchange.getIn().getHeader(AWS2S3Constants.UPLOAD_LINK_EXPIRATION_TIME, Long.class);
-        if (expirationMillis != null) {
+        if (ObjectHelper.isNotEmpty(expirationMillis)) {
             milliSeconds += expirationMillis;
         } else {
             milliSeconds += 1000 * 60 * 60;
@@ -1099,7 +1099,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
             // Add location constraint if region is not us-east-1
             String region = getConfiguration().getRegion();
-            if (region != null && !region.equals("us-east-1")) {
+            if (ObjectHelper.isNotEmpty(region) && !region.equals("us-east-1")) {
                 CreateBucketConfiguration bucketConfiguration = CreateBucketConfiguration.builder()
                         .locationConstraint(BucketLocationConstraint.fromValue(region))
                         .build();
@@ -1342,7 +1342,7 @@ public class AWS2S3Producer extends DefaultProducer {
         Map<String, String> objectMetadata = new HashMap<>();
 
         Map<String, String> metadata = exchange.getIn().getHeader(AWS2S3Constants.METADATA, Map.class);
-        if (metadata != null) {
+        if (ObjectHelper.isNotEmpty(metadata)) {
             objectMetadata.putAll(metadata);
         }
 
