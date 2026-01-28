@@ -48,7 +48,8 @@ public class Cw2Component extends HealthCheckComponent {
             throw new IllegalArgumentException("Metric namespace must be specified.");
         }
 
-        Cw2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Cw2Configuration();
+        Cw2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Cw2Configuration();
         configuration.setNamespace(remaining);
 
         Cw2Endpoint endpoint = new Cw2Endpoint(uri, this, configuration);

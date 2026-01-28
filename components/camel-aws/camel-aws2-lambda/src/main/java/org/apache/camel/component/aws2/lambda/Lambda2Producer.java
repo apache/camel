@@ -1003,8 +1003,10 @@ public class Lambda2Producer extends DefaultProducer {
         List<String> exposeHeaders = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_EXPOSE_HEADERS, List.class);
         Integer maxAge = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_MAX_AGE, Integer.class);
 
-        if (ObjectHelper.isNotEmpty(allowCredentials) || ObjectHelper.isNotEmpty(allowOrigins) || ObjectHelper.isNotEmpty(allowMethods)
-                || ObjectHelper.isNotEmpty(allowHeaders) || ObjectHelper.isNotEmpty(exposeHeaders) || ObjectHelper.isNotEmpty(maxAge)) {
+        if (ObjectHelper.isNotEmpty(allowCredentials) || ObjectHelper.isNotEmpty(allowOrigins)
+                || ObjectHelper.isNotEmpty(allowMethods)
+                || ObjectHelper.isNotEmpty(allowHeaders) || ObjectHelper.isNotEmpty(exposeHeaders)
+                || ObjectHelper.isNotEmpty(maxAge)) {
             Cors.Builder corsBuilder = Cors.builder();
             if (ObjectHelper.isNotEmpty(allowCredentials)) {
                 corsBuilder.allowCredentials(allowCredentials);

@@ -44,7 +44,8 @@ public class EKS2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        EKS2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new EKS2Configuration();
+        EKS2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new EKS2Configuration();
         EKS2Endpoint endpoint = new EKS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

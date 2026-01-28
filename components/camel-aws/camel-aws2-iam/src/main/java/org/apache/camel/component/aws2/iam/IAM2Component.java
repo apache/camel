@@ -44,7 +44,8 @@ public class IAM2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        IAM2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new IAM2Configuration();
+        IAM2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new IAM2Configuration();
         IAM2Endpoint endpoint = new IAM2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

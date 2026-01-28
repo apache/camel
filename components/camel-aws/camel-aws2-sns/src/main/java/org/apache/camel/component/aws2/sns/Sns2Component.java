@@ -59,7 +59,8 @@ public class Sns2Component extends HealthCheckComponent {
 
         Map<String, Object> nonTransientParameters = getNonTransientParameters(parameters);
 
-        Sns2Configuration epConfiguration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Sns2Configuration();
+        Sns2Configuration epConfiguration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Sns2Configuration();
 
         if (remaining.startsWith("arn:")) {
             parseRemaining(epConfiguration, remaining);
