@@ -159,11 +159,11 @@ public class EventbridgeProducer extends DefaultProducer {
         } else {
             PutRuleRequest.Builder builder = PutRuleRequest.builder();
             String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-            if (ruleName != null) {
+            if (ObjectHelper.isNotEmpty(ruleName)) {
                 builder.name(ruleName);
             }
             String eventPattern = getOptionalHeader(exchange, EventbridgeConstants.EVENT_PATTERN, String.class);
-            if (eventPattern == null) {
+            if (ObjectHelper.isEmpty(eventPattern)) {
                 try (InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getEndpoint().getCamelContext(),
                         getConfiguration().getEventPatternFile())) {
                     eventPattern = IOUtils.toString(s, Charset.defaultCharset());
@@ -193,11 +193,11 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     PutTargetsRequest.Builder builder = PutTargetsRequest.builder();
                     String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-                    if (ruleName != null) {
+                    if (ObjectHelper.isNotEmpty(ruleName)) {
                         builder.rule(ruleName);
                     }
                     Collection<Target> targets = getOptionalHeader(exchange, EventbridgeConstants.TARGETS, Collection.class);
-                    if (targets == null || targets.isEmpty()) {
+                    if (ObjectHelper.isEmpty(targets)) {
                         throw new IllegalArgumentException("At least one targets must be specified");
                     }
                     builder.targets(targets);
@@ -219,11 +219,11 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     RemoveTargetsRequest.Builder builder = RemoveTargetsRequest.builder();
                     String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-                    if (ruleName != null) {
+                    if (ObjectHelper.isNotEmpty(ruleName)) {
                         builder.rule(ruleName);
                     }
                     Collection<String> ids = getOptionalHeader(exchange, EventbridgeConstants.TARGETS_IDS, Collection.class);
-                    if (ids == null || ids.isEmpty()) {
+                    if (ObjectHelper.isEmpty(ids)) {
                         throw new IllegalArgumentException("At least one target ID must be specified");
                     }
                     builder.ids(ids);
@@ -244,7 +244,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     DeleteRuleRequest.Builder builder = DeleteRuleRequest.builder();
                     String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-                    if (ruleName != null) {
+                    if (ObjectHelper.isNotEmpty(ruleName)) {
                         builder.name(ruleName);
                     }
                     builder.eventBusName(getConfiguration().getEventbusName());
@@ -261,7 +261,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     EnableRuleRequest.Builder builder = EnableRuleRequest.builder();
                     String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-                    if (ruleName != null) {
+                    if (ObjectHelper.isNotEmpty(ruleName)) {
                         builder.name(ruleName);
                     }
                     builder.eventBusName(getConfiguration().getEventbusName());
@@ -278,7 +278,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     DisableRuleRequest.Builder builder = DisableRuleRequest.builder();
                     String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-                    if (ruleName != null) {
+                    if (ObjectHelper.isNotEmpty(ruleName)) {
                         builder.name(ruleName);
                     }
                     builder.eventBusName(getConfiguration().getEventbusName());
@@ -295,15 +295,15 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     ListRulesRequest.Builder builder = ListRulesRequest.builder();
                     String ruleNamePrefix = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME_PREFIX, String.class);
-                    if (ruleNamePrefix != null) {
+                    if (ObjectHelper.isNotEmpty(ruleNamePrefix)) {
                         builder.namePrefix(ruleNamePrefix);
                     }
                     String nextToken = getOptionalHeader(exchange, EventbridgeConstants.NEXT_TOKEN, String.class);
-                    if (nextToken != null) {
+                    if (ObjectHelper.isNotEmpty(nextToken)) {
                         builder.nextToken(nextToken);
                     }
                     Integer limit = getOptionalHeader(exchange, EventbridgeConstants.LIMIT, Integer.class);
-                    if (limit != null) {
+                    if (ObjectHelper.isNotEmpty(limit)) {
                         builder.limit(limit);
                     }
                     builder.eventBusName(getConfiguration().getEventbusName());
@@ -312,7 +312,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 "List Rules",
                 (ListRulesResponse response, Message message) -> {
                     message.setHeader(EventbridgeConstants.NEXT_TOKEN, response.nextToken());
-                    message.setHeader(EventbridgeConstants.IS_TRUNCATED, response.nextToken() != null);
+                    message.setHeader(EventbridgeConstants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
                 });
     }
 
@@ -324,7 +324,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     DescribeRuleRequest.Builder builder = DescribeRuleRequest.builder();
                     String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-                    if (ruleName != null) {
+                    if (ObjectHelper.isNotEmpty(ruleName)) {
                         builder.name(ruleName);
                     }
                     builder.eventBusName(getConfiguration().getEventbusName());
@@ -344,15 +344,15 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     ListTargetsByRuleRequest.Builder builder = ListTargetsByRuleRequest.builder();
                     String ruleName = getOptionalHeader(exchange, EventbridgeConstants.RULE_NAME, String.class);
-                    if (ruleName != null) {
+                    if (ObjectHelper.isNotEmpty(ruleName)) {
                         builder.rule(ruleName);
                     }
                     String nextToken = getOptionalHeader(exchange, EventbridgeConstants.NEXT_TOKEN, String.class);
-                    if (nextToken != null) {
+                    if (ObjectHelper.isNotEmpty(nextToken)) {
                         builder.nextToken(nextToken);
                     }
                     Integer limit = getOptionalHeader(exchange, EventbridgeConstants.LIMIT, Integer.class);
-                    if (limit != null) {
+                    if (ObjectHelper.isNotEmpty(limit)) {
                         builder.limit(limit);
                     }
                     builder.eventBusName(getConfiguration().getEventbusName());
@@ -361,7 +361,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 "List Targets by Rule",
                 (ListTargetsByRuleResponse response, Message message) -> {
                     message.setHeader(EventbridgeConstants.NEXT_TOKEN, response.nextToken());
-                    message.setHeader(EventbridgeConstants.IS_TRUNCATED, response.nextToken() != null);
+                    message.setHeader(EventbridgeConstants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
                 });
     }
 
@@ -373,15 +373,15 @@ public class EventbridgeProducer extends DefaultProducer {
                 () -> {
                     ListRuleNamesByTargetRequest.Builder builder = ListRuleNamesByTargetRequest.builder();
                     String targetArn = getOptionalHeader(exchange, EventbridgeConstants.TARGET_ARN, String.class);
-                    if (targetArn != null) {
+                    if (ObjectHelper.isNotEmpty(targetArn)) {
                         builder.targetArn(targetArn);
                     }
                     String nextToken = getOptionalHeader(exchange, EventbridgeConstants.NEXT_TOKEN, String.class);
-                    if (nextToken != null) {
+                    if (ObjectHelper.isNotEmpty(nextToken)) {
                         builder.nextToken(nextToken);
                     }
                     Integer limit = getOptionalHeader(exchange, EventbridgeConstants.LIMIT, Integer.class);
-                    if (limit != null) {
+                    if (ObjectHelper.isNotEmpty(limit)) {
                         builder.limit(limit);
                     }
                     builder.eventBusName(getConfiguration().getEventbusName());
@@ -390,7 +390,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 "List Rule Names by Target",
                 (ListRuleNamesByTargetResponse response, Message message) -> {
                     message.setHeader(EventbridgeConstants.NEXT_TOKEN, response.nextToken());
-                    message.setHeader(EventbridgeConstants.IS_TRUNCATED, response.nextToken() != null);
+                    message.setHeader(EventbridgeConstants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
                 });
     }
 
@@ -474,7 +474,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
                                 requestClass.getName(),
-                                payload != null ? payload.getClass().getName() : "null"));
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
             }
         } else {
             try {
@@ -486,7 +486,7 @@ public class EventbridgeProducer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
-        if (responseProcessor != null) {
+        if (ObjectHelper.isNotEmpty(responseProcessor)) {
             responseProcessor.accept(result, message);
         }
     }
@@ -517,7 +517,7 @@ public class EventbridgeProducer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new EventbridgeProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -527,7 +527,7 @@ public class EventbridgeProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
