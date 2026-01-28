@@ -36,6 +36,7 @@
         <!-- Zookeeper container is not available on this platform -->
         <skipITs.aarch64>true</skipITs.aarch64>
         <skipITs.s390x>true</skipITs.s390x>
+        <camel.surefire.fork.additional-vmargs>-XX:+ExitOnOutOfMemoryError -Xmx2G</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -136,7 +137,6 @@
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
-                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx2G</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
