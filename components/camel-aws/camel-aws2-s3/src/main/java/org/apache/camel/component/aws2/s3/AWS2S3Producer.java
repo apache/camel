@@ -324,8 +324,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
         try {
             // Need to check if the message body is WrappedFile
-            if (obj instanceof WrappedFile) {
-                WrappedFile<?> wrappedFile = ((WrappedFile<?>) obj);
+            if (obj instanceof WrappedFile<?> wrappedFile) {
                 contentLength = wrappedFile.getFileLength();
                 obj = wrappedFile.getFile();
             }
