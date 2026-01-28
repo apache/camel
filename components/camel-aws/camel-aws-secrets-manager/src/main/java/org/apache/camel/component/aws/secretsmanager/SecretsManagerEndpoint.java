@@ -70,7 +70,7 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements End
     public void doStart() throws Exception {
         super.doStart();
 
-        secretsManagerClient = configuration.getSecretsManagerClient() != null
+        secretsManagerClient = ObjectHelper.isNotEmpty(configuration.getSecretsManagerClient())
                 ? configuration.getSecretsManagerClient()
                 : SecretsManagerClientFactory.getSecretsManagerClient(configuration);
     }
@@ -78,7 +78,7 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint implements End
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getSecretsManagerClient())) {
-            if (secretsManagerClient != null) {
+            if (ObjectHelper.isNotEmpty(secretsManagerClient)) {
                 secretsManagerClient.close();
             }
         }

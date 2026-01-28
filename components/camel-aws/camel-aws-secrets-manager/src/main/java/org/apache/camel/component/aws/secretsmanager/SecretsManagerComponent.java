@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon Secrets Manager SDK v2.
@@ -44,7 +45,7 @@ public class SecretsManagerComponent extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SecretsManagerConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new SecretsManagerConfiguration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new SecretsManagerConfiguration();
         SecretsManagerEndpoint endpoint = new SecretsManagerEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
