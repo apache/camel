@@ -73,7 +73,7 @@ public class AWSConfigProducer extends DefaultProducer {
 
     private AWSConfigOperations determineOperation(Exchange exchange) {
         AWSConfigOperations operation = exchange.getIn().getHeader(AWSConfigConstants.OPERATION, AWSConfigOperations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -85,7 +85,7 @@ public class AWSConfigProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (configProducerToString == null) {
+        if (ObjectHelper.isEmpty(configProducerToString)) {
             configProducerToString = "AWSConfigProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return configProducerToString;
@@ -315,7 +315,7 @@ public class AWSConfigProducer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new AWSConfigProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -325,7 +325,7 @@ public class AWSConfigProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
