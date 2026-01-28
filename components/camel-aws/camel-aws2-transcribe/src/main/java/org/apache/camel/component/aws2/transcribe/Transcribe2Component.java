@@ -66,7 +66,8 @@ public class Transcribe2Component extends DefaultComponent {
             setRegionOnEndpoint(endpoint);
         }
         if (ObjectHelper.isEmpty(endpoint.getConfiguration().getTranscribeClient())
-                && (ObjectHelper.isEmpty(endpoint.getConfiguration().getAccessKey()) || ObjectHelper.isEmpty(endpoint.getConfiguration().getSecretKey()))) {
+                && (ObjectHelper.isEmpty(endpoint.getConfiguration().getAccessKey())
+                        || ObjectHelper.isEmpty(endpoint.getConfiguration().getSecretKey()))) {
             throw new IllegalArgumentException("Amazon transcribe client or accessKey and secretKey must be specified");
         }
 

@@ -44,7 +44,8 @@ public class MQ2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        MQ2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new MQ2Configuration();
+        MQ2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new MQ2Configuration();
         MQ2Endpoint endpoint = new MQ2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

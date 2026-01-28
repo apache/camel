@@ -96,7 +96,8 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
 
         String operation
                 = Optional.ofNullable(jsonBody.get("operation")).map(JsonNode::asText).orElse(Ddb2Operations.PutItem.name());
-        if (message.getExchange().hasProperties() && ObjectHelper.isNotEmpty(message.getExchange().getProperty("operation", String.class))) {
+        if (message.getExchange().hasProperties()
+                && ObjectHelper.isNotEmpty(message.getExchange().getProperty("operation", String.class))) {
             operation = message.getExchange().getProperty("operation", String.class);
         }
 

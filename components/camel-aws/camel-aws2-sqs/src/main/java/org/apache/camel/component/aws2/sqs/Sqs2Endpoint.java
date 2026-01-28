@@ -163,7 +163,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             // built manually.
             // This allows accessing queues where you don't have permission to
             // list queues or query queues
-            if (ObjectHelper.isNotEmpty(configuration.getRegion()) && ObjectHelper.isNotEmpty(configuration.getQueueOwnerAWSAccountId())) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion())
+                    && ObjectHelper.isNotEmpty(configuration.getQueueOwnerAWSAccountId())) {
                 queueUrl = getAwsEndpointUri() + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
                            + configuration.getQueueName();
                 queueUrlInitialized = true;

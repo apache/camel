@@ -43,7 +43,8 @@ public class KMS2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KMS2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new KMS2Configuration();
+        KMS2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new KMS2Configuration();
 
         KMS2Endpoint endpoint = new KMS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

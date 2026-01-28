@@ -48,7 +48,8 @@ public class Sqs2Component extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Queue name must be specified.");
         }
-        Sqs2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Sqs2Configuration();
+        Sqs2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Sqs2Configuration();
         if (remaining.startsWith("arn:")) {
             String[] parts = remaining.split(":");
             if (parts.length != 6 || !parts[2].equals("sqs")) {

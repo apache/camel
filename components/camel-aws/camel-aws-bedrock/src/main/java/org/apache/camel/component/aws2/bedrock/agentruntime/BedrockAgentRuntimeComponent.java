@@ -45,7 +45,8 @@ public class BedrockAgentRuntimeComponent extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BedrockAgentRuntimeConfiguration configuration
-                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new BedrockAgentRuntimeConfiguration();
+                = ObjectHelper.isNotEmpty(this.configuration)
+                        ? this.configuration.copy() : new BedrockAgentRuntimeConfiguration();
         BedrockAgentRuntimeEndpoint endpoint = new BedrockAgentRuntimeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

@@ -45,7 +45,8 @@ public class Ddb2Component extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("Table name must be specified.");
         }
-        Ddb2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Ddb2Configuration();
+        Ddb2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Ddb2Configuration();
         configuration.setTableName(remaining);
         Ddb2Endpoint endpoint = new Ddb2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

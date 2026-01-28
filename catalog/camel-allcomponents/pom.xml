@@ -51,7 +51,6 @@
     </repositories>
 
     <dependencies>
-        <!-- CODEGEN DEPENDENCIES START -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq</artifactId>
@@ -2277,7 +2276,6 @@
             <artifactId>camel-zookeeper-master</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- CODEGEN DEPENDENCIES END -->
     </dependencies>
 
 </project>
