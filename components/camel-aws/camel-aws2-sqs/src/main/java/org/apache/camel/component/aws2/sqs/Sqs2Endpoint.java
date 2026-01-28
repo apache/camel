@@ -147,15 +147,15 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     protected void doInit() throws Exception {
         super.doInit();
 
-        client = configuration.getAmazonSQSClient() != null
+        client = ObjectHelper.isNotEmpty(configuration.getAmazonSQSClient())
                 ? configuration.getAmazonSQSClient() : Sqs2ClientFactory.getSqsClient(configuration);
 
         // check the setting the headerFilterStrategy
-        if (headerFilterStrategy == null) {
+        if (ObjectHelper.isEmpty(headerFilterStrategy)) {
             headerFilterStrategy = new Sqs2HeaderFilterStrategy();
         }
 
-        if (configuration.getQueueUrl() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getQueueUrl())) {
             queueUrl = configuration.getQueueUrl();
             queueUrlInitialized = true;
         } else {
@@ -163,11 +163,11 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             // built manually.
             // This allows accessing queues where you don't have permission to
             // list queues or query queues
-            if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
+            if (ObjectHelper.isNotEmpty(configuration.getRegion()) && ObjectHelper.isNotEmpty(configuration.getQueueOwnerAWSAccountId())) {
                 queueUrl = getAwsEndpointUri() + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
                            + configuration.getQueueName();
                 queueUrlInitialized = true;
-            } else if (configuration.getQueueOwnerAWSAccountId() != null) {
+            } else if (ObjectHelper.isNotEmpty(configuration.getQueueOwnerAWSAccountId())) {
                 GetQueueUrlRequest.Builder getQueueUrlRequest = GetQueueUrlRequest.builder();
                 getQueueUrlRequest.queueName(configuration.getQueueName());
                 getQueueUrlRequest.queueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
@@ -179,7 +179,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             }
         }
 
-        if (queueUrl == null && configuration.isAutoCreateQueue()) {
+        if (ObjectHelper.isEmpty(queueUrl) && configuration.isAutoCreateQueue()) {
             createQueue(client);
         } else {
             LOG.debug("Using Amazon SQS queue url: {}", queueUrl);
@@ -203,13 +203,13 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                 }
             }
 
-            if (queueUrl != null) {
+            if (ObjectHelper.isNotEmpty(queueUrl)) {
                 queueUrlInitialized = true;
                 break;
             }
 
             String token = listQueuesResult.nextToken();
-            if (token == null) {
+            if (ObjectHelper.isEmpty(token)) {
                 break;
             }
 
@@ -253,38 +253,38 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                     = getConfiguration().getMessageDeduplicationIdStrategy() instanceof NullMessageDeduplicationIdStrategy;
             attributes.put(QueueAttributeName.CONTENT_BASED_DEDUPLICATION, String.valueOf(useContentBasedDeduplication));
         }
-        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getDefaultVisibilityTimeout())) {
             attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT,
                     String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
         }
-        if (getConfiguration().getMaximumMessageSize() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getMaximumMessageSize())) {
             attributes.put(QueueAttributeName.MAXIMUM_MESSAGE_SIZE, String.valueOf(getConfiguration().getMaximumMessageSize()));
         }
-        if (getConfiguration().getMessageRetentionPeriod() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getMessageRetentionPeriod())) {
             attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD,
                     String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
-        if (getConfiguration().getPolicy() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getPolicy())) {
             InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
                     getConfiguration().getPolicy());
             String policy = IOUtils.toString(s, Charset.defaultCharset());
             attributes.put(QueueAttributeName.POLICY, policy);
         }
-        if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getReceiveMessageWaitTimeSeconds())) {
             attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
                     String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
-        if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getDelaySeconds()) && getConfiguration().isDelayQueue()) {
             attributes.put(QueueAttributeName.DELAY_SECONDS, String.valueOf(getConfiguration().getDelaySeconds()));
         }
-        if (getConfiguration().getRedrivePolicy() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getRedrivePolicy())) {
             attributes.put(QueueAttributeName.REDRIVE_POLICY, getConfiguration().getRedrivePolicy());
         }
         if (getConfiguration().isServerSideEncryptionEnabled()) {
-            if (getConfiguration().getKmsMasterKeyId() != null) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getKmsMasterKeyId())) {
                 attributes.put(QueueAttributeName.KMS_MASTER_KEY_ID, getConfiguration().getKmsMasterKeyId());
             }
-            if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getKmsDataKeyReusePeriodSeconds())) {
                 attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS,
                         String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
@@ -310,38 +310,38 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     private void updateQueueAttributes(SqsClient client) throws IOException {
         SetQueueAttributesRequest.Builder request = SetQueueAttributesRequest.builder().queueUrl(queueUrl);
         Map<QueueAttributeName, String> attributes = new EnumMap<>(QueueAttributeName.class);
-        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getDefaultVisibilityTimeout())) {
             attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT,
                     String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));
         }
-        if (getConfiguration().getMaximumMessageSize() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getMaximumMessageSize())) {
             attributes.put(QueueAttributeName.MAXIMUM_MESSAGE_SIZE, String.valueOf(getConfiguration().getMaximumMessageSize()));
         }
-        if (getConfiguration().getMessageRetentionPeriod() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getMessageRetentionPeriod())) {
             attributes.put(QueueAttributeName.MESSAGE_RETENTION_PERIOD,
                     String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
-        if (getConfiguration().getPolicy() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getPolicy())) {
             InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
                     getConfiguration().getPolicy());
             String policy = IOUtils.toString(s, Charset.defaultCharset());
             attributes.put(QueueAttributeName.POLICY, policy);
         }
-        if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getReceiveMessageWaitTimeSeconds())) {
             attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
                     String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
-        if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getDelaySeconds()) && getConfiguration().isDelayQueue()) {
             attributes.put(QueueAttributeName.DELAY_SECONDS, String.valueOf(getConfiguration().getDelaySeconds()));
         }
-        if (getConfiguration().getRedrivePolicy() != null) {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getRedrivePolicy())) {
             attributes.put(QueueAttributeName.REDRIVE_POLICY, getConfiguration().getRedrivePolicy());
         }
         if (getConfiguration().isServerSideEncryptionEnabled()) {
-            if (getConfiguration().getKmsMasterKeyId() != null) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getKmsMasterKeyId())) {
                 attributes.put(QueueAttributeName.KMS_MASTER_KEY_ID, getConfiguration().getKmsMasterKeyId());
             }
-            if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
+            if (ObjectHelper.isNotEmpty(getConfiguration().getKmsDataKeyReusePeriodSeconds())) {
                 attributes.put(QueueAttributeName.KMS_DATA_KEY_REUSE_PERIOD_SECONDS,
                         String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
             }
@@ -357,7 +357,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonSQSClient())) {
-            if (client != null) {
+            if (ObjectHelper.isNotEmpty(client)) {
                 client.close();
             }
         }
@@ -427,7 +427,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     @Override
     public Map<String, String> getServiceMetadata() {
         HashMap<String, String> metadata = new HashMap<>();
-        if (configuration.getQueueName() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getQueueName())) {
             metadata.put("queueName", configuration.getQueueName());
         }
         return metadata;

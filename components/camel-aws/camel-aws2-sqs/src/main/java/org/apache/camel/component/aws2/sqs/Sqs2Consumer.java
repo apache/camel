@@ -123,7 +123,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         Queue<Exchange> answer = new LinkedList<>();
         for (software.amazon.awssdk.services.sqs.model.Message message : messages) {
-            if (message != null) {
+            if (ObjectHelper.isNotEmpty(message)) {
                 Exchange exchange = createExchange(message);
                 answer.add(exchange);
             }
@@ -228,7 +228,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
      */
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
-        if (cause != null) {
+        if (ObjectHelper.isNotEmpty(cause)) {
             getExceptionHandler().handleException(
                     "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
@@ -321,7 +321,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
 
-            if (visibilityTimeout != null && visibilityTimeout > 0) {
+            if (ObjectHelper.isNotEmpty(visibilityTimeout) && visibilityTimeout > 0) {
                 int delay = Math.max(1, visibilityTimeout / 2);
                 this.timeoutExtender = new TimeoutExtender(visibilityTimeout, delay);
 
@@ -340,21 +340,21 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (timeoutExtender != null) {
+        if (ObjectHelper.isNotEmpty(timeoutExtender)) {
             timeoutExtender.cancel();
             timeoutExtender = null;
         }
 
-        if (scheduledFuture != null) {
+        if (ObjectHelper.isNotEmpty(scheduledFuture)) {
             scheduledFuture.cancel(true);
             scheduledFuture = null;
         }
 
-        if (scheduledExecutor != null) {
+        if (ObjectHelper.isNotEmpty(scheduledExecutor)) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
         }
-        if (pollingTask != null) {
+        if (ObjectHelper.isNotEmpty(pollingTask)) {
             pollingTask.close();
             pollingTask = null;
         }
