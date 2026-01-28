@@ -66,7 +66,7 @@ public class Textract2Endpoint extends ScheduledPollEndpoint implements Endpoint
         super.doStart();
 
         textractClient
-                = configuration.getTextractClient() != null
+                = ObjectHelper.isNotEmpty(configuration.getTextractClient())
                         ? configuration.getTextractClient()
                         : Textract2ClientFactory.getTextractClient(configuration);
     }
@@ -74,7 +74,7 @@ public class Textract2Endpoint extends ScheduledPollEndpoint implements Endpoint
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getTextractClient())) {
-            if (textractClient != null) {
+            if (ObjectHelper.isNotEmpty(textractClient)) {
                 textractClient.close();
             }
         }
