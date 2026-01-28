@@ -51,6 +51,7 @@
     </repositories>
 
     <dependencies>
+        <!-- CODEGEN DEPENDENCIES START -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-activemq</artifactId>
