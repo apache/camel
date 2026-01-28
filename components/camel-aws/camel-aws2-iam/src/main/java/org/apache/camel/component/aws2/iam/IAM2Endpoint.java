@@ -66,7 +66,7 @@ public class IAM2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     public void doStart() throws Exception {
         super.doStart();
 
-        iamClient = configuration.getIamClient() != null
+        iamClient = ObjectHelper.isNotEmpty(configuration.getIamClient())
                 ? configuration.getIamClient()
                 : IAM2ClientFactory.getIamClient(configuration);
     }
@@ -74,7 +74,7 @@ public class IAM2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getIamClient())) {
-            if (iamClient != null) {
+            if (ObjectHelper.isNotEmpty(iamClient)) {
                 iamClient.close();
             }
         }
