@@ -151,14 +151,14 @@ public class Kinesis2Producer extends DefaultProducer {
         putRecordRequest.streamName(getEndpoint().getConfiguration().getStreamName());
         ensurePartitionKeyNotNull(partitionKey);
         putRecordRequest.partitionKey(partitionKey.toString());
-        if (sequenceNumber != null) {
+        if (ObjectHelper.isNotEmpty(sequenceNumber)) {
             putRecordRequest.sequenceNumberForOrdering(sequenceNumber.toString());
         }
         return putRecordRequest.build();
     }
 
     private void ensurePartitionKeyNotNull(Object partitionKey) {
-        if (partitionKey == null) {
+        if (ObjectHelper.isEmpty(partitionKey)) {
             throw new IllegalArgumentException("Partition key must be specified");
         }
     }
