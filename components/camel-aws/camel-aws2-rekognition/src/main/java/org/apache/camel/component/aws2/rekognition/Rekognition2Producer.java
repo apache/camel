@@ -152,7 +152,7 @@ public class Rekognition2Producer extends DefaultProducer {
     private Rekognition2Operations determineOperation(Exchange exchange) {
         Rekognition2Operations operation
                 = exchange.getIn().getHeader(Rekognition2Constants.OPERATION, Rekognition2Operations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -164,7 +164,7 @@ public class Rekognition2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (rekognitionProducerToString == null) {
+        if (ObjectHelper.isEmpty(rekognitionProducerToString)) {
             rekognitionProducerToString = "RekognitionProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return rekognitionProducerToString;
@@ -1300,7 +1300,7 @@ public class Rekognition2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Rekognition2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -1310,7 +1310,7 @@ public class Rekognition2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

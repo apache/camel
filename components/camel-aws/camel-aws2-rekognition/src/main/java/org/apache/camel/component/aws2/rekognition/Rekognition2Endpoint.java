@@ -62,7 +62,7 @@ public class Rekognition2Endpoint extends DefaultEndpoint implements EndpointSer
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsRekognitionClient = configuration.getAwsRekognitionClient() != null
+        awsRekognitionClient = ObjectHelper.isNotEmpty(configuration.getAwsRekognitionClient())
                 ? configuration.getAwsRekognitionClient()
                 : Rekognition2ClientFactory.getRekognitionClient(configuration);
     }
@@ -71,7 +71,7 @@ public class Rekognition2Endpoint extends DefaultEndpoint implements EndpointSer
     public void doStop() throws Exception {
 
         if (ObjectHelper.isEmpty(configuration.getAwsRekognitionClient())) {
-            if (awsRekognitionClient != null) {
+            if (ObjectHelper.isNotEmpty(awsRekognitionClient)) {
                 awsRekognitionClient.close();
             }
         }
