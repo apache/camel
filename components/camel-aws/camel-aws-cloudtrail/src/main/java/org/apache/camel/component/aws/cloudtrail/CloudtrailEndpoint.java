@@ -51,7 +51,7 @@ public class CloudtrailEndpoint extends ScheduledPollEndpoint implements Endpoin
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        cloudTrailClient = configuration.getCloudTrailClient() != null
+        cloudTrailClient = ObjectHelper.isNotEmpty(configuration.getCloudTrailClient())
                 ? configuration.getCloudTrailClient()
                 : CloudtrailClientFactory.getCloudtrailClient(configuration);
     }
@@ -59,7 +59,7 @@ public class CloudtrailEndpoint extends ScheduledPollEndpoint implements Endpoin
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getCloudTrailClient())) {
-            if (cloudTrailClient != null) {
+            if (ObjectHelper.isNotEmpty(cloudTrailClient)) {
                 cloudTrailClient.close();
             }
         }
@@ -111,7 +111,7 @@ public class CloudtrailEndpoint extends ScheduledPollEndpoint implements Endpoin
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getEventSource() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getEventSource())) {
             return Map.of("source", configuration.getEventSource());
         }
         return null;

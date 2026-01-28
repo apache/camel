@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-cloudtrail")
 public class CloudtrailComponent extends HealthCheckComponent {
@@ -41,7 +42,7 @@ public class CloudtrailComponent extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CloudtrailConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new CloudtrailConfiguration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new CloudtrailConfiguration();
         configuration.setLabel(remaining);
         CloudtrailEndpoint endpoint = new CloudtrailEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);
