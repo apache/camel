@@ -77,7 +77,7 @@ public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceL
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsLambdaClient = configuration.getAwsLambdaClient() != null
+        awsLambdaClient = ObjectHelper.isNotEmpty(configuration.getAwsLambdaClient())
                 ? configuration.getAwsLambdaClient()
                 : Lambda2ClientFactory.getLambdaClient(configuration);
     }
@@ -85,7 +85,7 @@ public class Lambda2Endpoint extends DefaultEndpoint implements EndpointServiceL
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAwsLambdaClient())) {
-            if (awsLambdaClient != null) {
+            if (ObjectHelper.isNotEmpty(awsLambdaClient)) {
                 awsLambdaClient.close();
             }
         }
