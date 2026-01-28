@@ -894,6 +894,23 @@ public class SimpleOperatorTest extends LanguageTestSupport {
                 ">>> Message received from WebSocket Client : Hello World");
     }
 
+    @Test
+    public void testChain() {
+        exchange.getIn().setBody(null);
+        assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", null);
+        exchange.getIn().setBody("Hello World");
+        assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", "WORLD");
+    }
+
+    @Test
+    public void testChainNullSafe() {
+        exchange.getIn().setBody(null);
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${uppercase()}", null);
+
+        exchange.getIn().setBody("Hello World,Hello Camel");
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${kindOfType()}", "object");
+    }
+
     @Override
     protected String getLanguageName() {
         return "simple";

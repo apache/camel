@@ -21,17 +21,27 @@ package org.apache.camel.language.simple.types;
  */
 public enum OtherOperatorType {
 
+    CHAIN,
+    CHAIN_NULL_SAFE,
     ELVIS;
 
     public static OtherOperatorType asOperator(String text) {
-        if ("?:".equals(text)) {
+        if ("~>".equals(text)) {
+            return CHAIN;
+        } else if ("?~>".equals(text)) {
+            return CHAIN_NULL_SAFE;
+        } else if ("?:".equals(text)) {
             return ELVIS;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
 
     public static String getOperatorText(OtherOperatorType operator) {
-        if (operator == ELVIS) {
+        if (operator == CHAIN) {
+            return "~>";
+        } else if (operator == CHAIN_NULL_SAFE) {
+            return "?~>";
+        } else if (operator == ELVIS) {
             return "?:";
         }
         return "";

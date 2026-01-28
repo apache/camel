@@ -772,6 +772,28 @@ The following numeric operators can be used:
 |`--` | To decrement a number by one. The left-hand side must be a function, otherwise parsed as literal.
 |====
 
+These operators are unary and requires to be attached directly next to a function:
+
+[source,text]
+----
+${function}OP
+----
+
+For example to increment the result of the function:
+
+[source,java]
+----
+simple("${header.myNumber}++ > 10");
+----
+
+And the same for decrement:
+
+[source,java]
+----
+simple("${header.myNumber}-- < 10");
+----
+
+
 === Other Operators
 
 The following other operators can be used:
@@ -781,7 +803,11 @@ The following other operators can be used:
 |Operator |Description
 |`? :` | The ternary operator evaluates a condition and returns a value based on the result. If the condition is true, the first value (after `?`) is returned; otherwise, the second value (after `:`) is returned. There must be spaces around both `?` and `:` operators. This is similar to the ternary operator in Java.
 |`?:` | The elvis operator returns the left-hand side if it has an effective Boolean value of true, otherwise it returns the right-hand side. This is useful for providing fallback values when an expression may evaluate to a value with an effective Boolean value of false (such as `null`, `false`, `0`, empty/blank string).
+|`~>` | The chain operator is used in the situations where multiple nested functions need to be applied to a value, while making it easy to read. The value on the left-hand-side is evaluated, and set as the new message body before evaluating the right-hand-side function. This concept is similar to the xref:eips:pipeline-eip.adoc[Pipeline EIP].
+|`?~>` | The null-safe chain operator, where the chain will not continue when a function returned `null`.
 |====
+
+==== Ternary Operator
 
 The syntax for the ternary operator is:
 
@@ -804,6 +830,8 @@ Ternary operators can also be nested to handle multiple conditions:
 simple("${header.score >= 90 ? 'A' : ${header.score >= 80 ? 'B' : 'C'}}");
 ----
 
+==== Elvis Operator
+
 For example the following elvis operator will return the username header unless its null or empty, which
 then the default value of `Guest` is returned.
 
@@ -811,6 +839,37 @@ then the default value of `Guest` is returned.
 ----
 simple("${header.username} ?: 'Guest'");
 ----
+
+==== Chain Operator
+
+IMPORTANT: The chain operator only supports passing results via the message body. This may change in the future to allow more flexible syntax to
+specify which parameter to use as input in the next fuction.
+
+The syntax for the chain operator is:
+
+[source,text]
+----
+${leftValue} ~> ${rightValue}
+----
+
+And there can be as many chains:
+
+[source,text]
+----
+${leftValue} ~> ${midValue} ~> ${midValue} -> ${rightValue}
+----
+
+For example if the message body contains `Hello World` then the follow would return `WORLD`:
+
+[source,java]
+----
+simple("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}");
+----
+
+The _null safe_ variant (`?~>`) can be used to avoid `NullPointerException` if it's accepted to not continue the chain when any function returned `null`:
+
+However, many of the simple functions have NPE protection built-in, so this variant is only needed in special situations.
+
 
 === Boolean Operators
 
