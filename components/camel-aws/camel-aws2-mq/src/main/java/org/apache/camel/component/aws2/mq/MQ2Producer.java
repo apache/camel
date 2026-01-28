@@ -130,16 +130,16 @@ public class MQ2Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 message.setHeader(MQ2Constants.NEXT_TOKEN, result.nextToken());
-                message.setHeader(MQ2Constants.IS_TRUNCATED, result.nextToken() != null);
+                message.setHeader(MQ2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextToken()));
             }
         } else {
             ListBrokersRequest.Builder builder = ListBrokersRequest.builder();
             Integer maxResults = getOptionalHeader(exchange, MQ2Constants.MAX_RESULTS, Integer.class);
-            if (maxResults != null) {
+            if (ObjectHelper.isNotEmpty(maxResults)) {
                 builder.maxResults(maxResults);
             }
             String nextToken = getOptionalHeader(exchange, MQ2Constants.NEXT_TOKEN, String.class);
-            if (nextToken != null) {
+            if (ObjectHelper.isNotEmpty(nextToken)) {
                 builder.nextToken(nextToken);
             }
             ListBrokersResponse result;
@@ -152,7 +152,7 @@ public class MQ2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(MQ2Constants.NEXT_TOKEN, result.nextToken());
-            message.setHeader(MQ2Constants.IS_TRUNCATED, result.nextToken() != null);
+            message.setHeader(MQ2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextToken()));
         }
     }
 
@@ -404,7 +404,7 @@ public class MQ2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new MQ2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -414,7 +414,7 @@ public class MQ2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
