@@ -232,7 +232,7 @@ class Athena2QueryHelper {
         }
 
         // Generic errors happen sometimes in Athena.  It's possible that a retry will fix the problem.
-        if (stateChangeReason != null && stateChangeReason.contains("GENERIC_INTERNAL_ERROR")
+        if (ObjectHelper.isNotEmpty(stateChangeReason) && stateChangeReason.contains("GENERIC_INTERNAL_ERROR")
                 && (this.retry.contains("generic") || this.retry.contains("retryable"))) {
             LOG.trace("AWS Athena start query execution detected generic error ({}), marked as retryable",
                     stateChangeReason);
@@ -240,7 +240,7 @@ class Athena2QueryHelper {
         }
 
         // Resource exhaustion happens sometimes in Athena.  It's possible that a retry will fix the problem.
-        if (stateChangeReason != null && stateChangeReason.contains("exhausted resources at this scale factor")
+        if (ObjectHelper.isNotEmpty(stateChangeReason) && stateChangeReason.contains("exhausted resources at this scale factor")
                 && (this.retry.contains("exhausted") || this.retry.contains("retryable"))) {
             LOG.trace("AWS Athena start query execution detected resource exhaustion error ({}), marked as retryable",
                     stateChangeReason);
