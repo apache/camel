@@ -244,6 +244,19 @@ public interface ComponentsBuilderFactory {
         return AwsSecretsManagerComponentBuilderFactory.awsSecretsManager();
     }
     /**
+     * AWS Security Hub (camel-aws-security-hub)
+     * Manage and interact with AWS Security Hub for security findings.
+     * 
+     * Category: cloud,security
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws-security-hub
+     * 
+     * @return the dsl builder
+     */
+    static AwsSecurityHubComponentBuilderFactory.AwsSecurityHubComponentBuilder awsSecurityHub() {
+        return AwsSecurityHubComponentBuilderFactory.awsSecurityHub();
+    }
+    /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
      * 

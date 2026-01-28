@@ -313,6 +313,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.SchematronEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ScpEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SecretsManagerEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.SecurityHubEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory,

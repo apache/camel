@@ -164,6 +164,88 @@ from("direct:start")
     .to("splunk-hec:...");
 ----
 
+== Example: AI-Powered Security Finding Summarization
+
+You can combine the OCSF DataFormat with the LangChain4j Chat component to use an AI agent that analyzes and summarizes security findings. This is useful for:
+
+* Generating human-readable summaries for security analysts
+* Prioritizing alerts based on AI assessment
+* Enriching findings with additional context and recommendations
+
+=== Java DSL Example
+
+[source,java]
+----
+from("kafka:security-events")
+    .unmarshal().ocsf(DetectionFinding.class)
+    .process(exchange -> {
+        DetectionFinding finding = exchange.getIn().getBody(DetectionFinding.class);
+
+        // Build a prompt with the finding details
+        String prompt = String.format("""
+            Analyze this security detection finding and provide a brief summary:
+
+            Title: %s
+            Severity: %s
+            Message: %s
+            Description: %s
+
+            Provide:
+            1. A one-sentence summary of the threat
+            2. Recommended immediate actions
+            3. Risk assessment (Critical/High/Medium/Low)
+            """,
+            finding.getFindingInfo() != null ? finding.getFindingInfo().getTitle() : "Unknown",
+            finding.getSeverityId(),
+            finding.getMessage(),
+            finding.getFindingInfo() != null ? finding.getFindingInfo().getDesc() : "No description"
+        );
+        exchange.getIn().setBody(prompt);
+    })
+    .to("langchain4j-chat:security-analyst?chatModel=#chatLanguageModel")
+    .to("direct:ai-summary");
+----
+
+=== YAML DSL Example
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "kafka:security-events"
+    steps:
+      - unmarshal:
+          ocsf:
+            unmarshalType: "org.apache.camel.dataformat.ocsf.model.DetectionFinding"
+      - setHeader:
+          name: "findingTitle"
+          simple: "${body.findingInfo?.title}"
+      - setHeader:
+          name: "findingSeverity"
+          simple: "${body.severityId}"
+      - setHeader:
+          name: "findingMessage"
+          simple: "${body.message}"
+      - setBody:
+          simple: |
+            Analyze this security detection finding and provide a brief summary:
+
+            Title: ${header.findingTitle}
+            Severity: ${header.findingSeverity}
+            Message: ${header.findingMessage}
+
+            Provide:
+            1. A one-sentence summary of the threat
+            2. Recommended immediate actions
+            3. Risk assessment (Critical/High/Medium/Low)
+      - to:
+          uri: "langchain4j-chat:security-analyst"
+          parameters:
+            chatModel: "#chatLanguageModel"
+      - to:
+          uri: "direct:ai-summary"
+----
+
 == Dependencies
 
 [source,xml]
