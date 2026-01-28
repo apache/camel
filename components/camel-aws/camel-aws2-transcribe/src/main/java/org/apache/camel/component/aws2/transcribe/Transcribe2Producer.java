@@ -542,7 +542,7 @@ public class Transcribe2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (transcribeProducerToString == null) {
+        if (ObjectHelper.isEmpty(transcribeProducerToString)) {
             transcribeProducerToString = "Transcribe2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return transcribeProducerToString;
