@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.kinesis;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Category;
@@ -64,7 +63,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
         }
 
         if (configuration.isAsyncClient() &&
-                Objects.isNull(configuration.getAmazonKinesisAsyncClient())) {
+                ObjectHelper.isEmpty(configuration.getAmazonKinesisAsyncClient())) {
             kinesisAsyncClient = kinesisConnection.getAsyncClient(this);
         } else {
             kinesisClient = kinesisConnection.getClient(this);
@@ -81,9 +80,9 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonKinesisClient())) {
-            if (kinesisClient != null) {
+            if (ObjectHelper.isNotEmpty(kinesisClient)) {
                 kinesisClient.close();
-            } else if (Objects.nonNull(kinesisAsyncClient)) {
+            } else if (ObjectHelper.isNotEmpty(kinesisAsyncClient)) {
                 kinesisAsyncClient.close();
             }
         }
@@ -151,7 +150,7 @@ public class Kinesis2Endpoint extends ScheduledPollEndpoint implements EndpointS
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getStreamName() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getStreamName())) {
             return Map.of("stream", configuration.getStreamName());
         }
         return null;

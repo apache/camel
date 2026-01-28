@@ -18,11 +18,11 @@ package org.apache.camel.component.aws2.kinesis;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.component.aws2.kinesis.client.KinesisClientFactory;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
 
@@ -38,8 +38,8 @@ public class KinesisConnection implements Closeable {
     public KinesisClient getClient(final Kinesis2Endpoint endpoint) {
         lock.lock();
         try {
-            if (Objects.isNull(kinesisClient)) {
-                kinesisClient = endpoint.getConfiguration().getAmazonKinesisClient() != null
+            if (ObjectHelper.isEmpty(kinesisClient)) {
+                kinesisClient = ObjectHelper.isNotEmpty(endpoint.getConfiguration().getAmazonKinesisClient())
                         ? endpoint.getConfiguration().getAmazonKinesisClient()
                         : KinesisClientFactory.getKinesisClient(endpoint.getConfiguration());
             }
@@ -52,8 +52,8 @@ public class KinesisConnection implements Closeable {
     public KinesisAsyncClient getAsyncClient(final Kinesis2Endpoint endpoint) {
         lock.lock();
         try {
-            if (Objects.isNull(kinesisAsyncClient)) {
-                kinesisAsyncClient = endpoint.getConfiguration().getAmazonKinesisAsyncClient() != null
+            if (ObjectHelper.isEmpty(kinesisAsyncClient)) {
+                kinesisAsyncClient = ObjectHelper.isNotEmpty(endpoint.getConfiguration().getAmazonKinesisAsyncClient())
                         ? endpoint.getConfiguration().getAmazonKinesisAsyncClient()
                         : KinesisClientFactory.getKinesisAsyncClient(endpoint.getConfiguration());
             }
@@ -73,10 +73,10 @@ public class KinesisConnection implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (kinesisClient != null) {
+        if (ObjectHelper.isNotEmpty(kinesisClient)) {
             kinesisClient.close();
         }
-        if (kinesisAsyncClient != null) {
+        if (ObjectHelper.isNotEmpty(kinesisAsyncClient)) {
             kinesisAsyncClient.close();
         }
     }
