@@ -24,7 +24,7 @@ public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(18, Lambda2Operations.values().length);
+        assertEquals(31, Lambda2Operations.values().length);
     }
 
     @Test
@@ -47,6 +47,23 @@ public class LambdaOperationsTest {
         assertEquals(Lambda2Operations.deleteAlias, Lambda2Operations.valueOf("deleteAlias"));
         assertEquals(Lambda2Operations.getAlias, Lambda2Operations.valueOf("getAlias"));
         assertEquals(Lambda2Operations.listAliases, Lambda2Operations.valueOf("listAliases"));
+        // Function URL operations
+        assertEquals(Lambda2Operations.createFunctionUrlConfig, Lambda2Operations.valueOf("createFunctionUrlConfig"));
+        assertEquals(Lambda2Operations.getFunctionUrlConfig, Lambda2Operations.valueOf("getFunctionUrlConfig"));
+        assertEquals(Lambda2Operations.updateFunctionUrlConfig, Lambda2Operations.valueOf("updateFunctionUrlConfig"));
+        assertEquals(Lambda2Operations.deleteFunctionUrlConfig, Lambda2Operations.valueOf("deleteFunctionUrlConfig"));
+        assertEquals(Lambda2Operations.listFunctionUrlConfigs, Lambda2Operations.valueOf("listFunctionUrlConfigs"));
+        // Function configuration operations
+        assertEquals(Lambda2Operations.getFunctionConfiguration, Lambda2Operations.valueOf("getFunctionConfiguration"));
+        assertEquals(Lambda2Operations.updateFunctionConfiguration, Lambda2Operations.valueOf("updateFunctionConfiguration"));
+        // Concurrency operations
+        assertEquals(Lambda2Operations.putFunctionConcurrency, Lambda2Operations.valueOf("putFunctionConcurrency"));
+        assertEquals(Lambda2Operations.deleteFunctionConcurrency, Lambda2Operations.valueOf("deleteFunctionConcurrency"));
+        assertEquals(Lambda2Operations.getFunctionConcurrency, Lambda2Operations.valueOf("getFunctionConcurrency"));
+        // Permission operations
+        assertEquals(Lambda2Operations.addPermission, Lambda2Operations.valueOf("addPermission"));
+        assertEquals(Lambda2Operations.removePermission, Lambda2Operations.valueOf("removePermission"));
+        assertEquals(Lambda2Operations.getPolicy, Lambda2Operations.valueOf("getPolicy"));
     }
 
     @Test
@@ -69,5 +86,22 @@ public class LambdaOperationsTest {
         assertEquals("deleteAlias", Lambda2Operations.deleteAlias.toString());
         assertEquals("getAlias", Lambda2Operations.getAlias.toString());
         assertEquals("listAliases", Lambda2Operations.listAliases.toString());
+        // Function URL operations
+        assertEquals("createFunctionUrlConfig", Lambda2Operations.createFunctionUrlConfig.toString());
+        assertEquals("getFunctionUrlConfig", Lambda2Operations.getFunctionUrlConfig.toString());
+        assertEquals("updateFunctionUrlConfig", Lambda2Operations.updateFunctionUrlConfig.toString());
+        assertEquals("deleteFunctionUrlConfig", Lambda2Operations.deleteFunctionUrlConfig.toString());
+        assertEquals("listFunctionUrlConfigs", Lambda2Operations.listFunctionUrlConfigs.toString());
+        // Function configuration operations
+        assertEquals("getFunctionConfiguration", Lambda2Operations.getFunctionConfiguration.toString());
+        assertEquals("updateFunctionConfiguration", Lambda2Operations.updateFunctionConfiguration.toString());
+        // Concurrency operations
+        assertEquals("putFunctionConcurrency", Lambda2Operations.putFunctionConcurrency.toString());
+        assertEquals("deleteFunctionConcurrency", Lambda2Operations.deleteFunctionConcurrency.toString());
+        assertEquals("getFunctionConcurrency", Lambda2Operations.getFunctionConcurrency.toString());
+        // Permission operations
+        assertEquals("addPermission", Lambda2Operations.addPermission.toString());
+        assertEquals("removePermission", Lambda2Operations.removePermission.toString());
+        assertEquals("getPolicy", Lambda2Operations.getPolicy.toString());
     }
 }
