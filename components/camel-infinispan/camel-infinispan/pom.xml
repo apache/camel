@@ -37,7 +37,7 @@
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
         <!-- Make use of native access during IT test execution only -->
-        <camel.failsafe.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
+        <camel.failsafe.fork.additional-vmargs>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --enable-native-access=ALL-UNNAMED</camel.failsafe.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -209,7 +209,6 @@
                             <systemPropertyVariables>
                                 <infinispan.test.jgroups.protocol>tcp</infinispan.test.jgroups.protocol>
                             </systemPropertyVariables>
-                            <argLine>${camel.failsafe.fork.vmargs} --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
