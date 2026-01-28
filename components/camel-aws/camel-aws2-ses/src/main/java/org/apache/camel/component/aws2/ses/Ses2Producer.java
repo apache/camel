@@ -127,7 +127,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private Collection<String> determineReplyToAddresses(Exchange exchange) {
         String replyToAddresses = exchange.getIn().getHeader(Ses2Constants.REPLY_TO_ADDRESSES, String.class);
-        if (replyToAddresses == null) {
+        if (ObjectHelper.isEmpty(replyToAddresses)) {
             replyToAddresses = getConfiguration().getReplyToAddresses();
         }
         if (ObjectHelper.isNotEmpty(replyToAddresses)) {
@@ -141,7 +141,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private String determineReturnPath(Exchange exchange) {
         String returnPath = exchange.getIn().getHeader(Ses2Constants.RETURN_PATH, String.class);
-        if (returnPath == null) {
+        if (ObjectHelper.isEmpty(returnPath)) {
             returnPath = getConfiguration().getReturnPath();
         }
         return returnPath;
@@ -184,7 +184,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private List<String> determineRawTo(Exchange exchange) {
         String to = exchange.getIn().getHeader(Ses2Constants.TO, String.class);
-        if (to == null) {
+        if (ObjectHelper.isEmpty(to)) {
             to = getConfiguration().getTo();
         }
         if (ObjectHelper.isNotEmpty(to)) {
@@ -198,7 +198,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private String determineFrom(Exchange exchange) {
         String from = exchange.getIn().getHeader(Ses2Constants.FROM, String.class);
-        if (from == null) {
+        if (ObjectHelper.isEmpty(from)) {
             from = getConfiguration().getFrom();
         }
         return from;
@@ -206,7 +206,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private String determineSubject(Exchange exchange) {
         String subject = exchange.getIn().getHeader(Ses2Constants.SUBJECT, String.class);
-        if (subject == null) {
+        if (ObjectHelper.isEmpty(subject)) {
             subject = getConfiguration().getSubject();
         }
         return subject;
@@ -215,7 +215,7 @@ public class Ses2Producer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     private List<MessageTag> determineTags(Exchange exchange) {
         Map<String, String> tagMap = exchange.getIn().getHeader(Ses2Constants.TAGS, Map.class);
-        if (tagMap == null || tagMap.isEmpty()) {
+        if (ObjectHelper.isEmpty(tagMap)) {
             return null;
         }
         return tagMap.entrySet().stream()
@@ -228,7 +228,7 @@ public class Ses2Producer extends DefaultProducer {
 
     private String determineConfigurationSet(Exchange exchange) {
         String configuration = exchange.getIn().getHeader(Ses2Constants.CONFIGURATION_SET, String.class);
-        if (configuration == null) {
+        if (ObjectHelper.isEmpty(configuration)) {
             configuration = getConfiguration().getConfigurationSet();
         }
         return configuration;
@@ -240,7 +240,7 @@ public class Ses2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (sesProducerToString == null) {
+        if (ObjectHelper.isEmpty(sesProducerToString)) {
             sesProducerToString = "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sesProducerToString;
@@ -263,7 +263,7 @@ public class Ses2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Ses2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -273,7 +273,7 @@ public class Ses2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

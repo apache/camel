@@ -54,7 +54,7 @@ public class Ses2Endpoint extends DefaultEndpoint implements EndpointServiceLoca
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        sesClient = configuration.getAmazonSESClient() != null
+        sesClient = ObjectHelper.isNotEmpty(configuration.getAmazonSESClient())
                 ? configuration.getAmazonSESClient()
                 : Ses2ClientFactory.getSesClient(configuration);
     }
@@ -62,7 +62,7 @@ public class Ses2Endpoint extends DefaultEndpoint implements EndpointServiceLoca
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonSESClient())) {
-            if (sesClient != null) {
+            if (ObjectHelper.isNotEmpty(sesClient)) {
                 sesClient.close();
             }
         }

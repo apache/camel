@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon SES SDK v2.
@@ -47,7 +48,7 @@ public class Ses2Component extends HealthCheckComponent {
         if (remaining == null || remaining.isBlank()) {
             throw new IllegalArgumentException("From must be specified.");
         }
-        Ses2Configuration configuration = this.configuration != null ? this.configuration.copy() : new Ses2Configuration();
+        Ses2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Ses2Configuration();
         configuration.setFrom(remaining);
         Ses2Endpoint endpoint = new Ses2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
