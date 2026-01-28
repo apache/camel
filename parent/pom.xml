@@ -516,7 +516,7 @@
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okhttp5-version>5.3.2</squareup-okhttp5-version>
         <squareup-okio-version>1.17.5</squareup-okio-version>
-        <sshd-version>2.16.0</sshd-version>
+        <sshd-version>2.17.1</sshd-version>
         <stompjms-version>1.19</stompjms-version>
         <stripe-java-version>31.2.0</stripe-java-version>
         <stumbleupon-async-version>1.4.1</stumbleupon-async-version>
