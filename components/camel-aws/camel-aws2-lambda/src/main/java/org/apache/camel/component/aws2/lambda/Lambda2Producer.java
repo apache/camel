@@ -275,11 +275,11 @@ public class Lambda2Producer extends DefaultProducer {
         } else {
             ListFunctionsRequest.Builder builder = ListFunctionsRequest.builder();
             String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
-            if (marker != null) {
+            if (ObjectHelper.isNotEmpty(marker)) {
                 builder.marker(marker);
             }
             Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
-            if (maxItems != null) {
+            if (ObjectHelper.isNotEmpty(maxItems)) {
                 builder.maxItems(maxItems);
             }
             request = builder.build();
@@ -293,7 +293,7 @@ public class Lambda2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
         message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
-        message.setHeader(Lambda2Constants.IS_TRUNCATED, result.nextMarker() != null);
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
     }
 
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
@@ -419,12 +419,12 @@ public class Lambda2Producer extends DefaultProducer {
 
             Map<String, String> environmentVariables
                     = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
-            if (environmentVariables != null) {
+            if (ObjectHelper.isNotEmpty(environmentVariables)) {
                 builder.environment(Environment.builder().variables(environmentVariables).build());
             }
 
             Map<String, String> tags = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.TAGS, Map.class));
-            if (tags != null) {
+            if (ObjectHelper.isNotEmpty(tags)) {
                 builder.tags(tags);
             }
 
@@ -432,12 +432,12 @@ public class Lambda2Producer extends DefaultProducer {
                     (Class<List<String>>) (Object) List.class));
             List<String> subnetIds = CastUtils.cast(
                     exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>) (Object) List.class));
-            if (securityGroupIds != null || subnetIds != null) {
+            if (ObjectHelper.isNotEmpty(securityGroupIds) || ObjectHelper.isNotEmpty(subnetIds)) {
                 VpcConfig.Builder vpcConfig = VpcConfig.builder();
-                if (securityGroupIds != null) {
+                if (ObjectHelper.isNotEmpty(securityGroupIds)) {
                     vpcConfig.securityGroupIds(securityGroupIds);
                 }
-                if (subnetIds != null) {
+                if (ObjectHelper.isNotEmpty(subnetIds)) {
                     vpcConfig.subnetIds(subnetIds);
                 }
                 builder.vpcConfig(vpcConfig.build());
@@ -691,11 +691,11 @@ public class Lambda2Producer extends DefaultProducer {
             ListVersionsByFunctionRequest.Builder builder = ListVersionsByFunctionRequest.builder();
             builder.functionName(getEndpoint().getFunction());
             String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
-            if (marker != null) {
+            if (ObjectHelper.isNotEmpty(marker)) {
                 builder.marker(marker);
             }
             Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
-            if (maxItems != null) {
+            if (ObjectHelper.isNotEmpty(maxItems)) {
                 builder.maxItems(maxItems);
             }
             request = builder.build();
@@ -709,7 +709,7 @@ public class Lambda2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
         message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
-        message.setHeader(Lambda2Constants.IS_TRUNCATED, result.nextMarker() != null);
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
     }
 
     private void createAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
@@ -803,15 +803,15 @@ public class Lambda2Producer extends DefaultProducer {
             ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
             builder.functionName(getEndpoint().getFunction());
             String version = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_VERSION, String.class);
-            if (version != null) {
+            if (ObjectHelper.isNotEmpty(version)) {
                 builder.functionVersion(version);
             }
             String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
-            if (marker != null) {
+            if (ObjectHelper.isNotEmpty(marker)) {
                 builder.marker(marker);
             }
             Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
-            if (maxItems != null) {
+            if (ObjectHelper.isNotEmpty(maxItems)) {
                 builder.maxItems(maxItems);
             }
             request = builder.build();
@@ -825,7 +825,7 @@ public class Lambda2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
         message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
-        message.setHeader(Lambda2Constants.IS_TRUNCATED, result.nextMarker() != null);
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
     }
 
     @SuppressWarnings("unchecked")
@@ -845,12 +845,12 @@ public class Lambda2Producer extends DefaultProducer {
             builder.authType(FunctionUrlAuthType.fromValue(authType));
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
             Cors cors = buildCorsConfig(exchange);
-            if (cors != null) {
+            if (ObjectHelper.isNotEmpty(cors)) {
                 builder.cors(cors);
             }
 
@@ -878,7 +878,7 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
@@ -907,17 +907,17 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             String authType = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_AUTH_TYPE, String.class);
-            if (authType != null) {
+            if (ObjectHelper.isNotEmpty(authType)) {
                 builder.authType(FunctionUrlAuthType.fromValue(authType));
             }
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
             Cors cors = buildCorsConfig(exchange);
-            if (cors != null) {
+            if (ObjectHelper.isNotEmpty(cors)) {
                 builder.cors(cors);
             }
 
@@ -945,7 +945,7 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
@@ -971,11 +971,11 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
-            if (marker != null) {
+            if (ObjectHelper.isNotEmpty(marker)) {
                 builder.marker(marker);
             }
             Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
-            if (maxItems != null) {
+            if (ObjectHelper.isNotEmpty(maxItems)) {
                 builder.maxItems(maxItems);
             }
 
@@ -990,7 +990,7 @@ public class Lambda2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
         message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
-        message.setHeader(Lambda2Constants.IS_TRUNCATED, result.nextMarker() != null);
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
     }
 
     @SuppressWarnings("unchecked")
@@ -1003,25 +1003,25 @@ public class Lambda2Producer extends DefaultProducer {
         List<String> exposeHeaders = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_EXPOSE_HEADERS, List.class);
         Integer maxAge = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_MAX_AGE, Integer.class);
 
-        if (allowCredentials != null || allowOrigins != null || allowMethods != null
-                || allowHeaders != null || exposeHeaders != null || maxAge != null) {
+        if (ObjectHelper.isNotEmpty(allowCredentials) || ObjectHelper.isNotEmpty(allowOrigins) || ObjectHelper.isNotEmpty(allowMethods)
+                || ObjectHelper.isNotEmpty(allowHeaders) || ObjectHelper.isNotEmpty(exposeHeaders) || ObjectHelper.isNotEmpty(maxAge)) {
             Cors.Builder corsBuilder = Cors.builder();
-            if (allowCredentials != null) {
+            if (ObjectHelper.isNotEmpty(allowCredentials)) {
                 corsBuilder.allowCredentials(allowCredentials);
             }
-            if (allowOrigins != null) {
+            if (ObjectHelper.isNotEmpty(allowOrigins)) {
                 corsBuilder.allowOrigins(allowOrigins);
             }
-            if (allowMethods != null) {
+            if (ObjectHelper.isNotEmpty(allowMethods)) {
                 corsBuilder.allowMethods(allowMethods);
             }
-            if (allowHeaders != null) {
+            if (ObjectHelper.isNotEmpty(allowHeaders)) {
                 corsBuilder.allowHeaders(allowHeaders);
             }
-            if (exposeHeaders != null) {
+            if (ObjectHelper.isNotEmpty(exposeHeaders)) {
                 corsBuilder.exposeHeaders(exposeHeaders);
             }
-            if (maxAge != null) {
+            if (ObjectHelper.isNotEmpty(maxAge)) {
                 corsBuilder.maxAge(maxAge);
             }
             return corsBuilder.build();
@@ -1039,7 +1039,7 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
@@ -1067,38 +1067,38 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             Integer memorySize = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_MEMORY_SIZE, Integer.class);
-            if (memorySize != null) {
+            if (ObjectHelper.isNotEmpty(memorySize)) {
                 builder.memorySize(memorySize);
             }
 
             Integer timeout = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_TIMEOUT, Integer.class);
-            if (timeout != null) {
+            if (ObjectHelper.isNotEmpty(timeout)) {
                 builder.timeout(timeout);
             }
 
             String runtime = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_RUNTIME, String.class);
-            if (runtime != null) {
+            if (ObjectHelper.isNotEmpty(runtime)) {
                 builder.runtime(runtime);
             }
 
             String handler = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_HANDLER, String.class);
-            if (handler != null) {
+            if (ObjectHelper.isNotEmpty(handler)) {
                 builder.handler(handler);
             }
 
             String description = getOptionalHeader(exchange, Lambda2Constants.DESCRIPTION, String.class);
-            if (description != null) {
+            if (ObjectHelper.isNotEmpty(description)) {
                 builder.description(description);
             }
 
             String role = getOptionalHeader(exchange, Lambda2Constants.ROLE, String.class);
-            if (role != null) {
+            if (ObjectHelper.isNotEmpty(role)) {
                 builder.role(role);
             }
 
             Map<String, String> environmentVariables
                     = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
-            if (environmentVariables != null) {
+            if (ObjectHelper.isNotEmpty(environmentVariables)) {
                 builder.environment(Environment.builder().variables(environmentVariables).build());
             }
 
@@ -1126,7 +1126,7 @@ public class Lambda2Producer extends DefaultProducer {
 
             Integer reservedConcurrentExecutions
                     = exchange.getIn().getHeader(Lambda2Constants.RESERVED_CONCURRENT_EXECUTIONS, Integer.class);
-            if (reservedConcurrentExecutions == null) {
+            if (ObjectHelper.isEmpty(reservedConcurrentExecutions)) {
                 throw new IllegalArgumentException("Reserved concurrent executions must be specified");
             }
             builder.reservedConcurrentExecutions(reservedConcurrentExecutions);
@@ -1211,17 +1211,17 @@ public class Lambda2Producer extends DefaultProducer {
             builder.principal(principal);
 
             String sourceAccount = getOptionalHeader(exchange, Lambda2Constants.SOURCE_ACCOUNT, String.class);
-            if (sourceAccount != null) {
+            if (ObjectHelper.isNotEmpty(sourceAccount)) {
                 builder.sourceAccount(sourceAccount);
             }
 
             String sourceArn = getOptionalHeader(exchange, Lambda2Constants.SOURCE_ARN, String.class);
-            if (sourceArn != null) {
+            if (ObjectHelper.isNotEmpty(sourceArn)) {
                 builder.sourceArn(sourceArn);
             }
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
@@ -1253,7 +1253,7 @@ public class Lambda2Producer extends DefaultProducer {
             builder.statementId(statementId);
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
@@ -1279,7 +1279,7 @@ public class Lambda2Producer extends DefaultProducer {
             builder.functionName(getEndpoint().getFunction());
 
             String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
-            if (qualifier != null) {
+            if (ObjectHelper.isNotEmpty(qualifier)) {
                 builder.qualifier(qualifier);
             }
 
@@ -1297,8 +1297,8 @@ public class Lambda2Producer extends DefaultProducer {
 
     private Lambda2Operations determineOperation(Exchange exchange) {
         Lambda2Operations operation = exchange.getIn().getHeader(Lambda2Constants.OPERATION, Lambda2Operations.class);
-        if (operation == null) {
-            operation = getConfiguration().getOperation() == null
+        if (ObjectHelper.isEmpty(operation)) {
+            operation = ObjectHelper.isEmpty(getConfiguration().getOperation())
                     ? Lambda2Operations.invokeFunction : getConfiguration().getOperation();
         }
         return operation;
@@ -1332,7 +1332,7 @@ public class Lambda2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Lambda2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -1342,7 +1342,7 @@ public class Lambda2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
