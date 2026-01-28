@@ -99,7 +99,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     private SecretsManagerOperations determineOperation(Exchange exchange) {
         SecretsManagerOperations operation = exchange.getIn().getHeader(SecretsManagerConstants.OPERATION,
                 SecretsManagerOperations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -111,7 +111,7 @@ public class SecretsManagerProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (secretsManagerProducerToString == null) {
+        if (ObjectHelper.isEmpty(secretsManagerProducerToString)) {
             secretsManagerProducerToString = "SecretsManagerProducer["
                                              + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
@@ -502,7 +502,7 @@ public class SecretsManagerProducer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new SecretsManagerProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -512,7 +512,7 @@ public class SecretsManagerProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
