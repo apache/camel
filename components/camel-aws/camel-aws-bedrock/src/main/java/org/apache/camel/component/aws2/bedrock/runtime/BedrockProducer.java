@@ -513,10 +513,10 @@ public class BedrockProducer extends DefaultProducer {
     }
 
     private void setStreamingMetadata(Message message, BedrockStreamHandler.StreamMetadata metadata) {
-        if (metadata.getCompletionReason() != null) {
+        if (ObjectHelper.isNotEmpty(metadata.getCompletionReason())) {
             message.setHeader(BedrockConstants.STREAMING_COMPLETION_REASON, metadata.getCompletionReason());
         }
-        if (metadata.getTokenCount() != null) {
+        if (ObjectHelper.isNotEmpty(metadata.getTokenCount())) {
             message.setHeader(BedrockConstants.STREAMING_TOKEN_COUNT, metadata.getTokenCount());
         }
         message.setHeader(BedrockConstants.STREAMING_CHUNK_COUNT, metadata.getChunkCount());
@@ -544,7 +544,7 @@ public class BedrockProducer extends DefaultProducer {
             @SuppressWarnings("unchecked")
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_MESSAGES, List.class);
-            if (messages != null) {
+            if (ObjectHelper.isNotEmpty(messages)) {
                 builder.messages(messages);
             } else {
                 throw new IllegalArgumentException(
@@ -555,21 +555,21 @@ public class BedrockProducer extends DefaultProducer {
             @SuppressWarnings("unchecked")
             List<SystemContentBlock> system
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_SYSTEM, List.class);
-            if (system != null) {
+            if (ObjectHelper.isNotEmpty(system)) {
                 builder.system(system);
             }
 
             // Optional: Inference configuration
             InferenceConfiguration inferenceConfig
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, InferenceConfiguration.class);
-            if (inferenceConfig != null) {
+            if (ObjectHelper.isNotEmpty(inferenceConfig)) {
                 builder.inferenceConfig(inferenceConfig);
             }
 
             // Optional: Tool configuration
             ToolConfiguration toolConfig
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_TOOL_CONFIG, ToolConfiguration.class);
-            if (toolConfig != null) {
+            if (ObjectHelper.isNotEmpty(toolConfig)) {
                 builder.toolConfig(toolConfig);
             }
 
@@ -577,7 +577,7 @@ public class BedrockProducer extends DefaultProducer {
             software.amazon.awssdk.core.document.Document additionalFields = exchange.getMessage()
                     .getHeader(BedrockConstants.CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS,
                             software.amazon.awssdk.core.document.Document.class);
-            if (additionalFields != null) {
+            if (ObjectHelper.isNotEmpty(additionalFields)) {
                 builder.additionalModelRequestFields(additionalFields);
             }
 
@@ -585,7 +585,7 @@ public class BedrockProducer extends DefaultProducer {
             software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration guardrailConfig
                     = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG,
                             software.amazon.awssdk.services.bedrockruntime.model.GuardrailConfiguration.class);
-            if (guardrailConfig != null) {
+            if (ObjectHelper.isNotEmpty(guardrailConfig)) {
                 builder.guardrailConfig(guardrailConfig);
             } else if (ObjectHelper.isNotEmpty(getConfiguration().getGuardrailIdentifier())) {
                 // Build from endpoint configuration
@@ -607,14 +607,14 @@ public class BedrockProducer extends DefaultProducer {
             org.apache.camel.Message message = getMessageForResponse(exchange);
 
             // Set the output message content as body
-            if (response.output() != null && response.output().message() != null) {
+            if (ObjectHelper.isNotEmpty(response.output()) && ObjectHelper.isNotEmpty(response.output().message())) {
                 software.amazon.awssdk.services.bedrockruntime.model.Message outputMessage = response.output().message();
                 message.setHeader(BedrockConstants.CONVERSE_OUTPUT_MESSAGE, outputMessage);
 
                 // Extract text content from the message
                 StringBuilder textContent = new StringBuilder();
                 for (ContentBlock content : outputMessage.content()) {
-                    if (content.text() != null) {
+                    if (ObjectHelper.isNotEmpty(content.text())) {
                         textContent.append(content.text());
                     }
                 }
@@ -622,13 +622,13 @@ public class BedrockProducer extends DefaultProducer {
             }
 
             // Set metadata headers
-            if (response.stopReason() != null) {
+            if (ObjectHelper.isNotEmpty(response.stopReason())) {
                 message.setHeader(BedrockConstants.CONVERSE_STOP_REASON, response.stopReason().toString());
             }
-            if (response.usage() != null) {
+            if (ObjectHelper.isNotEmpty(response.usage())) {
                 message.setHeader(BedrockConstants.CONVERSE_USAGE, response.usage());
             }
-            if (response.trace() != null && response.trace().guardrail() != null) {
+            if (ObjectHelper.isNotEmpty(response.trace()) && ObjectHelper.isNotEmpty(response.trace().guardrail())) {
                 message.setHeader(BedrockConstants.GUARDRAIL_TRACE, response.trace().guardrail());
             }
 
@@ -660,7 +660,7 @@ public class BedrockProducer extends DefaultProducer {
             @SuppressWarnings("unchecked")
             List<software.amazon.awssdk.services.bedrockruntime.model.Message> messages
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_MESSAGES, List.class);
-            if (messages != null) {
+            if (ObjectHelper.isNotEmpty(messages)) {
                 builder.messages(messages);
             } else {
                 throw new IllegalArgumentException(
@@ -671,21 +671,21 @@ public class BedrockProducer extends DefaultProducer {
             @SuppressWarnings("unchecked")
             List<SystemContentBlock> system
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_SYSTEM, List.class);
-            if (system != null) {
+            if (ObjectHelper.isNotEmpty(system)) {
                 builder.system(system);
             }
 
             // Optional: Inference configuration
             InferenceConfiguration inferenceConfig
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_INFERENCE_CONFIG, InferenceConfiguration.class);
-            if (inferenceConfig != null) {
+            if (ObjectHelper.isNotEmpty(inferenceConfig)) {
                 builder.inferenceConfig(inferenceConfig);
             }
 
             // Optional: Tool configuration
             ToolConfiguration toolConfig
                     = exchange.getMessage().getHeader(BedrockConstants.CONVERSE_TOOL_CONFIG, ToolConfiguration.class);
-            if (toolConfig != null) {
+            if (ObjectHelper.isNotEmpty(toolConfig)) {
                 builder.toolConfig(toolConfig);
             }
 
@@ -693,7 +693,7 @@ public class BedrockProducer extends DefaultProducer {
             software.amazon.awssdk.core.document.Document additionalFields = exchange.getMessage()
                     .getHeader(BedrockConstants.CONVERSE_ADDITIONAL_MODEL_REQUEST_FIELDS,
                             software.amazon.awssdk.core.document.Document.class);
-            if (additionalFields != null) {
+            if (ObjectHelper.isNotEmpty(additionalFields)) {
                 builder.additionalModelRequestFields(additionalFields);
             }
 
@@ -701,7 +701,7 @@ public class BedrockProducer extends DefaultProducer {
             software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration guardrailConfig
                     = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONFIG,
                             software.amazon.awssdk.services.bedrockruntime.model.GuardrailStreamConfiguration.class);
-            if (guardrailConfig != null) {
+            if (ObjectHelper.isNotEmpty(guardrailConfig)) {
                 builder.guardrailConfig(guardrailConfig);
             } else if (ObjectHelper.isNotEmpty(getConfiguration().getGuardrailIdentifier())) {
                 // Build from endpoint configuration
@@ -777,13 +777,13 @@ public class BedrockProducer extends DefaultProducer {
     private void setConverseStreamingMetadata(
             org.apache.camel.Message message,
             org.apache.camel.component.aws2.bedrock.runtime.stream.ConverseStreamHandler.StreamMetadata metadata) {
-        if (metadata.getStopReason() != null) {
+        if (ObjectHelper.isNotEmpty(metadata.getStopReason())) {
             message.setHeader(BedrockConstants.CONVERSE_STOP_REASON, metadata.getStopReason());
         }
-        if (metadata.getUsage() != null) {
+        if (ObjectHelper.isNotEmpty(metadata.getUsage())) {
             message.setHeader(BedrockConstants.CONVERSE_USAGE, metadata.getUsage());
         }
-        if (metadata.getGuardrailTrace() != null) {
+        if (ObjectHelper.isNotEmpty(metadata.getGuardrailTrace())) {
             message.setHeader(BedrockConstants.GUARDRAIL_TRACE, metadata.getGuardrailTrace());
         }
         message.setHeader(BedrockConstants.STREAMING_CHUNK_COUNT, metadata.getChunkCount());
@@ -830,7 +830,7 @@ public class BedrockProducer extends DefaultProducer {
             @SuppressWarnings("unchecked")
             List<software.amazon.awssdk.services.bedrockruntime.model.GuardrailContentBlock> content
                     = exchange.getMessage().getHeader(BedrockConstants.GUARDRAIL_CONTENT, List.class);
-            if (content != null && !content.isEmpty()) {
+            if (ObjectHelper.isNotEmpty(content)) {
                 builder.content(content);
             } else {
                 throw new IllegalArgumentException(
@@ -857,7 +857,7 @@ public class BedrockProducer extends DefaultProducer {
                 // Store assessments as a header for detailed analysis
                 message.setHeader(BedrockConstants.GUARDRAIL_ASSESSMENTS, response.assessments());
             }
-            if (response.usage() != null) {
+            if (ObjectHelper.isNotEmpty(response.usage())) {
                 message.setHeader(BedrockConstants.GUARDRAIL_USAGE, response.usage());
             }
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Parser for Meta Llama model streaming responses
@@ -39,7 +40,7 @@ public class LlamaStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode generation = node.get("generation");
-        return generation != null && !generation.isNull() ? generation.asText() : "";
+        return ObjectHelper.isNotEmpty(generation) && !generation.isNull() ? generation.asText() : "";
     }
 
     @Override
@@ -49,7 +50,7 @@ public class LlamaStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode stopReason = node.get("stop_reason");
-        return stopReason != null && !stopReason.isNull() ? stopReason.asText() : null;
+        return ObjectHelper.isNotEmpty(stopReason) && !stopReason.isNull() ? stopReason.asText() : null;
     }
 
     @Override
@@ -59,12 +60,12 @@ public class LlamaStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode tokenCount = node.get("generation_token_count");
-        return tokenCount != null && !tokenCount.isNull() ? tokenCount.asInt() : null;
+        return ObjectHelper.isNotEmpty(tokenCount) && !tokenCount.isNull() ? tokenCount.asInt() : null;
     }
 
     @Override
     public boolean isFinalChunk(String chunk) throws JsonProcessingException {
         String stopReason = extractCompletionReason(chunk);
-        return stopReason != null && !stopReason.isEmpty();
+        return ObjectHelper.isNotEmpty(stopReason);
     }
 }

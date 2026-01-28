@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Parser for Amazon Titan model streaming responses
@@ -39,7 +40,7 @@ public class TitanStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode outputText = node.get("outputText");
-        return outputText != null && !outputText.isNull() ? outputText.asText() : "";
+        return ObjectHelper.isNotEmpty(outputText) && !outputText.isNull() ? outputText.asText() : "";
     }
 
     @Override
@@ -49,7 +50,7 @@ public class TitanStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode completionReason = node.get("completionReason");
-        return completionReason != null && !completionReason.isNull() ? completionReason.asText() : null;
+        return ObjectHelper.isNotEmpty(completionReason) && !completionReason.isNull() ? completionReason.asText() : null;
     }
 
     @Override
@@ -59,12 +60,12 @@ public class TitanStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode tokenCount = node.get("totalOutputTextTokenCount");
-        return tokenCount != null && !tokenCount.isNull() ? tokenCount.asInt() : null;
+        return ObjectHelper.isNotEmpty(tokenCount) && !tokenCount.isNull() ? tokenCount.asInt() : null;
     }
 
     @Override
     public boolean isFinalChunk(String chunk) throws JsonProcessingException {
         String completionReason = extractCompletionReason(chunk);
-        return completionReason != null && !completionReason.isEmpty();
+        return ObjectHelper.isNotEmpty(completionReason);
     }
 }
