@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon ECS SDK v2.
@@ -43,7 +44,7 @@ public class ECS2Component extends HealthCheckComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        ECS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new ECS2Configuration();
+        ECS2Configuration configuration = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new ECS2Configuration();
         ECS2Endpoint endpoint = new ECS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
