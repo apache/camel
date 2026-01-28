@@ -109,7 +109,7 @@ public class IAM2Producer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         IAM2Operations operation = determineOperation(exchange);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             throw new IllegalArgumentException("Operation must be provided");
         }
 
@@ -255,15 +255,15 @@ public class IAM2Producer extends DefaultProducer {
                 () -> {
                     ListAccessKeysRequest.Builder builder = ListAccessKeysRequest.builder();
                     String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
-                    if (marker != null) {
+                    if (ObjectHelper.isNotEmpty(marker)) {
                         builder.marker(marker);
                     }
                     Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
-                    if (maxItems != null) {
+                    if (ObjectHelper.isNotEmpty(maxItems)) {
                         builder.maxItems(maxItems);
                     }
                     String userName = getOptionalHeader(exchange, IAM2Constants.USERNAME, String.class);
-                    if (userName != null) {
+                    if (ObjectHelper.isNotEmpty(userName)) {
                         builder.userName(userName);
                     }
                     return iamClient.listAccessKeys(builder.build());
@@ -271,7 +271,7 @@ public class IAM2Producer extends DefaultProducer {
                 "List Access Keys",
                 (ListAccessKeysResponse response, Message message) -> {
                     message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
-                    if (response.marker() != null) {
+                    if (ObjectHelper.isNotEmpty(response.marker())) {
                         message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
                     }
                 });
@@ -288,7 +288,7 @@ public class IAM2Producer extends DefaultProducer {
                 },
                 "Create user",
                 (CreateUserResponse response, Message message) -> {
-                    if (response.user() != null) {
+                    if (ObjectHelper.isNotEmpty(response.user())) {
                         message.setHeader(IAM2Constants.USER_ARN, response.user().arn());
                         message.setHeader(IAM2Constants.USER_ID, response.user().userId());
                     }
@@ -318,7 +318,7 @@ public class IAM2Producer extends DefaultProducer {
                 },
                 "Get user",
                 (GetUserResponse response, Message message) -> {
-                    if (response.user() != null) {
+                    if (ObjectHelper.isNotEmpty(response.user())) {
                         message.setHeader(IAM2Constants.USER_ARN, response.user().arn());
                         message.setHeader(IAM2Constants.USER_ID, response.user().userId());
                     }
@@ -333,11 +333,11 @@ public class IAM2Producer extends DefaultProducer {
                 () -> {
                     ListUsersRequest.Builder builder = ListUsersRequest.builder();
                     String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
-                    if (marker != null) {
+                    if (ObjectHelper.isNotEmpty(marker)) {
                         builder.marker(marker);
                     }
                     Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
-                    if (maxItems != null) {
+                    if (ObjectHelper.isNotEmpty(maxItems)) {
                         builder.maxItems(maxItems);
                     }
                     return iamClient.listUsers(builder.build());
@@ -345,7 +345,7 @@ public class IAM2Producer extends DefaultProducer {
                 "List users",
                 (ListUsersResponse response, Message message) -> {
                     message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
-                    if (response.marker() != null) {
+                    if (ObjectHelper.isNotEmpty(response.marker())) {
                         message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
                     }
                 });
@@ -359,7 +359,7 @@ public class IAM2Producer extends DefaultProducer {
                 () -> {
                     CreateAccessKeyRequest.Builder builder = CreateAccessKeyRequest.builder();
                     String userName = getOptionalHeader(exchange, IAM2Constants.USERNAME, String.class);
-                    if (userName != null) {
+                    if (ObjectHelper.isNotEmpty(userName)) {
                         builder.userName(userName);
                     }
                     return iamClient.createAccessKey(builder.build());
@@ -377,7 +377,7 @@ public class IAM2Producer extends DefaultProducer {
                             "Key Id must be specified");
                     DeleteAccessKeyRequest.Builder builder = DeleteAccessKeyRequest.builder().accessKeyId(accessKeyId);
                     String userName = getOptionalHeader(exchange, IAM2Constants.USERNAME, String.class);
-                    if (userName != null) {
+                    if (ObjectHelper.isNotEmpty(userName)) {
                         builder.userName(userName);
                     }
                     return iamClient.deleteAccessKey(builder.build());
@@ -399,7 +399,7 @@ public class IAM2Producer extends DefaultProducer {
                             .accessKeyId(accessKeyId)
                             .status(StatusType.fromValue(status));
                     String userName = getOptionalHeader(exchange, IAM2Constants.USERNAME, String.class);
-                    if (userName != null) {
+                    if (ObjectHelper.isNotEmpty(userName)) {
                         builder.userName(userName);
                     }
                     return iamClient.updateAccessKey(builder.build());
@@ -416,14 +416,14 @@ public class IAM2Producer extends DefaultProducer {
                     String groupName = getRequiredHeader(exchange, IAM2Constants.GROUP_NAME, String.class, MISSING_GROUP_NAME);
                     CreateGroupRequest.Builder builder = CreateGroupRequest.builder().groupName(groupName);
                     String groupPath = getOptionalHeader(exchange, IAM2Constants.GROUP_PATH, String.class);
-                    if (groupPath != null) {
+                    if (ObjectHelper.isNotEmpty(groupPath)) {
                         builder.path(groupPath);
                     }
                     return iamClient.createGroup(builder.build());
                 },
                 "Create Group",
                 (CreateGroupResponse response, Message message) -> {
-                    if (response.group() != null) {
+                    if (ObjectHelper.isNotEmpty(response.group())) {
                         message.setHeader(IAM2Constants.GROUP_ARN, response.group().arn());
                         message.setHeader(IAM2Constants.GROUP_ID, response.group().groupId());
                     }
@@ -450,11 +450,11 @@ public class IAM2Producer extends DefaultProducer {
                 () -> {
                     ListGroupsRequest.Builder builder = ListGroupsRequest.builder();
                     String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
-                    if (marker != null) {
+                    if (ObjectHelper.isNotEmpty(marker)) {
                         builder.marker(marker);
                     }
                     Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
-                    if (maxItems != null) {
+                    if (ObjectHelper.isNotEmpty(maxItems)) {
                         builder.maxItems(maxItems);
                     }
                     return iamClient.listGroups(builder.build());
@@ -462,7 +462,7 @@ public class IAM2Producer extends DefaultProducer {
                 "List Groups",
                 (ListGroupsResponse response, Message message) -> {
                     message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
-                    if (response.marker() != null) {
+                    if (ObjectHelper.isNotEmpty(response.marker())) {
                         message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
                     }
                 });
@@ -516,18 +516,18 @@ public class IAM2Producer extends DefaultProducer {
                             .roleName(roleName)
                             .assumeRolePolicyDocument(assumeRolePolicyDocument);
                     String rolePath = getOptionalHeader(exchange, IAM2Constants.ROLE_PATH, String.class);
-                    if (rolePath != null) {
+                    if (ObjectHelper.isNotEmpty(rolePath)) {
                         builder.path(rolePath);
                     }
                     String description = getOptionalHeader(exchange, IAM2Constants.ROLE_DESCRIPTION, String.class);
-                    if (description != null) {
+                    if (ObjectHelper.isNotEmpty(description)) {
                         builder.description(description);
                     }
                     return iamClient.createRole(builder.build());
                 },
                 "Create Role",
                 (CreateRoleResponse response, Message message) -> {
-                    if (response.role() != null) {
+                    if (ObjectHelper.isNotEmpty(response.role())) {
                         message.setHeader(IAM2Constants.ROLE_ARN, response.role().arn());
                         message.setHeader(IAM2Constants.ROLE_ID, response.role().roleId());
                     }
@@ -559,7 +559,7 @@ public class IAM2Producer extends DefaultProducer {
                 },
                 "Get Role",
                 (GetRoleResponse response, Message message) -> {
-                    if (response.role() != null) {
+                    if (ObjectHelper.isNotEmpty(response.role())) {
                         message.setHeader(IAM2Constants.ROLE_ARN, response.role().arn());
                         message.setHeader(IAM2Constants.ROLE_ID, response.role().roleId());
                     }
@@ -574,11 +574,11 @@ public class IAM2Producer extends DefaultProducer {
                 () -> {
                     ListRolesRequest.Builder builder = ListRolesRequest.builder();
                     String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
-                    if (marker != null) {
+                    if (ObjectHelper.isNotEmpty(marker)) {
                         builder.marker(marker);
                     }
                     Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
-                    if (maxItems != null) {
+                    if (ObjectHelper.isNotEmpty(maxItems)) {
                         builder.maxItems(maxItems);
                     }
                     return iamClient.listRoles(builder.build());
@@ -586,7 +586,7 @@ public class IAM2Producer extends DefaultProducer {
                 "List Roles",
                 (ListRolesResponse response, Message message) -> {
                     message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
-                    if (response.marker() != null) {
+                    if (ObjectHelper.isNotEmpty(response.marker())) {
                         message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
                     }
                 });
@@ -608,18 +608,18 @@ public class IAM2Producer extends DefaultProducer {
                             .policyName(policyName)
                             .policyDocument(policyDocument);
                     String policyPath = getOptionalHeader(exchange, IAM2Constants.POLICY_PATH, String.class);
-                    if (policyPath != null) {
+                    if (ObjectHelper.isNotEmpty(policyPath)) {
                         builder.path(policyPath);
                     }
                     String description = getOptionalHeader(exchange, IAM2Constants.POLICY_DESCRIPTION, String.class);
-                    if (description != null) {
+                    if (ObjectHelper.isNotEmpty(description)) {
                         builder.description(description);
                     }
                     return iamClient.createPolicy(builder.build());
                 },
                 "Create Policy",
                 (CreatePolicyResponse response, Message message) -> {
-                    if (response.policy() != null) {
+                    if (ObjectHelper.isNotEmpty(response.policy())) {
                         message.setHeader(IAM2Constants.POLICY_ARN, response.policy().arn());
                         message.setHeader(IAM2Constants.POLICY_ID, response.policy().policyId());
                     }
@@ -651,7 +651,7 @@ public class IAM2Producer extends DefaultProducer {
                 },
                 "Get Policy",
                 (GetPolicyResponse response, Message message) -> {
-                    if (response.policy() != null) {
+                    if (ObjectHelper.isNotEmpty(response.policy())) {
                         message.setHeader(IAM2Constants.POLICY_ARN, response.policy().arn());
                         message.setHeader(IAM2Constants.POLICY_ID, response.policy().policyId());
                     }
@@ -666,11 +666,11 @@ public class IAM2Producer extends DefaultProducer {
                 () -> {
                     ListPoliciesRequest.Builder builder = ListPoliciesRequest.builder();
                     String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
-                    if (marker != null) {
+                    if (ObjectHelper.isNotEmpty(marker)) {
                         builder.marker(marker);
                     }
                     Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
-                    if (maxItems != null) {
+                    if (ObjectHelper.isNotEmpty(maxItems)) {
                         builder.maxItems(maxItems);
                     }
                     return iamClient.listPolicies(builder.build());
@@ -678,7 +678,7 @@ public class IAM2Producer extends DefaultProducer {
                 "List Policies",
                 (ListPoliciesResponse response, Message message) -> {
                     message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
-                    if (response.marker() != null) {
+                    if (ObjectHelper.isNotEmpty(response.marker())) {
                         message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
                     }
                 });
@@ -807,14 +807,14 @@ public class IAM2Producer extends DefaultProducer {
                     CreateInstanceProfileRequest.Builder builder
                             = CreateInstanceProfileRequest.builder().instanceProfileName(instanceProfileName);
                     String path = getOptionalHeader(exchange, IAM2Constants.INSTANCE_PROFILE_PATH, String.class);
-                    if (path != null) {
+                    if (ObjectHelper.isNotEmpty(path)) {
                         builder.path(path);
                     }
                     return iamClient.createInstanceProfile(builder.build());
                 },
                 "Create Instance Profile",
                 (CreateInstanceProfileResponse response, Message message) -> {
-                    if (response.instanceProfile() != null) {
+                    if (ObjectHelper.isNotEmpty(response.instanceProfile())) {
                         message.setHeader(IAM2Constants.INSTANCE_PROFILE_ARN, response.instanceProfile().arn());
                         message.setHeader(IAM2Constants.INSTANCE_PROFILE_ID, response.instanceProfile().instanceProfileId());
                     }
@@ -848,7 +848,7 @@ public class IAM2Producer extends DefaultProducer {
                 },
                 "Get Instance Profile",
                 (GetInstanceProfileResponse response, Message message) -> {
-                    if (response.instanceProfile() != null) {
+                    if (ObjectHelper.isNotEmpty(response.instanceProfile())) {
                         message.setHeader(IAM2Constants.INSTANCE_PROFILE_ARN, response.instanceProfile().arn());
                         message.setHeader(IAM2Constants.INSTANCE_PROFILE_ID, response.instanceProfile().instanceProfileId());
                     }
@@ -863,11 +863,11 @@ public class IAM2Producer extends DefaultProducer {
                 () -> {
                     ListInstanceProfilesRequest.Builder builder = ListInstanceProfilesRequest.builder();
                     String marker = getOptionalHeader(exchange, IAM2Constants.MARKER, String.class);
-                    if (marker != null) {
+                    if (ObjectHelper.isNotEmpty(marker)) {
                         builder.marker(marker);
                     }
                     Integer maxItems = getOptionalHeader(exchange, IAM2Constants.MAX_ITEMS, Integer.class);
-                    if (maxItems != null) {
+                    if (ObjectHelper.isNotEmpty(maxItems)) {
                         builder.maxItems(maxItems);
                     }
                     return iamClient.listInstanceProfiles(builder.build());
@@ -875,7 +875,7 @@ public class IAM2Producer extends DefaultProducer {
                 "List Instance Profiles",
                 (ListInstanceProfilesResponse response, Message message) -> {
                     message.setHeader(IAM2Constants.IS_TRUNCATED, response.isTruncated());
-                    if (response.marker() != null) {
+                    if (ObjectHelper.isNotEmpty(response.marker())) {
                         message.setHeader(IAM2Constants.NEXT_MARKER, response.marker());
                     }
                 });
@@ -977,7 +977,7 @@ public class IAM2Producer extends DefaultProducer {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
                                 requestClass.getName(),
-                                payload != null ? payload.getClass().getName() : "null"));
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
             }
         } else {
             try {
@@ -989,7 +989,7 @@ public class IAM2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
-        if (responseProcessor != null) {
+        if (ObjectHelper.isNotEmpty(responseProcessor)) {
             responseProcessor.accept(result, message);
         }
     }
@@ -1033,7 +1033,7 @@ public class IAM2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new IAM2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -1043,7 +1043,7 @@ public class IAM2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
