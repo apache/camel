@@ -49,6 +49,9 @@ http://www.openlogic.com/[OpenLogic] by Perforce has a team of Camel experts rea
 We provide 24/7 support for troubleshooting issues and outages, consulting on architecture and design, and instructor-led, hands-on training.
 https://www.openlogic.com/solutions/support-activemq-apache-camel-kafka#apache-camel[Learn more about OpenLogic's Camel support].
 
+== https://www.meshiq.com[meshIQ]
+
+meshIQ provides expert support for Apache Camel, ensuring optimal performance and reliability of your routes and Camel runtimes. Their services include monitoring, troubleshooting, and management of Camel routes. meshIQ provides visibility and tracking on the exchanges processed by your Camel routes, integrating with other systems like Apache ActiveMQ or Apache Kafka.
 
 == https://www.redhat.com[Red Hat]
 
