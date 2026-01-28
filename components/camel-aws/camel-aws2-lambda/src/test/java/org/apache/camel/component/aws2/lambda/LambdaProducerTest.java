@@ -32,23 +32,36 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.lambda.model.AddPermissionResponse;
 import software.amazon.awssdk.services.lambda.model.CreateAliasResponse;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
+import software.amazon.awssdk.services.lambda.model.CreateFunctionUrlConfigResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteAliasResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteEventSourceMappingResponse;
+import software.amazon.awssdk.services.lambda.model.DeleteFunctionConcurrencyResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
+import software.amazon.awssdk.services.lambda.model.DeleteFunctionUrlConfigResponse;
 import software.amazon.awssdk.services.lambda.model.GetAliasResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionConcurrencyResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionConfigurationResponse;
 import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionUrlConfigResponse;
+import software.amazon.awssdk.services.lambda.model.GetPolicyResponse;
 import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
+import software.amazon.awssdk.services.lambda.model.ListFunctionUrlConfigsResponse;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.ListTagsResponse;
 import software.amazon.awssdk.services.lambda.model.ListVersionsByFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.PublishVersionResponse;
+import software.amazon.awssdk.services.lambda.model.PutFunctionConcurrencyResponse;
+import software.amazon.awssdk.services.lambda.model.RemovePermissionResponse;
 import software.amazon.awssdk.services.lambda.model.TagResourceResponse;
 import software.amazon.awssdk.services.lambda.model.UntagResourceResponse;
+import software.amazon.awssdk.services.lambda.model.UpdateFunctionConfigurationResponse;
+import software.amazon.awssdk.services.lambda.model.UpdateFunctionUrlConfigResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -357,6 +370,227 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertEquals("1", result.aliases().get(0).functionVersion());
     }
 
+    // Function URL tests
+
+    @Test
+    public void createFunctionUrlConfigTest() throws Exception {
+
+        Exchange exchange = template.send("direct:createFunctionUrlConfig", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, "NONE");
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        CreateFunctionUrlConfigResponse result = (CreateFunctionUrlConfigResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertNotNull(result.functionUrl());
+        assertTrue(result.functionUrl().contains("lambda-url"));
+    }
+
+    @Test
+    public void getFunctionUrlConfigTest() throws Exception {
+
+        Exchange exchange = template.send("direct:getFunctionUrlConfig", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        GetFunctionUrlConfigResponse result = (GetFunctionUrlConfigResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertNotNull(result.functionUrl());
+        assertTrue(result.functionUrl().contains("lambda-url"));
+    }
+
+    @Test
+    public void updateFunctionUrlConfigTest() throws Exception {
+
+        Exchange exchange = template.send("direct:updateFunctionUrlConfig", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, "AWS_IAM");
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        UpdateFunctionUrlConfigResponse result = (UpdateFunctionUrlConfigResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertNotNull(result.functionUrl());
+        assertTrue(result.functionUrl().contains("lambda-url"));
+    }
+
+    @Test
+    public void deleteFunctionUrlConfigTest() throws Exception {
+
+        Exchange exchange = template.send("direct:deleteFunctionUrlConfig", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        DeleteFunctionUrlConfigResponse result = (DeleteFunctionUrlConfigResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+    }
+
+    @Test
+    public void listFunctionUrlConfigsTest() throws Exception {
+
+        Exchange exchange = template.send("direct:listFunctionUrlConfigs", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        ListFunctionUrlConfigsResponse result = (ListFunctionUrlConfigsResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertEquals(1, result.functionUrlConfigs().size());
+        assertTrue(result.functionUrlConfigs().get(0).functionUrl().contains("lambda-url"));
+    }
+
+    // Function Configuration tests
+
+    @Test
+    public void getFunctionConfigurationTest() throws Exception {
+
+        Exchange exchange = template.send("direct:getFunctionConfiguration", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        GetFunctionConfigurationResponse result = (GetFunctionConfigurationResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertEquals("GetHelloWithName", result.functionName());
+        assertNotNull(result.functionArn());
+        assertEquals(128, result.memorySize());
+    }
+
+    @Test
+    public void updateFunctionConfigurationTest() throws Exception {
+
+        Exchange exchange = template.send("direct:updateFunctionConfiguration", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Lambda2Constants.FUNCTION_MEMORY_SIZE, 256);
+                exchange.getIn().setHeader(Lambda2Constants.FUNCTION_TIMEOUT, 30);
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        UpdateFunctionConfigurationResponse result = (UpdateFunctionConfigurationResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertEquals("GetHelloWithName", result.functionName());
+        assertNotNull(result.functionArn());
+        assertEquals(256, result.memorySize());
+        assertEquals(30, result.timeout());
+    }
+
+    // Concurrency tests
+
+    @Test
+    public void putFunctionConcurrencyTest() throws Exception {
+
+        Exchange exchange = template.send("direct:putFunctionConcurrency", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Lambda2Constants.RESERVED_CONCURRENT_EXECUTIONS, 100);
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        PutFunctionConcurrencyResponse result = (PutFunctionConcurrencyResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertEquals(100, result.reservedConcurrentExecutions());
+    }
+
+    @Test
+    public void deleteFunctionConcurrencyTest() throws Exception {
+
+        Exchange exchange = template.send("direct:deleteFunctionConcurrency", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        DeleteFunctionConcurrencyResponse result = (DeleteFunctionConcurrencyResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+    }
+
+    @Test
+    public void getFunctionConcurrencyTest() throws Exception {
+
+        Exchange exchange = template.send("direct:getFunctionConcurrency", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        GetFunctionConcurrencyResponse result = (GetFunctionConcurrencyResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertEquals(100, result.reservedConcurrentExecutions());
+    }
+
+    // Permission tests
+
+    @Test
+    public void addPermissionTest() throws Exception {
+
+        Exchange exchange = template.send("direct:addPermission", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Lambda2Constants.STATEMENT_ID, "s3-invoke");
+                exchange.getIn().setHeader(Lambda2Constants.ACTION, "lambda:InvokeFunction");
+                exchange.getIn().setHeader(Lambda2Constants.PRINCIPAL, "s3.amazonaws.com");
+                exchange.getIn().setHeader(Lambda2Constants.SOURCE_ARN, "arn:aws:s3:::my-bucket");
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        AddPermissionResponse result = (AddPermissionResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertNotNull(result.statement());
+        assertTrue(result.statement().contains("s3-invoke"));
+    }
+
+    @Test
+    public void removePermissionTest() throws Exception {
+
+        Exchange exchange = template.send("direct:removePermission", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Lambda2Constants.STATEMENT_ID, "s3-invoke");
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        RemovePermissionResponse result = (RemovePermissionResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+    }
+
+    @Test
+    public void getPolicyTest() throws Exception {
+
+        Exchange exchange = template.send("direct:getPolicy", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+            }
+        });
+        MockEndpoint.assertIsSatisfied(context);
+
+        GetPolicyResponse result = (GetPolicyResponse) exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertNotNull(result.policy());
+        assertTrue(result.policy().contains("Statement"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -434,6 +668,62 @@ public class LambdaProducerTest extends CamelTestSupport {
 
                 from("direct:listAliases")
                         .to("aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listAliases")
+                        .to("mock:result");
+
+                // Function URL routes
+                from("direct:createFunctionUrlConfig").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createFunctionUrlConfig")
+                        .to("mock:result");
+
+                from("direct:getFunctionUrlConfig").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunctionUrlConfig")
+                        .to("mock:result");
+
+                from("direct:updateFunctionUrlConfig").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunctionUrlConfig")
+                        .to("mock:result");
+
+                from("direct:deleteFunctionUrlConfig").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteFunctionUrlConfig")
+                        .to("mock:result");
+
+                from("direct:listFunctionUrlConfigs").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listFunctionUrlConfigs")
+                        .to("mock:result");
+
+                // Function configuration routes
+                from("direct:getFunctionConfiguration").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunctionConfiguration")
+                        .to("mock:result");
+
+                from("direct:updateFunctionConfiguration").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunctionConfiguration")
+                        .to("mock:result");
+
+                // Concurrency routes
+                from("direct:putFunctionConcurrency").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=putFunctionConcurrency")
+                        .to("mock:result");
+
+                from("direct:deleteFunctionConcurrency").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteFunctionConcurrency")
+                        .to("mock:result");
+
+                from("direct:getFunctionConcurrency").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getFunctionConcurrency")
+                        .to("mock:result");
+
+                // Permission routes
+                from("direct:addPermission").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=addPermission")
+                        .to("mock:result");
+
+                from("direct:removePermission").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=removePermission")
+                        .to("mock:result");
+
+                from("direct:getPolicy").to(
+                        "aws2-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getPolicy")
                         .to("mock:result");
             }
         };

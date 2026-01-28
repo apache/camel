@@ -35,5 +35,22 @@ public enum Lambda2Operations {
     tagResource,
     untagResource,
     publishVersion,
-    listVersions
+    listVersions,
+    // Function URL operations
+    createFunctionUrlConfig,
+    getFunctionUrlConfig,
+    updateFunctionUrlConfig,
+    deleteFunctionUrlConfig,
+    listFunctionUrlConfigs,
+    // Function configuration operations
+    getFunctionConfiguration,
+    updateFunctionConfiguration,
+    // Concurrency operations
+    putFunctionConcurrency,
+    deleteFunctionConcurrency,
+    getFunctionConcurrency,
+    // Permission operations
+    addPermission,
+    removePermission,
+    getPolicy
 }
