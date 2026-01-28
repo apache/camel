@@ -87,9 +87,6 @@ public class OtherExpression extends BaseSimpleNode {
 
         if (operator == OtherOperatorType.ELVIS) {
             return createElvisExpression(camelContext, leftExp, rightExp);
-        } else if (operator == OtherOperatorType.CHAIN || operator == OtherOperatorType.CHAIN_NULL_SAFE) {
-            boolean nullSafe = operator == OtherOperatorType.CHAIN_NULL_SAFE;
-            return createChainExpression(camelContext, leftExp, rightExp, nullSafe);
         }
 
         throw new SimpleParserException("Unknown other operator " + operator, token.getIndex());
@@ -106,27 +103,6 @@ public class OtherExpression extends BaseSimpleNode {
                 } else {
                     return leftExp.evaluate(exchange, type);
                 }
-            }
-
-            @Override
-            public String toString() {
-                return left + " " + token.getText() + " " + right;
-            }
-        };
-    }
-
-    private Expression createChainExpression(
-            final CamelContext camelContext, final Expression leftExp, final Expression rightExp, boolean nullSafe) {
-        return new Expression() {
-            @Override
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                // left is input to right
-                Object value = leftExp.evaluate(exchange, Object.class);
-                if (value == null && nullSafe) {
-                    return null; // break out
-                }
-                exchange.getMessage().setBody(value);
-                return rightExp.evaluate(exchange, type);
             }
 
             @Override
@@ -161,8 +137,6 @@ public class OtherExpression extends BaseSimpleNode {
 
         if (operator == OtherOperatorType.ELVIS) {
             return "elvis(exchange, " + leftExp + ", " + rightExp + ")";
-        } else if (operator == OtherOperatorType.CHAIN) {
-            throw new SimpleParserException("Chain operator " + operator + " not supported in csimple", token.getIndex());
         }
 
         throw new SimpleParserException("Unknown other operator " + operator, token.getIndex());
