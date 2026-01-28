@@ -34,6 +34,7 @@
 
     <properties>
         <camel.surefire.forkTimeout>1200</camel.surefire.forkTimeout>
+        <camel.surefire.fork.additional-vmargs>-Xmx2G</camel.surefire.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -87,15 +88,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>${camel.surefire.fork.vmargs} -Xmx2G</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
