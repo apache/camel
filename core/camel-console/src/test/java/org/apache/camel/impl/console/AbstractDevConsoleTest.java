@@ -66,7 +66,6 @@ public abstract class AbstractDevConsoleTest extends ContextTestSupport {
     protected String callText(DevConsole console) {
         String out = (String) console.call(DevConsole.MediaType.TEXT);
         assertNotNull(out, "TEXT output should not be null");
-        log.info(out);
         return out;
     }
 
@@ -76,7 +75,6 @@ public abstract class AbstractDevConsoleTest extends ContextTestSupport {
     protected String callText(DevConsole console, Map<String, Object> options) {
         String out = (String) console.call(DevConsole.MediaType.TEXT, options);
         assertNotNull(out, "TEXT output should not be null");
-        log.info(out);
         return out;
     }
 
@@ -86,7 +84,6 @@ public abstract class AbstractDevConsoleTest extends ContextTestSupport {
     protected JsonObject callJson(DevConsole console) {
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON);
         assertNotNull(out, "JSON output should not be null");
-        log.info(out.toJson());
         return out;
     }
 
@@ -96,7 +93,6 @@ public abstract class AbstractDevConsoleTest extends ContextTestSupport {
     protected JsonObject callJson(DevConsole console, Map<String, Object> options) {
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, options);
         assertNotNull(out, "JSON output should not be null");
-        log.info(out.toJson());
         return out;
     }
 }

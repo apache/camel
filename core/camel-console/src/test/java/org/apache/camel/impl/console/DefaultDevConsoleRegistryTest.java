@@ -28,8 +28,7 @@ public class DefaultDevConsoleRegistryTest extends ContextTestSupport {
     @Test
     public void testRegistry() {
         DevConsoleRegistry registry = context.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
-        Assertions.assertNotNull(registry);
-        Assertions.assertTrue(registry instanceof DefaultDevConsoleRegistry);
+        Assertions.assertInstanceOf(DefaultDevConsoleRegistry.class, registry);
         Assertions.assertTrue(registry.isEnabled());
     }
 
