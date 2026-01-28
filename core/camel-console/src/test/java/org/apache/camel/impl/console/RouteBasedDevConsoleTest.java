@@ -25,7 +25,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Parameterized test for DevConsoles that require routes to be configured.
@@ -76,9 +76,6 @@ public class RouteBasedDevConsoleTest extends AbstractDevConsoleTest {
         DevConsole console = assertConsoleExists(consoleId);
         JsonObject out = callJson(console);
 
-        if (expectedJsonKey != null) {
-            assertTrue(out.containsKey(expectedJsonKey),
-                    "JSON output should contain key '" + expectedJsonKey + "'");
-        }
+        assertThat(out).containsKey(expectedJsonKey);
     }
 }

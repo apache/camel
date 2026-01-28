@@ -27,6 +27,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class BeanDevConsoleTest extends ContextTestSupport {
 
     @Override
@@ -43,11 +45,7 @@ public class BeanDevConsoleTest extends ContextTestSupport {
         Assertions.assertEquals("bean", console.getId());
 
         String out = (String) console.call(DevConsole.MediaType.TEXT);
-        Assertions.assertNotNull(out);
-        log.info(out);
-        Assertions.assertTrue(out.contains("myBean"));
-        Assertions.assertTrue(out.contains("anotherBean"));
-        Assertions.assertTrue(out.contains("TestBean"));
+        assertThat(out).contains("myBean", "anotherBean", "TestBean");
     }
 
     @Test
@@ -57,16 +55,13 @@ public class BeanDevConsoleTest extends ContextTestSupport {
 
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON);
         Assertions.assertNotNull(out);
-        log.info(out.toJson());
 
         JsonObject beans = out.getMap("beans");
-        Assertions.assertNotNull(beans);
-        Assertions.assertTrue(beans.containsKey("myBean"));
-        Assertions.assertTrue(beans.containsKey("anotherBean"));
+        assertThat(beans).containsKey("myBean").containsKey("anotherBean");
 
         JsonObject myBean = beans.getMap("myBean");
         Assertions.assertEquals("myBean", myBean.getString("name"));
-        Assertions.assertTrue(myBean.getString("type").contains("TestBean"));
+        assertThat(myBean.getString("type")).contains("TestBean");
     }
 
     @Test
@@ -78,10 +73,7 @@ public class BeanDevConsoleTest extends ContextTestSupport {
         options.put(BeanDevConsole.FILTER, "myBean");
 
         String out = (String) console.call(DevConsole.MediaType.TEXT, options);
-        Assertions.assertNotNull(out);
-        log.info(out);
-        Assertions.assertTrue(out.contains("myBean"));
-        Assertions.assertFalse(out.contains("anotherBean"));
+        assertThat(out).contains("myBean").doesNotContain("anotherBean");
     }
 
     @Test
@@ -112,7 +104,6 @@ public class BeanDevConsoleTest extends ContextTestSupport {
 
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, options);
         Assertions.assertNotNull(out);
-        log.info(out.toJson());
 
         JsonObject beans = out.getMap("beans");
         JsonObject myBean = beans.getMap("myBean");
@@ -134,7 +125,6 @@ public class BeanDevConsoleTest extends ContextTestSupport {
 
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, options);
         Assertions.assertNotNull(out);
-        log.info(out.toJson());
 
         JsonObject beans = out.getMap("beans");
         JsonObject anotherBean = beans.getMap("anotherBean");
@@ -160,7 +150,6 @@ public class BeanDevConsoleTest extends ContextTestSupport {
 
         JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, options);
         Assertions.assertNotNull(out);
-        log.info(out.toJson());
 
         JsonObject beans = out.getMap("beans");
         JsonObject anotherBean = beans.getMap("anotherBean");
@@ -185,12 +174,9 @@ public class BeanDevConsoleTest extends ContextTestSupport {
         options.put(BeanDevConsole.INTERNAL, "false");
 
         String out = (String) console.call(DevConsole.MediaType.TEXT, options);
-        Assertions.assertNotNull(out);
-        log.info(out);
         // Our test beans are in org.apache.camel package, so they are treated as internal
         // and should be excluded when internal=false
-        Assertions.assertFalse(out.contains("myBean"));
-        Assertions.assertFalse(out.contains("anotherBean"));
+        assertThat(out).doesNotContain("myBean", "anotherBean");
     }
 
     @Test
@@ -202,11 +188,8 @@ public class BeanDevConsoleTest extends ContextTestSupport {
         options.put(BeanDevConsole.INTERNAL, "true");
 
         String out = (String) console.call(DevConsole.MediaType.TEXT, options);
-        Assertions.assertNotNull(out);
-        log.info(out);
         // When internal=true, all beans including our test beans should be present
-        Assertions.assertTrue(out.contains("myBean"));
-        Assertions.assertTrue(out.contains("anotherBean"));
+        assertThat(out).contains("myBean", "anotherBean");
     }
 
     public static class TestBean {

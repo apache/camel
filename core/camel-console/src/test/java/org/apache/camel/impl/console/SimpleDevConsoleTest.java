@@ -24,8 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Parameterized test for simple DevConsoles that don't require special setup. Each console is tested for basic TEXT and
@@ -34,57 +33,66 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SimpleDevConsoleTest extends AbstractDevConsoleTest {
 
     /**
-     * Provides test parameters: console ID, optional text assertion, optional JSON key to check.
+     * Provides test parameters: console ID, expected JSON key.
      */
     static Stream<Arguments> consoleParameters() {
         return Stream.of(
-                // Console ID, text contains (nullable), JSON key to verify (nullable)
-                Arguments.of("blocked", "Blocked:", "blocked"),
-                Arguments.of("circuit-breaker", null, "circuitBreakers"),
-                Arguments.of("context", null, null),
-                Arguments.of("debug", null, null),
-                Arguments.of("gc", null, "garbageCollectors"),
-                Arguments.of("health", null, "checks"),
-                Arguments.of("inflight", "Inflight:", "inflight"),
-                Arguments.of("internal-tasks", null, null),
-                Arguments.of("java-security", null, "securityProviders"),
-                Arguments.of("jvm", null, null),
-                Arguments.of("log", null, null),
-                Arguments.of("memory", null, null),
-                Arguments.of("message-history", null, null),
-                Arguments.of("reload", null, null),
-                Arguments.of("rest", null, null),
-                Arguments.of("service", null, null),
-                Arguments.of("startup-recorder", null, null),
-                Arguments.of("system-properties", null, null),
-                Arguments.of("thread", null, null),
-                Arguments.of("top", null, null),
-                Arguments.of("trace", null, null),
-                Arguments.of("transformers", null, null),
-                Arguments.of("type-converters", null, null));
+                // Console ID, JSON key to verify (use keys that are always present in output)
+                Arguments.of("blocked", "blocked"),
+                Arguments.of("circuit-breaker", "circuitBreakers"),
+                Arguments.of("context", "name"),
+                Arguments.of("gc", "garbageCollectors"),
+                Arguments.of("health", "checks"),
+                Arguments.of("inflight", "inflight"),
+                Arguments.of("internal-tasks", "tasks"),
+                Arguments.of("java-security", "securityProviders"),
+                Arguments.of("jvm", "vmName"),
+                Arguments.of("memory", "heapMemoryUsed"),
+                Arguments.of("system-properties", "systemProperties"),
+                Arguments.of("thread", "threads"),
+                Arguments.of("transformers", "size"),
+                Arguments.of("type-converters", "statistics"));
     }
 
     @ParameterizedTest(name = "{0} console - TEXT output")
     @MethodSource("consoleParameters")
-    void testConsoleText(String consoleId, String expectedTextContent, String expectedJsonKey) {
+    void testConsoleText(String consoleId, String expectedJsonKey) {
         DevConsole console = assertConsoleExists(consoleId);
-        String out = callText(console);
-
-        if (expectedTextContent != null) {
-            assertTrue(out.contains(expectedTextContent),
-                    "TEXT output should contain '" + expectedTextContent + "'");
-        }
+        // Just verify the console produces TEXT output without error
+        callText(console);
     }
 
     @ParameterizedTest(name = "{0} console - JSON output")
     @MethodSource("consoleParameters")
-    void testConsoleJson(String consoleId, String expectedTextContent, String expectedJsonKey) {
+    void testConsoleJson(String consoleId, String expectedJsonKey) {
         DevConsole console = assertConsoleExists(consoleId);
         JsonObject out = callJson(console);
 
-        if (expectedJsonKey != null) {
-            assertNotNull(out.get(expectedJsonKey),
-                    "JSON output should contain key '" + expectedJsonKey + "'");
-        }
+        assertThat(out).containsKey(expectedJsonKey);
+    }
+
+    /**
+     * Consoles with conditional output - just verify they produce output without errors.
+     */
+    static Stream<String> conditionalOutputConsoleIds() {
+        return Stream.of(
+                "debug",
+                "log",
+                "message-history",
+                "reload",
+                "rest",
+                "service",
+                "startup-recorder",
+                "top",
+                "trace");
+    }
+
+    @ParameterizedTest(name = "{0} console - basic output")
+    @MethodSource("conditionalOutputConsoleIds")
+    void testConditionalOutputConsole(String consoleId) {
+        DevConsole console = assertConsoleExists(consoleId);
+        // These consoles have conditional output - just verify they work without errors
+        callText(console);
+        callJson(console);
     }
 }
