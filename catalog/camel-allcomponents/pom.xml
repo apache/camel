@@ -2277,6 +2277,7 @@
             <artifactId>camel-zookeeper-master</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- CODEGEN DEPENDENCIES END -->
     </dependencies>
 
 </project>
