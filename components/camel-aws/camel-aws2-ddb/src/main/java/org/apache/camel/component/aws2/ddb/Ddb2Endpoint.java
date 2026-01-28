@@ -87,7 +87,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     public void doStart() throws Exception {
         super.doStart();
 
-        ddbClient = configuration.getAmazonDDBClient() != null
+        ddbClient = ObjectHelper.isNotEmpty(configuration.getAmazonDDBClient())
                 ? configuration.getAmazonDDBClient() : Ddb2ClientFactory.getDynamoDBClient(configuration);
 
         String tableName = getConfiguration().getTableName();
@@ -119,7 +119,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonDDBClient())) {
-            if (ddbClient != null) {
+            if (ObjectHelper.isNotEmpty(ddbClient)) {
                 ddbClient.close();
             }
         }
@@ -202,7 +202,7 @@ public class Ddb2Endpoint extends ScheduledPollEndpoint implements EndpointServi
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getTableName() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getTableName())) {
             return Map.of("table", configuration.getTableName());
         }
         return null;

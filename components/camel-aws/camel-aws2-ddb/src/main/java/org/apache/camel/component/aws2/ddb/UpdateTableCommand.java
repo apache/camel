@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTableRequest;
@@ -37,11 +38,11 @@ public class UpdateTableCommand extends AbstractDdbCommand {
 
     private Long determineReadCapacity() {
         Long readCapacity = exchange.getIn().getHeader(Ddb2Constants.READ_CAPACITY, Long.class);
-        return readCapacity != null ? readCapacity : configuration.getReadCapacity();
+        return ObjectHelper.isNotEmpty(readCapacity) ? readCapacity : configuration.getReadCapacity();
     }
 
     private Long determineWriteCapacity() {
         Long writeCapacity = exchange.getIn().getHeader(Ddb2Constants.WRITE_CAPACITY, Long.class);
-        return writeCapacity != null ? writeCapacity : configuration.getWriteCapacity();
+        return ObjectHelper.isNotEmpty(writeCapacity) ? writeCapacity : configuration.getWriteCapacity();
     }
 }

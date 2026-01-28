@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 @Component("aws2-ddbstream")
 public class Ddb2StreamComponent extends HealthCheckComponent {
@@ -43,7 +44,7 @@ public class Ddb2StreamComponent extends HealthCheckComponent {
             throw new IllegalArgumentException("Table name must be specified.");
         }
         Ddb2StreamConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new Ddb2StreamConfiguration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Ddb2StreamConfiguration();
         configuration.setTableName(remaining);
         Ddb2StreamEndpoint endpoint = new Ddb2StreamEndpoint(uri, configuration, this);
         setProperties(endpoint, parameters);

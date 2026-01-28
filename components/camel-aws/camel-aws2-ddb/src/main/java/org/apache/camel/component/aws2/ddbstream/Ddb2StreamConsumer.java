@@ -29,6 +29,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.model.ExpiredIteratorException;
@@ -130,7 +131,7 @@ public class Ddb2StreamConsumer extends ScheduledBatchPollingConsumer {
         ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_SOURCE, record.eventSource());
         ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_ID, record.eventID());
         ex.getMessage().setHeader(Ddb2StreamConstants.EVENT_NAME, record.eventNameAsString());
-        if (record.dynamodb() != null) {
+        if (ObjectHelper.isNotEmpty(record.dynamodb())) {
             ex.getMessage().setHeader(Ddb2StreamConstants.SEQUENCE_NUMBER, record.dynamodb().sequenceNumber());
             ex.getMessage().setHeader(Ddb2StreamConstants.APPROXIMATE_CREATION_DATE_TIME,
                     record.dynamodb().approximateCreationDateTime());

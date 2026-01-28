@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
@@ -44,13 +45,13 @@ public class QueryCommand extends AbstractDdbCommand {
 
         // Check if we have set an Index Name
         String indexName = determineIndexName();
-        if (indexName != null) {
+        if (ObjectHelper.isNotEmpty(indexName)) {
             query.indexName(indexName);
         }
 
         // Skip adding attribute-to-get from 'CamelAwsDdbAttributeNames' if the header is null or empty list.
         Collection<String> attributeNames = determineAttributeNames();
-        if (attributeNames != null && !attributeNames.isEmpty()) {
+        if (ObjectHelper.isNotEmpty(attributeNames)) {
             query.attributesToGet(attributeNames);
         }
 
