@@ -4398,6 +4398,13 @@
                             <argLine>${camel.surefire.fork.vmargs} ${jacocoAgent}</argLine>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>${camel.failsafe.fork.vmargs} ${jacocoAgent}</argLine>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
