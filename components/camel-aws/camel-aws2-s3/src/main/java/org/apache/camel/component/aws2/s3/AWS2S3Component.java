@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 @Component("aws2-s3")
 public class AWS2S3Component extends HealthCheckComponent {
@@ -47,7 +48,7 @@ public class AWS2S3Component extends HealthCheckComponent {
             remaining = remaining.substring(remaining.lastIndexOf(':') + 1, remaining.length());
         }
         final AWS2S3Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new AWS2S3Configuration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new AWS2S3Configuration();
         configuration.setBucketName(remaining);
         AWS2S3Endpoint endpoint = new AWS2S3Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
