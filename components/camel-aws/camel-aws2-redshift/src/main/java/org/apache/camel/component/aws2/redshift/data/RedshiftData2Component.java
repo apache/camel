@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 @Component(value = "aws2-redshift-data")
 public class RedshiftData2Component extends HealthCheckComponent {
@@ -41,7 +42,7 @@ public class RedshiftData2Component extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RedshiftData2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new RedshiftData2Configuration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new RedshiftData2Configuration();
         RedshiftData2Endpoint endpoint = new RedshiftData2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

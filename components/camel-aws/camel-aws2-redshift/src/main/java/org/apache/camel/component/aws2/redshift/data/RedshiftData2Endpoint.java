@@ -68,7 +68,7 @@ public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointSe
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsRedshiftDataClient = configuration.getAwsRedshiftDataClient() != null
+        awsRedshiftDataClient = ObjectHelper.isNotEmpty(configuration.getAwsRedshiftDataClient())
                 ? configuration.getAwsRedshiftDataClient()
                 : RedshiftData2ClientFactory.getRedshiftDataClient(configuration);
     }
@@ -77,7 +77,7 @@ public class RedshiftData2Endpoint extends DefaultEndpoint implements EndpointSe
     public void doStop() throws Exception {
 
         if (ObjectHelper.isEmpty(configuration.getAwsRedshiftDataClient())) {
-            if (awsRedshiftDataClient != null) {
+            if (ObjectHelper.isNotEmpty(awsRedshiftDataClient)) {
                 awsRedshiftDataClient.close();
             }
         }
