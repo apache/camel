@@ -58,14 +58,14 @@ public class Transcribe2Endpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        transcribeClient = configuration.getTranscribeClient() != null
+        transcribeClient = ObjectHelper.isNotEmpty(configuration.getTranscribeClient())
                 ? configuration.getTranscribeClient() : Transcribe2ClientFactory.getTranscribeClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getTranscribeClient())) {
-            if (transcribeClient != null) {
+            if (ObjectHelper.isNotEmpty(transcribeClient)) {
                 transcribeClient.close();
             }
         }
