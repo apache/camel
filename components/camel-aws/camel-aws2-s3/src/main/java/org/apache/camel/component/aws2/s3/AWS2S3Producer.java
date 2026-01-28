@@ -35,7 +35,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -326,14 +325,14 @@ public class AWS2S3Producer extends DefaultProducer {
         try {
             // Need to check if the message body is WrappedFile
             if (obj instanceof WrappedFile) {
-                obj = ((WrappedFile<?>) obj).getFile();
+                WrappedFile<?> wrappedFile = ((WrappedFile<?>) obj);
+                contentLength = wrappedFile.getFileLength();
+                obj = wrappedFile.getFile();
             }
             if (obj instanceof File) {
                 // optimize for file payload
                 filePayload = (File) obj;
                 contentLength = filePayload.length();
-            } else if (obj instanceof GenericFile) {
-                contentLength = ((GenericFile) obj).getFileLength();
             } else {
                 // okay we use input stream
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
