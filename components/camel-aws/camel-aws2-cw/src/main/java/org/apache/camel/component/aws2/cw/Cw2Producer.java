@@ -111,25 +111,25 @@ public class Cw2Producer extends DefaultProducer {
 
         String namespace = getOptionalHeader(exchange, Cw2Constants.METRIC_NAMESPACE, String.class,
                 () -> getConfiguration().getNamespace(), "namespace");
-        if (namespace != null) {
+        if (ObjectHelper.isNotEmpty(namespace)) {
             builder.namespace(namespace);
         }
 
         String metricName = getOptionalHeader(exchange, Cw2Constants.METRIC_NAME, String.class,
                 () -> getConfiguration().getName(), "metric name");
-        if (metricName != null) {
+        if (ObjectHelper.isNotEmpty(metricName)) {
             builder.metricName(metricName);
         }
 
         String nextToken = exchange.getIn().getHeader(Cw2Constants.NEXT_TOKEN, String.class);
-        if (nextToken != null) {
+        if (ObjectHelper.isNotEmpty(nextToken)) {
             builder.nextToken(nextToken);
         }
 
         // Handle dimensions filter
         @SuppressWarnings("unchecked")
         Map<String, String> dimensions = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSIONS, Map.class);
-        if (dimensions != null) {
+        if (ObjectHelper.isNotEmpty(dimensions)) {
             List<DimensionFilter> dimensionFilters = new ArrayList<>();
             for (Map.Entry<String, String> entry : dimensions.entrySet()) {
                 dimensionFilters.add(DimensionFilter.builder()
@@ -145,29 +145,29 @@ public class Cw2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(response);
         message.setHeader(Cw2Constants.NEXT_TOKEN, response.nextToken());
-        message.setHeader(Cw2Constants.IS_TRUNCATED, response.nextToken() != null);
+        message.setHeader(Cw2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
     }
 
     private void describeAlarms(CloudWatchClient client, Exchange exchange) {
         DescribeAlarmsRequest.Builder builder = DescribeAlarmsRequest.builder();
 
         String alarmName = exchange.getIn().getHeader(Cw2Constants.ALARM_NAME, String.class);
-        if (alarmName != null) {
+        if (ObjectHelper.isNotEmpty(alarmName)) {
             builder.alarmNames(alarmName);
         }
 
         String stateValue = exchange.getIn().getHeader(Cw2Constants.ALARM_STATE, String.class);
-        if (stateValue != null) {
+        if (ObjectHelper.isNotEmpty(stateValue)) {
             builder.stateValue(stateValue);
         }
 
         String nextToken = exchange.getIn().getHeader(Cw2Constants.NEXT_TOKEN, String.class);
-        if (nextToken != null) {
+        if (ObjectHelper.isNotEmpty(nextToken)) {
             builder.nextToken(nextToken);
         }
 
         Integer maxResults = exchange.getIn().getHeader(Cw2Constants.MAX_RESULTS, Integer.class);
-        if (maxResults != null) {
+        if (ObjectHelper.isNotEmpty(maxResults)) {
             builder.maxRecords(maxResults);
         }
 
@@ -176,7 +176,7 @@ public class Cw2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(response);
         message.setHeader(Cw2Constants.NEXT_TOKEN, response.nextToken());
-        message.setHeader(Cw2Constants.IS_TRUNCATED, response.nextToken() != null);
+        message.setHeader(Cw2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
     }
 
     private void describeAlarmsForMetric(CloudWatchClient client, Exchange exchange) {
@@ -193,7 +193,7 @@ public class Cw2Producer extends DefaultProducer {
         // Handle dimensions
         @SuppressWarnings("unchecked")
         Map<String, String> dimensions = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSIONS, Map.class);
-        if (dimensions != null) {
+        if (ObjectHelper.isNotEmpty(dimensions)) {
             List<Dimension> dimensionList = new ArrayList<>();
             for (Map.Entry<String, String> entry : dimensions.entrySet()) {
                 dimensionList.add(Dimension.builder()
@@ -230,12 +230,12 @@ public class Cw2Producer extends DefaultProducer {
     private void setDimension(MetricDatum.Builder metricDatum, Exchange exchange) {
         String name = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSION_NAME, String.class);
         String value = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSION_VALUE, String.class);
-        if (name != null && value != null) {
+        if (ObjectHelper.isNotEmpty(name) && ObjectHelper.isNotEmpty(value)) {
             metricDatum.dimensions(Dimension.builder().name(name).value(value).build());
         } else {
             @SuppressWarnings("unchecked")
             Map<String, String> dimensions = exchange.getIn().getHeader(Cw2Constants.METRIC_DIMENSIONS, Map.class);
-            if (dimensions != null) {
+            if (ObjectHelper.isNotEmpty(dimensions)) {
                 Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
                     Dimension dimension
@@ -265,13 +265,13 @@ public class Cw2Producer extends DefaultProducer {
     private Double determineValue(Exchange exchange) {
         Double value = getOptionalHeader(exchange, Cw2Constants.METRIC_VALUE, Double.class,
                 () -> getConfiguration().getValue(), "value");
-        return value != null ? value : Double.valueOf(1);
+        return ObjectHelper.isNotEmpty(value) ? value : Double.valueOf(1);
     }
 
     private StandardUnit determineUnit(Exchange exchange) {
         String unit = getOptionalHeader(exchange, Cw2Constants.METRIC_UNIT, String.class,
                 () -> getConfiguration().getUnit(), "unit");
-        return unit != null ? StandardUnit.fromValue(unit) : StandardUnit.COUNT;
+        return ObjectHelper.isNotEmpty(unit) ? StandardUnit.fromValue(unit) : StandardUnit.COUNT;
     }
 
     /**
@@ -339,7 +339,7 @@ public class Cw2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Cw2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -349,7 +349,7 @@ public class Cw2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

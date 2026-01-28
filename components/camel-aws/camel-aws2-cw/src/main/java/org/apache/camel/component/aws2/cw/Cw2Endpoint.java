@@ -66,14 +66,14 @@ public class Cw2Endpoint extends DefaultEndpoint implements EndpointServiceLocat
     public void doInit() throws Exception {
         super.doInit();
 
-        cloudWatchClient = configuration.getAmazonCwClient() != null
+        cloudWatchClient = ObjectHelper.isNotEmpty(configuration.getAmazonCwClient())
                 ? configuration.getAmazonCwClient() : Cw2ClientFactory.getCloudWatchClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonCwClient())) {
-            if (cloudWatchClient != null) {
+            if (ObjectHelper.isNotEmpty(cloudWatchClient)) {
                 cloudWatchClient.close();
             }
         }
@@ -115,7 +115,7 @@ public class Cw2Endpoint extends DefaultEndpoint implements EndpointServiceLocat
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getNamespace() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getNamespace())) {
             return Map.of("namespace", configuration.getNamespace());
         }
         return null;
