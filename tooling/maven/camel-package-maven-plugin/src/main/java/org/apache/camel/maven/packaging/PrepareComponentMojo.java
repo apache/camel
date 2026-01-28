@@ -267,7 +267,18 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             final String pomText = loadText(pomFile);
 
             final String before = Strings.before(pomText, startDependenciesMarker);
+            if (before == null) {
+                getLog().warn("The POM file should have a comment marking the beginning of the dependencies section such as"
+                              + startDependenciesMarker + "'");
+                throw new MojoExecutionException("POM file " + pomFile + " does not have the start of dependencies marker");
+            }
+
             final String after = Strings.after(pomText, endDependenciesMarker);
+            if (after == null) {
+                getLog().warn("The POM file should have a comment marking the end of the dependencies section such as"
+                              + endDependenciesMarker + "'");
+                throw new MojoExecutionException("POM file " + pomFile + " does not have the end of dependencies marker");
+            }
 
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
