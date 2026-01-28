@@ -144,6 +144,27 @@ public class ToolSearchToolTest {
         assertTrue(results.isEmpty());
     }
 
+    @Test
+    public void testSearchNonExistentTagReturnsHelpfulMessage() {
+        // Add some tools with specific tags
+        toolCache.putSearchable("users",
+                new CamelToolSpecification(createToolSpec("queryUser", "Query user by ID"), null, false));
+        toolCache.putSearchable("products",
+                new CamelToolSpecification(createToolSpec("queryProduct", "Query product by ID"), null, false));
+
+        // Search for a non-existent tag
+        List<CamelToolSpecification> results = toolSearchTool.searchTools("nonexistent");
+
+        // Verify empty results
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+
+        // Verify the formatted message is helpful for an LLM
+        String formattedMessage = ToolSearchTool.formatToolsForLLM(results);
+        assertNotNull(formattedMessage);
+        assertEquals("No tools found matching the search criteria.", formattedMessage);
+    }
+
     private ToolSpecification createToolSpec(String name, String description) {
         return ToolSpecification.builder()
                 .name(name)
