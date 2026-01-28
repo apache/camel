@@ -122,7 +122,9 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
                 } catch (Exception e) {
                     // ignore as we will try to recover connection
                     noop = false;
-                    // mark as not logged in, since the noop failed
+                }
+                // mark as not logged in, since the noop failed
+                if (!noop) {
                     loggedIn = false;
                 }
                 LOG.trace("preWriteCheck send noop success: {}", noop);
