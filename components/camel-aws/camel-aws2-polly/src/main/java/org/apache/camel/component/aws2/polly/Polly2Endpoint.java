@@ -66,7 +66,7 @@ public class Polly2Endpoint extends ScheduledPollEndpoint implements EndpointSer
         super.doStart();
 
         pollyClient
-                = configuration.getPollyClient() != null
+                = ObjectHelper.isNotEmpty(configuration.getPollyClient())
                         ? configuration.getPollyClient()
                         : Polly2ClientFactory.getPollyClient(configuration);
     }
@@ -74,7 +74,7 @@ public class Polly2Endpoint extends ScheduledPollEndpoint implements EndpointSer
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getPollyClient())) {
-            if (pollyClient != null) {
+            if (ObjectHelper.isNotEmpty(pollyClient)) {
                 pollyClient.close();
             }
         }
