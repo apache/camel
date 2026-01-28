@@ -44,6 +44,10 @@ public class Polly2ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "languageCode": getOrCreateConfiguration(target).setLanguageCode(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "lexiconcontent":
+        case "lexiconContent": getOrCreateConfiguration(target).setLexiconContent(property(camelContext, java.lang.String.class, value)); return true;
+        case "lexiconname":
+        case "lexiconName": getOrCreateConfiguration(target).setLexiconName(property(camelContext, java.lang.String.class, value)); return true;
         case "lexiconnames":
         case "lexiconNames": getOrCreateConfiguration(target).setLexiconNames(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.aws2.polly.Polly2Operations.class, value)); return true;
@@ -64,12 +68,20 @@ public class Polly2ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "proxyprotocol":
         case "proxyProtocol": getOrCreateConfiguration(target).setProxyProtocol(property(camelContext, software.amazon.awssdk.core.Protocol.class, value)); return true;
         case "region": getOrCreateConfiguration(target).setRegion(property(camelContext, java.lang.String.class, value)); return true;
+        case "s3bucket":
+        case "s3Bucket": getOrCreateConfiguration(target).setS3Bucket(property(camelContext, java.lang.String.class, value)); return true;
+        case "s3keyprefix":
+        case "s3KeyPrefix": getOrCreateConfiguration(target).setS3KeyPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "samplerate":
         case "sampleRate": getOrCreateConfiguration(target).setSampleRate(property(camelContext, java.lang.String.class, value)); return true;
         case "secretkey":
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontoken":
         case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "snstopicarn":
+        case "snsTopicArn": getOrCreateConfiguration(target).setSnsTopicArn(property(camelContext, java.lang.String.class, value)); return true;
+        case "taskid":
+        case "taskId": getOrCreateConfiguration(target).setTaskId(property(camelContext, java.lang.String.class, value)); return true;
         case "texttype":
         case "textType": getOrCreateConfiguration(target).setTextType(property(camelContext, software.amazon.awssdk.services.polly.model.TextType.class, value)); return true;
         case "trustallcertificates":
@@ -110,6 +122,10 @@ public class Polly2ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "languageCode": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "lexiconcontent":
+        case "lexiconContent": return java.lang.String.class;
+        case "lexiconname":
+        case "lexiconName": return java.lang.String.class;
         case "lexiconnames":
         case "lexiconNames": return java.lang.String.class;
         case "operation": return org.apache.camel.component.aws2.polly.Polly2Operations.class;
@@ -130,12 +146,20 @@ public class Polly2ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "proxyprotocol":
         case "proxyProtocol": return software.amazon.awssdk.core.Protocol.class;
         case "region": return java.lang.String.class;
+        case "s3bucket":
+        case "s3Bucket": return java.lang.String.class;
+        case "s3keyprefix":
+        case "s3KeyPrefix": return java.lang.String.class;
         case "samplerate":
         case "sampleRate": return java.lang.String.class;
         case "secretkey":
         case "secretKey": return java.lang.String.class;
         case "sessiontoken":
         case "sessionToken": return java.lang.String.class;
+        case "snstopicarn":
+        case "snsTopicArn": return java.lang.String.class;
+        case "taskid":
+        case "taskId": return java.lang.String.class;
         case "texttype":
         case "textType": return software.amazon.awssdk.services.polly.model.TextType.class;
         case "trustallcertificates":
@@ -172,6 +196,10 @@ public class Polly2ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "languageCode": return getOrCreateConfiguration(target).getLanguageCode();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "lexiconcontent":
+        case "lexiconContent": return getOrCreateConfiguration(target).getLexiconContent();
+        case "lexiconname":
+        case "lexiconName": return getOrCreateConfiguration(target).getLexiconName();
         case "lexiconnames":
         case "lexiconNames": return getOrCreateConfiguration(target).getLexiconNames();
         case "operation": return getOrCreateConfiguration(target).getOperation();
@@ -192,12 +220,20 @@ public class Polly2ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "proxyprotocol":
         case "proxyProtocol": return getOrCreateConfiguration(target).getProxyProtocol();
         case "region": return getOrCreateConfiguration(target).getRegion();
+        case "s3bucket":
+        case "s3Bucket": return getOrCreateConfiguration(target).getS3Bucket();
+        case "s3keyprefix":
+        case "s3KeyPrefix": return getOrCreateConfiguration(target).getS3KeyPrefix();
         case "samplerate":
         case "sampleRate": return getOrCreateConfiguration(target).getSampleRate();
         case "secretkey":
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sessiontoken":
         case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
+        case "snstopicarn":
+        case "snsTopicArn": return getOrCreateConfiguration(target).getSnsTopicArn();
+        case "taskid":
+        case "taskId": return getOrCreateConfiguration(target).getTaskId();
         case "texttype":
         case "textType": return getOrCreateConfiguration(target).getTextType();
         case "trustallcertificates":

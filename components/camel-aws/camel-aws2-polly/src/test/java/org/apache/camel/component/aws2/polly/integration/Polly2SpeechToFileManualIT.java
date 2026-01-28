@@ -22,16 +22,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.polly.Polly2Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import software.amazon.awssdk.services.polly.model.Engine;
-import software.amazon.awssdk.services.polly.model.OutputFormat;
-import software.amazon.awssdk.services.polly.model.TextType;
-import software.amazon.awssdk.services.polly.model.VoiceId;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,12 +49,9 @@ public class Polly2SpeechToFileManualIT extends CamelTestSupport {
     public void synthesizeSpeechToMp3FileTest() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.send("direct:synthesizeToFile", new Processor() {
+        template.send("direct:synthesizeToFileMp3", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
-                exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.MP3);
-                exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.TEXT);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "polly-test-joanna.mp3");
                 exchange.getIn().setBody("Hello, this is a test of Amazon Polly. The audio is saved to a file.");
             }
@@ -76,13 +68,9 @@ public class Polly2SpeechToFileManualIT extends CamelTestSupport {
     public void synthesizeSpeechWithNeuralEngineToFileTest() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.send("direct:synthesizeToFile", new Processor() {
+        template.send("direct:synthesizeToFileNeural", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
-                exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.MP3);
-                exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.TEXT);
-                exchange.getIn().setHeader(Polly2Constants.ENGINE, Engine.NEURAL);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "polly-test-joanna-neural.mp3");
                 exchange.getIn().setBody("Hello, this is a test using the neural engine. It sounds more natural.");
             }
@@ -99,12 +87,9 @@ public class Polly2SpeechToFileManualIT extends CamelTestSupport {
     public void synthesizeSpeechWithSsmlToFileTest() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.send("direct:synthesizeToFile", new Processor() {
+        template.send("direct:synthesizeToFileSsml", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
-                exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.MP3);
-                exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.SSML);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "polly-test-ssml.mp3");
                 exchange.getIn().setBody(
                         "<speak>Hello! <break time=\"500ms\"/> This is a test with <emphasis level=\"strong\">SSML</emphasis> markup.</speak>");
@@ -122,12 +107,9 @@ public class Polly2SpeechToFileManualIT extends CamelTestSupport {
     public void synthesizeSpeechToOggFileTest() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.send("direct:synthesizeToFile", new Processor() {
+        template.send("direct:synthesizeToFileOgg", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.MATTHEW);
-                exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.OGG_VORBIS);
-                exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.TEXT);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "polly-test-matthew.ogg");
                 exchange.getIn().setBody("Hello, this is Matthew speaking. The audio is in OGG format.");
             }
@@ -145,8 +127,23 @@ public class Polly2SpeechToFileManualIT extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:synthesizeToFile")
-                        .to("aws2-polly://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=us-east-1&operation=synthesizeSpeech")
+                from("direct:synthesizeToFileMp3")
+                        .to("aws2-polly://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=us-east-1&operation=synthesizeSpeech&voiceId=JOANNA&outputFormat=MP3&textType=TEXT")
+                        .to("file:" + OUTPUT_DIR)
+                        .to("mock:result");
+
+                from("direct:synthesizeToFileNeural")
+                        .to("aws2-polly://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=us-east-1&operation=synthesizeSpeech&voiceId=JOANNA&outputFormat=MP3&textType=TEXT&engine=NEURAL")
+                        .to("file:" + OUTPUT_DIR)
+                        .to("mock:result");
+
+                from("direct:synthesizeToFileSsml")
+                        .to("aws2-polly://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=us-east-1&operation=synthesizeSpeech&voiceId=JOANNA&outputFormat=MP3&textType=SSML")
+                        .to("file:" + OUTPUT_DIR)
+                        .to("mock:result");
+
+                from("direct:synthesizeToFileOgg")
+                        .to("aws2-polly://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=us-east-1&operation=synthesizeSpeech&voiceId=MATTHEW&outputFormat=OGG_VORBIS&textType=TEXT")
                         .to("file:" + OUTPUT_DIR)
                         .to("mock:result");
             }
