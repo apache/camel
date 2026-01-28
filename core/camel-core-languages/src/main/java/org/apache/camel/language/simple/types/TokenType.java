@@ -40,6 +40,7 @@ public enum TokenType {
     initOperator,
     initVariable,
     ternaryOperator,
+    chainOperator,
     eol
 
 }

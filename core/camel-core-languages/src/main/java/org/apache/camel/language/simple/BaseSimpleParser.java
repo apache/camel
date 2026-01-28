@@ -27,6 +27,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.ast.Block;
 import org.apache.camel.language.simple.ast.BlockEnd;
 import org.apache.camel.language.simple.ast.BlockStart;
+import org.apache.camel.language.simple.ast.ChainExpression;
 import org.apache.camel.language.simple.ast.OtherExpression;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.ast.TernaryExpression;
@@ -217,7 +218,7 @@ public abstract class BaseSimpleParser {
     }
 
     /**
-     * Prepares other expressions.
+     * Prepares chain expressions.
      * <p/>
      * This process prepares the other expressions in the AST. This is done by linking the other operator with both the
      * right and left hand side nodes, to have the AST graph updated and prepared properly.
@@ -225,6 +226,67 @@ public abstract class BaseSimpleParser {
      * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
      * linked and prepared graph of nodes which represent the input expression.
      */
+    protected void prepareChainExpression() {
+        Deque<SimpleNode> stack = new ArrayDeque<>();
+
+        SimpleNode left = null;
+        for (int i = 0; i < nodes.size(); i++) {
+            if (left == null) {
+                left = i > 0 ? nodes.get(i - 1) : null;
+            }
+            SimpleNode token = nodes.get(i);
+            SimpleNode right = i < nodes.size() - 1 ? nodes.get(i + 1) : null;
+
+            if (token instanceof ChainExpression chain) {
+                // remember the chain operator
+                String operator = chain.getOperator().toString();
+
+                if (left == null) {
+                    throw new SimpleParserException(
+                            "Chain operator " + operator + " has no left hand side token", token.getToken().getIndex());
+                }
+                if (right == null) {
+                    throw new SimpleParserException(
+                            "Chain operator " + operator + " has no right hand side token", token.getToken().getIndex());
+                }
+
+                if (left instanceof ChainExpression chainLeft) {
+                    // append to existing chain on right hand side
+                    chainLeft.acceptRightNode(right);
+                } else {
+                    if (!chain.acceptLeftNode(left)) {
+                        throw new SimpleParserException(
+                                "Chain operator " + operator + " does not support left hand side token " + left.getToken(),
+                                token.getToken().getIndex());
+                    }
+                    if (!chain.acceptRightNode(right)) {
+                        throw new SimpleParserException(
+                                "Chain operator " + operator + " does not support right hand side token " + right.getToken(),
+                                token.getToken().getIndex());
+                    }
+
+                    // pop previous as we need to replace it with this other operator
+                    stack.pop();
+                    stack.push(token);
+                    // this token is now the left for the next loop
+                    left = token;
+                }
+
+                // advantage after the right hand side
+                i++;
+            } else {
+                // clear left
+                left = null;
+                stack.push(token);
+            }
+        }
+
+        nodes.clear();
+        nodes.addAll(stack);
+        // must reverse as it was added from a stack that is reverse
+        Collections.reverse(nodes);
+    }
+
     protected void prepareOtherExpressions() {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
