@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.model.Shard;
@@ -92,7 +93,7 @@ class ShardList {
         List<Shard> sorted = new ArrayList<>(shards.values());
         Collections.sort(sorted, StartingSequenceNumberComparator.INSTANCE);
         for (Shard shard : sorted) {
-            if (shard.sequenceNumberRange().endingSequenceNumber() != null) {
+            if (ObjectHelper.isNotEmpty(shard.sequenceNumberRange().endingSequenceNumber())) {
                 BigInteger end = new BigInteger(shard.sequenceNumberRange().endingSequenceNumber());
                 // essentially: after < end or after <= end
                 if (condition.matches(atAfter, end)) {
@@ -117,7 +118,7 @@ class ShardList {
         String current = removeBefore.parentShardId();
 
         int removedShards = 0;
-        while (current != null) {
+        while (ObjectHelper.isNotEmpty(current)) {
             Shard s = shards.remove(current);
             if (s == null) {
                 current = null;

@@ -22,6 +22,7 @@ import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -78,7 +79,7 @@ public class Ddb2Producer extends DefaultProducer {
 
     private Ddb2Operations determineOperation(Exchange exchange) {
         Ddb2Operations operation = exchange.getIn().getHeader(Ddb2Constants.OPERATION, Ddb2Operations.class);
-        return operation != null ? operation : getConfiguration().getOperation();
+        return ObjectHelper.isNotEmpty(operation) ? operation : getConfiguration().getOperation();
     }
 
     protected Ddb2Configuration getConfiguration() {
@@ -106,7 +107,7 @@ public class Ddb2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Db2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -116,7 +117,7 @@ public class Ddb2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

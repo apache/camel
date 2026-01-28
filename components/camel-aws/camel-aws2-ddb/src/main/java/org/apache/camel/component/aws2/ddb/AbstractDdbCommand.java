@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.ExpectedAttributeValue;
@@ -45,7 +46,7 @@ public abstract class AbstractDdbCommand {
 
     protected String determineTableName() {
         String tableName = exchange.getIn().getHeader(Ddb2Constants.TABLE_NAME, String.class);
-        return tableName != null ? tableName : configuration.getTableName();
+        return ObjectHelper.isNotEmpty(tableName) ? tableName : configuration.getTableName();
     }
 
     @SuppressWarnings("unchecked")
@@ -139,7 +140,7 @@ public abstract class AbstractDdbCommand {
      */
     protected boolean hasFilterExpression() {
         String filterExpression = exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION, String.class);
-        return filterExpression != null && !filterExpression.isEmpty();
+        return ObjectHelper.isNotEmpty(filterExpression);
     }
 
     /**
@@ -147,7 +148,7 @@ public abstract class AbstractDdbCommand {
      */
     protected boolean hasFilterExpressionAttributeNames() {
         Map<?, ?> names = exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_NAMES, Map.class);
-        return names != null && !names.isEmpty();
+        return ObjectHelper.isNotEmpty(names);
     }
 
     /**
@@ -155,7 +156,7 @@ public abstract class AbstractDdbCommand {
      */
     protected boolean hasFilterExpressionAttributeValues() {
         Map<?, ?> values = exchange.getIn().getHeader(Ddb2Constants.FILTER_EXPRESSION_ATTRIBUTE_VALUES, Map.class);
-        return values != null && !values.isEmpty();
+        return ObjectHelper.isNotEmpty(values);
     }
 
     /**
@@ -163,6 +164,6 @@ public abstract class AbstractDdbCommand {
      */
     protected boolean hasProjectExpression() {
         String projectExpression = exchange.getIn().getHeader(Ddb2Constants.PROJECT_EXPRESSION, String.class);
-        return projectExpression != null && !projectExpression.isEmpty();
+        return ObjectHelper.isNotEmpty(projectExpression);
     }
 }

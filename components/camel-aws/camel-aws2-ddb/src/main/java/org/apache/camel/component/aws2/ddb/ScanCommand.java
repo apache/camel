@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.Condition;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
@@ -42,7 +43,7 @@ public class ScanCommand extends AbstractDdbCommand {
 
         // Check if we have set an Index Name
         String indexName = determineIndexName();
-        if (indexName != null) {
+        if (ObjectHelper.isNotEmpty(indexName)) {
             scan.indexName(indexName);
         }
 
