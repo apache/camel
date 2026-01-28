@@ -17,30 +17,34 @@
 package org.apache.camel.language.simple.types;
 
 /**
- * Classifications of known token types.
+ * Types of chain operators supported
  */
-public enum TokenType {
+public enum ChainOperatorType {
 
-    ignore,
-    whiteSpace,
-    character,
-    booleanValue,
-    numericValue,
-    nullValue,
-    singleQuote,
-    doubleQuote,
-    minusValue,
-    escape,
-    functionStart,
-    functionEnd,
-    binaryOperator,
-    otherOperator,
-    unaryOperator,
-    logicalOperator,
-    initOperator,
-    initVariable,
-    ternaryOperator,
-    chainOperator,
-    eol
+    CHAIN,
+    CHAIN_NULL_SAFE;
+
+    public static ChainOperatorType asOperator(String text) {
+        if ("~>".equals(text)) {
+            return CHAIN;
+        } else if ("?~>".equals(text)) {
+            return CHAIN_NULL_SAFE;
+        }
+        throw new IllegalArgumentException("Operator not supported: " + text);
+    }
+
+    public static String getOperatorText(ChainOperatorType operator) {
+        if (operator == CHAIN) {
+            return "~>";
+        } else if (operator == CHAIN_NULL_SAFE) {
+            return "?~>";
+        }
+        return "";
+    }
+
+    @Override
+    public String toString() {
+        return getOperatorText(this);
+    }
 
 }

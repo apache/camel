@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.ast.ChainExpression;
 import org.apache.camel.language.simple.ast.InitBlockExpression;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
@@ -32,6 +33,7 @@ import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.ast.TernaryExpression;
 import org.apache.camel.language.simple.ast.UnaryExpression;
+import org.apache.camel.language.simple.types.ChainOperatorType;
 import org.apache.camel.language.simple.types.OtherOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
@@ -141,6 +143,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             functionText();
             unaryOperator();
             ternaryOperator();
+            chainOperator();
             otherOperator();
             nextToken();
         }
@@ -159,6 +162,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         prepareUnaryExpressions();
         // compact and stack ternary expressions
         prepareTernaryExpressions();
+        // compact and stack chain expressions
+        prepareChainExpression();
         // compact and stack other expressions
         prepareOtherExpressions();
 
@@ -207,13 +212,13 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         // remove all ignored
         tokens.removeIf(t -> t.getType().isIgnore());
 
-        // white space should be removed before and after the other operator
+        // white space should be removed before and after the chain/other operator
         List<SimpleToken> toRemove = new ArrayList<>();
         for (int i = 1; i < tokens.size() - 1; i++) {
             SimpleToken prev = tokens.get(i - 1);
             SimpleToken cur = tokens.get(i);
             SimpleToken next = tokens.get(i + 1);
-            if (cur.getType().isOther() || cur.getType().isInit()) {
+            if (cur.getType().isOther() || cur.getType().isChain() || cur.getType().isInit()) {
                 if (prev.getType().isWhitespace()) {
                     toRemove.add(prev);
                 }
@@ -298,6 +303,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             // there must be a start ternary already, to let this be an end ternary
             ternary.decrementAndGet();
             return new TernaryExpression(token);
+        } else if (token.getType().isChain()) {
+            return new ChainExpression(token);
         } else if (token.getType().isOther()) {
             return new OtherExpression(token);
         } else if (token.getType().isInit()) {
@@ -384,7 +391,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     protected void templateText() {
         // for template, we accept anything but functions / ternary operator / other operator
         while (!token.getType().isFunctionStart() && !token.getType().isFunctionEnd() && !token.getType().isEol()
-                && !token.getType().isTernary() && !token.getType().isOther()) {
+                && !token.getType().isTernary() && !token.getType().isOther() && !token.getType().isChain()) {
             nextToken();
         }
     }
@@ -433,6 +440,36 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             } else {
                 throw new SimpleParserException(
                         "Other operator " + operatorType + " does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean chainOperator() {
+        if (accept(TokenType.chainOperator)) {
+            // remember the chain operator
+            ChainOperatorType operatorType = ChainOperatorType.asOperator(token.getText());
+
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expectAndAcceptMore(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Chain operator " + operatorType + " does not support token " + token, token.getIndex());
             }
             return true;
         }

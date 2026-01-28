@@ -18,12 +18,15 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimpleOperatorTest extends LanguageTestSupport {
 
@@ -898,17 +901,54 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     public void testChain() {
         exchange.getIn().setBody(null);
         assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", null);
-        exchange.getIn().setBody("Hello World");
+        exchange.getIn().setBody("   Hello    World   ");
         assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", "WORLD");
+        // run 2nd time give same result
+        assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", "WORLD");
+
+        exchange.getIn().setBody("  Hello    World   ");
+        Predicate predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()} == 'WORLD'");
+        boolean matches = predicate.matches(exchange);
+        assertTrue(matches);
+        // run 2nd time give same result
+        matches = predicate.matches(exchange);
+        assertTrue(matches);
+
+        exchange.getIn().setBody("  Hello    Camel   ");
+        predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()} == 'WORLD'");
+        matches = predicate.matches(exchange);
+        assertFalse(matches);
     }
 
     @Test
     public void testChainNullSafe() {
         exchange.getIn().setBody(null);
         assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${uppercase()}", null);
+        // run 2nd time give same result
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${uppercase()}", null);
+
+        Predicate predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${uppercase()}");
+        boolean matches = predicate.matches(exchange);
+        assertFalse(matches);
+        // run 2nd time give same result
+        matches = predicate.matches(exchange);
+        assertFalse(matches);
 
         exchange.getIn().setBody("Hello World,Hello Camel");
         assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${kindOfType()}", "object");
+        // run 2nd time give same result
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${kindOfType()}", "object");
+
+        predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${kindOfType()} == 'object'");
+        matches = predicate.matches(exchange);
+        assertTrue(matches);
+        // run 2nd time give same result
+        matches = predicate.matches(exchange);
+        assertTrue(matches);
     }
 
     @Override

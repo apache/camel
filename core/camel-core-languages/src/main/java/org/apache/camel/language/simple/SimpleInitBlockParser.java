@@ -125,7 +125,8 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         getTokenizer().setAcceptInitTokens(true);
         while (!token.getType().isInitVariable() && !token.getType().isEol()) {
             // skip until we find init variable/function (this skips code comments)
-            nextToken(TokenType.functionStart, TokenType.unaryOperator, TokenType.otherOperator, TokenType.initVariable,
+            nextToken(TokenType.functionStart, TokenType.unaryOperator, TokenType.chainOperator, TokenType.otherOperator,
+                    TokenType.initVariable,
                     TokenType.eol);
         }
         if (accept(TokenType.initVariable)) {

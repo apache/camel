@@ -87,8 +87,10 @@ public class SimpleTokenizer {
 
         // other operators
         KNOWN_TOKENS[44] = new SimpleTokenType(TokenType.otherOperator, "?:");
-        KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.otherOperator, "~>");
-        KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.otherOperator, "?~>");
+
+        // chain operators
+        KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.chainOperator, "~>");
+        KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.chainOperator, "?~>");
 
         // unary operators
         KNOWN_TOKENS[47] = new SimpleTokenType(TokenType.unaryOperator, "++");

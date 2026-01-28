@@ -194,6 +194,13 @@ public final class SimpleTokenType {
         return type == TokenType.ternaryOperator && ":".equals(value);
     }
 
+    /**
+     * Whether the type is chain operator
+     */
+    public boolean isChain() {
+        return type == TokenType.chainOperator;
+    }
+
     @Override
     public String toString() {
         return value;

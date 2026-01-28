@@ -30,6 +30,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.ast.BinaryExpression;
 import org.apache.camel.language.simple.ast.BooleanExpression;
+import org.apache.camel.language.simple.ast.ChainExpression;
 import org.apache.camel.language.simple.ast.DoubleQuoteEnd;
 import org.apache.camel.language.simple.ast.DoubleQuoteStart;
 import org.apache.camel.language.simple.ast.LiteralExpression;
@@ -46,6 +47,7 @@ import org.apache.camel.language.simple.ast.SingleQuoteStart;
 import org.apache.camel.language.simple.ast.TernaryExpression;
 import org.apache.camel.language.simple.ast.UnaryExpression;
 import org.apache.camel.language.simple.types.BinaryOperatorType;
+import org.apache.camel.language.simple.types.ChainOperatorType;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
 import org.apache.camel.language.simple.types.OtherOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
@@ -150,6 +152,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
                     && !unaryOperator()
                     && !binaryOperator()
                     && !ternaryOperator()
+                    && !chainOperator()
                     && !otherOperator()
                     && !logicalOperator()
                     && !isBooleanValue()
@@ -175,6 +178,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
         prepareBlocks();
         // compact and stack unary expressions
         prepareUnaryExpressions();
+        // compact and stack chain expressions
+        prepareChainExpression();
         // compact and stack binary expressions
         prepareBinaryExpressions();
         // compact and stack ternary expressions
@@ -374,6 +379,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
             return new TernaryExpression(token);
         } else if (token.getType().isOther()) {
             return new OtherExpression(token);
+        } else if (token.getType().isChain()) {
+            return new ChainExpression(token);
         } else if (token.getType().isLogical()) {
             return new LogicalExpression(token);
         } else if (token.getType().isNullValue()) {
@@ -818,6 +825,36 @@ public class SimplePredicateParser extends BaseSimpleParser {
             } else {
                 throw new SimpleParserException(
                         "Other operator " + operatorType + " does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean chainOperator() {
+        if (accept(TokenType.chainOperator)) {
+            // remember the chain operator
+            ChainOperatorType operatorType = ChainOperatorType.asOperator(token.getText());
+
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expectAndAcceptMore(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Chain operator " + operatorType + " does not support token " + token, token.getIndex());
             }
             return true;
         }
