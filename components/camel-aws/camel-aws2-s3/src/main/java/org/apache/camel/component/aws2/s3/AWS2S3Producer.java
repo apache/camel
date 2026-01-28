@@ -35,6 +35,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.aws2.s3.utils.AWS2S3Utils;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -331,6 +332,8 @@ public class AWS2S3Producer extends DefaultProducer {
                 // optimize for file payload
                 filePayload = (File) obj;
                 contentLength = filePayload.length();
+            } else if (obj instanceof GenericFile) {
+                contentLength = ((GenericFile) obj).getFileLength();
             } else {
                 // okay we use input stream
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
