@@ -73,6 +73,7 @@
         <module>camel-aws2-translate</module>
         <module>camel-aws-xray</module>
         <module>camel-aws2-rekognition</module>
+        <module>camel-aws-security-hub</module>
     </modules>
 
 </project>

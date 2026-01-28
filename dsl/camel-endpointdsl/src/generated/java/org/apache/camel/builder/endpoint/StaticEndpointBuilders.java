@@ -697,6 +697,46 @@ public class StaticEndpointBuilders {
         return SecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Security Hub (camel-aws-security-hub)
+     * Manage and interact with AWS Security Hub for security findings.
+     * 
+     * Category: cloud,security
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws-security-hub
+     * 
+     * Syntax: <code>aws-security-hub:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static SecurityHubEndpointBuilderFactory.SecurityHubEndpointBuilder awsSecurityHub(String path) {
+        return awsSecurityHub("aws-security-hub", path);
+    }
+    /**
+     * AWS Security Hub (camel-aws-security-hub)
+     * Manage and interact with AWS Security Hub for security findings.
+     * 
+     * Category: cloud,security
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws-security-hub
+     * 
+     * Syntax: <code>aws-security-hub:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static SecurityHubEndpointBuilderFactory.SecurityHubEndpointBuilder awsSecurityHub(String componentName, String path) {
+        return SecurityHubEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
      * 
