@@ -66,7 +66,7 @@ public class ParameterStoreEndpoint extends ScheduledPollEndpoint implements End
     public void doStart() throws Exception {
         super.doStart();
 
-        ssmClient = configuration.getSsmClient() != null
+        ssmClient = ObjectHelper.isNotEmpty(configuration.getSsmClient())
                 ? configuration.getSsmClient()
                 : ParameterStoreClientFactory.getSsmClient(configuration);
     }
@@ -74,7 +74,7 @@ public class ParameterStoreEndpoint extends ScheduledPollEndpoint implements End
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getSsmClient())) {
-            if (ssmClient != null) {
+            if (ObjectHelper.isNotEmpty(ssmClient)) {
                 ssmClient.close();
             }
         }
