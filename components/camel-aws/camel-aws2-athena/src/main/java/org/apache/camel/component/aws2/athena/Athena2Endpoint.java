@@ -67,7 +67,7 @@ public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceL
     public void doInit() throws Exception {
         super.doInit();
 
-        athenaClient = configuration.getAmazonAthenaClient() != null
+        athenaClient = ObjectHelper.isNotEmpty(configuration.getAmazonAthenaClient())
                 ? configuration.getAmazonAthenaClient()
                 : Athena2ClientFactory.getAthenaClient(configuration);
 
@@ -76,7 +76,7 @@ public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceL
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonAthenaClient())) {
-            if (athenaClient != null) {
+            if (ObjectHelper.isNotEmpty(athenaClient)) {
                 athenaClient.close();
             }
         }
@@ -114,7 +114,7 @@ public class Athena2Endpoint extends DefaultEndpoint implements EndpointServiceL
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getDatabase() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getDatabase())) {
             return Map.of("database", configuration.getDatabase());
         }
         return null;

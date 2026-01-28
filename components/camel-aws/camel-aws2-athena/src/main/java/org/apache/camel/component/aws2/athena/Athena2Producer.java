@@ -133,7 +133,7 @@ public class Athena2Producer extends DefaultProducer {
             GetQueryResultsRequest request = doGetQueryResultsRequest(queryExecutionId, exchange).build();
             GetQueryResultsResponse response = athenaClient.getQueryResults(request);
             message.setHeader(Athena2Constants.NEXT_TOKEN, response.nextToken());
-            message.setHeader(Athena2Constants.IS_TRUNCATED, response.nextToken() != null);
+            message.setHeader(Athena2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
             message.setBody(response);
         } else if (outputType == Athena2OutputType.S3Pointer) {
             GetQueryExecutionResponse response = doGetQueryExecution(queryExecutionId, athenaClient);
@@ -190,7 +190,7 @@ public class Athena2Producer extends DefaultProducer {
         ListQueryExecutionsResponse response = athenaClient.listQueryExecutions(request.build());
         Message message = getMessageForResponse(exchange);
         message.setHeader(Athena2Constants.NEXT_TOKEN, response.nextToken());
-        message.setHeader(Athena2Constants.IS_TRUNCATED, response.nextToken() != null);
+        message.setHeader(Athena2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
         message.setBody(response);
     }
 
@@ -306,7 +306,7 @@ public class Athena2Producer extends DefaultProducer {
                 Boolean.class,
                 () -> getConfiguration().isIncludeTrace(),
                 "include trace");
-        return includeTrace != null ? includeTrace : false;
+        return ObjectHelper.isNotEmpty(includeTrace) ? includeTrace : false;
     }
 
     private String determineNextToken(final Exchange exchange) {
@@ -469,7 +469,7 @@ public class Athena2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Athena2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -479,7 +479,7 @@ public class Athena2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
