@@ -35,4 +35,10 @@ public interface WrappedFile<T> {
      */
     Object getBody();
 
+    /**
+     * Gets the file length in bytes.
+     *
+     * @return the length of the file in bytes.
+     */
+    long getFileLength();
 }
