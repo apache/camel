@@ -119,11 +119,11 @@ public class KMS2Producer extends DefaultProducer {
                 () -> {
                     ListKeysRequest.Builder builder = ListKeysRequest.builder();
                     Integer limit = getOptionalHeader(exchange, KMS2Constants.LIMIT, Integer.class);
-                    if (limit != null) {
+                    if (ObjectHelper.isNotEmpty(limit)) {
                         builder.limit(limit);
                     }
                     String marker = getOptionalHeader(exchange, KMS2Constants.MARKER, String.class);
-                    if (marker != null) {
+                    if (ObjectHelper.isNotEmpty(marker)) {
                         builder.marker(marker);
                     }
                     return kmsClient.listKeys(builder.build());
@@ -143,14 +143,14 @@ public class KMS2Producer extends DefaultProducer {
                 () -> {
                     CreateKeyRequest.Builder builder = CreateKeyRequest.builder();
                     String description = getOptionalHeader(exchange, KMS2Constants.DESCRIPTION, String.class);
-                    if (description != null) {
+                    if (ObjectHelper.isNotEmpty(description)) {
                         builder.description(description);
                     }
                     return kmsClient.createKey(builder.build());
                 },
                 "Create Key",
                 (CreateKeyResponse response, Message message) -> {
-                    if (response.keyMetadata() != null) {
+                    if (ObjectHelper.isNotEmpty(response.keyMetadata())) {
                         message.setHeader(KMS2Constants.KEY_ID, response.keyMetadata().keyId());
                         message.setHeader(KMS2Constants.KEY_ARN, response.keyMetadata().arn());
                         message.setHeader(KMS2Constants.KEY_STATE, response.keyMetadata().keyStateAsString());
@@ -180,7 +180,7 @@ public class KMS2Producer extends DefaultProducer {
                     String keyId = getRequiredHeader(exchange, KMS2Constants.KEY_ID, String.class, MISSING_KEY_ID);
                     builder.keyId(keyId);
                     Integer pendingWindows = getOptionalHeader(exchange, KMS2Constants.PENDING_WINDOW_IN_DAYS, Integer.class);
-                    if (pendingWindows != null) {
+                    if (ObjectHelper.isNotEmpty(pendingWindows)) {
                         builder.pendingWindowInDays(pendingWindows);
                     }
                     return kmsClient.scheduleKeyDeletion(builder.build());
@@ -203,7 +203,7 @@ public class KMS2Producer extends DefaultProducer {
                 },
                 "Describe Key",
                 (DescribeKeyResponse response, Message message) -> {
-                    if (response.keyMetadata() != null) {
+                    if (ObjectHelper.isNotEmpty(response.keyMetadata())) {
                         message.setHeader(KMS2Constants.KEY_ID, response.keyMetadata().keyId());
                         message.setHeader(KMS2Constants.KEY_ARN, response.keyMetadata().arn());
                         message.setHeader(KMS2Constants.KEY_STATE, response.keyMetadata().keyStateAsString());
@@ -266,7 +266,7 @@ public class KMS2Producer extends DefaultProducer {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
                                 requestClass.getName(),
-                                payload != null ? payload.getClass().getName() : "null"));
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
             }
         } else {
             try {
@@ -278,7 +278,7 @@ public class KMS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
-        if (responseProcessor != null) {
+        if (ObjectHelper.isNotEmpty(responseProcessor)) {
             responseProcessor.accept(result, message);
         }
     }
