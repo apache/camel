@@ -503,6 +503,24 @@ public class SmbOperations implements SmbFileOperations {
         }
     }
 
+    @Override
+    public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
+        try {
+            try (File shareFile = share.openFile(name, EnumSet.of(AccessMask.FILE_WRITE_DATA),
+                    EnumSet.of(FileAttributes.FILE_ATTRIBUTE_NORMAL),
+                    SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OVERWRITE_IF,
+                    EnumSet.of(SMB2CreateOptions.FILE_DIRECTORY_FILE))) {
+                writeToFile(name, shareFile, bis);
+            }
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        } finally {
+            IOHelper.close(bis);
+        }
+        return true;
+    }
+
     public void createDirectory(DiskShare share, String fileName) {
         String parentDir = FileUtil.onlyPath(fileName);
         boolean dirExists = share.folderExists(parentDir);

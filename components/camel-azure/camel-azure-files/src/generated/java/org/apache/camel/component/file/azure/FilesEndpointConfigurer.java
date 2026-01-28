@@ -45,6 +45,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "browseLimit": target.setBrowseLimit(property(camelContext, int.class, value)); return true;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "checksumwritefile":
+        case "checksumWriteFile": target.setChecksumWriteFile(property(camelContext, boolean.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
         case "credentialtype":
@@ -225,6 +227,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "browseLimit": return int.class;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return java.lang.String.class;
+        case "checksumwritefile":
+        case "checksumWriteFile": return boolean.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
         case "credentialtype":
@@ -406,6 +410,8 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "browseLimit": return target.getBrowseLimit();
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
+        case "checksumwritefile":
+        case "checksumWriteFile": return target.isChecksumWriteFile();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();
         case "credentialtype":

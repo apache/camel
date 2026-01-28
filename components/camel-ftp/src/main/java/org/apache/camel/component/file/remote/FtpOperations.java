@@ -807,6 +807,18 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     @Override
+    public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
+        try {
+            return client.storeFile(name, bis);
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        } finally {
+            IOHelper.close(bis);
+        }
+    }
+
+    @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         log.trace("existsFile({})", name);
         if (endpoint.isFastExistsCheck()) {

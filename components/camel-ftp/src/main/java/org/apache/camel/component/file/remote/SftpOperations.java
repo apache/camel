@@ -1155,6 +1155,21 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     @Override
+    public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        lock.lock();
+        ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes());
+        try {
+            channel.put(bis, name);
+            return true;
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
+        } finally {
+            IOHelper.close(bis);
+            lock.unlock();
+        }
+    }
+
+    @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         lock.lock();
         try {
