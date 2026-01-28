@@ -65,7 +65,7 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
     public void doStart() throws Exception {
         super.doStart();
 
-        bedrockAgentRuntimeClient = configuration.getBedrockAgentRuntimeClient() != null
+        bedrockAgentRuntimeClient = ObjectHelper.isNotEmpty(configuration.getBedrockAgentRuntimeClient())
                 ? configuration.getBedrockAgentRuntimeClient()
                 : BedrockAgentRuntimeClientFactory.getBedrockAgentRuntimeClient(configuration);
     }
@@ -73,7 +73,7 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getBedrockAgentRuntimeClient())) {
-            if (bedrockAgentRuntimeClient != null) {
+            if (ObjectHelper.isNotEmpty(bedrockAgentRuntimeClient)) {
                 bedrockAgentRuntimeClient.close();
             }
         }
@@ -108,7 +108,7 @@ public class BedrockAgentRuntimeEndpoint extends ScheduledPollEndpoint implement
     @Override
     public Map<String, String> getServiceMetadata() {
         HashMap<String, String> metadata = new HashMap<>();
-        if (configuration.getModelId() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getModelId())) {
             metadata.put("modelId", configuration.getModelId());
         }
         return metadata;

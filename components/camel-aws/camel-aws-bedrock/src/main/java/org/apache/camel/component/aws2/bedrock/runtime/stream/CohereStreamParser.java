@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Parser for Cohere model streaming responses
@@ -39,9 +40,9 @@ public class CohereStreamParser implements StreamResponseParser {
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode eventType = node.get("event_type");
 
-        if (eventType != null && "text-generation".equals(eventType.asText())) {
+        if (ObjectHelper.isNotEmpty(eventType) && "text-generation".equals(eventType.asText())) {
             JsonNode text = node.get("text");
-            return text != null && !text.isNull() ? text.asText() : "";
+            return ObjectHelper.isNotEmpty(text) && !text.isNull() ? text.asText() : "";
         }
         return "";
     }
@@ -53,7 +54,7 @@ public class CohereStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode finishReason = node.get("finish_reason");
-        return finishReason != null && !finishReason.isNull() ? finishReason.asText() : null;
+        return ObjectHelper.isNotEmpty(finishReason) && !finishReason.isNull() ? finishReason.asText() : null;
     }
 
     @Override
@@ -63,13 +64,13 @@ public class CohereStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode response = node.get("response");
-        if (response != null) {
+        if (ObjectHelper.isNotEmpty(response)) {
             JsonNode meta = response.get("meta");
-            if (meta != null) {
+            if (ObjectHelper.isNotEmpty(meta)) {
                 JsonNode tokens = meta.get("tokens");
-                if (tokens != null) {
+                if (ObjectHelper.isNotEmpty(tokens)) {
                     JsonNode outputTokens = tokens.get("output_tokens");
-                    return outputTokens != null && !outputTokens.isNull() ? outputTokens.asInt() : null;
+                    return ObjectHelper.isNotEmpty(outputTokens) && !outputTokens.isNull() ? outputTokens.asInt() : null;
                 }
             }
         }
@@ -83,6 +84,6 @@ public class CohereStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode isFinished = node.get("is_finished");
-        return isFinished != null && isFinished.asBoolean(false);
+        return ObjectHelper.isNotEmpty(isFinished) && isFinished.asBoolean(false);
     }
 }

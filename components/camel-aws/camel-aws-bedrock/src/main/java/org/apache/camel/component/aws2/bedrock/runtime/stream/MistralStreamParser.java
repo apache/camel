@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Parser for Mistral AI model streaming responses
@@ -37,10 +38,10 @@ public class MistralStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode outputs = node.get("outputs");
-        if (outputs != null && outputs.isArray() && outputs.size() > 0) {
+        if (ObjectHelper.isNotEmpty(outputs) && outputs.isArray() && outputs.size() > 0) {
             JsonNode firstOutput = outputs.get(0);
             JsonNode text = firstOutput.get("text");
-            return text != null && !text.isNull() ? text.asText() : "";
+            return ObjectHelper.isNotEmpty(text) && !text.isNull() ? text.asText() : "";
         }
         return "";
     }
@@ -52,10 +53,10 @@ public class MistralStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode outputs = node.get("outputs");
-        if (outputs != null && outputs.isArray() && outputs.size() > 0) {
+        if (ObjectHelper.isNotEmpty(outputs) && outputs.isArray() && outputs.size() > 0) {
             JsonNode firstOutput = outputs.get(0);
             JsonNode stopReason = firstOutput.get("stop_reason");
-            return stopReason != null && !stopReason.isNull() ? stopReason.asText() : null;
+            return ObjectHelper.isNotEmpty(stopReason) && !stopReason.isNull() ? stopReason.asText() : null;
         }
         return null;
     }
@@ -70,6 +71,6 @@ public class MistralStreamParser implements StreamResponseParser {
     @Override
     public boolean isFinalChunk(String chunk) throws JsonProcessingException {
         String stopReason = extractCompletionReason(chunk);
-        return stopReason != null && !stopReason.isEmpty();
+        return ObjectHelper.isNotEmpty(stopReason);
     }
 }

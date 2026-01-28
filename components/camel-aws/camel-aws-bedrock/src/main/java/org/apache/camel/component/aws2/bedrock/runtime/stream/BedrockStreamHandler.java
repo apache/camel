@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamResponseHandler;
@@ -57,19 +58,19 @@ public final class BedrockStreamHandler {
                             try {
                                 String chunkJson = part.bytes().asUtf8String();
                                 String text = parser.extractText(chunkJson);
-                                if (text != null && !text.isEmpty()) {
+                                if (ObjectHelper.isNotEmpty(text)) {
                                     fullText.append(text);
                                 }
 
                                 // Extract metadata from final chunk
                                 if (parser.isFinalChunk(chunkJson)) {
                                     String completionReason = parser.extractCompletionReason(chunkJson);
-                                    if (completionReason != null) {
+                                    if (ObjectHelper.isNotEmpty(completionReason)) {
                                         metadata.setCompletionReason(completionReason);
                                     }
 
                                     Integer tokenCount = parser.extractTokenCount(chunkJson);
-                                    if (tokenCount != null) {
+                                    if (ObjectHelper.isNotEmpty(tokenCount)) {
                                         metadata.setTokenCount(tokenCount);
                                     }
                                 }
@@ -111,9 +112,9 @@ public final class BedrockStreamHandler {
                                 String chunkJson = part.bytes().asUtf8String();
                                 String text = parser.extractText(chunkJson);
 
-                                if (text != null && !text.isEmpty()) {
+                                if (ObjectHelper.isNotEmpty(text)) {
                                     chunks.add(text);
-                                    if (chunkConsumer != null) {
+                                    if (ObjectHelper.isNotEmpty(chunkConsumer)) {
                                         chunkConsumer.accept(text);
                                     }
                                 }
@@ -121,12 +122,12 @@ public final class BedrockStreamHandler {
                                 // Extract metadata from final chunk
                                 if (parser.isFinalChunk(chunkJson)) {
                                     String completionReason = parser.extractCompletionReason(chunkJson);
-                                    if (completionReason != null) {
+                                    if (ObjectHelper.isNotEmpty(completionReason)) {
                                         metadata.setCompletionReason(completionReason);
                                     }
 
                                     Integer tokenCount = parser.extractTokenCount(chunkJson);
-                                    if (tokenCount != null) {
+                                    if (ObjectHelper.isNotEmpty(tokenCount)) {
                                         metadata.setTokenCount(tokenCount);
                                     }
                                 }
