@@ -61,14 +61,14 @@ public class AWS2EC2Endpoint extends DefaultEndpoint implements EndpointServiceL
     public void doStart() throws Exception {
         super.doStart();
 
-        ec2Client = configuration.getAmazonEc2Client() != null
+        ec2Client = ObjectHelper.isNotEmpty(configuration.getAmazonEc2Client())
                 ? configuration.getAmazonEc2Client() : AWS2EC2ClientFactory.getEc2Client(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonEc2Client())) {
-            if (ec2Client != null) {
+            if (ObjectHelper.isNotEmpty(ec2Client)) {
                 ec2Client.close();
             }
         }

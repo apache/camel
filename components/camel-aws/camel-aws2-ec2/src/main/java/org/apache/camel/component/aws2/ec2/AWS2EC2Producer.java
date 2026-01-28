@@ -371,15 +371,15 @@ public class AWS2EC2Producer extends DefaultProducer {
                     DescribeInstancesRequest.Builder builder = DescribeInstancesRequest.builder();
                     Collection<String> instanceIds
                             = getOptionalHeader(exchange, AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-                    if (instanceIds != null) {
+                    if (ObjectHelper.isNotEmpty(instanceIds)) {
                         builder.instanceIds(instanceIds);
                     }
                     String nextToken = getOptionalHeader(exchange, AWS2EC2Constants.NEXT_TOKEN, String.class);
-                    if (nextToken != null) {
+                    if (ObjectHelper.isNotEmpty(nextToken)) {
                         builder.nextToken(nextToken);
                     }
                     Integer maxResults = getOptionalHeader(exchange, AWS2EC2Constants.MAX_RESULTS, Integer.class);
-                    if (maxResults != null) {
+                    if (ObjectHelper.isNotEmpty(maxResults)) {
                         builder.maxResults(maxResults);
                     }
                     return ec2Client.describeInstances(builder.build());
@@ -387,7 +387,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 "Describe Instances",
                 (DescribeInstancesResponse response, Message message) -> {
                     message.setHeader(AWS2EC2Constants.NEXT_TOKEN, response.nextToken());
-                    message.setHeader(AWS2EC2Constants.IS_TRUNCATED, response.nextToken() != null);
+                    message.setHeader(AWS2EC2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
                 });
     }
 
@@ -401,15 +401,15 @@ public class AWS2EC2Producer extends DefaultProducer {
                     DescribeInstanceStatusRequest.Builder builder = DescribeInstanceStatusRequest.builder();
                     Collection<String> instanceIds
                             = getOptionalHeader(exchange, AWS2EC2Constants.INSTANCES_IDS, Collection.class);
-                    if (instanceIds != null) {
+                    if (ObjectHelper.isNotEmpty(instanceIds)) {
                         builder.instanceIds(instanceIds);
                     }
                     String nextToken = getOptionalHeader(exchange, AWS2EC2Constants.NEXT_TOKEN, String.class);
-                    if (nextToken != null) {
+                    if (ObjectHelper.isNotEmpty(nextToken)) {
                         builder.nextToken(nextToken);
                     }
                     Integer maxResults = getOptionalHeader(exchange, AWS2EC2Constants.MAX_RESULTS, Integer.class);
-                    if (maxResults != null) {
+                    if (ObjectHelper.isNotEmpty(maxResults)) {
                         builder.maxResults(maxResults);
                     }
                     return ec2Client.describeInstanceStatus(builder.build());
@@ -417,7 +417,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 "Describe Instances Status",
                 (DescribeInstanceStatusResponse response, Message message) -> {
                     message.setHeader(AWS2EC2Constants.NEXT_TOKEN, response.nextToken());
-                    message.setHeader(AWS2EC2Constants.IS_TRUNCATED, response.nextToken() != null);
+                    message.setHeader(AWS2EC2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
                 });
     }
 
@@ -682,7 +682,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
                                 requestClass.getName(),
-                                payload != null ? payload.getClass().getName() : "null"));
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
             }
         } else {
             try {
@@ -694,7 +694,7 @@ public class AWS2EC2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
-        if (responseProcessor != null) {
+        if (ObjectHelper.isNotEmpty(responseProcessor)) {
             responseProcessor.accept(result, message);
         }
     }
@@ -726,7 +726,7 @@ public class AWS2EC2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new AWS2EC2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -736,7 +736,7 @@ public class AWS2EC2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
