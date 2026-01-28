@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.polly.Polly2Constants;
-import org.apache.camel.component.aws2.polly.Polly2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -56,10 +55,6 @@ public class Polly2ProducerManualIT extends CamelTestSupport {
         Exchange exchange = template.request("direct:synthesizeSpeech", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Polly2Constants.OPERATION, Polly2Operations.synthesizeSpeech);
-                exchange.getIn().setHeader(Polly2Constants.VOICE_ID, VoiceId.JOANNA);
-                exchange.getIn().setHeader(Polly2Constants.OUTPUT_FORMAT, OutputFormat.MP3);
-                exchange.getIn().setHeader(Polly2Constants.TEXT_TYPE, TextType.TEXT);
                 exchange.getIn().setBody("Hello, this is a test of Amazon Polly.");
             }
         });
@@ -97,7 +92,7 @@ public class Polly2ProducerManualIT extends CamelTestSupport {
         Exchange exchange = template.request("direct:describeVoices", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Polly2Constants.OPERATION, Polly2Operations.describeVoices);
+                // No headers needed - operation is set in endpoint
             }
         });
 
@@ -133,7 +128,7 @@ public class Polly2ProducerManualIT extends CamelTestSupport {
         Exchange exchange = template.request("direct:listLexicons", new Processor() {
             @Override
             public void process(Exchange exchange) {
-                exchange.getIn().setHeader(Polly2Constants.OPERATION, Polly2Operations.listLexicons);
+                // No headers needed - operation is set in endpoint
             }
         });
 
@@ -150,7 +145,7 @@ public class Polly2ProducerManualIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:synthesizeSpeech")
-                        .to("aws2-polly://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=us-east-1&operation=synthesizeSpeech")
+                        .to("aws2-polly://test?accessKey=RAW({{aws.access.key}})&secretKey=RAW({{aws.secret.key}})&region=us-east-1&operation=synthesizeSpeech&voiceId=JOANNA&outputFormat=MP3&textType=TEXT")
                         .to("mock:result");
 
                 from("direct:synthesizeSpeechPojo")

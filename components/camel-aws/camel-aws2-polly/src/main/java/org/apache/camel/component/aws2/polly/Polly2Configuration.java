@@ -69,6 +69,18 @@ public class Polly2Configuration implements Cloneable, AwsCommonConfiguration {
     private String languageCode;
     @UriParam(description = "Lexicon names to apply during synthesis")
     private String lexiconNames;
+    @UriParam(description = "The name of the lexicon to use for getLexicon, putLexicon, or deleteLexicon operations")
+    private String lexiconName;
+    @UriParam(description = "The content of the lexicon in PLS format for putLexicon operation")
+    private String lexiconContent;
+    @UriParam(description = "The task ID for getSpeechSynthesisTask operation")
+    private String taskId;
+    @UriParam(description = "The S3 bucket name for startSpeechSynthesisTask operation output")
+    private String s3Bucket;
+    @UriParam(description = "The S3 key prefix for startSpeechSynthesisTask operation output")
+    private String s3KeyPrefix;
+    @UriParam(description = "The SNS topic ARN for startSpeechSynthesisTask notifications")
+    private String snsTopicArn;
     @UriParam
     private boolean pojoRequest;
     @UriParam(label = "security")
@@ -262,6 +274,72 @@ public class Polly2Configuration implements Cloneable, AwsCommonConfiguration {
      */
     public void setLexiconNames(String lexiconNames) {
         this.lexiconNames = lexiconNames;
+    }
+
+    public String getLexiconName() {
+        return lexiconName;
+    }
+
+    /**
+     * The name of the lexicon to use for getLexicon, putLexicon, or deleteLexicon operations
+     */
+    public void setLexiconName(String lexiconName) {
+        this.lexiconName = lexiconName;
+    }
+
+    public String getLexiconContent() {
+        return lexiconContent;
+    }
+
+    /**
+     * The content of the lexicon in PLS format for putLexicon operation
+     */
+    public void setLexiconContent(String lexiconContent) {
+        this.lexiconContent = lexiconContent;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    /**
+     * The task ID for getSpeechSynthesisTask operation
+     */
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getS3Bucket() {
+        return s3Bucket;
+    }
+
+    /**
+     * The S3 bucket name for startSpeechSynthesisTask operation output
+     */
+    public void setS3Bucket(String s3Bucket) {
+        this.s3Bucket = s3Bucket;
+    }
+
+    public String getS3KeyPrefix() {
+        return s3KeyPrefix;
+    }
+
+    /**
+     * The S3 key prefix for startSpeechSynthesisTask operation output
+     */
+    public void setS3KeyPrefix(String s3KeyPrefix) {
+        this.s3KeyPrefix = s3KeyPrefix;
+    }
+
+    public String getSnsTopicArn() {
+        return snsTopicArn;
+    }
+
+    /**
+     * The SNS topic ARN for startSpeechSynthesisTask notifications
+     */
+    public void setSnsTopicArn(String snsTopicArn) {
+        this.snsTopicArn = snsTopicArn;
     }
 
     public boolean isPojoRequest() {

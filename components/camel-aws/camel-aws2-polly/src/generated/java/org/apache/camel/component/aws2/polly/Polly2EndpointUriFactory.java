@@ -23,12 +23,14 @@ public class Polly2EndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(26);
+        Set<String> props = new HashSet<>(32);
         props.add("accessKey");
         props.add("engine");
         props.add("label");
         props.add("languageCode");
         props.add("lazyStartProducer");
+        props.add("lexiconContent");
+        props.add("lexiconName");
         props.add("lexiconNames");
         props.add("operation");
         props.add("outputFormat");
@@ -40,9 +42,13 @@ public class Polly2EndpointUriFactory extends org.apache.camel.support.component
         props.add("proxyPort");
         props.add("proxyProtocol");
         props.add("region");
+        props.add("s3Bucket");
+        props.add("s3KeyPrefix");
         props.add("sampleRate");
         props.add("secretKey");
         props.add("sessionToken");
+        props.add("snsTopicArn");
+        props.add("taskId");
         props.add("textType");
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");

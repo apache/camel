@@ -124,6 +124,37 @@ public interface Aws2PollyComponentBuilderFactory {
         }
     
         /**
+         * The content of the lexicon in PLS format for putLexicon operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param lexiconContent the value to set
+         * @return the dsl builder
+         */
+        default Aws2PollyComponentBuilder lexiconContent(java.lang.String lexiconContent) {
+            doSetProperty("lexiconContent", lexiconContent);
+            return this;
+        }
+    
+        /**
+         * The name of the lexicon to use for getLexicon, putLexicon, or
+         * deleteLexicon operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param lexiconName the value to set
+         * @return the dsl builder
+         */
+        default Aws2PollyComponentBuilder lexiconName(java.lang.String lexiconName) {
+            doSetProperty("lexiconName", lexiconName);
+            return this;
+        }
+    
+        /**
          * Lexicon names to apply during synthesis.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -228,6 +259,36 @@ public interface Aws2PollyComponentBuilderFactory {
         }
     
         /**
+         * The S3 bucket name for startSpeechSynthesisTask operation output.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param s3Bucket the value to set
+         * @return the dsl builder
+         */
+        default Aws2PollyComponentBuilder s3Bucket(java.lang.String s3Bucket) {
+            doSetProperty("s3Bucket", s3Bucket);
+            return this;
+        }
+    
+        /**
+         * The S3 key prefix for startSpeechSynthesisTask operation output.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param s3KeyPrefix the value to set
+         * @return the dsl builder
+         */
+        default Aws2PollyComponentBuilder s3KeyPrefix(java.lang.String s3KeyPrefix) {
+            doSetProperty("s3KeyPrefix", s3KeyPrefix);
+            return this;
+        }
+    
+        /**
          * The sample rate in Hz for the audio output.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -239,6 +300,36 @@ public interface Aws2PollyComponentBuilderFactory {
          */
         default Aws2PollyComponentBuilder sampleRate(java.lang.String sampleRate) {
             doSetProperty("sampleRate", sampleRate);
+            return this;
+        }
+    
+        /**
+         * The SNS topic ARN for startSpeechSynthesisTask notifications.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param snsTopicArn the value to set
+         * @return the dsl builder
+         */
+        default Aws2PollyComponentBuilder snsTopicArn(java.lang.String snsTopicArn) {
+            doSetProperty("snsTopicArn", snsTopicArn);
+            return this;
+        }
+    
+        /**
+         * The task ID for getSpeechSynthesisTask operation.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
+         */
+        default Aws2PollyComponentBuilder taskId(java.lang.String taskId) {
+            doSetProperty("taskId", taskId);
             return this;
         }
     
@@ -576,13 +667,19 @@ public interface Aws2PollyComponentBuilderFactory {
             case "engine": getOrCreateConfiguration((Polly2Component) component).setEngine((software.amazon.awssdk.services.polly.model.Engine) value); return true;
             case "languageCode": getOrCreateConfiguration((Polly2Component) component).setLanguageCode((java.lang.String) value); return true;
             case "lazyStartProducer": ((Polly2Component) component).setLazyStartProducer((boolean) value); return true;
+            case "lexiconContent": getOrCreateConfiguration((Polly2Component) component).setLexiconContent((java.lang.String) value); return true;
+            case "lexiconName": getOrCreateConfiguration((Polly2Component) component).setLexiconName((java.lang.String) value); return true;
             case "lexiconNames": getOrCreateConfiguration((Polly2Component) component).setLexiconNames((java.lang.String) value); return true;
             case "operation": getOrCreateConfiguration((Polly2Component) component).setOperation((org.apache.camel.component.aws2.polly.Polly2Operations) value); return true;
             case "outputFormat": getOrCreateConfiguration((Polly2Component) component).setOutputFormat((software.amazon.awssdk.services.polly.model.OutputFormat) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Polly2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((Polly2Component) component).setPojoRequest((boolean) value); return true;
             case "region": getOrCreateConfiguration((Polly2Component) component).setRegion((java.lang.String) value); return true;
+            case "s3Bucket": getOrCreateConfiguration((Polly2Component) component).setS3Bucket((java.lang.String) value); return true;
+            case "s3KeyPrefix": getOrCreateConfiguration((Polly2Component) component).setS3KeyPrefix((java.lang.String) value); return true;
             case "sampleRate": getOrCreateConfiguration((Polly2Component) component).setSampleRate((java.lang.String) value); return true;
+            case "snsTopicArn": getOrCreateConfiguration((Polly2Component) component).setSnsTopicArn((java.lang.String) value); return true;
+            case "taskId": getOrCreateConfiguration((Polly2Component) component).setTaskId((java.lang.String) value); return true;
             case "textType": getOrCreateConfiguration((Polly2Component) component).setTextType((software.amazon.awssdk.services.polly.model.TextType) value); return true;
             case "uriEndpointOverride": getOrCreateConfiguration((Polly2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "voiceId": getOrCreateConfiguration((Polly2Component) component).setVoiceId((software.amazon.awssdk.services.polly.model.VoiceId) value); return true;

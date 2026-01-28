@@ -91,6 +91,35 @@ public interface Polly2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The content of the lexicon in PLS format for putLexicon operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param lexiconContent the value to set
+         * @return the dsl builder
+         */
+        default Polly2EndpointBuilder lexiconContent(String lexiconContent) {
+            doSetProperty("lexiconContent", lexiconContent);
+            return this;
+        }
+        /**
+         * The name of the lexicon to use for getLexicon, putLexicon, or
+         * deleteLexicon operations.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param lexiconName the value to set
+         * @return the dsl builder
+         */
+        default Polly2EndpointBuilder lexiconName(String lexiconName) {
+            doSetProperty("lexiconName", lexiconName);
+            return this;
+        }
+        /**
          * Lexicon names to apply during synthesis.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -254,6 +283,34 @@ public interface Polly2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The S3 bucket name for startSpeechSynthesisTask operation output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param s3Bucket the value to set
+         * @return the dsl builder
+         */
+        default Polly2EndpointBuilder s3Bucket(String s3Bucket) {
+            doSetProperty("s3Bucket", s3Bucket);
+            return this;
+        }
+        /**
+         * The S3 key prefix for startSpeechSynthesisTask operation output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param s3KeyPrefix the value to set
+         * @return the dsl builder
+         */
+        default Polly2EndpointBuilder s3KeyPrefix(String s3KeyPrefix) {
+            doSetProperty("s3KeyPrefix", s3KeyPrefix);
+            return this;
+        }
+        /**
          * The sample rate in Hz for the audio output.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -265,6 +322,34 @@ public interface Polly2EndpointBuilderFactory {
          */
         default Polly2EndpointBuilder sampleRate(String sampleRate) {
             doSetProperty("sampleRate", sampleRate);
+            return this;
+        }
+        /**
+         * The SNS topic ARN for startSpeechSynthesisTask notifications.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param snsTopicArn the value to set
+         * @return the dsl builder
+         */
+        default Polly2EndpointBuilder snsTopicArn(String snsTopicArn) {
+            doSetProperty("snsTopicArn", snsTopicArn);
+            return this;
+        }
+        /**
+         * The task ID for getSpeechSynthesisTask operation.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param taskId the value to set
+         * @return the dsl builder
+         */
+        default Polly2EndpointBuilder taskId(String taskId) {
+            doSetProperty("taskId", taskId);
             return this;
         }
         /**
