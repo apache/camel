@@ -114,20 +114,20 @@ public class MSK2Producer extends DefaultProducer {
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
                 message.setHeader(MSK2Constants.NEXT_TOKEN, result.nextToken());
-                message.setHeader(MSK2Constants.IS_TRUNCATED, result.nextToken() != null);
+                message.setHeader(MSK2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextToken()));
             }
         } else {
             ListClustersRequest.Builder builder = ListClustersRequest.builder();
             String filter = getOptionalHeader(exchange, MSK2Constants.CLUSTERS_FILTER, String.class);
-            if (filter != null) {
+            if (ObjectHelper.isNotEmpty(filter)) {
                 builder.clusterNameFilter(filter);
             }
             String nextToken = getOptionalHeader(exchange, MSK2Constants.NEXT_TOKEN, String.class);
-            if (nextToken != null) {
+            if (ObjectHelper.isNotEmpty(nextToken)) {
                 builder.nextToken(nextToken);
             }
             Integer maxResults = getOptionalHeader(exchange, MSK2Constants.MAX_RESULTS, Integer.class);
-            if (maxResults != null) {
+            if (ObjectHelper.isNotEmpty(maxResults)) {
                 builder.maxResults(maxResults);
             }
             ListClustersResponse result;
@@ -140,7 +140,7 @@ public class MSK2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             message.setHeader(MSK2Constants.NEXT_TOKEN, result.nextToken());
-            message.setHeader(MSK2Constants.IS_TRUNCATED, result.nextToken() != null);
+            message.setHeader(MSK2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextToken()));
         }
     }
 
@@ -264,7 +264,7 @@ public class MSK2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
-            if (result.clusterInfo() != null) {
+            if (ObjectHelper.isNotEmpty(result.clusterInfo())) {
                 message.setHeader(MSK2Constants.CLUSTER_ARN, result.clusterInfo().clusterArn());
                 message.setHeader(MSK2Constants.CLUSTER_STATE, result.clusterInfo().stateAsString());
             }
@@ -290,7 +290,7 @@ public class MSK2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new MSK2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -300,7 +300,7 @@ public class MSK2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

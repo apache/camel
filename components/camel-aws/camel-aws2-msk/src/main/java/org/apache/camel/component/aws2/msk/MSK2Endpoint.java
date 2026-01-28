@@ -66,7 +66,7 @@ public class MSK2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     public void doStart() throws Exception {
         super.doStart();
 
-        mskClient = configuration.getMskClient() != null
+        mskClient = ObjectHelper.isNotEmpty(configuration.getMskClient())
                 ? configuration.getMskClient()
                 : MSK2ClientFactory.getKafkaClient(configuration);
     }
@@ -74,7 +74,7 @@ public class MSK2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getMskClient())) {
-            if (mskClient != null) {
+            if (ObjectHelper.isNotEmpty(mskClient)) {
                 mskClient.close();
             }
         }
