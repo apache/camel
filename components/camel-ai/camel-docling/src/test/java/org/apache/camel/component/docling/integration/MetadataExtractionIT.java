@@ -24,7 +24,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DocumentMetadata;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
@@ -88,15 +90,17 @@ class MetadataExtractionIT extends DoclingITestSupport {
     @Test
     void testMetadataExtractionWithHeaders() throws Exception {
         Path testFile = createTestMarkdownFile();
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:afterMetadataExtraction", MockEndpoint.class);
+        resultEndpoint.expectedHeaderReceived(DoclingHeaders.METADATA_FORMAT, "text/markdown");
 
         // Extract metadata with headers enabled (default behavior)
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata-with-headers",
                 testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
-        assertNotNull(metadata.getFileName(), "File name should be extracted");
+        assertThat(metadata.getFormat()).isEqualTo("text/markdown");
 
-        // TODO: verify headers are populated
+        resultEndpoint.assertIsSatisfied();
 
         LOG.info("Successfully extracted metadata with headers: {}", metadata);
     }
@@ -104,12 +108,16 @@ class MetadataExtractionIT extends DoclingITestSupport {
     @Test
     void testMetadataExtractionWithoutHeaders() throws Exception {
         Path testFile = createTestMarkdownFile();
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:afterMetadataExtraction", MockEndpoint.class);
+        resultEndpoint.expectedNoHeaderReceived();
 
         DocumentMetadata metadata = template.requestBody("direct:extract-metadata-no-headers",
                 testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
-        assertNotNull(metadata.getFileName(), "File name should be extracted");
+        assertThat(metadata.getFormat()).isEqualTo("text/markdown");
+
+        resultEndpoint.assertIsSatisfied();
 
         LOG.info("Successfully extracted metadata without headers: {}", metadata);
     }
@@ -197,8 +205,10 @@ class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    public void testMetadataHeadersPopulated() throws Exception {
+    void testMetadataHeadersPopulated() throws Exception {
         Path testFile = createTestMarkdownFile();
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:afterMetadataExtraction", MockEndpoint.class);
+        resultEndpoint.expectedHeaderReceived(DoclingHeaders.METADATA_FORMAT, "text/markdown");
 
         // Extract metadata and verify headers are populated in the exchange
         // We use a mock endpoint to capture the exchange with headers
@@ -206,9 +216,9 @@ class MetadataExtractionIT extends DoclingITestSupport {
                 testFile.toString(), DocumentMetadata.class);
 
         assertNotNull(metadata, "Metadata should not be null");
-        assertNotNull(metadata.getFileName(), "File name should be extracted");
+        assertThat(metadata.getFormat()).isEqualTo("text/markdown");
 
-        // TODO: the headers are not verified if they are really used or not
+        resultEndpoint.assertIsSatisfied();
 
         LOG.info("Successfully verified metadata headers are populated");
     }
@@ -282,11 +292,13 @@ class MetadataExtractionIT extends DoclingITestSupport {
 
                 // Metadata extraction with headers enabled (default)
                 from("direct:extract-metadata-with-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=true");
+                        .to("docling:extract?operation=EXTRACT_METADATA")
+                        .to("mock:afterMetadataExtraction");
 
                 // Metadata extraction without headers
                 from("direct:extract-metadata-no-headers")
-                        .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=false");
+                        .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=false")
+                        .to("mock:afterMetadataExtraction");
 
                 // Metadata extraction with all fields
                 from("direct:extract-metadata-all-fields")
@@ -303,7 +315,8 @@ class MetadataExtractionIT extends DoclingITestSupport {
                 // Metadata extraction to verify headers are populated
                 from("direct:extract-metadata-verify-headers")
                         .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=true")
-                        .log("Headers should contain metadata fields");
+                        .log("Headers should contain metadata fields")
+                        .to("mock:afterMetadataExtraction");
             }
         };
     }
