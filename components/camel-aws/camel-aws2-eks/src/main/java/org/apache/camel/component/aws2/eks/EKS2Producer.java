@@ -111,11 +111,11 @@ public class EKS2Producer extends DefaultProducer {
                 () -> {
                     ListClustersRequest.Builder builder = ListClustersRequest.builder();
                     Integer maxResults = getOptionalHeader(exchange, EKS2Constants.MAX_RESULTS, Integer.class);
-                    if (maxResults != null) {
+                    if (ObjectHelper.isNotEmpty(maxResults)) {
                         builder.maxResults(maxResults);
                     }
                     String nextToken = getOptionalHeader(exchange, EKS2Constants.NEXT_TOKEN, String.class);
-                    if (nextToken != null) {
+                    if (ObjectHelper.isNotEmpty(nextToken)) {
                         builder.nextToken(nextToken);
                     }
                     return eksClient.listClusters(builder.build());
@@ -123,7 +123,7 @@ public class EKS2Producer extends DefaultProducer {
                 "List Clusters",
                 (ListClustersResponse response, Message message) -> {
                     message.setHeader(EKS2Constants.NEXT_TOKEN, response.nextToken());
-                    message.setHeader(EKS2Constants.IS_TRUNCATED, response.nextToken() != null);
+                    message.setHeader(EKS2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
                 });
     }
 
@@ -135,22 +135,22 @@ public class EKS2Producer extends DefaultProducer {
                 () -> {
                     CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
                     String clusterName = getOptionalHeader(exchange, EKS2Constants.CLUSTER_NAME, String.class);
-                    if (clusterName != null) {
+                    if (ObjectHelper.isNotEmpty(clusterName)) {
                         builder.name(clusterName);
                     }
                     String roleArn = getOptionalHeader(exchange, EKS2Constants.ROLE_ARN, String.class);
-                    if (roleArn != null) {
+                    if (ObjectHelper.isNotEmpty(roleArn)) {
                         builder.roleArn(roleArn);
                     }
                     VpcConfigRequest vpcConfig = getOptionalHeader(exchange, EKS2Constants.VPC_CONFIG, VpcConfigRequest.class);
-                    if (vpcConfig != null) {
+                    if (ObjectHelper.isNotEmpty(vpcConfig)) {
                         builder.resourcesVpcConfig(vpcConfig);
                     }
                     return eksClient.createCluster(builder.build());
                 },
                 "Create Cluster",
                 (CreateClusterResponse response, Message message) -> {
-                    if (response.cluster() != null) {
+                    if (ObjectHelper.isNotEmpty(response.cluster())) {
                         message.setHeader(EKS2Constants.CLUSTER_ARN, response.cluster().arn());
                     }
                 });
@@ -168,7 +168,7 @@ public class EKS2Producer extends DefaultProducer {
                 },
                 "Describe Cluster",
                 (DescribeClusterResponse response, Message message) -> {
-                    if (response.cluster() != null) {
+                    if (ObjectHelper.isNotEmpty(response.cluster())) {
                         message.setHeader(EKS2Constants.CLUSTER_ARN, response.cluster().arn());
                     }
                 });
@@ -186,7 +186,7 @@ public class EKS2Producer extends DefaultProducer {
                 },
                 "Delete Cluster",
                 (DeleteClusterResponse response, Message message) -> {
-                    if (response.cluster() != null) {
+                    if (ObjectHelper.isNotEmpty(response.cluster())) {
                         message.setHeader(EKS2Constants.CLUSTER_ARN, response.cluster().arn());
                     }
                 });
@@ -235,7 +235,7 @@ public class EKS2Producer extends DefaultProducer {
                 throw new IllegalArgumentException(
                         String.format("Expected body of type %s but was %s",
                                 requestClass.getName(),
-                                payload != null ? payload.getClass().getName() : "null"));
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
             }
         } else {
             try {
@@ -247,7 +247,7 @@ public class EKS2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
-        if (responseProcessor != null) {
+        if (ObjectHelper.isNotEmpty(responseProcessor)) {
             responseProcessor.accept(result, message);
         }
     }
@@ -278,7 +278,7 @@ public class EKS2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new EKS2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -288,7 +288,7 @@ public class EKS2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
