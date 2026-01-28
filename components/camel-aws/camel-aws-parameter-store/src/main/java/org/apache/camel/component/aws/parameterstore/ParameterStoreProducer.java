@@ -103,7 +103,7 @@ public class ParameterStoreProducer extends DefaultProducer {
     private ParameterStoreOperations determineOperation(Exchange exchange) {
         ParameterStoreOperations operation = exchange.getIn().getHeader(ParameterStoreConstants.OPERATION,
                 ParameterStoreOperations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -115,7 +115,7 @@ public class ParameterStoreProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (parameterStoreProducerToString == null) {
+        if (ObjectHelper.isEmpty(parameterStoreProducerToString)) {
             parameterStoreProducerToString = "ParameterStoreProducer["
                                              + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
@@ -403,7 +403,7 @@ public class ParameterStoreProducer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new ParameterStoreProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -413,7 +413,7 @@ public class ParameterStoreProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }
