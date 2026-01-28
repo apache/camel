@@ -75,7 +75,7 @@ public class AWS2S3VectorsEndpoint extends ScheduledPollEndpoint implements Endp
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getRegion() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             return Map.of("region", configuration.getRegion());
         }
         return null;
@@ -102,7 +102,7 @@ public class AWS2S3VectorsEndpoint extends ScheduledPollEndpoint implements Endp
     public void doStart() throws Exception {
         super.doStart();
 
-        s3VectorsClient = configuration.getS3VectorsClient() != null
+        s3VectorsClient = ObjectHelper.isNotEmpty(configuration.getS3VectorsClient())
                 ? configuration.getS3VectorsClient()
                 : AWS2S3VectorsClientFactory.getS3VectorsClient(configuration);
 
@@ -112,7 +112,7 @@ public class AWS2S3VectorsEndpoint extends ScheduledPollEndpoint implements Endp
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getS3VectorsClient())) {
-            if (s3VectorsClient != null) {
+            if (ObjectHelper.isNotEmpty(s3VectorsClient)) {
                 s3VectorsClient.close();
             }
         }
