@@ -49,7 +49,7 @@ public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint implem
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsTimestreamQueryClient = getConfiguration().getAwsTimestreamQueryClient() != null
+        awsTimestreamQueryClient = ObjectHelper.isNotEmpty(getConfiguration().getAwsTimestreamQueryClient())
                 ? getConfiguration().getAwsTimestreamQueryClient()
                 : Timestream2ClientFactory.getTimestreamQueryClient(getConfiguration());
     }
@@ -58,7 +58,7 @@ public class Timestream2QueryEndpoint extends Timestream2AbstractEndpoint implem
     public void doStop() throws Exception {
 
         if (ObjectHelper.isEmpty(getConfiguration().getAwsTimestreamQueryClient())) {
-            if (awsTimestreamQueryClient != null) {
+            if (ObjectHelper.isNotEmpty(awsTimestreamQueryClient)) {
                 awsTimestreamQueryClient.close();
             }
         }

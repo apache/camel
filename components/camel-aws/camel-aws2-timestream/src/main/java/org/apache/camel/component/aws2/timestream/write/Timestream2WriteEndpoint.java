@@ -50,7 +50,7 @@ public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint implem
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsTimestreamWriteClient = getConfiguration().getAwsTimestreamWriteClient() != null
+        awsTimestreamWriteClient = ObjectHelper.isNotEmpty(getConfiguration().getAwsTimestreamWriteClient())
                 ? getConfiguration().getAwsTimestreamWriteClient()
                 : Timestream2ClientFactory.getTimestreamWriteClient(getConfiguration());
     }
@@ -59,7 +59,7 @@ public class Timestream2WriteEndpoint extends Timestream2AbstractEndpoint implem
     public void doStop() throws Exception {
 
         if (ObjectHelper.isEmpty(getConfiguration().getAwsTimestreamWriteClient())) {
-            if (awsTimestreamWriteClient != null) {
+            if (ObjectHelper.isNotEmpty(awsTimestreamWriteClient)) {
                 awsTimestreamWriteClient.close();
             }
         }
