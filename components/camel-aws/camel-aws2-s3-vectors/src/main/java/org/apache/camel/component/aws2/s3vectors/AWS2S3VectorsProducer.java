@@ -119,7 +119,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
     private AWS2S3VectorsOperations determineOperation(Exchange exchange) {
         AWS2S3VectorsOperations operation = exchange.getIn().getHeader(AWS2S3VectorsConstants.OPERATION,
                 AWS2S3VectorsOperations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -132,13 +132,13 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
         // Get vector data from header or body
         Object vectorDataObj = message.getHeader(AWS2S3VectorsConstants.VECTOR_DATA);
-        if (vectorDataObj == null) {
+        if (ObjectHelper.isEmpty(vectorDataObj)) {
             vectorDataObj = message.getBody();
         }
 
         // Get vector ID
         String vectorId = message.getHeader(AWS2S3VectorsConstants.VECTOR_ID, String.class);
-        if (vectorId == null) {
+        if (ObjectHelper.isEmpty(vectorId)) {
             vectorId = exchange.getExchangeId(); // Use exchange ID as default
         }
 
@@ -185,7 +185,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
         // Get query vector from header or body
         Object queryVectorObj = message.getHeader(AWS2S3VectorsConstants.QUERY_VECTOR);
-        if (queryVectorObj == null) {
+        if (ObjectHelper.isEmpty(queryVectorObj)) {
             queryVectorObj = message.getBody();
         }
 
@@ -193,7 +193,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
         // Get query parameters
         Integer topK = message.getHeader(AWS2S3VectorsConstants.TOP_K, Integer.class);
-        if (topK == null) {
+        if (ObjectHelper.isEmpty(topK)) {
             topK = getConfiguration().getTopK();
         }
 
@@ -220,7 +220,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
         // Get vector IDs from header or body
         Object vectorIdsObj = message.getHeader(AWS2S3VectorsConstants.VECTOR_ID);
-        if (vectorIdsObj == null) {
+        if (ObjectHelper.isEmpty(vectorIdsObj)) {
             vectorIdsObj = message.getBody();
         }
 
@@ -247,7 +247,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
         // Get vector IDs from header or body
         Object vectorIdsObj = message.getHeader(AWS2S3VectorsConstants.VECTOR_ID);
-        if (vectorIdsObj == null) {
+        if (ObjectHelper.isEmpty(vectorIdsObj)) {
             vectorIdsObj = message.getBody();
         }
 
@@ -333,17 +333,17 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
         String vectorIndexName = determineVectorIndexName(exchange);
 
         Integer dimensions = message.getHeader(AWS2S3VectorsConstants.VECTOR_DIMENSIONS, Integer.class);
-        if (dimensions == null) {
+        if (ObjectHelper.isEmpty(dimensions)) {
             dimensions = getConfiguration().getVectorDimensions();
         }
 
         String dataType = message.getHeader(AWS2S3VectorsConstants.DATA_TYPE, String.class);
-        if (dataType == null) {
+        if (ObjectHelper.isEmpty(dataType)) {
             dataType = getConfiguration().getDataType();
         }
 
         String distanceMetric = message.getHeader(AWS2S3VectorsConstants.DISTANCE_METRIC, String.class);
-        if (distanceMetric == null) {
+        if (ObjectHelper.isEmpty(distanceMetric)) {
             distanceMetric = getConfiguration().getDistanceMetric();
         }
 
@@ -417,10 +417,10 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
     private String determineVectorBucketName(Exchange exchange) {
         String vectorBucketName = exchange.getIn().getHeader(AWS2S3VectorsConstants.VECTOR_BUCKET_NAME, String.class);
-        if (vectorBucketName == null) {
+        if (ObjectHelper.isEmpty(vectorBucketName)) {
             vectorBucketName = getConfiguration().getVectorBucketName();
         }
-        if (vectorBucketName == null) {
+        if (ObjectHelper.isEmpty(vectorBucketName)) {
             throw new IllegalArgumentException("Vector bucket name must be specified");
         }
         return vectorBucketName;
@@ -428,10 +428,10 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
     private String determineVectorIndexName(Exchange exchange) {
         String vectorIndexName = exchange.getIn().getHeader(AWS2S3VectorsConstants.VECTOR_INDEX_NAME, String.class);
-        if (vectorIndexName == null) {
+        if (ObjectHelper.isEmpty(vectorIndexName)) {
             vectorIndexName = getConfiguration().getVectorIndexName();
         }
-        if (vectorIndexName == null) {
+        if (ObjectHelper.isEmpty(vectorIndexName)) {
             throw new IllegalArgumentException("Vector index name must be specified");
         }
         return vectorIndexName;
@@ -439,7 +439,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private List<Float> convertToFloatList(Object obj) {
-        if (obj == null) {
+        if (ObjectHelper.isEmpty(obj)) {
             throw new IllegalArgumentException("Vector data cannot be null");
         }
 
@@ -474,7 +474,7 @@ public class AWS2S3VectorsProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private List<String> convertToStringList(Object obj) {
-        if (obj == null) {
+        if (ObjectHelper.isEmpty(obj)) {
             throw new IllegalArgumentException("Vector IDs cannot be null");
         }
 
