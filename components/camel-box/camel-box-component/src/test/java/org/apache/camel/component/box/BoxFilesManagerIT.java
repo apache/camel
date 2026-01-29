@@ -18,7 +18,6 @@ package org.apache.camel.component.box;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -581,17 +580,4 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
         testFile = rootFolder.uploadFile(stream, CAMEL_TEST_FILE_NAME).getResource();
     }
 
-    private int sizeOfIterable(Iterable<?> it) {
-        if (it instanceof Collection) {
-            return ((Collection<?>) it).size();
-        } else {
-            int i = 0;
-            for (@SuppressWarnings("unused")
-            Object obj : it) {
-                i++;
-            }
-            return i;
-        }
-
-    }
 }

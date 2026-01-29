@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.box;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -306,20 +305,6 @@ public class BoxFoldersManagerIT extends AbstractBoxITSupport {
     private void createTestFolder() {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         testFolder = rootFolder.createFolder(CAMEL_TEST_FOLDER).getResource();
-    }
-
-    private int sizeOfIterable(Iterable<?> it) {
-        if (it instanceof Collection) {
-            return ((Collection<?>) it).size();
-        } else {
-            int i = 0;
-            for (@SuppressWarnings("unused")
-            Object obj : it) {
-                i++;
-            }
-            return i;
-        }
-
     }
 
 }
