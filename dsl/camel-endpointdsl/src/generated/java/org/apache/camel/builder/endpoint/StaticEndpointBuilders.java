@@ -777,6 +777,48 @@ public class StaticEndpointBuilders {
         return Athena2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Comprehend (camel-aws2-comprehend)
+     * Perform natural language processing using AWS Comprehend and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-comprehend
+     * 
+     * Syntax: <code>aws2-comprehend:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Comprehend2EndpointBuilderFactory.Comprehend2EndpointBuilder aws2Comprehend(String path) {
+        return aws2Comprehend("aws2-comprehend", path);
+    }
+    /**
+     * AWS Comprehend (camel-aws2-comprehend)
+     * Perform natural language processing using AWS Comprehend and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-comprehend
+     * 
+     * Syntax: <code>aws2-comprehend:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Comprehend2EndpointBuilderFactory.Comprehend2EndpointBuilder aws2Comprehend(String componentName, String path) {
+        return Comprehend2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
      * 

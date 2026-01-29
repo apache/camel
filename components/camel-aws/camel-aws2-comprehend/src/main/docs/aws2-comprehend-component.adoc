@@ -1,0 +1,327 @@
+= AWS Comprehend Component
+:doctitle: AWS Comprehend
+:shortname: aws2-comprehend
+:artifactid: camel-aws2-comprehend
+:description: Perform natural language processing using AWS Comprehend and AWS SDK version 2.x.
+:since: 4.18
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only producer is supported
+//Manually maintained attributes
+:group: AWS
+:camel-spring-boot-name: aws2-comprehend
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The AWS2 Comprehend component supports natural language processing (NLP) operations using
+https://aws.amazon.com/comprehend/[AWS Comprehend]. It provides capabilities such as:
+
+* Language detection
+* Entity recognition (people, places, organizations, dates, etc.)
+* Key phrase extraction
+* Sentiment analysis
+* Syntax analysis (part-of-speech tagging)
+* PII (Personally Identifiable Information) detection
+* Toxic content detection
+* Custom document classification
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon Comprehend. More information is available at
+https://aws.amazon.com/comprehend/[Amazon Comprehend].
+
+== URI Format
+
+-------------------------
+aws2-comprehend://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format:
+
+`?options=value&option2=value&...`
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+Required Comprehend component options
+
+You have to provide the amazonComprehendClient in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/comprehend/[Amazon Comprehend] service.
+
+== Usage
+
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
+
+You have the possibility of avoiding the usage of explicit static credentials by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
+
+ - Java system properties - `aws.accessKeyId` and `aws.secretKey`
+ - Environment variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+ - Web Identity Token from AWS STS.
+ - The shared credentials and config files.
+ - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI` is set.
+ - Amazon EC2 Instance profile credentials.
+
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
+
+For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
+
+=== Comprehend Producer operations
+
+Camel-AWS Comprehend component provides the following operations on the producer side:
+
+[width="100%",cols="2,5",options="header"]
+|===
+| Operation | Description
+| `detectDominantLanguage` | Detects the dominant language of the input text. Returns language codes with confidence scores.
+| `detectEntities` | Identifies entities in the text such as persons, locations, organizations, dates, quantities, and more.
+| `detectKeyPhrases` | Extracts key phrases (noun phrases) that represent the main points in the text.
+| `detectSentiment` | Analyzes the sentiment of the text and returns POSITIVE, NEGATIVE, NEUTRAL, or MIXED with confidence scores.
+| `detectSyntax` | Performs syntactic analysis, providing part-of-speech tags for each word in the text.
+| `detectPiiEntities` | Detects personally identifiable information (PII) such as emails, phone numbers, SSN, credit cards, etc.
+| `detectToxicContent` | Analyzes text for toxic content including profanity, hate speech, threats, and more.
+| `classifyDocument` | Classifies a document using a custom classification model (requires a trained endpoint).
+| `containsPiiEntities` | Checks if the text contains PII and returns labels indicating the types of PII found.
+|===
+
+=== Language Code Requirement
+
+Most operations (except `detectDominantLanguage`) require a language code to be specified. You can set it:
+
+* As an endpoint option: `languageCode=en`
+* As a message header: `CamelAwsComprehendLanguageCode`
+
+Common language codes: `en` (English), `es` (Spanish), `fr` (French), `de` (German), `it` (Italian), `pt` (Portuguese), `ja` (Japanese), `ko` (Korean), `zh` (Chinese), `ar` (Arabic).
+
+== Examples
+
+=== Detect Dominant Language
+
+Automatically detect the language of the input text:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:detectLanguage")
+    .setBody(constant("This is a sample text written in English."))
+    .to("aws2-comprehend://test?operation=detectDominantLanguage&useDefaultCredentialsProvider=true&region=us-east-1")
+    .log("Detected language: ${header.CamelAwsComprehendDetectedLanguage}");
+------------------------------------------------------------------------------------------------------
+
+The result body will contain a list of `DominantLanguage` objects with language codes and confidence scores.
+The detected language code and score are also set as message headers.
+
+=== Detect Entities
+
+Extract named entities from text:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:detectEntities")
+    .setBody(constant("Amazon was founded by Jeff Bezos in Seattle, Washington in 1994."))
+    .to("aws2-comprehend://test?operation=detectEntities&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .log("Found ${body.size()} entities")
+    .split(body())
+        .log("Entity: ${body.text} - Type: ${body.type} - Score: ${body.score}");
+------------------------------------------------------------------------------------------------------
+
+This will detect entities like:
+* Jeff Bezos (PERSON)
+* Amazon (ORGANIZATION)
+* Seattle (LOCATION)
+* Washington (LOCATION)
+* 1994 (DATE)
+
+=== Detect Sentiment
+
+Analyze the sentiment of text:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:analyzeSentiment")
+    .setBody(constant("I love this product! It works perfectly and exceeded my expectations."))
+    .to("aws2-comprehend://test?operation=detectSentiment&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .log("Sentiment: ${header.CamelAwsComprehendDetectedSentiment}")
+    .log("Sentiment scores: ${header.CamelAwsComprehendDetectedSentimentScore}");
+------------------------------------------------------------------------------------------------------
+
+The sentiment will be one of: POSITIVE, NEGATIVE, NEUTRAL, or MIXED.
+
+=== Detect Key Phrases
+
+Extract key phrases from text:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:detectKeyPhrases")
+    .setBody(constant("Apache Camel is an open source integration framework that provides rule-based routing and mediation."))
+    .to("aws2-comprehend://test?operation=detectKeyPhrases&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .split(body())
+        .log("Key phrase: ${body.text} (score: ${body.score})");
+------------------------------------------------------------------------------------------------------
+
+=== Detect PII Entities
+
+Identify personally identifiable information in text:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:detectPii")
+    .setBody(constant("Contact John at john.doe@example.com or call 555-123-4567. His SSN is 123-45-6789."))
+    .to("aws2-comprehend://test?operation=detectPiiEntities&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .split(body())
+        .log("PII found: ${body.type} at position ${body.beginOffset}-${body.endOffset}");
+------------------------------------------------------------------------------------------------------
+
+This detects PII types such as EMAIL, PHONE, SSN, CREDIT_DEBIT_NUMBER, etc.
+
+=== Detect Syntax (Part-of-Speech Tagging)
+
+Analyze the grammatical structure of text:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:detectSyntax")
+    .setBody(constant("The quick brown fox jumps over the lazy dog."))
+    .to("aws2-comprehend://test?operation=detectSyntax&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .split(body())
+        .log("Token: ${body.text} - POS: ${body.partOfSpeech.tag}");
+------------------------------------------------------------------------------------------------------
+
+Returns part-of-speech tags like NOUN, VERB, ADJ (adjective), DET (determiner), etc.
+
+=== Detect Toxic Content
+
+Analyze text for toxic content:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:detectToxic")
+    .setBody(constant("This is a friendly and polite message."))
+    .to("aws2-comprehend://test?operation=detectToxicContent&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .log("Toxicity analysis: ${body}");
+------------------------------------------------------------------------------------------------------
+
+Returns toxicity scores for categories like PROFANITY, HATE_SPEECH, THREAT, INSULT, etc.
+
+=== Using a POJO as body
+
+For more control, you can pass AWS SDK request objects directly by setting `pojoRequest=true`:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:pojoRequest")
+    .setBody(exchange -> DetectSentimentRequest.builder()
+            .text("I am very happy with this service!")
+            .languageCode("en")
+            .build())
+    .to("aws2-comprehend://test?operation=detectSentiment&pojoRequest=true&useDefaultCredentialsProvider=true&region=us-east-1")
+    .log("Sentiment: ${header.CamelAwsComprehendDetectedSentiment}");
+------------------------------------------------------------------------------------------------------
+
+=== Setting Operation and Language via Headers
+
+You can dynamically set the operation and language code using message headers:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:dynamicOperation")
+    .setHeader("CamelAwsComprehendOperation", constant(Comprehend2Operations.detectEntities))
+    .setHeader("CamelAwsComprehendLanguageCode", constant("en"))
+    .setBody(constant("Apple Inc. is headquartered in Cupertino, California."))
+    .to("aws2-comprehend://test?useDefaultCredentialsProvider=true&region=us-east-1")
+    .log("Detected entities: ${body}");
+------------------------------------------------------------------------------------------------------
+
+=== Using with Static Credentials
+
+If you need to use explicit credentials:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:withCredentials")
+    .setBody(constant("Bonjour, comment allez-vous?"))
+    .to("aws2-comprehend://test?operation=detectDominantLanguage&accessKey=YOUR_ACCESS_KEY&secretKey=YOUR_SECRET_KEY&region=eu-west-1")
+    .log("Detected language: ${header.CamelAwsComprehendDetectedLanguage}");
+------------------------------------------------------------------------------------------------------
+
+=== Content Moderation Pipeline Example
+
+A practical example combining multiple Comprehend operations for content moderation:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("direct:moderateContent")
+    .setHeader("originalText", simple("${body}"))
+    // First, detect the language
+    .to("aws2-comprehend://test?operation=detectDominantLanguage&useDefaultCredentialsProvider=true&region=us-east-1")
+    .setHeader("detectedLanguage", simple("${header.CamelAwsComprehendDetectedLanguage}"))
+    .log("Language detected: ${header.detectedLanguage}")
+    // Restore original text and check for toxic content
+    .setBody(simple("${header.originalText}"))
+    .setHeader("CamelAwsComprehendLanguageCode", simple("${header.detectedLanguage}"))
+    .to("aws2-comprehend://test?operation=detectToxicContent&useDefaultCredentialsProvider=true&region=us-east-1")
+    .choice()
+        .when(simple("${body[0].toxicity} > 0.5"))
+            .log("WARNING: High toxicity detected!")
+            .to("direct:flagContent")
+        .otherwise()
+            .log("Content is safe")
+            .to("direct:approveContent");
+------------------------------------------------------------------------------------------------------
+
+=== Customer Feedback Analysis Example
+
+Analyze customer feedback for sentiment and key topics:
+
+[source,java]
+------------------------------------------------------------------------------------------------------
+from("kafka:customer-feedback")
+    .log("Processing feedback: ${body}")
+    // Analyze sentiment
+    .to("aws2-comprehend://test?operation=detectSentiment&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .setHeader("sentiment", simple("${header.CamelAwsComprehendDetectedSentiment}"))
+    // Extract key phrases
+    .to("aws2-comprehend://test?operation=detectKeyPhrases&languageCode=en&useDefaultCredentialsProvider=true&region=us-east-1")
+    .setHeader("keyPhrases", body())
+    .log("Sentiment: ${header.sentiment}, Key topics: ${header.keyPhrases}")
+    // Route based on sentiment
+    .choice()
+        .when(simple("${header.sentiment} == 'NEGATIVE'"))
+            .to("direct:handleNegativeFeedback")
+        .when(simple("${header.sentiment} == 'POSITIVE'"))
+            .to("direct:handlePositiveFeedback")
+        .otherwise()
+            .to("direct:handleNeutralFeedback");
+------------------------------------------------------------------------------------------------------
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws2-comprehend</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version}` must be replaced by the actual version of Camel.
+
+
+include::spring-boot:partial$starter.adoc[]

@@ -41,6 +41,7 @@
 *** xref:aws-bedrock-agent-runtime-component.adoc[AWS Bedrock Agent Runtime]
 *** xref:aws-cloudtrail-component.adoc[AWS Cloudtrail]
 *** xref:aws2-cw-component.adoc[AWS CloudWatch]
+*** xref:aws2-comprehend-component.adoc[AWS Comprehend]
 *** xref:aws-config-component.adoc[AWS Config Service]
 *** xref:aws2-ddb-component.adoc[AWS DynamoDB]
 *** xref:aws2-ddbstream-component.adoc[AWS DynamoDB Streams]

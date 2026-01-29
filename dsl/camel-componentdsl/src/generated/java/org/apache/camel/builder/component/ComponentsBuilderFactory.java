@@ -270,6 +270,20 @@ public interface ComponentsBuilderFactory {
         return Aws2AthenaComponentBuilderFactory.aws2Athena();
     }
     /**
+     * AWS Comprehend (camel-aws2-comprehend)
+     * Perform natural language processing using AWS Comprehend and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-comprehend
+     * 
+     * @return the dsl builder
+     */
+    static Aws2ComprehendComponentBuilderFactory.Aws2ComprehendComponentBuilder aws2Comprehend() {
+        return Aws2ComprehendComponentBuilderFactory.aws2Comprehend();
+    }
+    /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
      * 
