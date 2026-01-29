@@ -23,7 +23,7 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(28);
+        Set<String> props = new HashSet<>(27);
         props.add("apiKeyHeader");
         props.add("asyncPollInterval");
         props.add("asyncTimeout");
@@ -37,7 +37,6 @@ public class DoclingEndpointUriFactory extends org.apache.camel.support.componen
         props.add("doclingCommand");
         props.add("doclingServeUrl");
         props.add("enableOCR");
-        props.add("extractAllMetadata");
         props.add("includeLayoutInfo");
         props.add("includeMetadataInHeaders");
         props.add("includeRawMetadata");

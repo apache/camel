@@ -27,6 +27,13 @@ The *simple* language has deprecated binary operators that uses space in the nam
 
 The `org.apache.camel.component.file.GenericFileOperations` has added method `storeFileDirectly`.
 
+=== camel-docling
+
+All not working metadata headers have been removed.
+The option `extractAllMetadata` has been removed. Using `includeRawMetadata` will have the same effect given that there is no more `customMetadata` available.
+
+It corresponds to the removal of functionality no more working since 4.17. Given that this functionality was never available in a LTS version,that the next LST version is the next one and the fix requires important change in upstream dependency; it is not going through a deprecation phase and removed directly.
+
 === Component deprecation
 
 The `camel-olingo2` and `camel-olingo4` component are deprecated.

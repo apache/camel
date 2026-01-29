@@ -49,8 +49,6 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "doclingServeUrl": target.setDoclingServeUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "enableocr":
         case "enableOCR": target.setEnableOCR(property(camelContext, boolean.class, value)); return true;
-        case "extractallmetadata":
-        case "extractAllMetadata": target.setExtractAllMetadata(property(camelContext, boolean.class, value)); return true;
         case "includelayoutinfo":
         case "includeLayoutInfo": target.setIncludeLayoutInfo(property(camelContext, boolean.class, value)); return true;
         case "includemetadatainheaders":
@@ -107,8 +105,6 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "doclingServeUrl": return java.lang.String.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
-        case "extractallmetadata":
-        case "extractAllMetadata": return boolean.class;
         case "includelayoutinfo":
         case "includeLayoutInfo": return boolean.class;
         case "includemetadatainheaders":
@@ -166,8 +162,6 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "doclingServeUrl": return target.getDoclingServeUrl();
         case "enableocr":
         case "enableOCR": return target.isEnableOCR();
-        case "extractallmetadata":
-        case "extractAllMetadata": return target.isExtractAllMetadata();
         case "includelayoutinfo":
         case "includeLayoutInfo": return target.isIncludeLayoutInfo();
         case "includemetadatainheaders":

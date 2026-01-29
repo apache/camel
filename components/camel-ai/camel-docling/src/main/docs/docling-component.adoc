@@ -397,25 +397,11 @@ Java::
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:EXTRACT_METADATA?extractAllMetadata=true&includeRawMetadata=true")
+    .to("docling:EXTRACT_METADATA?includeRawMetadata=true")
     .process(exchange -> {
         DocumentMetadata metadata = exchange.getIn().getBody(DocumentMetadata.class);
 
-        // Standard metadata fields
-        log.info("Title: {}", metadata.getTitle());
-        log.info("Author: {}", metadata.getAuthor());
-        log.info("Creator: {}", metadata.getCreator());
-        log.info("Producer: {}", metadata.getProducer());
-        log.info("Subject: {}", metadata.getSubject());
-        log.info("Keywords: {}", metadata.getKeywords());
-        log.info("Language: {}", metadata.getLanguage());
         log.info("Page Count: {}", metadata.getPageCount());
-
-        // Custom metadata fields
-        Map<String, Object> customMetadata = metadata.getCustomMetadata();
-        customMetadata.forEach((key, value) -> {
-            log.info("Custom field {}: {}", key, value);
-        });
 
         // Raw metadata from parser
         Map<String, Object> rawMetadata = metadata.getRawMetadata();
@@ -436,7 +422,6 @@ YAML::
       - to:
           uri: "docling:EXTRACT_METADATA"
           parameters:
-            extractAllMetadata: true
             includeRawMetadata: true
       - process:
           ref: "fullMetadataProcessor"

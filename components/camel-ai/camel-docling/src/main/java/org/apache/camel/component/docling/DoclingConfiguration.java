@@ -134,10 +134,6 @@ public class DoclingConfiguration implements Cloneable {
     private boolean includeMetadataInHeaders = true;
 
     @UriParam(label = "metadata")
-    @Metadata(description = "Extract all available metadata fields including custom/raw fields", defaultValue = "false")
-    private boolean extractAllMetadata = false;
-
-    @UriParam(label = "metadata")
     @Metadata(description = "Include raw metadata as returned by the parser", defaultValue = "false")
     private boolean includeRawMetadata = false;
 
@@ -331,14 +327,6 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setIncludeMetadataInHeaders(boolean includeMetadataInHeaders) {
         this.includeMetadataInHeaders = includeMetadataInHeaders;
-    }
-
-    public boolean isExtractAllMetadata() {
-        return extractAllMetadata;
-    }
-
-    public void setExtractAllMetadata(boolean extractAllMetadata) {
-        this.extractAllMetadata = extractAllMetadata;
     }
 
     public boolean isIncludeRawMetadata() {

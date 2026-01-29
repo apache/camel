@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.docling;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,131 +24,15 @@ import java.util.Map;
  */
 public class DocumentMetadata {
 
-    private String title;
-    private String author;
-    private String creator;
-    private String producer;
-    private String subject;
-    private String keywords;
-    private Instant creationDate;
-    private Instant modificationDate;
     private Integer pageCount;
-    private String language;
-    private String documentType;
     private String format;
     private Long fileSizeBytes;
     private String fileName;
     private String filePath;
-    private Map<String, Object> customMetadata;
     private Map<String, Object> rawMetadata;
 
     public DocumentMetadata() {
-        this.customMetadata = new HashMap<>();
         this.rawMetadata = new HashMap<>();
-    }
-
-    /**
-     * Gets the document title.
-     *
-     * @return document title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Gets the document author.
-     *
-     * @return author name
-     */
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    /**
-     * Gets the creator (application that created the document).
-     *
-     * @return creator application name
-     */
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
-
-    /**
-     * Gets the producer (application that produced the PDF, if applicable).
-     *
-     * @return producer application name
-     */
-    public String getProducer() {
-        return producer;
-    }
-
-    public void setProducer(String producer) {
-        this.producer = producer;
-    }
-
-    /**
-     * Gets the document subject.
-     *
-     * @return document subject
-     */
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    /**
-     * Gets the document keywords.
-     *
-     * @return keywords as a comma-separated string
-     */
-    public String getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
-
-    /**
-     * Gets the document creation date.
-     *
-     * @return creation date
-     */
-    public Instant getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Instant creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    /**
-     * Gets the document modification date.
-     *
-     * @return modification date
-     */
-    public Instant getModificationDate() {
-        return modificationDate;
-    }
-
-    public void setModificationDate(Instant modificationDate) {
-        this.modificationDate = modificationDate;
     }
 
     /**
@@ -163,32 +46,6 @@ public class DocumentMetadata {
 
     public void setPageCount(Integer pageCount) {
         this.pageCount = pageCount;
-    }
-
-    /**
-     * Gets the document language.
-     *
-     * @return language code (e.g., "en", "fr", "de")
-     */
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    /**
-     * Gets the document type/format.
-     *
-     * @return document type (e.g., "PDF", "DOCX", "PPTX")
-     */
-    public String getDocumentType() {
-        return documentType;
-    }
-
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
     }
 
     /**
@@ -244,32 +101,6 @@ public class DocumentMetadata {
     }
 
     /**
-     * Gets custom metadata fields.
-     *
-     * @return map of custom metadata fields
-     */
-    public Map<String, Object> getCustomMetadata() {
-        return customMetadata;
-    }
-
-    public void setCustomMetadata(Map<String, Object> customMetadata) {
-        this.customMetadata = customMetadata != null ? customMetadata : new HashMap<>();
-    }
-
-    /**
-     * Adds a custom metadata field.
-     *
-     * @param key   the field name
-     * @param value the field value
-     */
-    public void addCustomMetadata(String key, Object value) {
-        if (this.customMetadata == null) {
-            this.customMetadata = new HashMap<>();
-        }
-        this.customMetadata.put(key, value);
-    }
-
-    /**
      * Gets the raw metadata as returned by the parser.
      *
      * @return map of raw metadata
@@ -296,24 +127,6 @@ public class DocumentMetadata {
     }
 
     /**
-     * Checks if the metadata has a title.
-     *
-     * @return true if title is present
-     */
-    public boolean hasTitle() {
-        return title != null && !title.isEmpty();
-    }
-
-    /**
-     * Checks if the metadata has an author.
-     *
-     * @return true if author is present
-     */
-    public boolean hasAuthor() {
-        return author != null && !author.isEmpty();
-    }
-
-    /**
      * Checks if the metadata has a page count.
      *
      * @return true if page count is present
@@ -324,12 +137,11 @@ public class DocumentMetadata {
 
     @Override
     public String toString() {
-        return "DocumentMetadata{" + "title='" + title + '\'' + ", author='" + author + '\'' + ", creator='" + creator + '\''
-               + ", producer='" + producer + '\'' + ", subject='" + subject + '\'' + ", keywords='" + keywords + '\''
-               + ", creationDate=" + creationDate + ", modificationDate=" + modificationDate + ", pageCount=" + pageCount
-               + ", language='" + language + '\'' + ", documentType='" + documentType + '\'' + ", format='" + format + '\''
+        return "DocumentMetadata{"
+               + ", pageCount=" + pageCount
+               + ", format='" + format + '\''
                + ", fileSizeBytes=" + fileSizeBytes + ", fileName='" + fileName + '\'' + ", filePath='" + filePath + '\''
-               + ", customMetadataFields=" + (customMetadata != null ? customMetadata.size() : 0) + ", rawMetadataFields="
+               + ", rawMetadataFields="
                + (rawMetadata != null ? rawMetadata.size() : 0) + '}';
     }
 

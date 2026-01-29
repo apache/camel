@@ -470,38 +470,8 @@ public class DoclingProducer extends DefaultProducer {
     }
 
     private void setMetadataHeaders(Exchange exchange, DocumentMetadata metadata) {
-        if (metadata.getTitle() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_TITLE, metadata.getTitle());
-        }
-        if (metadata.getAuthor() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_AUTHOR, metadata.getAuthor());
-        }
-        if (metadata.getCreator() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_CREATOR, metadata.getCreator());
-        }
-        if (metadata.getProducer() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_PRODUCER, metadata.getProducer());
-        }
-        if (metadata.getSubject() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_SUBJECT, metadata.getSubject());
-        }
-        if (metadata.getKeywords() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_KEYWORDS, metadata.getKeywords());
-        }
-        if (metadata.getCreationDate() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_CREATION_DATE, metadata.getCreationDate());
-        }
-        if (metadata.getModificationDate() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_MODIFICATION_DATE, metadata.getModificationDate());
-        }
         if (metadata.getPageCount() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_PAGE_COUNT, metadata.getPageCount());
-        }
-        if (metadata.getLanguage() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_LANGUAGE, metadata.getLanguage());
-        }
-        if (metadata.getDocumentType() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_DOCUMENT_TYPE, metadata.getDocumentType());
         }
         if (metadata.getFormat() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_FORMAT, metadata.getFormat());
@@ -511,9 +481,6 @@ public class DoclingProducer extends DefaultProducer {
         }
         if (metadata.getFileName() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_FILE_NAME, metadata.getFileName());
-        }
-        if (metadata.getCustomMetadata() != null && !metadata.getCustomMetadata().isEmpty()) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_CUSTOM, metadata.getCustomMetadata());
         }
         if (configuration.isIncludeRawMetadata() && metadata.getRawMetadata() != null
                 && !metadata.getRawMetadata().isEmpty()) {

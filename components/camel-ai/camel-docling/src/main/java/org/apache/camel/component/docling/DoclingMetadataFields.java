@@ -23,52 +23,9 @@ package org.apache.camel.component.docling;
  */
 public final class DoclingMetadataFields {
 
-    // Title field variations
-    public static final String TITLE = "title";
-    public static final String TITLE_PASCAL = "Title";
-
-    // Author field variations
-    public static final String AUTHOR = "author";
-    public static final String AUTHOR_PASCAL = "Author";
-
-    // Creator field variations
-    public static final String CREATOR = "creator";
-    public static final String CREATOR_PASCAL = "Creator";
-
-    // Producer field variations
-    public static final String PRODUCER = "producer";
-    public static final String PRODUCER_PASCAL = "Producer";
-
-    // Subject field variations
-    public static final String SUBJECT = "subject";
-    public static final String SUBJECT_PASCAL = "Subject";
-
-    // Keywords field variations
-    public static final String KEYWORDS = "keywords";
-    public static final String KEYWORDS_PASCAL = "Keywords";
-
-    // Language field variations
-    public static final String LANGUAGE = "language";
-    public static final String LANGUAGE_PASCAL = "Language";
-
     // Format field variations
     public static final String FORMAT = "format";
     public static final String FORMAT_PASCAL = "Format";
-
-    // Creation date field variations
-    public static final String CREATION_DATE = "creation_date";
-    public static final String CREATION_DATE_CAMEL = "creationDate";
-    public static final String CREATION_DATE_PASCAL = "CreationDate";
-    public static final String CREATED = "created";
-    public static final String CREATED_PASCAL = "Created";
-
-    // Modification date field variations
-    public static final String MODIFICATION_DATE = "modification_date";
-    public static final String MODIFICATION_DATE_CAMEL = "modificationDate";
-    public static final String MODIFICATION_DATE_PASCAL = "ModificationDate";
-    public static final String MODIFIED = "modified";
-    public static final String MODIFIED_PASCAL = "Modified";
-    public static final String MOD_DATE = "ModDate";
 
     // Document structure fields
     public static final String METADATA = "metadata";
@@ -84,11 +41,7 @@ public final class DoclingMetadataFields {
     /**
      * Array of all standard metadata field names (lowercase versions) for checking.
      */
-    public static final String[] STANDARD_FIELDS = {
-            TITLE, AUTHOR, CREATOR, PRODUCER, SUBJECT, KEYWORDS, LANGUAGE, FORMAT,
-            CREATION_DATE, CREATION_DATE_CAMEL, CREATED,
-            MODIFICATION_DATE, MODIFICATION_DATE_CAMEL, MODIFIED, MOD_DATE
-    };
+    public static final String[] STANDARD_FIELDS = { FORMAT };
 
     /**
      * Check if a field name is a standard metadata field.
@@ -101,10 +54,7 @@ public final class DoclingMetadataFields {
             return false;
         }
         String lower = fieldName.toLowerCase();
-        return lower.equals(TITLE) || lower.equals(AUTHOR) || lower.equals(CREATOR) || lower.equals(PRODUCER)
-                || lower.equals(SUBJECT) || lower.equals(KEYWORDS) || lower.equals(LANGUAGE) || lower.equals(FORMAT)
-                || lower.contains("creation") || lower.contains("modification") || lower.contains("date")
-                || lower.contains("created") || lower.contains("modified");
+        return lower.equals(FORMAT);
     }
 
     private DoclingMetadataFields() {
