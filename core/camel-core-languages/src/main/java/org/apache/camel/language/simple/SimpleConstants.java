@@ -53,6 +53,10 @@ public final class SimpleConstants {
               label = "function")
     public static final String ATTACHMENTS_HEADER_AS = "attachmentsHeaderAs(key,name,type)";
 
+    @Metadata(description = "All the attachment keys (filenames)", javaType = "java.util.Set",
+              label = "function")
+    public static final String ATTACHMENTS_KEYS = "attachmentsKeys";
+
     @Metadata(description = "The number of attachments. Is 0 if there are no attachments.", javaType = "int",
               label = "function")
     public static final String ATTACHMENTS_SIZE = "attachmentsSize";
@@ -99,6 +103,10 @@ public final class SimpleConstants {
     @Metadata(description = "Converts the message body (or expression) to a floating number and return the ceil value (rounded up to nearest integer).",
               label = "function", javaType = "Integer", displayName = "Ceil Number")
     public static final String CEIL = "ceil(exp)";
+
+    @Metadata(description = "Removes all existing attachments on the message.",
+            label = "function", javaType = "Object")
+    public static final String CLEAR_ATTACHMENTS = "clearAttachments";
 
     @Metadata(description = "The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists.",
               label = "function", javaType = "java.util.Iterator", displayName = "Group Message Body into Sub Lists")
@@ -320,6 +328,10 @@ public final class SimpleConstants {
     @Metadata(description = "The route id of the current route the Exchange is being routed", javaType = "String",
               label = "function")
     public static final String ROUTE_ID = "routeId";
+
+    @Metadata(description = "Sets an attachment with payload from the message body/expression.",
+              label = "function", javaType = "Object")
+    public static final String SET_ATTACHMENT = "setVariable(key,exp)";
 
     @Metadata(description = "Sets a message header with the given expression (optional converting to the given type)",
               label = "function", javaType = "Object")

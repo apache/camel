@@ -16,11 +16,16 @@
  */
 package org.apache.camel.attachment;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ResourceHelper;
 
 public class CSimpleAttachmentHelper {
 
@@ -40,6 +45,10 @@ public class CSimpleAttachmentHelper {
 
     public static int attachmentsSize(Exchange exchange) {
         return toAttachmentMessage(exchange).getAttachments().size();
+    }
+
+    public static Set<String> attachmentsKeys(Exchange exchange) {
+        return toAttachmentMessage(exchange).getAttachmentNames();
     }
 
     public static Object attachmentContent(Exchange exchange, String key) throws Exception {
@@ -87,6 +96,39 @@ public class CSimpleAttachmentHelper {
         if (data != null) {
             return exchange.getContext().getTypeConverter().convertTo(type, exchange, data);
         }
+        return null;
+    }
+
+    public static Object setAttachment(Exchange exchange, String attachmentName, Object value) throws Exception {
+        if (value != null) {
+            AttachmentMessage am = toAttachmentMessage(exchange);
+            DataSource ds;
+            if (value instanceof File f) {
+                ds = new CamelFileDataSource(f, attachmentName);
+            } else if (value instanceof String str) {
+                byte[] data;
+                if (ResourceHelper.hasScheme(str)) {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), str);
+                    data = exchange.getContext().getTypeConverter().convertTo(byte[].class, is);
+                } else {
+                    data = str.getBytes();
+                }
+                ds = new ByteArrayDataSource(attachmentName, data);
+            } else {
+                byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, value);
+                ds = new ByteArrayDataSource(attachmentName, data);
+            }
+            am.addAttachment(attachmentName, new DataHandler(ds));
+        } else {
+            AttachmentMessage am = toAttachmentMessage(exchange);
+            am.removeAttachment(attachmentName);
+        }
+        return null;
+    }
+
+    public static Object clearAttachments(Exchange exchange) {
+        AttachmentMessage am = toAttachmentMessage(exchange);
+        am.clearAttachments();
         return null;
     }
 

@@ -25,6 +25,7 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CSimpleAttachmentsTest extends LanguageTestSupport {
@@ -70,6 +71,9 @@ public class CSimpleAttachmentsTest extends LanguageTestSupport {
         exchange.getMessage(AttachmentMessage.class).removeAttachment("123.txt");
         assertExpression("${attachments.size}", 0);
         assertExpression("${attachments.length}", 0);
+
+        var set = exchange.getMessage(AttachmentMessage.class).getAttachmentNames();
+        assertExpression("${attachmentsKeys}", set);
     }
 
     @Test
@@ -102,6 +106,57 @@ public class CSimpleAttachmentsTest extends LanguageTestSupport {
         assertExpression("${attachmentContentType(message1.xml)}", "application/xml");
         assertExpression("${attachmentContentType(message2.xml)}", "application/xml");
         assertExpression("${attachmentContentType(123.txt)}", "text/plain");
+    }
+
+    @Test
+    public void testSetAttachmentFromBody() throws Exception {
+        exchange.getMessage(AttachmentMessage.class).clearAttachments();
+        assertExpression("${attachments.size}", 0);
+
+        exchange.getMessage().setBody("{id: 123, sku: 456}");
+
+        assertExpression("${setAttachment(myorder.json)}", null);
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("myorder.json").getContent();
+        String json1 = context.getTypeConverter().convertTo(String.class, is1);
+        assertExpression("{id: 123, sku: 456}", json1);
+    }
+
+    @Test
+    public void testSetAttachmentFromVariable() throws Exception {
+        exchange.getMessage(AttachmentMessage.class).clearAttachments();
+        assertExpression("${attachments.size}", 0);
+
+        exchange.getMessage().setBody(null);
+        exchange.setVariable("myOrder", "{id: 123, sku: 456}");
+
+        assertExpression("${setAttachment(myorder.json,${variable.myOrder})}", null);
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("myorder.json").getContent();
+        String json1 = context.getTypeConverter().convertTo(String.class, is1);
+        assertExpression("{id: 123, sku: 456}", json1);
+    }
+
+    @Test
+    public void testSetAttachmentFile() throws Exception {
+        exchange.getMessage(AttachmentMessage.class).clearAttachments();
+        assertExpression("${attachments.size}", 0);
+
+        assertExpression("${setAttachment(logger.properties,resource:file:src/test/resources/log4j2.properties)}", null);
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("logger.properties").getContent();
+        String data = context.getTypeConverter().convertTo(String.class, is1);
+        Assertions.assertTrue(data.contains("target/camel-csimple-joor-test.log"));
+    }
+
+    @Test
+    public void testClearAttachments() {
+        assertExpression("${attachments.size}", 3);
+        assertExpression("${clearAttachments}", null);
+        assertExpression("${attachments.size}", 0);
     }
 
 }

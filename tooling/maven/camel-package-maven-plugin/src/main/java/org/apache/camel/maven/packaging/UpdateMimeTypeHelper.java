@@ -69,9 +69,10 @@ public class UpdateMimeTypeHelper extends AbstractGeneratorMojo {
         }
         Map<String, String> types = new TreeMap<>();
 
-        // extra for yaml
+        // extra mime types
         types.put("yaml", "text/yaml");
         types.put("yml", "text/yaml");
+        types.put("properties", "text/plain");
 
         try (Stream<String> s = Files.lines(mimeFile.toPath())) {
             for (String line : s.toList()) {
