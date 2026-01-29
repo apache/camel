@@ -1,0 +1,1733 @@
+= MINA SFTP Component
+:doctitle: MINA SFTP
+:shortname: mina-sftp
+:artifactid: camel-mina-sftp
+:description: Upload and download files to/from SFTP servers using Apache MINA SSHD.
+:since: 4.18
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: mina-sftp
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The MINA SFTP component provides access to remote file systems over the SFTP protocol using Apache MINA SSHD library.
+
+This component is designed as a near drop-in replacement for the JSch-based `sftp` component, requiring only a URI scheme change from `sftp://` to `mina-sftp://`. Most configuration options remain the same for supported features.
+
+== URI format
+
+----
+mina-sftp://[username@]host[:port]/directoryName[?options]
+----
+
+Where *directoryName* represents the underlying directory. The directory name is a relative path.
+
+// component-configure options: START
+// component-configure options: END
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+// endpoint options: START
+// endpoint options: END
+
+== Authentication
+
+The MINA SFTP component supports multiple authentication methods:
+
+=== Password Authentication
+
+[source,java]
+----
+from("mina-sftp://admin@host/path?password=secret")
+    .to("file:local");
+----
+
+=== Public Key Authentication
+
+==== Using Private Key File
+
+[source,java]
+----
+from("mina-sftp://user@host/path?privateKeyFile=/home/user/.ssh/id_rsa")
+    .to("file:local");
+----
+
+==== Using Private Key from Classpath
+
+[source,java]
+----
+from("mina-sftp://user@host/path?privateKeyUri=classpath:keys/id_rsa")
+    .to("file:local");
+----
+
+==== Using Encrypted Private Key
+
+[source,java]
+----
+from("mina-sftp://user@host/path?privateKeyFile=/path/to/encrypted_key&privateKeyPassphrase=mypassphrase")
+    .to("file:local");
+----
+
+==== Using Direct KeyPair Object
+
+[source,java]
+----
+KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+keyGen.initialize(2048);
+KeyPair keyPair = keyGen.generateKeyPair();
+
+MinaSftpEndpoint endpoint = context.getEndpoint(
+    "mina-sftp://user@host/path", MinaSftpEndpoint.class);
+MinaSftpConfiguration config = (MinaSftpConfiguration) endpoint.getConfiguration();
+config.setKeyPair(keyPair);
+----
+
+=== Authentication Priority
+
+When both password and public key authentication are configured, the component will:
+
+1. Try public key authentication first
+2. Fall back to password authentication if public key fails
+
+This behavior matches the JSch-based sftp component.
+
+=== Preferred Authentication Methods
+
+You can customize the authentication order using the `preferredAuthentications` option:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&privateKeyFile=/path/to/key&preferredAuthentications=password,publickey")
+    .to("file:local");
+----
+
+==== Available Authentication Methods
+
+[cols="2,4"]
+|===
+| Method | Description
+
+| `publickey`
+| Public key or certificate-based authentication
+
+| `password`
+| Password-based authentication
+
+| `keyboard-interactive`
+| Keyboard-interactive authentication (multi-factor scenarios)
+|===
+
+If `preferredAuthentications` is not specified, the default order from Apache MINA SSHD is used: publickey, keyboard-interactive, password.
+
+=== Public Key Accepted Algorithms
+
+You can restrict which public key algorithms are accepted for authentication using the `publicKeyAcceptedAlgorithms` option:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?privateKeyFile=/path/to/key&publicKeyAcceptedAlgorithms=ssh-ed25519,rsa-sha2-256,rsa-sha2-512")
+    .to("file:local");
+----
+
+==== Available Public Key Algorithms
+
+[cols="2,4"]
+|===
+| Algorithm | Description
+
+| `ssh-ed25519`
+| Ed25519 algorithm (modern, recommended)
+
+| `rsa-sha2-256`
+| RSA with SHA-256 signature (recommended)
+
+| `rsa-sha2-512`
+| RSA with SHA-512 signature (recommended)
+
+| `ecdsa-sha2-nistp256`
+| ECDSA with NIST P-256 curve
+
+| `ecdsa-sha2-nistp384`
+| ECDSA with NIST P-384 curve
+
+| `ecdsa-sha2-nistp521`
+| ECDSA with NIST P-521 curve
+
+| `ssh-rsa`
+| Legacy RSA with SHA-1 (avoid if possible)
+
+| `ssh-dss`
+| DSA algorithm (deprecated)
+|===
+
+==== Example: Modern Algorithms Only
+
+For security-conscious deployments, restrict to modern algorithms only:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?privateKeyFile=/path/to/key&publicKeyAcceptedAlgorithms=ssh-ed25519,rsa-sha2-256,rsa-sha2-512,ecdsa-sha2-nistp256")
+    .to("file:local");
+----
+
+If `publicKeyAcceptedAlgorithms` is not specified, the default list from Apache MINA SSHD is used.
+
+=== Supported Key Formats
+
+The component supports all key formats natively supported by Apache MINA SSHD:
+
+* **PEM formats**: PKCS#1, PKCS#8, OpenSSH format
+* **OpenSSH native format**
+* **Encrypted keys**: Supported (PKCS#8 encrypted requires BouncyCastle)
+
+=== Supported Key Algorithms
+
+* RSA (all key sizes)
+* ECDSA (P-256, P-384, P-521)
+* Ed25519
+* DSA
+
+=== Client Certificate Authentication
+
+The mina-sftp component supports OpenSSH certificate-based authentication, which provides centralized key management through a Certificate Authority (CA). This is a MINA SSHD-specific feature not available in the JSch-based sftp component.
+
+OpenSSH certificates bind a public key to identity information and are signed by a trusted CA. They provide:
+
+* Centralized key revocation
+* Time-limited access without key rotation
+* Principal-based authorization
+
+==== Certificate Options
+
+[cols="2,3,1"]
+|===
+| Option | Description | Priority
+
+| `certBytes`
+| Certificate content as byte array (for programmatic loading from secret managers)
+| 1 (highest)
+
+| `certUri`
+| URI to certificate file (classpath:, file:, etc.)
+| 2
+
+| `certFile`
+| Path to certificate file on filesystem
+| 3 (lowest)
+|===
+
+==== Option Priority Order
+
+When multiple certificate options are configured, the component uses this priority order:
+
+1. `certBytes` - checked first (highest priority)
+2. `certUri` - checked second
+3. `certFile` - checked last (lowest priority)
+
+The first non-empty option wins. This matches the priority order used for private key options (`privateKey` > `privateKeyUri` > `privateKeyFile`).
+
+==== Certificate Format Requirements
+
+* Certificates must be in OpenSSH format (as generated by `ssh-keygen -s`)
+* Only USER type certificates are supported (for client authentication)
+* The certificate must correspond to the configured private key
+* Certificate file typically has a `-cert.pub` suffix (e.g., `id_rsa-cert.pub`)
+
+==== Example: Certificate from File
+
+[source,java]
+----
+from("direct:start")
+    .to("mina-sftp://user@host/path"
+        + "?privateKeyFile=/path/to/id_rsa"
+        + "&certFile=/path/to/id_rsa-cert.pub");
+----
+
+==== Example: Certificate from Classpath
+
+[source,java]
+----
+from("direct:start")
+    .to("mina-sftp://user@host/path"
+        + "?privateKeyUri=classpath:keys/id_rsa"
+        + "&certUri=classpath:keys/id_rsa-cert.pub");
+----
+
+==== Example: Certificate from Byte Array
+
+[source,java]
+----
+// Load certificate from external secret manager
+byte[] certBytes = secretManager.getCertificate("sftp-cert");
+byte[] keyBytes = secretManager.getPrivateKey("sftp-key");
+
+MinaSftpEndpoint endpoint = context.getEndpoint(
+    "mina-sftp://user@host/path", MinaSftpEndpoint.class);
+MinaSftpConfiguration config = (MinaSftpConfiguration) endpoint.getConfiguration();
+config.setCertBytes(certBytes);
+config.setPrivateKey(keyBytes);
+----
+
+==== Certificate Validation
+
+The component validates certificates before use:
+
+* **Type check**: Only USER certificates are accepted (not HOST certificates)
+* **Validity period**: Certificate must be currently valid (not expired, not before valid-from date)
+* **Private key requirement**: A corresponding private key must be configured
+
+Invalid certificates result in clear error messages indicating the issue.
+
+== Examples
+
+=== Upload Files
+
+[source,java]
+----
+from("file:inbox")
+    .to("mina-sftp://user@sftp.example.com/upload?password=secret");
+----
+
+=== Download Files
+
+[source,java]
+----
+from("mina-sftp://user@sftp.example.com/download?password=secret&delete=true")
+    .to("file:outbox");
+----
+
+=== Poll and Move
+
+[source,java]
+----
+from("mina-sftp://user@host/inbox?password=secret&move=.done")
+    .to("file:local");
+----
+
+=== Filter by Extension
+
+[source,java]
+----
+from("mina-sftp://user@host/data?password=secret&antInclude=*.csv")
+    .to("direct:process-csv");
+----
+
+== Migration from JSch SFTP
+
+Users migrating from the JSch-based `sftp` component can switch by changing only the URI scheme:
+
+.Before (JSch)
+[source,java]
+----
+from("sftp://user@host/path?password=secret")
+    .to("file:local");
+----
+
+.After (MINA SSHD)
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret")
+    .to("file:local");
+----
+
+All standard configuration options remain the same for supported features.
+
+=== Features Not Supported
+
+The following features from the JSch component are *not* supported by mina-sftp:
+
+* **Proxy support**: HTTP proxy, SOCKS4, SOCKS5 proxy connections
+* **GSSAPI/Kerberos authentication**
+
+If you require these features, continue using the JSch-based `sftp` component.
+
+If you configure an unsupported feature, the component will throw a clear error message indicating the feature is not supported.
+
+=== Behavioral Differences
+
+While the mina-sftp component aims for compatibility with the sftp component, there are some behavioral differences due to the underlying SSH libraries.
+
+==== Comparison Table
+
+[cols="2,3,3"]
+|===
+| Feature | mina-sftp (Apache MINA SSHD) | sftp (JSch)
+
+| **License**
+| Apache License 2.0
+| BSD-style license
+
+| **Compression**
+| Built-in support, no extra JARs needed
+| Requires manually adding jsch-zlib JAR to classpath
+
+| **Ciphers**
+| Modern algorithms (ChaCha20-Poly1305, AES-GCM); validates cipher names before connection
+| Limited algorithms; errors at connection time for invalid ciphers
+
+| **Key Exchange Protocols**
+| Modern algorithms (Curve25519, ECDH, post-quantum ready); validates protocol names before connection
+| Limited algorithms; uses JSch.setConfig("kex", ...)
+
+| **Server Host Keys**
+| Modern algorithms (Ed25519, RSA-SHA2, ECDSA); validates algorithm names before connection
+| Limited algorithms; uses session.setConfig("server_host_key", ...)
+
+| **Known Hosts Port Matching**
+| Strict OpenSSH semantics: `hostname` matches port 22 only; `[hostname]:port` required for non-standard ports
+| Lenient: `hostname` matches any port
+
+| **serverAliveCountMax=0**
+| Fire-and-forget mode: heartbeats sent with `wantReply=false`, connection never terminated
+| Keep-alive disabled, no heartbeats sent
+
+| **serverAliveCountMax < 0**
+| Same as `0` (fire-and-forget mode)
+| Keep-alive disabled
+
+| **Host Key Verification**
+| Apache MINA SSHD ServerKeyVerifier with certificate support
+| JSch-specific HostKeyRepository
+
+| **Algorithm Support**
+| Modern algorithms including Ed25519, ECDSA (all curves), ChaCha20-Poly1305
+| Limited algorithm support, requires workarounds for modern algorithms
+
+| **Proxy Support**
+| Not supported
+| HTTP, SOCKS4, SOCKS5 proxy support
+
+| **GSSAPI/Kerberos**
+| Not supported
+| Supported
+
+| **Logging Configuration**
+| Uses SLF4J natively; `loggingLevel` and `serverMessageLoggingLevel` parameters not supported - use standard logging framework configuration instead
+| Requires `loggingLevel` parameter to bridge JSch internal logging to SLF4J; `serverMessageLoggingLevel` for server messages
+|===
+
+==== Known Hosts Port Matching
+
+The mina-sftp component follows **strict OpenSSH semantics** for known_hosts port matching, while the sftp component is more lenient.
+
+**OpenSSH known_hosts format:**
+
+* `hostname` - matches the hostname on **port 22 only**
+* `[hostname]:port` - matches the hostname on the specified non-standard port
+
+**Example:** If your known_hosts file contains:
+[source]
+----
+myserver.example.com ssh-rsa AAAAB3NzaC1yc2E...
+----
+
+* **sftp component**: This entry matches connections to `myserver.example.com` on **any port**
+* **mina-sftp component**: This entry matches connections to `myserver.example.com` on **port 22 only**
+
+**For non-standard ports with mina-sftp**, you must use the bracketed format:
+[source]
+----
+[myserver.example.com]:2222 ssh-rsa AAAAB3NzaC1yc2E...
+----
+
+This difference is important when migrating from the sftp component and using `strictHostKeyChecking=yes` with servers running on non-standard ports.
+
+=== Migration Checklist
+
+When migrating from `sftp` to `mina-sftp`, verify the following:
+
+. **URI Scheme**: Change `sftp://` to `mina-sftp://`
+. **Proxy Usage**: If using proxy (HTTP, SOCKS4, SOCKS5), stay with `sftp` - proxy is not supported in mina-sftp
+. **Kerberos/GSSAPI**: If using GSSAPI authentication, stay with `sftp`
+. **Known Hosts on Non-Standard Ports**: Update known_hosts entries to use `[hostname]:port` format for non-standard ports
+. **serverAliveCountMax**: If using `serverAliveCountMax=0`, note the behavioral difference (fire-and-forget vs disabled)
+. **Compression**: Remove any manual zlib JAR additions - mina-sftp has built-in compression support
+. **Deprecated Parameters**: Remove JSch-specific parameters (`loggingLevel`, `serverMessageLoggingLevel`, `existDirCheckUsingLs`) - they are accepted but log warnings (see <<Deprecated JSch Parameters>>)
+. **Logging Configuration**: Configure logging via log4j/logback instead of URI parameters (see <<Logging Configuration>>)
+. **Test Authentication**: Verify public key and password authentication work correctly
+. **Test Host Key Verification**: If using `strictHostKeyChecking=yes`, verify known_hosts entries match
+
+== Error Handling
+
+=== Connection Retry
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&maximumReconnectAttempts=5&reconnectDelay=2000")
+    .to("file:local");
+----
+
+=== Error Messages
+
+The component provides clear error messages for common failure scenarios:
+
+==== Connection Errors
+* **Host unreachable**: `Cannot connect to \{host\}:\{port\}`
+* **Connection timeout**: `Connection timed out after \{timeout\}ms`
+
+==== Authentication Errors
+* **Authentication failure**: `Authentication failed: \{reason\}`
+* **Authentication timeout**: `Authentication timed out after \{timeout\}ms`
+
+==== Configuration Errors
+* **Invalid chmod**: `Invalid chmod value: '999'. Must be a valid octal number (e.g., 644, 755)`
+* **Invalid cipher**: `Unknown or unsupported cipher: xxx. Available ciphers: [aes128-ctr, aes256-ctr, ...]`
+* **Invalid key exchange**: `Unknown or unsupported key exchange protocol: xxx. Available protocols: [curve25519-sha256, ...]`
+* **Invalid host key algorithm**: `Unknown or unsupported server host key algorithm: xxx. Available algorithms: [ssh-ed25519, ...]`
+
+==== Host Key Verification Errors
+* **Unknown host**: `Host key verification failed: server 'hostname:port' is not in the known_hosts file`
+* **Key mismatch**: `Host key verification failed: the host key for 'hostname:port' has changed!`
+* **Expired certificate**: `Host certificate has expired. Valid until <date>, current time: <date>`
+
+==== Unsupported Features
+* **Proxy**: `Proxy not supported in mina-sftp, use sftp component`
+
+The error messages include available options where applicable, making it easier to correct configuration issues.
+
+== Compression
+
+The mina-sftp component supports SSH data compression to reduce bandwidth usage for large file transfers over slow or metered connections.
+
+=== Enabling Compression
+
+To enable compression, set the `compression` option to a value between 1 and 10:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&compression=5")
+    .to("file:local");
+----
+
+The compression level is advisory; the actual compression behavior depends on the SSH library's implementation. When compression is enabled, the component configures the following algorithms in order of preference:
+
+1. `zlib@openssh.com` (OpenSSH delayed compression - preferred for security)
+2. `zlib` (standard zlib compression)
+3. `none` (fallback if server doesn't support compression)
+
+=== No Additional Dependencies Required
+
+NOTE: Unlike the JSch-based `sftp` component which requires manually adding a zlib JAR to the classpath, Apache MINA SSHD includes built-in compression support. No additional dependencies are needed.
+
+=== Compression Fallback Behavior
+
+If compression is enabled but the server does not support any compression algorithms, the connection automatically falls back to uncompressed transfer and logs a WARNING message:
+
+[source]
+----
+WARN  Compression was requested (level=5) but server does not support compression. Falling back to uncompressed transfer.
+----
+
+This allows the connection to proceed without manual intervention while alerting administrators to the configuration mismatch.
+
+=== Default Behavior
+
+By default (`compression=0`), compression is disabled to minimize CPU overhead and maintain backward compatibility. Enable compression only when bandwidth savings outweigh the CPU cost of compression/decompression.
+
+=== Compression Algorithm Details
+
+When compression is enabled, the component offers the following algorithms during SSH negotiation:
+
+[cols="1,3"]
+|===
+| Algorithm | Description
+
+| `zlib@openssh.com`
+| OpenSSH "delayed" compression. Compression starts only after authentication completes. This is preferred for security as it prevents potential compression-related attacks during the authentication phase.
+
+| `zlib`
+| Standard zlib compression. Compression is active immediately, including during authentication. Use only if the server doesn't support delayed compression.
+
+| `none`
+| No compression (fallback). Used when the server doesn't support any compression.
+|===
+
+The algorithm negotiation follows SSH protocol standards - the first mutually supported algorithm from the client's preference list is selected.
+
+== Cipher Configuration
+
+The mina-sftp component allows you to specify which SSH cipher algorithms to use for encrypted data transfer.
+
+=== Configuring Ciphers
+
+To specify a custom list of ciphers, use the `ciphers` option with a comma-separated list of cipher names:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&ciphers=aes256-ctr,aes256-gcm@openssh.com")
+    .to("file:local");
+----
+
+Ciphers are offered to the server in the order specified. The first mutually supported cipher will be used.
+
+=== Available Ciphers
+
+The following ciphers are supported by Apache MINA SSHD:
+
+[cols="2,1,1,3"]
+|===
+| Cipher Name | Algorithm | Mode | Notes
+
+| `aes128-ctr`
+| AES-128
+| CTR
+| Standard, widely supported
+
+| `aes192-ctr`
+| AES-192
+| CTR
+| Standard
+
+| `aes256-ctr`
+| AES-256
+| CTR
+| Recommended for high security
+
+| `aes128-gcm@openssh.com`
+| AES-128
+| GCM
+| Authenticated encryption
+
+| `aes256-gcm@openssh.com`
+| AES-256
+| GCM
+| Recommended - authenticated encryption
+
+| `chacha20-poly1305@openssh.com`
+| ChaCha20
+| AEAD
+| Modern, fast on CPUs without AES-NI
+
+| `aes128-cbc`
+| AES-128
+| CBC
+| Legacy, avoid if possible
+
+| `aes192-cbc`
+| AES-192
+| CBC
+| Legacy
+
+| `aes256-cbc`
+| AES-256
+| CBC
+| Legacy, avoid if possible
+
+| `3des-cbc`
+| Triple DES
+| CBC
+| Deprecated, use only for compatibility
+
+| `blowfish-cbc`
+| Blowfish
+| CBC
+| Legacy
+|===
+
+=== Cipher Security Recommendations
+
+For security-hardened environments, use only modern authenticated encryption modes:
+
+[source,java]
+----
+// Recommended secure configuration
+from("mina-sftp://user@host/path?password=secret&ciphers=aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr")
+    .to("file:local");
+----
+
+=== Default Cipher Behavior
+
+If `ciphers` is not specified, Apache MINA SSHD's default cipher list is used, which includes a secure selection of modern algorithms.
+
+NOTE: Unlike the JSch-based `sftp` component, Apache MINA SSHD supports modern algorithms like ChaCha20-Poly1305 and AES-GCM that are not available in JSch. Additionally, invalid cipher names are validated before attempting to connect, providing clearer error messages.
+
+== Key Exchange Protocol Configuration
+
+The mina-sftp component allows you to specify which SSH key exchange algorithms to use for deriving the shared session key.
+
+=== Configuring Key Exchange Protocols
+
+To specify a custom list of key exchange protocols, use the `keyExchangeProtocols` option with a comma-separated list:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&keyExchangeProtocols=curve25519-sha256,ecdh-sha2-nistp256")
+    .to("file:local");
+----
+
+Key exchange protocols are offered to the server in the order specified. The first mutually supported algorithm will be used.
+
+=== Available Key Exchange Protocols
+
+The following key exchange protocols are supported by Apache MINA SSHD:
+
+[cols="2,3,1"]
+|===
+| Protocol Name | Description | Recommended
+
+| `curve25519-sha256`
+| Modern Curve25519 elliptic curve with SHA-256
+| Yes
+
+| `curve25519-sha256@libssh.org`
+| Curve25519 (libssh.org variant)
+| Yes
+
+| `curve448-sha512`
+| Curve448 with SHA-512 (stronger)
+| Yes
+
+| `ecdh-sha2-nistp256`
+| ECDH with NIST P-256 curve
+| Yes
+
+| `ecdh-sha2-nistp384`
+| ECDH with NIST P-384 curve
+| Yes
+
+| `ecdh-sha2-nistp521`
+| ECDH with NIST P-521 curve
+| Yes
+
+| `diffie-hellman-group14-sha256`
+| DH Group14 (2048-bit) with SHA-256
+| Yes
+
+| `diffie-hellman-group15-sha512`
+| DH Group15 (3072-bit) with SHA-512
+| Yes
+
+| `diffie-hellman-group16-sha512`
+| DH Group16 (4096-bit) with SHA-512
+| Yes
+
+| `diffie-hellman-group17-sha512`
+| DH Group17 (6144-bit) with SHA-512
+| Yes
+
+| `diffie-hellman-group18-sha512`
+| DH Group18 (8192-bit) with SHA-512
+| Yes
+
+| `diffie-hellman-group-exchange-sha256`
+| DH Group Exchange with SHA-256
+| Yes
+
+| `diffie-hellman-group14-sha1`
+| DH Group14 with SHA-1
+| Deprecated
+
+| `diffie-hellman-group1-sha1`
+| DH Group1 (1024-bit) with SHA-1
+| Deprecated
+
+| `diffie-hellman-group-exchange-sha1`
+| DH Group Exchange with SHA-1
+| Deprecated
+|===
+
+=== Default Key Exchange Behavior
+
+If `keyExchangeProtocols` is not specified, Apache MINA SSHD's default list is used, which prioritizes modern, secure algorithms.
+
+== Server Host Key Configuration
+
+The mina-sftp component allows you to specify which server host key algorithms are accepted for verifying the identity of the SSH server.
+
+=== Configuring Server Host Keys
+
+To specify a custom list of server host key algorithms, use the `serverHostKeys` option with a comma-separated list:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&serverHostKeys=ssh-ed25519,rsa-sha2-512")
+    .to("file:local");
+----
+
+Server host key algorithms are offered to the server in the order specified. The first mutually supported algorithm will be used for server authentication.
+
+=== Available Server Host Key Algorithms
+
+The following server host key algorithms are supported by Apache MINA SSHD:
+
+[cols="2,3,1"]
+|===
+| Algorithm Name | Description | Recommended
+
+| `ssh-ed25519`
+| EdDSA Ed25519 (modern, fast)
+| Yes
+
+| `rsa-sha2-512`
+| RSA with SHA-512 (2048+ bit keys)
+| Yes
+
+| `rsa-sha2-256`
+| RSA with SHA-256 (2048+ bit keys)
+| Yes
+
+| `ecdsa-sha2-nistp256`
+| ECDSA with NIST P-256 curve
+| Yes
+
+| `ecdsa-sha2-nistp384`
+| ECDSA with NIST P-384 curve
+| Yes
+
+| `ecdsa-sha2-nistp521`
+| ECDSA with NIST P-521 curve
+| Yes
+
+| `ssh-rsa`
+| RSA with SHA-1
+| Deprecated
+
+| `ssh-dss`
+| DSA
+| Deprecated
+|===
+
+=== Certificate Variants
+
+Apache MINA SSHD also supports OpenSSH certificate-based host key verification:
+
+* `ssh-ed25519-cert-v01@openssh.com`
+* `rsa-sha2-256-cert-v01@openssh.com`
+* `rsa-sha2-512-cert-v01@openssh.com`
+* `ecdsa-sha2-nistp256-cert-v01@openssh.com`
+* `ecdsa-sha2-nistp384-cert-v01@openssh.com`
+* `ecdsa-sha2-nistp521-cert-v01@openssh.com`
+
+=== Default Server Host Key Behavior
+
+If `serverHostKeys` is not specified, Apache MINA SSHD's default list is used, which includes all supported algorithms with modern ones prioritized.
+
+== Algorithm Security Recommendations
+
+For security-hardened environments, configure only modern, recommended algorithms:
+
+=== Recommended Configuration
+
+[source,java]
+----
+// Security-hardened SFTP connection
+from("mina-sftp://user@host/path?password=secret"
+    + "&keyExchangeProtocols=curve25519-sha256,ecdh-sha2-nistp256,diffie-hellman-group16-sha512"
+    + "&serverHostKeys=ssh-ed25519,rsa-sha2-512,ecdsa-sha2-nistp256"
+    + "&ciphers=aes256-gcm@openssh.com,chacha20-poly1305@openssh.com,aes256-ctr")
+    .to("file:local");
+----
+
+=== Algorithms to Avoid
+
+The following algorithms are deprecated and should be avoided for new deployments:
+
+[cols="1,2"]
+|===
+| Algorithm | Reason
+
+| `diffie-hellman-group1-sha1`
+| 1024-bit DH is too weak; SHA-1 is deprecated
+
+| `diffie-hellman-group14-sha1`
+| SHA-1 is deprecated
+
+| `diffie-hellman-group-exchange-sha1`
+| SHA-1 is deprecated
+
+| `ssh-rsa`
+| Uses SHA-1 for signatures (deprecated)
+
+| `ssh-dss`
+| DSA is deprecated
+|===
+
+=== Compliance Considerations
+
+For environments requiring compliance with security standards (e.g., FIPS, PCI-DSS):
+
+* Use only NIST-approved curves (P-256, P-384, P-521) for ECDH and ECDSA
+* Use RSA with SHA-256 or SHA-512 (rsa-sha2-256, rsa-sha2-512)
+* Use AES-128 or AES-256 in CTR or GCM mode
+* Avoid Curve25519/Ed25519 if strict FIPS compliance is required (not NIST-approved)
+
+== Connection Keep-Alive
+
+The component supports SSH keep-alive (heartbeat) functionality to prevent connections from being dropped during long idle periods and to detect unresponsive servers.
+
+=== Configuration Options
+
+[cols="1,1,1,3"]
+|===
+| Option | Default | Type | Description
+
+| `serverAliveInterval`
+| `0`
+| int (ms)
+| Interval in milliseconds between keep-alive messages. Set to `0` to disable (default).
+
+| `serverAliveCountMax`
+| `1`
+| int
+| Maximum number of consecutive unanswered keep-alive messages before the connection is terminated.
+|===
+
+These option names follow the standard OpenSSH client configuration naming (`ServerAliveInterval` and `ServerAliveCountMax`) and are identical to the JSch-based `sftp` component for seamless migration.
+
+NOTE: Under the hood, these settings are mapped to Apache MINA SSHD's `CoreModuleProperties.HEARTBEAT_INTERVAL` and `CoreModuleProperties.HEARTBEAT_NO_REPLY_MAX` properties.
+
+=== Preventing Connection Drops
+
+For routes with long idle periods between file transfers, configure keep-alive to prevent firewalls or servers from terminating the connection:
+
+[source,java]
+----
+// Send keep-alive every 30 seconds
+from("mina-sftp://user@host/path?password=secret&serverAliveInterval=30000")
+    .to("file:local");
+----
+
+=== Detecting Unresponsive Servers
+
+Configure `serverAliveCountMax` to control how quickly the component detects an unresponsive server:
+
+[source,java]
+----
+// Terminate connection after 3 unanswered keep-alives (90 seconds max)
+from("mina-sftp://user@host/path?password=secret&serverAliveInterval=30000&serverAliveCountMax=3")
+    .to("file:local");
+----
+
+With this configuration:
+
+* Keep-alive messages are sent every 30 seconds
+* If 3 consecutive messages go unanswered, the connection is terminated
+* Maximum detection time: 90 seconds (30s × 3)
+
+=== Default Behavior
+
+By default (`serverAliveInterval=0`), no keep-alive messages are sent. This matches the JSch-based `sftp` component behavior.
+
+NOTE: Negative values for `serverAliveInterval` are treated the same as `0` (keep-alive disabled). This behavior is consistent between `mina-sftp` and `sftp` components.
+
+=== Behavioral Difference: serverAliveCountMax with Zero or Negative Values
+
+IMPORTANT: There is a behavioral difference between `mina-sftp` and `sftp` components when `serverAliveCountMax` is set to `0` or a negative value.
+
+[cols="1,2,2"]
+|===
+| Value | mina-sftp (MINA SSHD) | sftp (JSch)
+
+| `> 0`
+| Terminate connection after N unanswered heartbeats
+| Terminate connection after N unanswered heartbeats
+
+| `= 0`
+| *Fire-and-forget mode*: heartbeats are sent but no reply is expected, connection is never terminated due to unanswered heartbeats
+| No keep-alive messages are sent
+
+| `< 0`
+| *Fire-and-forget mode*: same as `0`
+| No keep-alive messages are sent
+|===
+
+This difference stems from the underlying libraries:
+
+* **Apache MINA SSHD**: When `HEARTBEAT_NO_REPLY_MAX <= 0`, heartbeats are sent with `wantReply=false` (fire-and-forget mode)
+* **JSch**: When `serverAliveCountMax <= 0`, keep-alive functionality is effectively disabled
+
+==== Recommendation
+
+To ensure consistent behavior when migrating from `sftp` to `mina-sftp`:
+
+* Always use positive values for `serverAliveCountMax` (default is `1`)
+* If you want to disable connection termination on unresponsive servers but still send heartbeats, `mina-sftp` with `serverAliveCountMax=0` provides this capability (not available in `sftp`)
+
+== Host Key Verification
+
+The MINA SFTP component supports comprehensive host key verification to protect against Man-in-the-Middle (MITM) attacks.
+
+=== Strict Host Key Checking
+
+When `strictHostKeyChecking=yes`, the server's host key must match an entry in the known hosts source. If the key is unknown or mismatches, the connection is rejected.
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&strictHostKeyChecking=yes")
+    .to("file:local");
+----
+
+=== Known Hosts Sources (Priority Order)
+
+The component checks for known hosts in this priority order:
+
+1. **Byte array** (`knownHosts`): Directly configured as byte array
+2. **URI/Classpath** (`knownHostsUri`): Loaded from classpath or file URI
+3. **File path** (`knownHostsFile`): Loaded from filesystem
+4. **User default** (`useUserKnownHostsFile=true`): Uses `~/.ssh/known_hosts`
+
+==== Using Custom Known Hosts File
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&strictHostKeyChecking=yes&knownHostsFile=/path/to/known_hosts")
+    .to("file:local");
+----
+
+==== Using Known Hosts from Classpath
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&strictHostKeyChecking=yes&knownHostsUri=classpath:ssh/known_hosts")
+    .to("file:local");
+----
+
+==== Using User's Default Known Hosts
+
+By default, `useUserKnownHostsFile=true` which uses `~/.ssh/known_hosts`:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&strictHostKeyChecking=yes")
+    .to("file:local");
+----
+
+=== Auto-Create Known Hosts File (Development Only)
+
+For development environments, you can enable automatic trust-on-first-use:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&autoCreateKnownHostsFile=true&knownHostsFile=/tmp/dev_known_hosts")
+    .to("file:local");
+----
+
+CAUTION: Auto-create is only recommended for development environments. It weakens security by automatically trusting new hosts.
+
+=== Disable Host Key Checking (Testing Only)
+
+[source,java]
+----
+from("mina-sftp://user@localhost/test?password=secret&strictHostKeyChecking=no&useUserKnownHostsFile=false")
+    .to("mock:result");
+----
+
+CAUTION: Disabling host key checking is insecure and should only be used for testing.
+
+=== Certificate-Based Host Verification
+
+For enterprise environments using OpenSSH host certificates, you can use `@cert-authority` entries in your known_hosts file to verify server certificates instead of maintaining individual host keys.
+
+==== Using @cert-authority Entries
+
+The standard OpenSSH known_hosts format supports `@cert-authority` entries that define trusted CA public keys for certificate verification:
+
+[source]
+----
+# Trust this CA for all hosts in example.com domain
+@cert-authority *.example.com ssh-rsa AAAAB3NzaC1yc2E... Production CA
+
+# Trust this CA for a specific host
+@cert-authority server.example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5... Specific CA
+----
+
+==== Example Configuration
+
+[source,java]
+----
+from("mina-sftp://user@host.example.com/path?password=secret&strictHostKeyChecking=yes&knownHostsFile=/path/to/known_hosts")
+    .to("file:local");
+----
+
+Where the known_hosts file contains:
+[source]
+----
+# Regular host key entry
+server1.example.com ssh-rsa AAAAB3NzaC1yc2E...
+
+# CA for certificate-based verification
+@cert-authority *.example.com ssh-rsa AAAAB3NzaC1yc2E... Enterprise CA
+----
+
+==== Certificate vs Known Hosts Priority
+
+When both `@cert-authority` entries and regular host key entries are present:
+
+* If the server presents a certificate AND a matching `@cert-authority` entry exists: Certificate verification takes precedence
+* If certificate verification fails: Connection is rejected (does NOT fall back to regular known_hosts entries)
+* If server presents a plain public key (not certificate): Regular known hosts verification is used
+
+This ensures that servers configured for certificate authentication maintain their security guarantees.
+
+=== Custom ServerKeyVerifier
+
+For advanced use cases, you can provide a custom `ServerKeyVerifier` implementation to handle host key verification. This allows integration with enterprise key management systems or implementing custom verification logic.
+
+==== Using Custom Verifier via Bean Reference
+
+[source,java]
+----
+// Register custom verifier in Camel registry
+ServerKeyVerifier myVerifier = (session, remoteAddress, serverKey) -> {
+    // Custom verification logic
+    return verifyAgainstEnterpriseKeyStore(serverKey);
+};
+context.getRegistry().bind("myVerifier", myVerifier);
+
+// Use in endpoint URI
+from("mina-sftp://user@host/path?password=secret&serverKeyVerifier=#myVerifier")
+    .to("file:local");
+----
+
+==== Using Custom Verifier Programmatically
+
+[source,java]
+----
+MinaSftpEndpoint endpoint = context.getEndpoint(
+    "mina-sftp://user@host/path?password=secret", MinaSftpEndpoint.class);
+MinaSftpConfiguration config = (MinaSftpConfiguration) endpoint.getConfiguration();
+
+config.setServerKeyVerifier((session, remoteAddress, serverKey) -> {
+    // Custom verification logic
+    return true;
+});
+----
+
+==== Custom Verifier Precedence
+
+When a custom `ServerKeyVerifier` is provided:
+
+* The custom verifier is used **exclusively** for host key verification
+* All other host key options are ignored (`strictHostKeyChecking`, `knownHostsFile`, `knownHostsUri`, etc.)
+* The user takes full responsibility for security decisions
+
+This precedence ensures predictable behavior - when you provide a custom verifier, only your verification logic runs.
+
+=== Host Key Verification Error Messages
+
+The component provides clear error messages for different failure scenarios:
+
+* **Unknown host**: `Host key verification failed: server 'hostname:port' is not in the known_hosts file.`
+* **Key mismatch**: `Host key verification failed: the host key for 'hostname:port' has changed! This may indicate a man-in-the-middle attack.`
+* **Untrusted CA**: `Certificate is signed by untrusted CA. Add @cert-authority entry to known_hosts file.`
+* **Expired certificate**: `Host certificate has expired. Valid until <date>, current time: <date>.`
+* **Principal mismatch**: `Hostname '<hostname>' is not listed in certificate principals.`
+
+== Local Interface Binding
+
+In multi-homed environments (servers with multiple network interfaces), you may need to specify which local network interface the SFTP connection should use.
+
+=== Configuring Bind Address
+
+Use the `bindAddress` option to specify the local IP address or hostname to bind the outgoing connection:
+
+[source,java]
+----
+from("mina-sftp://user@host/path?password=secret&bindAddress=192.168.1.100")
+    .to("file:local");
+----
+
+=== Bind Address Formats
+
+The mina-sftp component supports multiple formats for `bindAddress`:
+
+[cols="2,2,2"]
+|===
+| Format | Example | Description
+
+| IPv4 address
+| `192.168.1.100`
+| Bind to IP, ephemeral port
+
+| IPv4 with port
+| `192.168.1.100:5000`
+| Bind to IP and specific port
+
+| IPv6 address
+| `::1`
+| Bind to IPv6, ephemeral port
+
+| IPv6 with port
+| `[::1]:5000`
+| Bind to IPv6 and port (bracketed notation)
+
+| Hostname
+| `localhost`
+| Bind to hostname, ephemeral port
+
+| Hostname with port
+| `localhost:5000`
+| Bind to hostname and specific port
+|===
+
+NOTE: The ability to specify a local port is a **mina-sftp specific feature** not available in the JSch-based `sftp` component. See <<bindaddress-difference>> for details.
+
+=== Use Cases
+
+[cols="2,3"]
+|===
+| Scenario | Configuration
+
+| Multi-homed server
+| `bindAddress=10.0.0.50` (use internal network interface)
+
+| Firewall compliance
+| `bindAddress=172.16.0.1` (use DMZ interface)
+
+| Fixed source port (strict firewall)
+| `bindAddress=10.0.0.50:5000` (specific interface and port)
+
+| Default routing
+| Omit `bindAddress` (OS decides based on routing table)
+|===
+
+=== Default Behavior
+
+When `bindAddress` is not specified (default), the operating system's routing table determines which local interface is used for the connection. This is the standard behavior for most use cases.
+
+When a port is not specified (e.g., `bindAddress=192.168.1.100`), an ephemeral port is automatically assigned by the operating system.
+
+=== Error Handling
+
+If an invalid or unavailable bind address is specified, the connection will fail with a clear error message:
+
+[source]
+----
+Invalid bind address: 192.168.99.99. Supported formats: host, host:port, [ipv6], [ipv6]:port
+----
+
+[[bindaddress-difference]]
+=== Difference from JSch SFTP Component
+
+The mina-sftp component's `bindAddress` parameter has an enhanced format compared to the JSch-based `sftp` component:
+
+[cols="1,2,2"]
+|===
+| Feature | mina-sftp | sftp (JSch)
+
+| **IP/hostname binding**
+| Supported
+| Supported
+
+| **Port specification**
+| Supported (`host:port` format)
+| Not supported (always ephemeral)
+
+| **IPv6 with port**
+| Supported (`[ipv6]:port` format)
+| Not supported
+
+| **Implementation**
+| Native MINA SSHD API (`SshClient.connect()` with local address)
+| Custom SocketFactory workaround
+|===
+
+==== Migration Note
+
+If you are migrating from the `sftp` component to `mina-sftp`, your existing `bindAddress` configurations will work without changes. The port specification is an optional enhancement.
+
+[source,java]
+----
+// Works in both sftp and mina-sftp
+bindAddress=192.168.1.100
+
+// Only works in mina-sftp (port specification)
+bindAddress=192.168.1.100:5000
+----
+
+== SFTP Buffer Size Configuration
+
+The mina-sftp component allows you to configure buffer sizes for SFTP read and write operations to optimize file transfer performance.
+
+=== Configuring Buffer Sizes
+
+Use `readBufferSize` and `writeBufferSize` to control the buffer allocation for SFTP transfers:
+
+[source,java]
+----
+// Configure 64KB read buffer and 32KB write buffer
+from("mina-sftp://user@host/path?password=secret&readBufferSize=65536&writeBufferSize=32768")
+    .to("file:local");
+
+// Configure symmetric buffer sizes for balanced transfers
+from("mina-sftp://user@host/path?password=secret&readBufferSize=65536&writeBufferSize=65536")
+    .to("file:local");
+----
+
+=== Buffer Size Options
+
+[cols="2,1,3"]
+|===
+| Option | Default | Description
+
+| `readBufferSize`
+| MINA default
+| Buffer size in bytes for reading data from SFTP connections
+
+| `writeBufferSize`
+| MINA default
+| Buffer size in bytes for writing data to SFTP connections
+|===
+
+=== Performance Tuning Guidelines
+
+[cols="2,2,3"]
+|===
+| Buffer Size | Memory Usage | Use Case
+
+| `32768` (32KB)
+| Low
+| Memory-constrained environments, slow connections
+
+| `65536` (64KB)
+| Medium
+| Balanced performance (recommended starting point)
+
+| `98304` (96KB)
+| Medium-High
+| High-throughput connections
+
+| `126976` (124KB)
+| High
+| Maximum recommended - higher values may cause issues
+|===
+
+=== Important Considerations
+
+IMPORTANT: The maximum recommended buffer size is `126976` bytes (approximately 124KB). Buffer sizes larger than this may cause data corruption issues in Apache MINA SSHD due to server read request size limits.
+
+=== Default Behavior
+
+When buffer sizes are not specified, Apache MINA SSHD uses its internal defaults, which are suitable for most use cases. Configure explicit buffer sizes only when you need to optimize for specific network conditions or memory constraints.
+
+=== Migration from bulkRequests (Deprecated)
+
+If you are migrating from a configuration using the deprecated `bulkRequests` parameter, use the following conversion:
+
+[cols="1,2,2"]
+|===
+| bulkRequests | Equivalent Buffer Size | Configuration
+
+| `1`
+| 32KB
+| `readBufferSize=32768&writeBufferSize=32768`
+
+| `2`
+| 64KB
+| `readBufferSize=65536&writeBufferSize=65536`
+
+| `4`
+| 128KB (capped to 124KB)
+| `readBufferSize=126976&writeBufferSize=126976`
+
+| `8+`
+| 124KB (maximum)
+| `readBufferSize=126976&writeBufferSize=126976`
+|===
+
+The `bulkRequests` parameter is still supported for backward compatibility but is deprecated. New configurations should use `readBufferSize` and `writeBufferSize` directly as they map directly to Apache MINA SSHD's native buffer properties.
+
+NOTE: In the original JSch-based `sftp` component, `bulkRequests` controlled how many 32KB packets could be in-flight simultaneously. In Apache MINA SSHD, there is no direct equivalent, so the mina-sftp component approximates this behavior using buffer sizes. For fine-grained control over transfer characteristics, use `readBufferSize` and `writeBufferSize`.
+
+== File and Directory Permissions (chmod)
+
+The mina-sftp component supports setting POSIX file permissions on uploaded files and created directories.
+
+=== Setting File Permissions
+
+Use the `chmod` option to set permissions on files after they are uploaded:
+
+[source,java]
+----
+// Set file permissions to rw-r--r-- (644)
+from("file:/data/outbound")
+    .to("mina-sftp://user@host/uploads?password=secret&chmod=644");
+
+// Set file permissions to rw------- (600) for sensitive files
+from("file:/data/secrets")
+    .to("mina-sftp://user@host/secure?password=secret&chmod=600");
+----
+
+=== Setting Directory Permissions
+
+Use the `chmodDirectory` option to set permissions on directories when they are created:
+
+[source,java]
+----
+// Set directory permissions to rwxr-xr-x (755)
+from("file:/data/outbound")
+    .to("mina-sftp://user@host/uploads?password=secret&chmodDirectory=755");
+
+// Combine with chmod for complete control
+from("file:/data/outbound")
+    .to("mina-sftp://user@host/uploads?password=secret&chmod=644&chmodDirectory=755");
+----
+
+=== Permission Format
+
+Permissions are specified as octal strings, just like the Unix `chmod` command:
+
+[cols="1,2,3"]
+|===
+| Value | Permissions | Description
+
+| `777`
+| `rwxrwxrwx`
+| Full access for everyone (not recommended)
+
+| `755`
+| `rwxr-xr-x`
+| Owner full, group/others read+execute
+
+| `750`
+| `rwxr-x---`
+| Owner full, group read+execute, others none
+
+| `700`
+| `rwx------`
+| Owner only
+
+| `644`
+| `rw-r--r--`
+| Owner read+write, group/others read-only
+
+| `640`
+| `rw-r-----`
+| Owner read+write, group read-only, others none
+
+| `600`
+| `rw-------`
+| Owner read+write only
+|===
+
+=== Platform Considerations
+
+IMPORTANT: The `chmod` and `chmodDirectory` options only work on POSIX-compatible SFTP servers (Linux, macOS, Unix). Windows SFTP servers that don't support POSIX permissions may ignore these settings or return an error.
+
+=== Configuration Validation
+
+The `chmod` and `chmodDirectory` values are validated at endpoint startup. Invalid values will cause the endpoint to fail during initialization with a clear error message:
+
+[source]
+----
+Invalid chmod value: '999'. Must be a valid octal number (e.g., 644, 755).
+The value contains non-octal characters (valid: 0-7).
+
+Invalid chmodDirectory value: '888'. Must be an octal number between 000 and 7777 (e.g., 644, 755).
+----
+
+This early validation helps catch configuration errors before any file operations are attempted.
+
+== Symbolic Links
+
+The mina-sftp component supports reading and writing through symbolic links on SFTP servers that support them.
+
+=== Consumer Behavior
+
+When consuming files, the consumer follows symbolic links to their target files:
+
+[source,java]
+----
+// Will consume files through symlinks
+from("mina-sftp://user@host/data?password=secret")
+    .to("file:local");
+----
+
+=== Producer Behavior
+
+When producing files, you can write to paths that are symbolic links. The file will be written to the symlink's target:
+
+[source,java]
+----
+// Can write to symlink targets
+from("file:local")
+    .to("mina-sftp://user@host/upload-link?password=secret");
+----
+
+=== Symlink Limitations
+
+NOTE: **Absolute symlinks in chroot environments**: If the SFTP server uses a chroot jail (common with OpenSSH `ChrootDirectory`), absolute symlinks may not resolve correctly because the absolute path gets prepended with the chroot directory. Use **relative symlinks** for maximum compatibility in chroot environments.
+
+[source,bash]
+----
+# Relative symlink (works in chroot) - RECOMMENDED
+ln -s ../actual-data/file.txt data/link.txt
+
+# Absolute symlink (may fail in chroot)
+ln -s /home/user/actual-data/file.txt data/link.txt
+----
+
+== Thread Safety
+
+The mina-sftp component handles thread safety internally. The underlying MINA SSHD session and SFTP client are not thread-safe, so the component uses internal locking to ensure safe concurrent access.
+
+=== Concurrent Access
+
+Multiple Camel routes can safely share the same SFTP endpoint. The component serializes access to the underlying SFTP connection:
+
+[source,java]
+----
+// Safe: Multiple routes can use the same endpoint
+from("timer:upload1?period=5000")
+    .setBody(constant("data1"))
+    .to("mina-sftp://user@host/uploads?password=secret");
+
+from("timer:upload2?period=5000")
+    .setBody(constant("data2"))
+    .to("mina-sftp://user@host/uploads?password=secret");
+----
+
+=== Connection Pooling
+
+Each endpoint maintains its own connection. For high-throughput scenarios with many concurrent operations, consider using multiple endpoints or connection pooling strategies at the route level.
+
+== Filename Encoding
+
+The mina-sftp component allows you to specify the character encoding used for filenames when communicating with the SFTP server.
+
+=== When to Use
+
+By default, MINA SSHD uses UTF-8 encoding for filenames, which is the standard for modern SFTP servers. However, some legacy servers may use different regional encodings:
+
+- **GBK** or **GB2312** - Chinese servers
+- **Shift-JIS** or **EUC-JP** - Japanese servers
+- **ISO-8859-1** - Western European legacy systems
+- **Windows-1252** - Windows legacy systems
+
+=== Configuration
+
+Use the `filenameEncoding` option to specify the charset:
+
+[source,java]
+----
+// Connect to a legacy server using GBK encoding for Chinese filenames
+from("mina-sftp://user@host/path?password=secret&filenameEncoding=GBK")
+    .to("file:local");
+
+// Connect to a Japanese server
+from("mina-sftp://user@host/path?password=secret&filenameEncoding=Shift-JIS")
+    .to("file:local");
+----
+
+=== Default Behavior
+
+When `filenameEncoding` is not specified, UTF-8 is used (the MINA SSHD default). This is correct for most modern SFTP servers.
+
+== Deprecated JSch Parameters (Migration from sftp)
+
+The following parameters from the JSch-based `sftp` component are accepted for **backward compatibility** but are ignored. When used, they log a deprecation warning to help you identify configurations that need updating.
+
+=== Accepted but Ignored Parameters
+
+[cols="2,3,2"]
+|===
+| Parameter | Description | Recommendation
+
+| `existDirCheckUsingLs`
+| JSch-specific workaround for Windows compatibility. MINA SSHD uses `stat()` instead.
+| Remove from URI
+
+| `jschLoggingLevel`
+| Controlled JSch internal logging verbosity.
+| Configure via log4j/logback (see <<Logging Configuration>>)
+
+| `serverMessageLoggingLevel`
+| Controlled SSH server message logging.
+| Configure via log4j/logback (see <<Logging Configuration>>)
+|===
+
+=== Example Warning Messages
+
+When these deprecated parameters are used, warnings like the following are logged:
+
+[source]
+----
+WARN  The 'existDirCheckUsingLs' parameter is specific to the JSch-based sftp component
+      and is ignored by mina-sftp. MINA SSHD uses stat() for directory existence checks
+      which is more reliable.
+
+WARN  The 'jschLoggingLevel' parameter is specific to the JSch-based sftp component
+      and is ignored by mina-sftp. MINA SSHD uses SLF4J natively - configure logging
+      via your logging framework (log4j, logback) instead.
+----
+
+=== Migration Example
+
+[source,java]
+----
+// Before (sftp component with JSch-specific parameters)
+from("sftp://user@host/path?existDirCheckUsingLs=false&jschLoggingLevel=WARN")
+
+// After (mina-sftp component) - remove JSch-specific parameters
+from("mina-sftp://user@host/path")
+----
+
+The deprecated parameters will continue to work (without effect) to ease migration, but you should remove them to avoid the warning messages.
+
+== Logging Configuration
+
+=== Difference from JSch SFTP Component
+
+The JSch-based `sftp` component provides two logging-related configuration options:
+
+* `loggingLevel` (also known as `jschLoggingLevel`) - Controls the verbosity of JSch library internal logging
+* `serverMessageLoggingLevel` - Controls the log level for SSH server messages (banners, interactive messages)
+
+**These options are NOT available in the mina-sftp component** because Apache MINA SSHD handles logging differently:
+
+[cols="2,3,3"]
+|===
+| Aspect | sftp (JSch) | mina-sftp (Apache MINA SSHD)
+
+| **Logging Framework**
+| JSch has its own `com.jcraft.jsch.Logger` interface that must be bridged to SLF4J
+| Uses SLF4J natively - no bridge needed
+
+| **Library Logging Control**
+| Requires `loggingLevel` parameter to control JSch verbosity
+| Controlled via standard SLF4J configuration (log4j.properties, logback.xml)
+
+| **Server Messages**
+| `serverMessageLoggingLevel` controls `showMessage()` callback output
+| Server messages (banners) are handled internally and logged via SLF4J
+|===
+
+=== Configuring MINA SSHD Logging
+
+To control the verbosity of Apache MINA SSHD logging, configure your logging framework directly.
+
+==== Log4j Configuration
+
+[source,properties]
+----
+# log4j.properties
+
+# Set MINA SSHD logging level (equivalent to loggingLevel in sftp component)
+log4j.logger.org.apache.sshd=WARN
+
+# For more verbose debugging during development
+log4j.logger.org.apache.sshd=DEBUG
+
+# Fine-grained control over specific MINA SSHD components
+log4j.logger.org.apache.sshd.client=DEBUG
+log4j.logger.org.apache.sshd.common.channel=WARN
+log4j.logger.org.apache.sshd.sftp=DEBUG
+
+# To see SSH channel window operations (very verbose)
+log4j.logger.org.apache.sshd.common.channel.Window=TRACE
+
+# To see key exchange details
+log4j.logger.org.apache.sshd.common.kex=DEBUG
+
+# To see authentication details
+log4j.logger.org.apache.sshd.client.auth=DEBUG
+----
+
+==== Log4j2 Configuration
+
+[source,xml]
+----
+<!-- log4j2.xml -->
+<Configuration>
+    <Loggers>
+        <!-- Set MINA SSHD logging level -->
+        <Logger name="org.apache.sshd" level="WARN"/>
+
+        <!-- For debugging SFTP operations -->
+        <Logger name="org.apache.sshd.sftp" level="DEBUG"/>
+
+        <!-- For debugging authentication -->
+        <Logger name="org.apache.sshd.client.auth" level="DEBUG"/>
+
+        <!-- For debugging key exchange -->
+        <Logger name="org.apache.sshd.common.kex" level="DEBUG"/>
+    </Loggers>
+</Configuration>
+----
+
+==== Logback Configuration
+
+[source,xml]
+----
+<!-- logback.xml -->
+<configuration>
+    <!-- Set MINA SSHD logging level (equivalent to loggingLevel in sftp component) -->
+    <logger name="org.apache.sshd" level="WARN"/>
+
+    <!-- For debugging during development -->
+    <logger name="org.apache.sshd" level="DEBUG"/>
+
+    <!-- Fine-grained control -->
+    <logger name="org.apache.sshd.client" level="DEBUG"/>
+    <logger name="org.apache.sshd.sftp" level="DEBUG"/>
+    <logger name="org.apache.sshd.client.auth" level="DEBUG"/>
+    <logger name="org.apache.sshd.common.kex" level="DEBUG"/>
+
+    <!-- Very verbose channel window logging -->
+    <logger name="org.apache.sshd.common.channel.Window" level="TRACE"/>
+</configuration>
+----
+
+=== Common Logging Scenarios
+
+[cols="2,3"]
+|===
+| Scenario | Logger Configuration
+
+| **Reduce noise in production**
+| `org.apache.sshd=WARN` or `org.apache.sshd=ERROR`
+
+| **Debug connection issues**
+| `org.apache.sshd.client=DEBUG`
+
+| **Debug authentication failures**
+| `org.apache.sshd.client.auth=DEBUG`
+
+| **Debug file transfer issues**
+| `org.apache.sshd.sftp=DEBUG`
+
+| **Debug host key verification**
+| `org.apache.sshd.client.keyverifier=DEBUG`
+
+| **Full verbose debugging**
+| `org.apache.sshd=TRACE` (warning: very verbose)
+|===
+
+=== Migration Note
+
+If you are migrating from the `sftp` component and were using `loggingLevel` or `serverMessageLoggingLevel`:
+
+1. These parameters are accepted for backward compatibility but will log a deprecation warning
+2. Remove these parameters from your endpoint URI to avoid the warning messages
+3. Add the equivalent logging configuration to your `log4j.properties`, `log4j2.xml`, or `logback.xml`
+4. The standard SLF4J approach provides more flexibility and follows Java logging best practices
+
+.Before (JSch sftp component)
+[source,java]
+----
+from("sftp://user@host/path?password=secret&loggingLevel=DEBUG&serverMessageLoggingLevel=INFO")
+    .to("file:local");
+----
+
+.After (MINA SSHD mina-sftp component)
+[source,java]
+----
+// Remove logging parameters from URI
+from("mina-sftp://user@host/path?password=secret")
+    .to("file:local");
+----
+
+And add to your logging configuration:
+[source,properties]
+----
+# log4j.properties
+log4j.logger.org.apache.sshd=DEBUG
+----

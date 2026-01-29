@@ -331,6 +331,11 @@
                                     <exclude>**/git.config</exclude>
                                     <exclude>**/id_file</exclude>
                                     <exclude>**/id_rsa</exclude>
+                                    <exclude>**/test-key-ecdsa</exclude>
+                                    <exclude>**/test-key-rsa-encrypted</exclude>
+                                    <exclude>**/test-ca-key</exclude>
+                                    <exclude>**/test-key-ed25519</exclude>
+                                    <exclude>**/test-key-rsa</exclude>
                                     <exclude>**/ignite/**</exclude>
                                     <exclude>**/it/resources/*.connectedApp</exclude>
                                     <exclude>**/it/resources/salesforce/**</exclude>

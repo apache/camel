@@ -271,6 +271,7 @@
 ** xref:metrics-component.adoc[Metrics]
 ** xref:micrometer-component.adoc[Micrometer]
 ** xref:mina-component.adoc[Mina]
+** xref:mina-sftp-component.adoc[MINA SFTP]
 ** xref:minio-component.adoc[Minio]
 ** xref:mllp-component.adoc[MLLP]
 ** xref:mock-component.adoc[Mock]

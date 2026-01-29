@@ -11313,6 +11313,58 @@ public class StaticEndpointBuilders {
         return MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * MINA SFTP (camel-mina-sftp)
+     * Upload and download files to/from SFTP servers using Apache MINA SSHD.
+     * 
+     * Category: file
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-mina-sftp
+     * 
+     * Syntax: <code>mina-sftp:host:port/directoryName</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param path host:port/directoryName
+     * @return the dsl builder
+     */
+    public static MinaSftpEndpointBuilderFactory.MinaSftpEndpointBuilder minaSftp(String path) {
+        return minaSftp("mina-sftp", path);
+    }
+    /**
+     * MINA SFTP (camel-mina-sftp)
+     * Upload and download files to/from SFTP servers using Apache MINA SSHD.
+     * 
+     * Category: file
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-mina-sftp
+     * 
+     * Syntax: <code>mina-sftp:host:port/directoryName</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port/directoryName
+     * @return the dsl builder
+     */
+    public static MinaSftpEndpointBuilderFactory.MinaSftpEndpointBuilder minaSftp(String componentName, String path) {
+        return MinaSftpEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 

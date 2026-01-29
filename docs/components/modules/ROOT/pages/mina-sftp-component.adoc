@@ -1,0 +1,1 @@
+../../../../../components/camel-mina-sftp/src/main/docs/mina-sftp-component.adoc
