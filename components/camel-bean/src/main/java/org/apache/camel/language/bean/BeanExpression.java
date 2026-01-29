@@ -434,74 +434,82 @@ public class BeanExpression implements Expression, Predicate {
         List<String> methods = OgnlHelper.splitOgnl(ognl);
 
         for (String methodName : methods) {
-            BeanHolder holder;
-            if (beanToCall != null) {
-                holder = new ConstantBeanHolder(beanToCall, exchange.getContext(), parameterMappingStrategy, beanComponent);
-            } else if (beanType != null) {
-                holder = new ConstantTypeBeanHolder(beanType, exchange.getContext(), parameterMappingStrategy, beanComponent);
-            } else {
-                holder = null;
-            }
-
-            // support the null safe operator
+            BeanHolder holder = createBeanHolder(beanToCall, beanType, exchange);
             boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
 
-            if (holder == null) {
-                String name = getBeanName(exchange, null, beanHolder);
-                throw new RuntimeBeanExpressionException(
-                        exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method "
-                                              + methodName + " on a null instance");
-            }
+            validateHolder(holder, exchange, beanHolder, ognl, methodName);
 
-            // keep up with how far are we doing
             ognlPath += methodName;
-
-            // get rid of leading ?. or . as we only needed that to determine if null safe was enabled or not
             methodName = OgnlHelper.removeLeadingOperators(methodName);
 
-            // are we doing an index lookup (eg in Map/List/array etc)?
-            String key = null;
             KeyValueHolder<String, String> index = OgnlHelper.isOgnlIndex(methodName);
+            String key = null;
             if (index != null) {
                 methodName = index.getKey();
                 key = index.getValue();
             }
 
-            // only invoke if we have a method name to use to invoke
-            if (methodName != null) {
-                Object newResult = invokeBean(holder, beanName, methodName, resultExchange);
+            result = invokeMethodIfPresent(holder, beanName, methodName, exchange, resultExchange, result);
+            result = lookupByKeyIfPresent(key, result, resultExchange, exchange, nullSafe, ognlPath, holder);
 
-                // check for exception and rethrow if we failed
-                if (resultExchange.getException() != null) {
-                    throw new RuntimeBeanExpressionException(exchange, beanName, methodName, resultExchange.getException());
-                }
-
-                result = newResult;
-            }
-
-            // if there was a key then we need to lookup using the key
-            if (key != null) {
-                // if key is a nested simple expression then re-evaluate that again
-                if (LanguageSupport.hasSimpleFunction(key)) {
-                    Expression exp = simple.createExpression(key);
-                    exp.init(exchange.getContext());
-                    key = exp.evaluate(exchange, String.class);
-                }
-                if (key != null) {
-                    result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean(exchange));
-                }
-            }
-
-            // check null safe for null results
             if (result == null && nullSafe) {
                 return null;
             }
 
-            // prepare for next bean to invoke
             beanToCall = result;
             beanType = null;
         }
 
+        return result;
+    }
+
+    private BeanHolder createBeanHolder(Object beanToCall, Class<?> beanType, Exchange exchange) {
+        if (beanToCall != null) {
+            return new ConstantBeanHolder(beanToCall, exchange.getContext(), parameterMappingStrategy, beanComponent);
+        }
+        if (beanType != null) {
+            return new ConstantTypeBeanHolder(beanType, exchange.getContext(), parameterMappingStrategy, beanComponent);
+        }
+        return null;
+    }
+
+    private void validateHolder(
+            BeanHolder holder, Exchange exchange, BeanHolder originalHolder, String ognl, String methodName) {
+        if (holder == null) {
+            String name = getBeanName(exchange, null, originalHolder);
+            throw new RuntimeBeanExpressionException(
+                    exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method "
+                                          + methodName + " on a null instance");
+        }
+    }
+
+    private Object invokeMethodIfPresent(
+            BeanHolder holder, String beanName, String methodName,
+            Exchange exchange, Exchange resultExchange, Object currentResult) {
+        if (methodName == null) {
+            return currentResult;
+        }
+        Object newResult = invokeBean(holder, beanName, methodName, resultExchange);
+        if (resultExchange.getException() != null) {
+            throw new RuntimeBeanExpressionException(exchange, beanName, methodName, resultExchange.getException());
+        }
+        return newResult;
+    }
+
+    private Object lookupByKeyIfPresent(
+            String key, Object result, Exchange resultExchange, Exchange exchange,
+            boolean nullSafe, String ognlPath, BeanHolder holder) {
+        if (key == null) {
+            return result;
+        }
+        if (LanguageSupport.hasSimpleFunction(key)) {
+            Expression exp = simple.createExpression(key);
+            exp.init(exchange.getContext());
+            key = exp.evaluate(exchange, String.class);
+        }
+        if (key != null) {
+            return lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean(exchange));
+        }
         return result;
     }
 
