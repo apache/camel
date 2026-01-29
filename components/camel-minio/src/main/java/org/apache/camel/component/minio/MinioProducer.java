@@ -142,18 +142,29 @@ public class MinioProducer extends DefaultProducer {
             // the content-length may already be known
             long contentLength = Long.parseLong(objectMetadata.getOrDefault(Exchange.CONTENT_LENGTH, "-1"));
 
-            Object object = exchange.getIn().getMandatoryBody();
+            // Use getBody() first to check for WrappedFile before any type conversion
+            Object object = exchange.getIn().getBody();
             InputStream inputStream = null;
             File filePayload = null;
             try {
                 // Need to check if the message body is WrappedFile
-                if (object instanceof WrappedFile) {
-                    object = ((WrappedFile<?>) object).getFile();
+                if (object instanceof WrappedFile<?> wf) {
+                    // Get file length from WrappedFile before unwrapping (works for remote files like SFTP)
+                    contentLength = wf.getFileLength();
+                    object = wf.getFile();
+                }
+                if (object == null) {
+                    throw new IllegalArgumentException("Message body is null");
                 }
                 if (object instanceof File) {
                     filePayload = (File) object;
                     inputStream = new FileInputStream(filePayload);
-                    contentLength = filePayload.length();
+                    if (contentLength <= 0) {
+                        contentLength = filePayload.length();
+                    }
+                } else if (object instanceof InputStream) {
+                    // Use the InputStream directly (e.g., from WrappedFile.getFile())
+                    inputStream = (InputStream) object;
                 } else {
                     inputStream = exchange.getMessage().getMandatoryBody(InputStream.class);
                     if (contentLength <= 0) {
