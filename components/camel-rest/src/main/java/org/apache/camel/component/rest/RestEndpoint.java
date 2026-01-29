@@ -313,286 +313,328 @@ public class RestEndpoint extends DefaultEndpoint {
     @SuppressWarnings("unchecked")
     @Override
     public Producer createProducer() throws Exception {
+        validateHost();
+
+        RestProducerFactory apiDocFactory = createApiDocFactory();
+        ProducerFactoryResult factoryResult = findProducerFactory();
+
+        if (factoryResult.factory == null) {
+            throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
+        }
+
+        LOG.debug("Using RestProducerFactory: {}", factoryResult.factory);
+
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), null, factoryResult.name);
+        Producer producer = createProducerInstance(factoryResult.factory, apiDocFactory, config);
+
+        RestProducer answer = new RestProducer(this, producer, config);
+        answer.setOutType(outType);
+        answer.setType(inType);
+        answer.setBindingMode(bindingMode);
+
+        return answer;
+    }
+
+    private void validateHost() {
         if (ObjectHelper.isEmpty(host)) {
-            // hostname must be provided
             throw new IllegalArgumentException(
                     "Hostname must be configured on either restConfiguration"
                                                + " or in the rest endpoint uri as a query parameter with name host, eg rest:"
                                                + method + ":" + path + "?host=someserver");
         }
+    }
 
-        RestProducerFactory apiDocFactory = null;
+    private RestProducerFactory createApiDocFactory() throws Exception {
+        if (apiDoc == null) {
+            return null;
+        }
+        LOG.debug("Discovering camel-openapi-java on classpath for using api-doc: {}", apiDoc);
+        try {
+            FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
+            RestProducerFactory apiDocFactory = finder.newInstance(DEFAULT_API_COMPONENT_NAME, RestProducerFactory.class)
+                    .orElse(null);
+            if (apiDocFactory == null) {
+                throw new NoFactoryAvailableException("Cannot find camel-openapi-java on classpath");
+            }
+            parameters.put("apiDoc", apiDoc);
+            return apiDocFactory;
+        } catch (NoFactoryAvailableException e) {
+            throw new IllegalStateException("Cannot find camel-openapi-java on classpath to use with api-doc: " + apiDoc);
+        }
+    }
+
+    private record ProducerFactoryResult(RestProducerFactory factory, String name) {
+    }
+
+    @SuppressWarnings("unchecked")
+    private ProducerFactoryResult findProducerFactory() {
         RestProducerFactory factory = null;
-
-        if (apiDoc != null) {
-            LOG.debug("Discovering camel-openapi-java on classpath for using api-doc: {}", apiDoc);
-            // lookup on classpath using factory finder to automatic find it (just add camel-openapi-java to classpath etc)
-            try {
-                FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
-                apiDocFactory = finder.newInstance(DEFAULT_API_COMPONENT_NAME, RestProducerFactory.class).orElse(null);
-                if (apiDocFactory == null) {
-                    throw new NoFactoryAvailableException("Cannot find camel-openapi-java on classpath");
-                }
-                parameters.put("apiDoc", apiDoc);
-            } catch (NoFactoryAvailableException e) {
-                throw new IllegalStateException(
-                        "Cannot find camel-openapi-java on classpath to use with api-doc: "
-                                                + apiDoc);
-            }
-        }
-
         String pname = getProducerComponentName();
+
         if (pname != null) {
-            Object comp = getCamelContext().getRegistry().lookupByName(pname);
+            factory = lookupProducerFactory(pname);
+        }
+
+        if (factory == null) {
+            ProducerFactoryResult result = findFromExistingComponents();
+            if (result.factory != null) {
+                return result;
+            }
+        }
+
+        if (factory == null && pname == null && getConsumerComponentName() != null) {
+            ProducerFactoryResult result = tryConsumerComponentAsProducer();
+            if (result.factory != null) {
+                return result;
+            }
+        }
+
+        if (factory == null) {
+            factory = findInRegistry();
+        }
+
+        if (factory == null) {
+            ProducerFactoryResult result = findFromDefaultComponents();
+            if (result.factory != null) {
+                return result;
+            }
+        }
+
+        return new ProducerFactoryResult(factory, pname);
+    }
+
+    @SuppressWarnings("unchecked")
+    private RestProducerFactory lookupProducerFactory(String pname) {
+        Object comp = getCamelContext().getRegistry().lookupByName(pname);
+        if (comp instanceof RestProducerFactory restProducerFactory) {
+            return restProducerFactory;
+        }
+        comp = setupComponent(pname, getCamelContext(), (Map<String, Object>) parameters.get("component"));
+        if (comp instanceof RestProducerFactory restProducerFactory) {
+            return restProducerFactory;
+        }
+        if (comp != null) {
+            throw new IllegalArgumentException("Component " + pname + " is not a RestProducerFactory");
+        }
+        throw new NoSuchBeanException(pname, RestProducerFactory.class.getName());
+    }
+
+    @SuppressWarnings("unchecked")
+    private ProducerFactoryResult findFromExistingComponents() {
+        for (String name : getCamelContext().getComponentNames()) {
+            Component comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
+            if (comp instanceof RestProducerFactory producerFactory) {
+                return new ProducerFactoryResult(producerFactory, name);
+            }
+        }
+        return new ProducerFactoryResult(null, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    private ProducerFactoryResult tryConsumerComponentAsProducer() {
+        String cname = getConsumerComponentName();
+        Object comp = getCamelContext().getRegistry().lookupByName(cname);
+        if (comp instanceof RestProducerFactory restProducerFactory) {
+            return new ProducerFactoryResult(restProducerFactory, cname);
+        }
+        comp = setupComponent(cname, getCamelContext(), (Map<String, Object>) parameters.get("component"));
+        if (comp instanceof RestProducerFactory restProducerFactory) {
+            return new ProducerFactoryResult(restProducerFactory, cname);
+        }
+        return new ProducerFactoryResult(null, null);
+    }
+
+    private RestProducerFactory findInRegistry() {
+        Set<RestProducerFactory> factories = getCamelContext().getRegistry().findByType(RestProducerFactory.class);
+        if (factories != null && factories.size() == 1) {
+            return factories.iterator().next();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private ProducerFactoryResult findFromDefaultComponents() {
+        for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
+            Object comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
             if (comp instanceof RestProducerFactory restProducerFactory) {
-                factory = restProducerFactory;
-            } else {
-                comp = setupComponent(getProducerComponentName(), getCamelContext(),
-                        (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory restProducerFactory) {
-                    factory = restProducerFactory;
-                }
-            }
-
-            if (factory == null) {
-                if (comp != null) {
-                    throw new IllegalArgumentException("Component " + pname + " is not a RestProducerFactory");
-                } else {
-                    throw new NoSuchBeanException(getProducerComponentName(), RestProducerFactory.class.getName());
-                }
+                LOG.debug("Auto discovered {} as RestProducerFactory", name);
+                return new ProducerFactoryResult(restProducerFactory, name);
             }
         }
+        return new ProducerFactoryResult(null, null);
+    }
 
-        // try all components
-        if (factory == null) {
-            for (String name : getCamelContext().getComponentNames()) {
-                Component comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory producerFactory) {
-                    factory = producerFactory;
-                    pname = name;
-                    break;
-                }
-            }
+    private Producer createProducerInstance(
+            RestProducerFactory factory, RestProducerFactory apiDocFactory, RestConfiguration config)
+            throws Exception {
+        if (apiDocFactory != null) {
+            parameters.put("restProducerFactory", factory);
+            return apiDocFactory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters,
+                    consumes, produces, config, parameters);
         }
-
-        // fallback to use consumer name as it may be producer capable too
-        if (pname == null && getConsumerComponentName() != null) {
-            String cname = getConsumerComponentName();
-            Object comp = getCamelContext().getRegistry().lookupByName(cname);
-            if (comp instanceof RestProducerFactory restProducerFactory) {
-                factory = restProducerFactory;
-                pname = cname;
-            } else {
-                comp = setupComponent(cname, getCamelContext(), (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory restProducerFactory) {
-                    factory = restProducerFactory;
-                    pname = cname;
-                }
-            }
-        }
-
-        // lookup in registry
-        if (factory == null) {
-            Set<RestProducerFactory> factories = getCamelContext().getRegistry().findByType(RestProducerFactory.class);
-            if (factories != null && factories.size() == 1) {
-                factory = factories.iterator().next();
-            }
-        }
-
-        // no explicit factory found then try to see if we can find any of the default rest producer components
-        if (factory == null) {
-            RestProducerFactory found = null;
-            String foundName = null;
-            for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
-                Object comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
-                if (comp instanceof RestProducerFactory restProducerFactory) {
-                    found = restProducerFactory;
-                    foundName = name;
-                    break;
-                }
-            }
-            if (found != null) {
-                LOG.debug("Auto discovered {} as RestProducerFactory", foundName);
-                factory = found;
-            }
-        }
-
-        if (factory != null) {
-            LOG.debug("Using RestProducerFactory: {}", factory);
-
-            // here we look for the producer part so we should not care about the component
-            // configured for the consumer part
-            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), null, pname);
-
-            Producer producer;
-            if (apiDocFactory != null) {
-                // wrap the factory using the api doc factory which will use the factory
-                parameters.put("restProducerFactory", factory);
-                producer = apiDocFactory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters,
-                        consumes, produces, config, parameters);
-            } else {
-                // NOTE: the stream must be closed by the client.
-                producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, // NOSONAR
-                        produces, config, parameters);
-            }
-
-            RestProducer answer = new RestProducer(this, producer, config);
-            answer.setOutType(outType);
-            answer.setType(inType);
-            answer.setBindingMode(bindingMode);
-
-            return answer;
-        } else {
-            throw new IllegalStateException("Cannot find RestProducerFactory in Registry or as a Component to use");
-        }
+        return factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters,
+                consumes, produces, config, parameters);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        RestConsumerFactory factory = null;
-        String cname = null;
-        if (getConsumerComponentName() != null) {
-            Object comp = getCamelContext().getRegistry().lookupByName(getConsumerComponentName());
-            if (comp instanceof RestConsumerFactory restConsumerFactory) {
-                factory = restConsumerFactory;
-            } else {
-                comp = getCamelContext().getComponent(getConsumerComponentName());
-                if (comp instanceof RestConsumerFactory restConsumerFactory) {
-                    factory = restConsumerFactory;
-                }
-            }
+        ConsumerFactoryResult factoryResult = findConsumerFactory();
 
-            if (factory == null) {
-                if (comp != null) {
-                    throw new IllegalArgumentException(
-                            "Component " + getConsumerComponentName() + " is not a RestConsumerFactory");
-                } else {
-                    throw new NoSuchBeanException(getConsumerComponentName(), RestConsumerFactory.class.getName());
-                }
-            }
-            cname = getConsumerComponentName();
-        }
-
-        // try all components
-        if (factory == null) {
-            for (String name : getCamelContext().getComponentNames()) {
-                Component comp = getCamelContext().getComponent(name);
-                if (comp instanceof RestConsumerFactory restConsumerFactory) {
-                    factory = restConsumerFactory;
-                    cname = name;
-                    break;
-                }
-            }
-        }
-
-        // favour using platform-http if available on classpath
-        if (factory == null) {
-            Object comp = getCamelContext().getComponent("platform-http", true);
-            if (comp instanceof RestConsumerFactory restConsumerFactory) {
-                factory = restConsumerFactory;
-                LOG.debug("Auto discovered platform-http as RestConsumerFactory");
-            }
-        }
-
-        // lookup in registry
-        if (factory == null) {
-            Set<RestConsumerFactory> factories = getCamelContext().getRegistry().findByType(RestConsumerFactory.class);
-            if (factories != null && factories.size() == 1) {
-                factory = factories.iterator().next();
-            }
-        }
-
-        // no explicit factory found then try to see if we can find any of the default rest consumer components
-        if (factory == null) {
-            RestConsumerFactory found = null;
-            String foundName = null;
-            for (String name : DEFAULT_REST_CONSUMER_COMPONENTS) {
-                Object comp = getCamelContext().getComponent(name, true);
-                if (comp instanceof RestConsumerFactory restConsumerFactory) {
-                    found = restConsumerFactory;
-                    foundName = name;
-                    break;
-                }
-            }
-            if (found != null) {
-                LOG.debug("Auto discovered {} as RestConsumerFactory", foundName);
-                factory = found;
-            }
-        }
-
-        if (factory != null) {
-            // if no explicit port/host configured, then use port from rest configuration
-            String scheme = "http";
-            String host = "";
-            int port = 80;
-
-            RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), cname);
-            if (config.getScheme() != null) {
-                scheme = config.getScheme();
-            }
-            if (config.getHost() != null) {
-                host = config.getHost();
-            }
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
-            }
-
-            // if no explicit hostname set then resolve the hostname
-            if (ObjectHelper.isEmpty(host)) {
-                if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
-                    host = "0.0.0.0";
-                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
-                    host = HostUtils.getLocalHostName();
-                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
-                    host = HostUtils.getLocalIp();
-                }
-            }
-
-            // calculate the url to the rest service
-            String path = getPath();
-            if (!path.startsWith("/")) {
-                path = "/" + path;
-            }
-
-            // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
-            // this may be needed when using camel-servlet where we cannot get the actual context-path or port number of the servlet engine
-            // during init of the servlet
-            String contextPath = config.getContextPath();
-            if (contextPath != null) {
-                if (!contextPath.startsWith("/")) {
-                    path = "/" + contextPath + path;
-                } else {
-                    path = contextPath + path;
-                }
-            }
-
-            String baseUrl = scheme + "://" + host + (port != 80 ? ":" + port : "") + path;
-
-            String url = baseUrl;
-            if (uriTemplate != null) {
-                // make sure to avoid double slashes
-                if (uriTemplate.startsWith("/")) {
-                    url = url + uriTemplate;
-                } else {
-                    url = url + "/" + uriTemplate;
-                }
-            }
-
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getMethod(), getPath(),
-                    getUriTemplate(), getConsumes(), getProduces(), config, getParameters());
-            configureConsumer(consumer);
-
-            // add to rest registry, so we can keep track of them, we will remove from the registry when the consumer is removed
-            // the rest registry will automatically keep track when the consumer is removed,
-            // and un-register the REST service from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(),
-                    getMethod(),
-                    getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
-            return consumer;
-        } else {
+        if (factoryResult.factory == null) {
             throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");
         }
+
+        RestConfiguration config = CamelContextHelper.getRestConfiguration(getCamelContext(), factoryResult.name);
+        String[] urls = buildServiceUrls(config);
+        String baseUrl = urls[0];
+        String url = urls[1];
+
+        Consumer consumer = factoryResult.factory.createConsumer(getCamelContext(), processor, getMethod(), getPath(),
+                getUriTemplate(), getConsumes(), getProduces(), config, getParameters());
+        configureConsumer(consumer);
+
+        // add to rest registry, so we can keep track of them
+        getCamelContext().getRestRegistry().addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(),
+                getMethod(), getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
+        return consumer;
+    }
+
+    private record ConsumerFactoryResult(RestConsumerFactory factory, String name) {
+    }
+
+    private ConsumerFactoryResult findConsumerFactory() {
+        if (getConsumerComponentName() != null) {
+            ConsumerFactoryResult result = lookupConsumerFactory(getConsumerComponentName());
+            if (result.factory != null) {
+                return result;
+            }
+        }
+
+        ConsumerFactoryResult result = findConsumerFromExistingComponents();
+        if (result.factory != null) {
+            return result;
+        }
+
+        result = findPlatformHttpFactory();
+        if (result.factory != null) {
+            return result;
+        }
+
+        RestConsumerFactory factory = findConsumerInRegistry();
+        if (factory != null) {
+            return new ConsumerFactoryResult(factory, null);
+        }
+
+        return findConsumerFromDefaultComponents();
+    }
+
+    private ConsumerFactoryResult lookupConsumerFactory(String cname) {
+        Object comp = getCamelContext().getRegistry().lookupByName(cname);
+        if (comp instanceof RestConsumerFactory restConsumerFactory) {
+            return new ConsumerFactoryResult(restConsumerFactory, cname);
+        }
+        comp = getCamelContext().getComponent(cname);
+        if (comp instanceof RestConsumerFactory restConsumerFactory) {
+            return new ConsumerFactoryResult(restConsumerFactory, cname);
+        }
+        if (comp != null) {
+            throw new IllegalArgumentException("Component " + cname + " is not a RestConsumerFactory");
+        }
+        throw new NoSuchBeanException(cname, RestConsumerFactory.class.getName());
+    }
+
+    private ConsumerFactoryResult findConsumerFromExistingComponents() {
+        for (String name : getCamelContext().getComponentNames()) {
+            Component comp = getCamelContext().getComponent(name);
+            if (comp instanceof RestConsumerFactory restConsumerFactory) {
+                return new ConsumerFactoryResult(restConsumerFactory, name);
+            }
+        }
+        return new ConsumerFactoryResult(null, null);
+    }
+
+    private ConsumerFactoryResult findPlatformHttpFactory() {
+        Object comp = getCamelContext().getComponent("platform-http", true);
+        if (comp instanceof RestConsumerFactory restConsumerFactory) {
+            LOG.debug("Auto discovered platform-http as RestConsumerFactory");
+            return new ConsumerFactoryResult(restConsumerFactory, "platform-http");
+        }
+        return new ConsumerFactoryResult(null, null);
+    }
+
+    private RestConsumerFactory findConsumerInRegistry() {
+        Set<RestConsumerFactory> factories = getCamelContext().getRegistry().findByType(RestConsumerFactory.class);
+        if (factories != null && factories.size() == 1) {
+            return factories.iterator().next();
+        }
+        return null;
+    }
+
+    private ConsumerFactoryResult findConsumerFromDefaultComponents() {
+        for (String name : DEFAULT_REST_CONSUMER_COMPONENTS) {
+            Object comp = getCamelContext().getComponent(name, true);
+            if (comp instanceof RestConsumerFactory restConsumerFactory) {
+                LOG.debug("Auto discovered {} as RestConsumerFactory", name);
+                return new ConsumerFactoryResult(restConsumerFactory, name);
+            }
+        }
+        return new ConsumerFactoryResult(null, null);
+    }
+
+    private String[] buildServiceUrls(RestConfiguration config) throws Exception {
+        String scheme = config.getScheme() != null ? config.getScheme() : "http";
+        String host = config.getHost() != null ? config.getHost() : "";
+        int port = config.getPort() > 0 ? config.getPort() : 80;
+
+        host = resolveHostName(host, config);
+
+        String path = buildPath(config);
+        String baseUrl = scheme + "://" + host + (port != 80 ? ":" + port : "") + path;
+        String url = buildFullUrl(baseUrl);
+
+        return new String[] { baseUrl, url };
+    }
+
+    private String resolveHostName(String host, RestConfiguration config) throws Exception {
+        if (ObjectHelper.isNotEmpty(host)) {
+            return host;
+        }
+        if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+            return "0.0.0.0";
+        }
+        if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            return HostUtils.getLocalHostName();
+        }
+        if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+            return HostUtils.getLocalIp();
+        }
+        return host;
+    }
+
+    private String buildPath(RestConfiguration config) {
+        String path = getPath();
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+        String contextPath = config.getContextPath();
+        if (contextPath != null) {
+            if (!contextPath.startsWith("/")) {
+                path = "/" + contextPath + path;
+            } else {
+                path = contextPath + path;
+            }
+        }
+        return path;
+    }
+
+    private String buildFullUrl(String baseUrl) {
+        if (uriTemplate == null) {
+            return baseUrl;
+        }
+        if (uriTemplate.startsWith("/")) {
+            return baseUrl + uriTemplate;
+        }
+        return baseUrl + "/" + uriTemplate;
     }
 
     @Override
