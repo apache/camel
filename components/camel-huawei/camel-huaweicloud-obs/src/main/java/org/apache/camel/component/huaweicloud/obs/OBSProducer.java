@@ -40,6 +40,7 @@ import com.obs.services.model.ObsBucket;
 import com.obs.services.model.ObsObject;
 import com.obs.services.model.PutObjectResult;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSConstants;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSOperations;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSProperties;
@@ -111,6 +112,11 @@ public class OBSProducer extends DefaultProducer {
     private void putObject(Exchange exchange, ClientConfigurations clientConfigurations) throws IOException {
 
         Object body = exchange.getMessage().getBody();
+
+        // Handle WrappedFile (e.g., from SFTP, FTP) by extracting the underlying file/stream
+        if (body instanceof WrappedFile<?> wf) {
+            body = wf.getFile();
+        }
 
         // if body doesn't contain File, then user must pass object name. Bucket name is mandatory in all case
         if ((ObjectHelper.isEmpty(clientConfigurations.getBucketName()) ||

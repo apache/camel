@@ -373,6 +373,60 @@ from("ibm-cos://mycamelbucket?cosClient=#cosClient&prefix=inbox/&deleteAfterRead
 
 This route will only consume objects whose keys start with "inbox/".
 
+== Running Integration Tests
+
+Integration tests require valid IBM Cloud credentials. Follow these steps to set up and run the tests.
+
+=== Creating Service Credentials
+
+1. Log in to the https://cloud.ibm.com[IBM Cloud Console]
+2. Navigate to your Cloud Object Storage instance (or create one if you don't have one)
+3. Go to **Service credentials** in the left menu
+4. Click **New credential**
+5. Give it a name (e.g., `camel-cos-test`)
+6. **Important**: Set the role to **Manager** (required for bucket creation operations)
+7. Click **Add**
+8. Expand the newly created credential to view the JSON
+
+=== Mapping Credentials to Test Properties
+
+From the service credential JSON, extract the following values:
+
+[cols="1,2,3"]
+|===
+|System Property |JSON Field |Example
+
+|`camel.ibm.cos.apiKey`
+|`apikey`
+|`Hh1u4wjecZ_jUhJScOt0sN...`
+
+|`camel.ibm.cos.serviceInstanceId`
+|`resource_instance_id`
+|`crn:v1:bluemix:public:cloud-object-storage:global:a/...`
+
+|`camel.ibm.cos.endpointUrl`
+|Not in credentials - choose based on region
+|`https://s3.us-south.cloud-object-storage.appdomain.cloud`
+|===
+
+NOTE: The `endpoints` field in the credentials JSON is a control API URL, not the actual COS endpoint. You must choose a regional endpoint from the https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-endpoints[IBM COS Endpoints documentation].
+
+=== Running the Tests
+
+[source,bash]
+----
+mvn verify -pl components/camel-ibm/camel-ibm-cos \
+  -Dcamel.ibm.cos.apiKey=YOUR_API_KEY \
+  -Dcamel.ibm.cos.serviceInstanceId='YOUR_SERVICE_INSTANCE_ID' \
+  -Dcamel.ibm.cos.endpointUrl=https://s3.us-south.cloud-object-storage.appdomain.cloud
+----
+
+TIP: Use single quotes around the `serviceInstanceId` value to prevent shell interpretation of special characters in the CRN.
+
+=== Troubleshooting
+
+* **403 Forbidden**: Ensure your service credential has the **Manager** role. Writer role is not sufficient for bucket creation.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their `pom.xml`.

@@ -38,16 +38,21 @@ public final class FileStreamAndLength {
     @SuppressWarnings("rawtypes")
     public static FileStreamAndLength createFileStreamAndLengthFromExchangeBody(final Exchange exchange) throws IOException {
         Object body = exchange.getIn().getBody();
+        long fileLength = -1;
 
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile) body).getFile();
+        if (body instanceof WrappedFile wf) {
+            // Get file length from WrappedFile before unwrapping (works for remote files like SFTP)
+            fileLength = wf.getFileLength();
+            body = wf.getFile();
         }
 
         if (body instanceof InputStream) {
             if (!((InputStream) body).markSupported()) {
                 throw new IllegalArgumentException("Inputstream does not support mark rest operations");
             }
-            return new FileStreamAndLength((InputStream) body, DataLakeUtils.getInputStreamLength((InputStream) body));
+            // Use cached file length if available, otherwise calculate from stream
+            long length = fileLength > 0 ? fileLength : DataLakeUtils.getInputStreamLength((InputStream) body);
+            return new FileStreamAndLength((InputStream) body, length);
         }
 
         if (body instanceof File) {
