@@ -247,32 +247,26 @@ public final class JmsMessageHelper {
             return destination;
         }
         if (destination.startsWith(QUEUE_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(QUEUE_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = QUEUE_PREFIX + "//" + s;
-            }
-            return s;
-        } else if (destination.startsWith(TEMP_QUEUE_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(TEMP_QUEUE_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = TEMP_QUEUE_PREFIX + "//" + s;
-            }
-            return s;
-        } else if (destination.startsWith(TOPIC_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(TOPIC_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = TOPIC_PREFIX + "//" + s;
-            }
-            return s;
-        } else if (destination.startsWith(TEMP_TOPIC_PREFIX)) {
-            String s = removeStartingCharacters(destination.substring(TEMP_TOPIC_PREFIX.length()), '/');
-            if (includePrefix) {
-                s = TEMP_TOPIC_PREFIX + "//" + s;
-            }
-            return s;
-        } else {
-            return destination;
+            return normalizeWithPrefix(destination, QUEUE_PREFIX, includePrefix);
         }
+        if (destination.startsWith(TEMP_QUEUE_PREFIX)) {
+            return normalizeWithPrefix(destination, TEMP_QUEUE_PREFIX, includePrefix);
+        }
+        if (destination.startsWith(TOPIC_PREFIX)) {
+            return normalizeWithPrefix(destination, TOPIC_PREFIX, includePrefix);
+        }
+        if (destination.startsWith(TEMP_TOPIC_PREFIX)) {
+            return normalizeWithPrefix(destination, TEMP_TOPIC_PREFIX, includePrefix);
+        }
+        return destination;
+    }
+
+    private static String normalizeWithPrefix(String destination, String prefix, boolean includePrefix) {
+        String s = removeStartingCharacters(destination.substring(prefix.length()), '/');
+        if (includePrefix) {
+            return prefix + "//" + s;
+        }
+        return s;
     }
 
     /**
