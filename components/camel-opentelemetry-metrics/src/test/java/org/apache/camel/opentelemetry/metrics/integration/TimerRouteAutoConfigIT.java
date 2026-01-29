@@ -18,18 +18,24 @@ package org.apache.camel.opentelemetry.metrics.integration;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.exporter.logging.LoggingMetricExporter;
 import io.opentelemetry.sdk.metrics.data.HistogramPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
+import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.opentelemetry.metrics.eventnotifier.OpenTelemetryExchangeEventNotifier;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -48,6 +54,7 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
 
     @BeforeAll
     public static void init() {
+        GlobalOpenTelemetry.resetForTest();
         // Open telemetry autoconfiguration using an exporter that writes to the console via logging.
         // Other possible exporters include 'logging-otlp' and 'otlp'.
         System.setProperty("otel.java.global-autoconfigure.enabled", "true");
@@ -56,6 +63,21 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
         System.setProperty("otel.logs.exporter", "none");
         System.setProperty("otel.propagators", "tracecontext");
         System.setProperty("otel.metric.export.interval", "300");
+    }
+
+    @AfterEach
+    void cleanup() {
+        GlobalOpenTelemetry.resetForTest();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // not setting any meter explicitly, relying on opentelemetry autoconfigure
+        OpenTelemetryExchangeEventNotifier eventNotifier = new OpenTelemetryExchangeEventNotifier();
+        context.getManagementStrategy().addEventNotifier(eventNotifier);
+        eventNotifier.init();
+        return context;
     }
 
     @Test
@@ -74,19 +96,26 @@ public class TimerRouteAutoConfigIT extends CamelTestSupport {
 
         List<LogRecord> logs = new ArrayList<>(handler.getLogs());
         assertFalse(logs.isEmpty(), "No metrics were exported");
-        int dataCount = 0;
-        for (LogRecord log : logs) {
-            if (log.getParameters() != null && log.getParameters().length > 0) {
-                MetricData metricData = (MetricData) log.getParameters()[0];
-                assertEquals("A", metricData.getName());
 
-                PointData pd = metricData.getData().getPoints().stream().findFirst().orElse(null);
-                assertInstanceOf(HistogramPointData.class, pd, "Expected LongPointData");
-                assertEquals(1L, ((HistogramPointData) pd).getCount());
-                assertTrue(((HistogramPointData) pd).getMin() >= DELAY);
-                dataCount++;
-            }
-        }
+        long dataCount = logs.stream()
+                .map(LogRecord::getParameters)
+                .filter(Objects::nonNull)
+                .flatMap(Arrays::stream)
+                .filter(MetricData.class::isInstance)
+                .map(MetricData.class::cast)
+                .filter(md -> "A".equals(md.getName()))
+                .peek(md -> {
+                    PointData pd = md.getData()
+                            .getPoints()
+                            .stream()
+                            .findFirst()
+                            .orElseThrow();
+                    assertInstanceOf(HistogramPointData.class, pd, "Expected HistogramPointData");
+                    HistogramPointData hpd = (HistogramPointData) pd;
+                    assertEquals(1L, hpd.getCount());
+                    assertTrue(hpd.getMin() >= DELAY);
+                })
+                .count();
         assertTrue(dataCount > 0, "No metric data found with name A");
         MockEndpoint.assertIsSatisfied(context);
     }

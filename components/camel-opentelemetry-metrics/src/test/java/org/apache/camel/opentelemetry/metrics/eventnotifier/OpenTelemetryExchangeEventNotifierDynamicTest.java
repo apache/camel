@@ -115,7 +115,9 @@ public class OpenTelemetryExchangeEventNotifierDynamicTest extends AbstractOpenT
     }
 
     private class MyEndpoint extends DefaultEndpoint {
+        @SuppressWarnings("unused")
         private final String password;
+        @SuppressWarnings("unused")
         private final String clear;
 
         MyEndpoint(String uri, MyComponent myComponent, Map<String, Object> parameters) {
