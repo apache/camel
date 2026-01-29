@@ -18,8 +18,10 @@ package org.apache.camel.component.langchain4j.chat;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.apache.camel.test.infra.ollama.services.OpenAIService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -40,6 +42,17 @@ public class OllamaTestSupport extends CamelTestSupport {
     }
 
     protected ChatModel createModel() {
+        if (OLLAMA instanceof OpenAIService) {
+            return OpenAiChatModel.builder()
+                    .apiKey(OLLAMA.apiKey())
+                    .baseUrl(OLLAMA.baseUrl())
+                    .modelName(OLLAMA.modelName())
+                    .temperature(0.3)
+                    .timeout(ofSeconds(60))
+                    .logRequests(true)
+                    .logResponses(true)
+                    .build();
+        }
         return OllamaChatModel.builder()
                 .baseUrl(OLLAMA.baseUrl())
                 .modelName(OLLAMA.modelName())

@@ -38,6 +38,7 @@ import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -63,14 +64,13 @@ public class LangChain4jAgentMcpToolsIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
 
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    @RegisterExtension
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
 
         // Initialize tempDirPath - use toRealPath() to resolve symlinks (e.g., /var -> /private/var on macOS)
         // This is needed because the MCP filesystem server resolves symlinks internally

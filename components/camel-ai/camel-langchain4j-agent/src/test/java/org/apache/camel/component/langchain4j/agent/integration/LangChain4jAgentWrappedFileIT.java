@@ -26,25 +26,27 @@ import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
 import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
 import org.apache.camel.component.langchain4j.agent.api.Headers;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.apache.camel.test.infra.ollama.services.OpenAIService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Integration tests for WrappedFile support in the LangChain4j Agent component. Tests the ability to process files from
  * the file component directly, with automatic Content type conversion based on MIME type.
  * <p>
- * Requires environment variables to be set:
+ * This test requires OpenAI or a compatible multimodal provider. Configure via:
  * <ul>
- * <li>API_KEY - The API key for the LLM provider</li>
- * <li>MODEL_PROVIDER - The provider name (e.g., "openai", "gemini", "ollama")</li>
- * <li>MODEL_BASE_URL - (Optional) Custom base URL for OpenAI-compatible endpoints</li>
- * <li>MODEL_NAME - (Optional) Custom model name</li>
+ * <li>{@code -Dollama.instance.type=openai}</li>
+ * <li>{@code -Dollama.api.key=sk-xxx}</li>
+ * <li>{@code -Dollama.model=gpt-4o-mini} (optional)</li>
  * </ul>
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Requires too much network resources")
@@ -53,6 +55,9 @@ public class LangChain4jAgentWrappedFileIT extends CamelTestSupport {
     private static final String IMAGE_ROUTE_ID = "image-route";
     private static final String PDF_ROUTE_ID = "pdf-route";
 
+    @RegisterExtension
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
+
     protected ChatModel chatModel;
     private String resourcesPath;
 
@@ -60,19 +65,12 @@ public class LangChain4jAgentWrappedFileIT extends CamelTestSupport {
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        // Skip if no environment configuration - this test requires external API providers
-        assumeTrue(ModelHelper.hasEnvironmentConfiguration(),
-                "Skipping: This test requires environment variables: API_KEY, MODEL_PROVIDER. " +
-                                                              "Optionally: MODEL_BASE_URL, MODEL_NAME");
+        // Skip if not using OpenAI - Ollama doesn't support multimodal content (images, PDFs)
+        assumeTrue(OLLAMA instanceof OpenAIService,
+                "Skipping wrapped file tests: This test requires OpenAI for multimodal content support. " +
+                                                    "Use -Dollama.instance.type=openai -Dollama.api.key=sk-xxx");
 
-        // Skip if using Ollama - it doesn't support multimodal content
-        assumeFalse("ollama".equals(System.getenv(ModelHelper.MODEL_PROVIDER)),
-                "Skipping wrapped file tests with Ollama: LangChain4j's Ollama provider does not support " +
-                                                                                "multimodal content (images, PDFs). The provider's InternalOllamaHelper requires "
-                                                                                +
-                                                                                "single text content in UserMessage. Use OpenAI or Gemini providers for file processing tests.");
-
-        chatModel = ModelHelper.loadFromEnv();
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
 
         // Get the path to test resources
         URL resourceUrl = getClass().getClassLoader().getResource("camel-logo.png");

@@ -31,19 +31,19 @@ import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import org.apache.camel.component.langchain4j.agent.BaseLangChain4jAgent;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
 
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    @RegisterExtension
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
         // Setup components
-        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
         retrievalAugmentor = createRetrievalAugmentor();
     }
 
@@ -55,9 +55,7 @@ public abstract class AbstractRAGIT extends BaseLangChain4jAgent {
         List<TextSegment> segments = DocumentSplitters.recursive(300, 100).split(document);
 
         // Create embeddings
-        EmbeddingModel embeddingModel = OLLAMA != null
-                ? ModelHelper.loadEmbeddingModel(OLLAMA)
-                : ModelHelper.createEmbeddingModel();
+        EmbeddingModel embeddingModel = ModelHelper.loadEmbeddingModel(OLLAMA);
 
         List<Embedding> embeddings = embeddingModel.embedAll(segments).content();
 
