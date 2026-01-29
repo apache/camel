@@ -30,6 +30,7 @@ import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.infra.ollama.services.OpenAIService;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -104,6 +105,7 @@ public class LangChain4jAgentWrappedFileIT extends CamelTestSupport {
      * agent.
      */
     @Test
+    @Disabled("Only few models support PDF")
     void testPdfFileFromFileComponent() throws Exception {
         // Start only the PDF route
         context.getRouteController().startRoute(PDF_ROUTE_ID);
