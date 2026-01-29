@@ -647,9 +647,12 @@ This requires having `camel-attachments` JAR on the classpath.
 |`attachmentContentAsText(key)` | `String` | The content of the attachment as text (ie `String`).
 |`attachmentHeader(key,name)` | `Object` | The attachment header with the given name.
 |`attachmentHeaderAs(key,name,type)` | `<T>` | The attachment header with the given name, converted to the given type.
+|`attachmentsKeys` | `Set` | All the attachment keys (filenames).
 |`attachment[key]` | `DataHandler` | The `jakarta.activation.DataHandler` for the given attachment.
 |`attachments.size` | `int` | The number of attachments. Is 0 if there are no attachments.
 |`attachments` | `Map` | All the attachments as a `Map<String,jakarta.activation.DataHandler>`.
+|`setAttachment(key,exp)` | `null` | Sets an attachment with payload from the message body/expression.
+|`clearAttachments` | `null` | Removes all existing attachments on the message.
 |====
 
 The attachment functions are only used with components that supports `javax.attachments` APIs
@@ -661,10 +664,32 @@ Suppose you are using `camel-platform-http` to expose a HTTP endpoint that suppo
 then you can use `${attachments.size}` to know how many files are attached. The other functions are used
 to access attachment content, headers and metadata.
 
-For example if a XML file was uploaded as `mydata.xml`, then you can access metadata such as
+The key is either the filename such as `${attachmentContent(mydata.xml)}` or by index (0 based) `${attachmentContent(0)}`.
+
+To know the names of the files you can use `$\{attachmentsKeys}` which returns a `Set` will all the keys.
+
+If the attached file is text based, you can access the payload via `${attachmentContentAsText(mydata.xml)}` or by index `${attachmentContentAsText(0)}`
+which returns the payload as a `String` value.
+
+For example if an XML file was uploaded as `mydata.xml`, then you can access metadata such as
 `${attachment[0].name` returns `mydata.xml`, and `${attachment[0].contentType` return `text/xml`, and
-`${attachment[2].content}` returns the XML payload. You can also use by filename `${attachmentContent(mydata.xml)}`
-or by index `${attachmentContent(0)}`.
+`${attachment[0].content}` returns the XML payload.
+
+If the content is binary or other formats, you can use Camels xref:manual::type-converter.adoc[Type Converter] to
+convert the payload into the given Object of choice, for example as a byte array: `${attachmentContentAs(mydata.xml,byte[])}`
+
+The `setAttachment` function is used for adding,updating or removing attachments. If the expression is `null` then
+any existing attachment is removed, such as `${setAttachment(mydata.xml,null)}`.
+
+You can add an attachment such as `${setAttachment(mydata2.xml)}`, which then will use the current message body
+as the payload. You can also use an expression such as from a variable `${setAttachment(mydata2.xml,${variable.mydata})}`.
+
+TIP: Camel will automatically detect the content-type of the attachment.
+
+The payload of the attachment can also refer to resources from the file system, or classpath by prefixing with `resource:` as follows
+`${setAttachment(mydata2.xml,resource:file:/inbox/mydata2.xml)}`
+
+To make the file name dynamic you can store the name in a variable such as: `${setAttachment(mydata2.xml,resource:file:${variable.attchmentName})}`
 
 
 === Base64 Functions

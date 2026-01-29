@@ -346,7 +346,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // attachments
-        if ("attachments".equals(function) || ifStartsWithReturnRemainder("attachment", function) != null) {
+        if ("attachments".equals(function) || "clearAttachments".equals(function)
+                || ifStartsWithReturnRemainder("setAttachment", function) != null
+                || ifStartsWithReturnRemainder("attachment", function) != null) {
             Expression exp = createSimpleAttachments(camelContext, function);
             if (exp != null) {
                 return exp;
@@ -1793,7 +1795,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // attachments
-        if ("attachments".equals(function) || ifStartsWithReturnRemainder("attachment", function) != null) {
+        if ("attachments".equals(function) || "clearAttachments".equals(function)
+                || ifStartsWithReturnRemainder("setAttachment", function) != null
+                || ifStartsWithReturnRemainder("attachment", function) != null) {
             String code = createCodeAttachments(camelContext, function);
             if (code != null) {
                 return code;

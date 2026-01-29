@@ -16,9 +16,12 @@
  */
 package org.apache.camel.attachment;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -29,6 +32,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ResourceHelper;
 
 import static org.apache.camel.support.builder.ExpressionBuilder.simpleExpression;
 
@@ -58,6 +62,25 @@ public class AttachmentExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 return toAttachmentMessage(exchange).getAttachments().size();
+            }
+        };
+    }
+
+    public static Expression attachmentsKeys() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return toAttachmentMessage(exchange).getAttachmentNames();
+            }
+        };
+    }
+
+    public static Expression clearAttachments() {
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                toAttachmentMessage(exchange).clearAttachments();
+                return null;
             }
         };
     }
@@ -202,6 +225,62 @@ public class AttachmentExpressionBuilder {
                     String key = exp.evaluate(exchange, String.class);
                     return lookupDataHandlerByKey(exchange, key);
                 });
+    }
+
+    /**
+     * Sets the attachment with the given expression value
+     */
+    public static Expression setAttachmentExpression(
+            final String attachmentName, final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                try {
+                    Object value = exp.evaluate(exchange, Object.class);
+                    if (value != null) {
+                        AttachmentMessage am = toAttachmentMessage(exchange);
+                        DataSource ds;
+                        if (value instanceof File f) {
+                            ds = new CamelFileDataSource(f, attachmentName);
+                        } else if (value instanceof String str) {
+                            byte[] data;
+                            if (ResourceHelper.hasScheme(str)) {
+                                InputStream is
+                                        = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), str);
+                                data = exchange.getContext().getTypeConverter().convertTo(byte[].class, is);
+                            } else {
+                                data = str.getBytes();
+                            }
+                            ds = new ByteArrayDataSource(attachmentName, data);
+                        } else {
+                            byte[] data = exchange.getContext().getTypeConverter().convertTo(byte[].class, value);
+                            ds = new ByteArrayDataSource(attachmentName, data);
+                        }
+                        am.addAttachment(attachmentName, new DataHandler(ds));
+                    } else {
+                        AttachmentMessage am = toAttachmentMessage(exchange);
+                        am.removeAttachment(attachmentName);
+                    }
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
+                }
+                // does not return anything
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "setAttachment(" + attachmentName + "," + expression + ")";
+            }
+        };
     }
 
     private static DataHandler lookupDataHandlerByKey(Exchange exchange, String key) {
