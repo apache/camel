@@ -126,7 +126,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         for (String camelHeader : exchange.getIn().getHeaders().keySet()) {
             String value = exchange.getIn().getHeader(camelHeader, String.class);
             if (headerFilterStrategy != null
-                    && headerFilterStrategy.applyFilterToExternalHeaders(camelHeader, value, exchange)) {
+                    && headerFilterStrategy.applyFilterToCamelHeaders(camelHeader, value, exchange)) {
                 continue;
             }
             messageBuilder.putAttributes(camelHeader, value);
