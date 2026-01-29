@@ -23,6 +23,11 @@ import org.apache.camel.spi.Metadata;
  */
 public interface Sns2Constants {
 
+    /**
+     * AWS SNS has a maximum subject length of 100 characters. Subjects longer than this will be truncated.
+     */
+    int MAX_SUBJECT_LENGTH = 100;
+
     @Metadata(description = "The Amazon SNS message ID.", javaType = "String")
     String MESSAGE_ID = "CamelAwsSnsMessageId";
     @Metadata(description = "The Amazon SNS message subject. If not set, the subject from the\n" +
