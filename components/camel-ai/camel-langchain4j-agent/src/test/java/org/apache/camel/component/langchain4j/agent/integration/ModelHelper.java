@@ -55,7 +55,7 @@ public class ModelHelper {
         OpenAiChatModel.OpenAiChatModelBuilder builder = OpenAiChatModel.builder()
                 .apiKey(apiKey)
                 .temperature(1.0)
-                .timeout(ofSeconds(60))
+                .timeout(ofSeconds(120))
                 .logRequests(true)
                 .logResponses(true);
 
@@ -95,7 +95,7 @@ public class ModelHelper {
                 .baseUrl(baseUrl)
                 .modelName(modelName)
                 .temperature(1.0)
-                .timeout(ofSeconds(60))
+                .timeout(ofSeconds(120))
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -180,7 +180,7 @@ public class ModelHelper {
                     .baseUrl(openaiService.baseUrl())
                     .modelName(openaiService.modelName())
                     .temperature(1.0)
-                    .timeout(ofSeconds(60))
+                    .timeout(ofSeconds(120))
                     .logRequests(true)
                     .logResponses(true)
                     .build();
@@ -191,7 +191,7 @@ public class ModelHelper {
                 .baseUrl(ollamaService.baseUrl())
                 .modelName(ollamaService.modelName())
                 .temperature(0.3)
-                .timeout(ofSeconds(60))
+                .timeout(ofSeconds(120))
                 .build();
     }
 
