@@ -138,7 +138,7 @@
         <cxf-version>4.1.4</cxf-version>
         <cxf-codegen-plugin-version>4.1.4</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
-        <cxf-xjc-plugin-version>4.1.1</cxf-xjc-plugin-version>
+        <cxf-xjc-plugin-version>4.1.2</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.1.2</cxf-xjc-utils-version>
         <daffodil-version>3.10.0</daffodil-version>
         <dapr-version>1.16.1</dapr-version>
