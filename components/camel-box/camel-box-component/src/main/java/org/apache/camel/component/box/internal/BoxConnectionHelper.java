@@ -53,6 +53,7 @@ import org.jsoup.select.Elements;
 public final class BoxConnectionHelper {
 
     private static final Pattern QUERY_PARAM_PATTERN = Pattern.compile("&?([^=]+)=([^&]+)");
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private BoxConnectionHelper() {
         // hide utility class constructor
@@ -78,7 +79,6 @@ public final class BoxConnectionHelper {
     }
 
     public static BoxAPIConnection createStandardAuthenticatedConnection(BoxConfiguration configuration) {
-
         // authorize application on user's behalf
         try {
             //prepare proxy parameter
@@ -98,7 +98,7 @@ public final class BoxConnectionHelper {
             }
 
             // generate anti-forgery token to prevent/detect CSRF attack
-            final String csrfToken = String.valueOf(new SecureRandom().nextLong());
+            final String csrfToken = String.valueOf(SECURE_RANDOM.nextLong());
 
             final String authorizeUrl = authorizationUrl(configuration.getClientId(), csrfToken);
 
