@@ -28,6 +28,7 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModelName;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
+import org.apache.camel.test.infra.ollama.services.OpenAIService;
 
 import static java.time.Duration.ofSeconds;
 
@@ -168,20 +169,24 @@ public class ModelHelper {
     }
 
     /**
-     * Load chat model from environment variables if configured, otherwise use OllamaService. This allows tests to run
-     * without requiring external API keys.
+     * Load chat model from OllamaService. Detects if the service is OpenAIService and creates the appropriate model
+     * type.
      */
     public static ChatModel loadChatModel(OllamaService ollamaService) {
-        var apiKey = System.getenv(API_KEY);
-        var modelProvider = System.getenv(MODEL_PROVIDER);
-
-        if (apiKey != null && !apiKey.trim().isEmpty()
-                && modelProvider != null && !modelProvider.trim().isEmpty()) {
-            // Use environment-configured model
-            return loadFromEnv();
+        // Detect OpenAI service and create OpenAI model
+        if (ollamaService instanceof OpenAIService openaiService) {
+            return OpenAiChatModel.builder()
+                    .apiKey(openaiService.apiKey())
+                    .baseUrl(openaiService.baseUrl())
+                    .modelName(openaiService.modelName())
+                    .temperature(1.0)
+                    .timeout(ofSeconds(60))
+                    .logRequests(true)
+                    .logResponses(true)
+                    .build();
         }
 
-        // Fallback to Ollama service
+        // Standard Ollama model
         return OllamaChatModel.builder()
                 .baseUrl(ollamaService.baseUrl())
                 .modelName(ollamaService.modelName())
@@ -191,20 +196,21 @@ public class ModelHelper {
     }
 
     /**
-     * Load embedding model from environment variables if configured, otherwise use OllamaService. This allows tests to
-     * run without requiring external API keys.
+     * Load embedding model from OllamaService. Detects if the service is OpenAIService and creates the appropriate
+     * model type.
      */
     public static EmbeddingModel loadEmbeddingModel(OllamaService ollamaService) {
-        var apiKey = System.getenv(API_KEY);
-        var modelProvider = System.getenv(MODEL_PROVIDER);
-
-        if (apiKey != null && !apiKey.trim().isEmpty()
-                && modelProvider != null && !modelProvider.trim().isEmpty()) {
-            // Use environment-configured embedding model
-            return createEmbeddingModel();
+        // Detect OpenAI service and create OpenAI embedding model
+        if (ollamaService instanceof OpenAIService openaiService) {
+            return OpenAiEmbeddingModel.builder()
+                    .apiKey(openaiService.apiKey())
+                    .baseUrl(openaiService.baseUrl())
+                    .modelName("granite-embedding")
+                    .timeout(ofSeconds(30))
+                    .build();
         }
 
-        // Fallback to Ollama service
+        // Standard Ollama embedding model
         return OllamaEmbeddingModel.builder()
                 .baseUrl(ollamaService.baseUrl())
                 .modelName(ollamaService.modelName())

@@ -37,6 +37,11 @@ public class OllamaProperties {
     public static final String MEMORY_LIMIT = "ollama.container.memory.limit";
     public static final String ENABLE_GPU = "ollama.container.enable.gpu";
 
+    // OpenAI-specific properties (used when ollama.instance.type=openai)
+    public static final String OPENAI_API_KEY = "openai.api.key";
+    public static final String OPENAI_ENDPOINT = "openai.endpoint";
+    public static final String OPENAI_MODEL = "openai.model";
+
     private OllamaProperties() {
 
     }

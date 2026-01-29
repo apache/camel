@@ -32,10 +32,12 @@ import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
+import org.apache.camel.test.infra.ollama.services.OpenAIService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,25 +54,26 @@ public class LangChain4jAgentMultimodalityIT extends CamelTestSupport {
 
     protected ChatModel chatModel;
 
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    @RegisterExtension
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
     }
 
     @BeforeEach
     void skipIfOllama() {
-        boolean isOllama = OLLAMA != null || "ollama".equals(System.getenv(ModelHelper.MODEL_PROVIDER));
-        assumeFalse(isOllama,
+        // Skip if not using OpenAI - Ollama doesn't support multimodal content
+        boolean isOpenAI = OLLAMA instanceof OpenAIService;
+        assumeFalse(!isOpenAI,
                 "Skipping multimodality tests with Ollama: LangChain4j's Ollama provider does not support " +
-                              "multiple content blocks in a single UserMessage. The provider's InternalOllamaHelper.toText() " +
-                              "calls UserMessage.singleText() which requires exactly one TextContent. " +
-                              "Use OpenAI or Gemini providers for multimodal content testing.");
+                               "multiple content blocks in a single UserMessage. The provider's InternalOllamaHelper.toText() "
+                               +
+                               "calls UserMessage.singleText() which requires exactly one TextContent. " +
+                               "Use OpenAI or Gemini providers for multimodal content testing.");
     }
 
     /**

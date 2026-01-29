@@ -123,6 +123,7 @@ public final class OllamaServiceFactory {
         return builder()
                 .addLocalMapping(OllamaServiceFactory::selectLocalService)
                 .addRemoteMapping(OllamaRemoteService::new)
+                .addMapping("openai", OpenAIService::new)
                 .build();
     }
 
@@ -130,6 +131,7 @@ public final class OllamaServiceFactory {
         return builder()
                 .addLocalMapping(() -> selectLocalService(serviceConfiguration))
                 .addRemoteMapping(() -> new OllamaRemoteService(serviceConfiguration))
+                .addMapping("openai", OpenAIService::new)
                 .build();
     }
 
@@ -147,7 +149,8 @@ public final class OllamaServiceFactory {
             SimpleTestServiceBuilder<OllamaService> instance = builder();
 
             instance.addLocalMapping(() -> new SingletonOllamaService(selectLocalService(), "ollama"))
-                    .addRemoteMapping(OllamaRemoteService::new);
+                    .addRemoteMapping(OllamaRemoteService::new)
+                    .addMapping("openai", OpenAIService::new);
 
             INSTANCE = instance.build();
         }

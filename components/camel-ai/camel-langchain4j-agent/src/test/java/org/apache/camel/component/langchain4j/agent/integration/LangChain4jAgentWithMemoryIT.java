@@ -34,6 +34,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.langchain4j.agent.api.Headers.MEMORY_ID;
 import static org.apache.camel.component.langchain4j.agent.api.Headers.SYSTEM_MESSAGE;
@@ -52,15 +53,14 @@ public class LangChain4jAgentWithMemoryIT extends CamelTestSupport {
     protected ChatMemoryProvider chatMemoryProvider;
     private PersistentChatMemoryStore store;
 
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    @RegisterExtension
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
 
-        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
         store = new PersistentChatMemoryStore();
         chatMemoryProvider = createMemoryProvider();
     }
