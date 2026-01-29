@@ -176,6 +176,12 @@ When sending something to the FIFO topic, you'll need to always set up a message
 
 If the content-based message deduplication has been enabled on the SNS Fifo topic, where won't be the need of setting a message deduplication id strategy, otherwise you'll have to set it.
 
+=== Message Subject Length Limitation
+
+AWS SNS has a maximum subject length of 100 characters. If you send a message with a subject longer than 100 characters (for example, when using CloudEvents with long subjects), the subject will be automatically truncated to 100 characters.
+
+This behavior ensures compatibility with AWS SNS constraints while allowing seamless integration with systems like CloudEvents that do not impose such restrictions.
+
 == Examples
 
 === Producer Examples

@@ -94,6 +94,13 @@ public class Sns2Producer extends DefaultProducer {
             subject = getConfiguration().getSubject();
         }
 
+        // AWS SNS has a maximum subject length of 100 characters
+        if (subject != null && subject.length() > Sns2Constants.MAX_SUBJECT_LENGTH) {
+            LOG.debug("Subject exceeds AWS SNS maximum length of {} characters, truncating from {} to {} characters",
+                    Sns2Constants.MAX_SUBJECT_LENGTH, subject.length(), Sns2Constants.MAX_SUBJECT_LENGTH);
+            subject = subject.substring(0, Sns2Constants.MAX_SUBJECT_LENGTH);
+        }
+
         return subject;
     }
 
