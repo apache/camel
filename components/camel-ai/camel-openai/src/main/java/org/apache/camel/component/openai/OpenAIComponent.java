@@ -18,6 +18,7 @@ package org.apache.camel.component.openai;
 
 import java.util.Map;
 
+import com.openai.core.ClientOptions;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -32,8 +33,8 @@ public class OpenAIComponent extends DefaultComponent {
     @Metadata(description = "Default API key for all endpoints")
     private String apiKey;
 
-    @Metadata(description = "Default base URL for all endpoints")
-    private String baseUrl;
+    @Metadata(description = "Default base URL for all endpoints", defaultValue = ClientOptions.PRODUCTION_URL)
+    private String baseUrl = ClientOptions.PRODUCTION_URL;
 
     @Metadata(description = "Default model for all endpoints")
     private String model;

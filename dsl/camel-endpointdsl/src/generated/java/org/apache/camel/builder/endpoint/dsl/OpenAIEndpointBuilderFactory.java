@@ -106,6 +106,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://api.openai.com/v1
          * Group: producer
          * 
          * @param baseUrl the value to set
