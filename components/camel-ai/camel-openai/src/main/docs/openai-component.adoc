@@ -48,7 +48,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Authentication
 
-Set `baseUrl` to your provider's endpoint (default:`https://api.openai.com/v1`).
+Set `baseUrl` to your providers endpoint (default: `https://api.openai.com/v1`).
 
 API key resolution order:
 

@@ -65,11 +65,13 @@ public interface OpenaiComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * Default base URL for all endpoints.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: https://api.openai.com/v1
          * Group: producer
          * 
          * @param baseUrl the value to set

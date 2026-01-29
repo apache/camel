@@ -35,7 +35,7 @@ public class OpenAIChatCompletionIT extends OpenAITestSupport {
             public void configure() {
                 // Route for simple message test
                 from("direct:send-simple-message")
-                        .toF("openai:chat-completion?apiKey=%s&baseUrl=%s&model=%s", apiKey, baseUrl, model)
+                        .toF("openai:chat-completion")
                         .to("mock:response");
             }
         };

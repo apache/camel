@@ -18,6 +18,7 @@ package org.apache.camel.component.openai;
 
 import java.util.Map;
 
+import com.openai.core.ClientOptions;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -33,8 +34,9 @@ public class OpenAIConfiguration implements Cloneable {
     private String apiKey;
 
     @UriParam
-    @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.")
-    private String baseUrl;
+    @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.",
+              defaultValue = ClientOptions.PRODUCTION_URL)
+    private String baseUrl = ClientOptions.PRODUCTION_URL;
 
     @UriParam
     @Metadata(description = "The model to use for chat completion")

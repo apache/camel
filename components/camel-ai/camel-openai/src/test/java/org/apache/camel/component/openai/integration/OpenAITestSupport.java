@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.openai.integration;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.openai.OpenAIComponent;
 import org.apache.camel.test.infra.ollama.services.OllamaService;
 import org.apache.camel.test.infra.ollama.services.OllamaServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 
 public class OpenAITestSupport extends CamelTestSupport {
 
@@ -45,6 +48,26 @@ public class OpenAITestSupport extends CamelTestSupport {
             baseUrl = System.getenv("OPENAI_BASE_URL"); // Optional
             model = System.getenv("OPENAI_MODEL"); // Optional
         }
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        OpenAIComponent component = new OpenAIComponent();
+        if (ObjectHelper.isNotEmpty(apiKey)) {
+            component.setApiKey(apiKey);
+        }
+
+        if (ObjectHelper.isNotEmpty(model)) {
+            component.setModel(model);
+        }
+
+        if (ObjectHelper.isNotEmpty(baseUrl)) {
+            component.setBaseUrl(baseUrl);
+        }
+
+        camelContext.addComponent("openai", component);
+        return camelContext;
     }
 
     protected static boolean hasEnvironmentConfiguration() {
