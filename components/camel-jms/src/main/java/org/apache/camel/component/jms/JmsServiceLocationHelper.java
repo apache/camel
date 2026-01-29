@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.jms.ConnectionFactory;
@@ -39,14 +38,12 @@ final class JmsServiceLocationHelper {
         if (cf == null) {
             return null;
         }
-        Map<String, Object> props = new HashMap<>();
-        bi.getProperties(cf, props, null, false);
-        Object url = props.get("brokerURL");
+        Object url = bi.getOrElseProperty(cf, "brokerURL", null, false);
         if (url != null) {
             return url.toString();
         } else {
             // nested connection factory which can be wrapped in connection pooling
-            ConnectionFactory ncf = (ConnectionFactory) props.get("connectionFactory");
+            ConnectionFactory ncf = (ConnectionFactory) bi.getOrElseProperty(cf, "connectionFactory", null, false);
             if (ncf != null) {
                 return getBrokerURLFromConnectionFactory(bi, ncf);
             }
@@ -59,20 +56,18 @@ final class JmsServiceLocationHelper {
         if (cf == null) {
             return null;
         }
-        Map<String, Object> props = new HashMap<>();
-        bi.getProperties(cf, props, null, false);
-        Object user = props.get("user");
+        Object user = bi.getOrElseProperty(cf, "user", null, false);
         if (user == null) {
-            user = props.get("username");
+            user = bi.getOrElseProperty(cf, "username", null, false);
         }
         if (user == null) {
-            user = props.get("userName");
+            user = bi.getOrElseProperty(cf, "userName", null, false);
         }
         if (user != null) {
             return user.toString();
         } else {
             // nested connection factory which can be wrapped in connection pooling
-            ConnectionFactory ncf = (ConnectionFactory) props.get("connectionFactory");
+            ConnectionFactory ncf = (ConnectionFactory) bi.getOrElseProperty(cf, "connectionFactory", null, false);
             if (ncf != null) {
                 return getUsernameFromConnectionFactory(bi, ncf);
             }
