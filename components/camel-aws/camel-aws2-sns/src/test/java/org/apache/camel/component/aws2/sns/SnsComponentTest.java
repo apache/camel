@@ -66,6 +66,67 @@ public class SnsComponentTest extends CamelTestSupport {
         };
     }
 
+    @DisplayName(value = "Test for CAMEL-22429 - Subject truncation to 100 characters")
+    @Test
+    public void sendWithLongSubject() {
+        // Create a subject longer than 100 characters
+        String longSubject
+                = "This is a very long subject that exceeds the AWS SNS maximum subject length of 100 characters and should be truncated";
+
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Sns2Constants.SUBJECT, longSubject);
+                exchange.getIn().setBody("This is my message text.");
+            }
+        });
+
+        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getIn().getHeader(Sns2Constants.MESSAGE_ID));
+
+        // Verify the subject was truncated to 100 characters
+        String actualSubject = client.getLastPublishRequest().subject();
+        assertEquals(Sns2Constants.MAX_SUBJECT_LENGTH, actualSubject.length());
+        assertEquals(longSubject.substring(0, Sns2Constants.MAX_SUBJECT_LENGTH), actualSubject);
+    }
+
+    @DisplayName(value = "Test for CAMEL-22429 - Subject exactly at 100 characters should not be truncated")
+    @Test
+    public void sendWithExact100CharSubject() {
+        // Create a subject exactly 100 characters
+        String exact100Subject = "A".repeat(Sns2Constants.MAX_SUBJECT_LENGTH);
+
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Sns2Constants.SUBJECT, exact100Subject);
+                exchange.getIn().setBody("This is my message text.");
+            }
+        });
+
+        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getIn().getHeader(Sns2Constants.MESSAGE_ID));
+
+        // Verify the subject was not modified
+        String actualSubject = client.getLastPublishRequest().subject();
+        assertEquals(exact100Subject, actualSubject);
+    }
+
+    @DisplayName(value = "Test for CAMEL-22429 - Short subject should not be modified")
+    @Test
+    public void sendWithShortSubject() {
+        String shortSubject = "Short subject";
+
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Sns2Constants.SUBJECT, shortSubject);
+                exchange.getIn().setBody("This is my message text.");
+            }
+        });
+
+        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getIn().getHeader(Sns2Constants.MESSAGE_ID));
+
+        // Verify the subject was not modified
+        String actualSubject = client.getLastPublishRequest().subject();
+        assertEquals(shortSubject, actualSubject);
+    }
+
     @DisplayName(value = "Test for CAMEL-16586")
     @Test
     public void createMultipleEndpoints() throws Exception {

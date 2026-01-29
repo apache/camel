@@ -37,7 +37,13 @@ public class AmazonSNSClientMock implements SnsClient {
 
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
 
+    private PublishRequest lastPublishRequest;
+
     public AmazonSNSClientMock() {
+    }
+
+    public PublishRequest getLastPublishRequest() {
+        return lastPublishRequest;
     }
 
     @Override
@@ -59,6 +65,7 @@ public class AmazonSNSClientMock implements SnsClient {
 
     @Override
     public PublishResponse publish(PublishRequest publishRequest) {
+        this.lastPublishRequest = publishRequest;
         return PublishResponse.builder().messageId("dcc8ce7a-7f18-4385-bedd-b97984b4363c").build();
     }
 
