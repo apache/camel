@@ -280,66 +280,81 @@ public class ReceiveDevConsole extends AbstractDevConsole {
     }
 
     protected static Endpoint findMatchingEndpoint(CamelContext camelContext, String endpoint) {
-        Endpoint target = null;
         boolean scheme = endpoint.contains(":");
         boolean pattern = endpoint.endsWith("*");
-        if (!scheme || pattern) {
-            if (!scheme && !endpoint.endsWith("*")) {
-                endpoint = endpoint + "*";
-            }
-            // find all producers for this camel context via JMX mbeans (this allows to find also producers created via dynamic EIPs)
-            MBeanServer mbeanServer = camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
-            if (mbeanServer != null) {
-                try {
-                    String jmxDomain
-                            = camelContext.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-                    String prefix
-                            = camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                    ObjectName query = ObjectName.getInstance(
-                            jmxDomain + ":context=" + prefix + camelContext.getManagementName() + ",type=producers,*");
-                    Set<ObjectName> set = mbeanServer.queryNames(query, null);
-                    if (set != null && !set.isEmpty()) {
-                        for (ObjectName on : set) {
-                            String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-                            if (PatternHelper.matchPattern(uri, endpoint)) {
-                                // is the endpoint able to create a consumer
-                                target = camelContext.getEndpoint(uri);
-                                // is the target able to create a consumer
-                                org.apache.camel.spi.UriEndpoint ann
-                                        = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
-                                if (ann != null) {
-                                    if (ann.producerOnly()) {
-                                        // skip if the endpoint cannot consume (we need to be able to consume to receive)
-                                        target = null;
-                                    }
-                                    if ("*".equals(endpoint) && !ann.remote()) {
-                                        // skip internal when matching everything
-                                        target = null;
-                                    }
-                                }
-                                if (target != null) {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        } else {
-            target = camelContext.getEndpoint(endpoint);
-            // is the target able to create a consumer
-            org.apache.camel.spi.UriEndpoint ann
-                    = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
-            if (ann != null) {
-                if (ann.producerOnly()) {
-                    // skip if the endpoint cannot consume (we need to be able to consume to receive)
-                    throw new IllegalArgumentException("Cannot consume from endpoint: " + endpoint);
-                }
-            }
+
+        if (scheme && !pattern) {
+            return findDirectEndpoint(camelContext, endpoint);
+        }
+
+        return findEndpointViaJmx(camelContext, endpoint, scheme);
+    }
+
+    private static Endpoint findDirectEndpoint(CamelContext camelContext, String endpoint) {
+        Endpoint target = camelContext.getEndpoint(endpoint);
+        org.apache.camel.spi.UriEndpoint ann = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+        if (ann != null && ann.producerOnly()) {
+            throw new IllegalArgumentException("Cannot consume from endpoint: " + endpoint);
         }
         return target;
+    }
+
+    private static Endpoint findEndpointViaJmx(CamelContext camelContext, String endpoint, boolean scheme) {
+        String searchPattern = scheme || endpoint.endsWith("*") ? endpoint : endpoint + "*";
+
+        MBeanServer mbeanServer = camelContext.getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (mbeanServer == null) {
+            return null;
+        }
+
+        try {
+            Set<ObjectName> set = queryProducerMBeans(camelContext, mbeanServer);
+            if (set == null || set.isEmpty()) {
+                return null;
+            }
+            return findFirstMatchingEndpoint(camelContext, mbeanServer, set, searchPattern);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static Set<ObjectName> queryProducerMBeans(CamelContext camelContext, MBeanServer mbeanServer) throws Exception {
+        String jmxDomain = camelContext.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
+        String prefix = camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+        ObjectName query = ObjectName.getInstance(
+                jmxDomain + ":context=" + prefix + camelContext.getManagementName() + ",type=producers,*");
+        return mbeanServer.queryNames(query, null);
+    }
+
+    private static Endpoint findFirstMatchingEndpoint(
+            CamelContext camelContext, MBeanServer mbeanServer, Set<ObjectName> set, String searchPattern)
+            throws Exception {
+        for (ObjectName on : set) {
+            String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
+            if (!PatternHelper.matchPattern(uri, searchPattern)) {
+                continue;
+            }
+
+            Endpoint target = camelContext.getEndpoint(uri);
+            if (isValidConsumerEndpoint(target, searchPattern)) {
+                return target;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isValidConsumerEndpoint(Endpoint target, String searchPattern) {
+        org.apache.camel.spi.UriEndpoint ann = ObjectHelper.getAnnotationDeep(target, org.apache.camel.spi.UriEndpoint.class);
+        if (ann == null) {
+            return true;
+        }
+        if (ann.producerOnly()) {
+            return false;
+        }
+        if ("*".equals(searchPattern) && !ann.remote()) {
+            return false;
+        }
+        return true;
     }
 
 }

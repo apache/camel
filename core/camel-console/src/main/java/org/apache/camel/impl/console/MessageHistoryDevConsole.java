@@ -63,36 +63,45 @@ public class MessageHistoryDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        String codeLimit = (String) options.getOrDefault(CODE_LIMIT, "5");
+        int limit = Integer.parseInt((String) options.getOrDefault(CODE_LIMIT, "5"));
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
-        if (tracer != null) {
-            JsonArray arr = new JsonArray();
-
-            Collection<BacklogTracerEventMessage> queue = tracer.getLatestMessageHistory();
-            for (BacklogTracerEventMessage t : queue) {
-                JsonObject to = (JsonObject) t.asJSon();
-
-                // enrich with source code +/- lines around location
-                int limit = Integer.parseInt(codeLimit);
-                if (limit > 0) {
-                    String rid = to.getString("routeId");
-                    String loc = to.getString("location");
-                    if (rid != null) {
-                        List<JsonObject> code = enrichSourceCode(rid, loc, limit);
-                        if (code != null && !code.isEmpty()) {
-                            to.put("code", code);
-                        }
-                    }
-                }
-
-                arr.add(to);
-            }
-            root.put("name", getCamelContext().getName());
-            root.put("traces", arr);
+        if (tracer == null) {
+            return root;
         }
 
+        JsonArray arr = new JsonArray();
+        Collection<BacklogTracerEventMessage> queue = tracer.getLatestMessageHistory();
+        for (BacklogTracerEventMessage t : queue) {
+            arr.add(processTraceMessage(t, limit));
+        }
+        root.put("name", getCamelContext().getName());
+        root.put("traces", arr);
+
         return root;
+    }
+
+    private JsonObject processTraceMessage(BacklogTracerEventMessage t, int codeLimit) {
+        JsonObject to = (JsonObject) t.asJSon();
+
+        if (codeLimit > 0) {
+            addSourceCodeToTrace(to, codeLimit);
+        }
+
+        return to;
+    }
+
+    private void addSourceCodeToTrace(JsonObject to, int limit) {
+        String rid = to.getString("routeId");
+        String loc = to.getString("location");
+        if (rid == null) {
+            return;
+        }
+
+        List<JsonObject> code = enrichSourceCode(rid, loc, limit);
+        if (code != null && !code.isEmpty()) {
+            to.put("code", code);
+        }
     }
 
     private List<JsonObject> enrichSourceCode(String routeId, String location, int lines) {

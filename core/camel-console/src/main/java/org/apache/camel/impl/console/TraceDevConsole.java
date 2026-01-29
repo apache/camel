@@ -75,45 +75,61 @@ public class TraceDevConsole extends AbstractDevConsole {
         String dump = (String) options.get(DUMP);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
-        if (tracer != null) {
-            if (dump != null) {
-                for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
-                    addMessage(t);
-                }
-                for (BacklogTracerEventMessage t : queue) {
-                    String json = t.toJSon(0);
-                    sb.append(json).append("\n");
-                }
-            } else {
-                if ("true".equals(enabled)) {
-                    tracer.setEnabled(true);
-                } else if ("false".equals(enabled)) {
-                    tracer.setEnabled(false);
-                }
-                sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
-                sb.append("Standby: ").append(tracer.isStandby()).append("\n");
-                sb.append("Trace Counter: ").append(tracer.getTraceCounter()).append("\n");
-                sb.append("Backlog Size: ").append(tracer.getBacklogSize()).append("\n");
-                sb.append("Queue Size: ").append(tracer.getQueueSize()).append("\n");
-                sb.append("Remove On Dump: ").append(tracer.isRemoveOnDump()).append("\n");
-                if (tracer.getTraceFilter() != null) {
-                    sb.append("Trace Filter: ").append(tracer.getTraceFilter()).append("\n");
-                }
-                if (tracer.getTracePattern() != null) {
-                    sb.append("Trace Pattern: ").append(tracer.getTracePattern()).append("\n");
-                }
-                sb.append("Trace Rests: ").append(tracer.isTraceRests()).append("\n");
-                sb.append("Trace Templates: ").append(tracer.isTraceTemplates()).append("\n");
-                sb.append("Body Max Chars: ").append(tracer.getBodyMaxChars()).append("\n");
-                sb.append("Body Include Files: ").append(tracer.isBodyIncludeFiles()).append("\n");
-                sb.append("Body Include Streams: ").append(tracer.isBodyIncludeStreams()).append("\n");
-                sb.append("Include Exchange Properties: ").append(tracer.isIncludeExchangeProperties()).append("\n");
-                sb.append("Include Exchange Variables: ").append(tracer.isIncludeExchangeVariables()).append("\n");
-                sb.append("Include Exception: ").append(tracer.isIncludeException()).append("\n");
-            }
+        if (tracer == null) {
+            return sb.toString();
+        }
+
+        if (dump != null) {
+            appendDumpText(sb, tracer);
+        } else {
+            applyEnabledSetting(tracer, enabled);
+            appendTracerStatusText(sb, tracer);
         }
 
         return sb.toString();
+    }
+
+    private void appendDumpText(StringBuilder sb, BacklogTracer tracer) {
+        for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
+            addMessage(t);
+        }
+        for (BacklogTracerEventMessage t : queue) {
+            String json = t.toJSon(0);
+            sb.append(json).append("\n");
+        }
+    }
+
+    private void appendTracerStatusText(StringBuilder sb, BacklogTracer tracer) {
+        sb.append("Enabled: ").append(tracer.isEnabled()).append("\n");
+        sb.append("Standby: ").append(tracer.isStandby()).append("\n");
+        sb.append("Trace Counter: ").append(tracer.getTraceCounter()).append("\n");
+        sb.append("Backlog Size: ").append(tracer.getBacklogSize()).append("\n");
+        sb.append("Queue Size: ").append(tracer.getQueueSize()).append("\n");
+        sb.append("Remove On Dump: ").append(tracer.isRemoveOnDump()).append("\n");
+        appendOptionalLine(sb, "Trace Filter", tracer.getTraceFilter());
+        appendOptionalLine(sb, "Trace Pattern", tracer.getTracePattern());
+        sb.append("Trace Rests: ").append(tracer.isTraceRests()).append("\n");
+        sb.append("Trace Templates: ").append(tracer.isTraceTemplates()).append("\n");
+        sb.append("Body Max Chars: ").append(tracer.getBodyMaxChars()).append("\n");
+        sb.append("Body Include Files: ").append(tracer.isBodyIncludeFiles()).append("\n");
+        sb.append("Body Include Streams: ").append(tracer.isBodyIncludeStreams()).append("\n");
+        sb.append("Include Exchange Properties: ").append(tracer.isIncludeExchangeProperties()).append("\n");
+        sb.append("Include Exchange Variables: ").append(tracer.isIncludeExchangeVariables()).append("\n");
+        sb.append("Include Exception: ").append(tracer.isIncludeException()).append("\n");
+    }
+
+    private void appendOptionalLine(StringBuilder sb, String label, String value) {
+        if (value != null) {
+            sb.append(label).append(": ").append(value).append("\n");
+        }
+    }
+
+    private void applyEnabledSetting(BacklogTracer tracer, String enabled) {
+        if ("true".equals(enabled)) {
+            tracer.setEnabled(true);
+        } else if ("false".equals(enabled)) {
+            tracer.setEnabled(false);
+        }
     }
 
     private void addMessage(BacklogTracerEventMessage message) {
@@ -133,48 +149,56 @@ public class TraceDevConsole extends AbstractDevConsole {
         String dump = (String) options.get(DUMP);
 
         BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
-        if (tracer != null) {
-            if (dump != null) {
-                for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
-                    addMessage(t);
-                }
-                JsonArray arr = new JsonArray();
-                root.put("enabled", tracer.isEnabled());
-                root.put("traces", arr);
-                for (BacklogTracerEventMessage t : queue) {
-                    JsonObject jo = (JsonObject) t.asJSon();
-                    arr.add(jo);
-                }
-            } else {
-                if ("true".equals(enabled)) {
-                    tracer.setEnabled(true);
-                } else if ("false".equals(enabled)) {
-                    tracer.setEnabled(false);
-                }
-                root.put("enabled", tracer.isEnabled());
-                root.put("standby", tracer.isStandby());
-                root.put("counter", tracer.getTraceCounter());
-                root.put("backlogSize", tracer.getBacklogSize());
-                root.put("queueSize", tracer.getQueueSize());
-                root.put("removeOnDump", tracer.isRemoveOnDump());
-                if (tracer.getTraceFilter() != null) {
-                    root.put("traceFilter", tracer.getTraceFilter());
-                }
-                if (tracer.getTracePattern() != null) {
-                    root.put("tracePattern", tracer.getTracePattern());
-                }
-                root.put("traceRests", tracer.isTraceRests());
-                root.put("traceTemplates", tracer.isTraceTemplates());
-                root.put("bodyMaxChars", tracer.getBodyMaxChars());
-                root.put("bodyIncludeFiles", tracer.isBodyIncludeFiles());
-                root.put("bodyIncludeStreams", tracer.isBodyIncludeStreams());
-                root.put("includeExchangeProperties", tracer.isIncludeExchangeProperties());
-                root.put("includeExchangeVariables", tracer.isIncludeExchangeVariables());
-                root.put("includeException", tracer.isIncludeException());
-            }
+        if (tracer == null) {
+            return root;
+        }
+
+        if (dump != null) {
+            addDumpJson(root, tracer);
+        } else {
+            applyEnabledSetting(tracer, enabled);
+            addTracerStatusJson(root, tracer);
         }
 
         return root;
+    }
+
+    private void addDumpJson(JsonObject root, BacklogTracer tracer) {
+        for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
+            addMessage(t);
+        }
+        JsonArray arr = new JsonArray();
+        root.put("enabled", tracer.isEnabled());
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage t : queue) {
+            JsonObject jo = (JsonObject) t.asJSon();
+            arr.add(jo);
+        }
+    }
+
+    private void addTracerStatusJson(JsonObject root, BacklogTracer tracer) {
+        root.put("enabled", tracer.isEnabled());
+        root.put("standby", tracer.isStandby());
+        root.put("counter", tracer.getTraceCounter());
+        root.put("backlogSize", tracer.getBacklogSize());
+        root.put("queueSize", tracer.getQueueSize());
+        root.put("removeOnDump", tracer.isRemoveOnDump());
+        putIfNotNull(root, "traceFilter", tracer.getTraceFilter());
+        putIfNotNull(root, "tracePattern", tracer.getTracePattern());
+        root.put("traceRests", tracer.isTraceRests());
+        root.put("traceTemplates", tracer.isTraceTemplates());
+        root.put("bodyMaxChars", tracer.getBodyMaxChars());
+        root.put("bodyIncludeFiles", tracer.isBodyIncludeFiles());
+        root.put("bodyIncludeStreams", tracer.isBodyIncludeStreams());
+        root.put("includeExchangeProperties", tracer.isIncludeExchangeProperties());
+        root.put("includeExchangeVariables", tracer.isIncludeExchangeVariables());
+        root.put("includeException", tracer.isIncludeException());
+    }
+
+    private void putIfNotNull(JsonObject jo, String key, String value) {
+        if (value != null) {
+            jo.put(key, value);
+        }
     }
 
 }
