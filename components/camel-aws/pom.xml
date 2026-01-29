@@ -44,6 +44,7 @@
         <module>camel-aws-bedrock</module>
         <module>camel-aws-cloudtrail</module>
         <module>camel-aws-config</module>
+        <module>camel-aws2-comprehend</module>
         <module>camel-aws2-cw</module>
         <module>camel-aws2-ddb</module>
         <module>camel-aws2-ec2</module>
