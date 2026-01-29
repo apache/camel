@@ -99,6 +99,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
               description = "The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is"
                             + " allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.")
     private int pollTimeout = 1000;
+    @UriParam(label = "consumer,advanced",
+              description = "If enabled, spawns a new virtual thread for each message instead of using a fixed pool of consumer threads. "
+                            + "This model is optimized for virtual threads (JDK 21+) and I/O-bound workloads where creating threads is cheap. "
+                            + "The concurrentConsumers option becomes a limit on max concurrent tasks (0 = unlimited). "
+                            + "Requires virtual threads to be enabled via camel.threads.virtual.enabled=true.")
+    private boolean virtualThreadPerTask;
 
     @UriParam(label = "producer", defaultValue = "IfReplyExpected",
               description = "Option to specify whether the caller should wait for the async task to complete or not before continuing. The"
@@ -203,6 +209,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     protected SedaConsumer createNewConsumer(Processor processor) {
+        if (virtualThreadPerTask) {
+            return new ThreadPerTaskSedaConsumer(this, processor);
+        }
         return new SedaConsumer(this, processor);
     }
 
@@ -524,6 +533,21 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      */
     public void setPollTimeout(int pollTimeout) {
         this.pollTimeout = pollTimeout;
+    }
+
+    @ManagedAttribute
+    public boolean isVirtualThreadPerTask() {
+        return virtualThreadPerTask;
+    }
+
+    /**
+     * If enabled, spawns a new virtual thread for each message instead of using a fixed pool of consumer threads. This
+     * model is optimized for virtual threads (JDK 21+) and I/O-bound workloads where creating threads is cheap. The
+     * concurrentConsumers option becomes a limit on max concurrent tasks (0 = unlimited). Requires virtual threads to
+     * be enabled via camel.threads.virtual.enabled=true.
+     */
+    public void setVirtualThreadPerTask(boolean virtualThreadPerTask) {
+        this.virtualThreadPerTask = virtualThreadPerTask;
     }
 
     @ManagedAttribute
