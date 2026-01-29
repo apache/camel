@@ -34,6 +34,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "exposed": target.setExposed(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
@@ -62,6 +63,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "exposed": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "name": return java.lang.String.class;
@@ -86,6 +88,7 @@ public class LangChain4jToolsEndpointConfigurer extends PropertyConfigurerSuppor
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "exposed": return target.isExposed();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "name": return target.getName();

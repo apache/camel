@@ -73,6 +73,40 @@ public interface LangChain4jToolsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the tool is automatically exposed to the LLM. When false, the
+         * tool is added to a searchable list and can be discovered via the
+         * tool-search-tool.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param exposed the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jToolsEndpointConsumerBuilder exposed(boolean exposed) {
+            doSetProperty("exposed", exposed);
+            return this;
+        }
+        /**
+         * Whether the tool is automatically exposed to the LLM. When false, the
+         * tool is added to a searchable list and can be discovered via the
+         * tool-search-tool.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param exposed the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jToolsEndpointConsumerBuilder exposed(String exposed) {
+            doSetProperty("exposed", exposed);
+            return this;
+        }
+        /**
          * Tool name.
          * 
          * The option is a: <code>java.lang.String</code> type.
