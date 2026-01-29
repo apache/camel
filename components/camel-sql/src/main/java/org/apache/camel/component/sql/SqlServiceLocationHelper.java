@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.sql;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.spi.BeanIntrospection;
@@ -34,17 +31,15 @@ public class SqlServiceLocationHelper {
             return ads.getUrl();
         }
 
-        Map<String, Object> props = new HashMap<>();
-        bi.getProperties(ds, props, null, false);
-        Object url = props.get("url");
+        Object url = bi.getOrElseProperty(ds, "url", null, false);
         if (url == null) {
-            url = props.get("jdbcUrl");
+            url = bi.getOrElseProperty(ds, "jdbcUrl", null, false);
         }
         if (url != null) {
             return url.toString();
         } else {
             // nested which can be wrapped in connection pooling
-            DataSource ncf = (DataSource) props.get("dataSource");
+            DataSource ncf = (DataSource) bi.getOrElseProperty(ds, "dataSource", null, false);
             if (ncf != null) {
                 return getJDBCURLFromDataSource(bi, ncf);
             }
@@ -61,20 +56,18 @@ public class SqlServiceLocationHelper {
             return ads.getUsername();
         }
 
-        Map<String, Object> props = new HashMap<>();
-        bi.getProperties(ds, props, null, false);
-        Object user = props.get("user");
+        Object user = bi.getOrElseProperty(ds, "user", null, false);
         if (user == null) {
-            user = props.get("username");
+            user = bi.getOrElseProperty(ds, "username", null, false);
         }
         if (user == null) {
-            user = props.get("userName");
+            user = bi.getOrElseProperty(ds, "userName", null, false);
         }
         if (user != null) {
             return user.toString();
         } else {
             // nested which can be wrapped in connection pooling
-            DataSource ncf = (DataSource) props.get("dataSource");
+            DataSource ncf = (DataSource) bi.getOrElseProperty(ds, "dataSource", null, false);
             if (ncf != null) {
                 return getUsernameFromConnectionFactory(bi, ncf);
             }
