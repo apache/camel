@@ -951,6 +951,17 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertTrue(matches);
     }
 
+    @Test
+    public void testChainParam() {
+        exchange.getIn().setBody("   Hello World from the Camel   ");
+        // no param
+        assertExpression("${trim()} ~> ${replace('Hello','Hi')}", "Hi World from the Camel");
+        assertExpression("${trim()} ~> ${replace('Hello','Hi')} ~> ${split(' ')} ~> ${size()}", 5);
+        // with $param
+        assertExpression("${trim()} ~> ${replace('Hello','Hi',$param)}", "Hi World from the Camel");
+        assertExpression("${trim()} ~> ${replace('Hello','Hi',$param)} ~> ${split($param,' ')} ~> ${size($param)}", 5);
+    }
+
     @Override
     protected String getLanguageName() {
         return "simple";

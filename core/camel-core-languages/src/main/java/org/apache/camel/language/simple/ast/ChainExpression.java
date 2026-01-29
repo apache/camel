@@ -27,6 +27,7 @@ import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.types.ChainOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -34,6 +35,8 @@ import org.apache.camel.util.StringHelper;
  * Represents chain operator expression in the AST.
  */
 public class ChainExpression extends BaseSimpleNode {
+
+    private static final String CHAIN_VARIABLE = "CamelSimpleChainParam";
 
     private final ChainOperatorType operator;
     private SimpleNode left;
@@ -86,15 +89,53 @@ public class ChainExpression extends BaseSimpleNode {
 
         final List<Expression> rightExp = new ArrayList<>();
         for (SimpleNode rn : right) {
+            boolean param = false;
             if (rn instanceof LiteralExpression le) {
                 String text = le.getText();
                 String changed = StringHelper.removeLeadingAndEndingQuotes(text);
+                if (changed.contains("$param")) {
+                    changed = changed.replace("$param", "${variable." + CHAIN_VARIABLE + "}");
+                    param = true;
+                }
                 if (!changed.equals(text)) {
                     le.replaceText(changed);
                 }
+            } else if (rn instanceof SimpleFunctionStart sf) {
+                for (var child : sf.getBlock().getChildren()) {
+                    if (child instanceof LiteralExpression le) {
+                        String text = le.getText();
+                        String changed = StringHelper.removeLeadingAndEndingQuotes(text);
+                        if (changed.contains("$param")) {
+                            changed = changed.replace("$param", "${variable." + CHAIN_VARIABLE + "}");
+                            param = true;
+                        }
+                        if (!changed.equals(text)) {
+                            le.replaceText(changed);
+                        }
+                    }
+                }
             }
-            Expression exp = rn.createExpression(camelContext, expression);
-            rightExp.add(exp);
+            final Expression exp = rn.createExpression(camelContext, expression);
+            Expression target = exp;
+            if (param) {
+                target = new ExpressionAdapter() {
+                    @Override
+                    public Object evaluate(Exchange exchange) {
+                        exchange.setVariable(CHAIN_VARIABLE, exchange.getMessage().getBody());
+                        try {
+                            return exp.evaluate(exchange, Object.class);
+                        } finally {
+                            exchange.removeVariable(CHAIN_VARIABLE);
+                        }
+                    }
+
+                    @Override
+                    public String toString() {
+                        return exp.toString();
+                    }
+                };
+            }
+            rightExp.add(target);
         }
 
         if (operator == ChainOperatorType.CHAIN || operator == ChainOperatorType.CHAIN_NULL_SAFE) {

@@ -867,9 +867,6 @@ simple("${header.username} ?: 'Guest'");
 
 ==== Chain Operator
 
-IMPORTANT: The chain operator only supports passing results via the message body. This may change in the future to allow more flexible syntax to
-specify which parameter to use as input in the next fuction.
-
 The syntax for the chain operator is:
 
 [source,text]
@@ -894,6 +891,25 @@ simple("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}");
 The _null safe_ variant (`?~>`) can be used to avoid `NullPointerException` if it's accepted to not continue the chain when any function returned `null`:
 
 However, many of the simple functions have NPE protection built-in, so this variant is only needed in special situations.
+
+==== Using $param as input parameter value
+
+IMPORTANT: The chain operator will by default pass results via the message body. This usually works well with most functions.
+However, when you need to be in full control then use `$param` as the magic parameter which represents the passed value from the previous function in the chain.
+
+Suppose the message body contains `"   Hello World from the Camel "` then the following chain works out of the box:
+
+[source,java]
+----
+simple("${trim()} ~> ${replace('Hello','Hi')} ~> ${split(' ')} ~> ${size()}");
+----
+
+And here is the same example where we explicit use `$param` in the parameters where we need the input to be:
+
+[source,java]
+----
+simple("${trim()} ~> ${replace('Hello','Hi',$param)} ~> ${split($param,' ')} ~> ${size($param)}");
+----
 
 
 === Boolean Operators
