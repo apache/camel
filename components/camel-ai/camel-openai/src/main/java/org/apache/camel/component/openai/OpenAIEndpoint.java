@@ -37,7 +37,8 @@ import org.apache.camel.util.ObjectHelper;
              title = "OpenAI",
              syntax = "openai:operation",
              category = { Category.AI },
-             producerOnly = true)
+             producerOnly = true,
+             headersClass = OpenAIConstants.class)
 public class OpenAIEndpoint extends DefaultEndpoint {
 
     @UriPath

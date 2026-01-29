@@ -465,6 +465,19 @@ public interface OpenAIEndpointBuilderFactory {
          * Since: 4.17
          * Maven coordinates: org.apache.camel:camel-openai
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default OpenAIHeaderNameBuilder openai() {
+            return OpenAIHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * OpenAI (camel-openai)
+         * OpenAI endpoint for chat completion.
+         * 
+         * Category: ai
+         * Since: 4.17
+         * Maven coordinates: org.apache.camel:camel-openai
+         * 
          * Syntax: <code>openai:operation</code>
          * 
          * Path parameter: operation (required)
@@ -500,6 +513,227 @@ public interface OpenAIEndpointBuilderFactory {
             return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the OpenAI component.
+     */
+    public static class OpenAIHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        private static final OpenAIHeaderNameBuilder INSTANCE = new OpenAIHeaderNameBuilder();
+
+        /**
+         * The user message to send to the OpenAI chat completion API.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIUserMessage}.
+         */
+        public String openAIUserMessage() {
+            return "CamelOpenAIUserMessage";
+        }
+        /**
+         * The system message to provide context and instructions to the model.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAISystemMessage}.
+         */
+        public String openAISystemMessage() {
+            return "CamelOpenAISystemMessage";
+        }
+        /**
+         * The developer message to provide additional instructions to the
+         * model.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIDeveloperMessage}.
+         */
+        public String openAIDeveloperMessage() {
+            return "CamelOpenAIDeveloperMessage";
+        }
+        /**
+         * The model to use for chat completion (e.g., gpt-4, gpt-3.5-turbo).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIModel}.
+         */
+        public String openAIModel() {
+            return "CamelOpenAIModel";
+        }
+        /**
+         * Controls randomness in the response. Higher values (e.g., 0.8) make
+         * output more random, lower values (e.g., 0.2) make it more
+         * deterministic.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAITemperature}.
+         */
+        public String openAITemperature() {
+            return "CamelOpenAITemperature";
+        }
+        /**
+         * An alternative to temperature for controlling randomness. Uses
+         * nucleus sampling where the model considers tokens with top_p
+         * probability mass.
+         * 
+         * The option is a: {@code Double} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAITopP}.
+         */
+        public String openAITopP() {
+            return "CamelOpenAITopP";
+        }
+        /**
+         * The maximum number of tokens to generate in the completion.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIMaxTokens}.
+         */
+        public String openAIMaxTokens() {
+            return "CamelOpenAIMaxTokens";
+        }
+        /**
+         * Whether to stream the response back incrementally.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIStreaming}.
+         */
+        public String openAIStreaming() {
+            return "CamelOpenAIStreaming";
+        }
+        /**
+         * The Java class to use for structured output parsing.
+         * 
+         * The option is a: {@code Class} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIOutputClass}.
+         */
+        public String openAIOutputClass() {
+            return "CamelOpenAIOutputClass";
+        }
+        /**
+         * The JSON schema to use for structured output validation.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIJsonSchema}.
+         */
+        public String openAIJsonSchema() {
+            return "CamelOpenAIJsonSchema";
+        }
+        /**
+         * The model used for the completion response.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIResponseModel}.
+         */
+        public String openAIResponseModel() {
+            return "CamelOpenAIResponseModel";
+        }
+        /**
+         * The unique identifier for the completion response.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIResponseId}.
+         */
+        public String openAIResponseId() {
+            return "CamelOpenAIResponseId";
+        }
+        /**
+         * The reason the completion finished (e.g., stop, length,
+         * content_filter).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIFinishReason}.
+         */
+        public String openAIFinishReason() {
+            return "CamelOpenAIFinishReason";
+        }
+        /**
+         * The number of tokens used in the prompt.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIPromptTokens}.
+         */
+        public String openAIPromptTokens() {
+            return "CamelOpenAIPromptTokens";
+        }
+        /**
+         * The number of tokens used in the completion.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAICompletionTokens}.
+         */
+        public String openAICompletionTokens() {
+            return "CamelOpenAICompletionTokens";
+        }
+        /**
+         * The total number of tokens used (prompt completion).
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAITotalTokens}.
+         */
+        public String openAITotalTokens() {
+            return "CamelOpenAITotalTokens";
+        }
+        /**
+         * The complete OpenAI response object.
+         * 
+         * The option is a: {@code com.openai.models.ChatCompletion} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code OpenAIResponse}.
+         */
+        public String openAIResponse() {
+            return "CamelOpenAIResponse";
+        }
     }
     static OpenAIEndpointBuilder endpointBuilder(String componentName, String path) {
         class OpenAIEndpointBuilderImpl extends AbstractEndpointBuilder implements OpenAIEndpointBuilder, AdvancedOpenAIEndpointBuilder {
