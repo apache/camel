@@ -123,24 +123,6 @@ class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    void testMetadataExtractionWithAllFields() throws Exception {
-        Path testFile = createTestMarkdownFile();
-
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata-all-fields",
-                testFile.toString(), DocumentMetadata.class);
-
-        assertNotNull(metadata, "Metadata should not be null");
-        assertNotNull(metadata.getFileName(), "File name should be extracted");
-
-        // Custom metadata should be available when extractAllMetadata=true
-        Map<String, Object> customMetadata = metadata.getCustomMetadata();
-        assertNotNull(customMetadata, "Custom metadata map should not be null");
-
-        LOG.info("Successfully extracted all metadata fields: {}", metadata);
-        LOG.info("Custom metadata fields: {}", customMetadata.size());
-    }
-
-    @Test
     void testMetadataExtractionWithRawMetadata() throws Exception {
         Path testFile = createTestMarkdownFile();
 
@@ -224,24 +206,6 @@ class MetadataExtractionIT extends DoclingITestSupport {
     }
 
     @Test
-    void testMetadataExtractionEmptyCustomFields() throws Exception {
-        Path testFile = createTestMarkdownFile();
-
-        // Extract metadata without extractAllMetadata flag
-        DocumentMetadata metadata = template.requestBody("direct:extract-metadata",
-                testFile.toString(), DocumentMetadata.class);
-
-        assertNotNull(metadata, "Metadata should not be null");
-
-        // Custom metadata should be empty when extractAllMetadata=false (default)
-        Map<String, Object> customMetadata = metadata.getCustomMetadata();
-        assertNotNull(customMetadata, "Custom metadata map should not be null");
-        assertTrue(customMetadata.isEmpty(), "Custom metadata should be empty by default");
-
-        LOG.info("Successfully verified custom metadata is empty by default");
-    }
-
-    @Test
     void testMetadataExtractionNoRawMetadata() throws Exception {
         Path testFile = createTestMarkdownFile();
 
@@ -299,10 +263,6 @@ class MetadataExtractionIT extends DoclingITestSupport {
                 from("direct:extract-metadata-no-headers")
                         .to("docling:extract?operation=EXTRACT_METADATA&includeMetadataInHeaders=false")
                         .to("mock:afterMetadataExtraction");
-
-                // Metadata extraction with all fields
-                from("direct:extract-metadata-all-fields")
-                        .to("docling:extract?operation=EXTRACT_METADATA&extractAllMetadata=true");
 
                 // Metadata extraction with raw metadata
                 from("direct:extract-metadata-with-raw")

@@ -439,23 +439,6 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
-         * Extract all available metadata fields including custom/raw fields.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: metadata
-         * 
-         * @param extractAllMetadata the value to set
-         * @return the dsl builder
-         */
-        default DoclingComponentBuilder extractAllMetadata(boolean extractAllMetadata) {
-            doSetProperty("extractAllMetadata", extractAllMetadata);
-            return this;
-        }
-    
-        
-        /**
          * Include metadata in message headers when extracting metadata.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -597,7 +580,6 @@ public interface DoclingComponentBuilderFactory {
             case "batchSize": getOrCreateConfiguration((DoclingComponent) component).setBatchSize((int) value); return true;
             case "batchTimeout": getOrCreateConfiguration((DoclingComponent) component).setBatchTimeout((long) value); return true;
             case "splitBatchResults": getOrCreateConfiguration((DoclingComponent) component).setSplitBatchResults((boolean) value); return true;
-            case "extractAllMetadata": getOrCreateConfiguration((DoclingComponent) component).setExtractAllMetadata((boolean) value); return true;
             case "includeMetadataInHeaders": getOrCreateConfiguration((DoclingComponent) component).setIncludeMetadataInHeaders((boolean) value); return true;
             case "includeRawMetadata": getOrCreateConfiguration((DoclingComponent) component).setIncludeRawMetadata((boolean) value); return true;
             case "apiKeyHeader": getOrCreateConfiguration((DoclingComponent) component).setApiKeyHeader((java.lang.String) value); return true;

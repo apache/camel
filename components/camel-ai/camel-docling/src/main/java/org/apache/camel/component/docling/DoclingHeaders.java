@@ -84,30 +84,6 @@ public final class DoclingHeaders {
               javaType = "Boolean")
     public static final String BATCH_SPLIT_RESULTS = "CamelDoclingBatchSplitResults";
 
-    @Metadata(description = "Document title extracted from metadata", javaType = "String")
-    public static final String METADATA_TITLE = "CamelDoclingMetadataTitle";
-
-    @Metadata(description = "Document author extracted from metadata", javaType = "String")
-    public static final String METADATA_AUTHOR = "CamelDoclingMetadataAuthor";
-
-    @Metadata(description = "Document creator application", javaType = "String")
-    public static final String METADATA_CREATOR = "CamelDoclingMetadataCreator";
-
-    @Metadata(description = "Document producer application", javaType = "String")
-    public static final String METADATA_PRODUCER = "CamelDoclingMetadataProducer";
-
-    @Metadata(description = "Document subject", javaType = "String")
-    public static final String METADATA_SUBJECT = "CamelDoclingMetadataSubject";
-
-    @Metadata(description = "Document keywords", javaType = "String")
-    public static final String METADATA_KEYWORDS = "CamelDoclingMetadataKeywords";
-
-    @Metadata(description = "Document creation date", javaType = "java.time.Instant")
-    public static final String METADATA_CREATION_DATE = "CamelDoclingMetadataCreationDate";
-
-    @Metadata(description = "Document modification date", javaType = "java.time.Instant")
-    public static final String METADATA_MODIFICATION_DATE = "CamelDoclingMetadataModificationDate";
-
     @Metadata(description = "Number of pages in the document", javaType = "Integer")
     public static final String METADATA_PAGE_COUNT = "CamelDoclingMetadataPageCount";
 
@@ -125,9 +101,6 @@ public final class DoclingHeaders {
 
     @Metadata(description = "File name", javaType = "String")
     public static final String METADATA_FILE_NAME = "CamelDoclingMetadataFileName";
-
-    @Metadata(description = "Custom metadata fields as a Map", javaType = "Map<String, Object>")
-    public static final String METADATA_CUSTOM = "CamelDoclingMetadataCustom";
 
     @Metadata(description = "Raw metadata fields as a Map", javaType = "Map<String, Object>")
     public static final String METADATA_RAW = "CamelDoclingMetadataRaw";

@@ -404,36 +404,6 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Extract all available metadata fields including custom/raw fields.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: metadata
-         * 
-         * @param extractAllMetadata the value to set
-         * @return the dsl builder
-         */
-        default DoclingEndpointBuilder extractAllMetadata(boolean extractAllMetadata) {
-            doSetProperty("extractAllMetadata", extractAllMetadata);
-            return this;
-        }
-        /**
-         * Extract all available metadata fields including custom/raw fields.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: metadata
-         * 
-         * @param extractAllMetadata the value to set
-         * @return the dsl builder
-         */
-        default DoclingEndpointBuilder extractAllMetadata(String extractAllMetadata) {
-            doSetProperty("extractAllMetadata", extractAllMetadata);
-            return this;
-        }
-        /**
          * Include metadata in message headers when extracting metadata.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1114,103 +1084,6 @@ public interface DoclingEndpointBuilderFactory {
             return "CamelDoclingBatchSplitResults";
         }
         /**
-         * Document title extracted from metadata.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataTitle}.
-         */
-        public String doclingMetadataTitle() {
-            return "CamelDoclingMetadataTitle";
-        }
-        /**
-         * Document author extracted from metadata.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataAuthor}.
-         */
-        public String doclingMetadataAuthor() {
-            return "CamelDoclingMetadataAuthor";
-        }
-        /**
-         * Document creator application.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataCreator}.
-         */
-        public String doclingMetadataCreator() {
-            return "CamelDoclingMetadataCreator";
-        }
-        /**
-         * Document producer application.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataProducer}.
-         */
-        public String doclingMetadataProducer() {
-            return "CamelDoclingMetadataProducer";
-        }
-        /**
-         * Document subject.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataSubject}.
-         */
-        public String doclingMetadataSubject() {
-            return "CamelDoclingMetadataSubject";
-        }
-        /**
-         * Document keywords.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataKeywords}.
-         */
-        public String doclingMetadataKeywords() {
-            return "CamelDoclingMetadataKeywords";
-        }
-        /**
-         * Document creation date.
-         * 
-         * The option is a: {@code java.time.Instant} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataCreationDate}.
-         */
-        public String doclingMetadataCreationDate() {
-            return "CamelDoclingMetadataCreationDate";
-        }
-        /**
-         * Document modification date.
-         * 
-         * The option is a: {@code java.time.Instant} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code
-         * DoclingMetadataModificationDate}.
-         */
-        public String doclingMetadataModificationDate() {
-            return "CamelDoclingMetadataModificationDate";
-        }
-        /**
          * Number of pages in the document.
          * 
          * The option is a: {@code Integer} type.
@@ -1281,18 +1154,6 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingMetadataFileName() {
             return "CamelDoclingMetadataFileName";
-        }
-        /**
-         * Custom metadata fields as a Map.
-         * 
-         * The option is a: {@code Map<String, Object>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataCustom}.
-         */
-        public String doclingMetadataCustom() {
-            return "CamelDoclingMetadataCustom";
         }
         /**
          * Raw metadata fields as a Map.
