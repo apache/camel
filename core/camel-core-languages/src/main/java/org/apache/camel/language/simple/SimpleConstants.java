@@ -105,7 +105,7 @@ public final class SimpleConstants {
     public static final String CEIL = "ceil(exp)";
 
     @Metadata(description = "Removes all existing attachments on the message.",
-            label = "function", javaType = "Object")
+              label = "function", javaType = "Object")
     public static final String CLEAR_ATTACHMENTS = "clearAttachments";
 
     @Metadata(description = "The collate function iterates the message body and groups the data into sub lists of specified size. This can be used with the Splitter EIP to split a message body and group/batch the split sub message into a group of N sub lists.",
