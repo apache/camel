@@ -34,11 +34,11 @@ mvn verify -Dollama.instance.type=openai \
 
 Note that `LangChain4jAgentWrappedFileIT` and `LangChain4jAgentMultimodalityIT` require multimodal models.
 
-All tests (tools and multimodal) can be executed with an OpenAI instance and the model `qwen3-vl:8b`:
+All tests (tools and multimodal) can be executed with an OpenAI instance and the model `qwen3-vl:2b-instruct`:
 
 ```bash
 mvn verify -Dollama.instance.type=openai \
     -Dopenai.endpoint=http://localhost:11434/v1/ \
-    -Dopenai.model=qwen3-vl:8b \
+    -Dopenai.model=qwen3-vl:2b-instruct \
     -Dopenai.api.key=dummy
 ```
