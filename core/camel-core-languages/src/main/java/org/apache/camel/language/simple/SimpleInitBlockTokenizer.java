@@ -28,7 +28,7 @@ import org.apache.camel.language.simple.types.TokenType;
 public class SimpleInitBlockTokenizer extends SimpleTokenizer {
 
     // keep this number in sync with tokens list
-    private static final int NUMBER_OF_TOKENS = 2;
+    private static final int NUMBER_OF_TOKENS = 3;
 
     private static final SimpleTokenType[] INIT_TOKENS = new SimpleTokenType[NUMBER_OF_TOKENS];
 
@@ -39,11 +39,13 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
 
     static {
         // init
-        INIT_TOKENS[0] = new SimpleTokenType(TokenType.initOperator, ":=");
-        INIT_TOKENS[1] = new SimpleTokenType(TokenType.initVariable, "$");
+        INIT_TOKENS[0] = new SimpleTokenType(TokenType.initVariable, "$");
+        INIT_TOKENS[1] = new SimpleTokenType(TokenType.initOperator, ":=");
+        INIT_TOKENS[2] = new SimpleTokenType(TokenType.initOperator, "~:=");
     }
 
     private boolean acceptInitTokens = true; // flag to turn on|off
+    private boolean newLine = true;
 
     /**
      * Does the expression include a simple init block.
@@ -58,13 +60,31 @@ public class SimpleInitBlockTokenizer extends SimpleTokenizer {
         return false;
     }
 
-    protected void setAcceptInitTokens(boolean accept) {
+    protected void setAcceptInitTokens(boolean accept, int index) {
         this.acceptInitTokens = accept;
+        if (!accept) {
+            this.newLine = false;
+        }
+    }
+
+    protected boolean hasNewLine() {
+        return newLine;
+    }
+
+    @Override
+    protected void onToken(SimpleTokenType token, int index) {
+        if (token.isNewLine()) {
+            this.newLine = true;
+        }
     }
 
     @Override
     protected SimpleToken customToken(String expression, int index, boolean allowEscape, TokenType... filters) {
+        // when discovering init tokens we must have seen a new-line prior
         if (!acceptInitTokens) {
+            return null;
+        }
+        if (!newLine) {
             return null;
         }
 

@@ -27,12 +27,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.ast.InitBlockExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.SimpleNode;
+import org.apache.camel.language.simple.types.InitOperatorType;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.util.StringHelper;
 
 class SimpleInitBlockParser extends SimpleExpressionParser {
 
     private final Set<String> initKeys = new LinkedHashSet<>();
+    private final Set<String> initFunctions = new LinkedHashSet<>();
 
     public SimpleInitBlockParser(CamelContext camelContext, String expression, boolean allowEscape, boolean skipFileFunctions,
                                  Map<String, Expression> cacheExpression) {
@@ -43,6 +45,10 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
 
     public Set<String> getInitKeys() {
         return initKeys;
+    }
+
+    public Set<String> getInitFunctions() {
+        return initFunctions;
     }
 
     protected SimpleInitBlockTokenizer getTokenizer() {
@@ -83,6 +89,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     protected List<SimpleNode> parseInitTokens() {
         clear();
         initKeys.clear();
+        initFunctions.clear();
 
         // parse the expression using the following grammar
         // init statements are variables assigned to functions/operators
@@ -92,6 +99,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
             functionText();
             unaryOperator();
             otherOperator();
+            chainOperator();
             nextToken();
         }
 
@@ -107,12 +115,14 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         parseAndCreateAstModel();
         // compact and stack blocks (eg function start/end)
         prepareBlocks();
-        // compact and stack init blocks
-        prepareInitBlocks();
+        // compact and stack chain expressions
+        prepareChainExpression();
         // compact and stack unary operators
         prepareUnaryExpressions();
         // compact and stack other expressions
         prepareOtherExpressions();
+        // compact and stack init blocks
+        prepareInitBlocks();
 
         return nodes;
     }
@@ -121,8 +131,13 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     // $$name := <function>
     // $$name2 := <function>
     protected boolean initText() {
+        // has there been a new line since last (which reset and allow to look for new init variable)
+        if (!getTokenizer().hasNewLine()) {
+            return false;
+        }
+
         // turn on init mode so the parser can find the beginning of the init variable
-        getTokenizer().setAcceptInitTokens(true);
+        getTokenizer().setAcceptInitTokens(true, index);
         while (!token.getType().isInitVariable() && !token.getType().isEol()) {
             // skip until we find init variable/function (this skips code comments)
             nextToken(TokenType.functionStart, TokenType.unaryOperator, TokenType.chainOperator, TokenType.otherOperator,
@@ -140,7 +155,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
             expectAndAcceptMore(TokenType.whiteSpace);
             // turn off init mode so the parser does not detect init variables inside functions or literal text
             // because they may also use := or $$ symbols
-            getTokenizer().setAcceptInitTokens(false);
+            getTokenizer().setAcceptInitTokens(false, index);
             return true;
         }
 
@@ -163,7 +178,11 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
                     String key = StringHelper.after(ln.getText(), "$");
                     if (key != null) {
                         key = key.trim();
-                        initKeys.add(key);
+                        if (ie.getOperator().equals(InitOperatorType.CHAIN_ASSIGNMENT)) {
+                            initFunctions.add(key);
+                        } else {
+                            initKeys.add(key);
+                        }
                     }
                 }
             }

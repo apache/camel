@@ -62,6 +62,13 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is a new-line character
+     */
+    public boolean isNewLine() {
+        return isWhitespace() && "\n".equals(value);
+    }
+
+    /**
      * Whether the type is eol
      */
     public boolean isEol() {

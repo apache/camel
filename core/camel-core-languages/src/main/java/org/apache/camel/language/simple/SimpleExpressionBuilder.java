@@ -50,6 +50,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ClassicUuidGenerator;
@@ -2859,6 +2860,46 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "exchangeExceptionOgnl(" + ognl + ")";
+            }
+        };
+    }
+
+    public static Expression customFunction(final String name, final String parameter) {
+        return new ExpressionAdapter() {
+            private Expression func;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                SimpleFunctionRegistry registry
+                        = context.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
+                func = registry.getFunction(name);
+                if (func == null) {
+                    throw new IllegalArgumentException("No custom simple function with name: " + name);
+                }
+                exp = ExpressionBuilder.simpleExpression(parameter);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object answer = null;
+                final Object originalBody = exchange.getMessage().getBody();
+                try {
+                    Object input = exp.evaluate(exchange, Object.class);
+                    if (input != null) {
+                        exchange.getMessage().setBody(input);
+                        answer = func.evaluate(exchange, Object.class);
+                    }
+                } finally {
+                    exchange.getMessage().setBody(originalBody);
+                }
+                return answer;
+            }
+
+            public String toString() {
+                return "function(" + name + ")";
             }
         };
     }

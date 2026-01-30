@@ -173,6 +173,10 @@ public final class SimpleConstants {
     @Metadata(description = "The original route id where this exchange was created.", javaType = "String", label = "function")
     public static final String FROM_ROUTE_ID = "fromRouteId";
 
+    @Metadata(description = "Invokes a custom function with the given name using the message body (or expression) as input parameter.",
+              label = "function", javaType = "Object", displayName = "For Each call Function")
+    public static final String FUNCTION = "function(name,exp)";
+
     @Metadata(description = "Returns a hashed value (string in hex decimal) of the message body/expression using JDK MessageDigest. The algorithm can be SHA-256 (default) or SHA3-256.",
               label = "function", javaType = "String", displayName = "Compute Hash Value")
     public static final String HASH = "hash(exp,algorithm)";

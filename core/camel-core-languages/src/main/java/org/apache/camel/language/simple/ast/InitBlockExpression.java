@@ -23,6 +23,7 @@ import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.types.InitOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -72,9 +73,16 @@ public class InitBlockExpression extends BaseSimpleNode {
         ObjectHelper.notNull(left, "left node", this);
         ObjectHelper.notNull(right, "right node", this);
 
+        String key = null;
+        if (left instanceof LiteralExpression le) {
+            key = le.getText();
+            key = key.trim();
+            key = StringHelper.after(key, "$", key);
+        }
+        ObjectHelper.notNull(key, "left node should be a literal text node", this);
+
         // the expression parser does not parse literal text into single/double quote tokens
         // so we need to manually remove leading quotes from the literal text when using the other operators
-        final Expression leftExp = left.createExpression(camelContext, expression);
         if (right instanceof LiteralExpression le) {
             String text = le.getText();
             String changed = StringHelper.removeLeadingAndEndingQuotes(text);
@@ -85,22 +93,24 @@ public class InitBlockExpression extends BaseSimpleNode {
         final Expression rightExp = right.createExpression(camelContext, expression);
 
         if (operator == InitOperatorType.ASSIGNMENT) {
-            return createAssignmentExpression(camelContext, leftExp, rightExp);
+            return createAssignmentExpression(camelContext, key, rightExp);
+        } else if (operator == InitOperatorType.CHAIN_ASSIGNMENT) {
+            SimpleFunctionRegistry registry
+                    = camelContext.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
+            registry.addFunction(key, rightExp);
+            return null;
         }
 
-        throw new SimpleParserException("Unknown other operator " + operator, token.getIndex());
+        throw new SimpleParserException("Unknown init operator " + operator, token.getIndex());
     }
 
     private Expression createAssignmentExpression(
-            final CamelContext camelContext, final Expression leftExp, final Expression rightExp) {
+            final CamelContext camelContext, final String key, final Expression rightExp) {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                String name = leftExp.evaluate(exchange, String.class);
-                name = name.trim();
-                name = StringHelper.after(name, "$", name);
                 Object value = rightExp.evaluate(exchange, Object.class);
-                exchange.setVariable(name, value);
+                exchange.setVariable(key, value);
                 return null;
             }
 

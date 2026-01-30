@@ -188,12 +188,14 @@ public class SimpleTokenizer {
             SimpleTokenType token = KNOWN_TOKENS[i];
             if (acceptType(token.getType(), filters)
                     && acceptToken(token, text, expression, index)) {
+                onToken(token, index);
                 return new SimpleToken(token, index);
             }
         }
 
         SimpleToken custom = customToken(expression, index, allowEscape, filters);
         if (custom != null) {
+            onToken(custom.getType(), index);
             return custom;
         }
 
@@ -204,6 +206,10 @@ public class SimpleTokenizer {
 
     protected SimpleToken customToken(String expression, int index, boolean allowEscape, TokenType... filters) {
         return null;
+    }
+
+    protected void onToken(SimpleTokenType token, int index) {
+        // noop
     }
 
     private static int repositionIndex(String expression, int index, StringBuilder sb) {

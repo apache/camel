@@ -14,37 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple.types;
+package org.apache.camel.spi;
+
+import org.apache.camel.Expression;
 
 /**
- * Types of init operators supported
+ * Registry for custom simple functions.
  */
-public enum InitOperatorType {
+public interface SimpleFunctionRegistry {
 
-    ASSIGNMENT,
-    CHAIN_ASSIGNMENT;
+    /**
+     * Add a function
+     *
+     * @param name       name of function
+     * @param expression the expression to use as the function
+     */
+    void addFunction(String name, Expression expression);
 
-    public static InitOperatorType asOperator(String text) {
-        if (":=".equals(text)) {
-            return ASSIGNMENT;
-        } else if ("~:=".equals(text)) {
-            return CHAIN_ASSIGNMENT;
-        }
-        throw new IllegalArgumentException("Operator not supported: " + text);
-    }
+    /**
+     * Remove a function
+     *
+     * @param name name of function
+     */
+    void removeFunction(String name);
 
-    public static String getOperatorText(InitOperatorType operator) {
-        if (operator == ASSIGNMENT) {
-            return ":=";
-        } else if (operator == CHAIN_ASSIGNMENT) {
-            return "~:=";
-        }
-        return "";
-    }
+    /**
+     * Gets the function
+     *
+     * @param  name name of function
+     * @return      the function, or <tt>null</tt> if no function exists
+     */
+    Expression getFunction(String name);
 
-    @Override
-    public String toString() {
-        return getOperatorText(this);
-    }
+    /**
+     * Number of custom functions
+     */
+    int size();
 
 }
