@@ -30,6 +30,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.SimpleFunctionRegistry;
 import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -103,6 +104,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (answer != null) {
             return answer;
         }
+        // custom functions
+        answer = createSimpleCustomFunction(camelContext, function, strict);
+        if (answer != null) {
+            return answer;
+        }
+
         // custom languages
         answer = createSimpleCustomLanguage(function, strict);
         if (answer != null) {
@@ -594,6 +601,23 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 // regular variable
                 return ExpressionBuilder.variableExpression(key);
             }
+        }
+
+        return null;
+    }
+
+    private Expression createSimpleCustomFunction(CamelContext camelContext, String function, boolean strict) {
+        String remainder = ifStartsWithReturnRemainder("function.", function);
+        if (remainder != null) {
+            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
+            key = key.trim();
+            SimpleFunctionRegistry registry
+                    = camelContext.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
+            Expression answer = registry.getFunction(key);
+            if (answer == null) {
+                throw new IllegalArgumentException("No custom simple function with name: " + key);
+            }
+            return answer;
         }
 
         return null;

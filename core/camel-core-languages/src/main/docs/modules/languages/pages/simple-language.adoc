@@ -1256,6 +1256,34 @@ Notice how we can refer to the variable (`$level`) in the log statement using th
 TIP: Instead of inlining the simple script in the route, you can externalize this to a source file such as `mymapping.txt`
 and then refer to the file such as `resource:classpath:mymapping.txt` where the file is located in the root classpath (can also be located in sub packages).
 
+=== Init Blocks with custom functions
+
+You can also declare custom functions using
+
+Inside the init block, it is a lso possible to define custom functions in the syntax `$nane ~:= ...` where you can then use simple language to declare
+the structure of the function. Then you can later use these custom functions in your simple language expressions.
+
+For example to create a function that can cleanup a `String` value:
+
+[source,text]
+----
+$init{
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+}init$
+----
+
+The function will by default use the message body as the input, such that the following:
+
+[source,java]
+----
+simple("Incoming message: $cleanUp()");
+----
+
+Would then call the _clean_ function with the message body as the input, which will then be used for trim, normalize and upper-casing.
+
+NOTE: You cannot declare custom functions that call other function functions. This is currently not supported.
+
+
 == OGNL Expression Support
 
 The xref:simple-language.adoc[Simple] and xref:simple-language.adoc[Bean] languages support a _OGNL like_ notation for invoking methods (using reflection) in a fluent builder like style.

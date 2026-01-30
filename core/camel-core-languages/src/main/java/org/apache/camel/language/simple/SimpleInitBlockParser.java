@@ -27,12 +27,14 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.simple.ast.InitBlockExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.SimpleNode;
+import org.apache.camel.language.simple.types.InitOperatorType;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.util.StringHelper;
 
 class SimpleInitBlockParser extends SimpleExpressionParser {
 
     private final Set<String> initKeys = new LinkedHashSet<>();
+    private final Set<String> initFunctions = new LinkedHashSet<>();
 
     public SimpleInitBlockParser(CamelContext camelContext, String expression, boolean allowEscape, boolean skipFileFunctions,
                                  Map<String, Expression> cacheExpression) {
@@ -43,6 +45,10 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
 
     public Set<String> getInitKeys() {
         return initKeys;
+    }
+
+    public Set<String> getInitFunctions() {
+        return initFunctions;
     }
 
     protected SimpleInitBlockTokenizer getTokenizer() {
@@ -83,6 +89,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     protected List<SimpleNode> parseInitTokens() {
         clear();
         initKeys.clear();
+        initFunctions.clear();
 
         // parse the expression using the following grammar
         // init statements are variables assigned to functions/operators
@@ -171,7 +178,11 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
                     String key = StringHelper.after(ln.getText(), "$");
                     if (key != null) {
                         key = key.trim();
-                        initKeys.add(key);
+                        if (ie.getOperator().equals(InitOperatorType.CHAIN_ASSIGNMENT)) {
+                            initFunctions.add(key);
+                        } else {
+                            initKeys.add(key);
+                        }
                     }
                 }
             }

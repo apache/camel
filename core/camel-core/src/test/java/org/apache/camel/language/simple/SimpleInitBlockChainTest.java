@@ -28,11 +28,26 @@ public class SimpleInitBlockChainTest extends LanguageTestSupport {
             You said: $clean()
             """;
 
+    private static final String INIT2 = """
+            $init{
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+              $count ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()} ~> ${split(' ')} ~> ${size()}
+            }init$
+            You said: $clean() in $count() words
+            """;
+
     @Test
     public void testInitBlockChain() throws Exception {
         exchange.getMessage().setBody("   Hello  big   World      ");
 
-        assertExpression(exchange, INIT, "You said: HELLO BIG WORLD");
+        assertExpression(exchange, INIT, "You said: HELLO BIG WORLD\n");
+    }
+
+    @Test
+    public void testInitBlockChain2() throws Exception {
+        exchange.getMessage().setBody("   Hello  big   World      ");
+
+        assertExpression(exchange, INIT2, "You said: HELLO BIG WORLD in 3 words\n");
     }
 
     @Override

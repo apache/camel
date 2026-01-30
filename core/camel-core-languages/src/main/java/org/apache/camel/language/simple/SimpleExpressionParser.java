@@ -83,17 +83,19 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                         = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
                 // the init block should be parsed in predicate mode as that is needed to fully parse with all the operators and functions
                 init = initParser.parseExpression();
-                if (init != null) {
-                    String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
-                    if (part.startsWith("\n")) {
-                        // skip newline after ending init block
-                        part = part.substring(1);
-                    }
-                    this.expression = part;
-                    // use $$key as local variable in the expression afterwards
-                    for (String key : initParser.getInitKeys()) {
-                        this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
-                    }
+                String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
+                if (part.startsWith("\n")) {
+                    // skip newline after ending init block
+                    part = part.substring(1);
+                }
+                this.expression = part;
+                // use $$key as local variable in the expression afterwards
+                for (String key : initParser.getInitKeys()) {
+                    this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
+                }
+                // use $$key() as local function in the expression afterwards
+                for (String key : initParser.getInitFunctions()) {
+                    this.expression = this.expression.replace("$" + key + "()", "${function." + key + "}");
                 }
             }
 
