@@ -41,7 +41,7 @@
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
         <quarkus-mcp-server-version>1.9.0</quarkus-mcp-server-version>
-        <quarkus.platform.version>3.30.8</quarkus.platform.version>
+        <quarkus.platform.version>3.31.1</quarkus.platform.version>
         <!-- Build uber-jar for easy JBang execution -->
         <quarkus.package.jar.type>uber-jar</quarkus.package.jar.type>
     </properties>
