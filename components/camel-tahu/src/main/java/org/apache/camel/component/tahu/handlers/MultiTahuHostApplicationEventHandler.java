@@ -18,95 +18,96 @@ package org.apache.camel.component.tahu.handlers;
 
 import java.util.function.BiConsumer;
 
-import org.eclipse.tahu.host.api.HostApplicationEventHandler;
+import org.eclipse.tahu.host.api.MultiHostApplicationEventHandler;
 import org.eclipse.tahu.message.model.DeviceDescriptor;
 import org.eclipse.tahu.message.model.EdgeNodeDescriptor;
 import org.eclipse.tahu.message.model.Message;
 import org.eclipse.tahu.message.model.Metric;
 import org.eclipse.tahu.message.model.SparkplugDescriptor;
+import org.eclipse.tahu.mqtt.MqttServerName;
 
-public class TahuHostApplicationEventHandler implements HostApplicationEventHandler {
+public class MultiTahuHostApplicationEventHandler implements MultiHostApplicationEventHandler {
 
     private final BiConsumer<EdgeNodeDescriptor, Message> onMessageConsumer;
     private final BiConsumer<EdgeNodeDescriptor, Metric> onMetricConsumer;
 
-    TahuHostApplicationEventHandler(BiConsumer<EdgeNodeDescriptor, Message> onMessageConsumer,
-                                    BiConsumer<EdgeNodeDescriptor, Metric> onMetricConsumer) {
+    MultiTahuHostApplicationEventHandler(BiConsumer<EdgeNodeDescriptor, Message> onMessageConsumer,
+                                         BiConsumer<EdgeNodeDescriptor, Metric> onMetricConsumer) {
         this.onMessageConsumer = onMessageConsumer;
         this.onMetricConsumer = onMetricConsumer;
     }
 
     @Override
-    public void onNodeBirthArrived(EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
+    public void onNodeBirthArrived(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
         onMessageConsumer.accept(edgeNodeDescriptor, message);
     }
 
     @Override
-    public void onNodeBirthComplete(EdgeNodeDescriptor edgeNodeDescriptor) {
+    public void onNodeBirthComplete(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor) {
     }
 
     @Override
-    public void onNodeDataArrived(EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
+    public void onNodeDataArrived(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
         onMessageConsumer.accept(edgeNodeDescriptor, message);
     }
 
     @Override
-    public void onNodeDataComplete(EdgeNodeDescriptor edgeNodeDescriptor) {
+    public void onNodeDataComplete(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor) {
     }
 
     @Override
-    public void onNodeDeath(EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
+    public void onNodeDeath(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor, Message message) {
         onMessageConsumer.accept(edgeNodeDescriptor, message);
     }
 
     @Override
-    public void onNodeDeathComplete(EdgeNodeDescriptor edgeNodeDescriptor) {
+    public void onNodeDeathComplete(MqttServerName serverName, EdgeNodeDescriptor edgeNodeDescriptor) {
     }
 
     @Override
-    public void onDeviceBirthArrived(DeviceDescriptor deviceDescriptor, Message message) {
+    public void onDeviceBirthArrived(MqttServerName serverName, DeviceDescriptor deviceDescriptor, Message message) {
         onMessageConsumer.accept(deviceDescriptor, message);
     }
 
     @Override
-    public void onDeviceBirthComplete(DeviceDescriptor deviceDescriptor) {
+    public void onDeviceBirthComplete(MqttServerName serverName, DeviceDescriptor deviceDescriptor) {
     }
 
     @Override
-    public void onDeviceDataArrived(DeviceDescriptor deviceDescriptor, Message message) {
+    public void onDeviceDataArrived(MqttServerName serverName, DeviceDescriptor deviceDescriptor, Message message) {
         onMessageConsumer.accept(deviceDescriptor, message);
     }
 
     @Override
-    public void onDeviceDataComplete(DeviceDescriptor deviceDescriptor) {
+    public void onDeviceDataComplete(MqttServerName serverName, DeviceDescriptor deviceDescriptor) {
     }
 
     @Override
-    public void onDeviceDeath(DeviceDescriptor deviceDescriptor, Message message) {
+    public void onDeviceDeath(MqttServerName serverName, DeviceDescriptor deviceDescriptor, Message message) {
         onMessageConsumer.accept(deviceDescriptor, message);
     }
 
     @Override
-    public void onDeviceDeathComplete(DeviceDescriptor deviceDescriptor) {
+    public void onDeviceDeathComplete(MqttServerName serverName, DeviceDescriptor deviceDescriptor) {
     }
 
     @Override
-    public void onBirthMetric(SparkplugDescriptor sparkplugDescriptor, Metric metric) {
+    public void onBirthMetric(MqttServerName serverName, SparkplugDescriptor sparkplugDescriptor, Metric metric) {
         acceptMetric(sparkplugDescriptor, metric);
     }
 
     @Override
-    public void onDataMetric(SparkplugDescriptor sparkplugDescriptor, Metric metric) {
+    public void onDataMetric(MqttServerName serverName, SparkplugDescriptor sparkplugDescriptor, Metric metric) {
         acceptMetric(sparkplugDescriptor, metric);
     }
 
     @Override
-    public void onStale(SparkplugDescriptor sparkplugDescriptor, Metric metric) {
+    public void onStale(MqttServerName serverName, SparkplugDescriptor sparkplugDescriptor, Metric metric) {
         acceptMetric(sparkplugDescriptor, metric);
     }
 
     @Override
-    public void onMessage(SparkplugDescriptor sparkplugDescriptor, Message message) {
+    public void onMessage(MqttServerName serverName, SparkplugDescriptor sparkplugDescriptor, Message message) {
         if (sparkplugDescriptor.isDeviceDescriptor()) {
             onMessageConsumer.accept((DeviceDescriptor) sparkplugDescriptor, message);
         } else {
@@ -123,11 +124,11 @@ public class TahuHostApplicationEventHandler implements HostApplicationEventHand
     }
 
     @Override
-    public void onConnect() {
+    public void onConnect(MqttServerName serverName) {
     }
 
     @Override
-    public void onDisconnect() {
+    public void onDisconnect(MqttServerName serverName) {
     }
 
 }
