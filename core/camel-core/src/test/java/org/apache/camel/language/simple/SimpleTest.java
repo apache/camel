@@ -2940,6 +2940,27 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testQuote() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${quote()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hello World\"", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${quote(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hello World\"", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${quote('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hi\"", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${quote(''Hi'')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hi\"", s);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 

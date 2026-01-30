@@ -1194,6 +1194,17 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.kindOfTypeExpression(exp);
         }
 
+        // quote function
+        remainder = ifStartsWithReturnRemainder("quote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.quoteExpression(exp);
+        }
+
         // trim function
         remainder = ifStartsWithReturnRemainder("trim(", function);
         if (remainder != null) {
@@ -2940,6 +2951,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 exp = "body";
             }
             return "Object o = " + exp + ";\n        return kindOfType(exchange, o);";
+        }
+
+        // quote function
+        remainder = ifStartsWithReturnRemainder("quote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${quote(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return quote(exchange, o);";
         }
 
         // trim function

@@ -471,6 +471,8 @@ The generator supports different kinds `default`, `classic`, `short`, `simple` a
 |`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
 |`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
+|`quote() | `String` | Returns the message body as a double-quoted string
+|`quote(exp) | `String` | Returns the expression as a double-quoted string
 |`uppercase()` | `String` | Uppercases the message body
 |`uppercase(exp)` | `String` | Uppercases the expression
 |====
@@ -523,6 +525,12 @@ So the previous example can also be trimmed by nesting the function as follows:
 `${trim(${substringBetween('great','how')})}` which would return `"big World"`.
 
 And of course `${trim('  hello world  ')}` returns `hello world`.
+
+The `quote` function is making sure the returned value is enclosed in double quotes.
+If the value is currently in single quote, then this will be converted to double quotes.
+
+If the message body contains `Hello World` then `${quote()}` returns `"Hello World"`.
+And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
 
 
 === XML & JSon Functions

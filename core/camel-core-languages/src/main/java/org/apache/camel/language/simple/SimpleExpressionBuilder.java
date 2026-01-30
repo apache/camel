@@ -70,6 +70,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 
 /**
  * Expression builder used by the simple language.
@@ -637,6 +638,47 @@ public final class SimpleExpressionBuilder {
                     return "kindOfType(" + expression + ")";
                 } else {
                     return "kindOfType()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Double quotes the given expressions (uses message body if expression is null)
+     */
+    public static Expression quoteExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null && !StringHelper.isDoubleQuoted(value)) {
+                    value = StringHelper.removeLeadingAndEndingQuotes(value);
+                    value = StringQuoteHelper.doubleQuote(value);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "quote(" + expression + ")";
+                } else {
+                    return "quote()";
                 }
             }
         };

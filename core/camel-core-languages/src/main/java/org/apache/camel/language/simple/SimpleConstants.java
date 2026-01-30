@@ -309,6 +309,10 @@ public final class SimpleConstants {
               label = "function", javaType = "boolean", displayName = "Property Placeholder Exists")
     public static final String PROPERTIES_EXIST = "propertiesExist:key";
 
+    @Metadata(description = "Returns the message body (or expression) as a double quoted string",
+              label = "function", javaType = "String")
+    public static final String QUOTE = "quote(exp)";
+
     @Metadata(description = "Returns a random number between min and max (exclusive)",
               label = "function", javaType = "int")
     public static final String RANDOM = "random(min,max)";

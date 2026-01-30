@@ -2615,6 +2615,27 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testQuote() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${quote()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hello World\"", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${quote(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hello World\"", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${quote('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hi\"", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${quote(''Hi'')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hi\"", s);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 

@@ -62,6 +62,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
@@ -1045,6 +1046,20 @@ public final class CSimpleHelper {
             }
         }
         return true;
+    }
+
+    public static String quote(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null && !StringHelper.isDoubleQuoted(body)) {
+            body = StringHelper.removeLeadingAndEndingQuotes(body);
+            body = StringQuoteHelper.doubleQuote(body);
+        }
+        return body;
     }
 
     public static String trim(Exchange exchange, Object value) {
