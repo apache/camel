@@ -86,9 +86,11 @@ public class InitBlockExpression extends BaseSimpleNode {
 
         if (operator == InitOperatorType.ASSIGNMENT) {
             return createAssignmentExpression(camelContext, leftExp, rightExp);
+        } else if (operator == InitOperatorType.CHAIN_ASSIGNMENT) {
+            throw new UnsupportedOperationException("TODO: Implement ~:=");
         }
 
-        throw new SimpleParserException("Unknown other operator " + operator, token.getIndex());
+        throw new SimpleParserException("Unknown init operator " + operator, token.getIndex());
     }
 
     private Expression createAssignmentExpression(

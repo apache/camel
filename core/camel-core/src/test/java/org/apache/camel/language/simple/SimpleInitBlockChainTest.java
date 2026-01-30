@@ -14,37 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple.types;
+package org.apache.camel.language.simple;
 
-/**
- * Types of init operators supported
- */
-public enum InitOperatorType {
+import org.apache.camel.LanguageTestSupport;
+import org.junit.jupiter.api.Test;
 
-    ASSIGNMENT,
-    CHAIN_ASSIGNMENT;
+public class SimpleInitBlockChainTest extends LanguageTestSupport {
 
-    public static InitOperatorType asOperator(String text) {
-        if (":=".equals(text)) {
-            return ASSIGNMENT;
-        } else if ("~:=".equals(text)) {
-            return CHAIN_ASSIGNMENT;
-        }
-        throw new IllegalArgumentException("Operator not supported: " + text);
-    }
+    private static final String INIT = """
+            $init{
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+            }init$
+            You said: $clean()
+            """;
 
-    public static String getOperatorText(InitOperatorType operator) {
-        if (operator == ASSIGNMENT) {
-            return ":=";
-        } else if (operator == CHAIN_ASSIGNMENT) {
-            return "~:=";
-        }
-        return "";
+    @Test
+    public void testInitBlockChain() throws Exception {
+        exchange.getMessage().setBody("   Hello  big   World      ");
+
+        assertExpression(exchange, INIT, "You said: HELLO BIG WORLD");
     }
 
     @Override
-    public String toString() {
-        return getOperatorText(this);
+    protected String getLanguageName() {
+        return "simple";
     }
-
 }

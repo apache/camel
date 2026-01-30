@@ -92,6 +92,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
             functionText();
             unaryOperator();
             otherOperator();
+            chainOperator();
             nextToken();
         }
 
@@ -107,12 +108,14 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         parseAndCreateAstModel();
         // compact and stack blocks (eg function start/end)
         prepareBlocks();
-        // compact and stack init blocks
-        prepareInitBlocks();
+        // compact and stack chain expressions
+        prepareChainExpression();
         // compact and stack unary operators
         prepareUnaryExpressions();
         // compact and stack other expressions
         prepareOtherExpressions();
+        // compact and stack init blocks
+        prepareInitBlocks();
 
         return nodes;
     }
@@ -121,8 +124,13 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     // $$name := <function>
     // $$name2 := <function>
     protected boolean initText() {
+        // has there been a new line since last (which reset and allow to look for new init variable)
+        if (!getTokenizer().hasNewLine()) {
+            return false;
+        }
+
         // turn on init mode so the parser can find the beginning of the init variable
-        getTokenizer().setAcceptInitTokens(true);
+        getTokenizer().setAcceptInitTokens(true, index);
         while (!token.getType().isInitVariable() && !token.getType().isEol()) {
             // skip until we find init variable/function (this skips code comments)
             nextToken(TokenType.functionStart, TokenType.unaryOperator, TokenType.chainOperator, TokenType.otherOperator,
@@ -140,7 +148,7 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
             expectAndAcceptMore(TokenType.whiteSpace);
             // turn off init mode so the parser does not detect init variables inside functions or literal text
             // because they may also use := or $$ symbols
-            getTokenizer().setAcceptInitTokens(false);
+            getTokenizer().setAcceptInitTokens(false, index);
             return true;
         }
 
