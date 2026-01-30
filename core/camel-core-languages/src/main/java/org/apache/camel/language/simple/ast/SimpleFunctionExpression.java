@@ -30,7 +30,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
-import org.apache.camel.language.simple.SimpleFunctionRegistry;
 import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -607,39 +606,31 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private Expression createSimpleCustomFunction(CamelContext camelContext, String function, boolean strict) {
-        String remainder = ifStartsWithReturnRemainder("function.", function);
-        if (remainder != null) {
-            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
-            key = key.trim();
-            SimpleFunctionRegistry registry
-                    = camelContext.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
-            Expression answer = registry.getFunction(key);
-            if (answer == null) {
-                throw new IllegalArgumentException("No custom simple function with name: " + key);
-            }
-            return answer;
-        }
-
-        remainder = ifStartsWithReturnRemainder("function(", function);
+        String remainder = ifStartsWithReturnRemainder("function(", function);
         if (remainder != null) {
             String key;
-            String param;
+            String param = null;
             String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${function(key,exp)} was: " + function,
+                        "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function,
                         token.getIndex());
             }
             String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
-            if (tokens.length != 2) {
+            if (tokens.length < 1 || tokens.length > 2) {
                 throw new SimpleParserException(
-                        "Valid syntax: ${function(key,exp)} was: " + function,
+                        "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function,
                         token.getIndex());
             }
             key = StringHelper.removeQuotes(tokens[0]);
             key = key.trim();
-            param = tokens[1];
-            param = StringHelper.removeLeadingAndEndingQuotes(param.trim());
+            if (tokens.length == 2) {
+                param = tokens[1];
+                param = StringHelper.removeLeadingAndEndingQuotes(param.trim());
+            }
+            if (param == null) {
+                param = "${body}";
+            }
             return SimpleExpressionBuilder.customFunction(key, param);
         }
 

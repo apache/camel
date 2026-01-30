@@ -149,6 +149,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`exchangeProperty.key._OGNL_` | `Object` | Same as `exchangeProperty.key` and then invoke Camel _OGNL syntax_.
 |`exchange` | `Exchange` | The current `Exchange` object.
 |`fromRouteId` | `String` | Returns the original route id where this `Exchange` was created.
+|`function(name,exp)` | `Object` | Invokes a custom function with the given name using the message body (or expression) as input parameter.
 |`header.key` | `Object` | The message header with the given key.
 |`header.key._OGNL_` | `Object` | Same as `header.key` and then invoke Camel _OGNL syntax_.
 |`header[key]` | `Object` | *Deprecated* The message header with the given key.

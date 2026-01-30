@@ -20,10 +20,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.BaseSimpleParser;
-import org.apache.camel.language.simple.SimpleFunctionRegistry;
 import org.apache.camel.language.simple.types.InitOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 

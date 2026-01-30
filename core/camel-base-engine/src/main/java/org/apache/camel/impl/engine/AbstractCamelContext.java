@@ -167,6 +167,7 @@ import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.StartupConditionStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -402,6 +403,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(DumpRoutesStrategy.class, this::createDumpRoutesStrategy);
         camelContextExtension.lazyAddContextPlugin(BackOffTimerFactory.class, this::createBackOffTimerFactory);
         camelContextExtension.lazyAddContextPlugin(GroovyScriptCompiler.class, this::createGroovyScriptCompiler);
+        camelContextExtension.lazyAddContextPlugin(SimpleFunctionRegistry.class, this::createSimpleFunctionRegistry);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -4450,6 +4452,8 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract HeadersMapFactory createHeadersMapFactory();
 
     protected abstract GroovyScriptCompiler createGroovyScriptCompiler();
+
+    protected abstract SimpleFunctionRegistry createSimpleFunctionRegistry();
 
     protected abstract BeanProxyFactory createBeanProxyFactory();
 

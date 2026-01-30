@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple;
+package org.apache.camel.spi;
 
 import org.apache.camel.Expression;
 
@@ -45,5 +45,10 @@ public interface SimpleFunctionRegistry {
      * @return      the function, or <tt>null</tt> if no function exists
      */
     Expression getFunction(String name);
+
+    /**
+     * Number of custom functions
+     */
+    int size();
 
 }

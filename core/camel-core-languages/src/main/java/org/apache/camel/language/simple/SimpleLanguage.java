@@ -30,7 +30,6 @@ import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.PredicateToExpressionAdapter;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +47,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     // a special prefix to avoid cache clash
     private static final String CACHE_KEY_PREFIX = "@SIMPLE@";
-
-    private SimpleFunctionRegistry registry;
 
     boolean allowEscape = true;
     boolean skipFileFunctions;
@@ -84,10 +81,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
                 LOG.debug("Simple language disabled predicate/expression cache");
             }
         }
-        registry = new DefaultSimpleFunctionRegistry();
-        ServiceHelper.initService(registry);
-        // register so we can obtain it during parsing
-        getCamelContext().getCamelContextExtension().addContextPlugin(SimpleFunctionRegistry.class, registry);
     }
 
     @Override
@@ -95,7 +88,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         if (getCamelContext() != null) {
             SIMPLE.setCamelContext(getCamelContext());
         }
-        ServiceHelper.startService(registry);
     }
 
     @Override
@@ -114,7 +106,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             }
             cacheExpression.clear();
         }
-        ServiceHelper.stopService(registry);
     }
 
     @Override

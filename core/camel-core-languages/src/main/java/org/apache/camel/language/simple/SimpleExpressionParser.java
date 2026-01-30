@@ -96,7 +96,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 // use $$key() as local function in the expression afterwards
                 for (String key : initParser.getInitFunctions()) {
                     // no-arg functions
-                    this.expression = this.expression.replace("$" + key + "()", "${function." + key + "}");
+                    this.expression = this.expression.replace("$" + key + "()", "${function(" + key + ")}");
                     // arg functions
                     this.expression = this.expression.replace("${" + key + "(", "${function(" + key + ",");
                 }
