@@ -2863,6 +2863,44 @@ public final class SimpleExpressionBuilder {
         };
     }
 
+    public static Expression customFunction(final String name, final String parameter) {
+        return new ExpressionAdapter() {
+            private Expression func;
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                SimpleFunctionRegistry registry
+                        = context.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
+                func = registry.getFunction(name);
+                if (func == null) {
+                    throw new IllegalArgumentException("No custom simple function with name: " + name);
+                }
+                exp = ExpressionBuilder.simpleExpression(parameter);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                final Object originalBody = exchange.getMessage().getBody();
+                try {
+                    Object input = exp.evaluate(exchange, Object.class);
+                    if (input != null) {
+                        exchange.getMessage().setBody(input);
+                        return func.evaluate(exchange, Object.class);
+                    }
+                    return null;
+                } finally {
+                    exchange.getMessage().setBody(originalBody);
+                }
+            }
+
+            public String toString() {
+                return "function(" + name + ")";
+            }
+        };
+    }
+
     /**
      * Expression adapter for OGNL expression from Message Header or Exchange property
      */

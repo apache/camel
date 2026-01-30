@@ -36,6 +36,14 @@ public class SimpleInitBlockChainTest extends LanguageTestSupport {
             You said: $clean() in $count() words
             """;
 
+    private static final String INIT3 = """
+            $init{
+              $clean ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+            }init$
+            You said: ${clean('  Clean this text  please ...    ')} and then do something else
+            """;
+
+
     @Test
     public void testInitBlockChain() throws Exception {
         exchange.getMessage().setBody("   Hello  big   World      ");
@@ -48,6 +56,13 @@ public class SimpleInitBlockChainTest extends LanguageTestSupport {
         exchange.getMessage().setBody("   Hello  big   World      ");
 
         assertExpression(exchange, INIT2, "You said: HELLO BIG WORLD in 3 words\n");
+    }
+
+    @Test
+    public void testInitBlockChain3() throws Exception {
+        exchange.getMessage().setBody("Hello World");
+
+        assertExpression(exchange, INIT3, "You said: CLEAN THIS TEXT PLEASE ... and then do something else\n");
     }
 
     @Override

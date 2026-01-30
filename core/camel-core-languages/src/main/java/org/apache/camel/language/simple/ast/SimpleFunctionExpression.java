@@ -620,6 +620,29 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return answer;
         }
 
+        remainder = ifStartsWithReturnRemainder("function(", function);
+        if (remainder != null) {
+            String key;
+            String param;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${function(key,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length != 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${function(key,exp)} was: " + function,
+                        token.getIndex());
+            }
+            key = StringHelper.removeQuotes(tokens[0]);
+            key = key.trim();
+            param = tokens[1];
+            param = StringHelper.removeLeadingAndEndingQuotes(param.trim());
+            return SimpleExpressionBuilder.customFunction(key, param);
+        }
+
         return null;
     }
 
