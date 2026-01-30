@@ -460,8 +460,8 @@ The generator supports different kinds `default`, `classic`, `short`, `simple` a
 |`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
 |`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`replace(from,to,exp)` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
-|`safeQuote() | `String` | Returns the message body safely quoted if needed
-|`safeQuote(exp) | `String` | Returns the expression safely quoted if needed
+|`safeQuote()` | `String` | Returns the message body safely quoted if needed
+|`safeQuote(exp)` | `String` | Returns the expression safely quoted if needed
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
 |`substring(num1,num2)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
 |`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
@@ -473,8 +473,8 @@ The generator supports different kinds `default`, `classic`, `short`, `simple` a
 |`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
 |`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
-|`quote() | `String` | Returns the message body as a double-quoted string
-|`quote(exp) | `String` | Returns the expression as a double-quoted string
+|`quote()` | `String` | Returns the message body as a double-quoted string
+|`quote(exp)` | `String` | Returns the expression as a double-quoted string
 |`uppercase()` | `String` | Uppercases the message body
 |`uppercase(exp)` | `String` | Uppercases the expression
 |====
