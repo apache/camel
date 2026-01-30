@@ -170,7 +170,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public int getDevConsolePort() {
-        return container.getMappedPort(container.DEV_CONSOLE_PORT);
+        return container.getMappedPort(CliBuiltContainer.DEV_CONSOLE_PORT);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public int getSshPort() {
-        return container.getMappedPort(container.SSH_PORT);
+        return container.getMappedPort(CliBuiltContainer.SSH_PORT);
     }
 
     @Override

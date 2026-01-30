@@ -29,7 +29,7 @@ ARG SSH_PASSWORD=jbang
 
 #update os and install tools
 RUN dnf update -y \
-    && dnf install java-17-openjdk-devel openssh-server xauth -y
+    && dnf install java-21-openjdk-devel openssh-server xauth -y
 
 RUN ssh-keygen -A
 
