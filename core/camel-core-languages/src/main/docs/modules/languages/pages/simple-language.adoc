@@ -460,6 +460,8 @@ The generator supports different kinds `default`, `classic`, `short`, `simple` a
 |`pad(exp,width,separator)` | `String` | Pads the expression with extra padding if necessary, according the total width The separator is by default a space. If the width is negative then padding to the right, otherwise to the left.
 |`replace(from,to)` | `String` | Replace all the string values in the message body. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
 |`replace(from,to,exp)` | `String` | Replace all the string values in the given expression. To make it easier to replace single and double quotes, then you can use XML escaped values `\&quot;` as double quote, `\&apos;` as single quote, and `\&empty;` as empty value.
+|`safeQuote() | `String` | Returns the message body safely quoted if needed
+|`safeQuote(exp) | `String` | Returns the expression safely quoted if needed
 |`substring(num1)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
 |`substring(num1,num2)` | `String` | Returns a substring of the message body. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
 |`substring(num1,num2,exp)` | `String` | Returns a substring of the given expression. If the number is positive, then the returned string is clipped from the beginning. If the number is negative, then the returned string is clipped from the ending.
@@ -531,6 +533,22 @@ If the value is currently in single quote, then this will be converted to double
 
 If the message body contains `Hello World` then `${quote()}` returns `"Hello World"`.
 And using `${quote('Hi from me')}` then `"Hi from me"` is returned.
+
+The `safeQuote` function is quoting the value depending on the value type
+(uses the same logic as `kindOfType` function). In essence values that are null, boolean or numbers are not quoted,
+while everything else is. The `safeQuote` function is useful when working with JSon data.
+
+For example when doing JSon to JSon mapping you can extract values form the source document,
+to be included in the output, but the values may or may not need to be quoted. Then you can use the `~>` chain operator
+to call the `safeQuote` function as shown below:
+
+[source,text]
+----
+{
+   "id": ${jsonpath($.id)} ~> ${safeQuote()}
+   "total": ${jsonpath($.amount)} ~> ${safeQuote()}
+}
+----
 
 
 === XML & JSon Functions

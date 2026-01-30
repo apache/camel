@@ -1062,6 +1062,19 @@ public final class CSimpleHelper {
         return body;
     }
 
+    public static Object safeQuote(Exchange exchange, Object value) {
+        if (value == null) {
+            return null;
+        }
+        String type = kindOfType(exchange, value);
+        if ("string".equals(type) || "array".equals(type) || "object".equals(type)) {
+            String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+            body = StringHelper.removeLeadingAndEndingQuotes(body);
+            value = StringQuoteHelper.doubleQuote(body);
+        }
+        return value;
+    }
+
     public static String trim(Exchange exchange, Object value) {
         String body;
         if (value != null) {

@@ -644,6 +644,68 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Safe quotes the given expressions (uses message body if expression is null) if necessary.
+     */
+    public static Expression safeQuoteExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, Object.class);
+                } else {
+                    value = exchange.getMessage().getBody(Object.class);
+                }
+                if (value != null) {
+                    String type = kindOfType(value);
+                    if ("string".equals(type) || "array".equals(type) || "object".equals(type)) {
+                        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+                        body = StringHelper.removeLeadingAndEndingQuotes(body);
+                        value = StringQuoteHelper.doubleQuote(body);
+                    }
+                }
+                return value;
+            }
+
+            private String kindOfType(Object value) {
+                Class<?> type = value.getClass();
+                if (ObjectHelper.isNumericType(type)) {
+                    return "number";
+                } else if (boolean.class == type || Boolean.class == type) {
+                    return "boolean";
+                } else if (value instanceof CharSequence) {
+                    return "string";
+                } else if (ObjectHelper.isPrimitiveArrayType(type) || value instanceof Collection
+                           || value instanceof Map<?, ?>) {
+                    return "array";
+                } else {
+                    return "object";
+                }
+            }
+
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "safeQuote(" + expression + ")";
+                } else {
+                    return "safeQuote()";
+                }
+            }
+        };
+    }
+
+    /**
      * Double quotes the given expressions (uses message body if expression is null)
      */
     public static Expression quoteExpression(final String expression) {

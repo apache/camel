@@ -2636,6 +2636,53 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSafeQuote() {
+        exchange.getMessage().setBody("Hello World");
+
+        Expression expression = context.resolveLanguage("csimple").createExpression("${safeQuote()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hello World\"", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hello World\"", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hi\"", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote(''Hi'')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"Hi\"", s);
+
+        exchange.getMessage().setBody(123);
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("123", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("123", s);
+
+        exchange.getMessage().setBody(true);
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("true", s);
+
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("true", s);
+
+        Map<String, String> m = new LinkedHashMap<>();
+        m.put("A", "1");
+        m.put("B", "2");
+        exchange.getMessage().setBody(m);
+        expression = context.resolveLanguage("csimple").createExpression("${safeQuote()}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("\"{A=1, B=2}\"", s);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 
@@ -2879,7 +2926,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         Integer i = expression.evaluate(exchange, Integer.class);
         assertEquals(987, i);
 
-        expression = context.resolveLanguage("simple").createExpression("${abs(-5)}");
+        expression = context.resolveLanguage("csimple").createExpression("${abs(-5)}");
         i = expression.evaluate(exchange, Integer.class);
         assertEquals(5, i);
 

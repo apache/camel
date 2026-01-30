@@ -337,6 +337,10 @@ public final class SimpleConstants {
               label = "function")
     public static final String ROUTE_ID = "routeId";
 
+    @Metadata(description = "Returns the message body (or expression) safely quoted if needed",
+              label = "function", javaType = "String")
+    public static final String SAFE_QUOTE = "safeQuote(exp)";
+
     @Metadata(description = "Sets an attachment with payload from the message body/expression.",
               label = "function", javaType = "Object")
     public static final String SET_ATTACHMENT = "setVariable(key,exp)";

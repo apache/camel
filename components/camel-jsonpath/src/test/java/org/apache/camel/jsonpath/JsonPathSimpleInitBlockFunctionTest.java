@@ -35,8 +35,8 @@ public class JsonPathSimpleInitBlockFunctionTest extends CamelTestSupport {
               "id": "$id",
               "type": "$type",
               "amount": $price,
-              "oldStatus": $price ~> $level() ~> ${quote()}
-              "status": ${newStatus($price)} ~> $level() ~> ${quote()}
+              "oldStatus": $price ~> $level() ~> ${safeQuote()}
+              "status": ${newStatus($price)} ~> $level() ~> ${safeQuote()}
             }
             """;
 
