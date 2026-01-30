@@ -25,7 +25,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.support.service.ServiceSupport;
 
-public class DefaultSimpleFunctionRegistry extends ServiceSupport implements CamelContextAware, SimpleFunctionRegistry, NonManagedService {
+public class DefaultSimpleFunctionRegistry extends ServiceSupport
+        implements CamelContextAware, SimpleFunctionRegistry, NonManagedService {
 
     private final Map<String, Expression> functions = new ConcurrentHashMap<>();
     private CamelContext camelContext;

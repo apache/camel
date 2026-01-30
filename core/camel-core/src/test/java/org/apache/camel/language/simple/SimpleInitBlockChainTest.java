@@ -43,7 +43,6 @@ public class SimpleInitBlockChainTest extends LanguageTestSupport {
             You said: ${clean('  Clean this text  please ...    ')} and then do something else
             """;
 
-
     @Test
     public void testInitBlockChain() throws Exception {
         exchange.getMessage().setBody("   Hello  big   World      ");
