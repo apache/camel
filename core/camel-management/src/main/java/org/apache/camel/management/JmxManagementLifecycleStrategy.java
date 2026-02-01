@@ -71,6 +71,7 @@ import org.apache.camel.management.mbean.ManagedRouteGroup;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedShutdownStrategy;
+import org.apache.camel.management.mbean.ManagedSimpleFunctionRepository;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
 import org.apache.camel.management.mbean.ManagedTaskManagerRegistry;
 import org.apache.camel.management.mbean.ManagedThrottlingExceptionRoutePolicy;
@@ -109,6 +110,7 @@ import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -600,6 +602,8 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             answer = new ManagedTaskManagerRegistry(camelContext, registry);
         } else if (service instanceof CamelClusterService camelClusterService) {
             answer = getManagementObjectStrategy().getManagedObjectForClusterService(context, camelClusterService);
+        } else if (service instanceof SimpleFunctionRegistry registry) {
+            answer = new ManagedSimpleFunctionRepository(context, registry);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);

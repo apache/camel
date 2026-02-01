@@ -375,7 +375,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         String name = StringHelper.before(function, "(", function);
         if (PluginHelper.getSimpleFunctionRegistry(camelContext).getFunctionNames().contains(name)) {
             String after = StringHelper.after(function, "(");
-            if (after.equals(")")) {
+            if (after == null || after.equals(")")) {
                 function = "function(" + name + ")";
             } else {
                 function = "function(" + name + "," + after;
