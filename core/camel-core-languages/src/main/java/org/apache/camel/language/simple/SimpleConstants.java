@@ -421,6 +421,10 @@ public final class SimpleConstants {
               label = "function", javaType = "Object", displayName = "Kind of Type")
     public static final String KIND_OF_TYPE = "kindOfType(exp)";
 
+    @Metadata(description = "Returns the message body (or expression) with any leading/ending quotes removed",
+              label = "function", javaType = "String")
+    public static final String UNQUOTE = "unquote(exp)";
+
     @Metadata(description = "Uppercases the message body (or expression)", label = "function", javaType = "String",
               displayName = "Uppercase")
     public static final String UPPERCASE = "uppercase(exp)";

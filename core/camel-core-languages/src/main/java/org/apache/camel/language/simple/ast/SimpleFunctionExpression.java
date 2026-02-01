@@ -35,6 +35,7 @@ import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
@@ -365,6 +366,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 || ifStartsWithReturnRemainder("base64Encode", function) != null
                 || ifStartsWithReturnRemainder("base64Decode", function) != null) {
             Expression exp = createSimpleBase64(camelContext, function);
+            if (exp != null) {
+                return exp;
+            }
+        }
+
+        // it may be a custom function
+        String name = StringHelper.before(function, "(", function);
+        if (PluginHelper.getSimpleFunctionRegistry(camelContext).getFunctionNames().contains(name)) {
+            String after = StringHelper.after(function, "(");
+            if (after.equals(")")) {
+                function = "function(" + name + ")";
+            } else {
+                function = "function(" + name + "," + after;
+            }
+            Expression exp = createSimpleCustomFunction(camelContext, function, strict);
             if (exp != null) {
                 return exp;
             }
@@ -1213,6 +1229,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 exp = StringHelper.removeQuotes(value);
             }
             return SimpleExpressionBuilder.safeQuoteExpression(exp);
+        }
+        // unquote function
+        remainder = ifStartsWithReturnRemainder("unquote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.unquoteExpression(exp);
         }
 
         // trim function
@@ -3010,6 +3036,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 exp = "body";
             }
             return "Object o = " + exp + ";\n        return safeQuote(exchange, o);";
+        }
+        // unquote function
+        remainder = ifStartsWithReturnRemainder("unquote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${unquote(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    // need to escape double quotes
+                    s = s.replace("\"", "\\\"");
+                    // and enclose in a string
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return unquote(exchange, o);";
         }
 
         // trim function

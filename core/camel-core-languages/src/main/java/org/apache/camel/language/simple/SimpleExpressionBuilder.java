@@ -686,13 +686,12 @@ public final class SimpleExpressionBuilder {
                 } else if (value instanceof CharSequence) {
                     return "string";
                 } else if (ObjectHelper.isPrimitiveArrayType(type) || value instanceof Collection
-                           || value instanceof Map<?, ?>) {
+                        || value instanceof Map<?, ?>) {
                     return "array";
                 } else {
                     return "object";
                 }
             }
-
 
             @Override
             public String toString() {
@@ -741,6 +740,46 @@ public final class SimpleExpressionBuilder {
                     return "quote(" + expression + ")";
                 } else {
                     return "quote()";
+                }
+            }
+        };
+    }
+
+    /**
+     * Un quotes the given expressions (uses message body if expression is null)
+     */
+    public static Expression unquoteExpression(final String expression) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                if (expression != null) {
+                    exp = context.resolveLanguage("simple").createExpression(expression);
+                    exp.init(context);
+                }
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String value;
+                if (exp != null) {
+                    value = exp.evaluate(exchange, String.class);
+                } else {
+                    value = exchange.getMessage().getBody(String.class);
+                }
+                if (value != null) {
+                    value = StringHelper.removeLeadingAndEndingQuotes(value);
+                }
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                if (expression != null) {
+                    return "unquote(" + expression + ")";
+                } else {
+                    return "unquote()";
                 }
             }
         };

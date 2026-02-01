@@ -19,6 +19,7 @@ package org.apache.camel.language.simple.ast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -28,6 +29,7 @@ import org.apache.camel.language.simple.types.ChainOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
@@ -83,47 +85,22 @@ public class ChainExpression extends BaseSimpleNode {
         ObjectHelper.notNull(left, "left node", this);
         ObjectHelper.notNull(right, "right node", this);
 
-        // the expression parser does not parse literal text into single/double quote tokens
-        // so we need to manually remove leading quotes from the literal text when using the other operators
+        // prepare nodes as the chain may refer to other functions
+        AtomicBoolean param = new AtomicBoolean();
+        left = prepareChainNode(camelContext, left, param);
         final Expression leftExp = left.createExpression(camelContext, expression);
 
         final List<Expression> rightExp = new ArrayList<>();
         for (SimpleNode rn : right) {
-            boolean param = false;
-            if (rn instanceof LiteralExpression le) {
-                String text = le.getText();
-                String changed = StringHelper.removeLeadingAndEndingQuotes(text);
-                if (changed.contains("$param")) {
-                    changed = changed.replace("$param", "${variable." + CHAIN_VARIABLE + "}");
-                    param = true;
-                }
-                if (!changed.equals(text)) {
-                    le.replaceText(changed);
-                }
-            } else if (rn instanceof SimpleFunctionStart sf) {
-                for (var child : sf.getBlock().getChildren()) {
-                    if (child instanceof LiteralExpression le) {
-                        String text = le.getText();
-                        String changed = StringHelper.removeLeadingAndEndingQuotes(text);
-                        if (changed.contains("$param")) {
-                            changed = changed.replace("$param", "${variable." + CHAIN_VARIABLE + "}");
-                            param = true;
-                        }
-                        if (!changed.equals(text)) {
-                            le.replaceText(changed);
-                        }
-                    }
-                }
-            }
-            final Expression exp = rn.createExpression(camelContext, expression);
-            Expression target = exp;
-            if (param) {
-                target = new ExpressionAdapter() {
+            rn = prepareChainNode(camelContext, rn, param);
+            final Expression right = rn.createExpression(camelContext, expression);
+            if (param.get()) {
+                rightExp.add(new ExpressionAdapter() {
                     @Override
                     public Object evaluate(Exchange exchange) {
                         exchange.setVariable(CHAIN_VARIABLE, exchange.getMessage().getBody());
                         try {
-                            return exp.evaluate(exchange, Object.class);
+                            return right.evaluate(exchange, Object.class);
                         } finally {
                             exchange.removeVariable(CHAIN_VARIABLE);
                         }
@@ -131,11 +108,12 @@ public class ChainExpression extends BaseSimpleNode {
 
                     @Override
                     public String toString() {
-                        return exp.toString();
+                        return right.toString();
                     }
-                };
+                });
+            } else {
+                rightExp.add(right);
             }
-            rightExp.add(target);
         }
 
         if (operator == ChainOperatorType.CHAIN || operator == ChainOperatorType.CHAIN_NULL_SAFE) {
@@ -144,6 +122,48 @@ public class ChainExpression extends BaseSimpleNode {
         }
 
         throw new SimpleParserException("Unknown chain operator " + operator, token.getIndex());
+    }
+
+    private SimpleNode prepareChainNode(CamelContext camelContext, SimpleNode node, AtomicBoolean param) {
+        param.set(false);
+        if (node instanceof LiteralExpression le) {
+            String text = le.getText();
+            if (text.startsWith("$")) {
+                // this may be a function
+                String key = text.substring(1);
+                key = StringHelper.before(key, "(", key);
+                if (PluginHelper.getSimpleFunctionRegistry(camelContext).getFunctionNames().contains(key)) {
+                    String changed = text.replace("$" + key + "()", "function(" + key + ")");
+                    if (changed.equals(text)) {
+                        changed = text.replace("$" + key + "(", "function(" + key);
+                    }
+                    le.replaceText(changed);
+
+                    SimpleFunctionStart sfs = new SimpleFunctionStart(le.getToken(), null, true);
+                    sfs.getBlock().addChild(le);
+                    node = sfs;
+                }
+            }
+            text = le.getText();
+            if (text.contains("$param")) {
+                text = text.replace("$param", "${variable." + CHAIN_VARIABLE + "}");
+                param.set(true);
+                le.replaceText(text);
+            }
+            return node;
+        } else if (node instanceof SimpleFunctionStart sf) {
+            for (var child : sf.getBlock().getChildren()) {
+                if (child instanceof LiteralExpression le) {
+                    String text = le.getText();
+                    if (text.contains("$param")) {
+                        text = text.replace("$param", "${variable." + CHAIN_VARIABLE + "}");
+                        param.set(true);
+                        le.replaceText(text);
+                    }
+                }
+            }
+        }
+        return node;
     }
 
     private Expression createChainExpression(

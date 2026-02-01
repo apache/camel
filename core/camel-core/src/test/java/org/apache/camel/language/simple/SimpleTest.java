@@ -3008,6 +3008,27 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testUnquote() {
+        exchange.getMessage().setBody("\"Hello World\"");
+
+        Expression expression = context.resolveLanguage("simple").createExpression("${unquote()}");
+        String s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${unquote(${body})}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hello World", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${unquote('\"Hi\"')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hi", s);
+
+        expression = context.resolveLanguage("simple").createExpression("${unquote('Hi')}");
+        s = expression.evaluate(exchange, String.class);
+        assertEquals("Hi", s);
+    }
+
+    @Test
     public void testTrim() {
         exchange.getMessage().setBody("   Hello World ");
 

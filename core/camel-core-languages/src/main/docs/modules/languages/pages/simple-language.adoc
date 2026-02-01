@@ -473,6 +473,8 @@ The generator supports different kinds `default`, `classic`, `short`, `simple` a
 |`substringBetween(exp,after,before` | `String` | Returns a substring of the expression that are between before and after. Returns `null` if nothing comes between.
 |`trim()` | `String` | The trim function trims the message body by removing all leading and trailing white spaces.
 |`trim(exp)` | `String` | The trim function trims the expression by removing all leading and trailing white spaces.
+|`unquote()` | `String` | Returns the message body with any leading/ending quotes removed
+|`unquote(exp)` | `String` | Returns the expression with any leading/ending quotes removed
 |`quote()` | `String` | Returns the message body as a double-quoted string
 |`quote(exp)` | `String` | Returns the expression as a double-quoted string
 |`uppercase()` | `String` | Uppercases the message body
@@ -1299,8 +1301,6 @@ $init{
 }init$
 ----
 
-NOTE: You cannot declare custom functions that call other function functions. This is currently not supported.
-
 The function will by default use the message body as the input, such that the following:
 
 [source,java]
@@ -1318,6 +1318,33 @@ simple("Incoming message: ${cleanUp('  Please   clean  this   text for    me ')}
 ----
 
 Here the parameter is a fixed `String` but you can also pass in other type of value such as a number, boolean, or even a nested function.
+
+==== Calling custom functions from custom functions
+
+It is also possible to reuse custom functions from other functions using `${function(name)}`, such shown:
+
+[source,text]
+----
+$init{
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+  $count ~:= ${function(cleanUp)} ~> ${split(' ')} ~> ${size()}
+}init$
+----
+
+Here the `$count` is declared as a function which calls the cleanUp function and then counts the words via split and size functions.
+
+Instead of using `${function(name)}` you can also same syntax as the built-in functions, as follows:
+
+[source,text]
+----
+$init{
+  $cleanUp ~:= ${trim()} ~> ${normalizeWhitespace()} ~> ${uppercase()}
+  $count ~:= ${cleanUp()} ~> ${split(' ')} ~> ${size()}
+}init$
+----
+
+Notice how `${cleanUp()}` despite being a custom function is using the same syntax as all the built-in functions that are being used, for example:
+ `${trim()}`.
 
 
 == OGNL Expression Support
