@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Set;
+
 import org.apache.camel.Expression;
 
 /**
@@ -45,6 +47,11 @@ public interface SimpleFunctionRegistry {
      * @return      the function, or <tt>null</tt> if no function exists
      */
     Expression getFunction(String name);
+
+    /**
+     * Returns a set with all the function names
+     */
+    Set<String> getFunctionNames();
 
     /**
      * Number of custom functions

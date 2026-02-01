@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
@@ -51,6 +52,11 @@ public class DefaultSimpleFunctionRegistry extends ServiceSupport implements Sim
     @Override
     public Expression getFunction(String name) {
         return functions.get(name);
+    }
+
+    @Override
+    public Set<String> getFunctionNames() {
+        return functions.keySet();
     }
 
     @Override
