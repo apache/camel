@@ -132,7 +132,7 @@ public class ChainExpression extends BaseSimpleNode {
                 // this may be a function
                 String key = text.substring(1);
                 key = StringHelper.before(key, "(", key);
-                if (PluginHelper.getSimpleFunctionRegistry(camelContext).getFunctionNames().contains(key)) {
+                if (PluginHelper.getSimpleFunctionRegistry(camelContext).getCustomFunctionNames().contains(key)) {
                     String changed = text.replace("$" + key + "()", "function(" + key + ")");
                     if (changed.equals(text)) {
                         changed = text.replace("$" + key + "(", "function(" + key);

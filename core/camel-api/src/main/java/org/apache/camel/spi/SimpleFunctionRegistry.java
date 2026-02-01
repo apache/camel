@@ -27,15 +27,15 @@ import org.apache.camel.StaticService;
 public interface SimpleFunctionRegistry extends StaticService {
 
     /**
-     * Add a function
+     * Add a custom simple function
      *
-     * @param name       name of function
+     * @param name       name of custom simple function
      * @param expression the expression to use as the function
      */
     void addFunction(String name, Expression expression);
 
     /**
-     * Remove a function
+     * Remove a custom simple function
      *
      * @param name name of function
      */
@@ -50,13 +50,23 @@ public interface SimpleFunctionRegistry extends StaticService {
     Expression getFunction(String name);
 
     /**
-     * Returns a set with all the function names
+     * Returns a set with all the custom function names
      */
-    Set<String> getFunctionNames();
+    Set<String> getCustomFunctionNames();
+
+    /**
+     * Returns a set with all the core/built-in function names
+     */
+    Set<String> getCoreFunctionNames();
 
     /**
      * Number of custom functions
      */
-    int size();
+    int customSize();
+
+    /**
+     * Number of core functions
+     */
+    int coreSize();
 
 }

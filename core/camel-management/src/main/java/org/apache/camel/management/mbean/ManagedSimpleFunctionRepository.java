@@ -34,17 +34,23 @@ public class ManagedSimpleFunctionRepository extends ManagedService implements M
     }
 
     @Override
-    public int getSize() {
-        return registry.size();
+    public int getCoreSize() {
+        return registry.coreSize();
     }
 
     @Override
-    public Set<String> getFunctionNames() {
-        return registry.getFunctionNames();
+    public int getCustomSize() {
+        return registry.customSize();
     }
 
     @Override
-    public boolean hasFunction(String name) {
-        return registry.getFunction(name) != null;
+    public Set<String> getCoreFunctionNames() {
+        return registry.getCoreFunctionNames();
     }
+
+    @Override
+    public Set<String> getCustomFunctionNames() {
+        return registry.getCustomFunctionNames();
+    }
+
 }

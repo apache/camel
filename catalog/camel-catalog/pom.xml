@@ -163,6 +163,8 @@
                             <goal>update-important-header-helper</goal>
                             <!-- update names in camel-main -->
                             <goal>update-main-helper</goal>
+                            <!-- update simple fuinctions in camel-core-languages -->
+                            <goal>update-simple-helper</goal>
                             <!-- update test-infra metadata -->
                             <goal>update-test-infra-metadata</goal>
                         </goals>

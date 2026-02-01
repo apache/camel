@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.SimpleUtils;
 
 /**
  * Default {@link SimpleFunctionRegistry}.
@@ -40,6 +42,10 @@ public class DefaultSimpleFunctionRegistry extends ServiceSupport implements Sim
 
     @Override
     public void addFunction(String name, Expression expression) {
+        String lower = name.toLowerCase(Locale.ENGLISH);
+        if (SimpleUtils.getFunctions().contains(lower)) {
+            throw new IllegalArgumentException("Simple already have built-in function with name: " + name);
+        }
         expression.init(camelContext);
         functions.put(name, expression);
     }
@@ -55,18 +61,28 @@ public class DefaultSimpleFunctionRegistry extends ServiceSupport implements Sim
     }
 
     @Override
-    public Set<String> getFunctionNames() {
+    public Set<String> getCustomFunctionNames() {
         return functions.keySet();
+    }
+
+    @Override
+    public Set<String> getCoreFunctionNames() {
+        return SimpleUtils.getFunctions();
+    }
+
+    @Override
+    public int customSize() {
+        return functions.size();
+    }
+
+    @Override
+    public int coreSize() {
+        return getCoreFunctionNames().size();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doShutdown();
         functions.clear();
-    }
-
-    @Override
-    public int size() {
-        return functions.size();
     }
 }

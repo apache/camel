@@ -45,20 +45,12 @@ public class ManagedSimpleFunctionRegistryTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName name = getCamelObjectName(TYPE_SERVICE, "DefaultSimpleFunctionRegistry");
 
-        Integer size = (Integer) mbeanServer.getAttribute(name, "Size");
+        Integer size = (Integer) mbeanServer.getAttribute(name, "CustomSize");
         assertEquals(1, size);
 
-        Set<String> names = (Set) mbeanServer.getAttribute(name, "FunctionNames");
+        Set<String> names = (Set) mbeanServer.getAttribute(name, "CustomFunctionNames");
         assertEquals(1, names.size());
         assertEquals("hi", names.iterator().next());
-
-        Boolean bool
-                = (Boolean) mbeanServer.invoke(name, "hasFunction", new Object[] { "hi" }, new String[] { "java.lang.String" });
-        assertEquals(Boolean.TRUE, bool);
-
-        bool = (Boolean) mbeanServer.invoke(name, "hasFunction", new Object[] { "goodbye" },
-                new String[] { "java.lang.String" });
-        assertEquals(Boolean.FALSE, bool);
     }
 
     @Override

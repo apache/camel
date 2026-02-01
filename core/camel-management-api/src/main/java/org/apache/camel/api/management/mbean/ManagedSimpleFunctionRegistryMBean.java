@@ -19,17 +19,19 @@ package org.apache.camel.api.management.mbean;
 import java.util.Set;
 
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedSimpleFunctionRegistryMBean extends ManagedServiceMBean {
 
+    @ManagedAttribute(description = "Number of core functions")
+    int getCoreSize();
+
     @ManagedAttribute(description = "Number of custom functions")
-    int getSize();
+    int getCustomSize();
+
+    @ManagedAttribute(description = "The names of the core functions")
+    Set<String> getCoreFunctionNames();
 
     @ManagedAttribute(description = "The names of the custom functions")
-    Set<String> getFunctionNames();
-
-    @ManagedOperation(description = "Is there a custom function with the given name")
-    boolean hasFunction(String name);
+    Set<String> getCustomFunctionNames();
 
 }

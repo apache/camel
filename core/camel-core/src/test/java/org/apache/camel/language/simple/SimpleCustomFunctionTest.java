@@ -31,7 +31,7 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
     @Test
     public void testCustomFunctionWithBody() throws Exception {
         SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
-        Assertions.assertEquals(1, reg.size());
+        Assertions.assertEquals(1, reg.customSize());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello I was here World");
         template.sendBody("direct:start", "World");
@@ -41,7 +41,7 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
     @Test
     public void testCustomFunctionWithExp() throws Exception {
         SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
-        Assertions.assertEquals(1, reg.size());
+        Assertions.assertEquals(1, reg.customSize());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye I was here Moon");
         template.sendBody("direct:start2", "World");

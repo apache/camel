@@ -19,6 +19,7 @@ package org.apache.camel.impl.console;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.util.SimpleUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,7 @@ public class SimpleLanguageDevConsoleTest extends ContextTestSupport {
 
         String out = (String) con.call(DevConsole.MediaType.TEXT);
         Assertions.assertNotNull(out);
+        Assertions.assertTrue(out.contains("Core Functions: " + SimpleUtils.getFunctions().size()));
         Assertions.assertTrue(out.contains("Custom Functions: 0"));
     }
 
@@ -45,7 +47,8 @@ public class SimpleLanguageDevConsoleTest extends ContextTestSupport {
         Assertions.assertEquals("simple-language", con.getId());
 
         JsonObject out = (JsonObject) con.call(DevConsole.MediaType.JSON);
-        Assertions.assertEquals(0, out.getInteger("size"));
+        Assertions.assertEquals(0, out.getInteger("customSize"));
+        Assertions.assertEquals(SimpleUtils.getFunctions().size(), out.getInteger("coreSize"));
         Assertions.assertNotNull(out);
     }
 
