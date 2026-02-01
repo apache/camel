@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "simple-language",
+    "title": "Simple Language",
+    "description": "Display simple language details",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.SimpleLanguageConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.18.0-SNAPSHOT"
+  }
+}
+

@@ -19,11 +19,12 @@ package org.apache.camel.spi;
 import java.util.Set;
 
 import org.apache.camel.Expression;
+import org.apache.camel.StaticService;
 
 /**
  * Registry for custom simple functions.
  */
-public interface SimpleFunctionRegistry {
+public interface SimpleFunctionRegistry extends StaticService {
 
     /**
      * Add a function
