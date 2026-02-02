@@ -168,10 +168,12 @@ class Athena2QueryHelper {
 
     void doWait() {
         // Use Camel's task API for polling delay instead of Thread.sleep()
+        // We use initialDelay for the actual delay, and maxIterations(1) to run once
         Tasks.foregroundTask()
                 .withBudget(Budgets.iterationBudget()
                         .withMaxIterations(1)
-                        .withInterval(Duration.ofMillis(this.currentDelay))
+                        .withInitialDelay(Duration.ofMillis(this.currentDelay))
+                        .withInterval(Duration.ZERO)
                         .build())
                 .withName("AthenaQueryPollingDelay")
                 .build()
