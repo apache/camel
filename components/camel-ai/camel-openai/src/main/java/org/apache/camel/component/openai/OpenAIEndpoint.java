@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * OpenAI endpoint for chat completion.
+ * OpenAI endpoint for chat completion and embeddings.
  */
 @UriEndpoint(firstVersion = "4.17.0",
              scheme = "openai",
@@ -42,7 +42,8 @@ import org.apache.camel.util.ObjectHelper;
 public class OpenAIEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = true, description = "The operation to perform (currently only chat-completion is supported)")
+    @Metadata(required = true, description = "The operation to perform: 'chat-completion' or 'embeddings'",
+              enums = "chat-completion,embeddings")
     private String operation;
 
     @UriParam
@@ -57,10 +58,12 @@ public class OpenAIEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        if (!"chat-completion".equals(operation)) {
-            throw new IllegalArgumentException("Only 'chat-completion' operation is supported");
-        }
-        return new OpenAIProducer(this);
+        return switch (operation) {
+            case "chat-completion" -> new OpenAIProducer(this);
+            case "embeddings" -> new OpenAIEmbeddingsProducer(this);
+            default -> throw new IllegalArgumentException(
+                    "Unknown operation: " + operation + ". Supported: chat-completion, embeddings");
+        };
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
- * OpenAI component for chat completion.
+ * OpenAI component for chat completion and embeddings.
  */
 @Component("openai")
 public class OpenAIComponent extends DefaultComponent {
@@ -36,8 +36,11 @@ public class OpenAIComponent extends DefaultComponent {
     @Metadata(description = "Default base URL for all endpoints", defaultValue = ClientOptions.PRODUCTION_URL)
     private String baseUrl = ClientOptions.PRODUCTION_URL;
 
-    @Metadata(description = "Default model for all endpoints")
+    @Metadata(description = "Default model for chat completion endpoints")
     private String model;
+
+    @Metadata(description = "Default model for embeddings endpoints")
+    private String embeddingModel;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -51,6 +54,9 @@ public class OpenAIComponent extends DefaultComponent {
         }
         if (model != null) {
             configuration.setModel(model);
+        }
+        if (embeddingModel != null) {
+            configuration.setEmbeddingModel(embeddingModel);
         }
 
         OpenAIEndpoint endpoint = new OpenAIEndpoint(uri, this, configuration);
@@ -83,5 +89,13 @@ public class OpenAIComponent extends DefaultComponent {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public String getEmbeddingModel() {
+        return embeddingModel;
+    }
+
+    public void setEmbeddingModel(String embeddingModel) {
+        this.embeddingModel = embeddingModel;
     }
 }

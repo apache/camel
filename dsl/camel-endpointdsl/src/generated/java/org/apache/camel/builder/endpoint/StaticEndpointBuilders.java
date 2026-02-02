@@ -12092,7 +12092,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion.
+     * OpenAI endpoint for chat completion and embeddings.
      * 
      * Category: ai
      * Since: 4.17
@@ -12101,7 +12101,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform (currently only chat-completion is supported)
+     * The operation to perform: 'chat-completion' or 'embeddings'
      * 
      * @param path operation
      * @return the dsl builder
@@ -12111,7 +12111,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion.
+     * OpenAI endpoint for chat completion and embeddings.
      * 
      * Category: ai
      * Since: 4.17
@@ -12120,7 +12120,7 @@ public class StaticEndpointBuilders {
      * Syntax: <code>openai:operation</code>
      * 
      * Path parameter: operation (required)
-     * The operation to perform (currently only chat-completion is supported)
+     * The operation to perform: 'chat-completion' or 'embeddings'
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

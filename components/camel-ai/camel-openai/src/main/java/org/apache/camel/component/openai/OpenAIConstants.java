@@ -30,7 +30,7 @@ public final class OpenAIConstants {
     public static final String SYSTEM_MESSAGE = "CamelOpenAISystemMessage";
     @Metadata(description = "The developer message to provide additional instructions to the model", javaType = "String")
     public static final String DEVELOPER_MESSAGE = "CamelOpenAIDeveloperMessage";
-    @Metadata(description = "The model to use for chat completion (e.g., gpt-4, gpt-3.5-turbo)", javaType = "String")
+    @Metadata(description = "The model to use for chat completion", javaType = "String")
     public static final String MODEL = "CamelOpenAIModel";
     @Metadata(description = "Controls randomness in the response. Higher values (e.g., 0.8) make output more random, lower values (e.g., 0.2) make it more deterministic",
               javaType = "Double")
@@ -64,6 +64,28 @@ public final class OpenAIConstants {
     // Output Exchange Properties
     @Metadata(description = "The complete OpenAI response object", javaType = "com.openai.models.ChatCompletion")
     public static final String RESPONSE = "CamelOpenAIResponse";
+
+    // Embeddings Input Headers
+    @Metadata(description = "The model to use for embeddings", javaType = "String")
+    public static final String EMBEDDING_MODEL = "CamelOpenAIEmbeddingModel";
+    @Metadata(description = "Number of output dimensions", javaType = "Integer")
+    public static final String EMBEDDING_DIMENSIONS = "CamelOpenAIEmbeddingDimensions";
+
+    // Embeddings Output Headers
+    @Metadata(description = "The embedding model used in the response", javaType = "String")
+    public static final String EMBEDDING_RESPONSE_MODEL = "CamelOpenAIEmbeddingResponseModel";
+    @Metadata(description = "Number of embeddings returned", javaType = "Integer")
+    public static final String EMBEDDING_COUNT = "CamelOpenAIEmbeddingCount";
+    @Metadata(description = "Vector dimensions of the embeddings", javaType = "Integer")
+    public static final String EMBEDDING_VECTOR_SIZE = "CamelOpenAIEmbeddingVectorSize";
+
+    // Similarity Helper Headers
+    @Metadata(description = "Reference embedding vector for similarity comparison", javaType = "List<Float>")
+    public static final String REFERENCE_EMBEDDING = "CamelOpenAIReferenceEmbedding";
+    @Metadata(description = "Calculated cosine similarity score (0.0 to 1.0)", javaType = "Double")
+    public static final String SIMILARITY_SCORE = "CamelOpenAISimilarityScore";
+    @Metadata(description = "Original text content when embeddings operation is used", javaType = "String or List<String>")
+    public static final String ORIGINAL_TEXT = "CamelOpenAIOriginalText";
 
     private OpenAIConstants() {
         // Utility class
