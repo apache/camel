@@ -99,6 +99,34 @@ To ack/nack the message the component uses Acknowledgement ID stored as header `
 If the header is removed or tampered with, the ack will fail and the message will be redelivered
 again after the ack deadline.
 
+=== Delivery Attempts and Dead Letter Queues
+
+When a subscription has a https://cloud.google.com/pubsub/docs/dead-letter-topics[dead-letter policy] configured,
+the component exposes the delivery attempt count via the header `GooglePubsubConstants.DELIVERY_ATTEMPT`.
+This header contains an `Integer` representing the approximate number of times the message has been delivered.
+The first delivery will have a value of `1`.
+
+NOTE: The delivery attempt header is only available when the subscription has a dead-letter policy configured.
+Without a dead-letter policy, the header will not be set.
+
+This allows routes to implement custom retry logic based on the delivery attempt count:
+
+[source,java]
+----
+from("google-pubsub:{{project.name}}:{{subscription.name}}")
+    .process(exchange -> {
+        Integer deliveryAttempt = exchange.getIn().getHeader(GooglePubsubConstants.DELIVERY_ATTEMPT, Integer.class);
+        if (deliveryAttempt != null && deliveryAttempt > 3) {
+            // Custom handling for messages that have been redelivered multiple times
+            log.warn("Message has been delivered {} times", deliveryAttempt);
+        }
+        // Process the message
+    });
+----
+
+With a dead-letter policy, after the configured maximum delivery attempts are exceeded,
+the message will automatically be forwarded to the dead-letter topic by Google PubSub.
+
 === Message Body
 
 The consumer endpoint returns the content of the message as `byte[]`. Exactly as the underlying system sends it.
