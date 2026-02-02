@@ -70,10 +70,12 @@ public class IggyFetchRecords implements Runnable {
             if (iggyConsumer.isSuspending() || iggyConsumer.isSuspended()) {
                 LOG.trace("Consumer is suspended. Skipping message polling.");
                 // Use Camel's task API to avoid busy-waiting instead of Thread.sleep()
+                // We use initialDelay for the actual delay, and maxIterations(1) to run once
                 Tasks.foregroundTask()
                         .withBudget(Budgets.iterationBudget()
                                 .withMaxIterations(1)
-                                .withInterval(Duration.ofSeconds(1))
+                                .withInitialDelay(Duration.ofSeconds(1))
+                                .withInterval(Duration.ZERO)
                                 .build())
                         .withName("IggySuspendedDelay")
                         .build()

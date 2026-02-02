@@ -220,10 +220,12 @@ public class SubscriptionHelper extends ServiceSupport {
 
                 LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
                 // Use Camel's task API for backoff delay instead of Thread.sleep()
+                // We use initialDelay for the actual delay, and maxIterations(1) to run once
                 Tasks.foregroundTask()
                         .withBudget(Budgets.iterationBudget()
                                 .withMaxIterations(1)
-                                .withInterval(Duration.ofMillis(backoff))
+                                .withInitialDelay(Duration.ofMillis(backoff))
+                                .withInterval(Duration.ZERO)
                                 .build())
                         .withName("SalesforceSubscribeRetryDelay")
                         .build()

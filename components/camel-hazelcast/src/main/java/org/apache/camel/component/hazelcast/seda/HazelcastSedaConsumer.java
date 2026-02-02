@@ -152,10 +152,12 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
                 // Use Camel's task API for error recovery delay instead of Thread.sleep()
+                // We use initialDelay for the actual delay, and maxIterations(1) to run once
                 Tasks.foregroundTask()
                         .withBudget(Budgets.iterationBudget()
                                 .withMaxIterations(1)
-                                .withInterval(Duration.ofMillis(endpoint.getConfiguration().getOnErrorDelay()))
+                                .withInitialDelay(Duration.ofMillis(endpoint.getConfiguration().getOnErrorDelay()))
+                                .withInterval(Duration.ZERO)
                                 .build())
                         .withName("HazelcastSedaErrorRecoveryDelay")
                         .build()

@@ -178,10 +178,12 @@ public class ZooKeeperConsumer extends DefaultConsumer {
             try {
                 if (isRunAllowed()) {
                     // Use Camel's task API for reconnection backoff delay instead of Thread.sleep()
+                    // We use initialDelay for the actual delay, and maxIterations(1) to run once
                     Tasks.foregroundTask()
                             .withBudget(Budgets.iterationBudget()
                                     .withMaxIterations(1)
-                                    .withInterval(Duration.ofMillis(configuration.getBackoff()))
+                                    .withInitialDelay(Duration.ofMillis(configuration.getBackoff()))
+                                    .withInterval(Duration.ZERO)
                                     .build())
                             .withName("ZooKeeperReconnectBackoff")
                             .build()
