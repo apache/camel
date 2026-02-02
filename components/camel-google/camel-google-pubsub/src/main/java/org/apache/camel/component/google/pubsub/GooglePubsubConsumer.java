@@ -45,7 +45,9 @@ import org.apache.camel.component.google.pubsub.consumer.AcknowledgeSync;
 import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
 import org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,6 +209,12 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         // Deprecated:  replaced by headerFilterStrategy
                         exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubsubMessage.getAttributesMap());
 
+                        // Delivery attempt (requires dead-letter policy on subscription)
+                        int deliveryAttempt = message.getDeliveryAttempt();
+                        if (deliveryAttempt > 0) {
+                            exchange.getIn().setHeader(GooglePubsubConstants.DELIVERY_ATTEMPT, deliveryAttempt);
+                        }
+
                         //existing subscriber can not be propagated, because it will be closed at the end of this block
                         //subscriber will be created at the moment of use
                         // (see  https://issues.apache.org/jira/browse/CAMEL-18447)
@@ -231,7 +239,21 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         try {
                             processor.process(exchange);
                         } catch (Exception e) {
-                            getExceptionHandler().handleException(e);
+                            exchange.setException(e);
+                        }
+
+                        // Handle exception if one occurred
+                        if (exchange.getException() != null) {
+                            getExceptionHandler().handleException("Error processing exchange", exchange,
+                                    exchange.getException());
+                        }
+
+                        // Execute synchronization callbacks (ACK/NACK) based on exchange status
+                        // This is required because we are directly calling processor.process() outside of the normal
+                        // Camel routing engine, so we must manually trigger the OnCompletion callbacks
+                        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
+                            List<Synchronization> synchronizations = exchange.getExchangeExtension().handoverCompletions();
+                            UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
                         }
                     }
                 } catch (CancellationException e) {
