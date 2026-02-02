@@ -135,7 +135,8 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
                         if (isRecoverable) {
                             localLog.error("Retryable error getting messages from PubSub Lite", e);
                         } else {
-                            localLog.error("Non-recoverable error getting messages from PubSub Lite, stopping subscriber loop", e);
+                            localLog.error("Non-recoverable error getting messages from PubSub Lite, stopping subscriber loop",
+                                    e);
                         }
 
                         // allow camel error handler to be aware
