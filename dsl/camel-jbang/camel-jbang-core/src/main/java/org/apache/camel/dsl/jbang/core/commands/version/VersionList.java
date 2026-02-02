@@ -377,28 +377,74 @@ public class VersionList extends CamelCommand {
     }
 
     private void filterVersions(List<String[]> versions, List<Row> rows, List<ReleaseModel> releases) throws Exception {
-        if (versions.isEmpty()) {
-            for (ReleaseModel rm : releases) {
-                boolean accept = true;
-                if (fromVersion != null || toVersion != null) {
-                    if (fromVersion == null) {
-                        fromVersion = "1.0";
-                    }
-                    if (toVersion == null) {
-                        toVersion = "99.0";
-                    }
-                    accept = VersionHelper.isBetween(rm.getVersion(), fromVersion, toVersion);
+        for (String[] v : versions) {
+            Row row = new Row();
+            row.coreVersion = v[0];
+            row.runtimeVersion = v[1];
+
+            // enrich with details from catalog (if we can find any)
+            String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
+            ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
+            if (download && rm == null) {
+                // unknown release but if it's an Apache Camel release we can grab from online
+                int dots = StringHelper.countChar(v[0], '.');
+                if (dots == 2) {
+                    rm = onlineRelease(runtime, row.coreVersion);
                 }
-                if (accept && fromDate != null || toDate != null) {
-                    if (fromDate == null) {
-                        fromDate = "2000-01-01";
-                    }
-                    if (toDate == null) {
-                        toDate = "9999-01-01";
-                    }
-                    accept = rm.getDate() == null || isDateBetween(rm.getDate(), fromDate, toDate);
+            }
+            if (rm != null) {
+                row.releaseDate = rm.getDate();
+                row.daysSince = daysSince(rm.getDate());
+                row.eolDate = rm.getEol();
+                row.jdks = rm.getJdk();
+                row.kind = rm.getKind();
+            }
+            boolean accept = true;
+            if (fromVersion != null || toVersion != null) {
+                if (fromVersion == null) {
+                    fromVersion = "1.0";
                 }
-                if (accept) {
+                if (toVersion == null) {
+                    toVersion = "99.0";
+                }
+                accept = VersionHelper.isBetween(row.coreVersion, fromVersion, toVersion);
+            }
+            if (accept && fromDate != null || toDate != null) {
+                if (fromDate == null) {
+                    fromDate = "2000-01-01";
+                }
+                if (toDate == null) {
+                    toDate = "9999-01-01";
+                }
+                accept = row.releaseDate == null || isDateBetween(row.releaseDate, fromDate, toDate);
+            }
+            if (accept) {
+                rows.add(row);
+            }
+        }
+        for (ReleaseModel rm : releases) {
+            boolean accept = true;
+            if (fromVersion != null || toVersion != null) {
+                if (fromVersion == null) {
+                    fromVersion = "1.0";
+                }
+                if (toVersion == null) {
+                    toVersion = "99.0";
+                }
+                accept = VersionHelper.isBetween(rm.getVersion(), fromVersion, toVersion);
+            }
+            if (accept && fromDate != null || toDate != null) {
+                if (fromDate == null) {
+                    fromDate = "2000-01-01";
+                }
+                if (toDate == null) {
+                    toDate = "9999-01-01";
+                }
+                accept = rm.getDate() == null || isDateBetween(rm.getDate(), fromDate, toDate);
+            }
+            if (accept) {
+                // only add if this is a new fresh release
+                if (rows.stream().filter(r -> r.coreVersion.equals(rm.getVersion())).findAny().isEmpty()) {
                     Row row = new Row();
                     rows.add(row);
                     row.coreVersion = rm.getVersion();
@@ -407,52 +453,6 @@ public class VersionList extends CamelCommand {
                     row.eolDate = rm.getEol();
                     row.jdks = rm.getJdk();
                     row.kind = rm.getKind();
-                }
-            }
-        } else {
-            for (String[] v : versions) {
-                Row row = new Row();
-                row.coreVersion = v[0];
-                row.runtimeVersion = v[1];
-
-                // enrich with details from catalog (if we can find any)
-                String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
-                ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
-                if (download && rm == null) {
-                    // unknown release but if it's an Apache Camel release we can grab from online
-                    int dots = StringHelper.countChar(v[0], '.');
-                    if (dots == 2) {
-                        rm = onlineRelease(runtime, row.coreVersion);
-                    }
-                }
-                if (rm != null) {
-                    row.releaseDate = rm.getDate();
-                    row.daysSince = daysSince(rm.getDate());
-                    row.eolDate = rm.getEol();
-                    row.jdks = rm.getJdk();
-                    row.kind = rm.getKind();
-                }
-                boolean accept = true;
-                if (fromVersion != null || toVersion != null) {
-                    if (fromVersion == null) {
-                        fromVersion = "1.0";
-                    }
-                    if (toVersion == null) {
-                        toVersion = "99.0";
-                    }
-                    accept = VersionHelper.isBetween(row.coreVersion, fromVersion, toVersion);
-                }
-                if (accept && fromDate != null || toDate != null) {
-                    if (fromDate == null) {
-                        fromDate = "2000-01-01";
-                    }
-                    if (toDate == null) {
-                        toDate = "9999-01-01";
-                    }
-                    accept = row.releaseDate == null || isDateBetween(row.releaseDate, fromDate, toDate);
-                }
-                if (accept) {
-                    rows.add(row);
                 }
             }
         }

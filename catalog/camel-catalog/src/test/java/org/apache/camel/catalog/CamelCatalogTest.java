@@ -1641,6 +1641,12 @@ public class CamelCatalogTest {
         Assertions.assertEquals("2023-01-07", rel.getDate());
         Assertions.assertEquals("2023-12-21", rel.getEol());
         Assertions.assertEquals("lts", rel.getKind());
+
+        rel = list.get(0);
+        Assertions.assertEquals("1.0.0", rel.getVersion());
+        Assertions.assertEquals("2007-07-02", rel.getDate());
+        Assertions.assertEquals("legacy", rel.getKind());
+        Assertions.assertEquals("1.5", rel.getJdk());
     }
 
     @Test
