@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import com.google.api.gax.rpc.ApiException;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsublite.cloudpubsub.Subscriber;
 import com.google.common.base.Strings;
@@ -115,11 +116,23 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
                         subscriberAdded = true;
                         subscriber.awaitTerminated();
                     } catch (Exception e) {
-                        localLog.error("Failure getting messages from PubSub Lite", e);
-
                         // Remove from list if it was added
                         if (subscriberAdded) {
                             subscribers.remove(subscriber);
+                        }
+
+                        // Check if error is recoverable
+                        boolean isRecoverable = false;
+                        if (e instanceof ApiException) {
+                            isRecoverable = ((ApiException) e).isRetryable();
+                        } else if (e.getCause() instanceof ApiException) {
+                            isRecoverable = ((ApiException) e.getCause()).isRetryable();
+                        }
+
+                        if (isRecoverable) {
+                            localLog.error("Retryable error getting messages from PubSub Lite", e);
+                        } else {
+                            localLog.error("Non-recoverable error getting messages from PubSub Lite, stopping subscriber loop", e);
                         }
 
                         // allow camel error handler to be aware
@@ -127,7 +140,12 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
                             getExceptionHandler().handleException(e);
                         }
 
-                        // Add backoff delay to prevent tight loop on persistent failures
+                        // For non-recoverable errors, exit the loop
+                        if (!isRecoverable) {
+                            break;
+                        }
+
+                        // Add backoff delay for recoverable errors to prevent tight loop
                         try {
                             Thread.sleep(5000); // 5 second backoff
                         } catch (InterruptedException ie) {
