@@ -1823,6 +1823,63 @@ And in XML DSL you use the pretty attribute to true as show below:
 </route>
 ----
 
+== Adding custom functions to Simple language
+
+You can add custom functions to the Simple language by adding to the `org.apache.camel.spi.SimpleFunctionRegistry`.
+
+This can be done programmatically such as:
+
+[source,java]
+----
+SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
+
+reg.addFunction("foo", new ExpressionAdapter() {
+    @Override
+    public Object evaluate(Exchange exchange) {
+        return "I was here " + exchange.getMessage().getBody();
+    }
+});
+----
+
+Here we add a custom function named `foo` which is implemented as a `org.apache.camel.Expression` which conveniently
+can be done by using the `org.apache.camel.support.ExpressionAdapter` class as above.
+
+The foo function can now be used in simple such as:
+
+[source,java]
+----
+from("direct:start2")
+        .setBody(simple("Hello ${foo}"))
+        .to("mock:result");
+----
+
+Notice how the foo function is used just like it was a built-in function using `$\{foo}` syntax.
+
+Since a custom function is just an `Expression` then it's possible to build custom functions from
+all the Camel languages such as Groovy, JSonPath and even Simple as well.
+
+[source,java]
+----
+var bar = context.resolveLanguage("simple").createExpression("${trim()} ~> ${normalizeWhitespace()} ~> ${capitalize()} ~> ${quote()}");
+reg.addFunction("bar", bar);
+----
+
+The `bar` function is build using simple functions using the `~>` chain operators to perform a sequence of functions on the payload.
+
+Custom functions will by default use the message body as the payload. But they also support a single parameter as the input,
+which allows to provide the input as fixed value such as a string literal or to refer to an existing header or variable.
+
+For example the foo function uses variable with name `msg` as the input:
+
+[source,java]
+----
+from("direct:start")
+        .setVariable("msg", constant("Moon"))
+        .setBody(simple("Bye ${foo(${variable.msg})}"))
+        .to("mock:result");
+----
+
+
 == Dependencies
 
 The Simple language is part of *camel-core*.
