@@ -17,6 +17,7 @@
 package org.apache.camel.component.iggy;
 
 import java.math.BigInteger;
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.iggy.client.IggyClientConnectionPool;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.apache.iggy.client.blocking.IggyBaseClient;
 import org.apache.iggy.consumergroup.Consumer;
 import org.apache.iggy.identifier.ConsumerId;
@@ -66,11 +69,15 @@ public class IggyFetchRecords implements Runnable {
         while (running) {
             if (iggyConsumer.isSuspending() || iggyConsumer.isSuspended()) {
                 LOG.trace("Consumer is suspended. Skipping message polling.");
-                try {
-                    Thread.sleep(1000); // Sleep for a bit to avoid busy-waiting
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                // Use Camel's task API to avoid busy-waiting instead of Thread.sleep()
+                Tasks.foregroundTask()
+                        .withBudget(Budgets.iterationBudget()
+                                .withMaxIterations(1)
+                                .withInterval(Duration.ofSeconds(1))
+                                .build())
+                        .withName("IggySuspendedDelay")
+                        .build()
+                        .run(endpoint.getCamelContext(), () -> true);
                 continue;
             }
 
