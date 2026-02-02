@@ -31,7 +31,7 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
     @Test
     public void testCustomFunctionWithBody() throws Exception {
         SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
-        Assertions.assertEquals(1, reg.customSize());
+        Assertions.assertEquals(2, reg.customSize());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello I was here World");
         template.sendBody("direct:start", "World");
@@ -39,12 +39,32 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
     }
 
     @Test
+    public void testCustomFunctionWithBodyFunction() throws Exception {
+        SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
+        Assertions.assertEquals(2, reg.customSize());
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello I was here Earth");
+        template.sendBody("direct:start2", "Earth");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testCustomFunctionWithExp() throws Exception {
         SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
-        Assertions.assertEquals(1, reg.customSize());
+        Assertions.assertEquals(2, reg.customSize());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye I was here Moon");
-        template.sendBody("direct:start2", "World");
+        template.sendBody("direct:start3", "World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testCustomFunctionWithSimple() throws Exception {
+        SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
+        Assertions.assertEquals(2, reg.customSize());
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("\"Hello World I Was Here\"");
+        template.sendBody("direct:start4", "  hello  world i was here   ");
         assertMockEndpointsSatisfied();
     }
 
@@ -61,13 +81,25 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
                     }
                 });
 
+                var bar = context.resolveLanguage("simple")
+                        .createExpression("${trim()} ~> ${normalizeWhitespace()} ~> ${capitalize()} ~> ${quote()}");
+                reg.addFunction("bar", bar);
+
                 from("direct:start")
                         .setBody(simple("Hello ${function(foo)}"))
                         .to("mock:result");
 
                 from("direct:start2")
+                        .setBody(simple("Hello ${foo}"))
+                        .to("mock:result");
+
+                from("direct:start3")
                         .setVariable("msg", constant("Moon"))
                         .setBody(simple("Bye ${function(foo,${variable.msg})}"))
+                        .to("mock:result");
+
+                from("direct:start4")
+                        .setBody(simple("${bar}"))
                         .to("mock:result");
             }
         };

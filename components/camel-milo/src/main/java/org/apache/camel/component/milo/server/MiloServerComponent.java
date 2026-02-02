@@ -440,13 +440,21 @@ public class MiloServerComponent extends DefaultComponent {
          * desired, do it explicitly.
          */
         Objects.requireNonNull(result, "Setting a null is not supported. call setCertificateManager(null) instead.)");
-        loadServerCertificate(result.getKeyPair(), result.getCertificate());
+        loadServerCertificate(result.getKeyPair(), result.getCertificate(), result.getCertificateChain());
     }
 
     /**
      * Server certificate
      */
     public void loadServerCertificate(final KeyPair keyPair, final X509Certificate certificate) {
+        loadServerCertificate(keyPair, certificate, new X509Certificate[] { certificate });
+    }
+
+    /**
+     * Server certificate with full certificate chain
+     */
+    public void loadServerCertificate(
+            final KeyPair keyPair, final X509Certificate certificate, final X509Certificate[] certificateChain) {
         this.certificate = certificate;
         // TODO evaluate migration to CertificateGroup
         //        setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
@@ -455,7 +463,7 @@ public class MiloServerComponent extends DefaultComponent {
                 this.certificateGroup.updateCertificate(
                         NodeIds.ServerConfiguration_CertificateGroups_DefaultApplicationGroup,
                         keyPair,
-                        new X509Certificate[] { certificate });
+                        certificateChain);
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }
