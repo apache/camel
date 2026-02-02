@@ -22,9 +22,9 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +53,6 @@ import org.jsoup.select.Elements;
 public final class BoxConnectionHelper {
 
     private static final Pattern QUERY_PARAM_PATTERN = Pattern.compile("&?([^=]+)=([^&]+)");
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private BoxConnectionHelper() {
         // hide utility class constructor
@@ -98,7 +97,7 @@ public final class BoxConnectionHelper {
             }
 
             // generate anti-forgery token to prevent/detect CSRF attack
-            final String csrfToken = String.valueOf(SECURE_RANDOM.nextLong());
+            final String csrfToken = UUID.randomUUID().toString();
 
             final String authorizeUrl = authorizationUrl(configuration.getClientId(), csrfToken);
 
