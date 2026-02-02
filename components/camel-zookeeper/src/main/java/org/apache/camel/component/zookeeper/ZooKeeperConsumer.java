@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zookeeper;
 
+import java.time.Duration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -31,6 +32,8 @@ import org.apache.camel.component.zookeeper.operations.GetDataOperation;
 import org.apache.camel.component.zookeeper.operations.OperationResult;
 import org.apache.camel.component.zookeeper.operations.ZooKeeperOperation;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
@@ -174,11 +177,20 @@ public class ZooKeeperConsumer extends DefaultConsumer {
         private void backoffAndThenRestart() {
             try {
                 if (isRunAllowed()) {
-                    Thread.sleep(configuration.getBackoff());
+                    // Use Camel's task API for reconnection backoff delay instead of Thread.sleep()
+                    // We use initialDelay for the actual delay, and maxIterations(1) to run once
+                    Tasks.foregroundTask()
+                            .withBudget(Budgets.iterationBudget()
+                                    .withMaxIterations(1)
+                                    .withInitialDelay(Duration.ofMillis(configuration.getBackoff()))
+                                    .withInterval(Duration.ZERO)
+                                    .build())
+                            .withName("ZooKeeperReconnectBackoff")
+                            .build()
+                            .run(getEndpoint().getCamelContext(), () -> true);
+
                     initializeConsumer();
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 // ignore
             }
