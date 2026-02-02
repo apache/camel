@@ -150,10 +150,12 @@ public class GooglePubsubLiteConsumer extends DefaultConsumer {
                         }
 
                         // Add backoff delay for recoverable errors to prevent tight loop
+                        // We use initialDelay for the actual delay, and maxIterations(1) to run once
                         Tasks.foregroundTask()
                                 .withBudget(Budgets.iterationBudget()
                                         .withMaxIterations(1)
-                                        .withInterval(Duration.ofSeconds(5))
+                                        .withInitialDelay(Duration.ofSeconds(5))
+                                        .withInterval(Duration.ZERO)
                                         .build())
                                 .withName("PubSubLiteRetryDelay")
                                 .build()
