@@ -163,20 +163,40 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                 MessageReceiver messageReceiver = new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
 
                 Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver, endpoint);
+                boolean subscriberAdded = false;
                 try {
-                    subscribers.add(subscriber);
                     subscriber.startAsync().awaitRunning();
+                    // Only add to list after successful startup
+                    subscribers.add(subscriber);
+                    subscriberAdded = true;
                     subscriber.awaitTerminated();
                 } catch (Exception e) {
                     localLog.error("Failure getting messages from PubSub", e);
+
+                    // Remove from list if it was added
+                    if (subscriberAdded) {
+                        subscribers.remove(subscriber);
+                    }
 
                     // allow camel error handler to be aware
                     if (endpoint.isBridgeErrorHandler()) {
                         getExceptionHandler().handleException(e);
                     }
+
+                    // Add backoff delay to prevent tight loop on persistent failures
+                    try {
+                        Thread.sleep(5000); // 5 second backoff
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 } finally {
                     localLog.debug("Stopping async subscriber {}", subscriptionName);
                     subscriber.stopAsync();
+                    // Ensure cleanup from list
+                    if (subscriberAdded) {
+                        subscribers.remove(subscriber);
+                    }
                 }
             }
         }
