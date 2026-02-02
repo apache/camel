@@ -39,6 +39,12 @@ public final class GooglePubsubConstants {
                                                 "message when ackMode=NONE.",
               javaType = "org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge")
     public static final String GOOGLE_PUBSUB_ACKNOWLEDGE = "CamelGooglePubsubAcknowledge";
+    @Metadata(label = "consumer",
+              description = "The delivery attempt counter received from PubSub. This is the approximate number of times " +
+                            "the message has been delivered. This will be 1 for the first delivery. This feature requires " +
+                            "a dead-letter policy to be configured on the subscription.",
+              javaType = "Integer")
+    public static final String DELIVERY_ATTEMPT = "CamelGooglePubsubDeliveryAttempt";
     @Deprecated(since = "4.15")
     public static final String RESERVED_GOOGLE_CLIENT_ATTRIBUTE_PREFIX = "goog";
 

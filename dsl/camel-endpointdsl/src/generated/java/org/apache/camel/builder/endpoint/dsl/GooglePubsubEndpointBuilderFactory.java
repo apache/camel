@@ -1081,6 +1081,21 @@ public interface GooglePubsubEndpointBuilderFactory {
         public String googlePubsubAcknowledge() {
             return "CamelGooglePubsubAcknowledge";
         }
+        /**
+         * The delivery attempt counter received from PubSub. This is the
+         * approximate number of times the message has been delivered. This will
+         * be 1 for the first delivery. This feature requires a dead-letter
+         * policy to be configured on the subscription.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code GooglePubsubDeliveryAttempt}.
+         */
+        public String googlePubsubDeliveryAttempt() {
+            return "CamelGooglePubsubDeliveryAttempt";
+        }
     }
     static GooglePubsubEndpointBuilder endpointBuilder(String componentName, String path) {
         class GooglePubsubEndpointBuilderImpl extends AbstractEndpointBuilder implements GooglePubsubEndpointBuilder, AdvancedGooglePubsubEndpointBuilder {
