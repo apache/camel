@@ -480,6 +480,7 @@ public class MiloClientConfiguration implements Cloneable {
         }
 
         builder.setCertificate(result.getCertificate());
+        builder.setCertificateChain(result.getCertificateChain());
         builder.setKeyPair(result.getKeyPair());
     }
 

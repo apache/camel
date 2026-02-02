@@ -43,15 +43,21 @@ public class KeyStoreLoader {
     public static class Result {
 
         private final X509Certificate certificate;
+        private final X509Certificate[] certificateChain;
         private final KeyPair keyPair;
 
-        public Result(final X509Certificate certificate, final KeyPair keyPair) {
+        public Result(final X509Certificate certificate, final X509Certificate[] certificateChain, final KeyPair keyPair) {
             this.certificate = certificate;
+            this.certificateChain = certificateChain;
             this.keyPair = keyPair;
         }
 
         public X509Certificate getCertificate() {
             return this.certificate;
+        }
+
+        public X509Certificate[] getCertificateChain() {
+            return this.certificateChain;
         }
 
         public KeyPair getKeyPair() {
@@ -132,14 +138,23 @@ public class KeyStoreLoader {
                 = keyStore.getKey(effectiveKeyAlias, this.keyPassword != null ? this.keyPassword.toCharArray() : null);
 
         if (privateKey instanceof PrivateKey pk) {
-            final X509Certificate certificate = (X509Certificate) keyStore.getCertificate(effectiveKeyAlias);
-            if (certificate == null) {
+            // Load the full certificate chain
+            final java.security.cert.Certificate[] chain = keyStore.getCertificateChain(effectiveKeyAlias);
+            if (chain == null || chain.length == 0) {
                 return null;
             }
 
+            // Convert to X509Certificate array
+            final X509Certificate[] certificateChain = new X509Certificate[chain.length];
+            for (int i = 0; i < chain.length; i++) {
+                certificateChain[i] = (X509Certificate) chain[i];
+            }
+
+            // The first certificate in the chain is the end-entity certificate
+            final X509Certificate certificate = certificateChain[0];
             final PublicKey publicKey = certificate.getPublicKey();
             final KeyPair keyPair = new KeyPair(publicKey, pk);
-            return new Result(certificate, keyPair);
+            return new Result(certificate, certificateChain, keyPair);
         }
 
         return null;
