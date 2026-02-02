@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +49,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.UnitOfWorkHelper;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,20 +168,61 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                 MessageReceiver messageReceiver = new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
 
                 Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver, endpoint);
+                boolean subscriberAdded = false;
                 try {
-                    subscribers.add(subscriber);
                     subscriber.startAsync().awaitRunning();
+                    // Only add to list after successful startup
+                    subscribers.add(subscriber);
+                    subscriberAdded = true;
                     subscriber.awaitTerminated();
                 } catch (Exception e) {
-                    localLog.error("Failure getting messages from PubSub", e);
+                    // Remove from list if it was added
+                    if (subscriberAdded) {
+                        subscribers.remove(subscriber);
+                    }
+
+                    // Check if error is recoverable
+                    boolean isRecoverable = false;
+                    if (e instanceof ApiException) {
+                        isRecoverable = ((ApiException) e).isRetryable();
+                    } else if (e.getCause() instanceof ApiException) {
+                        isRecoverable = ((ApiException) e.getCause()).isRetryable();
+                    }
+
+                    if (isRecoverable) {
+                        localLog.error("Retryable error getting messages from PubSub", e);
+                    } else {
+                        localLog.error("Non-recoverable error getting messages from PubSub, stopping subscriber loop", e);
+                    }
 
                     // allow camel error handler to be aware
                     if (endpoint.isBridgeErrorHandler()) {
                         getExceptionHandler().handleException(e);
                     }
+
+                    // For non-recoverable errors, exit the loop
+                    if (!isRecoverable) {
+                        break;
+                    }
+
+                    // Add backoff delay for recoverable errors to prevent tight loop
+                    // We use initialDelay for the actual delay, and maxIterations(1) to run once
+                    Tasks.foregroundTask()
+                            .withBudget(Budgets.iterationBudget()
+                                    .withMaxIterations(1)
+                                    .withInitialDelay(Duration.ofSeconds(5))
+                                    .withInterval(Duration.ZERO)
+                                    .build())
+                            .withName("PubSubRetryDelay")
+                            .build()
+                            .run(getEndpoint().getCamelContext(), () -> true);
                 } finally {
                     localLog.debug("Stopping async subscriber {}", subscriptionName);
                     subscriber.stopAsync();
+                    // Ensure cleanup from list
+                    if (subscriberAdded) {
+                        subscribers.remove(subscriber);
+                    }
                 }
             }
         }
