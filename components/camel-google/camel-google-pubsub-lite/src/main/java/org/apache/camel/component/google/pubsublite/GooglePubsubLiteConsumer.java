@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.google.pubsublite;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
-import java.time.Duration;
 
 import com.google.api.gax.rpc.ApiException;
 import com.google.cloud.pubsub.v1.MessageReceiver;
