@@ -1223,6 +1223,135 @@ public class VertxPlatformHttpEngineTest {
         }
     }
 
+    @Test
+    public void testMultipleServersScenario() throws Exception {
+        // This test simulates CAMEL-22937: when both main server and management server are running,
+        // findSingleByType returns null because there are multiple instances of VertxPlatformHttpServer.
+        // The engine should prefer the main server (SERVER_TYPE_SERVER) over the management server.
+        int mainPort = AvailablePortFinder.getNextAvailable();
+        int managementPort = AvailablePortFinder.getNextAvailable();
+
+        VertxPlatformHttpServerConfiguration mainConf = new VertxPlatformHttpServerConfiguration();
+        mainConf.setBindPort(mainPort);
+        mainConf.setServerType(VertxPlatformHttpRouter.SERVER_TYPE_SERVER);
+
+        VertxPlatformHttpServerConfiguration managementConf = new VertxPlatformHttpServerConfiguration();
+        managementConf.setBindPort(managementPort);
+        managementConf.setServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
+
+        RestAssured.port = mainPort;
+
+        CamelContext context = new DefaultCamelContext();
+        // Add management server FIRST to verify that the engine still picks the main server
+        context.addService(new VertxPlatformHttpServer(managementConf));
+        context.addService(new VertxPlatformHttpServer(mainConf));
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/test")
+                            .routeId("test")
+                            .setBody().constant("test-response");
+                }
+            });
+
+            context.start();
+
+            // Verify the engine prefers the main server port
+            PlatformHttpEngine engine = context.getRegistry().findSingleByType(PlatformHttpEngine.class);
+            assertNotNull(engine);
+            int serverPort = engine.getServerPort();
+            // The port should be the main server port, not the management port
+            assertEquals(mainPort, serverPort);
+
+            // Verify the route works on the main server port
+            given()
+                    .port(serverPort)
+                    .when()
+                    .get("/test")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("test-response"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testMultipleServersWithCustomPorts() throws Exception {
+        // This test simulates the exact scenario from CAMEL-22937 with custom ports like:
+        // camel.server.port = 8084
+        // camel.management.port = 8083
+        // The engine should always prefer the main server port.
+        int serverPort = 8084;
+        int managementPort = 8083;
+
+        // Check if ports are available, otherwise use dynamic ports
+        if (!isPortAvailable(serverPort)) {
+            serverPort = AvailablePortFinder.getNextAvailable();
+        }
+        if (!isPortAvailable(managementPort)) {
+            managementPort = AvailablePortFinder.getNextAvailable();
+        }
+
+        VertxPlatformHttpServerConfiguration mainConf = new VertxPlatformHttpServerConfiguration();
+        mainConf.setBindPort(serverPort);
+        mainConf.setServerType(VertxPlatformHttpRouter.SERVER_TYPE_SERVER);
+
+        VertxPlatformHttpServerConfiguration managementConf = new VertxPlatformHttpServerConfiguration();
+        managementConf.setBindPort(managementPort);
+        managementConf.setServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
+
+        RestAssured.port = serverPort;
+
+        CamelContext context = new DefaultCamelContext();
+        // Add both servers - the order shouldn't matter since we use server type to distinguish
+        context.addService(new VertxPlatformHttpServer(managementConf));
+        context.addService(new VertxPlatformHttpServer(mainConf));
+
+        final int expectedPort = serverPort;
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/api/test")
+                            .routeId("api-test")
+                            .setBody().constant("api-response");
+                }
+            });
+
+            context.start();
+
+            // Verify the engine picks the main server port
+            PlatformHttpEngine engine = context.getRegistry().findSingleByType(PlatformHttpEngine.class);
+            assertNotNull(engine);
+            assertEquals(expectedPort, engine.getServerPort());
+
+            // Verify the API route works on the main server port
+            given()
+                    .port(expectedPort)
+                    .when()
+                    .get("/api/test")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("api-response"));
+
+        } finally {
+            context.stop();
+        }
+    }
+
+    private boolean isPortAvailable(int port) {
+        try (java.net.ServerSocket socket = new java.net.ServerSocket(port)) {
+            socket.setReuseAddress(true);
+            return true;
+        } catch (java.io.IOException e) {
+            return false;
+        }
+    }
+
     static CamelContext createCamelContext() throws Exception {
         return createCamelContext(null);
     }
