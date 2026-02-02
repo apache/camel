@@ -34,6 +34,14 @@ The option `extractAllMetadata` has been removed. Using `includeRawMetadata` wil
 
 It corresponds to the removal of functionality no more working since 4.17. Given that this functionality was never available in a LTS version,that the next LST version is the next one and the fix requires important change in upstream dependency; it is not going through a deprecation phase and removed directly.
 
+=== camel-tahu
+
+The upgrade of Tahu from 1.0.17 to 1.0.18 introduced an API break. HostApplicationEventHandler has been renamed to MultiHostApplicationEventHandler and introduced one more parameter on all methods.
+
+Even if the interface HostApplicationEventHandler is public, I do not expect Camel users to use the implementation TahuHostApplicationEventHandler from Camel. Also the change would be relatively trivial. So replacing it without deprecating it first in order to be able to use the latest Tahu version right away.
+
+Consequently, there is an API break `org.apache.camel.tahu.handlers.TahuHostApplicationEventHandler` has been removed. It is replaced by `org.apache.camel.tahu.handlers.MultiTahuHostApplicationEventHandler`.
+
 === Component deprecation
 
 The `camel-olingo2` and `camel-olingo4` component are deprecated.

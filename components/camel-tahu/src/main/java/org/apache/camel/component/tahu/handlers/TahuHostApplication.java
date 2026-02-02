@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.eclipse.tahu.host.HostApplication;
+import org.eclipse.tahu.host.api.MultiHostApplicationEventHandler;
 import org.eclipse.tahu.message.PayloadDecoder;
 import org.eclipse.tahu.message.SparkplugBPayloadDecoder;
 import org.eclipse.tahu.message.model.EdgeNodeDescriptor;
@@ -32,7 +33,7 @@ import org.eclipse.tahu.mqtt.RandomStartupDelay;
 
 public class TahuHostApplication extends HostApplication {
 
-    TahuHostApplication(TahuHostApplicationEventHandler eventHandler, String hostId, List<String> sparkplugSubscriptions,
+    TahuHostApplication(MultiHostApplicationEventHandler eventHandler, String hostId, List<String> sparkplugSubscriptions,
                         List<MqttServerDefinition> serverDefinitions, RandomStartupDelay randomStartupDelay,
                         PayloadDecoder<SparkplugBPayload> payloadDecoder, boolean onlineState) {
         super(eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay, payloadDecoder, onlineState);
@@ -106,8 +107,8 @@ public class TahuHostApplication extends HostApplication {
             TahuHostApplication cachedTahuHostApplication = tahuHostApplication;
 
             if (cachedTahuHostApplication == null) {
-                TahuHostApplicationEventHandler eventHandler
-                        = new TahuHostApplicationEventHandler(onMessageConsumer, onMetricConsumer);
+                MultiHostApplicationEventHandler eventHandler
+                        = new MultiTahuHostApplicationEventHandler(onMessageConsumer, onMetricConsumer);
 
                 cachedTahuHostApplication = tahuHostApplication = new TahuHostApplication(
                         eventHandler, hostId, sparkplugSubscriptions, serverDefinitions, randomStartupDelay, payloadDecoder,
