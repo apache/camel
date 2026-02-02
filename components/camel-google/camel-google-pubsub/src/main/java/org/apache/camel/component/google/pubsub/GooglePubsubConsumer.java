@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
+import java.time.Duration;
+
 import com.google.api.core.AbstractApiService;
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ApiException;
@@ -46,6 +48,8 @@ import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
 import org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -201,12 +205,14 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                     }
 
                     // Add backoff delay for recoverable errors to prevent tight loop
-                    try {
-                        Thread.sleep(5000); // 5 second backoff
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+                    Tasks.foregroundTask()
+                            .withBudget(Budgets.iterationBudget()
+                                    .withMaxIterations(1)
+                                    .withInterval(Duration.ofSeconds(5))
+                                    .build())
+                            .withName("PubSubRetryDelay")
+                            .build()
+                            .run(getEndpoint().getCamelContext(), () -> true);
                 } finally {
                     localLog.debug("Stopping async subscriber {}", subscriptionName);
                     subscriber.stopAsync();
