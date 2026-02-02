@@ -96,6 +96,21 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
     private Map<String, Object> additionalBodyProperty;
 
+    // ========== EMBEDDINGS CONFIGURATION ==========
+
+    @UriParam
+    @Metadata(description = "The model to use for embeddings")
+    private String embeddingModel;
+
+    @UriParam
+    @Metadata(description = "Number of dimensions for the embedding output. Only supported by text-embedding-3 models. " +
+                            "Reducing dimensions can lower costs and improve performance without significant quality loss.")
+    private Integer dimensions;
+
+    @UriParam(enums = "float,base64", defaultValue = "float")
+    @Metadata(description = "The format for embedding output: 'float' for list of floats, 'base64' for compressed format")
+    private String encodingFormat = "float";
+
     public String getApiKey() {
         return apiKey;
     }
@@ -222,6 +237,30 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setAdditionalBodyProperty(Map<String, Object> additionalBodyProperty) {
         this.additionalBodyProperty = additionalBodyProperty;
+    }
+
+    public String getEmbeddingModel() {
+        return embeddingModel;
+    }
+
+    public void setEmbeddingModel(String embeddingModel) {
+        this.embeddingModel = embeddingModel;
+    }
+
+    public Integer getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(Integer dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public String getEncodingFormat() {
+        return encodingFormat;
+    }
+
+    public void setEncodingFormat(String encodingFormat) {
+        this.encodingFormat = encodingFormat;
     }
 
     public OpenAIConfiguration copy() {

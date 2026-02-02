@@ -35,6 +35,11 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "conversationMemory": target.getConfiguration().setConversationMemory(property(camelContext, boolean.class, value)); return true;
         case "developermessage":
         case "developerMessage": target.getConfiguration().setDeveloperMessage(property(camelContext, java.lang.String.class, value)); return true;
+        case "dimensions": target.getConfiguration().setDimensions(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "embeddingmodel":
+        case "embeddingModel": target.getConfiguration().setEmbeddingModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "encodingformat":
+        case "encodingFormat": target.getConfiguration().setEncodingFormat(property(camelContext, java.lang.String.class, value)); return true;
         case "jsonschema":
         case "jsonSchema": target.getConfiguration().setJsonSchema(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -73,6 +78,11 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "conversationMemory": return boolean.class;
         case "developermessage":
         case "developerMessage": return java.lang.String.class;
+        case "dimensions": return java.lang.Integer.class;
+        case "embeddingmodel":
+        case "embeddingModel": return java.lang.String.class;
+        case "encodingformat":
+        case "encodingFormat": return java.lang.String.class;
         case "jsonschema":
         case "jsonSchema": return java.lang.String.class;
         case "lazystartproducer":
@@ -112,6 +122,11 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "conversationMemory": return target.getConfiguration().isConversationMemory();
         case "developermessage":
         case "developerMessage": return target.getConfiguration().getDeveloperMessage();
+        case "dimensions": return target.getConfiguration().getDimensions();
+        case "embeddingmodel":
+        case "embeddingModel": return target.getConfiguration().getEmbeddingModel();
+        case "encodingformat":
+        case "encodingFormat": return target.getConfiguration().getEncodingFormat();
         case "jsonschema":
         case "jsonSchema": return target.getConfiguration().getJsonSchema();
         case "lazystartproducer":

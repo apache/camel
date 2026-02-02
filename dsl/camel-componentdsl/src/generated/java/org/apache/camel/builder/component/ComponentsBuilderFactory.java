@@ -3636,7 +3636,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * OpenAI (camel-openai)
-     * OpenAI endpoint for chat completion.
+     * OpenAI endpoint for chat completion and embeddings.
      * 
      * Category: ai
      * Since: 4.17
