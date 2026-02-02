@@ -75,7 +75,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     @Override
     @Deprecated
     public void setTag(Tag key, String value) {
-        String attribute = TAG_MAP.getOrDefault(key, key.getAttribute());
+        String attribute = TAG_MAP.getOrDefault(key.getAttribute(), key.getAttribute());
         this.span.setAttribute(attribute, value);
         if (!attribute.equals(key.getAttribute())) {
             this.span.setAttribute(key.getAttribute(), value);
@@ -85,7 +85,7 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     @Override
     @Deprecated
     public void setTag(Tag key, Number value) {
-        this.span.setAttribute(TAG_MAP.getOrDefault(key, key.getAttribute()), value.intValue());
+        this.span.setAttribute(TAG_MAP.getOrDefault(key.getAttribute(), key.getAttribute()), value.intValue());
     }
 
     @Override
