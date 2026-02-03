@@ -1848,7 +1848,7 @@ The foo function can now be used in simple such as:
 
 [source,java]
 ----
-from("direct:start2")
+from("direct:start")
         .setBody(simple("Hello ${foo}"))
         .to("mock:result");
 ----
@@ -1876,6 +1876,16 @@ For example the foo function uses variable with name `msg` as the input:
 from("direct:start")
         .setVariable("msg", constant("Moon"))
         .setBody(simple("Bye ${foo(${variable.msg})}"))
+        .to("mock:result");
+----
+
+And instead of nesting the variable inside the foo function, we can also use the `~>` chain operator:
+
+[source,java]
+----
+from("direct:start")
+        .setVariable("msg", constant("Moon"))
+        .setBody(simple("Bye ${variable.msg} ~> ${foo}"))
         .to("mock:result");
 ----
 

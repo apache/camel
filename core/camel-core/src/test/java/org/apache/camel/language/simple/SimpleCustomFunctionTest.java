@@ -59,6 +59,16 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
     }
 
     @Test
+    public void testCustomFunctionWithChain() throws Exception {
+        SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
+        Assertions.assertEquals(2, reg.customSize());
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye I was here Pluto");
+        template.sendBody("direct:start3b", "World");
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testCustomFunctionWithSimple() throws Exception {
         SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(context);
         Assertions.assertEquals(2, reg.customSize());
@@ -96,6 +106,11 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
                 from("direct:start3")
                         .setVariable("msg", constant("Moon"))
                         .setBody(simple("Bye ${function(foo,${variable.msg})}"))
+                        .to("mock:result");
+
+                from("direct:start3b")
+                        .setVariable("msg", constant("Pluto"))
+                        .setBody(simple("Bye ${variable.msg} ~> ${foo}"))
                         .to("mock:result");
 
                 from("direct:start4")
