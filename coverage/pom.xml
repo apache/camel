@@ -38,6 +38,20 @@
         <enforcer.skip>true</enforcer.skip>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>atlassian</id>
+            <url>https://packages.atlassian.com/maven-external/</url>
+            <name>atlassian external repo</name>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- camel core -->
         <dependency>
@@ -739,12 +753,17 @@
             <artifactId>camel-debezium-mysql</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- NOTE: this component has some issue with a transitive dependency -->
-        <!-- dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-debezium-oracle</artifactId>
             <version>${project.version}</version>
-        </dependency -->
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-debezium-postgres</artifactId>
@@ -2207,11 +2226,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -2619,35 +2633,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel.tests</groupId>
-            <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>spi-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!-- testing jars -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-management</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cxf-common</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-        </dependency>
     </dependencies>
 
     <profiles>
