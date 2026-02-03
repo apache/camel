@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.Runtime.Version;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -73,7 +74,9 @@ public class WebsocketRoute2Test extends WebsocketCamelRouterTestSupport {
                 // route for a broadcast line
                 from("atmosphere-websocket:///broadcast").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) {
-                        createResponse(exchange, false);
+                        Version javaVersion = Runtime.version();
+                        boolean useStreaming = javaVersion.compareTo(Version.parse("25")) >= 0;
+                        createResponse(exchange, useStreaming);
                     }
                 }).to("atmosphere-websocket:///broadcast?sendToAll=true");
             }
