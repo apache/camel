@@ -16,7 +16,7 @@
  */
 package org.apache.camel.opentelemetry;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import io.opentelemetry.api.baggage.Baggage;
@@ -27,22 +27,21 @@ import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;
 import org.apache.camel.tracing.SpanAdapter;
 import org.apache.camel.tracing.Tag;
-import org.apache.camel.tracing.TagConstants;
 
 public class OpenTelemetrySpanAdapter implements SpanAdapter {
 
     private static final String DEFAULT_EVENT_NAME = "log";
-    private static final Map<String, String> TAG_MAP = new HashMap<>();
+    private static final Map<Tag, String> TAG_MAP = new EnumMap<>(Tag.class);
 
     static {
-        TAG_MAP.put(TagConstants.COMPONENT, "component");
-        TAG_MAP.put(TagConstants.DB_SYSTEM, SemanticAttributes.DB_SYSTEM.getKey());
-        TAG_MAP.put(TagConstants.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.getKey());
-        TAG_MAP.put(TagConstants.DB_NAME, SemanticAttributes.DB_NAME.getKey());
-        TAG_MAP.put(TagConstants.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.getKey());
-        TAG_MAP.put(TagConstants.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.getKey());
-        TAG_MAP.put(TagConstants.HTTP_URL, SemanticAttributes.HTTP_URL.getKey());
-        TAG_MAP.put(TagConstants.MESSAGE_BUS_DESTINATION, "message_bus.destination");
+        TAG_MAP.put(Tag.COMPONENT, "component");
+        TAG_MAP.put(Tag.DB_TYPE, SemanticAttributes.DB_SYSTEM.getKey());
+        TAG_MAP.put(Tag.DB_STATEMENT, SemanticAttributes.DB_STATEMENT.getKey());
+        TAG_MAP.put(Tag.DB_INSTANCE, SemanticAttributes.DB_NAME.getKey());
+        TAG_MAP.put(Tag.HTTP_METHOD, SemanticAttributes.HTTP_METHOD.getKey());
+        TAG_MAP.put(Tag.HTTP_STATUS, SemanticAttributes.HTTP_STATUS_CODE.getKey());
+        TAG_MAP.put(Tag.HTTP_URL, SemanticAttributes.HTTP_URL.getKey());
+        TAG_MAP.put(Tag.MESSAGE_BUS_DESTINATION, "message_bus.destination");
     }
 
     private Baggage baggage;
@@ -73,7 +72,6 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     }
 
     @Override
-    @Deprecated
     public void setTag(Tag key, String value) {
         String attribute = TAG_MAP.getOrDefault(key, key.getAttribute());
         this.span.setAttribute(attribute, value);
@@ -83,7 +81,6 @@ public class OpenTelemetrySpanAdapter implements SpanAdapter {
     }
 
     @Override
-    @Deprecated
     public void setTag(Tag key, Number value) {
         this.span.setAttribute(TAG_MAP.getOrDefault(key, key.getAttribute()), value.intValue());
     }
