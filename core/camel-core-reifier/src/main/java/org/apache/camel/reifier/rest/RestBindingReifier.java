@@ -73,18 +73,18 @@ public class RestBindingReifier extends AbstractReifier {
         rbc.setClientResponseValidation(validation);
         rbc.setConsumes(parseString(definition.getConsumes()));
         rbc.setProduces(parseString(definition.getProduces()));
-        rbc.setCorsHeaders(config.getCorsHeaders());
-        rbc.setQueryDefaultValues(definition.getDefaultValues());
-        rbc.setQueryAllowedValues(definition.getAllowedValues());
+        rbc.setCorsHeaders(parseMap(config.getCorsHeaders()));
+        rbc.setQueryDefaultValues(parseMap(definition.getDefaultValues()));
+        rbc.setQueryAllowedValues(parseMap(definition.getAllowedValues()));
         rbc.setRequiredBody(definition.getRequiredBody() != null && definition.getRequiredBody());
-        rbc.setRequiredQueryParameters(definition.getRequiredQueryParameters());
-        rbc.setRequiredHeaders(definition.getRequiredHeaders());
+        rbc.setRequiredQueryParameters(parseSet(definition.getRequiredQueryParameters()));
+        rbc.setRequiredHeaders(parseSet(definition.getRequiredHeaders()));
         rbc.setType(parseString(definition.getType()));
         rbc.setTypeClass(definition.getTypeClass());
         rbc.setOutType(parseString(definition.getOutType()));
         rbc.setOutTypeClass(definition.getOutTypeClass());
-        rbc.setResponseCodes(definition.getResponseCodes());
-        rbc.setResponseHeaders(definition.getResponseHeaders());
+        rbc.setResponseCodes(parseMap(definition.getResponseCodes()));
+        rbc.setResponseHeaders(parseSet(definition.getResponseHeaders()));
 
         // use factory to create advice
         return RestBindingAdviceFactory.build(camelContext, rbc);
