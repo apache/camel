@@ -48,6 +48,7 @@ public class VertxPlatformHttpServerConfiguration {
     private Cors cors = new Cors();
     private SessionConfig sessionConfig = new SessionConfig();
     private AuthenticationConfig authenticationConfig = new AuthenticationConfig();
+    private String serverType;
 
     public int getPort() {
         return getBindPort();
@@ -143,6 +144,25 @@ public class VertxPlatformHttpServerConfiguration {
 
     public void setAuthenticationConfig(AuthenticationConfig authenticationConfig) {
         this.authenticationConfig = authenticationConfig;
+    }
+
+    /**
+     * The server type (e.g., "server" or "management") used to distinguish between main server and management server.
+     * This is used by {@link VertxPlatformHttpRouter} to help identify the correct router when multiple servers are
+     * running.
+     */
+    public String getServerType() {
+        return serverType;
+    }
+
+    /**
+     * Sets the server type (e.g., "server" or "management").
+     *
+     * @see VertxPlatformHttpRouter#SERVER_TYPE_SERVER
+     * @see VertxPlatformHttpRouter#SERVER_TYPE_MANAGEMENT
+     */
+    public void setServerType(String serverType) {
+        this.serverType = serverType;
     }
 
     public static class SessionConfig {
