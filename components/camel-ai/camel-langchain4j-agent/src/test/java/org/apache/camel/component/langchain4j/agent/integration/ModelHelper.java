@@ -69,7 +69,7 @@ public class ModelHelper {
             return OpenAiEmbeddingModel.builder()
                     .apiKey(openaiService.apiKey())
                     .baseUrl(openaiService.baseUrl())
-                    .modelName("granite-embedding")
+                    .modelName(openaiService.embeddingModelName())
                     .timeout(ofSeconds(30))
                     .build();
         }
@@ -77,7 +77,7 @@ public class ModelHelper {
         // Standard Ollama embedding model
         return OllamaEmbeddingModel.builder()
                 .baseUrl(ollamaService.baseUrl())
-                .modelName("granite-embedding")
+                .modelName(ollamaService.embeddingModelName())
                 .timeout(ofSeconds(60))
                 .build();
     }

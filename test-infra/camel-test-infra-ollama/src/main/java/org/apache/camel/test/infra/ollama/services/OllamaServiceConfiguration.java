@@ -21,5 +21,9 @@ public interface OllamaServiceConfiguration {
 
     String modelName();
 
+    default String embeddingModelName() {
+        return null;
+    }
+
     String apiKey();
 }

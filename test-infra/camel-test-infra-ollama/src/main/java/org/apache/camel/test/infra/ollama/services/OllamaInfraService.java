@@ -28,6 +28,8 @@ public interface OllamaInfraService extends InfrastructureService {
 
     String modelName();
 
+    String embeddingModelName();
+
     String baseUrl();
 
     String baseUrlV1();

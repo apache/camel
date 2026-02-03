@@ -38,6 +38,11 @@ public class OllamaLocalHostInfraService implements OllamaInfraService {
         }
 
         @Override
+        public String embeddingModelName() {
+            return LocalPropertyResolver.getProperty(OllamaLocalContainerInfraService.class, OllamaProperties.EMBEDDING_MODEL);
+        }
+
+        @Override
         public String apiKey() {
             return LocalPropertyResolver.getProperty(OllamaLocalContainerInfraService.class, OllamaProperties.API_KEY);
         }
@@ -85,6 +90,11 @@ public class OllamaLocalHostInfraService implements OllamaInfraService {
     @Override
     public String modelName() {
         return configuration.modelName();
+    }
+
+    @Override
+    public String embeddingModelName() {
+        return configuration.embeddingModelName();
     }
 
     @Override

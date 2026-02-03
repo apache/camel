@@ -33,11 +33,13 @@ public class OpenAIInfraService implements OllamaInfraService {
 
     private static final String DEFAULT_BASE_URL = "https://api.openai.com/v1/";
     private static final String DEFAULT_MODEL_NAME = "gpt-4o-mini";
+    private static final String DEFAULT_EMBEDDING_MODEL_NAME = "text-embedding-ada-002";
 
     // Environment variable names
     private static final String ENV_OPENAI_API_KEY = "OPENAI_API_KEY";
     private static final String ENV_OPENAI_BASE_URL = "OPENAI_BASE_URL";
     private static final String ENV_OPENAI_MODEL = "OPENAI_MODEL";
+    private static final String ENV_OPENAI_EMBEDDING_MODEL = "OPENAI_EMBEDDING_MODEL";
 
     @Override
     public void registerProperties() {
@@ -77,6 +79,21 @@ public class OpenAIInfraService implements OllamaInfraService {
             return envVar;
         }
         return DEFAULT_MODEL_NAME;
+    }
+
+    @Override
+    public String embeddingModelName() {
+        // First try openai.embedding.model system property
+        String sysProp = System.getProperty(OllamaProperties.OPENAI_EMBEDDING_MODEL);
+        if (sysProp != null && !sysProp.trim().isEmpty()) {
+            return sysProp;
+        }
+        // Then try OPENAI_EMBEDDING_MODEL environment variable
+        String envVar = System.getenv(ENV_OPENAI_EMBEDDING_MODEL);
+        if (envVar != null && !envVar.trim().isEmpty()) {
+            return envVar;
+        }
+        return DEFAULT_EMBEDDING_MODEL_NAME;
     }
 
     @Override
