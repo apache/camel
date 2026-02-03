@@ -17,6 +17,8 @@
 package org.apache.camel.reifier;
 
 import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,6 +54,31 @@ public abstract class AbstractReifier implements BeanRepository {
 
     protected CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    protected Map<String, String> parseMap(Map<String, String> map) {
+        if (map == null) {
+            return null;
+        }
+        Map<String, String> answer = new LinkedHashMap<>();
+        for (var e : map.entrySet()) {
+            String newKey = parseString(e.getKey());
+            String newValue = parseString(e.getValue());
+            answer.put(newKey, newValue);
+        }
+        return answer.isEmpty() ? map : answer;
+    }
+
+    protected Set<String> parseSet(Set<String> set) {
+        if (set == null) {
+            return null;
+        }
+        Set<String> answer = new LinkedHashSet<>();
+        for (var e : set) {
+            String value = parseString(e);
+            answer.add(value);
+        }
+        return answer.isEmpty() ? set : answer;
     }
 
     protected String parseString(String text) {
