@@ -143,7 +143,7 @@ pipeline {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD}"
                                         } else if ("${JDK_NAME}" == "jdk_17_latest") {
                                             // Enable coverage required later by Sonar check
-                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Pcoverage -Dsonar.coverage.jacoco.xmlReportPaths=coverage/target/site/jacoco-aggregate/jacoco.xml"
+                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Pcoverage"
                                         } else {
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install"
                                         }
@@ -171,7 +171,7 @@ pipeline {
                                 if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_17_latest") {
                                     withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                         echo "Code quality review ENABLED for ${PLATFORM} with ${JDK_NAME}"
-                                        sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
+                                        sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.coverage.jacoco.xmlReportPaths=coverage/target/site/jacoco-aggregate/jacoco.xml"
                                     }
                                 } else {
                                     echo "Code quality review DISABLED for ${PLATFORM} with ${JDK_NAME}"

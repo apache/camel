@@ -2736,11 +2736,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-test-junit5</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3151,11 +3146,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-openapi-rest-dsl-generator</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel.tests</groupId>
-                <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
