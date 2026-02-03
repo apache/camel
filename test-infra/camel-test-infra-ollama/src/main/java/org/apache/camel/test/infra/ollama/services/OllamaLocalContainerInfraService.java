@@ -46,6 +46,11 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
         }
 
         @Override
+        public String embeddingModelName() {
+            return LocalPropertyResolver.getProperty(OllamaLocalContainerInfraService.class, OllamaProperties.EMBEDDING_MODEL);
+        }
+
+        @Override
         public String apiKey() {
             return LocalPropertyResolver.getProperty(OllamaLocalContainerInfraService.class, OllamaProperties.API_KEY);
         }
@@ -133,6 +138,11 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
     }
 
     @Override
+    public String embeddingModelName() {
+        return configuration.embeddingModelName();
+    }
+
+    @Override
     public String baseUrl() {
         return container.getEndpoint();
     }
@@ -162,6 +172,16 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
             container.execInContainer("ollama", "pull", getModel());
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
+        }
+
+        String embeddingModel = embeddingModelName();
+        if (embeddingModel != null && !embeddingModel.isEmpty()) {
+            LOG.info("Pulling the embedding model {}", embeddingModel);
+            try {
+                container.execInContainer("ollama", "pull", embeddingModel);
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         registerProperties();

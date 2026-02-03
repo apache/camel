@@ -53,7 +53,7 @@ public class OllamaTestSupport extends CamelTestSupport {
                 .build();
 
         OllamaEmbeddingOptions ollamaOptions = OllamaEmbeddingOptions.builder()
-                .model(OLLAMA.modelName())
+                .model(OLLAMA.embeddingModelName())
                 .build();
 
         EmbeddingModel embeddingModel = OllamaEmbeddingModel.builder()

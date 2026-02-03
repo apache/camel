@@ -50,6 +50,11 @@ public final class OllamaServiceFactory {
         }
 
         @Override
+        public String embeddingModelName() {
+            return getService().embeddingModelName();
+        }
+
+        @Override
         public String baseUrl() {
             return getService().baseUrl();
         }
