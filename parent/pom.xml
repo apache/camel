@@ -215,7 +215,7 @@
         <google-cloud-secretmanager-version>2.83.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.62.1</google-cloud-storage-version>
         <google-cloud-aiplatform-version>3.84.0</google-cloud-aiplatform-version>
-        <google-genai-version>1.36.0</google-genai-version>
+        <google-genai-version>1.37.0</google-genai-version>
         <graaljs-version>25.0.2</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
         <greenmail-version>2.1.8</greenmail-version>
