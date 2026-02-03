@@ -227,8 +227,14 @@ public class CamelReceiveAction extends ActionBaseCommand {
         if (name != null) {
             return doCall(name, autoDump);
         } else {
-            return doCallLocal(autoDump);
+            // are there only 1 pid running then use that
+            List<Long> pids = findPids("*");
+            if (pids.size() == 1) {
+                return doCall(pids.get(0), autoDump);
+            }
         }
+        // okay fallback and run camel locally to connect to external system
+        return doCallLocal(autoDump);
     }
 
     private Integer doCall(String name, boolean autoDump) throws Exception {
@@ -240,9 +246,30 @@ public class CamelReceiveAction extends ActionBaseCommand {
                     Files.writeString(f, "{}");
                 }
             } else {
-                Path outputFile = writeReceiveData();
+                Path outputFile = writeReceiveData(pid);
+                printer().println("Starting to receive messages from existing Camel: " + name + " (pid: " + pid + ")");
                 showStatus(outputFile);
             }
+        }
+
+        if (autoDump) {
+            return doDumpCall();
+        }
+
+        return 0;
+    }
+
+    private Integer doCall(long pid, boolean autoDump) throws Exception {
+        this.pid = pid;
+        if ("clear".equals(action)) {
+            Path f = getReceiveFile("" + pid);
+            if (Files.exists(f)) {
+                Files.writeString(f, "{}");
+            }
+        } else {
+            Path outputFile = writeReceiveData(pid);
+            printer().println("Starting to receive messages from existing Camel (pid: " + pid + ")");
+            showStatus(outputFile);
         }
 
         if (autoDump) {
@@ -268,7 +295,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
         // spawn thread that waits for response file
         final CountDownLatch latch = new CountDownLatch(1);
         this.pid = ProcessHandle.current().pid();
-        Path outputFile = writeReceiveData();
+        Path outputFile = writeReceiveData(this.pid);
         Thread t = new Thread("CamelJBangSendStatus") {
             @Override
             public void run() {
@@ -294,6 +321,8 @@ public class CamelReceiveAction extends ActionBaseCommand {
         };
         // keep thread running as we need it to show the status before terminating
         t.start();
+        printer().println(
+                "Starting to receive messages by connecting to external system using local process (pid: " + pid + ")");
 
         Integer exit = run.call();
         latch.await();
@@ -301,7 +330,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
         return exit;
     }
 
-    protected Path writeReceiveData() {
+    protected Path writeReceiveData(long pid) {
         // ensure output file is deleted before executing action
         Path outputFile = getOutputFile(Long.toString(pid));
         PathUtils.deleteFile(outputFile);
