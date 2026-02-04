@@ -2736,6 +2736,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
+                <artifactId>camel-test</artifactId>
+                <version>4.18.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-test-junit5</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -4381,13 +4386,6 @@
                                 <configuration>
                                     <propertyName>jacocoAgent</propertyName>
                                 </configuration>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>

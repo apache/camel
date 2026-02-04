@@ -105,7 +105,6 @@
     </distributionManagement>
 
     <properties>
-
         <!-- unify the encoding for all the modules -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -118,8 +117,14 @@
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
         <minimalJavaBuildVersion>${jdk.version}</minimalJavaBuildVersion>
 
-        <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
+        <!-- reproducible builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>2026-01-12T11:12:19Z</project.build.outputTimestamp>
+
+        <!-- NOTE: this is required to correctly map each module coverage in Sonarqube. The ${maven.multiModuleProjectDirectory} may require some change
+            when upgrading to Maven 4.x, according to any of the new variables that will replace this one. -->
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${maven.multiModuleProjectDirectory}/coverage/target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
 
         <cyclonedx-maven-plugin-version>2.9.1</cyclonedx-maven-plugin-version>
         <flatten-maven-plugin-version>1.7.3</flatten-maven-plugin-version>
