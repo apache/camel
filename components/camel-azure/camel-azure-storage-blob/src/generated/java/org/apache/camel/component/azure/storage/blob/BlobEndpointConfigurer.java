@@ -75,6 +75,14 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "datacount":
         case "dataCount": target.getConfiguration().setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "deleteafterread":
+        case "deleteAfterRead": target.getConfiguration().setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
+        case "destinationblobprefix":
+        case "destinationBlobPrefix": target.getConfiguration().setDestinationBlobPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationblobsuffix":
+        case "destinationBlobSuffix": target.getConfiguration().setDestinationBlobSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationcontainer":
+        case "destinationContainer": target.getConfiguration().setDestinationContainer(property(camelContext, java.lang.String.class, value)); return true;
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": target.getConfiguration().setDownloadLinkExpiration(property(camelContext, java.lang.Long.class, value)); return true;
         case "exceptionhandler":
@@ -100,6 +108,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxRetryRequests": target.getConfiguration().setMaxRetryRequests(property(camelContext, int.class, value)); return true;
         case "maxsingleuploadsize":
         case "maxSingleUploadSize": target.getConfiguration().setMaxSingleUploadSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "moveafterread":
+        case "moveAfterRead": target.getConfiguration().setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
         case "pageblobsize":
         case "pageBlobSize": target.getConfiguration().setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
@@ -107,6 +117,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "prefix": target.getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "regex": target.getConfiguration().setRegex(property(camelContext, java.lang.String.class, value)); return true;
+        case "removeprefixonmove":
+        case "removePrefixOnMove": target.getConfiguration().setRemovePrefixOnMove(property(camelContext, boolean.class, value)); return true;
         case "repeatcount":
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "runlogginglevel":
@@ -195,6 +207,14 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "datacount":
         case "dataCount": return java.lang.Long.class;
         case "delay": return long.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "destinationblobprefix":
+        case "destinationBlobPrefix": return java.lang.String.class;
+        case "destinationblobsuffix":
+        case "destinationBlobSuffix": return java.lang.String.class;
+        case "destinationcontainer":
+        case "destinationContainer": return java.lang.String.class;
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": return java.lang.Long.class;
         case "exceptionhandler":
@@ -220,6 +240,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxRetryRequests": return int.class;
         case "maxsingleuploadsize":
         case "maxSingleUploadSize": return java.lang.Long.class;
+        case "moveafterread":
+        case "moveAfterRead": return boolean.class;
         case "operation": return org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class;
         case "pageblobsize":
         case "pageBlobSize": return java.lang.Long.class;
@@ -227,6 +249,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "prefix": return java.lang.String.class;
         case "regex": return java.lang.String.class;
+        case "removeprefixonmove":
+        case "removePrefixOnMove": return boolean.class;
         case "repeatcount":
         case "repeatCount": return long.class;
         case "runlogginglevel":
@@ -311,6 +335,14 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "datacount":
         case "dataCount": return target.getConfiguration().getDataCount();
         case "delay": return target.getDelay();
+        case "deleteafterread":
+        case "deleteAfterRead": return target.getConfiguration().isDeleteAfterRead();
+        case "destinationblobprefix":
+        case "destinationBlobPrefix": return target.getConfiguration().getDestinationBlobPrefix();
+        case "destinationblobsuffix":
+        case "destinationBlobSuffix": return target.getConfiguration().getDestinationBlobSuffix();
+        case "destinationcontainer":
+        case "destinationContainer": return target.getConfiguration().getDestinationContainer();
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": return target.getConfiguration().getDownloadLinkExpiration();
         case "exceptionhandler":
@@ -336,6 +368,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "maxRetryRequests": return target.getConfiguration().getMaxRetryRequests();
         case "maxsingleuploadsize":
         case "maxSingleUploadSize": return target.getConfiguration().getMaxSingleUploadSize();
+        case "moveafterread":
+        case "moveAfterRead": return target.getConfiguration().isMoveAfterRead();
         case "operation": return target.getConfiguration().getOperation();
         case "pageblobsize":
         case "pageBlobSize": return target.getConfiguration().getPageBlobSize();
@@ -343,6 +377,8 @@ public class BlobEndpointConfigurer extends PropertyConfigurerSupport implements
         case "pollStrategy": return target.getPollStrategy();
         case "prefix": return target.getConfiguration().getPrefix();
         case "regex": return target.getConfiguration().getRegex();
+        case "removeprefixonmove":
+        case "removePrefixOnMove": return target.getConfiguration().isRemovePrefixOnMove();
         case "repeatcount":
         case "repeatCount": return target.getRepeatCount();
         case "runlogginglevel":

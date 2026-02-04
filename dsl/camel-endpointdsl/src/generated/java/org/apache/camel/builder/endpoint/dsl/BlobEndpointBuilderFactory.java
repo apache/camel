@@ -572,6 +572,173 @@ public interface BlobEndpointBuilderFactory {
             return this;
         }
         /**
+         * Delete blobs from Azure after they have been retrieved. The delete is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the blob is not deleted. If this option is false, then the same blobs
+         * will be retrieved over and over again in the polls. Therefore, you
+         * need to use the Idempotent Consumer EIP in the route to filter out
+         * duplicates. You can filter using the BlobConstants#BLOB_NAME header,
+         * or only the blob name.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder deleteAfterRead(boolean deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+        /**
+         * Delete blobs from Azure after they have been retrieved. The delete is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the blob is not deleted. If this option is false, then the same blobs
+         * will be retrieved over and over again in the polls. Therefore, you
+         * need to use the Idempotent Consumer EIP in the route to filter out
+         * duplicates. You can filter using the BlobConstants#BLOB_NAME header,
+         * or only the blob name.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder deleteAfterRead(String deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+        /**
+         * Define the destination blob prefix to use when a blob must be moved,
+         * and moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param destinationBlobPrefix the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder destinationBlobPrefix(String destinationBlobPrefix) {
+            doSetProperty("destinationBlobPrefix", destinationBlobPrefix);
+            return this;
+        }
+        /**
+         * Define the destination blob suffix to use when a blob must be moved,
+         * and moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param destinationBlobSuffix the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder destinationBlobSuffix(String destinationBlobSuffix) {
+            doSetProperty("destinationBlobSuffix", destinationBlobSuffix);
+            return this;
+        }
+        /**
+         * Define the destination container where a blob must be moved when
+         * moveAfterRead is set to true.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param destinationContainer the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder destinationContainer(String destinationContainer) {
+            doSetProperty("destinationContainer", destinationContainer);
+            return this;
+        }
+        /**
+         * Move blobs from the container to a different container after they
+         * have been retrieved. To accomplish the operation, the
+         * destinationContainer option must be set. The copy blob operation is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the blob is not moved.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder moveAfterRead(boolean moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
+            return this;
+        }
+        /**
+         * Move blobs from the container to a different container after they
+         * have been retrieved. To accomplish the operation, the
+         * destinationContainer option must be set. The copy blob operation is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the blob is not moved.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder moveAfterRead(String moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
+            return this;
+        }
+        /**
+         * Remove the contents of the prefix configuration string from the new
+         * blob name before moving. For example, if prefix is set to 'notify/'
+         * and the destinationBlobPrefix is set to 'archive/', a blob with a
+         * name of 'notify/example.txt' will be moved to 'archive/example.txt',
+         * rather than the default behavior where the new name is
+         * 'archive/notify/example.txt'. Only applicable when moveAfterRead is
+         * true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param removePrefixOnMove the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder removePrefixOnMove(boolean removePrefixOnMove) {
+            doSetProperty("removePrefixOnMove", removePrefixOnMove);
+            return this;
+        }
+        /**
+         * Remove the contents of the prefix configuration string from the new
+         * blob name before moving. For example, if prefix is set to 'notify/'
+         * and the destinationBlobPrefix is set to 'archive/', a blob with a
+         * name of 'notify/example.txt' will be moved to 'archive/example.txt',
+         * rather than the default behavior where the new name is
+         * 'archive/notify/example.txt'. Only applicable when moveAfterRead is
+         * true.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param removePrefixOnMove the value to set
+         * @return the dsl builder
+         */
+        default BlobEndpointConsumerBuilder removePrefixOnMove(String removePrefixOnMove) {
+            doSetProperty("removePrefixOnMove", removePrefixOnMove);
+            return this;
+        }
+        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 

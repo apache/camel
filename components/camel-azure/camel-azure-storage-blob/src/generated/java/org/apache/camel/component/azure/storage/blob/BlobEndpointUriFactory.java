@@ -23,7 +23,7 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(60);
+        Set<String> props = new HashSet<>(66);
         props.add("accessKey");
         props.add("accountName");
         props.add("azureClientId");
@@ -53,6 +53,10 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("credentials");
         props.add("dataCount");
         props.add("delay");
+        props.add("deleteAfterRead");
+        props.add("destinationBlobPrefix");
+        props.add("destinationBlobSuffix");
+        props.add("destinationContainer");
         props.add("downloadLinkExpiration");
         props.add("exceptionHandler");
         props.add("exchangePattern");
@@ -66,11 +70,13 @@ public class BlobEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("maxResultsPerPage");
         props.add("maxRetryRequests");
         props.add("maxSingleUploadSize");
+        props.add("moveAfterRead");
         props.add("operation");
         props.add("pageBlobSize");
         props.add("pollStrategy");
         props.add("prefix");
         props.add("regex");
+        props.add("removePrefixOnMove");
         props.add("repeatCount");
         props.add("runLoggingLevel");
         props.add("sasToken");

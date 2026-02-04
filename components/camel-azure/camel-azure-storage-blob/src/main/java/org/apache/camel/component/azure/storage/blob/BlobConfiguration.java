@@ -119,6 +119,18 @@ public class BlobConfiguration implements Cloneable {
     private String azureClientSecret;
     @UriParam(label = "security")
     private String azureTenantId;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean deleteAfterRead;
+    @UriParam(label = "consumer")
+    private boolean moveAfterRead;
+    @UriParam(label = "consumer")
+    private String destinationContainer;
+    @UriParam(label = "consumer")
+    private String destinationBlobPrefix;
+    @UriParam(label = "consumer")
+    private String destinationBlobSuffix;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean removePrefixOnMove;
 
     /**
      * Azure account name to be used for authentication with azure blob services
@@ -583,6 +595,82 @@ public class BlobConfiguration implements Cloneable {
 
     public void setAzureTenantId(String azureTenantId) {
         this.azureTenantId = azureTenantId;
+    }
+
+    /**
+     * Delete blobs from Azure after they have been retrieved. The delete is only performed if the Exchange is
+     * committed. If a rollback occurs, the blob is not deleted.
+     * <p/>
+     * If this option is false, then the same blobs will be retrieved over and over again in the polls. Therefore, you
+     * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
+     * {@link BlobConstants#BLOB_NAME} header, or only the blob name.
+     */
+    public boolean isDeleteAfterRead() {
+        return deleteAfterRead;
+    }
+
+    public void setDeleteAfterRead(boolean deleteAfterRead) {
+        this.deleteAfterRead = deleteAfterRead;
+    }
+
+    /**
+     * Move blobs from the container to a different container after they have been retrieved. To accomplish the
+     * operation, the destinationContainer option must be set. The copy blob operation is only performed if the Exchange
+     * is committed. If a rollback occurs, the blob is not moved.
+     */
+    public boolean isMoveAfterRead() {
+        return moveAfterRead;
+    }
+
+    public void setMoveAfterRead(boolean moveAfterRead) {
+        this.moveAfterRead = moveAfterRead;
+    }
+
+    /**
+     * Define the destination container where a blob must be moved when moveAfterRead is set to true.
+     */
+    public String getDestinationContainer() {
+        return destinationContainer;
+    }
+
+    public void setDestinationContainer(String destinationContainer) {
+        this.destinationContainer = destinationContainer;
+    }
+
+    /**
+     * Define the destination blob prefix to use when a blob must be moved, and moveAfterRead is set to true.
+     */
+    public String getDestinationBlobPrefix() {
+        return destinationBlobPrefix;
+    }
+
+    public void setDestinationBlobPrefix(String destinationBlobPrefix) {
+        this.destinationBlobPrefix = destinationBlobPrefix;
+    }
+
+    /**
+     * Define the destination blob suffix to use when a blob must be moved, and moveAfterRead is set to true.
+     */
+    public String getDestinationBlobSuffix() {
+        return destinationBlobSuffix;
+    }
+
+    public void setDestinationBlobSuffix(String destinationBlobSuffix) {
+        this.destinationBlobSuffix = destinationBlobSuffix;
+    }
+
+    /**
+     * Remove the contents of the prefix configuration string from the new blob name before moving. For example, if
+     * prefix is set to 'notify/' and the destinationBlobPrefix is set to 'archive/', a blob with a name of
+     * 'notify/example.txt' will be moved to 'archive/example.txt', rather than the default behavior where the new name
+     * is 'archive/notify/example.txt'. Only applicable when moveAfterRead is true.
+     */
+    public boolean isRemovePrefixOnMove() {
+        return removePrefixOnMove;
+    }
+
+    public void setRemovePrefixOnMove(boolean removePrefixOnMove) {
+        this.removePrefixOnMove = removePrefixOnMove;
     }
 
     // *************************************************
