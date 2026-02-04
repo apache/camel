@@ -220,6 +220,73 @@ class BlobComponentTest extends CamelTestSupport {
         assertEquals(CredentialType.AZURE_IDENTITY, endpoint.getConfiguration().getCredentialType());
     }
 
+    @Test
+    void testCreateEndpointWithDeleteAfterRead() {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL&deleteAfterRead=true");
+
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("container", endpoint.getConfiguration().getContainerName());
+        assertEquals("blob", endpoint.getConfiguration().getBlobName());
+        assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
+        assertFalse(endpoint.getConfiguration().isMoveAfterRead());
+    }
+
+    @Test
+    void testCreateEndpointWithMoveAfterRead() {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
+                             + "&moveAfterRead=true&destinationContainer=archive");
+
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("container", endpoint.getConfiguration().getContainerName());
+        assertEquals("blob", endpoint.getConfiguration().getBlobName());
+        assertFalse(endpoint.getConfiguration().isDeleteAfterRead());
+        assertTrue(endpoint.getConfiguration().isMoveAfterRead());
+        assertEquals("archive", endpoint.getConfiguration().getDestinationContainer());
+    }
+
+    @Test
+    void testCreateEndpointWithMoveAfterReadFullConfig() {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL"
+                             + "&moveAfterRead=true&destinationContainer=archive"
+                             + "&destinationBlobPrefix=processed/&destinationBlobSuffix=.done"
+                             + "&removePrefixOnMove=true&prefix=incoming/");
+
+        assertTrue(endpoint.getConfiguration().isMoveAfterRead());
+        assertEquals("archive", endpoint.getConfiguration().getDestinationContainer());
+        assertEquals("processed/", endpoint.getConfiguration().getDestinationBlobPrefix());
+        assertEquals(".done", endpoint.getConfiguration().getDestinationBlobSuffix());
+        assertTrue(endpoint.getConfiguration().isRemovePrefixOnMove());
+        assertEquals("incoming/", endpoint.getConfiguration().getPrefix());
+    }
+
+    @Test
+    void testDeleteAfterReadDefaultIsFalse() {
+        context.getRegistry().bind("creds", storageSharedKeyCredential());
+
+        final BlobEndpoint endpoint = (BlobEndpoint) context
+                .getEndpoint(
+                        "azure-storage-blob://camelazure/container?blobName=blob&credentials=#creds&credentialType=SHARED_KEY_CREDENTIAL");
+
+        assertFalse(endpoint.getConfiguration().isDeleteAfterRead());
+        assertFalse(endpoint.getConfiguration().isMoveAfterRead());
+        assertNull(endpoint.getConfiguration().getDestinationContainer());
+        assertNull(endpoint.getConfiguration().getDestinationBlobPrefix());
+        assertNull(endpoint.getConfiguration().getDestinationBlobSuffix());
+        assertFalse(endpoint.getConfiguration().isRemovePrefixOnMove());
+    }
+
     private StorageSharedKeyCredential storageSharedKeyCredential() {
         return new StorageSharedKeyCredential("fakeuser", "fakekey");
     }
