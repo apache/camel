@@ -2478,6 +2478,7 @@ public class ModelParser extends BaseParser {
     }
     protected SimpleExpression doParseSimpleExpression() throws IOException, XmlPullParserException {
         return doParse(new SimpleExpression(), (def, key, val) -> switch (key) {
+                case "nested": def.setNested(val); yield true;
                 case "pretty": def.setPretty(val); yield true;
                 case "trimResult": def.setTrimResult(val); yield true;
                 default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);

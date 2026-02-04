@@ -3253,11 +3253,11 @@ public class SimpleTest extends LanguageTestSupport {
 
         SimpleLanguage sl = (SimpleLanguage) context.resolveLanguage("simple");
 
-        Expression expression = sl.createExpression("  Hi ${body}", Object.class, false, false);
+        Expression expression = sl.createExpression("  Hi ${body}", Object.class, false, false, false);
         String out = expression.evaluate(exchange, String.class);
         assertEquals("  Hi Camel  ", out);
 
-        expression = sl.createExpression("  Hi ${body}", Object.class, false, true);
+        expression = sl.createExpression("  Hi ${body}", Object.class, false, true, false);
         out = expression.evaluate(exchange, String.class);
         assertEquals("Hi Camel", out);
     }
