@@ -122,7 +122,10 @@ The Simple language has many built-in functions which allows access to various p
 
 NOTE: Some functions take 1 or more arguments enclosed in parentheses, and arguments separated by comma (ie `${replace('custID','customerId')}`.
 
-=== Camel Functions
+=== Core Camel Functions
+
+The Camel functions are as the name implies specific to Apache Camel and these functions are primary used
+to access Camel functionality and content of the message being routed.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
@@ -162,6 +165,8 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`headers` | `Map` | All the message headers as a `java.util.Map`.
 |`id` | `String` | The message id
 |`kindOfType(exp)` | `String` | What kind of type is the value (null,number,string,boolean,array,object).
+|`length()` | `int` | The payload length (number of bytes) of the message body
+|`length(exp)` | `int` | The payload length (number of bytes) of the expression.
 |`logExchange` | `String` | Dumps the exchange for logging purpose (uses `ExchangeFormatter` to format the output).
 |`mandatoryBodyAs(type)` | `<T>` | Converts the message body to the given type determined by its classname. If the body is `null` then an exception is thrown.
 |`mandatoryBodyAs(type)._OGNL_` | `Object` | Same as `mandatoryBodyAs(type)` and then invoke Camel _OGNL syntax_.
@@ -179,6 +184,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`setHeader(name,type,exp)` | `null` | Sets a message header with the given expression (optional converting to the given type).
 |`setVariable(name,type,exp)` | `null` | Sets a variable with the given expression (optional converting to the given type).
 |`stepId` | `String` | Returns the id of the current step the `Exchange` is being routed. Returns `null` if there are no steps.
+|`throwException(type,msg)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
 |`type:name.field` | `Object` | To refer to a type or field by its fully qualified classname. For example: `type:org.apache.camel.Exchange.FILE_NAME`.
 |`variable.key` | `Object` | To look up the variable with the given key.
 |`variable.key._OGNL_` | `Object` | To look up the variable with the given key and then invoke Camel _OGNL syntax_.
@@ -188,10 +194,7 @@ NOTE: Some functions take 1 or more arguments enclosed in parentheses, and argum
 |`variables.size` | `int` | The number of `Exchange` variables
 |====
 
-The Camel functions are as the name implies specific to Apache Camel and these functions are primary used
-to access Camel functionality and content of the message being routed.
-
-These functions are powerful to give easy access to the current `Exchange` / `Message` being routed so
+The core functions are powerful to give easy access to the current `Exchange` / `Message` being routed so
 you can get the message body, headers, variables and exchange properties.
 
 During routing, you can use the xref:eips:log-eip.adoc[LogEIP] to write to the log, for example:
@@ -230,8 +233,18 @@ YAML::
 
 NOTE: The Camel functions are often also used for basic data mapping to easily get the part of the message payload you desire.
 
+The `length` function calculates the payload size in bytes (if possible). This is calculated by
+(if necessary) converting the payload into String to use for determine the byte length.
+For example `${length('Hello World')}` returns `11`. For larger payloads, then when using xref:manual::stream-caching.adoc[stream caching]
+the length is pre-computed and usually does not require to load the content into memory.
+
+The `throwException` function is used for throwing an exception.
+
 
 === Array & List Functions
+
+The array and list functions are less commonly used as they are more advanced and require to work with data that are structured
+in arrays or lists.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
@@ -245,13 +258,12 @@ NOTE: The Camel functions are often also used for basic data mapping to easily g
 |`createEmpty(kind)` | `<T>` | Creates a new empty object of the given kind. The `string` kind creates an empty `String` object. The `list` creates an empty `ArrayList`, and `map` creates an empty `LinkedHashMap` object. Use `set` to create an empty `java.util.LinkedHashSet`.
 |`reverse(val1,val2,...)` | `List` | Returns a list of all the values, but in reverse order.
 |`shuffle(val1,val2,...)` | `List` | Returns a list of all the values shuffled in random order.
+|`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
+|`size(exp)` | `int` | Returns the number of elements in collection or array based value. If the value is null then 0 is returned, otherwise 1.
 |`skip(number)` | `Iterator` | The skip function iterates the message body and skips the first number of items. This can be used with the Splitter EIP to split a message body and skip the first N number of items.
 |`split(separator)` | `String[]` | Splits the message body as a `String` value using the separator into a `String` array. The separator is comma by default.
 |`split(exp,separator)` | `String[]` | Splits the expression as a `String` value using the separator into a `String` array. The separator is comma by default.
 |====
-
-The array and list functions are less commonly used as they are more advanced and require to work with data that are structured
-in arrays or lists.
 
 The `collate` function is used for grouping together data into smaller subgroups. Suppose you have a message body containing a list of 9 elements.
 Then by using `${collate(2)}` will transform this into an `java.util.Iterator` that will return each sub list.
@@ -279,6 +291,14 @@ The `reverse` function is to reverse the order of the values.
 For example `${reverse(1,2,3,4,5)}` will return a `List` with the values `5,4,3,2,1`.
 And the `shuffle` function will randomize the order of the values.
 
+The `size` functions is used to determine the number of elements, when using `Collection` or array based payloads.
+If not then either 0 or 1 is returned whether the body is `null` or not.
+For example if the message body contains a `List` with 7 elements then `${size()}` returns `7`.
+On the other hand if the message body contains a `InputStream` then the result is `1`, and when body is `null` then `0` is returned.
+And for String payloads such as `${size('Hello World')}` then `1` is always returned.
+
+TIP: Use the `length` function to return the payload length in bytes.
+
 The `skip` function is used for skipping the first number of elements. For example suppose you have a CSV file that contains a header line,
 and you want to skip this line, then you can use `${skip(1)}` that then returns an `Iterator` that starts at the 2nd line.
 
@@ -288,6 +308,8 @@ this into a `String[]` separated by new-line.
 
 
 === Boolean & Condition Functions
+
+The condition functions is small functions that mostly evaluates to a `boolean` value.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
@@ -303,7 +325,6 @@ this into a `String[]` separated by new-line.
 |`isNumeric()` | `boolean` | Whether the message body is numeric value (0..9). For more advanced checks use the `regex` operator.
 |`isNumeric(exp)` | `boolean` | Whether the expression is numeric value (0..9). For more advanced checks use the `regex` operator.
 |`not(predicate)` | `boolean` | Evaluates the predicate and returns the opposite.
-|`throwException(type,msg)` | `Exception` | Deliberately throws an error. Uses `IllegalArgumentException` by default if no type is specified (use fully qualified classname).
 |====
 
 The `assert` function evaluates the expression and if its false or null, then an `SimpleAssertionException` is thrown with the given message.
@@ -325,10 +346,10 @@ TIP: You can use the `regex` operator to use regular expressions for more advanc
 
 And the `not` function is function to inverse the boolean value.
 
-The `throwException` function is used for throwing an exception.
-
 
 === Date & Time Functions
+
+The date functions is used for parsing and formatting with date and times.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
@@ -338,8 +359,6 @@ The `throwException` function is used for throwing an exception.
 |`date:command:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` patterns. See `data:command` function for additional documentation on the commands.
 |`date-with-timezone:command:timezone:pattern` | `String` | Date formatting using `java.text.SimpleDateFormat` timezones and patterns. See `data:command` function for additional documentation on the commands.
 |====
-
-The date functions is used for parsing and formatting with date and times.
 
 For example to get the current time use `${date:now}` which is returned as a `java.util.Date` object.
 And you can use `${date:millis}` to get unix epoch timestamp as a long value.
@@ -353,6 +372,8 @@ This will get the `Date` object from the header with key birthday, and format th
 
 === Math & Numeric Functions
 
+Various functions to work with numbers.
+
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
@@ -363,14 +384,10 @@ This will get the `Date` object from the header with key birthday, and format th
 |`ceil(exp)` | `int` | Converts the expression to a floating number and return the ceil value (rounded up to nearest integer).
 |`floor()` | `int` | Converts the message body to a floating number and return the floor value (rounded down to nearest integer).
 |`floor(exp)` | `int` | Converts the expression to a floating number and return the floor value (rounded down to nearest integer).
-|`length()` | `int` | The payload length (number of bytes) of the message body
-|`length(exp)` | `int` | The payload length (number of bytes) of the expression.
 |`max(val1,val2,...)` | `long` | Returns the maximum number from all the values (integral numbers only).
 |`min(val1,val2,...)` | `long` | Returns the minimum number from all the values (integral numbers only).
 |`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).
 |`random(min,max)` | `int` | Returns a random `Integer` between min (included) and max (excluded),
-|`size()` | `int` | Returns the number of elements in collection or array based message body. If the value is null then 0 is returned, otherwise 1.
-|`size(exp)` | `int` | Returns the number of elements in collection or array based value. If the value is null then 0 is returned, otherwise 1.
 |`sum(val1,val2,...)` | `long` | Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.
 |====
 
@@ -386,24 +403,11 @@ For example `${ceil(5.7)}` returns `6`, and `${ceil(5.1)}` also returns `6`.
 The `floor` functions returns the value of number rounded down to the nearest integer that is smaller or equal to number.
 For example `${ceil(5.7)}` returns `5`, and `${ceil(5.1)}` also returns `5`.
 
-The `length` function calculates the payload size in bytes (if possible). This is calculated by
-(if necessary) converting the payload into String to use for determine the byte length.
-For example `${length('Hello World')}` returns `11`. For larger payloads, then when using xref:manual::stream-caching.adoc[stream caching]
-the length is pre-computed and usually does not require to load the content into memory.
-
 The `max` and `min` functions in are used to find the maximum or minimum value among a set of numeric integral values.
 For example message body contains a list `[10, 5, 30, 15]` then `${max()}` returns `30` and `${min()}` returns `5`.
 
 The `random` functions returns a random number between min and max (exclusive).
 For example `${random(10)}` returns a random number 0..9. And `${random(18,50)}` returns a random number between 18..49.
-
-The `size` functions is used to determine the number of elements, when using `Collection` or array based payloads.
-If not then either 0 or 1 is returned whether the body is `null` or not.
-For example if the message body contains a `List` with 7 elements then `${size()}` returns `7`.
-On the other hand if the message body contains a `InputStream` then the result is `1`, and when body is `null` then `0` is returned.
-And for String payloads such as `${size('Hello World')}` then `1` is always returned.
-
-TIP: Use the `length` function to return the payload length in bytes.
 
 The `sum` function adds up numeric values (not floating point) and returns the result as a long.
 Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${sum()}` results in `60`
@@ -411,6 +415,8 @@ You can also use the `sum` function to add or subtract numbers. For example if y
 `$sum($\{body},2)}`, and likewise to subtract you use negative number, such as `$sum($\{body},-2)}`.
 
 === Other Functions
+
+Other kind of functions.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
@@ -455,6 +461,8 @@ to load server files.
 
 === String Functions
 
+The string functions is various functions to work with values that are String and text based.
+
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
 |Function |Response Type |Description
@@ -489,8 +497,6 @@ to load server files.
 |`uppercase()` | `String` | Uppercases the message body
 |`uppercase(exp)` | `String` | Uppercases the expression
 |====
-
-The string functions is various functions to work with values that are String and text based.
 
 The `capitalize` function is used for _capitalizing_ words, by upper-casing the first letter in every words.
 For example `${capitalize('hello world')}` returns `Hello World`.
@@ -563,6 +569,8 @@ to call the `safeQuote` function as shown below:
 
 
 === XML & JSon Functions
+
+Functions to work with XML and JSon payloads.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |====
