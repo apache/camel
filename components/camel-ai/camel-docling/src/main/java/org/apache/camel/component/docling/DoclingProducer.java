@@ -34,7 +34,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -566,7 +565,8 @@ public class DoclingProducer extends DefaultProducer {
         BatchProcessingResults results = new BatchProcessingResults();
         results.setStartTimeMs(System.currentTimeMillis());
 
-        ExecutorService executor = Executors.newFixedThreadPool(parallelism);
+        ExecutorService executor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newFixedThreadPool(this, "DoclingBatch", parallelism);
         AtomicInteger index = new AtomicInteger(0);
         AtomicBoolean shouldCancel = new AtomicBoolean(false);
 
@@ -670,18 +670,7 @@ public class DoclingProducer extends DefaultProducer {
             }
 
         } finally {
-            executor.shutdown();
-            try {
-                // Allow 10 seconds grace period for executor shutdown
-                long shutdownTimeout = Math.max(10000, batchTimeout / 10);
-                if (!executor.awaitTermination(shutdownTimeout, TimeUnit.MILLISECONDS)) {
-                    LOG.warn("Executor did not terminate within {}ms, forcing shutdown", shutdownTimeout);
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
         }
 
         results.setEndTimeMs(System.currentTimeMillis());

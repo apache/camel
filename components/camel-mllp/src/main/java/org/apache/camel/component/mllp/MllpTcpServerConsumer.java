@@ -28,11 +28,7 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -66,12 +62,12 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "MLLP Producer")
 public class MllpTcpServerConsumer extends DefaultConsumer {
     final Logger log;
-    final ExecutorService validationExecutor;
-    final ExecutorService consumerExecutor;
     final Charset charset;
     final Hl7Util hl7Util;
     final boolean logPhi;
 
+    ExecutorService validationExecutor;
+    ExecutorService consumerExecutor;
     TcpServerBindThread bindThread;
     TcpServerAcceptThread acceptThread;
 
@@ -84,11 +80,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         MllpComponent component = endpoint.getComponent();
         this.logPhi = component.getLogPhi();
         hl7Util = new Hl7Util(component.getLogPhiMaxBytes(), logPhi);
-
-        validationExecutor = Executors.newCachedThreadPool();
-        consumerExecutor = new ThreadPoolExecutor(
-                1, getConfiguration().getMaxConcurrentConsumers(), getConfiguration().getAcceptTimeout(), TimeUnit.MILLISECONDS,
-                new SynchronousQueue<>());
     }
 
     @Override
@@ -158,6 +149,13 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        // Create executor services using Camel's ExecutorServiceManager for virtual threads support
+        validationExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newCachedThreadPool(this, "MllpValidation");
+        consumerExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newThreadPool(this, "MllpConsumer",
+                        1, getConfiguration().getMaxConcurrentConsumers());
+
         if (bindThread == null || !bindThread.isAlive()) {
             bindThread = new TcpServerBindThread(this, getEndpoint().getSslContextParameters());
 
@@ -180,11 +178,17 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        consumerExecutor.shutdownNow();
+        if (consumerExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(consumerExecutor);
+            consumerExecutor = null;
+        }
         if (acceptThread != null) {
             acceptThread.interrupt();
         }
-        validationExecutor.shutdownNow();
+        if (validationExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(validationExecutor);
+            validationExecutor = null;
+        }
     }
 
     public void handleMessageTimeout(String message, byte[] payload, Throwable cause) {

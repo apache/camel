@@ -27,6 +27,11 @@ import org.apache.curator.framework.CuratorFramework;
 
 public class ZooKeeperMultiGroup<T extends NodeState> extends ZooKeeperGroup<T> implements MultiGroup<T> {
 
+    /**
+     * @deprecated Use the constructor that accepts an ExecutorService from ExecutorServiceManager for virtual threads
+     *             support.
+     */
+    @Deprecated
     public ZooKeeperMultiGroup(CuratorFramework client, String path, Class<T> clazz) {
         super(client, path, clazz);
     }
@@ -35,6 +40,11 @@ public class ZooKeeperMultiGroup<T extends NodeState> extends ZooKeeperGroup<T> 
         super(client, path, clazz, executorService);
     }
 
+    /**
+     * @deprecated Use the constructor that accepts an ExecutorService from ExecutorServiceManager for virtual threads
+     *             support.
+     */
+    @Deprecated
     public ZooKeeperMultiGroup(CuratorFramework client, String path, Class<T> clazz, ThreadFactory threadFactory) {
         super(client, path, clazz, threadFactory);
     }

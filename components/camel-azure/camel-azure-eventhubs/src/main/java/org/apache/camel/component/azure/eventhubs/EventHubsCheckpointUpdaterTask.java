@@ -16,21 +16,24 @@
  */
 package org.apache.camel.component.azure.eventhubs;
 
-import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.azure.messaging.eventhubs.models.EventContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EventHubsCheckpointUpdaterTimerTask extends TimerTask {
+/**
+ * A task for updating Azure Event Hubs checkpoints using ScheduledExecutorService.
+ */
+public class EventHubsCheckpointUpdaterTask implements Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventHubsCheckpointUpdaterTimerTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EventHubsCheckpointUpdaterTask.class);
 
     private EventContext eventContext;
     private final AtomicInteger processedEvents;
+    private volatile long scheduledTime;
 
-    public EventHubsCheckpointUpdaterTimerTask(EventContext eventContext, AtomicInteger processedEvents) {
+    public EventHubsCheckpointUpdaterTask(EventContext eventContext, AtomicInteger processedEvents) {
         this.eventContext = eventContext;
         this.processedEvents = processedEvents;
     }
@@ -53,5 +56,17 @@ public class EventHubsCheckpointUpdaterTimerTask extends TimerTask {
 
     public void setEventContext(EventContext eventContext) {
         this.eventContext = eventContext;
+    }
+
+    public void setScheduledTime(long scheduledTime) {
+        this.scheduledTime = scheduledTime;
+    }
+
+    public long getScheduledTime() {
+        return scheduledTime;
+    }
+
+    public boolean isExpired() {
+        return System.currentTimeMillis() > scheduledTime;
     }
 }
