@@ -196,6 +196,141 @@ from("azure-storage-blob://camelazure/container1?accountName=yourAccountName&acc
 to("mock:results");
 --------------------------------------------------------------------------------
 
+==== Delete After Read
+
+The consumer supports automatic deletion of blobs after they have been successfully processed. This is useful when you want to ensure that blobs are only processed once.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Delete blob after successful processing
+from("azure-storage-blob://camelazure/container1?deleteAfterRead=true&accessKey=RAW(yourAccessKey)")
+    .log("Processing blob: ${header.CamelAzureStorageBlobBlobName}")
+    .to("direct:processBlob");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: azure-blob-delete-after-read
+    from:
+      uri: azure-storage-blob://camelazure/container1
+      parameters:
+        deleteAfterRead: true
+        credentialType: SHARED_ACCOUNT_KEY
+        accessKey: "RAW({{azure.accessKey}})"
+      steps:
+        - log: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
+        - to: direct:processBlob
+----
+====
+
+IMPORTANT: The delete operation is only performed if the Exchange is successfully committed. If processing fails or a rollback occurs, the blob will not be deleted and can be reprocessed on the next poll.
+
+NOTE: When `deleteAfterRead` is set to `false` (the default), the same blobs will be retrieved repeatedly in subsequent polls. In this case, you should use the Idempotent Consumer EIP to filter out duplicates based on the `CamelAzureStorageBlobBlobName` header.
+
+==== Move After Read
+
+The consumer can move blobs to a different container after successful processing. This is useful for archiving processed blobs or implementing a processing pipeline across containers.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Move blob to archive container after processing
+from("azure-storage-blob://camelazure/incoming?moveAfterRead=true&destinationContainer=archive&accessKey=RAW(yourAccessKey)")
+    .log("Processing blob: ${header.CamelAzureStorageBlobBlobName}")
+    .to("direct:processBlob");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: azure-blob-move-after-read
+    from:
+      uri: azure-storage-blob://camelazure/incoming
+      parameters:
+        moveAfterRead: true
+        destinationContainer: archive
+        credentialType: SHARED_ACCOUNT_KEY
+        accessKey: "RAW({{azure.accessKey}})"
+      steps:
+        - log: "Processing blob: ${header.CamelAzureStorageBlobBlobName}"
+        - to: direct:processBlob
+----
+====
+
+You can also customize the destination blob name by adding a prefix and/or suffix:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+// Move blob with prefix and suffix transformation
+// Source: incoming/data.csv -> Destination: processed/data.csv.done
+from("azure-storage-blob://camelazure/source"
+    + "?moveAfterRead=true"
+    + "&destinationContainer=archive"
+    + "&prefix=incoming/"
+    + "&removePrefixOnMove=true"
+    + "&destinationBlobPrefix=processed/"
+    + "&destinationBlobSuffix=.done"
+    + "&accessKey=RAW(yourAccessKey)")
+    .log("Processing: ${header.CamelAzureStorageBlobBlobName}")
+    .to("direct:processBlob");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: azure-blob-move-with-transform
+    from:
+      uri: azure-storage-blob://camelazure/source
+      parameters:
+        moveAfterRead: true
+        destinationContainer: archive
+        prefix: "incoming/"
+        removePrefixOnMove: true
+        destinationBlobPrefix: "processed/"
+        destinationBlobSuffix: ".done"
+        credentialType: SHARED_ACCOUNT_KEY
+        accessKey: "RAW({{azure.accessKey}})"
+      steps:
+        - log: "Processing: ${header.CamelAzureStorageBlobBlobName}"
+        - to: direct:processBlob
+----
+====
+
+The move operation works as follows:
+
+1. The blob is copied to the destination container with the new name
+2. The original blob is deleted from the source container
+3. Both operations only occur after the Exchange is successfully committed
+
+The following options control the move behavior:
+
+[width="100%",cols="25%,75%",options="header",]
+|===
+|Option |Description
+|`moveAfterRead` |Enable moving blobs after successful processing
+|`destinationContainer` |Target container for moved blobs (required when `moveAfterRead=true`)
+|`destinationBlobPrefix` |Prefix to add to the blob name in the destination
+|`destinationBlobSuffix` |Suffix to add to the blob name in the destination
+|`removePrefixOnMove` |Remove the source prefix from the blob name before adding destination prefix
+|===
 
 === Producer Operations Examples
 - `listBlobContainers`:
