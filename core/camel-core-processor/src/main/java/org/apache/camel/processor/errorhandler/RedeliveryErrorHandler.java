@@ -443,17 +443,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         /**
          * Handles bridged errors from consumers with bridgeErrorHandler=true.
          * <p>
-         * When a consumer is configured with bridgeErrorHandler=true, exceptions that occur
-         * in the consumer are bridged to the Camel error handler. These bridged errors are
-         * marked with ERRORHANDLER_BRIDGE=true and RedeliveryExhausted=true properties.
+         * When a consumer is configured with bridgeErrorHandler=true, exceptions that occur in the consumer are bridged
+         * to the Camel error handler. These bridged errors are marked with ERRORHANDLER_BRIDGE=true and
+         * RedeliveryExhausted=true properties.
          * <p>
-         * This method ensures that the onException route (failure processor) is properly
-         * invoked for bridged errors, even when handled(false) is configured. This allows
-         * error handling logic in subroutes to execute while keeping the exchange in a
-         * failed state.
+         * This method ensures that the onException route (failure processor) is properly invoked for bridged errors,
+         * even when handled(false) is configured. This allows error handling logic in subroutes to execute while
+         * keeping the exchange in a failed state.
          * <p>
-         * This fix addresses CAMEL-22907 where bridged errors with handled(false) were not
-         * executing the onException route body.
+         * This fix addresses CAMEL-22907 where bridged errors with handled(false) were not executing the onException
+         * route body.
          *
          * @see BridgeExceptionHandlerToErrorHandler
          */
@@ -504,9 +503,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         /**
          * Delivers the exchange to the failure processor (onException route) for bridged errors.
          * <p>
-         * This method processes the onException route for bridged errors from consumers.
-         * It temporarily clears the exception to allow the route to execute, then restores
-         * it based on the handled/continued predicates.
+         * This method processes the onException route for bridged errors from consumers. It temporarily clears the
+         * exception to allow the route to execute, then restores it based on the handled/continued predicates.
          * <p>
          * The key behavior is:
          * <ul>
