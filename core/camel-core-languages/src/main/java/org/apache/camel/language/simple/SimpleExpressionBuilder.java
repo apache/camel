@@ -60,6 +60,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.RandomUuidGenerator;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.support.builder.ExpressionBuilder;
@@ -2885,6 +2886,58 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return expression.toString();
+            }
+        };
+    }
+
+    /**
+     * Loads the given resource from classpath
+     */
+    public static Expression loadExpression(final String expression) {
+        return new ExpressionAdapter() {
+
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                String name = exp.evaluate(exchange, String.class);
+                if (name != null) {
+                    name = name.trim();
+                    String part = StringHelper.after(name, ":", name);
+                    boolean optional = part.endsWith("?optional=true");
+                    if (optional) {
+                        part = part.substring(0, part.length() - 14);
+                    }
+                    if (part.endsWith("?optional=false")) {
+                        part = part.substring(0, part.length() - 15);
+                    }
+                    try {
+                        InputStream is;
+                        if (!optional) {
+                            is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), part);
+                        } else {
+                            is = ResourceHelper.resolveResourceAsInputStream(exchange.getContext(), part);
+                        }
+                        if (is == null) {
+                            return null;
+                        }
+                        return IOHelper.loadText(is, false);
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "load(" + expression + ")";
             }
         };
     }

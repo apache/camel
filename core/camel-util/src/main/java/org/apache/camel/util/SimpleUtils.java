@@ -84,6 +84,7 @@ public class SimpleUtils {
                     "kindoftype",
                     "length",
                     "list",
+                    "load",
                     "lowercase",
                     "mandatorybodyas",
                     "map",

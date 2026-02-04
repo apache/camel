@@ -1564,6 +1564,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.mapExpression(tokens);
         }
 
+        // load function
+        remainder = ifStartsWithReturnRemainder("load(", function);
+        if (remainder != null) {
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${load(name)} but was: " + function, token.getIndex());
+            }
+            value = StringHelper.removeQuotes(value);
+            return SimpleExpressionBuilder.loadExpression(value);
+        }
+
         return null;
     }
 
@@ -3732,6 +3744,22 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "Object o = " + tokens[0]
                    + ";\n        boolean b = convertTo(exchange, boolean.class, o);\n        return b ? "
                    + tokens[1] + " : " + tokens[2];
+        }
+
+        // load function
+        remainder = ifStartsWithReturnRemainder("load(", function);
+        if (remainder != null) {
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${load(name)} but was: " + function, token.getIndex());
+            }
+            // single quotes should be double quotes
+            if (StringHelper.isSingleQuoted(value)) {
+                value = StringHelper.removeLeadingAndEndingQuotes(value);
+                value = StringQuoteHelper.doubleQuote(value);
+            }
+            return "Object o = " + value + ";\n        return load(exchange, o);";
         }
 
         return null;
