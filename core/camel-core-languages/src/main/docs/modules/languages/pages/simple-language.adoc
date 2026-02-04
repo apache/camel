@@ -418,6 +418,7 @@ You can also use the `sum` function to add or subtract numbers. For example if y
 |`env.key` | `String` | Refers to the OS system environment variable with the given key. For example `env.HOME` to refer to the home directory.
 |`hash(exp,algorithm)` | `String` | Returns a hashed value (string in hex decimal) of the given expression. The algorithm can be `SHA-256` (default) or `SHA3-256`.
 |`hostname` | `String` | Returns the local hostname (may be `null` if not possible to resolve).
+|`load(file)` | `String` | Loads the content of the resource from classpath (cannot load from file-system to avoid dangerous situations).
 |`null` | `null` | Returns a `null` value.
 |`sys.key` | `String` | *Deprecated* To lookup the JVM system property with the given key.
 |`sysenv.key` | `String` | To lookup the JVM system property with the given key.
@@ -442,6 +443,14 @@ You can get the current thread id by the `$\{threadId}` function, and the name v
 
 And you can generate unique IDs with the xref:manual::uuidgenerator.adoc[Camel UUID Generator] by the `uuid` function.
 The generator supports different kinds `default`, `classic`, `short`, `simple` and `random`, such as `${uuid(random)}`.
+
+To load data from classpath, you can use the load function such as `$\{load(myrules.json)}`.
+If the file is not present on classpath, then an exception is thrown. However, you can mark the file as optional as follows:
+`$\{load(myrules.json?optional=true)}`, which will return `null` if the file does not exists.
+
+IMPORTANT: The load function can only load from classpath; and not the file-system in general. This is on purpose
+to avoid potential security risks by constructing dynamic simple expressions using the load function to attempt
+to load server files.
 
 
 === String Functions

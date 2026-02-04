@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.csimple;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -55,6 +56,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
@@ -1341,6 +1343,34 @@ public final class CSimpleHelper {
             }
         }
         return "null";
+    }
+
+    public static String load(Exchange exchange, Object value) throws IOException {
+        String name;
+        if (value != null) {
+            name = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            name = exchange.getMessage().getBody(String.class);
+        }
+        name = name.trim();
+        String part = StringHelper.after(name, ":", name);
+        boolean optional = part.endsWith("?optional=true");
+        if (optional) {
+            part = part.substring(part.length() - 14);
+        }
+        if (part.endsWith("?optional=false")) {
+            part = part.substring(0, part.length() - 15);
+        }
+        InputStream is;
+        if (!optional) {
+            is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), part);
+        } else {
+            is = ResourceHelper.resolveResourceAsInputStream(exchange.getContext(), part);
+        }
+        if (is == null) {
+            return null;
+        }
+        return IOHelper.loadText(is, false);
     }
 
 }

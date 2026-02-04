@@ -238,6 +238,11 @@ public final class SimpleConstants {
               javaType = "java.util.ArrayList", displayName = "Create List of values")
     public static final String LIST = "list(val...)";
 
+    @Metadata(description = "Loads the content of the resource from classpath (cannot load from file-system to avoid dangerous situations).",
+              label = "function", javaType = "String",
+              displayName = "Load")
+    public static final String LOAD = "load(file)";
+
     @Metadata(description = "Lowercases the message body (or expression)", label = "function", javaType = "String",
               displayName = "Lowercase")
     public static final String LOWERCASE = "lowercase(exp)";
