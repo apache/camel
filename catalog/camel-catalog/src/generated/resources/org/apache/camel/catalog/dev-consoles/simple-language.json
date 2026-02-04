@@ -6,7 +6,7 @@
     "title": "Simple Language",
     "description": "Display simple language details",
     "deprecated": false,
-    "javaType": "org.apache.camel.impl.console.SimpleLanguageConsole",
+    "javaType": "org.apache.camel.impl.console.SimpleLanguageDevConsole",
     "groupId": "org.apache.camel",
     "artifactId": "camel-console",
     "version": "4.18.0-SNAPSHOT"

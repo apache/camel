@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.SimpleFunction;
 import org.apache.camel.spi.SimpleFunctionRegistry;
-import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -84,12 +84,8 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
-                reg.addFunction("foo", new ExpressionAdapter() {
-                    @Override
-                    public Object evaluate(Exchange exchange) {
-                        return "I was here " + exchange.getMessage().getBody();
-                    }
-                });
+
+                reg.addFunction(new FooSimpleFunction());
 
                 var bar = context.resolveLanguage("simple")
                         .createExpression("${trim()} ~> ${normalizeWhitespace()} ~> ${capitalize()} ~> ${quote()}");
@@ -118,5 +114,18 @@ public class SimpleCustomFunctionTest extends ContextTestSupport {
                         .to("mock:result");
             }
         };
+    }
+
+    private static class FooSimpleFunction implements SimpleFunction {
+
+        @Override
+        public String getName() {
+            return "foo";
+        }
+
+        @Override
+        public Object apply(Exchange exchange, Object input) throws Exception {
+            return "I was here " + input;
+        }
     }
 }

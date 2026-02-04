@@ -35,6 +35,13 @@ public interface SimpleFunctionRegistry extends StaticService {
     void addFunction(String name, Expression expression);
 
     /**
+     * Add a custom simple function
+     *
+     * @param function the function to add
+     */
+    void addFunction(SimpleFunction function);
+
+    /**
      * Remove a custom simple function
      *
      * @param name name of function
@@ -42,7 +49,7 @@ public interface SimpleFunctionRegistry extends StaticService {
     void removeFunction(String name);
 
     /**
-     * Gets the function
+     * Gets the function (will resolve custom functions from registry and classpath)
      *
      * @param  name name of function
      * @return      the function, or <tt>null</tt> if no function exists
@@ -50,7 +57,7 @@ public interface SimpleFunctionRegistry extends StaticService {
     Expression getFunction(String name);
 
     /**
-     * Returns a set with all the custom function names
+     * Returns a set with all the custom function names currently in use
      */
     Set<String> getCustomFunctionNames();
 
@@ -60,7 +67,7 @@ public interface SimpleFunctionRegistry extends StaticService {
     Set<String> getCoreFunctionNames();
 
     /**
-     * Number of custom functions
+     * Number of custom functions currently in use
      */
     int customSize();
 
