@@ -41,6 +41,7 @@ public class GoogleBigQueryConnectionFactory {
 
     private String serviceAccountKeyFile;
     private String serviceURL;
+    private String projectId;
     private BigQuery client;
     private CamelContext camelContext;
     private final Lock lock = new ReentrantLock();
@@ -85,6 +86,10 @@ public class GoogleBigQueryConnectionFactory {
 
         BigQueryOptions.Builder builder = BigQueryOptions.newBuilder()
                 .setCredentials(credentials);
+
+        if (ObjectHelper.isNotEmpty(projectId)) {
+            builder.setProjectId(projectId);
+        }
 
         if (ObjectHelper.isNotEmpty(serviceURL)) {
             builder.setHost(serviceURL);
@@ -137,6 +142,16 @@ public class GoogleBigQueryConnectionFactory {
 
     public GoogleBigQueryConnectionFactory setServiceURL(String serviceURL) {
         this.serviceURL = serviceURL;
+        resetClient();
+        return this;
+    }
+
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public GoogleBigQueryConnectionFactory setProjectId(String projectId) {
+        this.projectId = projectId;
         resetClient();
         return this;
     }
