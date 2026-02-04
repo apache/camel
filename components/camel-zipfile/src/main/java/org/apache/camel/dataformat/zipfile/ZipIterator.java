@@ -16,13 +16,18 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Objects;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -57,7 +62,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             zipInputStream = zipArchiveInputStream;
         } else {
             try {
-                ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP,
+                ArchiveInputStream<?> input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP,
                         new BufferedInputStream(inputStream));
                 zipInputStream = (ZipArchiveInputStream) input;
             } catch (ArchiveException e) {
@@ -143,10 +148,9 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                         return getNextElement(); // skip directory
                     }
                 } else {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    IOHelper.copy(zipInputStream, baos);
-                    byte[] data = baos.toByteArray();
-                    answer.setBody(new ByteArrayInputStream(data));
+                    CachedOutputStream cos = new CachedOutputStream(exchange);
+                    IOHelper.copy(zipInputStream, cos);
+                    answer.setBody(cos.getInputStream());
                 }
 
                 return answer;
