@@ -14929,6 +14929,12 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
+            "nested" : {
+              "type" : "boolean",
+              "title" : "Nested",
+              "description" : "If the result is a nested simple expression should this expression be evaluated as well",
+              "default" : false
+            },
             "pretty" : {
               "type" : "boolean",
               "title" : "Pretty",

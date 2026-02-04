@@ -39,6 +39,9 @@ public class SimpleExpression extends TypedExpressionDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "false", javaType = "java.lang.Boolean")
     private String pretty;
+    @XmlAttribute
+    @Metadata(defaultValue = "false", javaType = "java.lang.Boolean", label = "advanced")
+    private String nested;
 
     public SimpleExpression() {
     }
@@ -47,6 +50,7 @@ public class SimpleExpression extends TypedExpressionDefinition {
         super(source);
         this.trimResult = source.trimResult;
         this.pretty = source.pretty;
+        this.nested = source.nested;
     }
 
     public SimpleExpression(String expression) {
@@ -61,6 +65,7 @@ public class SimpleExpression extends TypedExpressionDefinition {
         super(builder);
         this.trimResult = builder.trimResult;
         this.pretty = builder.pretty;
+        this.nested = builder.nested;
     }
 
     @Override
@@ -100,6 +105,17 @@ public class SimpleExpression extends TypedExpressionDefinition {
         this.pretty = pretty;
     }
 
+    public String getNested() {
+        return nested;
+    }
+
+    /**
+     * If the result is a nested simple expression should this expression be evaluated as well
+     */
+    public void setNested(String nested) {
+        this.nested = nested;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link SimpleExpression}.
      */
@@ -108,6 +124,7 @@ public class SimpleExpression extends TypedExpressionDefinition {
 
         private String trimResult;
         private String pretty;
+        private String nested;
 
         /**
          * Whether to trim the returned values when this language are in use.
@@ -148,6 +165,22 @@ public class SimpleExpression extends TypedExpressionDefinition {
          */
         public Builder pretty(boolean pretty) {
             this.pretty = Boolean.toString(pretty);
+            return this;
+        }
+
+        /**
+         * If the result is a nested simple expression should this expression be evaluated as well
+         */
+        public Builder nested(String nested) {
+            this.nested = nested;
+            return this;
+        }
+
+        /**
+         * If the result is a nested simple expression should this expression be evaluated as well
+         */
+        public Builder nested(boolean nested) {
+            this.nested = Boolean.toString(nested);
             return this;
         }
 

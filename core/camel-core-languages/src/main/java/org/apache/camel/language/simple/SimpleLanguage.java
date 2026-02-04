@@ -18,12 +18,14 @@ package org.apache.camel.language.simple;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LanguageSupport;
@@ -160,13 +162,14 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         boolean trim = property(boolean.class, properties, 1, true);
         boolean pretty = property(boolean.class, properties, 2, false);
         boolean trimResult = property(boolean.class, properties, 3, false);
+        boolean nested = property(boolean.class, properties, 4, false);
         if (trim && expression != null) {
             expression = expression.trim();
         }
         if (expression == null) {
             expression = "${null}";
         }
-        return createExpression(expression, resultType, pretty, trimResult);
+        return createExpression(expression, resultType, pretty, trimResult, nested);
     }
 
     @Override
@@ -204,13 +207,17 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         return answer;
     }
 
-    public Expression createExpression(String expression, Class<?> resultType, boolean pretty, boolean trimResult) {
+    public Expression createExpression(
+            String expression, Class<?> resultType, boolean pretty, boolean trimResult, boolean nested) {
         if (resultType == Boolean.class || resultType == boolean.class) {
             // if its a boolean as result then its a predicate
             Predicate predicate = createPredicate(expression);
             return PredicateToExpressionAdapter.toExpression(predicate);
         } else {
             Expression exp = createExpression(expression);
+            if (nested) {
+                exp = nestedExpression(exp);
+            }
             if (resultType != null) {
                 exp = ExpressionBuilder.convertToExpression(exp, resultType);
             }
@@ -265,4 +272,34 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
             return text;
         }
     }
+
+    private static Expression nestedExpression(final Expression expression) {
+        return new ExpressionAdapter() {
+            private org.apache.camel.spi.Language language;
+
+            @Override
+            public void init(CamelContext context) {
+                super.init(context);
+                expression.init(context);
+                language = context.resolveLanguage("simple");
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                Object answer = expression.evaluate(exchange, Object.class);
+                if (answer instanceof String str && hasSimpleFunction(str)) {
+                    Expression nested = language.createExpression(str);
+                    nested.init(exchange.getContext());
+                    answer = nested.evaluate(exchange, Object.class);
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return expression.toString();
+            }
+        };
+    }
+
 }
