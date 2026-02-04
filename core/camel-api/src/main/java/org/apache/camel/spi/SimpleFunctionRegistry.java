@@ -49,7 +49,7 @@ public interface SimpleFunctionRegistry extends StaticService {
     void removeFunction(String name);
 
     /**
-     * Gets the function (will resolve custom functions from registry and classpath)
+     * Gets the function (will resolve custom functions from registry)
      *
      * @param  name name of function
      * @return      the function, or <tt>null</tt> if no function exists
