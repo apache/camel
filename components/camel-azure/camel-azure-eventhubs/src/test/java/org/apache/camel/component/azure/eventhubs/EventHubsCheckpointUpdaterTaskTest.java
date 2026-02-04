@@ -24,8 +24,10 @@ import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class EventHubsCheckpointUpdaterTimerTaskTest {
+class EventHubsCheckpointUpdaterTaskTest {
 
     @Test
     void testProcessedEventsResetWhenCheckpointUpdated() {
@@ -35,9 +37,9 @@ class EventHubsCheckpointUpdaterTimerTaskTest {
         Mockito.when(eventContext.updateCheckpointAsync())
                 .thenReturn(Mono.just("").then());
 
-        var timerTask = new EventHubsCheckpointUpdaterTimerTask(eventContext, processedEvents);
+        var task = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
 
-        timerTask.run();
+        task.run();
 
         assertEquals(0, processedEvents.get());
     }
@@ -50,11 +52,26 @@ class EventHubsCheckpointUpdaterTimerTaskTest {
         Mockito.when(eventContext.updateCheckpointAsync())
                 .thenReturn(Mono.error(new RuntimeException()));
 
-        var timerTask = new EventHubsCheckpointUpdaterTimerTask(eventContext, processedEvents);
+        var task = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
 
-        timerTask.run();
+        task.run();
 
         assertEquals(1, processedEvents.get());
+    }
+
+    @Test
+    void testIsExpired() {
+        var processedEvents = new AtomicInteger(0);
+        var eventContext = Mockito.mock(EventContext.class);
+        var task = new EventHubsCheckpointUpdaterTask(eventContext, processedEvents);
+
+        // Set scheduled time in the past
+        task.setScheduledTime(System.currentTimeMillis() - 1000);
+        assertTrue(task.isExpired());
+
+        // Set scheduled time in the future
+        task.setScheduledTime(System.currentTimeMillis() + 10000);
+        assertFalse(task.isExpired());
     }
 
 }

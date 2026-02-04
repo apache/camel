@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.zookeepermaster.group;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperGroup;
 import org.apache.camel.component.zookeepermaster.group.internal.ZooKeeperMultiGroup;
 import org.apache.curator.framework.CuratorFramework;
@@ -26,10 +28,16 @@ public class DefaultManagedGroupFactory implements ManagedGroupFactory {
 
     private final CuratorFramework curator;
     private final boolean shouldClose;
+    private final CamelContext camelContext;
 
     public DefaultManagedGroupFactory(CuratorFramework curator, boolean shouldClose) {
+        this(curator, shouldClose, null);
+    }
+
+    public DefaultManagedGroupFactory(CuratorFramework curator, boolean shouldClose, CamelContext camelContext) {
         this.curator = curator;
         this.shouldClose = shouldClose;
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -39,22 +47,36 @@ public class DefaultManagedGroupFactory implements ManagedGroupFactory {
 
     @Override
     public <T extends NodeState> Group<T> createGroup(String path, Class<T> clazz) {
-        return new ZooKeeperGroup<>(curator, path, clazz);
+        ExecutorService executorService = createExecutorService(path);
+        return new ZooKeeperGroup<>(curator, path, clazz, executorService);
     }
 
     @Override
     public <T extends NodeState> Group<T> createGroup(String path, Class<T> clazz, ThreadFactory threadFactory) {
-        return new ZooKeeperGroup<>(curator, path, clazz, threadFactory);
+        ExecutorService executorService = createExecutorService(path);
+        return new ZooKeeperGroup<>(curator, path, clazz, executorService);
     }
 
     @Override
     public <T extends NodeState> Group<T> createMultiGroup(String path, Class<T> clazz) {
-        return new ZooKeeperMultiGroup<>(curator, path, clazz);
+        ExecutorService executorService = createExecutorService(path);
+        return new ZooKeeperMultiGroup<>(curator, path, clazz, executorService);
     }
 
     @Override
     public <T extends NodeState> Group<T> createMultiGroup(String path, Class<T> clazz, ThreadFactory threadFactory) {
-        return new ZooKeeperMultiGroup<>(curator, path, clazz, threadFactory);
+        ExecutorService executorService = createExecutorService(path);
+        return new ZooKeeperMultiGroup<>(curator, path, clazz, executorService);
+    }
+
+    private ExecutorService createExecutorService(String path) {
+        if (camelContext == null) {
+            throw new IllegalStateException(
+                    "CamelContext is required to create ExecutorService for virtual threads support. "
+                                            + "Use the constructor that accepts CamelContext.");
+        }
+        return camelContext.getExecutorServiceManager()
+                .newSingleThreadExecutor(this, "ZooKeeperGroup-" + path);
     }
 
     @Override

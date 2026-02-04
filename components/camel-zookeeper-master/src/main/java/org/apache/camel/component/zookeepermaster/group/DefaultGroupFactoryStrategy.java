@@ -33,9 +33,9 @@ public class DefaultGroupFactoryStrategy implements ManagedGroupFactoryStrategy 
             throws Exception {
 
         if (curator != null) {
-            return new DefaultManagedGroupFactory(curator, false);
+            return new DefaultManagedGroupFactory(curator, false, camelContext);
         } else {
-            return new DefaultManagedGroupFactory(factory.call(), true);
+            return new DefaultManagedGroupFactory(factory.call(), true, camelContext);
         }
     }
 

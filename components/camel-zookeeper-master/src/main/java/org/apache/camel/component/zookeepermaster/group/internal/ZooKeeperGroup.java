@@ -120,20 +120,30 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             = (CuratorFramework client, ConnectionState newState) -> handleStateChange(newState);
 
     /**
-     * @param client the client
-     * @param path   path to watch
+     * @param      client the client
+     * @param      path   path to watch
+     * @deprecated        Use the constructor that accepts an ExecutorService from ExecutorServiceManager for virtual
+     *                    threads support.
      */
+    @Deprecated
     public ZooKeeperGroup(CuratorFramework client, String path, Class<T> clazz) {
         this(client, path, clazz, Executors.newSingleThreadExecutor());
+        LOG.warn("Using deprecated ZooKeeperGroup constructor without ExecutorService. "
+                 + "This does not support virtual threads. Use ManagedGroupFactory.createGroup() instead.");
     }
 
     /**
-     * @param client        the client
-     * @param path          path to watch
-     * @param threadFactory factory to use when creating internal threads
+     * @param      client        the client
+     * @param      path          path to watch
+     * @param      threadFactory factory to use when creating internal threads
+     * @deprecated               Use the constructor that accepts an ExecutorService from ExecutorServiceManager for
+     *                           virtual threads support.
      */
+    @Deprecated
     public ZooKeeperGroup(CuratorFramework client, String path, Class<T> clazz, ThreadFactory threadFactory) {
         this(client, path, clazz, Executors.newSingleThreadExecutor(threadFactory));
+        LOG.warn("Using deprecated ZooKeeperGroup constructor with ThreadFactory. "
+                 + "This does not support virtual threads. Use ManagedGroupFactory.createGroup() instead.");
     }
 
     /**
@@ -143,6 +153,11 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      */
     public ZooKeeperGroup(CuratorFramework client, String path, Class<T> clazz, final ExecutorService executorService) {
         LOG.info("Creating ZK Group for path \"{}\"", path);
+        if (executorService == null) {
+            throw new IllegalArgumentException(
+                    "ExecutorService must not be null. "
+                                               + "Use ExecutorServiceManager to create an ExecutorService for virtual threads support.");
+        }
         this.client = client;
         this.path = path;
         this.clazz = clazz;

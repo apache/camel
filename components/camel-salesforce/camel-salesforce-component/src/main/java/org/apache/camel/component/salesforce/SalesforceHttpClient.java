@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -57,12 +56,20 @@ public class SalesforceHttpClient extends HttpClient {
 
     private final ExecutorService workerPool;
 
+    /**
+     * Creates a SalesforceHttpClient without a worker pool. This constructor is intended for testing purposes only.
+     * Production code should use the constructor that accepts a CamelContext and ExecutorService.
+     */
     public SalesforceHttpClient() {
-        this(null);
+        this(null, null, null);
     }
 
+    /**
+     * Creates a SalesforceHttpClient without a worker pool. This constructor is intended for testing purposes only.
+     * Production code should use the constructor that accepts a CamelContext and ExecutorService.
+     */
     public SalesforceHttpClient(SslContextFactory.Client sslContextFactory) {
-        this(null, Executors.newCachedThreadPool(), sslContextFactory);
+        this(null, null, sslContextFactory);
     }
 
     public SalesforceHttpClient(CamelContext context, ExecutorService workerPool, SslContextFactory.Client sslContextFactory) {

@@ -23,6 +23,11 @@ import org.apache.camel.component.zookeepermaster.group.GroupFactory;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.curator.framework.CuratorFramework;
 
+/**
+ * @deprecated Use {@link org.apache.camel.component.zookeepermaster.group.DefaultManagedGroupFactory} which supports
+ *             virtual threads via ExecutorServiceManager.
+ */
+@Deprecated
 public class ZooKeeperGroupFactory implements GroupFactory {
 
     private CuratorFramework curator;
