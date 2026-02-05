@@ -21,7 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.camel.Exchange;
@@ -49,6 +51,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     private boolean allowEmptyDirectory;
     private volatile ZipArchiveInputStream zipInputStream;
     private volatile ZipArchiveEntry currentEntry;
+    private volatile List<CachedOutputStream> cachedOutputStreamsToClose = new ArrayList<>();
     private volatile Message parent;
     private volatile boolean first;
 
@@ -135,12 +138,13 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             currentEntry = getNextEntry();
 
             if (currentEntry != null) {
-                LOG.debug("read zipEntry {}", currentEntry.getName());
+                String zipFileName = currentEntry.getName();
+                LOG.debug("read zipEntry {}", zipFileName);
 
                 Message answer = new DefaultMessage(exchange.getContext());
                 answer.getHeaders().putAll(exchange.getIn().getHeaders());
-                answer.setHeader("zipFileName", currentEntry.getName());
-                answer.setHeader(Exchange.FILE_NAME, currentEntry.getName());
+                answer.setHeader("zipFileName", zipFileName);
+                answer.setHeader(Exchange.FILE_NAME, zipFileName);
                 if (currentEntry.isDirectory()) {
                     if (allowEmptyDirectory) {
                         answer.setBody(new ByteArrayInputStream(new byte[0]));
@@ -148,9 +152,17 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                         return getNextElement(); // skip directory
                     }
                 } else {
-                    CachedOutputStream cos = new CachedOutputStream(exchange);
+
+                    CachedOutputStream cos = new CachedOutputStream(exchange) {
+                        @Override
+                        public void close() throws IOException {
+                            super.close();
+                            LOG.info("Closed CachedOutputStream for '{}'", zipFileName);
+                        }
+                    };
                     IOHelper.copy(zipInputStream, cos);
                     answer.setBody(cos.getInputStream());
+                    cachedOutputStreamsToClose.add(cos);
                 }
 
                 return answer;
@@ -196,6 +208,10 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         IOHelper.close(zipInputStream);
         zipInputStream = null;
         currentEntry = null;
+
+        for (CachedOutputStream cos : cachedOutputStreamsToClose) {
+            cos.close();
+        }
     }
 
     public boolean isSupportIteratorForEmptyDirectory() {
