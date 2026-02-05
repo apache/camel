@@ -61,7 +61,7 @@ public abstract class SpringInfinispanRemoteIdempotentRepositoryTestSupport exte
                 .username(service.username())
                 .password(service.password())
                 .serverName("infinispan")
-                .saslMechanism("DIGEST-MD5")
+                .saslMechanism("SCRAM-SHA-512")
                 .realm("default");
 
         RemoteCacheManager manager = new RemoteCacheManager(clientBuilder.create());
