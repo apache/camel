@@ -76,7 +76,7 @@ public class TransformMessageAction extends ActionWatchCommand {
 
     @CommandLine.Option(names = {
             "--template" },
-                        description = "The template to use for message transformation (prefix with file: to refer to loading message body from file)")
+                        description = "The template to use for message transformation (prefix with file: to refer to loading template from file)")
     private String template;
 
     @CommandLine.Option(names = { "--option" },

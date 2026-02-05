@@ -19,6 +19,7 @@ package org.apache.camel.impl.engine;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
@@ -127,7 +128,7 @@ public class DefaultSimpleFunctionRegistry extends ServiceSupport implements Sim
 
     @Override
     public Set<String> getCustomFunctionNames() {
-        return functions.keySet();
+        return new TreeSet<>(functions.keySet());
     }
 
     @Override
