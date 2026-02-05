@@ -89,10 +89,16 @@
                             <reuseForks>true</reuseForks>
                         </configuration>
                         <executions>
+                            <!-- Disable inherited default execution -->
+                            <execution>
+                                <id>default</id>
+                                <phase>none</phase>
+                            </execution>
                             <execution>
                                 <id>integration-test</id>
                                 <goals>
                                     <goal>integration-test</goal>
+                                    <goal>verify</goal>
                                 </goals>
                                 <configuration>
                                     <forkCount>1</forkCount>
@@ -104,6 +110,7 @@
                                 <id>couchbase-7</id>
                                 <goals>
                                     <goal>integration-test</goal>
+                                    <goal>verify</goal>
                                 </goals>
                                 <configuration>
                                     <groups>couchbase-7</groups>
