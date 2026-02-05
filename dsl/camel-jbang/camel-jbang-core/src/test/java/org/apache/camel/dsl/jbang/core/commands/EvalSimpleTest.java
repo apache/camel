@@ -19,8 +19,10 @@ package org.apache.camel.dsl.jbang.core.commands;
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import picocli.CommandLine;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Runs only local")
 class EvalSimpleTest extends CamelCommandBaseTestSupport {
 
     @Test
