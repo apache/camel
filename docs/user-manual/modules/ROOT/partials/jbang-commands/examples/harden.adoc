@@ -1,0 +1,161 @@
+== Examples
+
+The `camel harden` command uses AI/LLM to analyze Camel routes and provide security hardening recommendations.
+It supports multiple LLM providers including Ollama (local), OpenAI, Azure OpenAI, vLLM, LM Studio, and LocalAI.
+
+=== Prerequisites
+
+Start Ollama locally using Camel infra:
+
+[source,bash]
+----
+camel infra run ollama
+----
+
+=== Basic Usage
+
+Analyze a YAML route for security issues:
+
+[source,bash]
+----
+camel harden my-route.yaml
+----
+
+Analyze a Java route:
+
+[source,bash]
+----
+camel harden OrderRoute.java
+----
+
+Analyze multiple route files:
+
+[source,bash]
+----
+camel harden route1.yaml route2.xml MyRoute.java
+----
+
+=== Security Analysis Focus
+
+The harden command analyzes routes for these security concerns:
+
+* **Authentication & Authorization** - Missing or weak authentication, credential exposure
+* **Encryption & Data Protection** - TLS/SSL configuration, data in transit security
+* **Secrets Management** - Hardcoded credentials, vault integration recommendations
+* **Input Validation & Injection Prevention** - SQL, command, and path traversal vulnerabilities
+* **Secure Component Configuration** - Insecure defaults, missing security headers
+* **Logging & Monitoring** - Sensitive data in logs, audit trail recommendations
+
+=== Output Options
+
+Use verbose mode for detailed recommendations with code examples:
+
+[source,bash]
+----
+camel harden my-route.yaml --verbose
+----
+
+Output as Markdown for documentation:
+
+[source,bash]
+----
+camel harden my-route.yaml --format=markdown
+----
+
+=== Prompt Options
+
+Include Camel Catalog descriptions for component-specific security advice:
+
+[source,bash]
+----
+camel harden my-route.yaml --catalog-context
+----
+
+Show the prompt sent to the LLM (useful for debugging):
+
+[source,bash]
+----
+camel harden my-route.yaml --show-prompt
+----
+
+Use a custom system prompt:
+
+[source,bash]
+----
+camel harden my-route.yaml --system-prompt="Focus on OWASP Top 10 vulnerabilities."
+----
+
+=== LLM Configuration
+
+Use OpenAI or compatible services:
+
+[source,bash]
+----
+camel harden my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...
+----
+
+Use environment variables for the API key:
+
+[source,bash]
+----
+export OPENAI_API_KEY=sk-...
+camel harden my-route.yaml --url=https://api.openai.com --api-type=openai
+----
+
+Use a specific model:
+
+[source,bash]
+----
+camel harden my-route.yaml --model=llama3.1:70b
+----
+
+=== Advanced Options
+
+Disable streaming (wait for complete response):
+
+[source,bash]
+----
+camel harden my-route.yaml --stream=false
+----
+
+Adjust temperature (0.0 = deterministic, 2.0 = creative):
+
+[source,bash]
+----
+camel harden my-route.yaml --temperature=0.3
+----
+
+Set a custom timeout (in seconds):
+
+[source,bash]
+----
+camel harden my-route.yaml --timeout=300
+----
+
+=== Security Findings Severity Levels
+
+The harden command categorizes findings by severity:
+
+* **Critical** - Immediate security risks (command injection, hardcoded credentials, disabled TLS)
+* **High** - Significant security concerns (HTTP instead of HTTPS, SQL injection risk, plain FTP)
+* **Medium** - Moderate security issues (missing authentication hints, path validation concerns)
+* **Low** - Minor security improvements (missing optional security headers)
+
+=== Example Workflow
+
+A typical security review workflow:
+
+[source,bash]
+----
+# 1. First, understand what the route does
+camel explain my-route.yaml
+
+# 2. Perform security analysis
+camel harden my-route.yaml
+
+# 3. Get detailed recommendations with code examples
+camel harden my-route.yaml --verbose --format=markdown
+
+# 4. Full analysis with catalog context
+camel harden my-route.yaml --catalog-context --verbose
+----

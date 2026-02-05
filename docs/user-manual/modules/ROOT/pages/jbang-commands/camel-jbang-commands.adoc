@@ -23,6 +23,7 @@ TIP: You can also use `camel --help` or `camel <command> --help` to see availabl
 | xref:jbang-commands/camel-jbang-explain.adoc[camel explain] | Explain what a Camel route does using AI/LLM
 | xref:jbang-commands/camel-jbang-export.adoc[camel export] | Export to other runtimes (Camel Main, Spring Boot, or Quarkus)
 | xref:jbang-commands/camel-jbang-get.adoc[camel get] | Get status of Camel integrations
+| xref:jbang-commands/camel-jbang-harden.adoc[camel harden] | Suggest security hardening for Camel routes using AI/LLM
 | xref:jbang-commands/camel-jbang-hawtio.adoc[camel hawtio] | Launch Hawtio web console
 | xref:jbang-commands/camel-jbang-infra.adoc[camel infra] | List and Run external services for testing and prototyping
 | xref:jbang-commands/camel-jbang-init.adoc[camel init] | Creates a new Camel integration
