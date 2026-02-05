@@ -49,6 +49,7 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
         addPropertiesFunction(new ServicePropertiesFunction());
         addPropertiesFunction(new ServiceHostPropertiesFunction());
         addPropertiesFunction(new ServicePortPropertiesFunction());
+        addPropertiesFunction(new BooleanPropertiesFunction());
     }
 
     @Override
@@ -123,6 +124,7 @@ public class DefaultPropertiesFunctionResolver extends ServiceSupport
 
     @Override
     protected void doInit() throws Exception {
+        functions.values().forEach(f -> CamelContextAware.trySetCamelContext(f, camelContext));
         ServiceHelper.initService(functions.values());
     }
 
