@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.properties;
 
-import org.apache.camel.ContextTestSupport;`
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +35,9 @@ public class PropertiesComponentBooleanTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                    .to("mock:foo")
-                    .transform().constant("Customer A is here").disabled("{{boolean:customer != 'A'}}")
-                    .to("mock:bar");
+                        .to("mock:foo")
+                        .transform().constant("Customer A is here").disabled("{{boolean:customer != 'A'}}")
+                        .to("mock:bar");
             }
         });
         context.start();
