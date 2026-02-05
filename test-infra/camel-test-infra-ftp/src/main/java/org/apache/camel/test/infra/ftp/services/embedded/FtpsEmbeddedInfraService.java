@@ -63,10 +63,11 @@ public class FtpsEmbeddedInfraService extends FtpEmbeddedInfraService {
         FtpServerFactory serverFactory = super.createFtpServerFactory(embeddedConfiguration);
 
         ListenerFactory listenerFactory = new ListenerFactory(serverFactory.getListener(DEFAULT_LISTENER));
-        if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
-            listenerFactory.setPort(ContainerEnvironmentUtil.getConfiguredPort(2221));
-        } else {
+        // If port was already assigned (restart scenario), reuse it; otherwise get a new one
+        if (port > 0) {
             listenerFactory.setPort(port);
+        } else {
+            listenerFactory.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom());
         }
         listenerFactory.setImplicitSsl(embeddedConfiguration.getSecurityConfiguration().isUseImplicit());
         listenerFactory.setSslConfiguration(createSslConfiguration(embeddedConfiguration).createSslConfiguration());

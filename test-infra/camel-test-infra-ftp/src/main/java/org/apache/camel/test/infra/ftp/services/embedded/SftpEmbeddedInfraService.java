@@ -96,10 +96,11 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
 
     public void setUpServer() throws Exception {
         sshd = SshServer.setUpDefaultServer();
-        if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
-            sshd.setPort(ContainerEnvironmentUtil.getConfiguredPort(2222));
-        } else {
+        // If port was already assigned (restart scenario), reuse it; otherwise get a new one
+        if (port > 0) {
             sshd.setPort(port);
+        } else {
+            sshd.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom());
         }
 
         sshd.setKeyPairProvider(createKeyPairProvider());
