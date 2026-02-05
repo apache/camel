@@ -177,27 +177,30 @@ public final class ContainerEnvironmentUtil {
      * @param ports     the port configurations (primary and secondary)
      */
     public static void configurePorts(GenericContainer<?> container, boolean fixedPort, PortConfig... ports) {
+        // Always expose the ports first - this is needed for wait strategies and port mapping
+        Integer[] containerPorts = Arrays.stream(ports)
+                .map(PortConfig::containerPort)
+                .toArray(Integer[]::new);
+        container.withExposedPorts(containerPorts);
+
+        // If fixed port mode, also add the fixed port bindings
         if (fixedPort) {
             for (PortConfig port : ports) {
                 int hostPort = port.primary() ? getConfiguredPort(port.containerPort()) : port.containerPort();
-                addFixedExposedPort(container, hostPort, port.containerPort());
+                invokeAddFixedExposedPort(container, hostPort, port.containerPort());
             }
-        } else {
-            Integer[] containerPorts = Arrays.stream(ports)
-                    .map(PortConfig::containerPort)
-                    .toArray(Integer[]::new);
-            container.withExposedPorts(containerPorts);
         }
     }
 
     /**
-     * Invokes the protected addFixedExposedPort method on a container using reflection.
+     * Invokes the protected addFixedExposedPort method on a container using reflection. This method is protected in
+     * GenericContainer to discourage use, but is necessary for fixed port scenarios like Camel JBang.
      *
      * @param container     the container to configure
      * @param hostPort      the host port to bind
      * @param containerPort the container port to expose
      */
-    private static void addFixedExposedPort(GenericContainer<?> container, int hostPort, int containerPort) {
+    private static void invokeAddFixedExposedPort(GenericContainer<?> container, int hostPort, int containerPort) {
         try {
             Method method = GenericContainer.class.getDeclaredMethod("addFixedExposedPort", int.class, int.class);
             method.setAccessible(true);
