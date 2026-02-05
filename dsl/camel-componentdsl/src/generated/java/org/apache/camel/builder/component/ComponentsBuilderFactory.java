@@ -1695,6 +1695,19 @@ public interface ComponentsBuilderFactory {
         return GithubComponentBuilderFactory.github();
     }
     /**
+     * GitHub2 (camel-github2)
+     * Interact with the GitHub API.
+     * 
+     * Category: file,cloud,api
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-github2
+     * 
+     * @return the dsl builder
+     */
+    static Github2ComponentBuilderFactory.Github2ComponentBuilder github2() {
+        return Github2ComponentBuilderFactory.github2();
+    }
+    /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
      * 
