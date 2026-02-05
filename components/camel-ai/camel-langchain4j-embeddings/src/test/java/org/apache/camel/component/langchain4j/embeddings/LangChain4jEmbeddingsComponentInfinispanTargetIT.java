@@ -257,7 +257,7 @@ public class LangChain4jEmbeddingsComponentInfinispanTargetIT extends CamelTestS
                 .username(service.username())
                 .password(service.password())
                 .serverName("infinispan")
-                .saslMechanism("DIGEST-MD5")
+                .saslMechanism("DIGEST-SHA-256")
                 .realm("default");
 
         if (SystemUtils.IS_OS_MAC) {

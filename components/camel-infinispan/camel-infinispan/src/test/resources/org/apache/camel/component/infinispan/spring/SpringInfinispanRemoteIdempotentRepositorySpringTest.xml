@@ -35,7 +35,7 @@
         <prop key="infinispan.client.hotrod.auth_username">${infinispan.service.username}</prop>
         <prop key="infinispan.client.hotrod.auth_password">${infinispan.service.password}</prop>
         <prop key="infinispan.client.hotrod.auth_realm">default</prop>
-        <prop key="infinispan.client.hotrod.sasl_mechanism">DIGEST-MD5</prop>
+        <prop key="infinispan.client.hotrod.sasl_mechanism">DIGEST-SHA-256</prop>
       </props>
     </property>
   </bean>

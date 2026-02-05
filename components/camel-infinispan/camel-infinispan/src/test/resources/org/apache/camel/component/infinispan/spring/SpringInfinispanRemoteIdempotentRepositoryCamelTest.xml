@@ -38,7 +38,7 @@
         <property name="password" value="${infinispan.service.password}"/>
         <property name="securityRealm" value="default"/>
         <property name="securityServerName" value="infinispan"/>
-        <property name="saslMechanism" value="DIGEST-MD5"/>
+        <property name="saslMechanism" value="DIGEST-SHA-256"/>
       </bean>
     </property>
   </bean>

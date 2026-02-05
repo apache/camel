@@ -53,7 +53,7 @@ public final class InfinispanServiceFactory {
 
         @Override
         public String getServiceAddress() {
-            return getService().getServiceAddress();
+            return getService().hosts();
         }
 
         @Override

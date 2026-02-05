@@ -192,7 +192,7 @@ public class InfinispanRemoteEmbeddingStoreIT extends InfinispanRemoteTestSuppor
         configuration.setHosts(service.getServiceAddress());
         configuration.setUsername(service.username());
         configuration.setPassword(service.password());
-        configuration.setSaslMechanism("DIGEST-MD5");
+        configuration.setSaslMechanism("DIGEST-SHA-256");
         configuration.setSecurityRealm("default");
         configuration.setSecure(true);
 
