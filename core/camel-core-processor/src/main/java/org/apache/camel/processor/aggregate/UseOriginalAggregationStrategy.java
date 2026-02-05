@@ -61,25 +61,28 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
 
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        Exchange target = oldExchange;
         if (propagateException) {
             Exception exception = checkException(oldExchange, newExchange);
             if (exception != null) {
+                target = oldExchange != null ? oldExchange : newExchange;
                 if (original != null) {
                     original.setException(exception);
                 } else {
-                    oldExchange.setException(exception);
+                    target.setException(exception);
                 }
             }
             exception = checkCaughtException(oldExchange, newExchange);
             if (exception != null) {
+                target = oldExchange != null ? oldExchange : newExchange;
                 if (original != null) {
                     original.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
-                } else if (oldExchange != null) {
-                    oldExchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+                } else {
+                    target.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
                 }
             }
         }
-        return original != null ? original : oldExchange;
+        return original != null ? original : target;
     }
 
     protected Exception checkException(Exchange oldExchange, Exchange newExchange) {
