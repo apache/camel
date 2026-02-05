@@ -21,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -59,8 +57,7 @@ class ExportTest {
     @BeforeEach
     public void setup() throws IOException {
         LOG.info("Preparing ExportTest");
-        Path base = Paths.get("target");
-        workingDir = Files.createTempDirectory(base, "camel-export").toFile();
+        workingDir = Files.createTempDirectory("camel-export").toFile();
     }
 
     @AfterEach

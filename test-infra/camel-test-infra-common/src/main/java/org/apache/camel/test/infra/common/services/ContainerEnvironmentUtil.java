@@ -158,6 +158,25 @@ public final class ContainerEnvironmentUtil {
     }
 
     /**
+     * Gets the configured port from system property for embedded services. Returns 0 (random port) if no port is
+     * explicitly configured. Embedded services should use random ports by default for test isolation, and only use a
+     * fixed port when explicitly configured.
+     *
+     * @return the configured port, or 0 for random port assignment
+     */
+    public static int getConfiguredPortOrRandom() {
+        String portStr = System.getProperty(INFRA_PORT_PROPERTY);
+        if (portStr != null && !portStr.isEmpty()) {
+            try {
+                return Integer.parseInt(portStr);
+            } catch (NumberFormatException e) {
+                LOG.warn("Invalid port value '{}', using random port", portStr);
+            }
+        }
+        return 0;
+    }
+
+    /**
      * Configures port exposure for a single-port container based on fixed/random port mode.
      *
      * @param container   the container to configure

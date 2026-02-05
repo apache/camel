@@ -35,8 +35,6 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
     public static final String CONTAINER_NAME = "minio";
     private static final String ACCESS_KEY = System.getProperty(MinioProperties.ACCESS_KEY, "testAccessKey");
     private static final String SECRET_KEY = System.getProperty(MinioProperties.SECRET_KEY, "testSecretKey");
-    private static final String USERNAME = System.getProperty(MinioProperties.USERNAME, "minioadmin");
-    private static final String PASSWORD = System.getProperty(MinioProperties.PASSWORD, "minioadmin");
     private static final int MINIO_TCP_PORT = 9000;
     private static final int MINIO_UI_PORT = 9001;
 
@@ -78,8 +76,9 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
                             ContainerEnvironmentUtil.PortConfig.primary(MINIO_TCP_PORT),
                             ContainerEnvironmentUtil.PortConfig.secondary(MINIO_UI_PORT));
                     withCommand("server /data --console-address :9001");
-                    withEnv("MINIO_ROOT_USER", USERNAME);
-                    withEnv("MINIO_ROOT_PASSWORD", PASSWORD);
+                    // Use same credentials for MINIO_ROOT_USER as accessKey() returns for consistency
+                    withEnv("MINIO_ROOT_USER", accessKey());
+                    withEnv("MINIO_ROOT_PASSWORD", secretKey());
                 } else {
                     ContainerEnvironmentUtil.configurePort(this, false, MINIO_TCP_PORT);
                     withCommand("server /data");
@@ -146,11 +145,11 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
 
     @Override
     public String consoleUsername() {
-        return USERNAME;
+        return accessKey();
     }
 
     @Override
     public String consolePassword() {
-        return PASSWORD;
+        return secretKey();
     }
 }
