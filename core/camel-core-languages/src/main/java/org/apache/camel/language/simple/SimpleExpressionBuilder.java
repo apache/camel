@@ -3080,18 +3080,14 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public Object evaluate(Exchange exchange) {
-                Object answer = null;
                 final Object originalBody = exchange.getMessage().getBody();
                 try {
                     Object input = exp.evaluate(exchange, Object.class);
-                    if (input != null) {
-                        exchange.getMessage().setBody(input);
-                        answer = func.evaluate(exchange, Object.class);
-                    }
+                    exchange.getMessage().setBody(input);
+                    return func.evaluate(exchange, Object.class);
                 } finally {
                     exchange.getMessage().setBody(originalBody);
                 }
-                return answer;
             }
 
             public String toString() {

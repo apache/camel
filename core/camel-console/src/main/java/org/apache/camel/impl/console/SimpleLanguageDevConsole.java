@@ -26,9 +26,9 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole(name = "simple-language", displayName = "Simple Language", description = "Display simple language details")
-public class SimpleLanguageConsole extends AbstractDevConsole {
+public class SimpleLanguageDevConsole extends AbstractDevConsole {
 
-    public SimpleLanguageConsole() {
+    public SimpleLanguageDevConsole() {
         super("camel", "simple-language", "Simple Language", "Display simple language details");
     }
 

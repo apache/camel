@@ -1844,6 +1844,9 @@ And in XML DSL you use the pretty attribute to true as show below:
 
 You can add custom functions to the Simple language by adding to the `org.apache.camel.spi.SimpleFunctionRegistry`.
 
+A custom function should either be an `Expression` or a `org.apache.camel.spi.SimpleFunction` implementation.
+
+You may want to use `Expression` when you build custom functions from the built-in functions in Camel.
 This can be done programmatically such as:
 
 [source,java]
@@ -1905,6 +1908,39 @@ from("direct:start")
         .setBody(simple("Bye ${variable.msg} ~> ${foo}"))
         .to("mock:result");
 ----
+
+You can also build custom functions as a Java class as below:
+
+[source,java]
+----
+public class FooSimpleFunction implements SimpleFunction {
+
+    @Override
+    public String getName() {
+        return "foo";
+    }
+
+    @Override
+    public Object apply(Exchange exchange, Object input) throws Exception {
+        return "I was here " + input;
+    }
+}
+----
+
+This gives you the full power to implement the function logic in standard Java.
+
+This function can be added programmatically:
+
+[source,java]
+----
+SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
+
+reg.addFunction(new FooSimpleFunction());
+----
+
+TIP: The custom function can then be made discoverable by Camel by dependency injection.
+If you use standalone Camel you can add `@BindToRegistry("foo-function)` to the class.
+For Spring Boot use `@Component` or `@Service` and Quarkus you can for example use `@ApplicationScoped`.
 
 
 == Dependencies
