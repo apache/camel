@@ -37,7 +37,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class CouchbaseIntegrationTestBase extends CamelTestSupport {
     @RegisterExtension
-    public static CouchbaseService service = CouchbaseServiceFactory.createService();
+    public static CouchbaseService service = CouchbaseServiceFactory.createSingletonService();
 
     protected static String bucketName;
     protected static Cluster cluster;
