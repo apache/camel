@@ -1,10 +1,11 @@
-= GitHub Component
+= GitHub Component (deprecated)
 :doctitle: GitHub
 :shortname: github
 :artifactid: camel-github
 :description: Interact with the GitHub API.
 :since: 2.15
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -13,6 +14,12 @@
 *Since Camel {since}*
 
 *{component-header}*
+
+[NOTE]
+====
+This component is deprecated since Camel 4.18 and will be removed in a future release.
+Please use the xref:github2-component.adoc[GitHub2] component instead, which uses the official https://github.com/hub4j/github-api[GitHub API for Java] library.
+====
 
 The GitHub component interacts with the GitHub API by
 encapsulating https://git.eclipse.org/c/egit/egit-github.git/[egit-github]. It
