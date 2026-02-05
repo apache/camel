@@ -1064,6 +1064,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * @return the dsl builder for the headers' name.
          */
+        @Deprecated
         default GitHubHeaderNameBuilder github() {
             return GitHubHeaderNameBuilder.INSTANCE;
         }
@@ -1089,6 +1090,7 @@ public interface GitHubEndpointBuilderFactory {
          * @param path type/branchName
          * @return the dsl builder
          */
+        @Deprecated
         default GitHubEndpointBuilder github(String path) {
             return GitHubEndpointBuilderFactory.endpointBuilder("github", path);
         }
@@ -1116,6 +1118,7 @@ public interface GitHubEndpointBuilderFactory {
          * @param path type/branchName
          * @return the dsl builder
          */
+        @Deprecated
         default GitHubEndpointBuilder github(String componentName, String path) {
             return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
         }

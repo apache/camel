@@ -5445,6 +5445,7 @@ public class StaticEndpointBuilders {
      * @param path type/branchName
      * @return the dsl builder
      */
+    @Deprecated
     public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String path) {
         return github("github", path);
     }
@@ -5472,6 +5473,7 @@ public class StaticEndpointBuilders {
      * @param path type/branchName
      * @return the dsl builder
      */
+    @Deprecated
     public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String componentName, String path) {
         return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

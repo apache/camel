@@ -4,7 +4,7 @@
     "name": "github",
     "title": "GitHub",
     "description": "Interact with the GitHub API.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.15.0",
     "label": "file,cloud,api",
     "javaType": "org.apache.camel.component.github.GitHubComponent",

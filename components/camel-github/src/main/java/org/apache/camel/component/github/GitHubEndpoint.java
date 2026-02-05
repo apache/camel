@@ -60,9 +60,12 @@ import org.apache.camel.util.StringHelper;
  * reliability/stability if this somehow relied on an exposed, embedded server (Jetty?) - the types of payloads we're
  * polling aren't typically large (plus, paging is available in the API) - need to support apps running somewhere not
  * publicly accessible where a webhook would fail
+ *
+ * @deprecated since 4.18, use {@link org.apache.camel.component.github2.GitHub2Endpoint} (camel-github2) instead
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName",
              category = { Category.FILE, Category.CLOUD, Category.API }, headersClass = GitHubConstants.class)
+@Deprecated(since = "4.18")
 public class GitHubEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {
 
     @UriPath
