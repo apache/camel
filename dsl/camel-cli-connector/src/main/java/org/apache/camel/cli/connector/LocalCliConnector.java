@@ -292,6 +292,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 doActionLoggerTask(root);
             } else if ("gc".equals(action)) {
                 System.gc();
+            } else if ("eval".equals(action)) {
+                doActionEvalTask(root);
             } else if ("load".equals(action)) {
                 doActionLoadTask(root);
             } else if ("reload".equals(action)) {
@@ -849,6 +851,31 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             String position = root.getStringOrDefault("position", "");
             JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
                     Map.of("command", cmd, "breakpoint", bp, "history", history, "position", position));
+            LOG.trace("Updating output file: {}", outputFile);
+            IOHelper.writeText(json.toJson(), outputFile);
+        } else {
+            IOHelper.writeText("{}", outputFile);
+        }
+    }
+
+    private void doActionEvalTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("eval-language");
+        if (dc != null) {
+            String lan = root.getStringOrDefault("language", "simple");
+            boolean predicate = root.getBooleanOrDefault("predicate", false);
+            String template = root.getStringOrDefault("template", "");
+            String body = root.getStringOrDefault("body", "");
+            Map<String, String> map = new LinkedHashMap<>();
+            Collection<JsonObject> headers = root.getCollection("headers");
+            if (headers != null) {
+                map = new LinkedHashMap<>();
+                for (JsonObject jo : headers) {
+                    map.put(jo.getString("key"), jo.getString("value"));
+                }
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON,
+                    Map.of("language", lan, "predicate", predicate, "template", template, "body", body, "headers", map));
             LOG.trace("Updating output file: {}", outputFile);
             IOHelper.writeText(json.toJson(), outputFile);
         } else {

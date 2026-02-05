@@ -35,7 +35,7 @@ camel transform message [options]
 | `--show-exchange-properties` | Show exchange properties from the output message | false | boolean
 | `--show-headers` | Show message headers from the output message | true | boolean
 | `--source` | Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number or :id to refer to the exact location of the EIP to use) |  | String
-| `--template` | The template to use for message transformation (prefix with file: to refer to loading message body from file) |  | String
+| `--template` | The template to use for message transformation (prefix with file: to refer to loading template from file) |  | String
 | `--timeout` | Timeout in millis waiting for message to be transformed | 20000 | long
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean

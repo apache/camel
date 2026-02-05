@@ -39,20 +39,23 @@ public class SimpleLanguageDevConsole extends AbstractDevConsole {
         SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
         sb.append(String.format("%n    Core Functions: %d", reg.coreSize()));
         for (String name : reg.getCoreFunctionNames()) {
-            sb.append(String.format("%n    %s", name));
+            sb.append(String.format("%n        %s", name));
         }
+        sb.append("\n");
         sb.append(String.format("%n    Custom Functions: %d", reg.customSize()));
         for (String name : reg.getCustomFunctionNames()) {
-            sb.append(String.format("%n    %s", name));
+            sb.append(String.format("%n        %s", name));
         }
+        sb.append("\n");
+
         return sb.toString();
     }
 
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
-
         JsonObject root = new JsonObject();
+
+        SimpleFunctionRegistry reg = PluginHelper.getSimpleFunctionRegistry(getCamelContext());
         root.put("coreSize", reg.coreSize());
         root.put("customSize", reg.customSize());
         JsonArray arr = new JsonArray();
@@ -65,6 +68,7 @@ public class SimpleLanguageDevConsole extends AbstractDevConsole {
         if (!arr.isEmpty()) {
             root.put("customFunctions", arr);
         }
+
         return root;
     }
 }
