@@ -74,13 +74,14 @@ public class MinioLocalContainerInfraService implements MinioInfraService, Conta
                                 .withStartupTimeout(Duration.ofSeconds(10)));
 
                 if (fixedPort) {
-                    addFixedExposedPort(MINIO_TCP_PORT, MINIO_TCP_PORT);
-                    addFixedExposedPort(MINIO_UI_PORT, MINIO_UI_PORT);
+                    ContainerEnvironmentUtil.configurePorts(this, true,
+                            ContainerEnvironmentUtil.PortConfig.primary(MINIO_TCP_PORT),
+                            ContainerEnvironmentUtil.PortConfig.secondary(MINIO_UI_PORT));
                     withCommand("server /data --console-address :9001");
                     withEnv("MINIO_ROOT_USER", USERNAME);
                     withEnv("MINIO_ROOT_PASSWORD", PASSWORD);
                 } else {
-                    withExposedPorts(MINIO_TCP_PORT);
+                    ContainerEnvironmentUtil.configurePort(this, false, MINIO_TCP_PORT);
                     withCommand("server /data");
                 }
             }

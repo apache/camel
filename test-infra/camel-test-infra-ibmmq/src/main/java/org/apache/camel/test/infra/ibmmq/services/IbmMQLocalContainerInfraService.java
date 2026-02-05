@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.ibmmq.services;
 
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.ibmmq.common.IbmMQProperties;
 import org.slf4j.Logger;
@@ -62,8 +63,10 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
                         .waitingFor(Wait.forLogMessage(
                                 ".*Queued Publish/Subscribe Daemon started for queue manager.*", 1));
 
-                addFixedExposedPort(MQ_LISTENER_PORT, MQ_LISTENER_PORT);
-                addFixedExposedPort(WEB_CONSOLE_PORT, WEB_CONSOLE_PORT);
+                ContainerEnvironmentUtil.configurePorts(this,
+                        ContainerEnvironmentUtil.isFixedPort(IbmMQLocalContainerInfraService.class),
+                        ContainerEnvironmentUtil.PortConfig.primary(MQ_LISTENER_PORT),
+                        ContainerEnvironmentUtil.PortConfig.secondary(WEB_CONSOLE_PORT));
             }
         }
         return new IbmMQContainer();
@@ -112,6 +115,6 @@ public class IbmMQLocalContainerInfraService implements IbmMQInfraService, Conta
 
     @Override
     public int listenerPort() {
-        return MQ_LISTENER_PORT;
+        return container.getMappedPort(MQ_LISTENER_PORT);
     }
 }

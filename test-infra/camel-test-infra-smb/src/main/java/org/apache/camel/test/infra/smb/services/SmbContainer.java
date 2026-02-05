@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.smb.services;
 
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.ImageFromDockerfile;
@@ -33,11 +34,7 @@ public class SmbContainer extends GenericContainer<SmbContainer> {
                 .withFileFromClasspath(".",
                         "org/apache/camel/test/infra/smb/services/"));
 
-        if (fixedPort) {
-            addFixedExposedPort(SMB_PORT_DEFAULT, SMB_PORT_DEFAULT);
-        } else {
-            super.withExposedPorts(SMB_PORT_DEFAULT);
-        }
+        ContainerEnvironmentUtil.configurePort(this, fixedPort, SMB_PORT_DEFAULT);
 
         waitingFor(Wait.forListeningPort());
     }

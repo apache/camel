@@ -61,9 +61,7 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
             public TestInfraStrimziContainer(Network network, String name, String zookeeperInstanceName, boolean fixedPort) {
                 super(network, name, zookeeperInstanceName);
 
-                if (fixedPort) {
-                    addFixedExposedPort(9092, 9092);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 9092);
             }
         }
 
@@ -76,9 +74,7 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
             public TestInfraZookeeperContainer(Network network, String name, boolean fixedPort) {
                 super(network, name);
 
-                if (fixedPort) {
-                    addFixedExposedPort(2181, 2181);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 2181);
             }
         }
 

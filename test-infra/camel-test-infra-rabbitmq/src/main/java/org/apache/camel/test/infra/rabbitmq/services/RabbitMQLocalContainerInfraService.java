@@ -57,12 +57,11 @@ public class RabbitMQLocalContainerInfraService implements RabbitMQInfraService,
             public TestInfraRabbitMQContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("rabbitmq"));
 
-                if (fixedPort) {
-                    addFixedExposedPort(5672, 5672);
-                    addFixedExposedPort(5671, 5671);
-                    addFixedExposedPort(15671, 15671);
-                    addFixedExposedPort(15672, 15672);
-                }
+                ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                        ContainerEnvironmentUtil.PortConfig.primary(5672),
+                        ContainerEnvironmentUtil.PortConfig.secondary(5671),
+                        ContainerEnvironmentUtil.PortConfig.secondary(15671),
+                        ContainerEnvironmentUtil.PortConfig.secondary(15672));
             }
         }
 

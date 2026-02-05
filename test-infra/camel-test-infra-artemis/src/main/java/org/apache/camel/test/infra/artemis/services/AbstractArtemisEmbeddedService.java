@@ -33,6 +33,7 @@ import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.common.ArtemisRunException;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.messaging.services.ConnectionFactoryAware;
 import org.slf4j.Logger;
@@ -48,8 +49,23 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     private Consumer<Configuration> customConfigurator;
     private final int port;
 
+    private static final int DEFAULT_PORT = 61616;
+
     public AbstractArtemisEmbeddedService() {
-        this(AvailablePortFinder.getNextAvailable());
+        this(getPort());
+    }
+
+    private static int getPort() {
+        // Check if a port is configured via system property
+        String portStr = System.getProperty(ContainerEnvironmentUtil.INFRA_PORT_PROPERTY);
+        if (portStr != null && !portStr.isEmpty()) {
+            try {
+                return Integer.parseInt(portStr);
+            } catch (NumberFormatException e) {
+                // Fall through to random port
+            }
+        }
+        return AvailablePortFinder.getNextAvailable();
     }
 
     /**

@@ -109,9 +109,7 @@ public class OllamaLocalContainerInfraService implements OllamaInfraService, Con
                     LOG.info("GPU support disabled");
                 }
 
-                if (fixedPort) {
-                    addFixedExposedPort(11434, 11434);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 11434);
                 String name = ContainerEnvironmentUtil.containerName(OllamaLocalContainerInfraService.this.getClass());
                 if (name != null) {
                     withCreateContainerCmdModifier(cmd -> cmd.withName(name));

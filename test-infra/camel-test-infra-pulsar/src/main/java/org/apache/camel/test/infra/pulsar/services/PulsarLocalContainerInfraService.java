@@ -61,10 +61,9 @@ public class PulsarLocalContainerInfraService implements PulsarInfraService, Con
 
                 withStartupTimeout(Duration.ofMinutes(3L));
 
-                if (fixedPort) {
-                    addFixedExposedPort(6650, 6650);
-                    addFixedExposedPort(8085, 8080);
-                }
+                ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                        ContainerEnvironmentUtil.PortConfig.primary(6650),
+                        ContainerEnvironmentUtil.PortConfig.secondary(8080));
             }
         }
 
