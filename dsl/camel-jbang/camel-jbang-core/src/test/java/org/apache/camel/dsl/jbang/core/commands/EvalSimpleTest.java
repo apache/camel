@@ -25,7 +25,7 @@ class EvalSimpleTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void shouldEvalSimple() throws Exception {
-        String[] args = new String[] { "--template=${length()}", "--body=hello_world" };
+        String[] args = new String[] { "--isolated=true", "--template=${length()}", "--body=hello_world" };
         EvalExpressionCommand command = createCommand(args);
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);

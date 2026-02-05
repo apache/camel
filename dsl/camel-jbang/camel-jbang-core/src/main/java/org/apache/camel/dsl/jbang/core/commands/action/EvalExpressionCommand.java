@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -41,21 +42,27 @@ public class EvalExpressionCommand extends ActionWatchCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
+    @CommandLine.Option(names = { "--isolated" },
+                        description = "Whether to run evaluation isolated in local process", defaultValue = "false")
+    boolean isolated;
+
     @CommandLine.Option(names = { "--camel-version" },
                         description = "To run using a different Camel version than the default version.")
     String camelVersion;
 
-    @CommandLine.Parameters(description = "Language to use", defaultValue = "simple")
+    @CommandLine.Option(names = { "--language" },
+                        description = "Language to use", defaultValue = "simple")
     String language;
 
-    @CommandLine.Parameters(description = "Whether to force evaluating as predicate", defaultValue = "false")
+    @CommandLine.Option(names = { "--predicate" },
+                        description = "Whether to force evaluating as predicate", defaultValue = "false")
     boolean predicate;
 
     @CommandLine.Option(names = {
             "--template" },
                         description = "The template to use for evaluating (prefix with file: to refer to loading template from file)",
                         required = true)
-    private String template;
+    String template;
 
     @CommandLine.Option(names = { "--body" },
                         description = "Message body (prefix with file: to refer to loading message body from file)")
@@ -94,7 +101,7 @@ public class EvalExpressionCommand extends ActionWatchCommand {
         }
 
         Integer exit;
-        List<Long> pids = findPids(name);
+        List<Long> pids = isolated ? Collections.EMPTY_LIST : findPids(name);
         if (pids.size() == 1) {
             this.pid = pids.get(0);
             printer().println("Using existing running Camel integration to evaluate (pid: " + this.pid + ")");
