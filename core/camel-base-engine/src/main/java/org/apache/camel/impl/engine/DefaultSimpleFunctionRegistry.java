@@ -100,19 +100,29 @@ public class DefaultSimpleFunctionRegistry extends ServiceSupport implements Sim
 
     @Override
     public Expression getFunction(String name) {
-        Expression exp = functions.get(name);
+        // in dev mode then always lookup function as it may be updated due to a live reload
+        boolean dev = "dev".equals(camelContext.getCamelContextExtension().getProfile());
+        Expression exp = dev ? null : functions.get(name);
         if (exp == null) {
-            // lookup if there is a function with the given name
-            var custom = camelContext.getRegistry().findByType(SimpleFunction.class);
-            for (SimpleFunction sf : custom) {
-                if (name.equals(sf.getName())) {
-                    addFunction(sf);
-                    exp = functions.get(name);
-                    break;
-                }
+            SimpleFunction sf = lookupFunction(name);
+            if (sf != null) {
+                removeFunction(name);
+                addFunction(sf);
+                exp = functions.get(name);
             }
         }
         return exp;
+    }
+
+    private SimpleFunction lookupFunction(String name) {
+        // lookup if there is a function with the given name
+        var custom = camelContext.getRegistry().findByType(SimpleFunction.class);
+        for (SimpleFunction sf : custom) {
+            if (name.equals(sf.getName())) {
+                return sf;
+            }
+        }
+        return null;
     }
 
     @Override
