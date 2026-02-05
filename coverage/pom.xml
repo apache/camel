@@ -2225,11 +2225,11 @@
             <artifactId>camel-tensorflow-serving</artifactId>
             <version>${project.version}</version>
         </dependency>
-      <dependency>
+      <!-- dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
             <version>4.18.0-SNAPSHOT</version>
-      </dependency>
+      </dependency -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
