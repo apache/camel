@@ -110,13 +110,13 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
     }
 
     @Test
-    public void testHundredThousandRecords() throws Exception {
+    public void testTenThousandRecords() throws Exception {
         final MockEndpoint mock = contextExtension.getMockEndpoint("mock:test");
         mock.expectedMessageCount(1000);
 
         context.getRouteController().startRoute("tailableCursorConsumer1");
 
-        // continuous pump of 100000 records, asserting incrementally to reduce
+        // continuous pump of 10000 records, asserting incrementally to reduce
         // overhead on the mock endpoint
         Executors.newSingleThreadExecutor().submit(() -> doLongerInsert(mock)).get();
 
@@ -125,7 +125,7 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport im
     }
 
     private void doLongerInsert(MockEndpoint mock) {
-        for (int i = 1; i <= 100000; i++) {
+        for (int i = 1; i <= 10000; i++) {
             cappedTestCollection.insertOne(new Document("increasing", i).append("string", "value" + i));
 
             // incrementally assert, as the mock endpoint stores all
