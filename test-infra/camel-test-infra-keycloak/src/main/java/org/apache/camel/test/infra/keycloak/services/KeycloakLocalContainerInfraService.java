@@ -79,16 +79,13 @@ public class KeycloakLocalContainerInfraService implements KeycloakInfraService,
                     startCommand = "start-dev";
                 }
 
-                withExposedPorts(KEYCLOAK_PORT)
-                        .withEnv("KEYCLOAK_ADMIN", DEFAULT_ADMIN_USERNAME)
+                withEnv("KEYCLOAK_ADMIN", DEFAULT_ADMIN_USERNAME)
                         .withEnv("KEYCLOAK_ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD)
                         .withCommand(startCommand.split(" "))
                         .waitingFor(Wait.forListeningPorts(KEYCLOAK_PORT))
                         .withStartupTimeout(Duration.ofMinutes(3L));
 
-                if (fixedPort) {
-                    addFixedExposedPort(KEYCLOAK_PORT, KEYCLOAK_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, KEYCLOAK_PORT);
             }
         }
 

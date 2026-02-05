@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.openldap.services;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.openldap.common.OpenldapProperties;
 import org.testcontainers.containers.GenericContainer;
 
@@ -30,12 +31,11 @@ public class OpenLdapContainer extends GenericContainer<OpenLdapContainer> {
         super(LocalPropertyResolver.getProperty(OpenldapLocalContainerInfraService.class,
                 OpenldapProperties.OPENLDAP_CONTAINER));
 
-        if (fixedPort) {
-            this.addFixedExposedPort(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP);
-            this.addFixedExposedPort(CONTAINER_PORT_LDAP_OVER_SSL, CONTAINER_PORT_LDAP_OVER_SSL);
-        } else {
-            this.withExposedPorts(CONTAINER_PORT_LDAP, CONTAINER_PORT_LDAP_OVER_SSL)
-                    .withNetworkAliases(CONTAINER_NAME);
+        if (!fixedPort) {
+            this.withNetworkAliases(CONTAINER_NAME);
         }
+        ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                ContainerEnvironmentUtil.PortConfig.primary(CONTAINER_PORT_LDAP),
+                ContainerEnvironmentUtil.PortConfig.secondary(CONTAINER_PORT_LDAP_OVER_SSL));
     }
 }

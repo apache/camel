@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.rocketmq.services;
 
 import java.util.Collections;
 
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.rocketmq.common.RocketMQProperties;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
@@ -29,16 +30,13 @@ public class RocketMQBrokerContainer extends GenericContainer<RocketMQBrokerCont
     public RocketMQBrokerContainer(Network network, String confName, boolean fixedPort) {
         super(RocketMQContainerInfraService.ROCKETMQ_IMAGE);
 
-        if (fixedPort) {
-            addFixedExposedPort(RocketMQProperties.ROCKETMQ_BROKER3_PORT, RocketMQProperties.ROCKETMQ_BROKER3_PORT);
-            addFixedExposedPort(RocketMQProperties.ROCKETMQ_BROKER2_PORT, RocketMQProperties.ROCKETMQ_BROKER2_PORT);
-            addFixedExposedPort(RocketMQProperties.ROCKETMQ_BROKER1_PORT, RocketMQProperties.ROCKETMQ_BROKER1_PORT);
-        } else {
+        if (!fixedPort) {
             withNetwork(network);
-            withExposedPorts(RocketMQProperties.ROCKETMQ_BROKER3_PORT,
-                    RocketMQProperties.ROCKETMQ_BROKER2_PORT,
-                    RocketMQProperties.ROCKETMQ_BROKER1_PORT);
         }
+        ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                ContainerEnvironmentUtil.PortConfig.primary(RocketMQProperties.ROCKETMQ_BROKER1_PORT),
+                ContainerEnvironmentUtil.PortConfig.secondary(RocketMQProperties.ROCKETMQ_BROKER2_PORT),
+                ContainerEnvironmentUtil.PortConfig.secondary(RocketMQProperties.ROCKETMQ_BROKER3_PORT));
         withEnv("NAMESRV_ADDR", "nameserver:9876");
         withClasspathResourceMapping(confName + "/" + confName + ".conf",
                 "/opt/rocketmq-" + RocketMQContainerInfraService.ROCKETMQ_VERSION + "/conf/broker.conf",

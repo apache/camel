@@ -97,7 +97,7 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
     public void setUpServer() throws Exception {
         sshd = SshServer.setUpDefaultServer();
         if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
-            sshd.setPort(2222);
+            sshd.setPort(ContainerEnvironmentUtil.getConfiguredPort(2222));
         } else {
             sshd.setPort(port);
         }

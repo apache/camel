@@ -60,9 +60,7 @@ public class PostgresLocalContainerInfraService implements PostgresInfraService,
                 super(DockerImageName.parse(imageName)
                         .asCompatibleSubstituteFor("postgres"));
 
-                if (fixedPort) {
-                    addFixedExposedPort(5432, 5432);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 5432);
                 withLogConsumer(new Slf4jLogConsumer(LOG));
             }
         }

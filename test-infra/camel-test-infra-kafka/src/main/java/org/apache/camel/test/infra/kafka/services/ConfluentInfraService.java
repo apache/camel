@@ -52,9 +52,7 @@ public class ConfluentInfraService implements KafkaInfraService, ContainerServic
             public TestInfraConfluentContainer(Network network, String name, boolean fixedPort) {
                 super(network, name);
 
-                if (fixedPort) {
-                    addFixedExposedPort(9092, 9092);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 9092);
             }
         }
 

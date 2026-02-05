@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.kafka.services;
 
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
         public StaticKafkaContainer(String jaasConfigFile) {
             super(jaasConfigFile);
 
-            addFixedExposedPort(9093, 9093);
+            ContainerEnvironmentUtil.configurePort(this, true, 9093);
         }
 
         @Override

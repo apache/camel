@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.solr.services;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.solr.common.SolrProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,11 +61,7 @@ public class SolrContainer extends GenericContainer<SolrContainer> {
                 .withCommand(SOLR_CONTAINER_COMMANDS)
                 .waitingFor(Wait.forHttp("/solr/" + SOLR_DFT_COLLECTION + "/admin/ping?docker-ping"));
 
-        if (fixedPort) {
-            solrContainer.addFixedExposedPort(SolrProperties.DEFAULT_PORT, SolrProperties.DEFAULT_PORT);
-        } else {
-            solrContainer.withExposedPorts(SolrProperties.DEFAULT_PORT);
-        }
+        ContainerEnvironmentUtil.configurePort(solrContainer, fixedPort, SolrProperties.DEFAULT_PORT);
 
         return solrContainer;
     }

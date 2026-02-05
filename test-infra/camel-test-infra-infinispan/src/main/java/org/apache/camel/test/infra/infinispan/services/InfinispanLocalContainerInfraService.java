@@ -81,11 +81,11 @@ public class InfinispanLocalContainerInfraService implements InfinispanInfraServ
 
                 if (isNetworkHost) {
                     withNetworkMode("host");
-                } else if (fixedPort) {
-                    addFixedExposedPort(InfinispanProperties.DEFAULT_SERVICE_PORT, InfinispanProperties.DEFAULT_SERVICE_PORT);
                 } else {
-                    withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
-                            .waitingFor(Wait.forListeningPort());
+                    ContainerEnvironmentUtil.configurePort(this, fixedPort, InfinispanProperties.DEFAULT_SERVICE_PORT);
+                    if (!fixedPort) {
+                        waitingFor(Wait.forListeningPort());
+                    }
                 }
             }
         }

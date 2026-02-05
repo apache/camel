@@ -40,13 +40,23 @@ public class ChatScriptLocalContainerInfraService implements ChatScriptInfraServ
                 ChatScriptLocalContainerInfraService.class,
                 ChatScriptProperties.CHATSCRIPT_CONTAINER);
 
-        container = new GenericContainer<>(containerName) // NOSONAR
-                .withExposedPorts(SERVICE_PORT)
-                .withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withTty(true));
+        container = initContainer(containerName);
+
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
             container.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
         }
+    }
+
+    private GenericContainer<?> initContainer(String containerName) {
+        class ChatScriptContainer extends GenericContainer<ChatScriptContainer> {
+            ChatScriptContainer(String imageName, boolean fixedPort) {
+                super(imageName);
+                withCreateContainerCmdModifier(createContainerCmd -> createContainerCmd.withTty(true));
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, SERVICE_PORT);
+            }
+        }
+        return new ChatScriptContainer(containerName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     @Override

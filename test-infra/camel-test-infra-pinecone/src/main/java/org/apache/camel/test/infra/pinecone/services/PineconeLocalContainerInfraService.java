@@ -61,9 +61,7 @@ public class PineconeLocalContainerInfraService implements PineconeInfraService,
 
                 withStartupTimeout(Duration.ofMinutes(3L));
 
-                if (fixedPort) {
-                    addFixedExposedPort(5080, 5080);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 5080);
             }
         }
 

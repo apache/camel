@@ -18,6 +18,7 @@ package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.messaging.services.MessagingContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -46,10 +47,11 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     public static ArtemisContainer withFixedPort() {
         ArtemisContainer container = new ArtemisContainer();
-        container.addFixedExposedPort(DEFAULT_MQTT_PORT, DEFAULT_MQTT_PORT);
-        container.addFixedExposedPort(DEFAULT_AMQP_PORT, DEFAULT_AMQP_PORT);
-        container.addFixedExposedPort(DEFAULT_ADMIN_PORT, DEFAULT_ADMIN_PORT);
-        container.addFixedExposedPort(DEFAULT_ACCEPTOR_PORT, DEFAULT_ACCEPTOR_PORT);
+        ContainerEnvironmentUtil.configurePorts(container, true,
+                ContainerEnvironmentUtil.PortConfig.primary(DEFAULT_ACCEPTOR_PORT),
+                ContainerEnvironmentUtil.PortConfig.secondary(DEFAULT_MQTT_PORT),
+                ContainerEnvironmentUtil.PortConfig.secondary(DEFAULT_AMQP_PORT),
+                ContainerEnvironmentUtil.PortConfig.secondary(DEFAULT_ADMIN_PORT));
 
         return container;
     }

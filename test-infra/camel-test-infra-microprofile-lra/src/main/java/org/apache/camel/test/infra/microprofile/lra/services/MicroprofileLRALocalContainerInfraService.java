@@ -67,11 +67,7 @@ public class MicroprofileLRALocalContainerInfraService
                         .waitingFor(Wait.forListeningPort())
                         .waitingFor(Wait.forLogMessage(".*lra-coordinator-quarkus.*Listening on.*", 1));
 
-                if (fixedPort) {
-                    addFixedExposedPort(MicroprofileLRAProperties.DEFAULT_PORT, MicroprofileLRAProperties.DEFAULT_PORT);
-                } else {
-                    withExposedPorts(MicroprofileLRAProperties.DEFAULT_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, MicroprofileLRAProperties.DEFAULT_PORT);
             }
         }
 

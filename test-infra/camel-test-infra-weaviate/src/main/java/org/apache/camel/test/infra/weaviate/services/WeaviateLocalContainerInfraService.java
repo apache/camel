@@ -61,10 +61,9 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
 
                 withStartupTimeout(Duration.ofMinutes(3L));
 
-                if (fixedPort) {
-                    addFixedExposedPort(8087, 8080);
-                    addFixedExposedPort(50051, 50051);
-                }
+                ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                        ContainerEnvironmentUtil.PortConfig.primary(8080),
+                        ContainerEnvironmentUtil.PortConfig.secondary(50051));
             }
         }
 

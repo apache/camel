@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.azure.common.services;
 
 import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
@@ -29,12 +30,9 @@ public class AzuriteContainer extends GenericContainer<AzuriteContainer> {
     public AzuriteContainer(String containerName, boolean fixedPort) {
         super(containerName);
 
-        if (fixedPort) {
-            addFixedExposedPort(AzureServices.BLOB_SERVICE, AzureServices.BLOB_SERVICE);
-            addFixedExposedPort(AzureServices.QUEUE_SERVICE, AzureServices.QUEUE_SERVICE);
-        } else {
-            withExposedPorts(AzureServices.BLOB_SERVICE, AzureServices.QUEUE_SERVICE);
-        }
+        ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                ContainerEnvironmentUtil.PortConfig.primary(AzureServices.BLOB_SERVICE),
+                ContainerEnvironmentUtil.PortConfig.secondary(AzureServices.QUEUE_SERVICE));
 
         waitingFor(Wait.forListeningPort());
     }

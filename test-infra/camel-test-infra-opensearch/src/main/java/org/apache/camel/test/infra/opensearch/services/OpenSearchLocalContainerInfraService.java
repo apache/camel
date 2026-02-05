@@ -66,9 +66,7 @@ public class OpenSearchLocalContainerInfraService implements OpenSearchInfraServ
 
                 withLogConsumer(new Slf4jLogConsumer(LOG));
 
-                if (fixedPort) {
-                    addFixedExposedPort(OPEN_SEARCH_PORT, OPEN_SEARCH_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, OPEN_SEARCH_PORT);
             }
         }
 

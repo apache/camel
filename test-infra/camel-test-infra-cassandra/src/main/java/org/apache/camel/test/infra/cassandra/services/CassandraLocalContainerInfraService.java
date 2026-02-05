@@ -60,11 +60,7 @@ public class CassandraLocalContainerInfraService implements CassandraInfraServic
             public CassandraContainerWithFixedPort(boolean fixedPort) {
                 super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("cassandra"));
 
-                if (fixedPort) {
-                    addFixedExposedPort(9042, 9042);
-                } else {
-                    withExposedPorts(9042);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 9042);
             }
         }
 

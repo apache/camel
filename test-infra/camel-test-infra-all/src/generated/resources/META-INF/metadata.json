@@ -44,6 +44,15 @@
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.18.0-SNAPSHOT"
 }, {
+  "service" : "org.apache.camel.test.infra.iggy.services.IggyInfraService",
+  "description" : "Iggy distributed message streaming platform",
+  "implementation" : "org.apache.camel.test.infra.iggy.services.IggyLocalContainerInfraService",
+  "alias" : [ "iggy" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-iggy",
+  "version" : "4.18.0-SNAPSHOT"
+}, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
   "implementation" : "org.apache.camel.test.infra.aws2.services.AWSEventBridgeLocalContainerInfraService",
@@ -377,6 +386,24 @@
   "artifactId" : "camel-test-infra-xmpp",
   "version" : "4.18.0-SNAPSHOT"
 }, {
+  "service" : "org.apache.camel.test.infra.weaviate.services.WeaviateInfraService",
+  "description" : "Weaviate Vector Database",
+  "implementation" : "org.apache.camel.test.infra.weaviate.services.WeaviateLocalContainerInfraService",
+  "alias" : [ "weaviate" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-weaviate",
+  "version" : "4.18.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.consul.services.ConsulInfraService",
+  "description" : "Consul is a service networking solution",
+  "implementation" : "org.apache.camel.test.infra.consul.services.ConsulLocalContainerInfraService",
+  "alias" : [ "consul" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-consul",
+  "version" : "4.18.0-SNAPSHOT"
+}, {
   "service" : "org.apache.camel.test.infra.pulsar.services.PulsarInfraService",
   "description" : "Distributed messaging and streaming platform",
   "implementation" : "org.apache.camel.test.infra.pulsar.services.PulsarLocalContainerInfraService",
@@ -485,6 +512,15 @@
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.18.0-SNAPSHOT"
 }, {
+  "service" : "org.apache.camel.test.infra.pinecone.services.PineconeInfraService",
+  "description" : "Pinecone Vector Database",
+  "implementation" : "org.apache.camel.test.infra.pinecone.services.PineconeLocalContainerInfraService",
+  "alias" : [ "pinecone" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-pinecone",
+  "version" : "4.18.0-SNAPSHOT"
+}, {
   "service" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubInfraService",
   "description" : "Google Cloud SDK Tool",
   "implementation" : "org.apache.camel.test.infra.google.pubsub.services.GooglePubSubLocalContainerInfraService",
@@ -512,6 +548,15 @@
   "artifactId" : "camel-test-infra-arangodb",
   "version" : "4.18.0-SNAPSHOT"
 }, {
+  "service" : "org.apache.camel.test.infra.ignite.services.IgniteInfraService",
+  "description" : "Distributed Database Apache Ignite",
+  "implementation" : "org.apache.camel.test.infra.ignite.services.IgniteEmbeddedInfraService",
+  "alias" : [ "ignite" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-ignite",
+  "version" : "4.18.0-SNAPSHOT"
+}, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded FTP Server",
   "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedInfraService",
@@ -537,6 +582,15 @@
   "aliasImplementation" : [ ],
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-mosquitto",
+  "version" : "4.18.0-SNAPSHOT"
+}, {
+  "service" : "org.apache.camel.test.infra.neo4j.services.Neo4jInfraService",
+  "description" : "Neo4j Database",
+  "implementation" : "org.apache.camel.test.infra.neo4j.services.Neo4jLocalContainerInfraService",
+  "alias" : [ "neo4j" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-neo4j",
   "version" : "4.18.0-SNAPSHOT"
 }, {
   "service" : "org.apache.camel.test.infra.rocketmq.services.RocketMQInfraService",

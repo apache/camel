@@ -64,11 +64,7 @@ public class CouchDbLocalContainerInfraService implements CouchDbInfraService, C
                 withEnv("COUCHDB_PASSWORD", "password");
                 waitingFor(Wait.forListeningPort());
 
-                if (fixedPort) {
-                    addFixedExposedPort(CouchDbProperties.DEFAULT_PORT, CouchDbProperties.DEFAULT_PORT);
-                } else {
-                    withExposedPorts(CouchDbProperties.DEFAULT_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, CouchDbProperties.DEFAULT_PORT);
             }
         }
 

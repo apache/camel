@@ -77,11 +77,7 @@ public class ElasticSearchLocalContainerInfraService
 
                 withPassword(PASSWORD);
 
-                if (fixedPort) {
-                    addFixedExposedPort(ELASTIC_SEARCH_PORT, ELASTIC_SEARCH_PORT);
-                } else {
-                    withExposedPorts(ELASTIC_SEARCH_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, ELASTIC_SEARCH_PORT);
 
                 setWaitStrategy(
                         new LogMessageWaitStrategy()

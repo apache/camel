@@ -134,7 +134,7 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
 
         ListenerFactory factory = new ListenerFactory();
         if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
-            factory.setPort(2221);
+            factory.setPort(ContainerEnvironmentUtil.getConfiguredPort(2221));
         } else {
             factory.setPort(port);
         }

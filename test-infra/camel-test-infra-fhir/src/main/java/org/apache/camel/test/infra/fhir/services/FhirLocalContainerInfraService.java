@@ -62,11 +62,7 @@ public class FhirLocalContainerInfraService implements FhirInfraService, Contain
             public FhirContainer(boolean fixedPort) {
                 super(imageName);
                 withNetworkAliases(containerName);
-                if (fixedPort) {
-                    addFixedExposedPort(FhirProperties.DEFAULT_SERVICE_PORT, FhirProperties.DEFAULT_SERVICE_PORT);
-                } else {
-                    withExposedPorts(FhirProperties.DEFAULT_SERVICE_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, FhirProperties.DEFAULT_SERVICE_PORT);
                 withStartupTimeout(Duration.ofMinutes(3L));
                 withStartupAttempts(5);
                 withEnv("hapi.fhir.allow_multiple_delete", "true");
