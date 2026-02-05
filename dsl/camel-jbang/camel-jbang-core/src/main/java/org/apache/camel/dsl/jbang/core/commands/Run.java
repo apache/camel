@@ -678,10 +678,6 @@ public class Run extends CamelCommand {
         writeSetting(main, profileProperties, QUARKUS_GROUP_ID, quarkusGroupId);
         writeSetting(main, profileProperties, QUARKUS_ARTIFACT_ID, quarkusArtifactId);
 
-        if (observe) {
-            main.addInitialProperty(DEPENDENCIES, "camel:observability-services");
-        }
-
         // command line arguments
         if (property != null) {
             for (String p : property) {
@@ -990,6 +986,9 @@ public class Run extends CamelCommand {
         // Add runtime-specific dependencies
         addRuntimeSpecificDependenciesFromProperties(profileProperties);
 
+        if (observe) {
+            dependencies.add("camel:observability-services");
+        }
         if (!dependencies.isEmpty()) {
             var joined = String.join(",", dependencies);
             main.addInitialProperty(DEPENDENCIES, joined);
