@@ -189,6 +189,10 @@
                         </configuration>
                         <executions>
                             <execution>
+                                <id>default</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
                                 <id>integration-test</id>
                                 <goals>
                                     <goal>integration-test</goal>
