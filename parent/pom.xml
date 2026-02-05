@@ -158,6 +158,8 @@
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.11.1</ehcache3-version>
+        <!-- github-api (kohsuke) for camel-github2 -->
+        <github-api-version>1.330</github-api-version>
         <elasticsearch-java-client-version>9.3.0</elasticsearch-java-client-version>
         <elasticsearch-java-client-sniffer-version>9.2.4</elasticsearch-java-client-sniffer-version>
         <elytron-web>4.1.2.Final</elytron-web>
@@ -1452,6 +1454,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-github</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-github2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -5476,6 +5476,58 @@ public class StaticEndpointBuilders {
         return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * GitHub2 (camel-github2)
+     * Interact with the GitHub API.
+     * 
+     * Category: file,cloud,api
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-github2
+     * 
+     * Syntax: <code>github2:type/branchName</code>
+     * 
+     * Path parameter: type (required)
+     * What git operation to execute
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
+     * 
+     * Path parameter: branchName
+     * Name of branch
+     * 
+     * @param path type/branchName
+     * @return the dsl builder
+     */
+    public static GitHub2EndpointBuilderFactory.GitHub2EndpointBuilder github2(String path) {
+        return github2("github2", path);
+    }
+    /**
+     * GitHub2 (camel-github2)
+     * Interact with the GitHub API.
+     * 
+     * Category: file,cloud,api
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-github2
+     * 
+     * Syntax: <code>github2:type/branchName</code>
+     * 
+     * Path parameter: type (required)
+     * What git operation to execute
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
+     * 
+     * Path parameter: branchName
+     * Name of branch
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path type/branchName
+     * @return the dsl builder
+     */
+    public static GitHub2EndpointBuilderFactory.GitHub2EndpointBuilder github2(String componentName, String path) {
+        return GitHub2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
      * 

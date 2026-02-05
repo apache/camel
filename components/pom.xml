@@ -146,6 +146,7 @@
         <module>camel-geocoder</module>
         <module>camel-git</module>
         <module>camel-github</module>
+        <module>camel-github2</module>
         <module>camel-google</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>

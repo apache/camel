@@ -1,0 +1,14 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "github2",
+    "title": "Github2",
+    "description": "Interact with the GitHub API using kohsuke github-api library",
+    "deprecated": false,
+    "firstVersion": "4.18.0",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-github2",
+    "version": "4.18.0-SNAPSHOT"
+  }
+}
