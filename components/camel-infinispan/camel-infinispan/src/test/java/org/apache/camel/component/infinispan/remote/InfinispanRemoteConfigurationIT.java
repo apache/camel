@@ -74,7 +74,7 @@ public class InfinispanRemoteConfigurationIT {
         configuration.setUsername(service.username());
         configuration.setPassword(service.password());
         configuration.setSecurityServerName("infinispan");
-        configuration.setSaslMechanism("DIGEST-MD5");
+        configuration.setSaslMechanism("SCRAM-SHA-512");
         configuration.setSecurityRealm("default");
         return configuration;
     }

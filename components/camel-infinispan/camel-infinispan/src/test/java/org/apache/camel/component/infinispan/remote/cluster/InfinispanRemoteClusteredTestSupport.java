@@ -48,7 +48,7 @@ public final class InfinispanRemoteClusteredTestSupport {
                 .username(service.username())
                 .password(service.password())
                 .serverName("infinispan")
-                .saslMechanism("DIGEST-MD5")
+                .saslMechanism("SCRAM-SHA-512")
                 .realm("default")
                 .build();
     }
