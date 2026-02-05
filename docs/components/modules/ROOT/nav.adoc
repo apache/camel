@@ -146,6 +146,7 @@
 ** xref:geocoder-component.adoc[Geocoder]
 ** xref:git-component.adoc[Git]
 ** xref:github-component.adoc[GitHub]
+** xref:github2-component.adoc[GitHub2]
 ** xref:google-summary.adoc[Google]
 *** xref:google-bigquery-component.adoc[Google BigQuery]
 *** xref:google-bigquery-sql-component.adoc[Google BigQuery Standard SQL]
