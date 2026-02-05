@@ -71,20 +71,20 @@ public class KeycloakLocalContainerInfraService implements KeycloakInfraService,
             public TestInfraKeycloakContainer(boolean fixedPort) {
                 super(DockerImageName.parse(keycloakImage));
 
-                if ("ppc64le".equals(SystemUtils.OS_ARCH))
-                    withExposedPorts(KEYCLOAK_PORT)
-                            .withEnv("KEYCLOAK_ADMIN", DEFAULT_ADMIN_USERNAME)
-                            .withEnv("KEYCLOAK_ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD)
-                            .withCommand("/opt/bitnami/keycloak/bin/kc.sh", "start-dev")
-                            .waitingFor(Wait.forListeningPorts(KEYCLOAK_PORT))
-                            .withStartupTimeout(Duration.ofMinutes(3L));
-                else
-                    withExposedPorts(KEYCLOAK_PORT)
-                            .withEnv("KEYCLOAK_ADMIN", DEFAULT_ADMIN_USERNAME)
-                            .withEnv("KEYCLOAK_ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD)
-                            .withCommand("start-dev")
-                            .waitingFor(Wait.forListeningPorts(KEYCLOAK_PORT))
-                            .withStartupTimeout(Duration.ofMinutes(3L));
+                String startCommand;
+
+                if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
+                    startCommand = "/opt/bitnami/keycloak/bin/kc.sh start-dev";
+                } else {
+                    startCommand = "start-dev";
+                }
+
+                withExposedPorts(KEYCLOAK_PORT)
+                        .withEnv("KEYCLOAK_ADMIN", DEFAULT_ADMIN_USERNAME)
+                        .withEnv("KEYCLOAK_ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD)
+                        .withCommand(startCommand.split(" "))
+                        .waitingFor(Wait.forListeningPorts(KEYCLOAK_PORT))
+                        .withStartupTimeout(Duration.ofMinutes(3L));
 
                 if (fixedPort) {
                     addFixedExposedPort(KEYCLOAK_PORT, KEYCLOAK_PORT);
