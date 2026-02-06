@@ -183,10 +183,10 @@ public class GooglePubsubConsumer extends DefaultConsumer {
 
                     // Check if error is recoverable
                     boolean isRecoverable = false;
-                    if (e instanceof ApiException) {
-                        isRecoverable = ((ApiException) e).isRetryable();
-                    } else if (e.getCause() instanceof ApiException) {
-                        isRecoverable = ((ApiException) e.getCause()).isRetryable();
+                    if (e instanceof ApiException ae) {
+                        isRecoverable = ae.isRetryable();
+                    } else if (e.getCause() instanceof ApiException ae) {
+                        isRecoverable = ae.isRetryable();
                     }
 
                     if (isRecoverable) {
