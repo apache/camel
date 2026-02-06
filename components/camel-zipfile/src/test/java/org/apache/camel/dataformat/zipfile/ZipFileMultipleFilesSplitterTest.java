@@ -22,12 +22,12 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
+public class ZipFileMultipleFilesSplitterTest extends CamelTestSupport {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
 
-    @Override
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
@@ -80,5 +80,4 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
 
         };
     }
-
 }

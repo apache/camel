@@ -16,13 +16,20 @@
  */
 package org.apache.camel.dataformat.zipfile;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -44,6 +51,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     private boolean allowEmptyDirectory;
     private volatile ZipArchiveInputStream zipInputStream;
     private volatile ZipArchiveEntry currentEntry;
+    private volatile List<CachedOutputStream> cachedOutputStreamsToClose = new ArrayList<>();
     private volatile Message parent;
     private volatile boolean first;
 
@@ -57,7 +65,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             zipInputStream = zipArchiveInputStream;
         } else {
             try {
-                ArchiveInputStream input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP,
+                ArchiveInputStream<?> input = new ArchiveStreamFactory().createArchiveInputStream(ArchiveStreamFactory.ZIP,
                         new BufferedInputStream(inputStream));
                 zipInputStream = (ZipArchiveInputStream) input;
             } catch (ArchiveException e) {
@@ -130,12 +138,13 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             currentEntry = getNextEntry();
 
             if (currentEntry != null) {
-                LOG.debug("read zipEntry {}", currentEntry.getName());
+                String zipFileName = currentEntry.getName();
+                LOG.debug("read zipEntry {}", zipFileName);
 
                 Message answer = new DefaultMessage(exchange.getContext());
                 answer.getHeaders().putAll(exchange.getIn().getHeaders());
-                answer.setHeader("zipFileName", currentEntry.getName());
-                answer.setHeader(Exchange.FILE_NAME, currentEntry.getName());
+                answer.setHeader("zipFileName", zipFileName);
+                answer.setHeader(Exchange.FILE_NAME, zipFileName);
                 if (currentEntry.isDirectory()) {
                     if (allowEmptyDirectory) {
                         answer.setBody(new ByteArrayInputStream(new byte[0]));
@@ -143,10 +152,10 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                         return getNextElement(); // skip directory
                     }
                 } else {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    IOHelper.copy(zipInputStream, baos);
-                    byte[] data = baos.toByteArray();
-                    answer.setBody(new ByteArrayInputStream(data));
+                    CachedOutputStream cos = new CachedOutputStream(exchange);
+                    IOHelper.copy(zipInputStream, cos);
+                    answer.setBody(cos.getInputStream());
+                    cachedOutputStreamsToClose.add(cos);
                 }
 
                 return answer;
@@ -192,6 +201,10 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         IOHelper.close(zipInputStream);
         zipInputStream = null;
         currentEntry = null;
+
+        for (CachedOutputStream cos : cachedOutputStreamsToClose) {
+            IOHelper.close(cos);
+        }
     }
 
     public boolean isSupportIteratorForEmptyDirectory() {
