@@ -268,7 +268,7 @@
         <irclib-version>1.10</irclib-version>
         <ironmq-version>3.0.5</ironmq-version>
         <ivy-version>2.5.3</ivy-version>
-        <jackson-databind-nullable-version>0.2.8</jackson-databind-nullable-version>
+        <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.0</jackson-jq-version>
         <jackson2-version>2.19.4</jackson2-version>
         <jackrabbit-version>2.22.3</jackrabbit-version>
