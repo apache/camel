@@ -34,9 +34,7 @@
     <description>Camel DHIS2 Component</description>
 
     <properties>
-        <dhis2-java-sdk.version>3.0.1</dhis2-java-sdk.version>
-
-         <!-- DHIS2 container is not available on these platforms -->
+        <!-- DHIS2 container is not available on these platforms -->
         <skipITs.ppc64le>true</skipITs.ppc64le>
         <skipITs.s390x>true</skipITs.s390x>
         <skipITs.aarch64>true</skipITs.aarch64>
@@ -51,18 +49,18 @@
         <dependency>
             <groupId>org.hisp.dhis.integration.sdk</groupId>
             <artifactId>dhis2-java-sdk</artifactId>
-            <version>${dhis2-java-sdk.version}</version>
+            <version>${dhis2-version}</version>
         </dependency>
         <dependency>
             <groupId>org.hisp.dhis.integration.sdk</groupId>
             <artifactId>jackson-resource-model</artifactId>
-            <version>${dhis2-java-sdk.version}</version>
+            <version>${dhis2-version}</version>
             <classifier>v40.2.2</classifier>
         </dependency>
         <dependency>
             <groupId>org.hisp.dhis.integration.sdk</groupId>
             <artifactId>jackson-resource-model</artifactId>
-            <version>${dhis2-java-sdk.version}</version>
+            <version>${dhis2-version}</version>
             <classifier>v2.39.1</classifier>
         </dependency>
         <dependency>

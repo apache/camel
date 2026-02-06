@@ -147,6 +147,7 @@
         <debezium-version>3.4.1.Final</debezium-version>
         <debezium-mysql-connector-version>9.6.0</debezium-mysql-connector-version>
         <derby-version>10.16.1.1</derby-version>
+        <dhis2-version>3.0.2</dhis2-version>
         <digitalocean-api-client-version>2.17</digitalocean-api-client-version>
         <directory-watcher-version>0.19.1</directory-watcher-version>
         <disruptor-version>3.4.4</disruptor-version>
