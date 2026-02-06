@@ -39,17 +39,15 @@ public class KameletReifier extends ProcessorReifier<KameletDefinition> {
         }
         // wrap in uow
         String outputId = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
-        camelContext.getCamelContextExtension().createProcessor(outputId);
-        try {
-            Processor answer = new KameletProcessor(camelContext, parseString(definition.getName()), processor);
+        final Processor childProcessor = processor;
+        return camelContext.getCamelContextExtension().createProcessor(outputId, () -> {
+            Processor answer = new KameletProcessor(camelContext, parseString(definition.getName()), childProcessor);
             if (answer instanceof DisabledAware da) {
                 da.setDisabled(isDisabled(camelContext, definition));
             }
             answer = PluginHelper.getInternalProcessorFactory(camelContext)
                     .addUnitOfWorkProcessorAdvice(camelContext, answer, null);
             return answer;
-        } finally {
-            camelContext.getCamelContextExtension().createProcessor(null);
-        }
+        });
     }
 }
