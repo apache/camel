@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -61,6 +64,9 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
     @Parameter(property = PREFIX + "includeSetters")
     protected Boolean includeSetters;
 
+    @Parameter
+    protected File apiSrcDir;
+
     @Override
     public List<SignatureModel> getSignatureList() throws MojoExecutionException {
         // signatures as map from signature with no arg names to arg names from JavadocParser
@@ -89,60 +95,69 @@ public class JavaSourceApiMethodGeneratorMojo extends AbstractApiMethodGenerator
 
             // read source java text for class
             log.debug("Loading source: {}", sourcePath);
-            JavaSourceParser parser;
-            try (InputStream inputStream = getProjectClassLoader().getResourceAsStream(sourcePath)) {
-                if (inputStream == null) {
-                    log.debug("Java source not found on classpath for {}", aClass.getName());
-                    break;
-                }
+            JavaSourceParser parser = null;
 
-                parser = new JavaSourceParser(projectClassLoader);
-                parser.parse(inputStream, nestedClass, includeSetters != null && includeSetters);
+            InputStream inputStream = getProjectClassLoader().getResourceAsStream(sourcePath);
+            if (inputStream == null) {
+                log.debug("Java source not found on classpath for {}", aClass.getName());
+            }
+            try {
+                if (inputStream == null && apiSrcDir != null) {
+                    log.debug("Using file location for source: {}", apiSrcDir);
+                    inputStream = new FileInputStream(new File(apiSrcDir, sourcePath));
+                }
+                if (inputStream != null) {
+                    parser = new JavaSourceParser(projectClassLoader);
+                    parser.parse(inputStream, nestedClass, includeSetters != null && includeSetters);
+                }
             } catch (Exception e) {
                 throw new MojoExecutionException(e.getMessage(), e);
+            } finally {
+                IOHelper.close(inputStream);
             }
 
-            // look for parse errors
-            final String parseError = parser.getErrorMessage();
-            if (parseError != null) {
-                throw new MojoExecutionException(parseError);
-            }
+            if (parser != null) {
+                // look for parse errors
+                final String parseError = parser.getErrorMessage();
+                if (parseError != null) {
+                    throw new MojoExecutionException(parseError);
+                }
 
-            // get public method signature
-            for (String method : parser.getMethodSignatures()) {
-                if (!result.containsKey(method)
-                        && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
-                        && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
+                // get public method signature
+                for (String method : parser.getMethodSignatures()) {
+                    if (!result.containsKey(method)
+                            && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
+                            && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
 
-                    String signature = method;
-                    method = method.replace("public ", "");
-                    int whitespace = method.indexOf(' ');
-                    int leftBracket = method.indexOf('(');
-                    String name = method.substring(whitespace + 1, leftBracket);
+                        String signature = method;
+                        method = method.replace("public ", "");
+                        int whitespace = method.indexOf(' ');
+                        int leftBracket = method.indexOf('(');
+                        String name = method.substring(whitespace + 1, leftBracket);
 
-                    SignatureModel model = new SignatureModel();
-                    model.setSignature(method);
-                    model.setApiDescription(parser.getClassDoc());
-                    model.setMethodDescription(parser.getMethodDocs().get(name));
-                    model.setParameterDescriptions(parser.getParameterDocs().get(name));
-                    model.setParameterTypes(parser.getParameterTypes().get(signature));
+                        SignatureModel model = new SignatureModel();
+                        model.setSignature(method);
+                        model.setApiDescription(parser.getClassDoc());
+                        model.setMethodDescription(parser.getMethodDocs().get(name));
+                        model.setParameterDescriptions(parser.getParameterDocs().get(name));
+                        model.setParameterTypes(parser.getParameterTypes().get(signature));
 
-                    // include getter/setters
-                    if (includeSetters != null && includeSetters && !parser.getSetterMethods().isEmpty()) {
-                        var m = parser.getSetterMethods().get(signature);
-                        var d = parser.getSetterDocs().get(signature);
-                        if (getLog().isDebugEnabled()) {
-                            getLog().debug("There are " + m.size() + " optional properties as setters for: " + name);
-                            getLog().debug("" + m);
+                        // include getter/setters
+                        if (includeSetters != null && includeSetters && !parser.getSetterMethods().isEmpty()) {
+                            var m = parser.getSetterMethods().get(signature);
+                            var d = parser.getSetterDocs().get(signature);
+                            if (getLog().isDebugEnabled()) {
+                                getLog().debug("There are " + m.size() + " optional properties as setters for: " + name);
+                                getLog().debug("" + m);
+                            }
+                            model.setSetterTypes(m);
+                            model.setSetterDescriptions(d);
                         }
-                        model.setSetterTypes(m);
-                        model.setSetterDescriptions(d);
-                    }
 
-                    result.put(method, model);
+                        result.put(method, model);
+                    }
                 }
             }
-
         }
 
         if (result.isEmpty()) {

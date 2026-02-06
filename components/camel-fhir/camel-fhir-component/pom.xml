@@ -191,6 +191,7 @@
                             <goal>fromApis</goal>
                         </goals>
                         <configuration>
+                            <apiSrcDir>../camel-fhir-api/src/main/java</apiSrcDir>
                             <apis>
                                 <api>
                                     <apiName>capabilities</apiName>
