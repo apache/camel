@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -51,6 +52,7 @@ import org.apache.camel.component.mllp.internal.TcpServerBindThread;
 import org.apache.camel.component.mllp.internal.TcpServerConsumerValidationRunnable;
 import org.apache.camel.component.mllp.internal.TcpSocketConsumerRunnable;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
@@ -152,9 +154,18 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         // Create executor services using Camel's ExecutorServiceManager for virtual threads support
         validationExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
                 .newCachedThreadPool(this, "MllpValidation");
+
+        // Create a custom profile with maxQueueSize=0 to use SynchronousQueue for direct handoff.
+        // This is required because MLLP needs immediate task scheduling to process incoming messages
+        // and send acknowledgments before the producer times out.
+        ThreadPoolProfile consumerProfile = new ThreadPoolProfile("MllpConsumer");
+        consumerProfile.setPoolSize(1);
+        consumerProfile.setMaxPoolSize(getConfiguration().getMaxConcurrentConsumers());
+        consumerProfile.setMaxQueueSize(0);
+        consumerProfile.setKeepAliveTime((long) getConfiguration().getAcceptTimeout());
+        consumerProfile.setTimeUnit(TimeUnit.MILLISECONDS);
         consumerExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
-                .newThreadPool(this, "MllpConsumer",
-                        1, getConfiguration().getMaxConcurrentConsumers());
+                .newThreadPool(this, "MllpConsumer", consumerProfile);
 
         if (bindThread == null || !bindThread.isAlive()) {
             bindThread = new TcpServerBindThread(this, getEndpoint().getSslContextParameters());
