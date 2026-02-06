@@ -107,8 +107,8 @@ public final class AWSSDKClientUtils {
             clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
         }
 
-        if (clientBuilder instanceof S3ClientBuilder) {
-            ((S3ClientBuilder) clientBuilder).forcePathStyle(true);
+        if (clientBuilder instanceof S3ClientBuilder s3Builder) {
+            s3Builder.forcePathStyle(true);
         }
 
         return clientBuilder.build();
