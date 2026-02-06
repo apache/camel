@@ -102,8 +102,7 @@ public class MainHttpServerUtil {
                     public void notify(CamelEvent event) {
                         // when reloading then there may be more routes in the same batch, so we only want
                         // to log the summary at the end
-                        if (event instanceof CamelEvent.RouteReloadedEvent) {
-                            CamelEvent.RouteReloadedEvent re = (CamelEvent.RouteReloadedEvent) event;
+                        if (event instanceof CamelEvent.RouteReloadedEvent re) {
                             if (re.getIndex() < re.getTotal()) {
                                 return;
                             }
