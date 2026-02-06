@@ -31,7 +31,7 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>coverage</artifactId>
     <packaging>pom</packaging>
-    <name>Camel Coverage</name>
+    <name>Camel :: Coverage</name>
     <description>Camel Coverage Report</description>
 
     <properties>
