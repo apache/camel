@@ -23,7 +23,7 @@ public class VertxHttpEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(27);
+        Set<String> props = new HashSet<>(28);
         props.add("basicAuthPassword");
         props.add("basicAuthUsername");
         props.add("bearerToken");
@@ -47,6 +47,7 @@ public class VertxHttpEndpointUriFactory extends org.apache.camel.support.compon
         props.add("sslContextParameters");
         props.add("throwExceptionOnFailure");
         props.add("timeout");
+        props.add("tracingPolicy");
         props.add("transferException");
         props.add("useCompression");
         props.add("vertxHttpBinding");
