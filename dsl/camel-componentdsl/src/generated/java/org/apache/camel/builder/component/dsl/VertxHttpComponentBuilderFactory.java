@@ -137,6 +137,24 @@ public interface VertxHttpComponentBuilderFactory {
         }
     
         /**
+         * The tracing policy used by the HTTP client when integrating with
+         * observability frameworks such as OpenTelemetry. If not specified the
+         * HTTP client applies a default tracing policy of PROPAGATE.
+         * 
+         * The option is a:
+         * &lt;code&gt;io.vertx.core.tracing.TracingPolicy&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param tracingPolicy the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpComponentBuilder tracingPolicy(io.vertx.core.tracing.TracingPolicy tracingPolicy) {
+            doSetProperty("tracingPolicy", tracingPolicy);
+            return this;
+        }
+    
+        /**
          * To use an existing vertx instead of creating a new instance.
          * 
          * The option is a: &lt;code&gt;io.vertx.core.Vertx&lt;/code&gt; type.
@@ -391,6 +409,7 @@ public interface VertxHttpComponentBuilderFactory {
             case "responsePayloadAsByteArray": ((VertxHttpComponent) component).setResponsePayloadAsByteArray((boolean) value); return true;
             case "allowJavaSerializedObject": ((VertxHttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "autowiredEnabled": ((VertxHttpComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "tracingPolicy": ((VertxHttpComponent) component).setTracingPolicy((io.vertx.core.tracing.TracingPolicy) value); return true;
             case "vertx": ((VertxHttpComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
             case "vertxHttpBinding": ((VertxHttpComponent) component).setVertxHttpBinding((org.apache.camel.component.vertx.http.VertxHttpBinding) value); return true;
             case "vertxOptions": ((VertxHttpComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;

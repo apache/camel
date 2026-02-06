@@ -415,6 +415,40 @@ public interface VertxHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * The tracing policy used by the HTTP client when integrating with
+         * observability frameworks such as OpenTelemetry. If not specified the
+         * HTTP client applies a default tracing policy of PROPAGATE.
+         * 
+         * The option is a: <code>io.vertx.core.tracing.TracingPolicy</code>
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param tracingPolicy the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder tracingPolicy(io.vertx.core.tracing.TracingPolicy tracingPolicy) {
+            doSetProperty("tracingPolicy", tracingPolicy);
+            return this;
+        }
+        /**
+         * The tracing policy used by the HTTP client when integrating with
+         * observability frameworks such as OpenTelemetry. If not specified the
+         * HTTP client applies a default tracing policy of PROPAGATE.
+         * 
+         * The option will be converted to a
+         * <code>io.vertx.core.tracing.TracingPolicy</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param tracingPolicy the value to set
+         * @return the dsl builder
+         */
+        default VertxHttpEndpointBuilder tracingPolicy(String tracingPolicy) {
+            doSetProperty("tracingPolicy", tracingPolicy);
+            return this;
+        }
+        /**
          * If enabled and an Exchange failed processing on the consumer side,
          * and if the caused Exception was sent back serialized in the response
          * as a application/x-java-serialized-object content type. On the

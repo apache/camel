@@ -21,6 +21,7 @@ import java.net.URI;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.net.ClientOptionsBase;
 import io.vertx.core.net.ProxyType;
+import io.vertx.core.tracing.TracingPolicy;
 import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.client.spi.CookieStore;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -90,6 +91,9 @@ public class VertxHttpConfiguration {
     @UriParam(label = "producer",
               description = "If the option is true, the Exchange.HTTP_URI header will be ignored and the endpoint URI will be used for the HTTP request. You may also set option throwExceptionOnFailure to false to return the fault response back to the client.")
     private boolean bridgeEndpoint;
+    @UriParam(label = "producer",
+              description = "The tracing policy used by the HTTP client when integrating with observability frameworks such as OpenTelemetry. If not specified the HTTP client applies a default tracing policy of PROPAGATE.")
+    private TracingPolicy tracingPolicy;
 
     /**
      * The HTTP URI to connect to
@@ -387,5 +391,13 @@ public class VertxHttpConfiguration {
 
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
+    }
+
+    public TracingPolicy getTracingPolicy() {
+        return tracingPolicy;
+    }
+
+    public void setTracingPolicy(TracingPolicy tracingPolicy) {
+        this.tracingPolicy = tracingPolicy;
     }
 }
