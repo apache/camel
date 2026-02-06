@@ -969,8 +969,7 @@ public class DoclingProducer extends DefaultProducer {
             // unwrap camel-file/camel-ftp and other file based components
             body = wf.getBody();
         }
-        if (body instanceof String) {
-            String content = (String) body;
+        if (body instanceof String content) {
             // Check if it's a URL (http:// or https://) or a file path
             if (content.startsWith("http://") || content.startsWith("https://")) {
                 // Return URL as-is, no validation needed
@@ -986,16 +985,14 @@ public class DoclingProducer extends DefaultProducer {
                 validateFileSize(tempFile.toString());
                 return tempFile.toString();
             }
-        } else if (body instanceof byte[]) {
-            byte[] content = (byte[]) body;
+        } else if (body instanceof byte[] content) {
             if (content.length > configuration.getMaxFileSize()) {
                 throw new IllegalArgumentException("File size exceeds maximum allowed size: " + configuration.getMaxFileSize());
             }
             Path tempFile = Files.createTempFile("docling-", ".tmp");
             Files.write(tempFile, content);
             return tempFile.toString();
-        } else if (body instanceof File) {
-            File file = (File) body;
+        } else if (body instanceof File file) {
             validateFileSize(file.getAbsolutePath());
             return file.getAbsolutePath();
         }
