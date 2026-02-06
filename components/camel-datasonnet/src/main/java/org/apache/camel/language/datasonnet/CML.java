@@ -95,8 +95,8 @@ public final class CML extends Library {
     }
 
     private Val variable(Val key, DataFormatService dataformats) {
-        if (key instanceof Val.Str) {
-            return valFrom(exchange.get().getVariable(((Val.Str) key).value()), dataformats);
+        if (key instanceof Val.Str str) {
+            return valFrom(exchange.get().getVariable(str.value()), dataformats);
         }
         throw new IllegalArgumentException("Expected String got: " + key.prettyName());
     }
