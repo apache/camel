@@ -78,7 +78,7 @@ public class MavenVersionManager implements VersionManager {
 
     public MavenVersionManager(RepositorySystem repositorySystem, RepositorySystemSession repositorySystemSession,
                                Settings settings) {
-        this(new MavenDownloaderImpl(repositorySystem, repositorySystemSession, settings));
+        this(new MavenDownloaderImpl(repositorySystem, repositorySystemSession));
     }
 
     @Override

@@ -308,7 +308,7 @@ public class ValidateMojo extends AbstractMojo {
                     });
 
             try (MavenDownloaderImpl downloader
-                    = new MavenDownloaderImpl(repositorySystem, repositorySystemSession, session.getSettings())) {
+                    = new MavenDownloaderImpl(repositorySystem, repositorySystemSession)) {
                 downloadArtifacts(downloader, artifacts);
             } catch (IOException e) {
                 throw new MojoExecutionException(e);
