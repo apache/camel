@@ -20,7 +20,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

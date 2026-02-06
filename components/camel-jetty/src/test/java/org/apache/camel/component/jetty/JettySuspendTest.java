@@ -21,7 +21,7 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpConsumer;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;

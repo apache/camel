@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.comprehend.Comprehend2Constants;
 import org.apache.camel.component.aws2.comprehend.Comprehend2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import software.amazon.awssdk.services.comprehend.model.DetectSentimentResponse;

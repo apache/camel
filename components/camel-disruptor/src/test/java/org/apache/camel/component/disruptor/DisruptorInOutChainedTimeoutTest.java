@@ -19,11 +19,11 @@ package org.apache.camel.component.disruptor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

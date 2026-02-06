@@ -23,7 +23,7 @@ import java.util.Date;
 import org.apache.camel.BindToRegistry;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit6.TestSupport.assertFileExists;
 
 /**
  * Unit test for FTP using expression (file language)

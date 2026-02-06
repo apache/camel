@@ -26,7 +26,7 @@ import ca.uhn.fhir.parser.LenientErrorHandler;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.fhir.FhirDataFormat;
 import org.apache.camel.reifier.dataformat.DataFormatReifier;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.hl7.fhir.r4.model.IdType;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.SshServer;
 

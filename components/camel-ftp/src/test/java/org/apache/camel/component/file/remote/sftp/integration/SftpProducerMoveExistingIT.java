@@ -23,10 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
-import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
-import static org.apache.camel.test.junit5.TestSupport.assertFileNotExists;
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.apache.camel.test.junit5.TestSupport.createCleanDirectory;
+import static org.apache.camel.test.junit6.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit6.TestSupport.assertFileNotExists;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.createCleanDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -26,7 +26,7 @@ import org.apache.camel.component.splunkhec.SplunkHECEndpoint;
 import org.apache.camel.component.splunkhec.SplunkHECProducer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

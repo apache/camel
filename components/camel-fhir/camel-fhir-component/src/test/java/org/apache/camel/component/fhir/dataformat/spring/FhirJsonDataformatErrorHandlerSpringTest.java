@@ -20,7 +20,7 @@ import ca.uhn.fhir.parser.DataFormatException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;

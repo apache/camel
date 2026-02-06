@@ -18,7 +18,7 @@ package org.apache.camel.component.elasticsearch.rest.client.integration;
 
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchService;
 import org.apache.camel.test.infra.elasticsearch.services.ElasticSearchServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;

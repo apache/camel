@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

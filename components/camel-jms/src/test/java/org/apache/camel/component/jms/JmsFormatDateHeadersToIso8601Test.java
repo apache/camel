@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;

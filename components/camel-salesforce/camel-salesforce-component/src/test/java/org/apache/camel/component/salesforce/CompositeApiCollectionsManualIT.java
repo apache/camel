@@ -30,10 +30,10 @@ import org.apache.camel.component.salesforce.api.dto.DeleteSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.SaveSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Account;
-import org.apache.camel.test.junit5.params.Parameter;
-import org.apache.camel.test.junit5.params.Parameterized;
-import org.apache.camel.test.junit5.params.Parameters;
-import org.apache.camel.test.junit5.params.Test;
+import org.apache.camel.test.junit6.params.Parameter;
+import org.apache.camel.test.junit6.params.Parameterized;
+import org.apache.camel.test.junit6.params.Parameters;
+import org.apache.camel.test.junit6.params.Test;
 import org.junit.jupiter.api.AfterEach;
 
 import static org.apache.camel.language.constant.ConstantLanguage.constant;

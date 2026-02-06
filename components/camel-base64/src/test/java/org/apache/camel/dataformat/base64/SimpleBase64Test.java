@@ -17,7 +17,7 @@
 package org.apache.camel.dataformat.base64;
 
 import org.apache.camel.Expression;
-import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.apache.camel.test.junit6.LanguageTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

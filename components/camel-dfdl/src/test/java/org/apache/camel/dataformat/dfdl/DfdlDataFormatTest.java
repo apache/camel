@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dfdl.DfdlParseException;
 import org.apache.camel.component.dfdl.DfdlUnparseException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.daffodil.japi.Diagnostic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

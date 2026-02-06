@@ -31,7 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.undertow.UndertowComponent;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.wildfly.security.WildFlyElytronBaseProvider;
 import org.wildfly.security.auth.permission.LoginPermission;

@@ -33,7 +33,7 @@ import org.apache.camel.component.stitch.client.models.StitchMessage;
 import org.apache.camel.component.stitch.client.models.StitchRequestBody;
 import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 

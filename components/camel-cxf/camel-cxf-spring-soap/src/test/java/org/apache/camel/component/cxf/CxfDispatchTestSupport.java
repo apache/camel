@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.component.cxf.common.CXFTestSupport;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

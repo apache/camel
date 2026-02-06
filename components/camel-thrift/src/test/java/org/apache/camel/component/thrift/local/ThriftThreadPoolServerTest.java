@@ -23,7 +23,7 @@ import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.component.thrift.server.ThriftThreadPoolServer;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;

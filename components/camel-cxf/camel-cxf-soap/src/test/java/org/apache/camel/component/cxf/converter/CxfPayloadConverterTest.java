@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.common.CxfPayload;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.jupiter.api.Test;
 

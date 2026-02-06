@@ -27,7 +27,7 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

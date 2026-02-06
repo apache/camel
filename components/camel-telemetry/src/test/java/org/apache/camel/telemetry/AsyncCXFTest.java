@@ -28,7 +28,7 @@ import org.apache.camel.telemetry.mock.MockSpanAdapter;
 import org.apache.camel.telemetry.mock.MockTrace;
 import org.apache.camel.telemetry.mock.MockTracer;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

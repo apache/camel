@@ -29,7 +29,7 @@ import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.component.jpa.JpaEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 

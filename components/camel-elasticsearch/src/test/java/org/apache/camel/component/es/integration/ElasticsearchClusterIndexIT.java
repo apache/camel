@@ -28,7 +28,7 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.elasticsearch.client.Request;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.apache.camel.test.junit6.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

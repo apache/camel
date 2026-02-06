@@ -27,7 +27,7 @@ import jakarta.validation.Path.Node;
 import jakarta.validation.TraversableResolver;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 

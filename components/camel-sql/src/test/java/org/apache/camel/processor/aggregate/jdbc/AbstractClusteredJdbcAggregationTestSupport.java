@@ -18,7 +18,7 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.springframework.context.support.AbstractApplicationContext;
 
 public abstract class AbstractClusteredJdbcAggregationTestSupport extends CamelSpringTestSupport {

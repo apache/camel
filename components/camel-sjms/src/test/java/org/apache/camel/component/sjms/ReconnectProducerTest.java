@@ -88,7 +88,7 @@ public class ReconnectProducerTest extends JmsExclusiveTestSupport {
 
     /**
      * @return
-     * @see    org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
+     * @see    org.apache.camel.test.junit6.CamelTestSupport#createRouteBuilder()
      */
     @Override
     protected RouteBuilder createRouteBuilder() {

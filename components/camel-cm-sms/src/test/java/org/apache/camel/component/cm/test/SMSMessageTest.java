@@ -26,7 +26,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber.CountryCodeSource;
 import org.apache.camel.component.cm.client.SMSMessage;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

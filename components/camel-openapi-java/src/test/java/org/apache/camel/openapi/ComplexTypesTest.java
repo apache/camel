@@ -34,7 +34,7 @@ import org.apache.camel.openapi.model.SampleComplexRequestType;
 import org.apache.camel.openapi.model.SampleComplexRequestTypeWithSchemaAnnotation;
 import org.apache.camel.openapi.model.SampleComplexResponseType;
 import org.apache.camel.openapi.model.SampleComplexResponseTypeWithSchemaAnnotation;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

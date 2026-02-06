@@ -33,7 +33,7 @@ import org.apache.camel.component.spring.security.keycloak.KeycloakRealmRoleConv
 import org.apache.camel.component.spring.security.keycloak.KeycloakUsernameSubClaimAdapter;
 import org.apache.camel.component.undertow.UndertowComponent;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.security.oauth2.jwt.Jwt;
 

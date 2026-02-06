@@ -26,11 +26,11 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.Workspace;
 
 import org.apache.camel.spi.Registry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.jupiter.api.BeforeEach;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.apache.camel.test.junit6.TestSupport.deleteDirectory;
 
 /**
  * JcrRouteDifferentWorkspaceTestSupport

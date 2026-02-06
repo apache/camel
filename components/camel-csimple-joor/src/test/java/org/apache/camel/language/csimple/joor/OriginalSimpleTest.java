@@ -57,13 +57,13 @@ import org.apache.camel.spi.VariableRepositoryFactory;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LanguageHelper;
-import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.apache.camel.test.junit6.LanguageTestSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

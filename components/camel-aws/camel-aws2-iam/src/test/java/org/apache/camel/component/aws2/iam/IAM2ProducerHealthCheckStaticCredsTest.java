@@ -26,7 +26,7 @@ import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
