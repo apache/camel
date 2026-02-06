@@ -147,7 +147,9 @@ public class InfraRun extends InfraBaseCommand {
         String serviceInterface = testInfraService.service();
         String serviceImpl = testInfraService.implementation();
 
-        // Set the port property BEFORE instantiating the service so it can use the configured port
+        // Set the fixed port property BEFORE instantiating the service so it uses fixed ports
+        System.setProperty("camel.infra.fixedPort", "true");
+        // Set the port property if a specific port was requested
         if (port != null) {
             System.setProperty("camel.infra.port", String.valueOf(port));
         }
@@ -291,6 +293,7 @@ public class InfraRun extends InfraBaseCommand {
                 // ignore
             }
             System.clearProperty("camel.infra.port");
+            System.clearProperty("camel.infra.fixedPort");
         }
     }
 

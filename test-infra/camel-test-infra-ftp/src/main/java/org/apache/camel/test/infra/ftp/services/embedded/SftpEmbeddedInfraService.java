@@ -100,7 +100,7 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
         if (port > 0) {
             sshd.setPort(port);
         } else {
-            sshd.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom());
+            sshd.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom(FtpProperties.DEFAULT_SFTP_PORT));
         }
 
         sshd.setKeyPairProvider(createKeyPairProvider());

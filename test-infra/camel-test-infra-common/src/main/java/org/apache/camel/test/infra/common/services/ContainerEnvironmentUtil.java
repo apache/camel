@@ -33,6 +33,7 @@ import org.testcontainers.containers.GenericContainer;
 public final class ContainerEnvironmentUtil {
     public static final String STARTUP_ATTEMPTS_PROPERTY = ".startup.attempts";
     public static final String INFRA_PORT_PROPERTY = "camel.infra.port";
+    public static final String INFRA_FIXED_PORT_PROPERTY = "camel.infra.fixedPort";
     private static final Logger LOG = LoggerFactory.getLogger(ContainerEnvironmentUtil.class);
 
     private static boolean dockerAvailable;
@@ -88,28 +89,21 @@ public final class ContainerEnvironmentUtil {
      * Determines if a service class should use fixed ports (for Camel JBang compatibility) or random ports (for
      * testcontainer isolation).
      *
-     * Services implementing an interface with "InfraService" in the name are considered to be intended for use with
-     * Camel JBang and will use fixed default ports. This checks both direct and inherited interfaces.
+     * Fixed ports are only used when the {@link #INFRA_FIXED_PORT_PROPERTY} system property is set to "true". This
+     * property is set by Camel JBang when running "camel infra run" commands. Tests use random ports by default for
+     * isolation.
      *
-     * @param  cls the service class to check
+     * @param  cls the service class to check (unused, kept for API compatibility)
      * @return     true if the service should use fixed ports, false for random ports
      */
     public static boolean isFixedPort(@SuppressWarnings("rawtypes") Class cls) {
-        // Check the entire class hierarchy for InfraService interfaces
-        Class<?> currentClass = cls;
-        while (currentClass != null) {
-            for (Class<?> i : currentClass.getInterfaces()) {
-                if (i.getName().contains("InfraService")) {
-                    LOG.debug("Service {} will use fixed ports (detected InfraService interface: {})",
-                            cls.getSimpleName(), i.getSimpleName());
-                    return true;
-                }
-            }
-            currentClass = currentClass.getSuperclass();
+        boolean fixedPort = Boolean.parseBoolean(System.getProperty(INFRA_FIXED_PORT_PROPERTY, "false"));
+        if (fixedPort) {
+            LOG.debug("Service {} will use fixed ports (camel.infra.fixedPort=true)", cls.getSimpleName());
+        } else {
+            LOG.debug("Service {} will use random ports (camel.infra.fixedPort not set)", cls.getSimpleName());
         }
-
-        LOG.debug("Service {} will use random ports (no InfraService interface detected)", cls.getSimpleName());
-        return false;
+        return fixedPort;
     }
 
     public static String containerName(Class cls) {
@@ -165,13 +159,28 @@ public final class ContainerEnvironmentUtil {
      * @return the configured port, or 0 for random port assignment
      */
     public static int getConfiguredPortOrRandom() {
+        return getConfiguredPortOrRandom(0);
+    }
+
+    /**
+     * Gets the configured port from system property for embedded services. Returns the configured port if set, the
+     * default port if running in fixed port mode (Camel JBang), or 0 (random port) for test isolation.
+     *
+     * @param  defaultPort the default port to use when running in fixed port mode (Camel JBang)
+     * @return             the configured port, the default port in fixed port mode, or 0 for random port assignment
+     */
+    public static int getConfiguredPortOrRandom(int defaultPort) {
         String portStr = System.getProperty(INFRA_PORT_PROPERTY);
         if (portStr != null && !portStr.isEmpty()) {
             try {
                 return Integer.parseInt(portStr);
             } catch (NumberFormatException e) {
-                LOG.warn("Invalid port value '{}', using random port", portStr);
+                LOG.warn("Invalid port value '{}', using default behavior", portStr);
             }
+        }
+        // If in fixed port mode (Camel JBang), use the default port
+        if (Boolean.parseBoolean(System.getProperty(INFRA_FIXED_PORT_PROPERTY, "false"))) {
+            return defaultPort;
         }
         return 0;
     }
