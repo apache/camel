@@ -115,8 +115,8 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
                 attributesBuilder.put(key, ((Number) value).longValue());
             } else if (value instanceof Float || value instanceof Double) {
                 attributesBuilder.put(key, ((Number) value).doubleValue());
-            } else if (value instanceof Boolean) {
-                attributesBuilder.put(key, (Boolean) value);
+            } else if (value instanceof Boolean b) {
+                attributesBuilder.put(key, b);
             } else {
                 attributesBuilder.put(key, value.toString());
             }
