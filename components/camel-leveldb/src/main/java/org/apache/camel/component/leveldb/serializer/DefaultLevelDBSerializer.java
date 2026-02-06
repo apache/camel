@@ -19,12 +19,14 @@ package org.apache.camel.component.leveldb.serializer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.util.ClassLoadingAwareObjectInputStream;
 
 public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
 
@@ -67,6 +69,22 @@ public class DefaultLevelDBSerializer extends AbstractLevelDBSerializer {
             } catch (ClassNotFoundException e) {
                 //this should not happen because serialized content should be byte[]
                 throw new IllegalStateException("Content has to be serialized String.", e);
+            }
+        });
+    }
+
+    @Override
+    public Exchange deserializeExchange(CamelContext camelContext, byte[] buffer, String deserializationFilter)
+            throws IOException, ClassNotFoundException {
+        return deserializeExchange(camelContext, buffer, b -> {
+            ClassLoader classLoader = camelContext.getApplicationContextClassLoader();
+            try (final ObjectInputStream ois = new ClassLoadingAwareObjectInputStream(
+                    classLoader,
+                    new ByteArrayInputStream(buffer))) {
+                ois.setObjectInputFilter(ObjectInputFilter.Config.createFilter(deserializationFilter));
+                return (DefaultExchangeHolder) ois.readObject();
+            } catch (ClassNotFoundException e) {
+                throw new IOException("Failed to deserialize exchange", e);
             }
         });
     }
