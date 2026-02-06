@@ -78,8 +78,7 @@ public class TahuEdgePayloadConverter implements HeaderFilterStrategyAware {
 
                 dataPayloadBuilder.setUuid(headerValue.toString());
 
-            } else if (headerValue instanceof Metric) {
-                Metric metricValue = (Metric) headerValue;
+            } else if (headerValue instanceof Metric metricValue) {
 
                 dataPayloadBuilder.addMetric(metricValue);
 
