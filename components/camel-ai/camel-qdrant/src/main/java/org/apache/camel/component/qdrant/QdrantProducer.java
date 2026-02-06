@@ -265,8 +265,8 @@ public class QdrantProducer extends DefaultAsyncProducer {
         Object body = in.getMandatoryBody();
 
         List<Float> vectors = null;
-        if (body instanceof Points.PointStruct) {
-            Points.Vectors resultVector = ((Points.PointStruct) body).getVectors();
+        if (body instanceof Points.PointStruct pointStruct) {
+            Points.Vectors resultVector = pointStruct.getVectors();
             vectors = resultVector.getVector().getDense().getDataList();
         } else {
             vectors = in.getMandatoryBody(List.class);
