@@ -25,6 +25,7 @@ import io.milvus.common.clientenum.ConsistencyLevelEnum;
 import io.milvus.grpc.DataType;
 import io.milvus.param.IndexType;
 import io.milvus.param.MetricType;
+import io.milvus.param.collection.CollectionSchemaParam;
 import io.milvus.param.collection.CreateCollectionParam;
 import io.milvus.param.collection.FieldType;
 import io.milvus.param.highlevel.dml.SearchSimpleParam;
@@ -100,10 +101,12 @@ public class LangChain4jEmbeddingsComponentMilvusTargetIT extends CamelTestSuppo
                 .withCollectionName("embeddings")
                 .withDescription("customer info")
                 .withShardsNum(2)
-                .withEnableDynamicField(false)
-                .addFieldType(fieldType1)
-                .addFieldType(fieldType2)
-                .addFieldType(fieldType3)
+                .withSchema(CollectionSchemaParam.newBuilder()
+                        .withEnableDynamicField(false)
+                        .addFieldType(fieldType1)
+                        .addFieldType(fieldType2)
+                        .addFieldType(fieldType3)
+                        .build())
                 .build();
 
         Exchange result = fluentTemplate.to(MILVUS_URI)
