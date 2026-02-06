@@ -37,6 +37,8 @@ updates:
         patterns: ["micrometer*"]
       Opentelemetry:
         patterns: ["opentelemetry*"]
+      LangChain4j:
+        patterns: ["dev.langchain4j:*"]
     open-pull-requests-limit: 20
   - package-ecosystem: "npm"
     directory: "docs"
