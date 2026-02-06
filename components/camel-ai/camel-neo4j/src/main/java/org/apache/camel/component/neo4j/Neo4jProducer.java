@@ -349,10 +349,10 @@ public class Neo4jProducer extends DefaultProducer {
 
         Object body = exchange.getMessage().getBody();
 
-        if (body instanceof Neo4jEmbedding) {
-            id = ((Neo4jEmbedding) body).getId();
-            text = ((Neo4jEmbedding) body).getText();
-            vectors = ((Neo4jEmbedding) body).getVectors();
+        if (body instanceof Neo4jEmbedding neo4jEmbed) {
+            id = neo4jEmbed.getId();
+            text = neo4jEmbed.getText();
+            vectors = neo4jEmbed.getVectors();
         } else {
             id = exchange.getMessage().getHeader(Neo4jHeaders.VECTOR_ID, () -> UUID.randomUUID(), String.class);
             vectors = exchange.getMessage().getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR,
@@ -384,8 +384,8 @@ public class Neo4jProducer extends DefaultProducer {
         float[] vectors;
 
         Object body = exchange.getMessage().getMandatoryBody();
-        if (body instanceof Neo4jEmbedding) {
-            vectors = ((Neo4jEmbedding) body).getVectors();
+        if (body instanceof Neo4jEmbedding neo4jEmbed) {
+            vectors = neo4jEmbed.getVectors();
         } else {
             vectors = exchange.getMessage().getBody(float[].class);
         }
