@@ -276,6 +276,10 @@ public class KubernetesExport extends Export {
         // app.kubernetes.io/version
         //
         context.addLabel("app.kubernetes.io/runtime", "camel");
+        if (observe) {
+            // Add the default label for camel dashboard to pick up the camel application
+            context.addLabel("camel.apache.org/app", context.getName());
+        }
         if (labels != null) {
             context.addLabels(Arrays.stream(labels)
                     .map(item -> item.split("="))

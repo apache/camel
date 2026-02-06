@@ -390,6 +390,8 @@ The CronJob configuration parameters:
 You may need to add labels or annotations to the generated Kubernetes resources.
 By default, the generated resources will have the label `camel.apache.org/integration` set to the exported project name.
 
+When the `--observe` command option is present (it is by default) then the generated resources will also have the label `camel.apache.org/app` set to the exported project name.
+
 You can add labels and annotations with these options on the export command:
 
 [source,bash]

@@ -192,7 +192,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldGenerateKubernetesManifest(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
-                "--image-registry=quay.io", "--image-group=camel-test", "--runtime=" + rt.runtime());
+                "--image-registry=quay.io", "--image-group=camel-test", "--observe=true", "--runtime=" + rt.runtime());
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
@@ -203,6 +203,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         Assertions.assertEquals("route", deployment.getMetadata().getName());
         Assertions.assertEquals(1, containers.size());
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertEquals("route", labels.get("camel.apache.org/app"));
         Assertions.assertEquals("route", containers.get(0).getName());
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertNull(containers.get(0).getImage());
@@ -663,16 +664,17 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
     @MethodSource("runtimeProvider")
     public void shouldAddLabels(RuntimeType rt) throws Exception {
         KubernetesExport command = createCommand(new String[] { "classpath:route.yaml" },
-                "--label=foo=bar", "--runtime=" + rt.runtime());
+                "--label=foo=bar", "--observe=true", "--runtime=" + rt.runtime());
         var exit = command.doCall();
         Assertions.assertEquals(0, exit);
 
         Deployment deployment = getDeployment(rt);
         var labels = deployment.getMetadata().getLabels();
         Assertions.assertEquals("route", deployment.getMetadata().getName());
-        Assertions.assertEquals(3, labels.size());
+        Assertions.assertEquals(4, labels.size());
         Assertions.assertEquals("camel", labels.get("app.kubernetes.io/runtime"));
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
+        Assertions.assertEquals("route", labels.get("camel.apache.org/app"));
         Assertions.assertEquals("bar", labels.get("foo"));
     }
 
