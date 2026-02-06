@@ -200,8 +200,8 @@ public class DefaultJolokiaPlatformHttpPlugin extends ServiceSupport implements 
                 try {
                     Method m = ReflectionHelper.findMethod(requestHandler.getClass(), "handleThrowable", Throwable.class);
                     if (m != null) {
-                        json = ObjectHelper.invokeMethodSafe(m, requestHandler, exp instanceof RuntimeMBeanException
-                                ? ((RuntimeMBeanException) exp).getTargetException() : exp);
+                        json = ObjectHelper.invokeMethodSafe(m, requestHandler, exp instanceof RuntimeMBeanException rmbe
+                                ? rmbe.getTargetException() : exp);
                     }
                 } catch (Exception e) {
                     // ignore
