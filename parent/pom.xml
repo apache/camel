@@ -563,7 +563,7 @@
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.4</yasson-version>
         <yetus-audience-annotations-version>0.15.1</yetus-audience-annotations-version>
-        <zeebe-version>8.8.9</zeebe-version>
+        <zeebe-version>8.8.11</zeebe-version>
         <zendesk-client-version>1.4.0</zendesk-client-version>
         <zookeeper-version>3.9.4</zookeeper-version>
         <zxing-version>3.5.4</zxing-version>
