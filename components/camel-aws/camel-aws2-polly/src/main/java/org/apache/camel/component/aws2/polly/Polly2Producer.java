@@ -134,10 +134,10 @@ public class Polly2Producer extends DefaultProducer {
     private void synthesizeSpeech(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof SynthesizeSpeechRequest) {
+            if (payload instanceof SynthesizeSpeechRequest req) {
                 ResponseInputStream<SynthesizeSpeechResponse> result;
                 try {
-                    result = pollyClient.synthesizeSpeech((SynthesizeSpeechRequest) payload);
+                    result = pollyClient.synthesizeSpeech(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Synthesize Speech command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -238,10 +238,10 @@ public class Polly2Producer extends DefaultProducer {
     private void describeVoices(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeVoicesRequest) {
+            if (payload instanceof DescribeVoicesRequest req) {
                 DescribeVoicesResponse result;
                 try {
-                    result = pollyClient.describeVoices((DescribeVoicesRequest) payload);
+                    result = pollyClient.describeVoices(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Describe Voices command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -285,10 +285,10 @@ public class Polly2Producer extends DefaultProducer {
     private void listLexicons(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListLexiconsRequest) {
+            if (payload instanceof ListLexiconsRequest req) {
                 ListLexiconsResponse result;
                 try {
-                    result = pollyClient.listLexicons((ListLexiconsRequest) payload);
+                    result = pollyClient.listLexicons(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Lexicons command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -313,10 +313,10 @@ public class Polly2Producer extends DefaultProducer {
     private void getLexicon(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetLexiconRequest) {
+            if (payload instanceof GetLexiconRequest req) {
                 GetLexiconResponse result;
                 try {
-                    result = pollyClient.getLexicon((GetLexiconRequest) payload);
+                    result = pollyClient.getLexicon(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -348,10 +348,10 @@ public class Polly2Producer extends DefaultProducer {
     private void putLexicon(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutLexiconRequest) {
+            if (payload instanceof PutLexiconRequest req) {
                 PutLexiconResponse result;
                 try {
-                    result = pollyClient.putLexicon((PutLexiconRequest) payload);
+                    result = pollyClient.putLexicon(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Put Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -396,10 +396,10 @@ public class Polly2Producer extends DefaultProducer {
     private void deleteLexicon(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteLexiconRequest) {
+            if (payload instanceof DeleteLexiconRequest req) {
                 DeleteLexiconResponse result;
                 try {
-                    result = pollyClient.deleteLexicon((DeleteLexiconRequest) payload);
+                    result = pollyClient.deleteLexicon(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Lexicon command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -431,10 +431,10 @@ public class Polly2Producer extends DefaultProducer {
     private void startSpeechSynthesisTask(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof StartSpeechSynthesisTaskRequest) {
+            if (payload instanceof StartSpeechSynthesisTaskRequest req) {
                 StartSpeechSynthesisTaskResponse result;
                 try {
-                    result = pollyClient.startSpeechSynthesisTask((StartSpeechSynthesisTaskRequest) payload);
+                    result = pollyClient.startSpeechSynthesisTask(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Speech Synthesis Task command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
@@ -559,10 +559,10 @@ public class Polly2Producer extends DefaultProducer {
     private void getSpeechSynthesisTask(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetSpeechSynthesisTaskRequest) {
+            if (payload instanceof GetSpeechSynthesisTaskRequest req) {
                 GetSpeechSynthesisTaskResponse result;
                 try {
-                    result = pollyClient.getSpeechSynthesisTask((GetSpeechSynthesisTaskRequest) payload);
+                    result = pollyClient.getSpeechSynthesisTask(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Speech Synthesis Task command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
@@ -598,10 +598,10 @@ public class Polly2Producer extends DefaultProducer {
     private void listSpeechSynthesisTasks(PollyClient pollyClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListSpeechSynthesisTasksRequest) {
+            if (payload instanceof ListSpeechSynthesisTasksRequest req) {
                 ListSpeechSynthesisTasksResponse result;
                 try {
-                    result = pollyClient.listSpeechSynthesisTasks((ListSpeechSynthesisTasksRequest) payload);
+                    result = pollyClient.listSpeechSynthesisTasks(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Speech Synthesis Tasks command returned the error code {}",
                             ase.awsErrorDetails().errorCode());
