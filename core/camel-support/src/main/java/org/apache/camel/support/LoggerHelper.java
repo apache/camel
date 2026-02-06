@@ -95,13 +95,13 @@ public final class LoggerHelper {
 
     public static String getSourceLocationOnly(Object node) {
         String name = null;
-        if (node instanceof LineNumberAware) {
-            if (node instanceof NamedRoute namedRoute) {
+        if (node instanceof LineNumberAware lna) {
+            LineNumberAware lineNumberAware = lna;
+            if (lna instanceof NamedRoute namedRoute) {
                 // we want the input from a route as it has the source location / line number
-                node = namedRoute.getInput();
+                lineNumberAware = (LineNumberAware) namedRoute.getInput();
             }
 
-            final LineNumberAware lineNumberAware = (LineNumberAware) node;
             String loc = lineNumberAware.getLocation();
             if (loc != null) {
                 // is it a class or file?
