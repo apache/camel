@@ -198,7 +198,9 @@ public class ZipSplitterRouteTest extends CamelTestSupport {
                             InputStream is = message.getBody(InputStream.class);
                                 byte buf[] = new byte[20];
                                 int bytesRead = is.read(buf);
-                                captureMemory(maxMemoryMbInside, "INSIDE");
+                                if (20 == bytesRead) { // No need to compare memory for all small files i zip file of "testSplitter()"
+                                	captureMemory(maxMemoryMbInside, "INSIDE");
+                                }
                                 return new String(buf, 0, bytesRead);
                             } catch (IOException e) {
                                 throw new RuntimeException("Failed to convert body to String", e);

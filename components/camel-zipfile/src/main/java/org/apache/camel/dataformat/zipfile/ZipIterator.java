@@ -152,14 +152,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                         return getNextElement(); // skip directory
                     }
                 } else {
-
-                    CachedOutputStream cos = new CachedOutputStream(exchange) {
-                        @Override
-                        public void close() throws IOException {
-                            super.close();
-                            LOG.info("Closed CachedOutputStream for '{}'", zipFileName);
-                        }
-                    };
+                    CachedOutputStream cos = new CachedOutputStream(exchange);
                     IOHelper.copy(zipInputStream, cos);
                     answer.setBody(cos.getInputStream());
                     cachedOutputStreamsToClose.add(cos);
@@ -210,7 +203,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
         currentEntry = null;
 
         for (CachedOutputStream cos : cachedOutputStreamsToClose) {
-            cos.close();
+            IOHelper.close(cos);
         }
     }
 
