@@ -133,10 +133,10 @@ public class SecurityHubProducer extends DefaultProducer {
                     if (findings == null || findings.isEmpty()) {
                         // Try to get findings from body
                         Object body = exchange.getIn().getBody();
-                        if (body instanceof List) {
-                            findings = (List<AwsSecurityFinding>) body;
-                        } else if (body instanceof AwsSecurityFinding) {
-                            findings = List.of((AwsSecurityFinding) body);
+                        if (body instanceof List list) {
+                            findings = (List<AwsSecurityFinding>) list;
+                        } else if (body instanceof AwsSecurityFinding asf) {
+                            findings = List.of(asf);
                         }
                     }
                     if (findings == null || findings.isEmpty()) {
