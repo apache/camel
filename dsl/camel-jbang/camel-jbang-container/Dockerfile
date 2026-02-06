@@ -21,12 +21,18 @@ FROM eclipse-temurin:21-jdk
 ENV JBANG_VERSION=0.136.0 \
     CAMEL_VERSION=4.17.0 \
     CAMEL_JBANG_COMMIT=c955dff71d90e5c5bc853edb11dd48782b588deb \
-    JBANG_PATH=/usr/local/bin
+    JBANG_PATH=/opt/jbang
+
+RUN mkdir $JBANG_PATH && chown ubuntu:ubuntu $JBANG_PATH
+
+ENV PATH="$PATH:$JBANG_PATH"
+
+USER ubuntu
 
 # Download JBang, create camel exec, set JBang version, trust camel sources and download camel DEPS by running camel
-RUN bash -c set -o pipefail && wget -qc https://github.com/jbangdev/jbang/releases/download/v$JBANG_VERSION/jbang.tar -O - | tar xf - --strip-components=2 -C /usr/local/bin jbang/bin/jbang jbang/bin/jbang.jar && \
-    echo '#!/bin/sh\nexec jbang run https://github.com/apache/camel/blob/'$CAMEL_JBANG_COMMIT'/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java "$@"' > /usr/local/bin/camel && \
-    chmod +x /usr/local/bin/camel && \
+RUN bash -c set -o pipefail && wget -qc https://github.com/jbangdev/jbang/releases/download/v$JBANG_VERSION/jbang.tar -O - | tar xf - --strip-components=2 -C $JBANG_PATH jbang/bin/jbang jbang/bin/jbang.jar && \
+    echo '#!/bin/sh\nexec jbang run https://github.com/apache/camel/blob/'$CAMEL_JBANG_COMMIT'/dsl/camel-jbang/camel-jbang-main/dist/CamelJBang.java "$@"' > $JBANG_PATH/camel && \
+    chmod +x $JBANG_PATH/camel && \
     mkdir -p $HOME/.jbang/cache && echo -n $JBANG_VERSION > $HOME/.jbang/cache/version.txt && \
     jbang trust add https://github.com/apache/camel && \
     camel version
