@@ -137,7 +137,7 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
         if (port > 0) {
             factory.setPort(port);
         } else {
-            factory.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom());
+            factory.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom(FtpProperties.DEFAULT_FTP_PORT));
         }
         factory.setServerAddress(embeddedConfiguration.getServerAddress());
 

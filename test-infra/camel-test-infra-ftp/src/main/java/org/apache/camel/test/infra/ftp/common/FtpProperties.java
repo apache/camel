@@ -22,6 +22,10 @@ public final class FtpProperties {
     public static final String SERVER_PORT = "ftp.server.port";
     public static final String ROOT_DIR = "ftp.root.dir";
 
+    public static final int DEFAULT_FTP_PORT = 2121;
+    public static final int DEFAULT_FTPS_PORT = 2122;
+    public static final int DEFAULT_SFTP_PORT = 2222;
+
     private FtpProperties() {
 
     }
