@@ -102,7 +102,7 @@
         <!-- This is exclusively required in camel-aws-xray as the dependency is leaking a build time annotation
             TODO: remove when this issue is solved https://github.com/aws/aws-xray-sdk-java/issues/441
         -->
-        <checker-framework-version>3.53.0</checker-framework-version>
+        <checker-framework-version>3.53.1</checker-framework-version>
         <chicory-version>1.6.1</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <citrus-version>4.9.1</citrus-version>
