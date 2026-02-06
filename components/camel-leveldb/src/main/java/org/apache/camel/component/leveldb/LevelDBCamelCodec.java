@@ -62,4 +62,19 @@ public final class LevelDBCamelCodec {
         }
         return answer;
     }
+
+    public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer, String deserializationFilter)
+            throws IOException, ClassNotFoundException {
+        Exchange answer = serializer.deserializeExchange(camelContext, buffer, deserializationFilter);
+
+        // restore the from endpoint
+        String fromEndpointUri = (String) answer.removeProperty("CamelAggregatedFromEndpoint");
+        if (fromEndpointUri != null) {
+            Endpoint fromEndpoint = camelContext.hasEndpoint(fromEndpointUri);
+            if (fromEndpoint != null) {
+                answer.getExchangeExtension().setFromEndpoint(fromEndpoint);
+            }
+        }
+        return answer;
+    }
 }
