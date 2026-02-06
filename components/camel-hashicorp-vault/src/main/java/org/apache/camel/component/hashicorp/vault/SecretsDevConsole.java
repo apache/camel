@@ -39,8 +39,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
         if (getCamelContext().getPropertiesComponent().hasPropertiesFunction("hashicorp")) {
             PropertiesFunction pf = getCamelContext().getPropertiesComponent().getPropertiesFunction("hashicorp");
-            if (pf instanceof HashicorpVaultPropertiesFunction) {
-                propertiesFunction = (HashicorpVaultPropertiesFunction) pf;
+            if (pf instanceof HashicorpVaultPropertiesFunction hvpf) {
+                propertiesFunction = hvpf;
             }
         }
     }
