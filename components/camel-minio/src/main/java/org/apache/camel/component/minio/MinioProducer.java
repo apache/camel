@@ -162,9 +162,9 @@ public class MinioProducer extends DefaultProducer {
                     if (contentLength <= 0) {
                         contentLength = filePayload.length();
                     }
-                } else if (object instanceof InputStream) {
+                } else if (object instanceof InputStream is) {
                     // Use the InputStream directly (e.g., from WrappedFile.getFile())
-                    inputStream = (InputStream) object;
+                    inputStream = is;
                 } else {
                     inputStream = exchange.getMessage().getMandatoryBody(InputStream.class);
                     if (contentLength <= 0) {
