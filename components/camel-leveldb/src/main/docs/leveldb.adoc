@@ -71,6 +71,14 @@ option must also be provided.
 |`deadLetterUri` |String |An endpoint uri for a Dead Letter Channel
 where exhausted recovered Exchanges will be moved. If this option is
 used then the `maximumRedeliveries` option must also be provided.
+
+|`deserializationFilter` |String |A deserialization filter used when
+deserializing exchange data from the LevelDB store. The filter uses the
+standard Java `ObjectInputFilter` pattern syntax. By default, the filter
+is set to `java.**;org.apache.camel.**;!*` which allows Java platform
+classes and Apache Camel classes. If your application stores custom objects,
+you can adjust this filter to include additional packages
+(e.g., `java.**;org.apache.camel.**;com.mycompany.**;!*`).
 |=======================================================================
 
 The `repositoryName` option must be provided. Then either the
