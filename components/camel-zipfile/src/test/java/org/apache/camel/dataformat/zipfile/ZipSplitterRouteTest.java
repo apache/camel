@@ -199,7 +199,7 @@ public class ZipSplitterRouteTest extends CamelTestSupport {
                                 byte buf[] = new byte[20];
                                 int bytesRead = is.read(buf);
                                 if (20 == bytesRead) { // No need to compare memory for all small files i zip file of "testSplitter()"
-                                	captureMemory(maxMemoryMbInside, "INSIDE");
+                                    captureMemory(maxMemoryMbInside, "INSIDE");
                                 }
                                 return new String(buf, 0, bytesRead);
                             } catch (IOException e) {
