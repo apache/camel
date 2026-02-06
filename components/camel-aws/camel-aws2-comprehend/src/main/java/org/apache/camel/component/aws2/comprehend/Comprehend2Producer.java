@@ -132,10 +132,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void detectDominantLanguage(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DetectDominantLanguageRequest) {
+            if (payload instanceof DetectDominantLanguageRequest req) {
                 DetectDominantLanguageResponse result;
                 try {
-                    result = comprehendClient.detectDominantLanguage((DetectDominantLanguageRequest) payload);
+                    result = comprehendClient.detectDominantLanguage(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect Dominant Language command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -171,10 +171,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void detectEntities(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DetectEntitiesRequest) {
+            if (payload instanceof DetectEntitiesRequest req) {
                 DetectEntitiesResponse result;
                 try {
-                    result = comprehendClient.detectEntities((DetectEntitiesRequest) payload);
+                    result = comprehendClient.detectEntities(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -201,10 +201,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void detectKeyPhrases(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DetectKeyPhrasesRequest) {
+            if (payload instanceof DetectKeyPhrasesRequest req) {
                 DetectKeyPhrasesResponse result;
                 try {
-                    result = comprehendClient.detectKeyPhrases((DetectKeyPhrasesRequest) payload);
+                    result = comprehendClient.detectKeyPhrases(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect Key Phrases command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -231,10 +231,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void detectSentiment(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DetectSentimentRequest) {
+            if (payload instanceof DetectSentimentRequest req) {
                 DetectSentimentResponse result;
                 try {
-                    result = comprehendClient.detectSentiment((DetectSentimentRequest) payload);
+                    result = comprehendClient.detectSentiment(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect Sentiment command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -265,10 +265,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void detectSyntax(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DetectSyntaxRequest) {
+            if (payload instanceof DetectSyntaxRequest req) {
                 DetectSyntaxResponse result;
                 try {
-                    result = comprehendClient.detectSyntax((DetectSyntaxRequest) payload);
+                    result = comprehendClient.detectSyntax(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect Syntax command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -295,10 +295,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void detectPiiEntities(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DetectPiiEntitiesRequest) {
+            if (payload instanceof DetectPiiEntitiesRequest req) {
                 DetectPiiEntitiesResponse result;
                 try {
-                    result = comprehendClient.detectPiiEntities((DetectPiiEntitiesRequest) payload);
+                    result = comprehendClient.detectPiiEntities(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect PII Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -325,10 +325,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void detectToxicContent(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DetectToxicContentRequest) {
+            if (payload instanceof DetectToxicContentRequest req) {
                 DetectToxicContentResponse result;
                 try {
-                    result = comprehendClient.detectToxicContent((DetectToxicContentRequest) payload);
+                    result = comprehendClient.detectToxicContent(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Detect Toxic Content command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -356,10 +356,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void classifyDocument(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClassifyDocumentRequest) {
+            if (payload instanceof ClassifyDocumentRequest req) {
                 ClassifyDocumentResponse result;
                 try {
-                    result = comprehendClient.classifyDocument((ClassifyDocumentRequest) payload);
+                    result = comprehendClient.classifyDocument(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Classify Document command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -390,10 +390,10 @@ public class Comprehend2Producer extends DefaultProducer {
     private void containsPiiEntities(ComprehendClient comprehendClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ContainsPiiEntitiesRequest) {
+            if (payload instanceof ContainsPiiEntitiesRequest req) {
                 ContainsPiiEntitiesResponse result;
                 try {
-                    result = comprehendClient.containsPiiEntities((ContainsPiiEntitiesRequest) payload);
+                    result = comprehendClient.containsPiiEntities(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Contains PII Entities command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
