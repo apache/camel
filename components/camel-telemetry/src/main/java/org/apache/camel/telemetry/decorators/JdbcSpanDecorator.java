@@ -40,8 +40,8 @@ public class JdbcSpanDecorator extends AbstractSpanDecorator {
         span.setTag(TagConstants.DB_SYSTEM, "sql");
 
         Object body = exchange.getIn().getBody();
-        if (body instanceof String) {
-            span.setTag(TagConstants.DB_STATEMENT, (String) body);
+        if (body instanceof String str) {
+            span.setTag(TagConstants.DB_STATEMENT, str);
         }
     }
 
