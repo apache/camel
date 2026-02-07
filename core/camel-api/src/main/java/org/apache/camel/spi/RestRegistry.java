@@ -156,7 +156,9 @@ public interface RestRegistry extends StaticService {
      * @param produces      optional details about what media-types the REST service returns
      * @param description   optional description about the service
      */
-    void addRestSpecification(Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String method, String produces, String description);
+    void addRestSpecification(
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String method,
+            String produces, String description);
 
     /**
      * List all REST API specification (ie api-doc)
