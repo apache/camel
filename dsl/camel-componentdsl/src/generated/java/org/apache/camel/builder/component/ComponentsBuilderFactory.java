@@ -3411,6 +3411,19 @@ public interface ComponentsBuilderFactory {
         return MinaComponentBuilderFactory.mina();
     }
     /**
+     * MINA SFTP (camel-mina-sftp)
+     * Upload and download files to/from SFTP servers using Apache MINA SSHD.
+     * 
+     * Category: file
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-mina-sftp
+     * 
+     * @return the dsl builder
+     */
+    static MinaSftpComponentBuilderFactory.MinaSftpComponentBuilder minaSftp() {
+        return MinaSftpComponentBuilderFactory.minaSftp();
+    }
+    /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 

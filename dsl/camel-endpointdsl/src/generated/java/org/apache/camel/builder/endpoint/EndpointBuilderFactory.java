@@ -255,6 +255,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.MiloServerEndpointBuilderFactory.MiloServerBuilders,
             org.apache.camel.builder.endpoint.dsl.MilvusEndpointBuilderFactory.MilvusBuilders,
             org.apache.camel.builder.endpoint.dsl.MinaEndpointBuilderFactory.MinaBuilders,
+            org.apache.camel.builder.endpoint.dsl.MinaSftpEndpointBuilderFactory.MinaSftpBuilders,
             org.apache.camel.builder.endpoint.dsl.MinioEndpointBuilderFactory.MinioBuilders,
             org.apache.camel.builder.endpoint.dsl.MllpEndpointBuilderFactory.MllpBuilders,
             org.apache.camel.builder.endpoint.dsl.MockEndpointBuilderFactory.MockBuilders,
