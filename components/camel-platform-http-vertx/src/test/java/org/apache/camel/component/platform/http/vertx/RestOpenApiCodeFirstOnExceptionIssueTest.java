@@ -23,12 +23,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
-public class RestOpenApiOnExceptionIssueTest extends CamelTestSupport {
+public class RestOpenApiCodeFirstOnExceptionIssueTest extends CamelTestSupport {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
 
     @Test
     public void testOnExceptionHandledTrue() throws Exception {
@@ -37,10 +41,17 @@ public class RestOpenApiOnExceptionIssueTest extends CamelTestSupport {
             public void configure() throws Exception {
                 onException(Exception.class)
                         .log("Error processing request: ${exception.message}")
+                        .process(e -> {
+                            log.info("onException: {}", e);
+                        })
                         .to("mock:error")
                         .handled(true);
 
-                rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
+                restConfiguration().contextPath("/api/v3");
+
+                rest()
+                    .get("pet/{id}")
+                    .to("direct:getPetById");
 
                 from("direct:getPetById").routeId("directRoute")
                         .process(e -> {
@@ -61,17 +72,23 @@ public class RestOpenApiOnExceptionIssueTest extends CamelTestSupport {
     }
 
     @Test
-    @Disabled
     public void testOnExceptionHandledFalse() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
                         .log("Error processing request: ${exception.message}")
+                        .process(e -> {
+                            log.info("onException: {}", e);
+                        })
                         .to("mock:error")
                         .handled(false);
 
-                rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
+                restConfiguration().contextPath("/api/v3");
+
+                rest()
+                    .get("pet/{id}")
+                    .to("direct:getPetById");
 
                 from("direct:getPetById").routeId("directRoute")
                         .process(e -> {
