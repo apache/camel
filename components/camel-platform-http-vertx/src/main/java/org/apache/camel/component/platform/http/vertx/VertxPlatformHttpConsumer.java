@@ -73,6 +73,7 @@ import static org.apache.camel.util.CollectionHelper.appendEntry;
  */
 public class VertxPlatformHttpConsumer extends DefaultConsumer
         implements PlatformHttpConsumer, Suspendable {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
@@ -80,9 +81,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     private final String fileNameExtWhitelist;
     private final boolean muteExceptions;
     private final boolean handleWriteResponseError;
+    private final List<Route> routes = new ArrayList<>();
     private Set<Method> methods;
     private String path;
-    private final List<Route> routes = new ArrayList<>();
     private VertxPlatformHttpRouter router;
     private HttpRequestBodyHandler httpRequestBodyHandler;
     private CookieConfiguration cookieConfiguration;
@@ -111,7 +112,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     protected void doInit() throws Exception {
         super.doInit();
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
-        path = configureEndpointPath(getEndpoint());
+        path = configureEndpointPath(getEndpoint());  // in vertx-web we should replace path parameters from {xxx} to :xxx syntax
         router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), routerName);
         if (router == null) {
             // dynamic assigned port number, then lookup using -0
@@ -191,16 +192,15 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     protected boolean startRestServicesContractFirst() throws Exception {
         boolean matched = false;
         for (var r : getEndpoint().getCamelContext().getRestRegistry().listAllRestServices()) {
+            // rest-dsl contract-first we need to create a new unique router per API endpoint
             String target = path;
             if (target.endsWith("*")) {
                 target = target.substring(0, target.length() - 1);
             }
             if (r.isContractFirst() && target.equals(r.getBasePath())) {
                 matched = true;
-                // contract-first, then lets build up fine-grained router for vertx
                 String u = r.getBasePath() + r.getBaseUrl();
-                // in vertx-web we should replace path parameters from {xxx} to :xxx syntax
-                u = u.replaceAll("\\{([a-zA-Z0-9]+)\\}", ":$1");
+                u = configureEndpointPath(u); // in vertx-web we should replace path parameters from {xxx} to :xxx syntax
                 String v = r.getMethod();
                 String c = r.getConsumes();
                 String p = r.getProduces();
@@ -228,12 +228,13 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
             }
         }
         for (var r : getEndpoint().getCamelContext().getRestRegistry().listAllRestSpecifications()) {
+            // rest-dsl contract-first we need to see if there is an api spec
+            // that should be exposed via a vertx http router
             String target = path;
             if (target.endsWith("*")) {
                 target = target.substring(0, target.length() - 1);
             }
             if (r.isSpecification() && target.equals(r.getBasePath())) {
-                // contract-first, then lets build up fine-grained router for vertx
                 String u = r.getBasePath() + r.getBaseUrl();
                 String v = r.getMethod();
                 String p = r.getProduces();
@@ -263,6 +264,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         if (endpoint.isMatchOnUriPrefix() && !path.endsWith("*")) {
             path += "*";
         }
+        return configureEndpointPath(path);
+    }
+
+    private String configureEndpointPath(String path) {
         // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
         return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }
