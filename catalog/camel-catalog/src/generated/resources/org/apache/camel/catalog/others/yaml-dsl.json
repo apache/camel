@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "yaml-dsl",
     "title": "YAML DSL",
-    "description": "Camel DSL with YAML",
+    "description": "Camel YAML DSL",
     "deprecated": false,
     "firstVersion": "3.9.0",
     "label": "dsl",

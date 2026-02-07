@@ -2,7 +2,7 @@
 :doctitle: YAML DSL
 :shortname: yaml-dsl
 :artifactid: camel-yaml-dsl
-:description: Camel DSL with YAML
+:description: Camel YAML DSL
 :since: 3.9
 :supportlevel: Stable
 :tabs-sync-option:

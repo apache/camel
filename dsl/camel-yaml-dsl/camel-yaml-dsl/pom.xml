@@ -30,7 +30,7 @@
     <artifactId>camel-yaml-dsl</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: YAML DSL</name>
-    <description>Camel DSL with YAML</description>
+    <description>Camel YAML DSL</description>
 
     <properties>
         <firstVersion>3.9.0</firstVersion>
