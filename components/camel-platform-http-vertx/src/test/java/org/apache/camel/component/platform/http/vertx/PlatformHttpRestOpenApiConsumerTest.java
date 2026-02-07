@@ -231,6 +231,7 @@ public class PlatformHttpRestOpenApiConsumerTest {
 
             given()
                     .when()
+                    .contentType("application/json")
                     .put("/api/v3/pet")
                     .then()
                     .statusCode(400); // no request body

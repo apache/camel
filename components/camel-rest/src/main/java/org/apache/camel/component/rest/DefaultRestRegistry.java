@@ -43,6 +43,7 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
 
     private CamelContext camelContext;
     private final Map<Consumer, List<RestService>> registry = new LinkedHashMap<>();
+    private final Map<Consumer, List<RestService>> specs = new LinkedHashMap<>();
     private transient Producer apiProducer;
 
     @Override
@@ -51,21 +52,43 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
             String method,
             String consumes, String produces, String inType, String outType, String routeId, String description) {
         RestServiceEntry entry = new RestServiceEntry(
-                consumer, contractFirst, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType,
+                consumer, false, contractFirst, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType,
+                outType,
                 description);
         List<RestService> list = registry.computeIfAbsent(consumer, c -> new ArrayList<>());
         list.add(entry);
     }
 
     @Override
+    public void addRestSpecification(
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String method,
+            String produces, String description) {
+        RestServiceEntry entry = new RestServiceEntry(
+                consumer, true, contractFirst, url, baseUrl, basePath, null, method, null, produces, null, null,
+                description);
+        List<RestService> list = specs.computeIfAbsent(consumer, c -> new ArrayList<>());
+        list.add(entry);
+    }
+
+    @Override
     public void removeRestService(Consumer consumer) {
         registry.remove(consumer);
+        specs.remove(consumer);
     }
 
     @Override
     public List<RestRegistry.RestService> listAllRestServices() {
         List<RestRegistry.RestService> answer = new ArrayList<>();
         for (var list : registry.values()) {
+            answer.addAll(list);
+        }
+        return answer;
+    }
+
+    @Override
+    public List<RestService> listAllRestSpecifications() {
+        List<RestRegistry.RestService> answer = new ArrayList<>();
+        for (var list : specs.values()) {
             answer.addAll(list);
         }
         return answer;
@@ -160,6 +183,7 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
     @Override
     protected void doStop() throws Exception {
         registry.clear();
+        specs.clear();
     }
 
     /**
@@ -168,6 +192,7 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
     private static final class RestServiceEntry implements RestService {
 
         private final Consumer consumer;
+        private final boolean specification;
         private final boolean contractFirst;
         private final String url;
         private final String baseUrl;
@@ -180,10 +205,12 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
         private final String outType;
         private final String description;
 
-        private RestServiceEntry(Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath,
+        private RestServiceEntry(Consumer consumer, boolean specification, boolean contractFirst, String url, String baseUrl,
+                                 String basePath,
                                  String uriTemplate, String method, String consumes, String produces,
                                  String inType, String outType, String description) {
             this.consumer = consumer;
+            this.specification = specification;
             this.contractFirst = contractFirst;
             this.url = url;
             this.baseUrl = baseUrl;
@@ -200,6 +227,11 @@ public class DefaultRestRegistry extends ServiceSupport implements RestRegistry,
         @Override
         public Consumer getConsumer() {
             return consumer;
+        }
+
+        @Override
+        public boolean isSpecification() {
+            return specification;
         }
 
         @Override

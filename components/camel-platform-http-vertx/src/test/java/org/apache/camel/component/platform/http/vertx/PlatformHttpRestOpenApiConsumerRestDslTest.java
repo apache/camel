@@ -224,7 +224,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.start();
 
             given()
-                    .when()
+                    .when().contentType("application/json")
                     .put("/api/v3/pet")
                     .then()
                     .statusCode(400); // no request body
