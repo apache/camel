@@ -18,7 +18,6 @@ package org.apache.camel.component.platform.http.vertx;
 
 import io.restassured.RestAssured;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -29,25 +28,42 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 
-@Disabled("CAMEL-22874")
 public class RestOpenApiOnExceptionIssueTest extends CamelTestSupport {
 
     @Test
-    public void testOnException() throws Exception {
+    public void testOnExceptionHandledTrue() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(Exception.class)
+                        .log("Error processing request: ${exception.message}")
+                        .to("mock:error")
+                        .handled(true);
+
+                rest().openApi().specification("openapi-v3.json").missingOperation("ignore");
+
+                from("direct:getPetById").routeId("directRoute")
+                        .process(e -> {
+                            throw new RuntimeException("Simulated error get pet");
+                        });
+            }
+        });
+
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
         given()
                 .when()
                 .get("/api/v3/pet/1")
                 .then()
-                .statusCode(500);
+                .statusCode(204);
 
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    @Test
+    @Disabled
+    public void testOnExceptionHandledFalse() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
@@ -62,7 +78,17 @@ public class RestOpenApiOnExceptionIssueTest extends CamelTestSupport {
                             throw new RuntimeException("Simulated error get pet");
                         });
             }
-        };
+        });
+
+        getMockEndpoint("mock:error").expectedMessageCount(1);
+
+        given()
+                .when()
+                .get("/api/v3/pet/1")
+                .then()
+                .statusCode(500);
+
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override
