@@ -305,42 +305,56 @@ public class RouteGroupDevConsole extends AbstractDevConsole {
     }
 
     protected void doAction(CamelContext camelContext, String command, String filter) {
-        if (filter == null) {
-            filter = "*";
-        }
-        String[] patterns = filter.split(",");
-        // find matching IDs
+        String effectiveFilter = filter != null ? filter : "*";
+        String[] patterns = effectiveFilter.split(",");
+
         List<String> ids = camelContext.getRoutes()
                 .stream()
                 .map(Route::getGroup)
-                .filter(group -> {
-                    for (String p : patterns) {
-                        if (PatternHelper.matchPattern(group, p)) {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
+                .filter(group -> matchesAnyPattern(group, patterns))
                 .distinct()
                 .toList();
+
         for (String id : ids) {
-            try {
-                if ("start".equals(command)) {
-                    if ("*".equals(id)) {
-                        camelContext.getRouteController().startAllRoutes();
-                    } else {
-                        camelContext.getRouteController().startRouteGroup(id);
-                    }
-                } else if ("stop".equals(command)) {
-                    if ("*".equals(id)) {
-                        camelContext.getRouteController().stopAllRoutes();
-                    } else {
-                        camelContext.getRouteController().stopRouteGroup(id);
-                    }
-                }
-            } catch (Exception e) {
-                LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
+            executeGroupCommand(camelContext, command, id);
+        }
+    }
+
+    private boolean matchesAnyPattern(String group, String[] patterns) {
+        for (String p : patterns) {
+            if (PatternHelper.matchPattern(group, p)) {
+                return true;
             }
+        }
+        return false;
+    }
+
+    private void executeGroupCommand(CamelContext camelContext, String command, String id) {
+        try {
+            switch (command) {
+                case "start" -> executeStartGroup(camelContext, id);
+                case "stop" -> executeStopGroup(camelContext, id);
+                default -> {
+                }
+            }
+        } catch (Exception e) {
+            LOG.warn("Error {} route: {} due to: {}. This exception is ignored.", command, id, e.getMessage(), e);
+        }
+    }
+
+    private void executeStartGroup(CamelContext camelContext, String id) throws Exception {
+        if ("*".equals(id)) {
+            camelContext.getRouteController().startAllRoutes();
+        } else {
+            camelContext.getRouteController().startRouteGroup(id);
+        }
+    }
+
+    private void executeStopGroup(CamelContext camelContext, String id) throws Exception {
+        if ("*".equals(id)) {
+            camelContext.getRouteController().stopAllRoutes();
+        } else {
+            camelContext.getRouteController().stopRouteGroup(id);
         }
     }
 

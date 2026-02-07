@@ -41,37 +41,31 @@ public class ProducerDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-        if (mbeanServer != null) {
-            try {
-                String jmxDomain
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-                String prefix
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(
-                        jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
-                Set<ObjectName> set = mbeanServer.queryNames(query, null);
-                if (set != null && !set.isEmpty()) {
-                    for (ObjectName on : set) {
-                        ManagedProducerMBean mp = getManagedProducer(getCamelContext(), on);
-                        if (!sb.isEmpty()) {
-                            sb.append("\n");
-                        }
-                        sb.append(String.format("%n    Uri: %s", mp.getEndpointUri()));
-                        sb.append(String.format("%n    State: %s", mp.getState()));
-                        sb.append(String.format("%n    Class: %s", mp.getServiceType()));
-                        sb.append(String.format("%n    Remote: %b", mp.isRemoteEndpoint()));
-                        sb.append(String.format("%n    Singleton: %b", mp.isSingleton()));
-                        if (mp.getRouteId() != null) {
-                            sb.append(String.format("%n    Route Id: %s", mp.getRouteId()));
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                // ignore
-            }
+        Set<ObjectName> producers = queryProducerMBeans();
+        if (producers == null) {
+            return sb.toString();
         }
+
+        for (ObjectName on : producers) {
+            ManagedProducerMBean mp = getManagedProducer(getCamelContext(), on);
+            if (!sb.isEmpty()) {
+                sb.append("\n");
+            }
+            appendProducerText(sb, mp);
+        }
+
         return sb.toString();
+    }
+
+    private void appendProducerText(StringBuilder sb, ManagedProducerMBean mp) {
+        sb.append(String.format("%n    Uri: %s", mp.getEndpointUri()));
+        sb.append(String.format("%n    State: %s", mp.getState()));
+        sb.append(String.format("%n    Class: %s", mp.getServiceType()));
+        sb.append(String.format("%n    Remote: %b", mp.isRemoteEndpoint()));
+        sb.append(String.format("%n    Singleton: %b", mp.isSingleton()));
+        if (mp.getRouteId() != null) {
+            sb.append(String.format("%n    Route Id: %s", mp.getRouteId()));
+        }
     }
 
     @Override
@@ -80,36 +74,48 @@ public class ProducerDevConsole extends AbstractDevConsole {
         final List<JsonObject> list = new ArrayList<>();
         root.put("producers", list);
 
-        MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-        if (mbeanServer != null) {
-            try {
-                String jmxDomain
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
-                String prefix
-                        = getCamelContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
-                ObjectName query = ObjectName.getInstance(
-                        jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
-                Set<ObjectName> set = mbeanServer.queryNames(query, null);
-                if (set != null && !set.isEmpty()) {
-                    for (ObjectName on : set) {
-                        ManagedProducerMBean mp = getManagedProducer(getCamelContext(), on);
-                        JsonObject jo = new JsonObject();
-                        jo.put("uri", mp.getEndpointUri());
-                        jo.put("state", mp.getState());
-                        jo.put("class", mp.getServiceType());
-                        jo.put("remote", mp.isRemoteEndpoint());
-                        jo.put("singleton", mp.isSingleton());
-                        if (mp.getRouteId() != null) {
-                            jo.put("routeId", mp.getRouteId());
-                        }
-                        list.add(jo);
-                    }
-                }
-            } catch (Exception e) {
-                // ignore
-            }
+        Set<ObjectName> producers = queryProducerMBeans();
+        if (producers == null) {
+            return root;
         }
+
+        for (ObjectName on : producers) {
+            ManagedProducerMBean mp = getManagedProducer(getCamelContext(), on);
+            list.add(buildProducerJson(mp));
+        }
+
         return root;
+    }
+
+    private JsonObject buildProducerJson(ManagedProducerMBean mp) {
+        JsonObject jo = new JsonObject();
+        jo.put("uri", mp.getEndpointUri());
+        jo.put("state", mp.getState());
+        jo.put("class", mp.getServiceType());
+        jo.put("remote", mp.isRemoteEndpoint());
+        jo.put("singleton", mp.isSingleton());
+        if (mp.getRouteId() != null) {
+            jo.put("routeId", mp.getRouteId());
+        }
+        return jo;
+    }
+
+    private Set<ObjectName> queryProducerMBeans() {
+        MBeanServer mbeanServer = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (mbeanServer == null) {
+            return null;
+        }
+
+        try {
+            String jmxDomain = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
+            String prefix = getCamelContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName.getInstance(
+                    jmxDomain + ":context=" + prefix + getCamelContext().getManagementName() + ",type=producers,*");
+            Set<ObjectName> set = mbeanServer.queryNames(query, null);
+            return (set != null && !set.isEmpty()) ? set : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static ManagedProducerMBean getManagedProducer(CamelContext camelContext, ObjectName on) {

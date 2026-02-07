@@ -271,44 +271,57 @@ public class SendDevConsole extends AbstractDevConsole {
     }
 
     private Endpoint findTarget(String endpoint) {
-        Endpoint target = null;
         if (endpoint == null) {
-            List<Route> routes = getCamelContext().getRoutes();
-            if (!routes.isEmpty()) {
-                // grab endpoint from 1st route
-                target = routes.get(0).getEndpoint();
-            }
-        } else {
-            // is the endpoint a pattern or route id
-            boolean scheme = endpoint.contains(":");
-            boolean pattern = endpoint.endsWith("*");
-            if (!scheme || pattern) {
-                if (!scheme) {
-                    endpoint = endpoint + "*";
-                }
-                for (Route route : getCamelContext().getRoutes()) {
-                    Endpoint e = route.getEndpoint();
-                    if (EndpointHelper.matchEndpoint(getCamelContext(), e.getEndpointUri(), endpoint)) {
-                        target = e;
-                        break;
-                    }
-                }
-                if (target == null) {
-                    // okay it may refer to a route id
-                    for (Route route : getCamelContext().getRoutes()) {
-                        String id = route.getRouteId();
-                        Endpoint e = route.getEndpoint();
-                        if (EndpointHelper.matchEndpoint(getCamelContext(), id, endpoint)) {
-                            target = e;
-                            break;
-                        }
-                    }
-                }
-            } else {
-                target = getCamelContext().getEndpoint(endpoint);
+            return getFirstRouteEndpoint();
+        }
+
+        boolean hasScheme = endpoint.contains(":");
+        boolean isPattern = endpoint.endsWith("*");
+
+        if (hasScheme && !isPattern) {
+            return getCamelContext().getEndpoint(endpoint);
+        }
+
+        return findEndpointByPattern(endpoint, hasScheme);
+    }
+
+    private Endpoint getFirstRouteEndpoint() {
+        List<Route> routes = getCamelContext().getRoutes();
+        if (routes.isEmpty()) {
+            return null;
+        }
+        return routes.get(0).getEndpoint();
+    }
+
+    private Endpoint findEndpointByPattern(String endpoint, boolean hasScheme) {
+        String searchPattern = hasScheme ? endpoint : endpoint + "*";
+
+        Endpoint target = findEndpointByUri(searchPattern);
+        if (target != null) {
+            return target;
+        }
+
+        return findEndpointByRouteId(searchPattern);
+    }
+
+    private Endpoint findEndpointByUri(String pattern) {
+        for (Route route : getCamelContext().getRoutes()) {
+            Endpoint e = route.getEndpoint();
+            if (EndpointHelper.matchEndpoint(getCamelContext(), e.getEndpointUri(), pattern)) {
+                return e;
             }
         }
-        return target;
+        return null;
+    }
+
+    private Endpoint findEndpointByRouteId(String pattern) {
+        for (Route route : getCamelContext().getRoutes()) {
+            String id = route.getRouteId();
+            if (EndpointHelper.matchEndpoint(getCamelContext(), id, pattern)) {
+                return route.getEndpoint();
+            }
+        }
+        return null;
     }
 
     private Object prepareBody(String body) throws Exception {

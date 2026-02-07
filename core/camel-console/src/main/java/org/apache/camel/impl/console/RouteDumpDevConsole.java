@@ -72,86 +72,111 @@ public class RouteDumpDevConsole extends AbstractDevConsole {
 
     @Override
     protected String doCallText(Map<String, Object> options) {
-        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final String format = (String) options.get(FORMAT);
+        final boolean useUriAsParameters = "true".equals(options.getOrDefault(URI_AS_PARAMETERS, "false"));
 
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            String dump = null;
-            try {
-                String format = (String) options.get(FORMAT);
-                if (format == null || "xml".equals(format)) {
-                    dump = mrb.dumpRouteAsXml(true);
-                } else if ("yaml".equals(format)) {
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters));
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-            sb.append(String.format("    Id: %s", mrb.getRouteId()));
-            if (mrb.getSourceLocation() != null) {
-                sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
-            }
-            if (dump != null && !dump.isEmpty()) {
-                sb.append("\n\n");
-                for (String line : dump.split("\n")) {
-                    sb.append("    ").append(line).append("\n");
-                }
-                sb.append("\n");
-            }
-
-            sb.append("\n");
+            appendRouteTextDump(sb, mrb, format, useUriAsParameters);
             return null;
         };
         doCall(options, task);
         return sb.toString();
     }
 
+    private void appendRouteTextDump(StringBuilder sb, ManagedRouteMBean mrb, String format, boolean useUriAsParameters) {
+        String dump = getRouteDumpText(mrb, format, useUriAsParameters);
+
+        sb.append(String.format("    Id: %s", mrb.getRouteId()));
+        if (mrb.getSourceLocation() != null) {
+            sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
+        }
+        if (dump != null && !dump.isEmpty()) {
+            sb.append("\n\n");
+            for (String line : dump.split("\n")) {
+                sb.append("    ").append(line).append("\n");
+            }
+            sb.append("\n");
+        }
+        sb.append("\n");
+    }
+
+    private String getRouteDumpText(ManagedRouteMBean mrb, String format, boolean useUriAsParameters) {
+        try {
+            if (format == null || "xml".equals(format)) {
+                return mrb.dumpRouteAsXml(true);
+            } else if ("yaml".equals(format)) {
+                return mrb.dumpRouteAsYaml(true, useUriAsParameters);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
     @Override
     protected JsonObject doCallJson(Map<String, Object> options) {
-        final String uriAsParameters = (String) options.getOrDefault(URI_AS_PARAMETERS, "false");
+        final String format = (String) options.get(FORMAT);
+        final boolean useUriAsParameters = "true".equals(options.getOrDefault(URI_AS_PARAMETERS, "false"));
 
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
 
         Function<ManagedRouteMBean, Object> task = mrb -> {
-            JsonObject jo = new JsonObject();
-            list.add(jo);
-
-            jo.put("routeId", mrb.getRouteId());
-            jo.put("from", mrb.getEndpointUri());
-            if (mrb.getSourceLocation() != null) {
-                jo.put("source", mrb.getSourceLocation());
-            }
-
-            try {
-                String dump = null;
-                String format = (String) options.get(FORMAT);
-                if (format == null || "xml".equals(format)) {
-                    jo.put("format", "xml");
-                    dump = mrb.dumpRouteAsXml(true, false, true);
-                } else if ("yaml".equals(format)) {
-                    jo.put("format", "yaml");
-                    dump = mrb.dumpRouteAsYaml(true, "true".equals(uriAsParameters), false, true);
-                }
-                if (dump != null) {
-                    List<JsonObject> code;
-                    if (format == null || "xml".equals(format)) {
-                        code = xmlLoadSourceAsJson(new StringReader(dump));
-                    } else {
-                        code = yamlLoadSourceAsJson(new StringReader(dump));
-                    }
-                    if (code != null) {
-                        jo.put("code", code);
-                    }
-                }
-            } catch (Exception e) {
-                // ignore
-            }
+            list.add(buildRouteJsonDump(mrb, format, useUriAsParameters));
             return null;
         };
         doCall(options, task);
         root.put("routes", list);
         return root;
+    }
+
+    private JsonObject buildRouteJsonDump(ManagedRouteMBean mrb, String format, boolean useUriAsParameters) {
+        JsonObject jo = new JsonObject();
+        jo.put("routeId", mrb.getRouteId());
+        jo.put("from", mrb.getEndpointUri());
+        if (mrb.getSourceLocation() != null) {
+            jo.put("source", mrb.getSourceLocation());
+        }
+
+        addRouteDumpCode(jo, mrb, format, useUriAsParameters);
+        return jo;
+    }
+
+    private void addRouteDumpCode(JsonObject jo, ManagedRouteMBean mrb, String format, boolean useUriAsParameters) {
+        try {
+            String effectiveFormat = format == null ? "xml" : format;
+            String dump = getRouteDumpJson(mrb, effectiveFormat, useUriAsParameters);
+
+            jo.put("format", effectiveFormat);
+            if (dump == null) {
+                return;
+            }
+
+            List<JsonObject> code = parseRouteDumpToCode(dump, effectiveFormat);
+            if (code != null) {
+                jo.put("code", code);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    private String getRouteDumpJson(ManagedRouteMBean mrb, String format, boolean useUriAsParameters) throws Exception {
+        if ("xml".equals(format)) {
+            return mrb.dumpRouteAsXml(true, false, true);
+        } else if ("yaml".equals(format)) {
+            return mrb.dumpRouteAsYaml(true, useUriAsParameters, false, true);
+        }
+        return null;
+    }
+
+    private List<JsonObject> parseRouteDumpToCode(String dump, String format) {
+        if ("xml".equals(format)) {
+            return xmlLoadSourceAsJson(new StringReader(dump));
+        } else {
+            return yamlLoadSourceAsJson(new StringReader(dump));
+        }
     }
 
     protected void doCall(Map<String, Object> options, Function<ManagedRouteMBean, Object> task) {
