@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
  * Will by default not sync writes which allows it to be faster. You can force syncing by setting the sync option to
  * <tt>true</tt>.
  */
+@Deprecated
 public class LevelDBFile implements Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBFile.class);

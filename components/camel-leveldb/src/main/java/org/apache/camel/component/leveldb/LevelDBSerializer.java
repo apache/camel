@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
+@Deprecated
 public interface LevelDBSerializer {
 
     byte[] serializeKey(String key) throws IOException;
