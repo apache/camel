@@ -6,7 +6,7 @@
     "interfaceType": "org.apache.camel.spi.AggregationRepository",
     "title": "Level DBAggregation Repository",
     "description": "Aggregation repository that uses LevelDB to store exchanges.",
-    "deprecated": false,
+    "deprecated": true,
     "groupId": "org.apache.camel",
     "artifactId": "camel-leveldb",
     "version": "4.18.0-SNAPSHOT",

@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.leveldb.serializer.DefaultLevelDBSerializer;
 
+@Deprecated
 public final class LevelDBCamelCodec {
 
     private final LevelDBSerializer serializer;

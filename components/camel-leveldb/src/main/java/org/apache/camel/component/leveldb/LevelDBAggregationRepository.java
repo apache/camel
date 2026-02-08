@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
           description = "Aggregation repository that uses LevelDB to store exchanges.",
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
+@Deprecated
 public class LevelDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregationRepository.class);
