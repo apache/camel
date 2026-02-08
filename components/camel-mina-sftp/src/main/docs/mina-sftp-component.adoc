@@ -450,7 +450,7 @@ When migrating from `sftp` to `mina-sftp`, verify the following:
 . **Known Hosts on Non-Standard Ports**: Update known_hosts entries to use `[hostname]:port` format for non-standard ports
 . **serverAliveCountMax**: If using `serverAliveCountMax=0`, note the behavioral difference (fire-and-forget vs disabled)
 . **Compression**: Remove any manual zlib JAR additions - mina-sftp has built-in compression support
-. **Deprecated Parameters**: Remove JSch-specific parameters (`loggingLevel`, `serverMessageLoggingLevel`, `existDirCheckUsingLs`) - they are accepted but log warnings (see <<Deprecated JSch Parameters>>)
+. **Deprecated Parameters**: Remove JSch-specific parameters (`loggingLevel`, `serverMessageLoggingLevel`, `existDirCheckUsingLs`) - they are accepted but log warnings (see <<Deprecated JSch Parameters (Migration from sftp)>>)
 . **Logging Configuration**: Configure logging via log4j/logback instead of URI parameters (see <<Logging Configuration>>)
 . **Test Authentication**: Verify public key and password authentication work correctly
 . **Test Host Key Verification**: If using `strictHostKeyChecking=yes`, verify known_hosts entries match
