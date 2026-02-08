@@ -713,6 +713,19 @@ public final class CSimpleHelper {
         return random.nextInt(num2 - num1) + num1;
     }
 
+    public static List<Integer> rangeList(Exchange exchange, Object min, Object max) {
+        int num1 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, min);
+        int num2 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, max);
+        if (num1 >= 0 && num1 <= num2 && num1 != num2) {
+            List<Integer> answer = new ArrayList<>();
+            for (int i = num1; i < num2; i++) {
+                answer.add(i);
+            }
+            return answer;
+        }
+        return null;
+    }
+
     public static SkipIterator skip(Exchange exchange, Object skip) {
         int num = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, skip);
         Iterator<?> it = org.apache.camel.support.ObjectHelper.createIterator(exchange.getMessage().getBody());

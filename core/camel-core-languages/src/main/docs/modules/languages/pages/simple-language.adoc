@@ -387,7 +387,9 @@ Various functions to work with numbers.
 |`max(val1,val2,...)` | `long` | Returns the maximum number from all the values (integral numbers only).
 |`min(val1,val2,...)` | `long` | Returns the minimum number from all the values (integral numbers only).
 |`random(max)` | `int` | Returns a random `Integer` between 0 (included) and max (excluded).
-|`random(min,max)` | `int` | Returns a random `Integer` between min (included) and max (excluded),
+|`random(min,max)` | `int` | Returns a random `Integer` between min (included) and max (excluded).
+|`range(max)` | `List` | Returns a list of increasing integers between 0 (included) and max (excluded).
+|`range(min,max)` | `List` | Returns a list of increasing integers between min (included) and max (excluded).
 |`sum(val1,val2,...)` | `long` | Sums together all the values as integral numbers. This function can also be used to subtract by using negative numbers.
 |====
 
@@ -408,6 +410,9 @@ For example message body contains a list `[10, 5, 30, 15]` then `${max()}` retur
 
 The `random` functions returns a random number between min and max (exclusive).
 For example `${random(10)}` returns a random number 0..9. And `${random(18,50)}` returns a random number between 18..49.
+
+The `range` functions returns a list of increasing numbers between min and max (exclusive).
+For example `${range(10)}` returns the numbers `0..9`. And `${range(1,10)}` returns `1..9`.
 
 The `sum` function adds up numeric values (not floating point) and returns the result as a long.
 Assume message body is `[10, 20, 30]` (as `List<Integer>` or similar) then `${sum()}` results in `60`

@@ -322,6 +322,10 @@ public final class SimpleConstants {
               label = "number", javaType = "int")
     public static final String RANDOM = "random(min,max)";
 
+    @Metadata(description = "Returns a list of increasing integers between the given interval (exclusive)",
+              label = "number", javaType = "List")
+    public static final String RANGE = "range(min,max)";
+
     @Metadata(description = "To look up a bean from the Registry with the given name.", label = "core", javaType = "Object",
               displayName = "Bean By Id")
     public static final String REF = "ref:name";

@@ -2194,6 +2194,43 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Returns a range of number between min and max (exclusive)
+     */
+    public static Expression rangeExpression(final String min, final String max) {
+        return new ExpressionAdapter() {
+            private Expression exp1;
+            private Expression exp2;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                int num1 = exp1.evaluate(exchange, Integer.class);
+                int num2 = exp2.evaluate(exchange, Integer.class);
+                if (num1 >= 0 && num1 <= num2 && num1 != num2) {
+                    List<Integer> answer = new ArrayList<>();
+                    for (int i = num1; i < num2; i++) {
+                        answer.add(i);
+                    }
+                    return answer;
+                }
+                return null;
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                exp1 = ExpressionBuilder.simpleExpression(min);
+                exp1.init(context);
+                exp2 = ExpressionBuilder.simpleExpression(max);
+                exp2.init(context);
+            }
+
+            @Override
+            public String toString() {
+                return "range(" + min + "," + max + ")";
+            }
+        };
+    }
+
+    /**
      * Returns a random number between 0 and max (exclusive)
      */
     public static Expression randomExpression(final int max) {

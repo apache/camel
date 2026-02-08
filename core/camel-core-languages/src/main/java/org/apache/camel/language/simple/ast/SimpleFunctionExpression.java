@@ -1021,6 +1021,25 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return SimpleExpressionBuilder.randomExpression("0", values.trim());
             }
         }
+        // range function
+        remainder = ifStartsWithReturnRemainder("range(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = values.split(",", 3);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, token.getIndex());
+                }
+                return SimpleExpressionBuilder.rangeExpression(tokens[0].trim(), tokens[1].trim());
+            } else {
+                return SimpleExpressionBuilder.rangeExpression("1", values.trim());
+            }
+        }
 
         // distinct function
         remainder = ifStartsWithReturnRemainder("distinct(", function);
@@ -2832,6 +2851,26 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return "random(exchange, " + before + ", " + after + ")";
             } else {
                 return "random(exchange, 0, " + values.trim() + ")";
+            }
+        }
+        remainder = ifStartsWithReturnRemainder("range(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String before = StringHelper.before(remainder, ",");
+                before = before.trim();
+                String after = StringHelper.after(remainder, ",");
+                after = after.trim();
+                if (after.endsWith(")")) {
+                    after = after.substring(0, after.length() - 1);
+                }
+                return "rangeList(exchange, " + before + ", " + after + ")";
+            } else {
+                return "rangeList(exchange, 0, " + values.trim() + ")";
             }
         }
 

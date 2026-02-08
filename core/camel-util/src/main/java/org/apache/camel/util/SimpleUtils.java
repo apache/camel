@@ -105,6 +105,7 @@ public class SimpleUtils {
                     "propertiesexist",
                     "quote",
                     "random",
+                    "range",
                     "ref",
                     "replace",
                     "reverse",

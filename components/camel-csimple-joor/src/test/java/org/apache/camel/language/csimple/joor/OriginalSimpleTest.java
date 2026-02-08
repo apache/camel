@@ -2320,6 +2320,18 @@ public class OriginalSimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testRange() {
+        exchange.getMessage().setBody("5");
+        assertExpression("${range(1,4)}", "[1, 2, 3]");
+        assertExpression("${range(1,${body})}", "[1, 2, 3, 4]");
+        assertExpression("${range(0,10)}", "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]");
+        assertExpression("${range(1,2)}", "[1]");
+        assertExpression("${range(1,1)}", null);
+        assertExpression("${range(0,0)}", null);
+        assertExpression("${range(4,1)}", null);
+    }
+
+    @Test
     public void testSubstringBefore() {
         exchange.getMessage().setBody("Hello World");
 
