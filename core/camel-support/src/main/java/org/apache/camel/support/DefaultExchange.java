@@ -36,17 +36,17 @@ public final class DefaultExchange extends AbstractExchange {
     DefaultExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
                     Map<String, Object> properties) {
         super(context, internalProperties, properties);
-        this.timeInfo = new MonotonicClock();
+        this.timeInfo = new ResetableClock();
     }
 
     public DefaultExchange(CamelContext context) {
         super(context);
-        this.timeInfo = new MonotonicClock();
+        this.timeInfo = new ResetableClock();
     }
 
     public DefaultExchange(CamelContext context, ExchangePattern pattern) {
         super(context, pattern);
-        this.timeInfo = new MonotonicClock();
+        this.timeInfo = new ResetableClock();
     }
 
     public DefaultExchange(Exchange parent) {
