@@ -59,6 +59,32 @@ XML::
     </pipeline>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - pipeline:
+            steps:
+              - to:
+                  uri: bean
+                  parameters:
+                    beanName: foo
+              - to:
+                  uri: bean
+                  parameters:
+                    beanName: bar
+              - to:
+                  uri: activemq
+                  parameters:
+                    destinationName: wine
+----
 ====
 
 Though a pipeline is the default mode of operation when you specify
@@ -86,6 +112,30 @@ XML::
     <to uri="bean:bar"/>
     <to uri="activemq:wine"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - to:
+            uri: bean
+            parameters:
+              beanName: foo
+        - to:
+            uri: bean
+            parameters:
+              beanName: bar
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
 ----
 ====
 
@@ -148,5 +198,47 @@ XML::
   </multicast>
   <to uri="log:result"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: SomeQueue
+      steps:
+        - multicast:
+            steps:
+              - pipeline:
+                  steps:
+                    - to:
+                        uri: bean
+                        parameters:
+                          beanName: something
+                    - to:
+                        uri: log
+                        parameters:
+                          loggerName: Something
+              - pipeline:
+                  steps:
+                    - to:
+                        uri: bean
+                        parameters:
+                          beanName: foo
+                    - to:
+                        uri: bean
+                        parameters:
+                          beanName: bar
+                    - to:
+                        uri: activemq
+                        parameters:
+                          destinationName: OutputQueue
+        - to:
+            uri: log
+            parameters:
+              loggerName: result
 ----
 ====
