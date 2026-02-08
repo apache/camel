@@ -42,6 +42,16 @@ Even if the interface HostApplicationEventHandler is public, I do not expect Cam
 
 Consequently, there is an API break `org.apache.camel.tahu.handlers.TahuHostApplicationEventHandler` has been removed. It is replaced by `org.apache.camel.tahu.handlers.MultiTahuHostApplicationEventHandler`.
 
+=== camel-platform-http-vertx and Rest DSL contract-first
+
+When using Rest DSL in _contract first_ style, then the HTTP engine (vertx-web) instead of a single
+router to handle all incoming Rest API calls, is now one unique router per API endpoint. This change
+can affect HTTP request validation as vertx/Quarkus is now also performing this per API endpoint according
+to the API specification.
+
+All together this would make Camel behave similar for Rest DSL for both _code first_ and _contract first_ style.
+
+
 === Component deprecation
 
 The `camel-olingo2` and `camel-olingo4` component are deprecated.

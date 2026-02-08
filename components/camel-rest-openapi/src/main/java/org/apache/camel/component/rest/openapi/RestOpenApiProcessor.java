@@ -19,7 +19,6 @@ package org.apache.camel.component.rest.openapi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -184,6 +183,20 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         }
         openApiUtils.clear(); // no longer needed
 
+        // register api-doc in rest registry
+        if (endpoint.getSpecificationUri() != null && apiContextPath != null) {
+            String url = basePath + apiContextPath;
+            String produces = null;
+            if (endpoint.getSpecificationUri().endsWith("json")) {
+                produces = "application/json";
+            } else if (endpoint.getSpecificationUri().endsWith("yaml") || endpoint.getSpecificationUri().endsWith("yml")) {
+                produces = "text/yaml";
+            }
+            // register api-doc
+            camelContext.getRestRegistry().addRestSpecification(consumer, true, url, apiContextPath, basePath, "GET", produces,
+                    null);
+        }
+
         for (var p : paths) {
             if (p instanceof RestOpenApiConsumerPath rcp) {
                 ServiceHelper.startService(rcp.getBinding());
@@ -216,15 +229,9 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
         bc.setClientResponseValidation(config.isClientResponseValidation() || endpoint.isClientResponseValidation());
         bc.setEnableNoContentResponse(config.isEnableNoContentResponse());
         bc.setSkipBindingOnErrorCode(config.isSkipBindingOnErrorCode());
-
-        String consumes = Optional.ofNullable(openApiUtils.getConsumes(o)).orElse(endpoint.getConsumes());
-        String produces = Optional.ofNullable(openApiUtils.getProduces(o)).orElse(endpoint.getProduces());
-
-        bc.setConsumes(consumes);
-        bc.setProduces(produces);
-
+        bc.setConsumes(openApiUtils.getConsumes(o));
+        bc.setProduces(openApiUtils.getProduces(o));
         bc.setRequiredBody(openApiUtils.isRequiredBody(o));
-
         bc.setRequiredQueryParameters(openApiUtils.getRequiredQueryParameters(o));
         bc.setRequiredHeaders(openApiUtils.getRequiredHeaders(o));
         bc.setQueryDefaultValues(openApiUtils.getQueryParametersDefaultValue(o));
