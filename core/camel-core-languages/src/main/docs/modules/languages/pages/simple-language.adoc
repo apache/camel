@@ -315,6 +315,8 @@ The condition functions is small functions that mostly evaluates to a `boolean` 
 |====
 |Function |Response Type |Description
 |`assert(exp,msg)` | `null` | Evaluates the expression and throws an exception with the message if the condition is false. This function is not supported when using csimple.
+|`contains(text`) | `boolean` | Returns true if the message body contains part of the text (ignore case)
+|`contains(exp,text`) | `boolean` | Returns true if the expression contains part of the text (ignore case)
 |`iif(predicate,trueExp,falseExp`) | `Object` | The inlined if function evaluates the predicate expression and returns the value of _trueExp_ if the predicate is `true`, otherwise the value of `falseExp` is returned. This function is similar to the ternary operator in Java.
 |`isEmpty` | `boolean` | Whether the message body is `null` or empty (list/map types are tested if they have 0 elements).
 |`isEmpty(exp)` | `boolean` | Whether the expression is `null` or empty (list/map types are tested if they have 0 elements).
@@ -328,6 +330,9 @@ The condition functions is small functions that mostly evaluates to a `boolean` 
 |====
 
 The `assert` function evaluates the expression and if its false or null, then an `SimpleAssertionException` is thrown with the given message.
+
+The `contains` function is a convenient function to check if a given expression contain partly a given text (ignore case).
+For example given the message body is `Hello big World` then `${contains(world)}` returns `true`, and `${contains(camel)}` returns `false`.
 
 The `iif` (_inlined if_) function is from Camel 4.18 also available as a ternary operator (predicate `?` trueExp `:` falseExp), see further below.
 An example with `iif` could be `${iif(${header.foo} > 0,'positive','negative')}`. This example is also used further below with the ternary operator.

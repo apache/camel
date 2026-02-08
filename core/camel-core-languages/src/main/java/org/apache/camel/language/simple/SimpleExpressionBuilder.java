@@ -1862,6 +1862,47 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Filters the values from the source that matches the predicate function
+     */
+    public static Expression filterExpression(final String source, final String function) {
+        return new ExpressionAdapter() {
+            private CamelContext context;
+            private Expression exp1;
+            private Predicate exp2;
+
+            @Override
+            public void init(CamelContext context) {
+                this.context = context;
+                exp1 = context.resolveLanguage("simple").createExpression(source);
+                exp1.init(context);
+                exp2 = context.resolveLanguage("simple").createPredicate(function);
+                exp2.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                List<Object> answer = new ArrayList<>();
+                Object o = exp1.evaluate(exchange, Object.class);
+                Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+                for (Object i : it) {
+                    // use a dummy exchange as the input is to be the message body
+                    Exchange dummy = ExchangeHelper.createCopy(exchange, true);
+                    dummy.getMessage().setBody(i);
+                    if (exp2.matches(dummy)) {
+                        answer.add(i);
+                    }
+                }
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "filter(" + source + ", " + function + ")";
+            }
+        };
+    }
+
+    /**
      * Sets the message header with the given expression value
      */
     public static Expression setHeaderExpression(final String name, final String type, final String expression) {
@@ -2113,6 +2154,34 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "substringBetween(" + expression + "," + after + "," + before + ")";
+            }
+        };
+    }
+
+    /**
+     * Whether the expression matches the pattern
+     */
+    public static Expression containsExpression(final String expression, final String pattern) {
+        return new ExpressionAdapter() {
+            private Expression right;
+            private Expression left;
+
+            @Override
+            public void init(CamelContext context) {
+                left = context.resolveLanguage("simple").createExpression(expression);
+                left.init(context);
+                right = context.resolveLanguage("simple").createExpression(pattern);
+                right.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return PredicateBuilder.containsIgnoreCase(left, right).matches(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "contains(" + expression + "," + pattern + ")";
             }
         };
     }
