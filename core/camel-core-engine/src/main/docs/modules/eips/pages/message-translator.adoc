@@ -52,6 +52,24 @@ XML::
     <to uri="activemq:wine"/>
 </route>
 ----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - transform:
+            simple:
+              expression: Hello ${body}
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
+----
 ====
 
 === Message Translator with Bean
@@ -81,6 +99,26 @@ XML::
     <to uri="activemq:wine"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - bean:
+            ref: myTransformerBean
+            method: doTransform
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
+----
+
 ====
 
 === Message Translator with Processor
@@ -108,6 +146,24 @@ XML::
     <process ref="myTransformerProcessor"/>
     <to uri="activemq:wine"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - process:
+            ref: myTransformerProcessor
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
 ----
 ====
 
@@ -137,6 +193,26 @@ XML::
     <to uri="velocity:com/acme/MyResponse.vm"/>
     <to uri="activemq:wine"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: cheese
+      steps:
+        - to:
+            uri: velocity
+            parameters:
+              resourceUri: com/acme/MyResponse.vm
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: wine
 ----
 ====
 
