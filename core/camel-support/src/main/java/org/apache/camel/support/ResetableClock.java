@@ -21,7 +21,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.clock.Clock;
 
 /**
- * A clock that can be reset.
+ * A clock for precises elapsed calculations, that also can be reset.
+ *
+ * @see MonotonicClock
  */
 public final class ResetableClock implements Clock {
     private long created;

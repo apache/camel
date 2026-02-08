@@ -22,6 +22,8 @@ import org.apache.camel.clock.Clock;
 
 /**
  * A clock that increases monotonically (i.e.: does not go back in time) for precise elapsed calculations.
+ *
+ * @see ResetableClock
  */
 public final class MonotonicClock implements Clock {
     private final long created;
