@@ -30,6 +30,7 @@ import javax.net.ssl.SSLSocketFactory;
 import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAS2;
 import org.apache.camel.component.as2.api.protocol.RequestMDN;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.HttpRoute;
@@ -187,31 +188,49 @@ public class AS2ClientConnection {
             throws HttpException, IOException, InterruptedException, ExecutionException, TimeoutException {
 
         HttpRoute route = new HttpRoute(targetHost);
-
         request.setAuthority(new URIAuthority(targetHost));
-
         LeaseRequest leaseRequest = connectionPoolManager.lease(UUID.randomUUID().toString(), route, null);
-        ConnectionEndpoint endpoint = leaseRequest.get(Timeout.ofSeconds(RETRIEVE_CONNECTION_TIMEOUT_SECONDS));
-        if (!endpoint.isConnected()) {
-            connectionPoolManager.connect(endpoint, TimeValue.ofMilliseconds(connectionTimeoutMilliseconds), httpContext);
-        }
 
-        // Execute Request
-        HttpRequestExecutor httpExecutor = new HttpRequestExecutor() {
-            @Override
-            public ClassicHttpResponse execute(ClassicHttpRequest request, HttpClientConnection conn, HttpContext context)
-                    throws IOException, HttpException {
-                super.preProcess(request, httpProcessor, context);
-                ClassicHttpResponse response = super.execute(request, conn, context);
-                super.postProcess(response, httpProcessor, context);
-                return response;
+        ConnectionEndpoint endpoint = null;
+        HttpResponse response = null;
+        try {
+            endpoint = leaseRequest.get(Timeout.ofSeconds(RETRIEVE_CONNECTION_TIMEOUT_SECONDS));
+            if (!endpoint.isConnected()) {
+                connectionPoolManager.connect(endpoint, TimeValue.ofMilliseconds(connectionTimeoutMilliseconds), httpContext);
             }
-        };
-
-        HttpResponse response = endpoint.execute(UUID.randomUUID().toString(), request, httpExecutor, httpContext);
-        connectionPoolManager.release(endpoint, null,
-                connectionKeepAliveStrategy.getKeepAliveDuration(response, httpContext));
-
+            // Execute Request
+            HttpRequestExecutor httpExecutor = new HttpRequestExecutor() {
+                @Override
+                public ClassicHttpResponse execute(ClassicHttpRequest request, HttpClientConnection conn, HttpContext context)
+                        throws IOException, HttpException {
+                    super.preProcess(request, httpProcessor, context);
+                    ClassicHttpResponse response = super.execute(request, conn, context);
+                    super.postProcess(response, httpProcessor, context);
+                    return response;
+                }
+            };
+            response = endpoint.execute(UUID.randomUUID().toString(), request, httpExecutor, httpContext);
+        } finally {
+            if (endpoint != null) {
+                TimeValue keepAlive = null;
+                if (response != null) {
+                    // Normal happy path: release with computed keep-alive.
+                    keepAlive = connectionKeepAliveStrategy.getKeepAliveDuration(response, httpContext);
+                }
+                if (keepAlive == null) {
+                    // If we didn't get a response, something failed mid-flight:
+                    // do NOT keep this connection around. Close it and release with zero keep-alive.
+                    keepAlive = TimeValue.ZERO_MILLISECONDS;
+                }
+                try {
+                    connectionPoolManager.release(endpoint, null, keepAlive);
+                } catch (Exception ignored) {
+                    // ignore
+                } finally {
+                    IOHelper.close(endpoint);
+                }
+            }
+        }
         return response;
     }
 
