@@ -32,6 +32,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "ciphersuites":
         case "cipherSuites": target.setCipherSuites(property(camelContext, java.lang.String.class, value)); return true;
+        case "client": target.setClient(property(camelContext, org.eclipse.californium.core.CoapClient.class, value)); return true;
         case "clientauthentication":
         case "clientAuthentication": target.setClientAuthentication(property(camelContext, org.eclipse.californium.elements.config.CertificateAuthenticationMode.class, value)); return true;
         case "coapmethodrestrict":
@@ -69,6 +70,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return boolean.class;
         case "ciphersuites":
         case "cipherSuites": return java.lang.String.class;
+        case "client": return org.eclipse.californium.core.CoapClient.class;
         case "clientauthentication":
         case "clientAuthentication": return org.eclipse.californium.elements.config.CertificateAuthenticationMode.class;
         case "coapmethodrestrict":
@@ -107,6 +109,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "ciphersuites":
         case "cipherSuites": return target.getCipherSuites();
+        case "client": return target.getClient();
         case "clientauthentication":
         case "clientAuthentication": return target.getClientAuthentication();
         case "coapmethodrestrict":

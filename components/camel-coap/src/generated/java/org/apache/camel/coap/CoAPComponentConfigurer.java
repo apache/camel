@@ -27,6 +27,7 @@ public class CoAPComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "client": target.setClient(property(camelContext, org.eclipse.californium.core.CoapClient.class, value)); return true;
         case "configurationfile":
         case "configurationFile": target.setConfigurationFile(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -42,6 +43,7 @@ public class CoAPComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "client": return org.eclipse.californium.core.CoapClient.class;
         case "configurationfile":
         case "configurationFile": return java.lang.String.class;
         case "lazystartproducer":
@@ -58,6 +60,7 @@ public class CoAPComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "client": return target.getClient();
         case "configurationfile":
         case "configurationFile": return target.getConfigurationFile();
         case "lazystartproducer":

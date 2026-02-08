@@ -830,6 +830,36 @@ public interface CoAPEndpointBuilderFactory {
         }
 
         /**
+         * To use a shared client for the producers.
+         * 
+         * The option is a: <code>org.eclipse.californium.core.CoapClient</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCoAPEndpointProducerBuilder client(org.eclipse.californium.core.CoapClient client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
+         * To use a shared client for the producers.
+         * 
+         * The option will be converted to a
+         * <code>org.eclipse.californium.core.CoapClient</code> type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param client the value to set
+         * @return the dsl builder
+         */
+        default AdvancedCoAPEndpointProducerBuilder client(String client) {
+            doSetProperty("client", client);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during

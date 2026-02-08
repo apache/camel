@@ -107,6 +107,8 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
     private boolean observable;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean notify;
+    @UriParam(label = "producer,advanced")
+    private CoapClient client;
 
     private CoAPComponent component;
 
@@ -153,7 +155,9 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
         if (isNotify()) {
             return new CoAPNotifier(this);
         } else {
-            return new CoAPProducer(this);
+            CoAPProducer answer = new CoAPProducer(this);
+            answer.setClient(client);
+            return answer;
         }
     }
 
@@ -255,6 +259,17 @@ public class CoAPEndpoint extends DefaultEndpoint implements EndpointServiceLoca
      */
     public void setNotify(boolean notify) {
         this.notify = notify;
+    }
+
+    public CoapClient getClient() {
+        return client;
+    }
+
+    /**
+     * To use a shared client for the producers
+     */
+    public void setClient(CoapClient client) {
+        this.client = client;
     }
 
     /**

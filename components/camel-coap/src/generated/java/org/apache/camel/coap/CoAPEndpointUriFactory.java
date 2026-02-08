@@ -24,12 +24,13 @@ public class CoAPEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(18);
+        Set<String> props = new HashSet<>(19);
         props.add("advancedCertificateVerifier");
         props.add("advancedPskStore");
         props.add("alias");
         props.add("bridgeErrorHandler");
         props.add("cipherSuites");
+        props.add("client");
         props.add("clientAuthentication");
         props.add("coapMethodRestrict");
         props.add("exceptionHandler");

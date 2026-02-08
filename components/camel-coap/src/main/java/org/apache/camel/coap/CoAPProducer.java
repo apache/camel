@@ -28,11 +28,20 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
  */
 public class CoAPProducer extends DefaultProducer {
     private final CoAPEndpoint endpoint;
-    private volatile CoapClient client;
+    private CoapClient client;
+    private boolean shutdownClient;
 
     public CoAPProducer(CoAPEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+    }
+
+    public CoapClient getClient() {
+        return client;
+    }
+
+    public void setClient(CoapClient client) {
+        this.client = client;
     }
 
     @Override
@@ -85,6 +94,7 @@ public class CoAPProducer extends DefaultProducer {
         try {
             if (client == null) {
                 client = endpoint.createCoapClient(endpoint.getUri());
+                shutdownClient = true;
             }
         } finally {
             lock.unlock();
@@ -93,7 +103,7 @@ public class CoAPProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (client != null) {
+        if (shutdownClient && client != null) {
             client.shutdown();
             client = null;
         }
