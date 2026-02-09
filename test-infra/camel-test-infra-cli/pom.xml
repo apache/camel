@@ -31,7 +31,7 @@
     <name>Camel :: Test Infra :: Cli (Camel JBang)</name>
 
     <properties>
-        <maven.test.skip>false</maven.test.skip>
+        <skipTests>true</skipTests>
     </properties>
 
     <dependencies>
@@ -87,8 +87,8 @@
             <version>${logback-version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -149,6 +149,33 @@
                                 <currentProjectVersion>${project.version}</currentProjectVersion>
                             </systemPropertyVariables>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jbang-it-test</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>jbang-it-test</name>
+                </property>
+            </activation>
+            <properties>
+                <skipTests>false</skipTests>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
