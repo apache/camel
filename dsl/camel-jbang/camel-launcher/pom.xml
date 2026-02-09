@@ -49,7 +49,7 @@
         <plexus-xml-version>3.0.1</plexus-xml-version>
         <plexus-sec-dispatcher-version>2.0</plexus-sec-dispatcher-version>
         <plexus-cipher-version>2.1.0</plexus-cipher-version>
-        <eclipse-sisu-version>0.9.0.M4</eclipse-sisu-version>
+        <eclipse-sisu-version>1.0.0</eclipse-sisu-version>
         <javax-inject-version>1</javax-inject-version>
         <httpclient-version>4.5.14</httpclient-version>
         <httpcore-version>4.4.16</httpcore-version>
