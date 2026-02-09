@@ -16,51 +16,9 @@
  */
 package org.apache.camel.component.qdrant;
 
-import org.apache.camel.spi.Metadata;
-
 public class Qdrant {
     public static final String SCHEME = "qdrant";
 
     private Qdrant() {
-    }
-
-    /**
-     * @deprecated As of Camel 4.15, this nested Headers class has been moved to its own class. Use
-     *             {@link org.apache.camel.component.qdrant.QdrantHeaders} instead.
-     */
-    @Deprecated
-    public static class Headers {
-        @Metadata(description = "The action to be performed.", javaType = "String",
-                  enums = "CREATE_COLLECTION,DELETE_COLLECTION,UPSERT,RETRIEVE,DELETE,COLLECTION_INFO,SIMILARITY_SEARCH")
-        public static final String ACTION = "CamelQdrantAction";
-
-        @Metadata(description = "Payload Selector.", javaType = "io.qdrant.client.grpc.Points$WithPayloadSelector")
-        public static final String PAYLOAD_SELECTOR = "CamelQdrantPointsPayloadSelector";
-
-        @Metadata(description = "Operation ID.", javaType = "long")
-        public static final String OPERATION_ID = "CamelQdrantOperationID";
-
-        @Metadata(description = "Operation Status.", javaType = "String")
-        public static final String OPERATION_STATUS = "CamelQdrantOperationStatus";
-
-        @Metadata(description = "Operation Status Value.", javaType = "int")
-        public static final String OPERATION_STATUS_VALUE = "CamelQdrantOperationStatusValue";
-
-        @Metadata(description = "Read Consistency.", javaType = "io.qdrant.client.grpc.Points$ReadConsistency")
-        public static final String READ_CONSISTENCY = "CamelQdrantReadConsistency";
-
-        @Metadata(description = "Include Payload.", javaType = "boolean", defaultValue = "true")
-        public static final String INCLUDE_PAYLOAD = "CamelQdrantWithPayload";
-        public static final boolean DEFAULT_INCLUDE_PAYLOAD = true;
-
-        @Metadata(description = "Include Vectors.", javaType = "boolean", defaultValue = "false")
-        public static final String INCLUDE_VECTORS = "CamelQdrantWithVectors";
-        public static final boolean DEFAULT_INCLUDE_VECTORS = false;
-
-        @Metadata(description = "The number of elements.", javaType = "int")
-        public static final String SIZE = "CamelQdrantSize";
-
-        @Metadata(description = "The point id to use for operation.", javaType = "int")
-        public static final String POINT_ID = "CamelQdrantPointId";
     }
 }
