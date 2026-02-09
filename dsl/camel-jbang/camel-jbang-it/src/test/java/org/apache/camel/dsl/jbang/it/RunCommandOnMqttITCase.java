@@ -48,22 +48,22 @@ public class RunCommandOnMqttITCase extends JBangTestSupport {
     public void sendMessageWithoutEndpoint() throws IOException {
         copyResourceInDataFolder(TestResources.MQQT_CONSUMER);
         final String ipAddr = getIpAddr(service.getContainer());
-        final String pid = executeBackground(String.format("run --property=brokerUrl=%s %s/%s",
+        final String process = executeBackground(String.format("run --property=brokerUrl=%s %s/%s",
                 "tcp://" + ipAddr + ":1883",
                 mountPoint(), TestResources.MQQT_CONSUMER.getName()));
         checkLogContains("Started route1 (kamelet:mqtt5-source)");
         final String payloadFile = "payload.json";
         newFileInDataFolder(payloadFile, "{\"value\": 21}");
-        sendCmd(String.format("%s/%s", mountPoint(), payloadFile), pid);
+        sendCmd(String.format("%s/%s", mountPoint(), payloadFile), getPID(process));
         checkLogContains("The temperature is 21");
     }
 
     @Test
     public void testStub() throws IOException {
         copyResourceInDataFolder(TestResources.STUB_ROUTE);
-        final String pid = executeBackground(String.format("run %s/%s --stub=jms",
+        final String process = executeBackground(String.format("run %s/%s --stub=jms",
                 mountPoint(), TestResources.STUB_ROUTE.getName()));
-        checkCommandOutputs("cmd send --body='Hello camel from stubbed jms' " + pid, "Sent (success)");
+        checkCommandOutputs("cmd send --body='Hello camel from stubbed jms' " + getPID(process), "Sent (success)");
         checkCommandOutputs("cmd stub --browse", "Hello camel from stubbed jms", ASSERTION_WAIT_SECONDS);
     }
 

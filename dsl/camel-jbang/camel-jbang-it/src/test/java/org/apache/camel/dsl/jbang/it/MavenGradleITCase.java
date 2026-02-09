@@ -28,10 +28,11 @@ public class MavenGradleITCase extends JBangTestSupport {
     @Test
     public void runFromMavenModuleTest() {
         execInContainer(String.format("mkdir %s/mvn-app", mountPoint()));
-        execInContainer(String.format("cd %s/mvn-app && camel init cheese.xml", mountPoint()));
+        execInContainer(String.format("cd %s/mvn-app && %s init cheese.xml", mountPoint(), getMainCommand()));
         execInContainer(String.format(
-                "cd %s/mvn-app && camel export --runtime=camel-main --gav=org.jbang:maven-app:1.0-SNAPSHOT", mountPoint()));
-        execInContainer(String.format("cd %s/mvn-app && camel run pom.xml --background", mountPoint()));
+                "cd %s/mvn-app && %s export --runtime=camel-main --gav=org.jbang:maven-app:1.0-SNAPSHOT", mountPoint(),
+                getMainCommand()));
+        execInContainer(String.format("cd %s/mvn-app && %s run pom.xml --background", mountPoint(), getMainCommand()));
         checkLogContains("Apache Camel " + version() + " (maven-app) started");
         checkLogContains("Hello Camel from route1");
     }
@@ -39,13 +40,14 @@ public class MavenGradleITCase extends JBangTestSupport {
     @Test
     public void runFromGradleTest() throws IOException {
         execInContainer(String.format("mkdir %s/gradle-app", mountPoint()));
-        execInContainer(String.format("cd %s/gradle-app && camel init cheese.xml", mountPoint()));
+        execInContainer(String.format("cd %s/gradle-app && %s init cheese.xml", mountPoint(), getMainCommand()));
         execInContainer(String.format(
-                "cd %s/gradle-app && camel export --runtime=camel-main --gav=org.jbang:gradle-app:1.0-SNAPSHOT", mountPoint()));
+                "cd %s/gradle-app && %s export --runtime=camel-main --gav=org.jbang:gradle-app:1.0-SNAPSHOT", mountPoint(),
+                getMainCommand()));
         copyResourceInDataFolder(TestResources.BUILD_GRADLE);
         Files.move(Path.of(String.format("%s/build.gradle", getDataFolder())),
                 Path.of(String.format("%s/gradle-app/build.gradle", getDataFolder())));
-        execInContainer(String.format("cd %s/gradle-app && camel run pom.xml --background", mountPoint()));
+        execInContainer(String.format("cd %s/gradle-app && %s run pom.xml --background", mountPoint(), getMainCommand()));
         checkLogContains("Apache Camel " + version() + " (gradle-app) started");
         checkLogContains("Hello Camel from route1");
     }
