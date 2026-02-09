@@ -809,12 +809,16 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Gets the {@link org.apache.camel.spi.RestRegistry} to use
+     *
+     * @deprecated use PluginHelper
      */
+    @Deprecated
     RestRegistry getRestRegistry();
 
     /**
      * Sets a custom {@link org.apache.camel.spi.RestRegistry} to use.
      */
+    @Deprecated
     void setRestRegistry(RestRegistry restRegistry);
 
     // Properties

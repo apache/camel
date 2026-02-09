@@ -26,7 +26,9 @@ import org.apache.camel.*;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumerAware;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.support.processor.RestBindingAdvice;
 import org.apache.camel.support.processor.RestBindingAdviceFactory;
@@ -169,7 +171,8 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                 if (consumer instanceof RouteAware ra) {
                     routeId = ra.getRoute().getRouteId();
                 }
-                camelContext.getRestRegistry().addRestService(consumer, true, url, path, basePath, null, v, bc.getConsumes(),
+                RestRegistry restRegistry = PluginHelper.getRestRegistry(camelContext);
+                restRegistry.addRestService(consumer, true, url, path, basePath, null, v, bc.getConsumes(),
                         bc.getProduces(), bc.getType(), bc.getOutType(), routeId, desc);
 
                 try {
@@ -193,7 +196,8 @@ public class RestOpenApiProcessor extends AsyncProcessorSupport implements Camel
                 produces = "text/yaml";
             }
             // register api-doc
-            camelContext.getRestRegistry().addRestSpecification(consumer, true, url, apiContextPath, basePath, "GET", produces,
+            RestRegistry restRegistry = PluginHelper.getRestRegistry(camelContext);
+            restRegistry.addRestSpecification(consumer, true, url, apiContextPath, basePath, "GET", produces,
                     null);
         }
 

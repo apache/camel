@@ -404,6 +404,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BackOffTimerFactory.class, this::createBackOffTimerFactory);
         camelContextExtension.lazyAddContextPlugin(GroovyScriptCompiler.class, this::createGroovyScriptCompiler);
         camelContextExtension.lazyAddContextPlugin(SimpleFunctionRegistry.class, this::createSimpleFunctionRegistry);
+        camelContextExtension.lazyAddContextPlugin(RestRegistry.class, this::createRestRegistry);
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
@@ -4272,12 +4273,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public RestRegistry getRestRegistry() {
-        return camelContextExtension.getRestRegistry();
+        return PluginHelper.getRestRegistry(this);
     }
 
     @Override
     public void setRestRegistry(RestRegistry restRegistry) {
-        camelContextExtension.setRestRegistry(restRegistry);
+        throw new UnsupportedOperationException("Not in use");
     }
 
     protected RestRegistry createRestRegistry() {

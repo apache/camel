@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
@@ -37,10 +38,10 @@ public class RestDevConsole extends AbstractDevConsole {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        try {
-            rr = getCamelContext().getRestRegistry();
-        } catch (IllegalArgumentException e) {
-            // ignore as this is optional
+
+        // camel-rest is optional
+        if (getCamelContext().getCamelContextExtension().isContextPluginInUse(RestRegistry.class)) {
+            rr = PluginHelper.getRestRegistry(getCamelContext());
         }
     }
 
