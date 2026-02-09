@@ -105,7 +105,7 @@ class QdrantDeletePointsIT extends QdrantTestSupport {
         assertThat(result.getException()).isNull();
 
         assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> {
-            assertThat(c).hasSize(0);
+            assertThat(c).isEmpty();
         });
     }
 
@@ -132,7 +132,7 @@ class QdrantDeletePointsIT extends QdrantTestSupport {
         assertThat(result.getException()).isNull();
 
         assertThat(result.getIn().getBody()).isInstanceOfSatisfying(Collection.class, c -> {
-            assertThat(c).hasSize(0);
+            assertThat(c).isEmpty();
         });
     }
 
