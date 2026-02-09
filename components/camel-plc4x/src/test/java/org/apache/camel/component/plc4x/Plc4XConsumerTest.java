@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.plc4x;
 
+import java.util.Collections;
+import java.util.concurrent.ScheduledFuture;
+
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ScheduledFuture;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,7 +45,6 @@ class Plc4XConsumerTest {
 
         consumer = new Plc4XConsumer(endpoint, processor);
     }
-
 
     @Test
     void doStart() throws Exception {
