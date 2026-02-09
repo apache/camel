@@ -560,13 +560,13 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         String headerName = getConfiguration().getTimestampHeaderName();
         Object timestampObj = exchange.getIn().getHeader(headerName);
 
-        if (timestampObj instanceof Long) {
-            return (Long) timestampObj;
-        } else if (timestampObj instanceof Date) {
-            return ((Date) timestampObj).getTime();
-        } else if (timestampObj instanceof String) {
+        if (timestampObj instanceof Long ts) {
+            return ts;
+        } else if (timestampObj instanceof Date date) {
+            return date.getTime();
+        } else if (timestampObj instanceof String str) {
             try {
-                return Long.parseLong((String) timestampObj);
+                return Long.parseLong(str);
             } catch (NumberFormatException e) {
                 LOG.warn("Cannot parse timestamp header '{}' with value '{}'", headerName, timestampObj);
                 return null;
