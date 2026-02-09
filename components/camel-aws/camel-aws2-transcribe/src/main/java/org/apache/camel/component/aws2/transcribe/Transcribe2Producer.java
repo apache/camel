@@ -141,10 +141,10 @@ public class Transcribe2Producer extends DefaultProducer {
     private void startTranscriptionJob(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof StartTranscriptionJobRequest) {
+            if (payload instanceof StartTranscriptionJobRequest req) {
                 StartTranscriptionJobResponse result;
                 try {
-                    result = transcribeClient.startTranscriptionJob((StartTranscriptionJobRequest) payload);
+                    result = transcribeClient.startTranscriptionJob(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Start Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -185,10 +185,10 @@ public class Transcribe2Producer extends DefaultProducer {
     private void getTranscriptionJob(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetTranscriptionJobRequest) {
+            if (payload instanceof GetTranscriptionJobRequest req) {
                 GetTranscriptionJobResponse result;
                 try {
-                    result = transcribeClient.getTranscriptionJob((GetTranscriptionJobRequest) payload);
+                    result = transcribeClient.getTranscriptionJob(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -217,10 +217,10 @@ public class Transcribe2Producer extends DefaultProducer {
     private void listTranscriptionJobs(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListTranscriptionJobsRequest) {
+            if (payload instanceof ListTranscriptionJobsRequest req) {
                 ListTranscriptionJobsResponse result;
                 try {
-                    result = transcribeClient.listTranscriptionJobs((ListTranscriptionJobsRequest) payload);
+                    result = transcribeClient.listTranscriptionJobs(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Transcription Jobs command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -253,9 +253,9 @@ public class Transcribe2Producer extends DefaultProducer {
     private void deleteTranscriptionJob(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteTranscriptionJobRequest) {
+            if (payload instanceof DeleteTranscriptionJobRequest req) {
                 try {
-                    transcribeClient.deleteTranscriptionJob((DeleteTranscriptionJobRequest) payload);
+                    transcribeClient.deleteTranscriptionJob(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Transcription Job command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -280,10 +280,10 @@ public class Transcribe2Producer extends DefaultProducer {
     private void createVocabulary(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateVocabularyRequest) {
+            if (payload instanceof CreateVocabularyRequest req) {
                 CreateVocabularyResponse result;
                 try {
-                    result = transcribeClient.createVocabulary((CreateVocabularyRequest) payload);
+                    result = transcribeClient.createVocabulary(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Create Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -320,10 +320,10 @@ public class Transcribe2Producer extends DefaultProducer {
     private void getVocabulary(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetVocabularyRequest) {
+            if (payload instanceof GetVocabularyRequest req) {
                 GetVocabularyResponse result;
                 try {
-                    result = transcribeClient.getVocabulary((GetVocabularyRequest) payload);
+                    result = transcribeClient.getVocabulary(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Get Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -352,10 +352,10 @@ public class Transcribe2Producer extends DefaultProducer {
     private void listVocabularies(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListVocabulariesRequest) {
+            if (payload instanceof ListVocabulariesRequest req) {
                 ListVocabulariesResponse result;
                 try {
-                    result = transcribeClient.listVocabularies((ListVocabulariesRequest) payload);
+                    result = transcribeClient.listVocabularies(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("List Vocabularies command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -384,10 +384,10 @@ public class Transcribe2Producer extends DefaultProducer {
     private void updateVocabulary(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UpdateVocabularyRequest) {
+            if (payload instanceof UpdateVocabularyRequest req) {
                 UpdateVocabularyResponse result;
                 try {
-                    result = transcribeClient.updateVocabulary((UpdateVocabularyRequest) payload);
+                    result = transcribeClient.updateVocabulary(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Update Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
@@ -420,9 +420,9 @@ public class Transcribe2Producer extends DefaultProducer {
     private void deleteVocabulary(TranscribeClient transcribeClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteVocabularyRequest) {
+            if (payload instanceof DeleteVocabularyRequest req) {
                 try {
-                    transcribeClient.deleteVocabulary((DeleteVocabularyRequest) payload);
+                    transcribeClient.deleteVocabulary(req);
                 } catch (AwsServiceException ase) {
                     LOG.trace("Delete Vocabulary command returned the error code {}", ase.awsErrorDetails().errorCode());
                     throw ase;
