@@ -47,7 +47,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader(Qdrant.Headers.ACTION)
+    .setHeader(QdrantHeaders.ACTION)
         .constant(QdrantAction.CREATE_COLLECTION)
     .setBody()
         .constant(
@@ -69,7 +69,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader(Qdrant.Headers.ACTION)
+    .setHeader(QdrantHeaders.ACTION)
         .constant(QdrantAction.DELETE_COLLECTION)
     .to("qdrant:myCollection");
 ----
@@ -87,7 +87,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader(Qdrant.Headers.ACTION)
+    .setHeader(QdrantHeaders.ACTION)
         .constant(QdrantAction.COLLECTION_INFO)
     .to("qdrant:myCollection")
     .process(this::process);
@@ -112,7 +112,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader(Qdrant.Headers.ACTION)
+    .setHeader(QdrantHeaders.ACTION)
         .constant(QdrantAction.UPSERT)
     .setBody()
         .constant(
@@ -139,7 +139,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader(Qdrant.Headers.ACTION)
+    .setHeader(QdrantHeaders.ACTION)
         .constant(QdrantAction.RETRIEVE)
     .setBody()
         .constant(PointIdFactory.id(8))
@@ -160,7 +160,7 @@ Java::
 [source,java]
 ----
 from("direct:in")
-    .setHeader(Qdrant.Headers.ACTION)
+    .setHeader(QdrantHeaders.ACTION)
         .constant(QdrantAction.DELETE)
     .setBody()
         .constant(ConditionFactory.matchKeyword("foo", "hello"))

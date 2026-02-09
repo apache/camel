@@ -199,8 +199,8 @@ Java::
 ----
 from("direct:store")
     .to("langchain4j-embeddings:embed")
-    .setHeader(Qdrant.Headers.ACTION).constant(QdrantAction.UPSERT)
-    .setHeader(Qdrant.Headers.POINT_ID).constant(1)
+    .setHeader(QdrantHeaders.ACTION).constant(QdrantAction.UPSERT)
+    .setHeader(QdrantHeaders.POINT_ID).constant(1)
     .transformDataType(new DataType("qdrant:embeddings"))
     .to("qdrant:myCollection");
 ----
@@ -239,8 +239,8 @@ Java::
 from("direct:search")
     .to("langchain4j-embeddings:embed")
     .transformDataType(new DataType("qdrant:embeddings"))
-    .setHeader(Qdrant.Headers.ACTION, constant(QdrantAction.SIMILARITY_SEARCH))
-    .setHeader(Qdrant.Headers.INCLUDE_PAYLOAD, constant(true))
+    .setHeader(QdrantHeaders.ACTION, constant(QdrantAction.SIMILARITY_SEARCH))
+    .setHeader(QdrantHeaders.INCLUDE_PAYLOAD, constant(true))
     .to("qdrant:myCollection")
     .transformDataType(new DataType("qdrant:rag"));
 ----

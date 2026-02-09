@@ -480,7 +480,7 @@ Generate an embedding and store it in a Qdrant vector database for semantic sear
 
 [source,java]
 --------------------------------------------------------------------------------
-import org.apache.camel.component.qdrant.Qdrant;
+import org.apache.camel.component.qdrant.QdrantHeaders;
 import org.apache.camel.component.qdrant.QdrantAction;
 import io.qdrant.client.PointIdFactory;
 import io.qdrant.client.VectorsFactory;
@@ -495,7 +495,7 @@ from("direct:embedAndStore")
       "&modelId=ibm/slate-125m-english-rtrvr" +
       "&operation=embedding")
   // Transform to Qdrant format and upsert
-  .setHeader(Qdrant.Headers.ACTION, constant(QdrantAction.UPSERT))
+  .setHeader(QdrantHeaders.ACTION, constant(QdrantAction.UPSERT))
   .process(exchange -> {
       List<Float> embedding = exchange.getMessage().getBody(List.class);
       exchange.getMessage().setBody(
