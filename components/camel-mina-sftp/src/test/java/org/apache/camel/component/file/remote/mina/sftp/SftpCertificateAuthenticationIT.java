@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.file.remote.mina.MinaSftpConfiguration;
 import org.apache.camel.component.file.remote.mina.MinaSftpEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * These tests verify that certificate authentication works for SFTP operations. The embedded server accepts all public
  * keys, so the tests validate that the client correctly loads and uses the certificate alongside the private key.
  */
+@DisabledOnOs(architectures = "s390x")
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/sftp/hostkey.pem')")
 public class SftpCertificateAuthenticationIT extends SftpServerTestSupport {
 
