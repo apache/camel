@@ -18,7 +18,11 @@ package org.apache.camel.component.qdrant;
 
 import org.apache.camel.spi.Metadata;
 
-public class QdrantHeaders {
+public final class QdrantHeaders {
+
+    private QdrantHeaders() {
+    }
+
     @Metadata(description = "The action to be performed.", javaType = "String",
               enums = "CREATE_COLLECTION,DELETE_COLLECTION,UPSERT,RETRIEVE,DELETE,COLLECTION_INFO,SIMILARITY_SEARCH")
     public static final String ACTION = "CamelQdrantAction";
