@@ -43,11 +43,11 @@ import org.junit.jupiter.params.provider.EnumSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class QdrantComponentIT extends QdrantTestSupport {
+class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(0)
-    public void collectionInfoNonExistent() {
+    void collectionInfoNonExistent() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
@@ -67,7 +67,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(1)
-    public void createCollection() {
+    void createCollection() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
@@ -82,7 +82,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(2)
-    public void collectionInfoExistent() {
+    void collectionInfoExistent() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
@@ -94,7 +94,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(3)
-    public void upsert() {
+    void upsert() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
                 .withBody(
@@ -124,7 +124,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @Test
     @Order(4)
     @SuppressWarnings({ "unchecked" })
-    public void retrieve() {
+    void retrieve() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(8))
@@ -142,7 +142,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
     @ParameterizedTest
     @EnumSource(TestData.class)
     @Order(5)
-    public void upsertOtherVectors(TestData testData) {
+    void upsertOtherVectors(TestData testData) {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
                 .withBody(
@@ -165,7 +165,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(6)
-    public void similaritySeach() {
+    void similaritySeach() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.SIMILARITY_SEARCH)
                 .withHeader(QdrantHeaders.INCLUDE_VECTORS, true)
@@ -184,7 +184,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(7)
-    public void delete() {
+    void delete() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(ConditionFactory.matchKeyword("foo", "hello"))
@@ -206,7 +206,7 @@ public class QdrantComponentIT extends QdrantTestSupport {
 
     @Test
     @Order(8)
-    public void retrieveAfterDelete() {
+    void retrieveAfterDelete() {
         Exchange result = fluentTemplate.to("qdrant:testComponent")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(8))

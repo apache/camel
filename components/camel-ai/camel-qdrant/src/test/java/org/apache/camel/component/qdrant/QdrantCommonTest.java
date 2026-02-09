@@ -26,12 +26,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public final class QdrantCommonTest extends CamelTestSupport {
+final class QdrantCommonTest extends CamelTestSupport {
 
     @DisplayName("Tests that trying to run actions with a null body triggers a failure")
     @ParameterizedTest
     @EnumSource(QdrantAction.class)
-    public void upsertWithNullBody(QdrantAction action) {
+    void upsertWithNullBody(QdrantAction action) {
         Exchange result = fluentTemplate.to("qdrant:test")
                 .withHeader(QdrantHeaders.ACTION, action)
                 .withBody(null)

@@ -25,11 +25,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class QdrantCreateCollectionTest extends QdrantTestSupport {
+class QdrantCreateCollectionTest extends QdrantTestSupport {
 
     @DisplayName("Tests that trying to create a collection without passing the action name triggers a failure")
     @Test
-    public void createCollectionWithoutRequiredParameters() {
+    void createCollectionWithoutRequiredParameters() {
         Exchange result = fluentTemplate.to("qdrant:createCollection")
                 .withBody(
                         Collections.VectorParams.newBuilder()

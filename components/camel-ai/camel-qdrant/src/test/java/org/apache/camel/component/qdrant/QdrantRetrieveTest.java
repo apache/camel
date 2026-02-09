@@ -25,11 +25,11 @@ import org.junit.jupiter.api.Test;
 import static io.qdrant.client.PointIdFactory.id;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class QdrantRetrieveTest extends QdrantTestSupport {
+class QdrantRetrieveTest extends QdrantTestSupport {
 
     @DisplayName("Tests that trying to retrieve without passing the action name triggers a failure")
     @Test
-    public void retrieveWithoutRequiredParameters() {
+    void retrieveWithoutRequiredParameters() {
         Exchange result = fluentTemplate.to("qdrant:retrieve")
                 .withBody(id(8))
                 .request(Exchange.class);
