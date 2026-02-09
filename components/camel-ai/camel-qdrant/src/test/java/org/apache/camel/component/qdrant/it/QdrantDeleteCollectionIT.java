@@ -89,8 +89,9 @@ class QdrantDeleteCollectionIT extends QdrantTestSupport {
         final QdrantActionException exception = result.getException(QdrantActionException.class);
         final Throwable cause = exception.getCause();
 
-        assertThat(cause).isNotNull();
-        assertThat(cause).isInstanceOf(StatusRuntimeException.class);
+        assertThat(cause)
+                .isNotNull()
+                .isInstanceOf(StatusRuntimeException.class);
 
         StatusRuntimeException statusRuntimeException = (StatusRuntimeException) cause;
         assertThat(statusRuntimeException.getStatus().getCode()).isEqualTo(Status.NOT_FOUND.getCode());
