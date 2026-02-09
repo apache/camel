@@ -39,10 +39,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class QdrantDeletePointsIT extends QdrantTestSupport {
+class QdrantDeletePointsIT extends QdrantTestSupport {
     @Test
     @Order(1)
-    public void createCollection() {
+    void createCollection() {
         Exchange result = fluentTemplate.to("qdrant:testDelete")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
@@ -57,7 +57,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
 
     @Test
     @Order(2)
-    public void upsert() {
+    void upsert() {
         Exchange result1 = fluentTemplate.to("qdrant:testDelete")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.UPSERT)
                 .withBody(
@@ -87,7 +87,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
 
     @Test
     @Order(3)
-    public void deleteWithCondition() {
+    void deleteWithCondition() {
         Exchange deleteResult = fluentTemplate.to("qdrant:testDelete")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(ConditionFactory.matchKeyword("foo", "hello1"))
@@ -111,7 +111,7 @@ public class QdrantDeletePointsIT extends QdrantTestSupport {
 
     @Test
     @Order(4)
-    public void deleteWithFilter() {
+    void deleteWithFilter() {
         Exchange deleteResult = fluentTemplate.to("qdrant:testDelete")
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE)
                 .withBody(

@@ -34,13 +34,13 @@ import org.junit.jupiter.api.TestMethodOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class QdrantDeleteCollectionIT extends QdrantTestSupport {
+class QdrantDeleteCollectionIT extends QdrantTestSupport {
     @EndpointInject("qdrant:collectionForDeletion")
     QdrantEndpoint qdrantEndpoint;
 
     @Test
     @Order(1)
-    public void createCollection() {
+    void createCollection() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
@@ -55,7 +55,7 @@ public class QdrantDeleteCollectionIT extends QdrantTestSupport {
 
     @Test
     @Order(2)
-    public void collectionInfoExistent() {
+    void collectionInfoExistent() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
@@ -67,7 +67,7 @@ public class QdrantDeleteCollectionIT extends QdrantTestSupport {
 
     @Test
     @Order(3)
-    public void deleteCollection() {
+    void deleteCollection() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.DELETE_COLLECTION)
                 .request(Exchange.class);
@@ -78,7 +78,7 @@ public class QdrantDeleteCollectionIT extends QdrantTestSupport {
 
     @Test
     @Order(4)
-    public void collectionInfoNonExistent() {
+    void collectionInfoNonExistent() {
         Exchange result = fluentTemplate.to(qdrantEndpoint)
                 .withHeader(QdrantHeaders.ACTION, QdrantAction.COLLECTION_INFO)
                 .request(Exchange.class);
