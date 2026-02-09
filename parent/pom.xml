@@ -386,7 +386,7 @@
         <maven-owasp-plugin-version>12.2.0</maven-owasp-plugin-version>
         <maven-plugin-plugin-version>3.15.2</maven-plugin-plugin-version>
         <maven-plugin-annotations-version>3.15.2</maven-plugin-annotations-version>
-        <maven-plugin-testing-harness-version>3.5.0</maven-plugin-testing-harness-version>
+        <maven-plugin-testing-harness-version>3.5.1</maven-plugin-testing-harness-version>
         <maven-project-version>2.2.1</maven-project-version>
         <maven-resources-plugin-version>3.4.0</maven-resources-plugin-version>
         <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
