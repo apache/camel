@@ -36,7 +36,7 @@ include::partial$component-endpoint-headers.adoc[]
 
 === Collection Examples
 
-In the route below, we use the qdrant component to create a collection named _myCollection_ with the given parameters:
+In the route below, we use the Qdrant component to create a collection named _myCollection_ with the given parameters:
 
 ==== Create Collection
 
@@ -60,7 +60,7 @@ from("direct:in")
 
 ==== Delete Collection
 
-In the route below, we use the qdrant component to delete a collection named _myCollection_:
+In the route below, we use the Qdrant component to delete a collection named _myCollection_:
 
 [tabs]
 ====
@@ -130,7 +130,7 @@ from("direct:in")
 
 ==== Retrieve
 
-In the route below, we use the qdrant component to retrieve information of a single point by id from the collection named _myCollection_:
+In the route below, we use the Qdrant component to retrieve information of a single point by id from the collection named _myCollection_:
 
 [tabs]
 ====
