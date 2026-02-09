@@ -27,6 +27,7 @@ import org.apache.camel.component.file.remote.mina.MinaSftpConfiguration;
 import org.apache.camel.component.file.remote.mina.MinaSftpEndpoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration tests for public key authentication in MINA SFTP component.
  */
+@DisabledOnOs(architectures = "s390x")
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class MinaSftpPublicKeyAuthIT extends MinaSftpServerTestSupport {
 
