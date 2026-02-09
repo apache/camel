@@ -43,6 +43,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.elements.config.CertificateAuthenticationMode;
@@ -64,6 +65,8 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
     @Metadata
     private String configurationFile;
+    @Metadata(label = "producer,advanced")
+    private CoapClient client;
 
     final Map<Integer, CoapServer> servers = new ConcurrentHashMap<>();
 
@@ -155,7 +158,8 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new CoAPEndpoint(uri, this);
+        CoAPEndpoint endpoint = new CoAPEndpoint(uri, this);
+        endpoint.setClient(client);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -255,6 +259,17 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
      */
     public void setConfigurationFile(String configurationFile) {
         this.configurationFile = configurationFile;
+    }
+
+    public CoapClient getClient() {
+        return client;
+    }
+
+    /**
+     * To use a shared client for the producers
+     */
+    public void setClient(CoapClient client) {
+        this.client = client;
     }
 
     @Override
