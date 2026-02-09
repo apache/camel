@@ -32,11 +32,13 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.MimeTypeHelper;
@@ -494,7 +496,8 @@ public class RestEndpoint extends DefaultEndpoint {
         configureConsumer(consumer);
 
         // add to rest registry, so we can keep track of them
-        getCamelContext().getRestRegistry().addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(),
+        RestRegistry registry = PluginHelper.getRestRegistry(getCamelContext());
+        registry.addRestService(consumer, false, url, baseUrl, getPath(), getUriTemplate(),
                 getMethod(), getConsumes(), getProduces(), getInType(), getOutType(), getRouteId(), getDescription());
         return consumer;
     }

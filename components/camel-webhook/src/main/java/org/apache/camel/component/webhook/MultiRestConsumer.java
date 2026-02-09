@@ -26,14 +26,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * MultiRestConsumer allows to bind the webhook to multiple local rest endpoints. It is useful for services that need to
  * respond to multiple kinds of requests.
  * <p>
- * E.g. some webhook providers operate over POST but they do require that a specific endpoint replies also to GET
+ * E.g. some webhook providers operate over POST, but they do require that a specific endpoint replies also to GET
  * requests during handshake.
  */
 public class MultiRestConsumer extends DefaultConsumer {
@@ -50,8 +52,10 @@ public class MultiRestConsumer extends DefaultConsumer {
                     null, null, null, config, Collections.emptyMap());
             configurer.configure(consumer);
 
-            context.getRestRegistry().addRestService(consumer, false, url, url, path, null, method,
-                    null, null, null, null, null, null);
+            if (context.getCamelContextExtension().isContextPluginInUse(RestRegistry.class)) {
+                PluginHelper.getRestRegistry(context).addRestService(consumer, false, url, url, path, null, method,
+                        null, null, null, null, null, null);
+            }
 
             this.delegateConsumers.add(consumer);
         }
