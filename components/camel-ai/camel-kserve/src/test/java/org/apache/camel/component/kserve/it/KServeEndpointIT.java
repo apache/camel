@@ -29,9 +29,12 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kserve.KServeConstants;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
+                          disabledReason = "Requires too much network resources (15GB Docker image!!!)")
 class KServeEndpointIT extends KServeITSupport {
 
     private static final String TEST_MODEL = "simple";

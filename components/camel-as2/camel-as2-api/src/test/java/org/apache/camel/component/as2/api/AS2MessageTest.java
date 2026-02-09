@@ -21,12 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
@@ -61,23 +61,12 @@ import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicHttpResponse;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.smime.SMIMECapabilitiesAttribute;
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.asn1.smime.SMIMECapabilityVector;
-import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,46 +104,6 @@ public class AS2MessageTest extends AS2MessageTestBase {
                 }
             }
         });
-    }
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
-
-        // Create and populate certificate store.
-        JcaCertStore certs = new JcaCertStore(certList);
-
-        // Create capabilities vector
-        SMIMECapabilityVector capabilities = new SMIMECapabilityVector();
-        capabilities.addCapability(SMIMECapability.dES_EDE3_CBC);
-        capabilities.addCapability(SMIMECapability.rC2_CBC, 128);
-        capabilities.addCapability(SMIMECapability.dES_CBC);
-
-        // Create signing attributes
-        ASN1EncodableVector attributes = new ASN1EncodableVector();
-        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(
-                new IssuerAndSerialNumber(
-                        new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
-        attributes.add(new SMIMECapabilitiesAttribute(capabilities));
-
-        for (String signingAlgorithmName : AS2SignedDataGenerator
-                .getSupportedSignatureAlgorithmNamesForKey(signingKP.getPrivate())) {
-            try {
-                this.gen = new AS2SignedDataGenerator();
-                this.gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
-                        .setSignedAttributeGenerator(new AttributeTable(attributes))
-                        .build(signingAlgorithmName, signingKP.getPrivate(), signingCert));
-                this.gen.addCertificates(certs);
-                break;
-            } catch (Exception e) {
-                this.gen = null;
-                continue;
-            }
-        }
-
-        if (this.gen == null) {
-            throw new Exception("failed to create signing generator");
-        }
     }
 
     @ParameterizedTest
@@ -217,104 +166,17 @@ public class AS2MessageTest extends AS2MessageTestBase {
         assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
     }
 
-    @Test
-    public void aes128CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES128_CBC);
+    static Stream<AS2EncryptionAlgorithm> encryptionAlgorithms() {
+        return Stream.of(
+                AS2EncryptionAlgorithm.AES128_CBC,
+                AS2EncryptionAlgorithm.AES256_GCM,
+                AS2EncryptionAlgorithm.DES_EDE3_CBC);
     }
 
-    @Test
-    public void aes192CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES192_CBC);
-    }
-
-    @Test
-    public void aes256CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES256_CBC);
-    }
-
-    @Test
-    public void aes128CcmEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES128_CCM);
-    }
-
-    @Test
-    public void aes192CcmEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES192_CCM);
-    }
-
-    @Test
-    public void aes256CcmEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES256_CCM);
-    }
-
-    @Test
-    public void aes128GcmEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES128_GCM);
-    }
-
-    @Test
-    public void aes192GcmEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES192_GCM);
-    }
-
-    @Test
-    public void aes256GcmEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.AES256_GCM);
-    }
-
-    @Test
-    public void camellia128CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.CAMELLIA128_CBC);
-    }
-
-    @Test
-    public void camellia192CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.CAMELLIA192_CBC);
-    }
-
-    @Test
-    public void camellia256CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.CAMELLIA256_CBC);
-    }
-
-    @Test
-    public void cast5CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.CAST5_CBC);
-    }
-
-    @Test
-    public void desCbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.DES_CBC);
-    }
-
-    @Test
-    public void desEde3CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.DES_EDE3_CBC);
-    }
-
-    @Test
-    public void cost28147GcfbEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.GOST28147_GCFB);
-    }
-
-    @Test
-    public void ideaCbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.IDEA_CBC);
-    }
-
-    @Test
-    public void rc2CbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.RC2_CBC);
-    }
-
-    @Test
-    public void rc4EnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.RC4);
-    }
-
-    @Test
-    public void seedCbcEnvelopedMessageTest() throws Exception {
-        envelopedMessageTest(AS2EncryptionAlgorithm.SEED_CBC);
+    @ParameterizedTest
+    @MethodSource("encryptionAlgorithms")
+    public void envelopedMessageEncryptionTest(AS2EncryptionAlgorithm algorithm) throws Exception {
+        envelopedMessageTest(algorithm);
     }
 
     public void envelopedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {

@@ -135,7 +135,7 @@ pipeline {
                         steps {
                             echo "Do Build and test for ${PLATFORM}-${JDK_NAME}"
                             sh 'java -version'
-                            timeout(unit: 'HOURS', time: 7) {
+                            timeout(unit: 'MINUTES', time: 450) {
                                 script {
                                     if ("${PLATFORM}" == "ubuntu-avx") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {

@@ -33,7 +33,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
 
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
         compensate.expectedMessageCount(1);
-        compensate.setResultWaitTime(300000);
+        compensate.setResultWaitTime(20000);
 
         sendBody("direct:saga-compensate", "hello");
 
@@ -46,7 +46,7 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
         complete.expectedMessageCount(1);
-        complete.setResultWaitTime(300000);
+        complete.setResultWaitTime(20000);
 
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("hello");
