@@ -33,7 +33,10 @@ import org.apache.camel.Converter;
  * Converter methods to convert from / to Qdrant types.
  */
 @Converter(generateLoader = true)
-public class QdrantConverter {
+public final class QdrantConverter {
+
+    private QdrantConverter() {
+    }
 
     @Converter
     public static List<PointStruct> toListOfPointStructs(PointStruct p) {
