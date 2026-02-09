@@ -92,6 +92,26 @@ Camel-AWS2 IAM component provides the following operation on the producer side:
 - listGroups
 - addUserToGroup
 - removeUserFromGroup
+- createRole
+- deleteRole
+- getRole
+- listRoles
+- createPolicy
+- deletePolicy
+- getPolicy
+- listPolicies
+- attachUserPolicy
+- detachUserPolicy
+- attachGroupPolicy
+- detachGroupPolicy
+- attachRolePolicy
+- detachRolePolicy
+- createInstanceProfile
+- deleteInstanceProfile
+- getInstanceProfile
+- listInstanceProfiles
+- addRoleToInstanceProfile
+- removeRoleFromInstanceProfile
 
 == Examples
 
@@ -147,6 +167,201 @@ from("direct:deleteUser")
 --------------------------------------------------------------------------------
 from("direct:listUsers")
     .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listGroups")
+--------------------------------------------------------------------------------
+
+==== Role Operations
+
+- createRole: this operation will create a role in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createRole")
+    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .setHeader(IAM2Constants.ASSUME_ROLE_POLICY_DOCUMENT, constant("{...}"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createRole")
+--------------------------------------------------------------------------------
+
+- deleteRole: this operation will delete a role in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteRole")
+    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteRole")
+--------------------------------------------------------------------------------
+
+- getRole: this operation will get a role in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getRole")
+    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getRole")
+--------------------------------------------------------------------------------
+
+- listRoles: this operation will list the roles in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listRoles")
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listRoles")
+--------------------------------------------------------------------------------
+
+==== Policy Operations
+
+- createPolicy: this operation will create a policy in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createPolicy")
+    .setHeader(IAM2Constants.POLICY_NAME, constant("myPolicy"))
+    .setHeader(IAM2Constants.POLICY_DOCUMENT, constant("{...}"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createPolicy")
+--------------------------------------------------------------------------------
+
+- deletePolicy: this operation will delete a policy in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deletePolicy")
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deletePolicy")
+--------------------------------------------------------------------------------
+
+- getPolicy: this operation will get a policy in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getPolicy")
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getPolicy")
+--------------------------------------------------------------------------------
+
+- listPolicies: this operation will list the policies in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listPolicies")
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listPolicies")
+--------------------------------------------------------------------------------
+
+==== Policy Attachment Operations
+
+- attachUserPolicy: this operation will attach a policy to a user
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:attachUserPolicy")
+    .setHeader(IAM2Constants.USERNAME, constant("camel"))
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=attachUserPolicy")
+--------------------------------------------------------------------------------
+
+- detachUserPolicy: this operation will detach a policy from a user
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:detachUserPolicy")
+    .setHeader(IAM2Constants.USERNAME, constant("camel"))
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=detachUserPolicy")
+--------------------------------------------------------------------------------
+
+- attachGroupPolicy: this operation will attach a policy to a group
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:attachGroupPolicy")
+    .setHeader(IAM2Constants.GROUP_NAME, constant("myGroup"))
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=attachGroupPolicy")
+--------------------------------------------------------------------------------
+
+- detachGroupPolicy: this operation will detach a policy from a group
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:detachGroupPolicy")
+    .setHeader(IAM2Constants.GROUP_NAME, constant("myGroup"))
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=detachGroupPolicy")
+--------------------------------------------------------------------------------
+
+- attachRolePolicy: this operation will attach a policy to a role
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:attachRolePolicy")
+    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=attachRolePolicy")
+--------------------------------------------------------------------------------
+
+- detachRolePolicy: this operation will detach a policy from a role
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:detachRolePolicy")
+    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .setHeader(IAM2Constants.POLICY_ARN, constant("arn:aws:iam::123456789012:policy/myPolicy"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=detachRolePolicy")
+--------------------------------------------------------------------------------
+
+==== Instance Profile Operations
+
+- createInstanceProfile: this operation will create an instance profile in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createInstanceProfile")
+    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=createInstanceProfile")
+--------------------------------------------------------------------------------
+
+- deleteInstanceProfile: this operation will delete an instance profile in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteInstanceProfile")
+    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=deleteInstanceProfile")
+--------------------------------------------------------------------------------
+
+- getInstanceProfile: this operation will get an instance profile in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getInstanceProfile")
+    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=getInstanceProfile")
+--------------------------------------------------------------------------------
+
+- listInstanceProfiles: this operation will list the instance profiles in IAM
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listInstanceProfiles")
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=listInstanceProfiles")
+--------------------------------------------------------------------------------
+
+- addRoleToInstanceProfile: this operation will add a role to an instance profile
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:addRoleToInstanceProfile")
+    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=addRoleToInstanceProfile")
+--------------------------------------------------------------------------------
+
+- removeRoleFromInstanceProfile: this operation will remove a role from an instance profile
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:removeRoleFromInstanceProfile")
+    .setHeader(IAM2Constants.INSTANCE_PROFILE_NAME, constant("myInstanceProfile"))
+    .setHeader(IAM2Constants.ROLE_NAME, constant("myRole"))
+    .to("aws2-iam://test?iamClient=#amazonIAMClient&operation=removeRoleFromInstanceProfile")
 --------------------------------------------------------------------------------
 
 === Using a POJO as body

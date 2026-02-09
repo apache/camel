@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.google.sheets.GoogleSheetsConfiguration;
 import org.apache.camel.component.google.sheets.SheetsSpreadsheetsEndpointConfiguration;
@@ -20,6 +21,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for GoogleSheets
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class GoogleSheetsApiCollection extends ApiCollection<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
     private GoogleSheetsApiCollection() {

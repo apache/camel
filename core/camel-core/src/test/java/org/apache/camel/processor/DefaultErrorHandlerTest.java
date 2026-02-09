@@ -29,7 +29,7 @@ import org.apache.camel.processor.errorhandler.DefaultErrorHandler;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Default error handler test
@@ -68,12 +68,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Kaboom");
-            fail("Should have thrown a RuntimeCamelException");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        assertThrows(RuntimeCamelException.class, () -> template.sendBody("direct:start", "Kaboom"));
 
         assertMockEndpointsSatisfied();
     }

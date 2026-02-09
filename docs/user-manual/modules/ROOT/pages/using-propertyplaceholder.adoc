@@ -459,6 +459,7 @@ The xref:components::properties-component.adoc[Properties] component includes th
 * `env` - A function to lookup the property from OS environment variables
 * `sys` - A function to lookup the property from Java JVM system properties
 * `bean` - A function to lookup the property from the return value of bean's method (requires `camel-bean` JAR)
+* `boolean` - A function to evaluate if a property key matches a condition and returns either `true` or `false`
 * `service` - A function to lookup the property from OS environment variables using the service naming idiom
 * `service.name` - A function to lookup the property from OS environment variables using the service naming idiom returning the hostname part only
 * `service.port` - A function to lookup the property from OS environment variables using the service naming idiom returning the port part only
@@ -488,6 +489,34 @@ You can use default values as well, so if the property does not exist, you can d
     </route>
 </camelContext>
 ----
+
+The boolean function is intended for more flexibility when enabling or disabling EIP options.
+
+For example given we have a property with key `region` that has the value `EMEA`:
+
+[source,properties]
+----
+region = EMEA
+----
+
+We can then configure EIPs whether they are disabled based on this condition as follows:
+
+[source,yaml]
+----
+    - choice:
+        disabled: "{{boolean:region == 'EMEA`}}"
+        when:
+        - simple: "${header.RetryAttempts} == null"
+          steps:
+          - setProperty:
+              name: "HttpMessageMethod"
+              constant: "SET"
+          - process:
+              ref: "SetOriginalMessageProcessor"
+    ...
+----
+
+TIP: The boolean function uses the xref:components:languages:simple-language.adoc[Simple] language which has many functions and operators to build the condition.
 
 The service function is for looking up a service which is defined using OS environment variables using the service naming idiom, to refer to a service location using `hostname : port`
 

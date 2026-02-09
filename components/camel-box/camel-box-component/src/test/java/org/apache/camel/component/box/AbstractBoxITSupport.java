@@ -44,7 +44,7 @@ public class AbstractBoxITSupport extends CamelTestSupport {
     protected boolean jwtAuthentication;
     protected Map<String, Object> options;
 
-    private static boolean hasCredentials() throws IOException {
+    protected static boolean hasCredentials() throws IOException {
         if (properties.isEmpty()) {
             TestSupport.loadExternalProperties(properties, AbstractBoxITSupport.class, TEST_OPTIONS_PROPERTIES);
         }

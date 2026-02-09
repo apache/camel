@@ -101,6 +101,9 @@ public class OnWhenDefinition extends OptionalIdentifiedDefinition<OnWhenDefinit
         return expression;
     }
 
+    /**
+     * The predicate to use
+     */
     public void setExpression(ExpressionDefinition expression) {
         // favour using the helper to set the expression as it can unwrap some
         // unwanted builders when using Java DSL

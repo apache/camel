@@ -54,6 +54,8 @@ public class InlineKeyboardButton implements Serializable {
     @JsonProperty("request_location")
     private Boolean requestLocation;
 
+    private Boolean pay;
+
     public InlineKeyboardButton() {
 
     }
@@ -73,6 +75,12 @@ public class InlineKeyboardButton implements Serializable {
     public InlineKeyboardButton(String text, String url, LoginUrl loginUrl,
                                 String callbackData, CallbackGame callbackGame,
                                 Boolean requestContact, Boolean requestLocation) {
+        this(text, url, loginUrl, callbackData, callbackGame, requestContact, requestLocation, null);
+    }
+
+    public InlineKeyboardButton(String text, String url, LoginUrl loginUrl,
+                                String callbackData, CallbackGame callbackGame,
+                                Boolean requestContact, Boolean requestLocation, Boolean pay) {
         this.text = text;
         this.url = url;
         this.loginUrl = loginUrl;
@@ -80,6 +88,7 @@ public class InlineKeyboardButton implements Serializable {
         this.callbackGame = callbackGame;
         this.requestContact = requestContact;
         this.requestLocation = requestLocation;
+        this.pay = pay;
     }
 
     public String getText() {
@@ -138,6 +147,14 @@ public class InlineKeyboardButton implements Serializable {
         this.requestLocation = requestLocation;
     }
 
+    public Boolean getPay() {
+        return pay;
+    }
+
+    public void setPay(Boolean pay) {
+        this.pay = pay;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -151,6 +168,7 @@ public class InlineKeyboardButton implements Serializable {
         private CallbackGame callbackGame;
         private Boolean requestContact;
         private Boolean requestLocation;
+        private Boolean pay;
 
         public Builder text(String text) {
             this.text = text;
@@ -187,8 +205,14 @@ public class InlineKeyboardButton implements Serializable {
             return this;
         }
 
+        public Builder pay(Boolean pay) {
+            this.pay = pay;
+            return this;
+        }
+
         public InlineKeyboardButton build() {
-            return new InlineKeyboardButton(text, url, loginUrl, callbackData, callbackGame, requestContact, requestLocation);
+            return new InlineKeyboardButton(
+                    text, url, loginUrl, callbackData, callbackGame, requestContact, requestLocation, pay);
         }
     }
 
@@ -202,6 +226,7 @@ public class InlineKeyboardButton implements Serializable {
         sb.append(", callbackGame=").append(callbackGame);
         sb.append(", requestContact=").append(requestContact);
         sb.append(", requestLocation=").append(requestLocation);
+        sb.append(", pay=").append(pay);
         sb.append('}');
         return sb.toString();
     }
@@ -221,11 +246,12 @@ public class InlineKeyboardButton implements Serializable {
                 && Objects.equals(callbackData, that.callbackData)
                 && Objects.equals(callbackGame, that.callbackGame)
                 && Objects.equals(requestContact, that.requestContact)
-                && Objects.equals(requestLocation, that.requestLocation);
+                && Objects.equals(requestLocation, that.requestLocation)
+                && Objects.equals(pay, that.pay);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, url, loginUrl, callbackData, callbackGame, requestContact, requestLocation);
+        return Objects.hash(text, url, loginUrl, callbackData, callbackGame, requestContact, requestLocation, pay);
     }
 }

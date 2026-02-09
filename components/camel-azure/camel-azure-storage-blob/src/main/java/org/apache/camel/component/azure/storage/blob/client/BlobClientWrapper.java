@@ -53,6 +53,8 @@ import com.azure.storage.blob.models.PageBlobRequestConditions;
 import com.azure.storage.blob.models.PageRange;
 import com.azure.storage.blob.models.PageRangeItem;
 import com.azure.storage.blob.models.ParallelTransferOptions;
+import com.azure.storage.blob.options.BlobParallelUploadOptions;
+import com.azure.storage.blob.options.BlobUploadFromFileOptions;
 import com.azure.storage.blob.options.BlockBlobSimpleUploadOptions;
 import com.azure.storage.blob.options.ListPageRangesOptions;
 import com.azure.storage.blob.sas.BlobSasPermission;
@@ -130,6 +132,94 @@ public class BlobClientWrapper {
         BlockBlobSimpleUploadOptions uploadOptions = new BlockBlobSimpleUploadOptions(dataBuffer, length).setHeaders(headers)
                 .setMetadata(metadata).setTier(tier).setContentMd5(contentMd5).setRequestConditions(requestConditions);
         return getBlockBlobClient().uploadWithResponse(uploadOptions, timeout, Context.NONE);
+    }
+
+    /**
+     * Uploads a file to block blob using the Azure SDK's optimized file upload. This method handles chunking
+     * automatically for files larger than maxSingleUploadSize.
+     *
+     * @param  filePath                the local file path to upload
+     * @param  parallelTransferOptions options for parallel upload (block size, concurrency, etc.)
+     * @param  headers                 blob HTTP headers
+     * @param  metadata                blob metadata
+     * @param  tier                    access tier
+     * @param  requestConditions       request conditions
+     * @param  timeout                 operation timeout
+     * @return                         response with upload result
+     */
+    public Response<BlockBlobItem> uploadBlockBlobChunked(
+            final String filePath,
+            final ParallelTransferOptions parallelTransferOptions,
+            final BlobHttpHeaders headers,
+            final Map<String, String> metadata,
+            final AccessTier tier,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+
+        BlobUploadFromFileOptions options = new BlobUploadFromFileOptions(filePath);
+
+        if (parallelTransferOptions != null) {
+            options.setParallelTransferOptions(parallelTransferOptions);
+        }
+        if (headers != null) {
+            options.setHeaders(headers);
+        }
+        if (metadata != null) {
+            options.setMetadata(metadata);
+        }
+        if (tier != null) {
+            options.setTier(tier);
+        }
+        if (requestConditions != null) {
+            options.setRequestConditions(requestConditions);
+        }
+
+        return client.uploadFromFileWithResponse(options, timeout, Context.NONE);
+    }
+
+    /**
+     * Uploads an InputStream to block blob using the Azure SDK's parallel upload. This method handles chunking
+     * automatically for streams larger than maxSingleUploadSize, supporting memory-efficient uploads of large files.
+     *
+     * @param  data                    the input stream to upload
+     * @param  length                  the exact length of the data in the stream
+     * @param  parallelTransferOptions options for parallel upload (block size, concurrency, etc.)
+     * @param  headers                 blob HTTP headers
+     * @param  metadata                blob metadata
+     * @param  tier                    access tier
+     * @param  requestConditions       request conditions
+     * @param  timeout                 operation timeout
+     * @return                         response with upload result
+     */
+    public Response<BlockBlobItem> uploadBlockBlobWithParallelOptions(
+            final InputStream data,
+            final long length,
+            final ParallelTransferOptions parallelTransferOptions,
+            final BlobHttpHeaders headers,
+            final Map<String, String> metadata,
+            final AccessTier tier,
+            final BlobRequestConditions requestConditions,
+            final Duration timeout) {
+
+        BlobParallelUploadOptions options = new BlobParallelUploadOptions(data, length);
+
+        if (parallelTransferOptions != null) {
+            options.setParallelTransferOptions(parallelTransferOptions);
+        }
+        if (headers != null) {
+            options.setHeaders(headers);
+        }
+        if (metadata != null) {
+            options.setMetadata(metadata);
+        }
+        if (tier != null) {
+            options.setTier(tier);
+        }
+        if (requestConditions != null) {
+            options.setRequestConditions(requestConditions);
+        }
+
+        return client.uploadWithResponse(options, timeout, Context.NONE);
     }
 
     public HttpHeaders stageBlockBlob(

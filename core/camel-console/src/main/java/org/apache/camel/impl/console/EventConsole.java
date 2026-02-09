@@ -128,9 +128,9 @@ public class EventConsole extends AbstractDevConsole {
             if (event != null) {
                 added++;
                 if (event.getTimestamp() > 0) {
-                    sb.append(String.format("    %s (age: %s)\n", event, TimeUtils.printSince(event.getTimestamp())));
+                    sb.append(String.format("    %s (age: %s)%n", event, TimeUtils.printSince(event.getTimestamp())));
                 } else {
-                    sb.append(String.format("    %s\n", event));
+                    sb.append(String.format("    %s%n", event));
                 }
             }
             // move to next
@@ -139,7 +139,7 @@ public class EventConsole extends AbstractDevConsole {
             event = events[cursor];
         }
         if (added > 0) {
-            sb.insert(0, String.format("Last %s %s Events:\n", added, kind));
+            sb.insert(0, String.format("Last %s %s Events:%n", added, kind));
         }
         return sb.toString();
     }

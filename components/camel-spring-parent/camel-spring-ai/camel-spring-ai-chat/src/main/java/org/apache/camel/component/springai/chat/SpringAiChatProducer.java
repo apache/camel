@@ -154,21 +154,20 @@ public class SpringAiChatProducer extends DefaultProducer {
         }
 
         // Handle different body types
-        if (messageBody instanceof String) {
-            userMessageText = (String) messageBody;
-        } else if (messageBody instanceof UserMessage) {
-            UserMessage userMsg = (UserMessage) messageBody;
+        if (messageBody instanceof String stringBody) {
+            userMessageText = stringBody;
+        } else if (messageBody instanceof UserMessage userMsg) {
             userMessageText = userMsg.getText();
             // If there's media, we need to handle it differently using additive builder
             if (!userMsg.getMedia().isEmpty()) {
                 applyUserMessageWithMedia(request, exchange, userMsg.getText(), userMsg.getMedia());
                 userMessageText = null; // Already handled
             }
-        } else if (messageBody instanceof Message) {
+        } else if (messageBody instanceof Message message) {
             // Note: Using request.messages() here replaces the entire message list,
             // which will ignore any default system message configured in doStart() or via headers.
             // This is intentional for the CHAT_SINGLE_MESSAGE operation when a complete Message is provided.
-            request.messages((Message) messageBody);
+            request.messages(message);
         } else if (messageBody instanceof WrappedFile) {
             // Handle single WrappedFile for multimodal content
             WrappedFile<?> wrappedFile = (WrappedFile<?>) messageBody;
@@ -189,9 +188,9 @@ public class SpringAiChatProducer extends DefaultProducer {
                         "List body must contain WrappedFile objects. Got: "
                                                    + (list.isEmpty() ? "empty list" : list.get(0).getClass().getName()));
             }
-        } else if (messageBody instanceof byte[]) {
+        } else if (messageBody instanceof byte[] bytes) {
             // Handle multimodal content (image or audio)
-            UserMessage multimodalMessage = createMultimodalMessage(exchange, (byte[]) messageBody);
+            UserMessage multimodalMessage = createMultimodalMessage(exchange, bytes);
             applyUserMessageWithMedia(request, exchange, multimodalMessage.getText(), multimodalMessage.getMedia());
         } else {
             throw new IllegalArgumentException(

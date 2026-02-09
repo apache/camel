@@ -45,8 +45,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = { "/org/apache/camel/component/jetty/jetty-https.xml" })
@@ -124,11 +124,11 @@ public class SpringHttpsRouteTest {
     @Test
     public void testEndpointWithoutHttps() {
         mockEndpoint.reset();
-        try {
-            template.sendBodyAndHeader("http://localhost:" + port + "/test", expectedBody, "Content-Type", "application/xml");
-            fail("expect exception on access to https endpoint via http");
-        } catch (RuntimeCamelException expected) {
-        }
+        assertThrows(RuntimeCamelException.class,
+                () -> template.sendBodyAndHeader("http://localhost:" + port + "/test", expectedBody, "Content-Type",
+                        "application/xml"),
+                "expect exception on access to https endpoint via http");
+
         assertTrue(mockEndpoint.getExchanges().isEmpty(), "mock endpoint was not called");
     }
 

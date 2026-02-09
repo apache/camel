@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "JGroupsRaftClusterService",
+    "javaType": "org.apache.camel.component.jgroups.raft.cluster.JGroupsRaftClusterService",
+    "interfaceType": "org.apache.camel.cluster.CamelClusterService",
+    "title": "JGroups Raft Cluster Service",
+    "description": "JGroups Raft based cluster locking",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-jgroups-raft",
+    "version": "4.18.0-SNAPSHOT",
+    "properties": { "id": { "index": 0, "kind": "property", "displayName": "Id", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Unique Raft id" }, "jgroupsConfig": { "index": 1, "kind": "property", "displayName": "Jgroups Config", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "raft.xml", "description": "The path to the JGroups Raft configuration" }, "jgroupsClusterName": { "index": 2, "kind": "property", "displayName": "Jgroups Cluster Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "jgroupsraft-master", "description": "The name of the cluster" }, "raftHandle": { "index": 3, "kind": "property", "displayName": "Raft Handle", "label": "advanced", "required": false, "type": "object", "javaType": "org.jgroups.raft.RaftHandle", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom RaftHandler" } }
+  }
+}
+

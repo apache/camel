@@ -41,6 +41,7 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.StopDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NodeIdFactory;
@@ -1107,6 +1108,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         // the route should be from this rest endpoint
         route.fromRest(from);
+        // rest-dsl open-api contract-first is only a facade and each route handles error handling
+        route.setErrorHandlerFactory(new NoErrorHandlerDefinition());
         route.getInput().setLocation(getLocation());
         route.getInput().setLineNumber(getLineNumber());
         route.setRestDefinition(this);

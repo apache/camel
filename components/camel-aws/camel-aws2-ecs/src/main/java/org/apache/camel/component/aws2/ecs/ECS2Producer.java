@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.aws2.ecs;
 
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -37,7 +41,6 @@ import software.amazon.awssdk.services.ecs.model.DeleteClusterResponse;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersRequest;
 import software.amazon.awssdk.services.ecs.model.DescribeClustersResponse;
 import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
-import software.amazon.awssdk.services.ecs.model.ListClustersRequest.Builder;
 import software.amazon.awssdk.services.ecs.model.ListClustersResponse;
 
 /**
@@ -101,145 +104,165 @@ public class ECS2Producer extends DefaultProducer {
     }
 
     private void listClusters(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
-        if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ListClustersRequest) {
-                ListClustersResponse result;
-                try {
-                    ListClustersRequest request = (ListClustersRequest) payload;
-                    result = ecsClient.listClusters(request);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
-        } else {
-            Builder builder = ListClustersRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.MAX_RESULTS))) {
-                int maxRes = exchange.getIn().getHeader(ECS2Constants.MAX_RESULTS, Integer.class);
-                builder.maxResults(maxRes);
-            }
-            ListClustersResponse result;
-            try {
-                ListClustersRequest request = builder.build();
-                result = ecsClient.listClusters(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("List Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        }
+        executeOperation(
+                exchange,
+                ListClustersRequest.class,
+                ecsClient::listClusters,
+                () -> {
+                    ListClustersRequest.Builder builder = ListClustersRequest.builder();
+                    Integer maxResults = getOptionalHeader(exchange, ECS2Constants.MAX_RESULTS, Integer.class);
+                    if (ObjectHelper.isNotEmpty(maxResults)) {
+                        builder.maxResults(maxResults);
+                    }
+                    String nextToken = getOptionalHeader(exchange, ECS2Constants.NEXT_TOKEN, String.class);
+                    if (ObjectHelper.isNotEmpty(nextToken)) {
+                        builder.nextToken(nextToken);
+                    }
+                    return ecsClient.listClusters(builder.build());
+                },
+                "List Clusters",
+                (ListClustersResponse response, Message message) -> {
+                    message.setHeader(ECS2Constants.NEXT_TOKEN, response.nextToken());
+                    message.setHeader(ECS2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
+                });
     }
 
     private void createCluster(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
-        if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateClusterRequest) {
-                CreateClusterResponse result;
-                try {
-                    CreateClusterRequest request = (CreateClusterRequest) payload;
-                    result = ecsClient.createCluster(request);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
-        } else {
-            CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
-                String name = exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME, String.class);
-                builder.clusterName(name);
-            }
-            CreateClusterResponse result;
-            try {
-                CreateClusterRequest request = builder.build();
-                result = ecsClient.createCluster(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("Create Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        }
+        executeOperation(
+                exchange,
+                CreateClusterRequest.class,
+                ecsClient::createCluster,
+                () -> {
+                    CreateClusterRequest.Builder builder = CreateClusterRequest.builder();
+                    String clusterName = getOptionalHeader(exchange, ECS2Constants.CLUSTER_NAME, String.class);
+                    if (ObjectHelper.isNotEmpty(clusterName)) {
+                        builder.clusterName(clusterName);
+                    }
+                    return ecsClient.createCluster(builder.build());
+                },
+                "Create Cluster",
+                (CreateClusterResponse response, Message message) -> {
+                    if (ObjectHelper.isNotEmpty(response.cluster())) {
+                        message.setHeader(ECS2Constants.CLUSTER_ARN, response.cluster().clusterArn());
+                    }
+                });
     }
 
     private void describeCluster(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
-        if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DescribeClustersRequest) {
-                DescribeClustersResponse result;
-                try {
-                    DescribeClustersRequest request = (DescribeClustersRequest) payload;
-                    result = ecsClient.describeClusters(request);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("Describe Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
-        } else {
-            DescribeClustersRequest.Builder builder = DescribeClustersRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
-                String clusterName = exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME, String.class);
-                builder.clusters(clusterName);
-            }
-            DescribeClustersResponse result;
-            try {
-                DescribeClustersRequest request = builder.build();
-                result = ecsClient.describeClusters(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("Describe Clusters command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        }
+        executeOperation(
+                exchange,
+                DescribeClustersRequest.class,
+                ecsClient::describeClusters,
+                () -> {
+                    DescribeClustersRequest.Builder builder = DescribeClustersRequest.builder();
+                    String clusterName = getOptionalHeader(exchange, ECS2Constants.CLUSTER_NAME, String.class);
+                    if (ObjectHelper.isNotEmpty(clusterName)) {
+                        builder.clusters(clusterName);
+                    }
+                    return ecsClient.describeClusters(builder.build());
+                },
+                "Describe Clusters",
+                (DescribeClustersResponse response, Message message) -> {
+                    if (response.hasClusters() && !response.clusters().isEmpty()) {
+                        message.setHeader(ECS2Constants.CLUSTER_ARN, response.clusters().get(0).clusterArn());
+                    }
+                });
     }
 
     private void deleteCluster(EcsClient ecsClient, Exchange exchange) throws InvalidPayloadException {
-        if (getConfiguration().isPojoRequest()) {
-            Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteClusterRequest) {
-                DeleteClusterResponse result;
-                try {
-                    DeleteClusterRequest request = (DeleteClusterRequest) payload;
-                    result = ecsClient.deleteCluster(request);
-                } catch (AwsServiceException ase) {
-                    LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
-                    throw ase;
-                }
-                Message message = getMessageForResponse(exchange);
-                message.setBody(result);
-            }
-        } else {
-            DeleteClusterRequest.Builder builder = DeleteClusterRequest.builder();
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME))) {
-                String name = exchange.getIn().getHeader(ECS2Constants.CLUSTER_NAME, String.class);
-                builder.cluster(name);
-            } else {
-                throw new IllegalArgumentException("Cluster name must be specified");
-            }
-            DeleteClusterResponse result;
-            try {
-                DeleteClusterRequest request = builder.build();
-                result = ecsClient.deleteCluster(request);
-            } catch (AwsServiceException ase) {
-                LOG.trace("Delete Cluster command returned the error code {}", ase.awsErrorDetails().errorCode());
-                throw ase;
-            }
-            Message message = getMessageForResponse(exchange);
-            message.setBody(result);
-        }
+        executeOperation(
+                exchange,
+                DeleteClusterRequest.class,
+                ecsClient::deleteCluster,
+                () -> {
+                    String clusterName = getRequiredHeader(exchange, ECS2Constants.CLUSTER_NAME, String.class,
+                            "Cluster name must be specified");
+                    return ecsClient.deleteCluster(DeleteClusterRequest.builder().cluster(clusterName).build());
+                },
+                "Delete Cluster",
+                (DeleteClusterResponse response, Message message) -> {
+                    if (ObjectHelper.isNotEmpty(response.cluster())) {
+                        message.setHeader(ECS2Constants.CLUSTER_ARN, response.cluster().clusterArn());
+                    }
+                });
     }
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    /**
+     * Executes an ECS operation with POJO request support.
+     */
+    private <REQ, RES> void executeOperation(
+            Exchange exchange,
+            Class<REQ> requestClass,
+            Function<REQ, RES> pojoExecutor,
+            Supplier<RES> headerExecutor,
+            String operationName)
+            throws InvalidPayloadException {
+        executeOperation(exchange, requestClass, pojoExecutor, headerExecutor, operationName, null);
+    }
+
+    /**
+     * Executes an ECS operation with POJO request support and optional response post-processing.
+     */
+    private <REQ, RES> void executeOperation(
+            Exchange exchange,
+            Class<REQ> requestClass,
+            Function<REQ, RES> pojoExecutor,
+            Supplier<RES> headerExecutor,
+            String operationName,
+            BiConsumer<RES, Message> responseProcessor)
+            throws InvalidPayloadException {
+
+        RES result;
+        if (getConfiguration().isPojoRequest()) {
+            Object payload = exchange.getIn().getMandatoryBody();
+            if (requestClass.isInstance(payload)) {
+                try {
+                    result = pojoExecutor.apply(requestClass.cast(payload));
+                } catch (AwsServiceException ase) {
+                    LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                    throw ase;
+                }
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("Expected body of type %s but was %s",
+                                requestClass.getName(),
+                                ObjectHelper.isNotEmpty(payload) ? payload.getClass().getName() : "null"));
+            }
+        } else {
+            try {
+                result = headerExecutor.get();
+            } catch (AwsServiceException ase) {
+                LOG.trace("{} command returned the error code {}", operationName, ase.awsErrorDetails().errorCode());
+                throw ase;
+            }
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        if (ObjectHelper.isNotEmpty(responseProcessor)) {
+            responseProcessor.accept(result, message);
+        }
+    }
+
+    /**
+     * Gets a required header value or throws an IllegalArgumentException.
+     */
+    private <T> T getRequiredHeader(Exchange exchange, String headerName, Class<T> headerType, String errorMessage) {
+        T value = exchange.getIn().getHeader(headerName, headerType);
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+        return value;
+    }
+
+    /**
+     * Gets an optional header value.
+     */
+    private <T> T getOptionalHeader(Exchange exchange, String headerName, Class<T> headerType) {
+        return exchange.getIn().getHeader(headerName, headerType);
     }
 
     @Override
@@ -250,7 +273,7 @@ public class ECS2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new ECS2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -260,7 +283,7 @@ public class ECS2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

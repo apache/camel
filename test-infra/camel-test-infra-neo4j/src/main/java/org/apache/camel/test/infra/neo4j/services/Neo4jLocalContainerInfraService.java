@@ -59,11 +59,10 @@ public class Neo4jLocalContainerInfraService implements Neo4jInfraService, Conta
                 withStartupTimeout(Duration.ofMinutes(3L));
                 withRandomPassword();
 
-                if (fixedPort) {
-                    addFixedExposedPort(7687, 7687);
-                    addFixedExposedPort(7473, 7473);
-                    addFixedExposedPort(7474, 7474);
-                }
+                ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                        ContainerEnvironmentUtil.PortConfig.primary(7687),
+                        ContainerEnvironmentUtil.PortConfig.secondary(7473),
+                        ContainerEnvironmentUtil.PortConfig.secondary(7474));
             }
         }
 

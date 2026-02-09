@@ -38,7 +38,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Checks for interoperability between a CXF client that is attached using the Camel transport for CXF and the SOAP data
@@ -91,13 +91,11 @@ public class SoapCxfClientTest extends RouteBuilder {
     public void testFault() {
         GetCustomersByName request = new GetCustomersByName();
         request.setName("none");
-        try {
-            customerService.getCustomersByName(request);
-            fail("NoSuchCustomerException expected");
-        } catch (NoSuchCustomerException e) {
-            NoSuchCustomer info = e.getFaultInfo();
-            assertEquals("none", info.getCustomerId());
-        }
+        NoSuchCustomerException e = assertThrows(NoSuchCustomerException.class,
+                () -> customerService.getCustomersByName(request),
+                "NoSuchCustomerException expected");
+        NoSuchCustomer info = e.getFaultInfo();
+        assertEquals("none", info.getCustomerId());
 
     }
 

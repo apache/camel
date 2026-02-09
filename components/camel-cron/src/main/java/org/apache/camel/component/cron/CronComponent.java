@@ -64,8 +64,7 @@ public class CronComponent extends DefaultComponent {
         // create delegate and set on endpoint
         Endpoint delegate = this.service.createEndpoint(configuration);
         answer.setDelegate(delegate);
-        if (delegate instanceof DefaultEndpoint) {
-            DefaultEndpoint de = (DefaultEndpoint) delegate;
+        if (delegate instanceof DefaultEndpoint de) {
             de.setAutowiredEnabled(answer.isAutowiredEnabled());
             de.setBridgeErrorHandler(answer.isBridgeErrorHandler());
             de.setExceptionHandler(answer.getExceptionHandler());

@@ -42,11 +42,11 @@ public class MainHttpServerDevConsole extends AbstractDevConsole {
             String url = String.format("%s:%s%s", server.getHost(), server.getPort(), p);
             sb.append(String.format("    Server: http://%s", url));
             if (server.getMaxBodySize() != null) {
-                sb.append(String.format("\n    Max Body Size: %s", server.getMaxBodySize()));
+                sb.append(String.format("%n    Max Body Size: %s", server.getMaxBodySize()));
             }
-            sb.append(String.format("\n    File Upload Enabled: %b", server.isFileUploadEnabled()));
-            sb.append(String.format("\n    File Upload Dir: %s", server.getFileUploadDirectory()));
-            sb.append(String.format("\n    Use Global SSL ContextParameters: %s", server.isUseGlobalSslContextParameters()));
+            sb.append(String.format("%n    File Upload Enabled: %b", server.isFileUploadEnabled()));
+            sb.append(String.format("%n    File Upload Dir: %s", server.getFileUploadDirectory()));
+            sb.append(String.format("%n    Use Global SSL ContextParameters: %s", server.isUseGlobalSslContextParameters()));
         }
 
         return sb.toString();

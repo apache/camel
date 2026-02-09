@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class BeanValidatorOutputValidateTest extends ContextTestSupport {
 
@@ -87,13 +87,11 @@ public class BeanValidatorOutputValidateTest extends ContextTestSupport {
         getMockEndpoint("mock:out").expectedMessageCount(1);
         getMockEndpoint("mock:invalid").expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:in", "wrong");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ValidationException.class, e.getCause());
-            assertTrue(e.getCause().getMessage().startsWith("Wrong content"));
-        }
+        });
+        assertIsInstanceOf(ValidationException.class, e.getCause());
+        assertTrue(e.getCause().getMessage().startsWith("Wrong content"));
 
         assertMockEndpointsSatisfied();
     }

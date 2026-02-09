@@ -22,9 +22,9 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +78,6 @@ public final class BoxConnectionHelper {
     }
 
     public static BoxAPIConnection createStandardAuthenticatedConnection(BoxConfiguration configuration) {
-
         // authorize application on user's behalf
         try {
             //prepare proxy parameter
@@ -98,7 +97,7 @@ public final class BoxConnectionHelper {
             }
 
             // generate anti-forgery token to prevent/detect CSRF attack
-            final String csrfToken = String.valueOf(new SecureRandom().nextLong());
+            final String csrfToken = UUID.randomUUID().toString();
 
             final String authorizeUrl = authorizationUrl(configuration.getClientId(), csrfToken);
 

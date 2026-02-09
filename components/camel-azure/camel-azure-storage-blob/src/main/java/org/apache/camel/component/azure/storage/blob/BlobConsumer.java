@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobStorageException;
@@ -46,6 +47,19 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
 
     public BlobConsumer(final BlobEndpoint endpoint, final Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (getEndpoint().getConfiguration().isMoveAfterRead()) {
+            String destContainer = getEndpoint().getConfiguration().getDestinationContainer();
+            if (ObjectHelper.isEmpty(destContainer)) {
+                throw new IllegalArgumentException(
+                        "destinationContainer must be set when moveAfterRead is enabled");
+            }
+        }
     }
 
     @Override
@@ -143,7 +157,7 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
-                    LOG.trace("Completed from processing all exchanges...");
+                    processCommit(exchange);
                 }
 
                 @Override
@@ -170,5 +184,119 @@ public class BlobConsumer extends ScheduledBatchPollingConsumer {
             getExceptionHandler().handleException(
                     "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
+    }
+
+    /**
+     * Strategy to move/delete the blob after being processed.
+     *
+     * @param exchange the exchange
+     */
+    protected void processCommit(Exchange exchange) {
+        try {
+            final String containerName = getEndpoint().getConfiguration().getContainerName();
+            final String blobName = exchange.getIn().getHeader(BlobConstants.BLOB_NAME, String.class);
+
+            if (blobName == null) {
+                LOG.warn("Cannot perform move/delete after read because blob name is not available in exchange headers");
+                return;
+            }
+
+            if (getEndpoint().getConfiguration().isMoveAfterRead()) {
+                final String destinationContainer = getEndpoint().getConfiguration().getDestinationContainer();
+                LOG.trace("Moving blob {} from container {} to container {}...", blobName, containerName, destinationContainer);
+
+                // Build destination blob name with optional prefix/suffix
+                final String destinationBlobName = buildDestinationBlobName(blobName);
+
+                // Copy to destination
+                copyBlobToDestination(containerName, blobName, destinationContainer, destinationBlobName);
+
+                // Delete source blob after successful copy (move = copy + delete)
+                deleteBlob(containerName, blobName);
+
+                LOG.trace("Moved blob {} from container {} to blob {} in container {}",
+                        blobName, containerName, destinationBlobName, destinationContainer);
+            } else if (getEndpoint().getConfiguration().isDeleteAfterRead()) {
+                // Only delete if not moving (move already handles deletion)
+                LOG.trace("Deleting blob {} from container {}...", blobName, containerName);
+
+                deleteBlob(containerName, blobName);
+
+                LOG.trace("Deleted blob {} from container {}", blobName, containerName);
+            }
+        } catch (BlobStorageException e) {
+            getExceptionHandler().handleException(
+                    "Error occurred during moving or deleting blob. This exception is ignored.", exchange, e);
+        }
+    }
+
+    /**
+     * Builds the destination blob name with optional prefix/suffix and prefix removal.
+     *
+     * @param  blobName the source blob name
+     * @return          the destination blob name
+     */
+    private String buildDestinationBlobName(String blobName) {
+        StringBuilder builder = new StringBuilder();
+
+        String blobNameToUse = blobName;
+
+        // Remove prefix if configured
+        if (getEndpoint().getConfiguration().isRemovePrefixOnMove()) {
+            String prefix = getEndpoint().getConfiguration().getPrefix();
+            if (prefix != null && blobNameToUse.startsWith(prefix)) {
+                blobNameToUse = blobNameToUse.substring(prefix.length());
+            }
+        }
+
+        // Add destination prefix
+        if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getDestinationBlobPrefix())) {
+            builder.append(getEndpoint().getConfiguration().getDestinationBlobPrefix());
+        }
+
+        builder.append(blobNameToUse);
+
+        // Add destination suffix
+        if (ObjectHelper.isNotEmpty(getEndpoint().getConfiguration().getDestinationBlobSuffix())) {
+            builder.append(getEndpoint().getConfiguration().getDestinationBlobSuffix());
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Copies a blob from source container to destination container within the same storage account.
+     *
+     * @param sourceContainer      the source container name
+     * @param sourceBlobName       the source blob name
+     * @param destinationContainer the destination container name
+     * @param destinationBlobName  the destination blob name
+     */
+    private void copyBlobToDestination(
+            String sourceContainer, String sourceBlobName,
+            String destinationContainer, String destinationBlobName) {
+        BlobContainerClient sourceContainerClient
+                = getEndpoint().getBlobServiceClient().getBlobContainerClient(sourceContainer);
+        BlobClient sourceBlobClient = sourceContainerClient.getBlobClient(sourceBlobName);
+
+        BlobContainerClient destContainerClient
+                = getEndpoint().getBlobServiceClient().getBlobContainerClient(destinationContainer);
+        BlobClient destBlobClient = destContainerClient.getBlobClient(destinationBlobName);
+
+        // Copy from source URL (works within same storage account)
+        destBlobClient.copyFromUrl(sourceBlobClient.getBlobUrl());
+    }
+
+    /**
+     * Deletes a blob from the specified container.
+     *
+     * @param containerName the container name
+     * @param blobName      the blob name
+     */
+    private void deleteBlob(String containerName, String blobName) {
+        BlobContainerClient containerClient
+                = getEndpoint().getBlobServiceClient().getBlobContainerClient(containerName);
+        BlobClient blobClient = containerClient.getBlobClient(blobName);
+        blobClient.delete();
     }
 }

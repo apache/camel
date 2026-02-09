@@ -50,7 +50,7 @@ public class BlobConfiguration implements Cloneable {
     private String accessKey;
     @UriParam(label = "producer",
               enums = "listBlobContainers,createBlobContainer,deleteBlobContainer,listBlobs,getBlob,deleteBlob,downloadBlobToFile,downloadLink,"
-                      + "uploadBlockBlob,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
+                      + "uploadBlockBlob,uploadBlockBlobChunked,stageBlockBlobList,commitBlobBlockList,getBlobBlockList,createAppendBlob,commitAppendBlob,createPageBlob,uploadPageBlob,resizePageBlob,"
                       + "clearPageBlob,getPageBlobRanges",
               defaultValue = "listBlobContainers")
     private BlobOperationsDefinition operation = BlobOperationsDefinition.listBlobContainers;
@@ -96,6 +96,12 @@ public class BlobConfiguration implements Cloneable {
     private OffsetDateTime changeFeedEndTime;
     @UriParam(label = "producer")
     private Context changeFeedContext;
+    @UriParam(label = "producer")
+    private Long blockSize;
+    @UriParam(label = "producer")
+    private Integer maxConcurrency;
+    @UriParam(label = "producer")
+    private Long maxSingleUploadSize;
     @UriParam(label = "common")
     private String regex;
     @UriParam(label = "security", secret = true)
@@ -113,6 +119,18 @@ public class BlobConfiguration implements Cloneable {
     private String azureClientSecret;
     @UriParam(label = "security")
     private String azureTenantId;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean deleteAfterRead;
+    @UriParam(label = "consumer")
+    private boolean moveAfterRead;
+    @UriParam(label = "consumer")
+    private String destinationContainer;
+    @UriParam(label = "consumer")
+    private String destinationBlobPrefix;
+    @UriParam(label = "consumer")
+    private String destinationBlobSuffix;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean removePrefixOnMove;
 
     /**
      * Azure account name to be used for authentication with azure blob services
@@ -430,6 +448,43 @@ public class BlobConfiguration implements Cloneable {
     }
 
     /**
+     * The block size in bytes to use for chunked uploads with `uploadBlockBlobChunked` operation. Default is 4MB
+     * (4194304). Maximum is 4000MB. Must be greater than 0.
+     */
+    public Long getBlockSize() {
+        return blockSize;
+    }
+
+    public void setBlockSize(Long blockSize) {
+        this.blockSize = blockSize;
+    }
+
+    /**
+     * The maximum number of parallel requests to use during upload with `uploadBlockBlobChunked` operation. Default is
+     * determined by the Azure SDK based on available processors.
+     */
+    public Integer getMaxConcurrency() {
+        return maxConcurrency;
+    }
+
+    public void setMaxConcurrency(Integer maxConcurrency) {
+        this.maxConcurrency = maxConcurrency;
+    }
+
+    /**
+     * The maximum size in bytes for a single upload request with `uploadBlockBlobChunked` operation. Files smaller than
+     * this will be uploaded in a single request. Files larger will use chunked upload with blocks of size blockSize.
+     * Default is 256MB.
+     */
+    public Long getMaxSingleUploadSize() {
+        return maxSingleUploadSize;
+    }
+
+    public void setMaxSingleUploadSize(Long maxSingleUploadSize) {
+        this.maxSingleUploadSize = maxSingleUploadSize;
+    }
+
+    /**
      * Filters the results to return only blobs whose names match the specified regular expression. May be null to
      * return all if both prefix and regex are set, regex takes the priority and prefix is ignored.
      */
@@ -540,6 +595,82 @@ public class BlobConfiguration implements Cloneable {
 
     public void setAzureTenantId(String azureTenantId) {
         this.azureTenantId = azureTenantId;
+    }
+
+    /**
+     * Delete blobs from Azure after they have been retrieved. The delete is only performed if the Exchange is
+     * committed. If a rollback occurs, the blob is not deleted.
+     * <p/>
+     * If this option is false, then the same blobs will be retrieved over and over again in the polls. Therefore, you
+     * need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the
+     * {@link BlobConstants#BLOB_NAME} header, or only the blob name.
+     */
+    public boolean isDeleteAfterRead() {
+        return deleteAfterRead;
+    }
+
+    public void setDeleteAfterRead(boolean deleteAfterRead) {
+        this.deleteAfterRead = deleteAfterRead;
+    }
+
+    /**
+     * Move blobs from the container to a different container after they have been retrieved. To accomplish the
+     * operation, the destinationContainer option must be set. The copy blob operation is only performed if the Exchange
+     * is committed. If a rollback occurs, the blob is not moved.
+     */
+    public boolean isMoveAfterRead() {
+        return moveAfterRead;
+    }
+
+    public void setMoveAfterRead(boolean moveAfterRead) {
+        this.moveAfterRead = moveAfterRead;
+    }
+
+    /**
+     * Define the destination container where a blob must be moved when moveAfterRead is set to true.
+     */
+    public String getDestinationContainer() {
+        return destinationContainer;
+    }
+
+    public void setDestinationContainer(String destinationContainer) {
+        this.destinationContainer = destinationContainer;
+    }
+
+    /**
+     * Define the destination blob prefix to use when a blob must be moved, and moveAfterRead is set to true.
+     */
+    public String getDestinationBlobPrefix() {
+        return destinationBlobPrefix;
+    }
+
+    public void setDestinationBlobPrefix(String destinationBlobPrefix) {
+        this.destinationBlobPrefix = destinationBlobPrefix;
+    }
+
+    /**
+     * Define the destination blob suffix to use when a blob must be moved, and moveAfterRead is set to true.
+     */
+    public String getDestinationBlobSuffix() {
+        return destinationBlobSuffix;
+    }
+
+    public void setDestinationBlobSuffix(String destinationBlobSuffix) {
+        this.destinationBlobSuffix = destinationBlobSuffix;
+    }
+
+    /**
+     * Remove the contents of the prefix configuration string from the new blob name before moving. For example, if
+     * prefix is set to 'notify/' and the destinationBlobPrefix is set to 'archive/', a blob with a name of
+     * 'notify/example.txt' will be moved to 'archive/example.txt', rather than the default behavior where the new name
+     * is 'archive/notify/example.txt'. Only applicable when moveAfterRead is true.
+     */
+    public boolean isRemovePrefixOnMove() {
+        return removePrefixOnMove;
+    }
+
+    public void setRemovePrefixOnMove(boolean removePrefixOnMove) {
+        this.removePrefixOnMove = removePrefixOnMove;
     }
 
     // *************************************************

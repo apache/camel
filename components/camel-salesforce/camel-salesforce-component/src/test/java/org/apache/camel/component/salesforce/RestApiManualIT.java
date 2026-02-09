@@ -161,7 +161,7 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         Line_Item__c lineItem = new Line_Item__c();
         final String lineItemId = String.valueOf(TEST_LINE_ITEM_ID.incrementAndGet());
         lineItem.setName(lineItemId);
-        template().requestBody("direct:createLineItem", lineItem, CreateSObjectResult.class);
+        CreateSObjectResult result = template().requestBody("direct:createLineItem", lineItem, CreateSObjectResult.class);
     }
 
     private void createLineItems(int count) {
@@ -720,10 +720,11 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         final ClientConnector connector = new ClientConnector();
         connector.setSslContextFactory(sslContextFactory);
         final HttpClientTransport transport = new HttpClientTransportOverHTTP(connector);
-        try (final HttpClient httpClient = new HttpClient(transport)) {
-            httpClient.setConnectTimeout(60000);
-            httpClient.start();
+        final HttpClient httpClient = new HttpClient(transport);
+        httpClient.setConnectTimeout(60000);
+        httpClient.start();
 
+        try {
             final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
             final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
@@ -731,6 +732,8 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
             assertEquals(HttpStatus.OK_200, response.getStatus());
 
             testGetGlobalObjects();
+        } finally {
+            httpClient.stop();
         }
     }
 
@@ -744,10 +747,11 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
         final ClientConnector connector = new ClientConnector();
         connector.setSslContextFactory(sslContextFactory);
         final HttpClientTransport transport = new HttpClientTransportOverHTTP(connector);
-        try (final HttpClient httpClient = new HttpClient(transport)) {
-            httpClient.setConnectTimeout(60000);
-            httpClient.start();
+        final HttpClient httpClient = new HttpClient(transport);
+        httpClient.setConnectTimeout(60000);
+        httpClient.start();
 
+        try {
             final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
             final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
@@ -755,9 +759,14 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
             assertEquals(HttpStatus.OK_200, response.getStatus());
 
             // set component config to bad password to cause relogin attempts to
-            // fail
+            // fail. Also clear refresh token and set explicit auth type to avoid ambiguous config.
+            // Important: save password and refreshToken first, then clear refreshToken before
+            // doing anything else - getType() throws if both password and refreshToken are set.
             final String password = sf.getLoginConfig().getPassword();
+            final String refreshToken = sf.getLoginConfig().getRefreshToken();
+            sf.getLoginConfig().setRefreshToken(null);
             sf.getLoginConfig().setPassword("bad_password");
+            sf.getLoginConfig().setType(AuthenticationType.USERNAME_PASSWORD);
 
             try {
                 testGetGlobalObjects();
@@ -771,9 +780,14 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
                     fail("Expected SalesforceException!");
                 }
             } finally {
-                // reset password and retries to allow other tests to pass
+                // reset config to allow other tests to pass
+                // restore refreshToken first, then password, then clear type to let it auto-determine
+                sf.getLoginConfig().setRefreshToken(refreshToken);
                 sf.getLoginConfig().setPassword(password);
+                sf.getLoginConfig().setType(null);
             }
+        } finally {
+            httpClient.stop();
         }
     }
 

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test for using http client SO timeout
@@ -48,13 +48,12 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        try {
-            // we use a timeout of 1 second
-            template.requestBody("http://localhost:{{port}}/myservice?responseTimeout=1000", null, String.class);
-            fail("Should throw an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
-        }
+        // we use a timeout of 1 second
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("http://localhost:{{port}}/myservice?responseTimeout=1000", null, String.class),
+                "Should throw an exception");
+
+        assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
 
         MockEndpoint.assertIsSatisfied(context);
     }

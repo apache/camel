@@ -30,7 +30,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated
-public class NettyHttpCompressTest extends BaseNettyTest {
+public class NettyHttpCompressTest extends BaseNettyTestSupport {
 
     @Test
     public void testContentType() throws Exception {

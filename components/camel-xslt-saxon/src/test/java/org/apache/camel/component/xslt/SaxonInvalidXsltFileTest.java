@@ -24,24 +24,21 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SaxonInvalidXsltFileTest {
 
     @Test
     public void testInvalidStylesheet() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             RouteBuilder builder = createRouteBuilder();
             try (CamelContext context = new DefaultCamelContext()) {
                 context.addRoutes(builder);
                 context.start();
-
-                fail("Should have thrown an exception due XSL compilation error");
             }
-        } catch (Exception e) {
-            // expected
-            assertIsInstanceOf(TransformerException.class, e.getCause().getCause().getCause());
-        }
+        });
+        // expected
+        assertIsInstanceOf(TransformerException.class, e.getCause().getCause().getCause());
     }
 
     protected RouteBuilder createRouteBuilder() {

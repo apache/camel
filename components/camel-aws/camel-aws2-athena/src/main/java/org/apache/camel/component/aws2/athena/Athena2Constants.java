@@ -41,26 +41,33 @@ public interface Athena2Constants {
               javaType = "String")
     String NEXT_TOKEN = "CamelAwsAthenaNextToken";
     @Metadata(label = "getQueryResults listQueryExecutions",
-              description = "Max number of results to return for the given operation (if supported by the Athena API endpoint).\n"
-                            +
-                            "If not set, will use the Athena API default for the given operation.",
+              description = """
+                      Max number of results to return for the given operation (if supported by the Athena API endpoint).
+                      If not set, will use the Athena API default for the given operation.""",
               javaType = "Integer")
     String MAX_RESULTS = "CamelAwsAthenaMaxResults";
+    @Metadata(label = "getQueryResults listQueryExecutions",
+              description = """
+                      Whether the response has more results (i.e., is truncated). \
+                      If true, use the NEXT_TOKEN header to fetch the next page.""",
+              javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsAthenaIsTruncated";
     @Metadata(label = "startQueryExecution",
               description = "Include useful trace information at the beginning of queries as an SQL comment (prefixed with \"--\").",
               javaType = "boolean")
     String INCLUDE_TRACE = "CamelAwsAthenaIncludeTrace";
     @Metadata(label = "getQueryExecution getQueryResults startQueryExecution",
-              description = "The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/.\n" +
-                            "Ensure this value ends with a forward slash ('/').",
+              description = """
+                      The location in Amazon S3 where query results are stored, such as s3://path/to/query/bucket/.
+                      Ensure this value ends with a forward slash ('/').""",
               javaType = "String")
     String OUTPUT_LOCATION = "CamelAwsAthenaOutputLocation";
-    @Metadata(label = "getQueryResults", description = "How query results should be returned.  One of\n" +
-                                                       "StreamList (default - return a GetQueryResultsIterable that can page through all results),\n"
-                                                       +
-                                                       "SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results),\n"
-                                                       +
-                                                       "S3Pointer (return an S3 path pointing to the results).",
+    @Metadata(label = "getQueryResults",
+              description = """
+                      How query results should be returned.  One of
+                      StreamList (default - return a GetQueryResultsIterable that can page through all results),
+                      SelectList (returns at most 1,000 rows at a time, plus a NextToken value as a header than can be used for manual pagination of results),
+                      S3Pointer (return an S3 path pointing to the results).""",
               javaType = "org.apache.camel.component.aws2.athena.Athena2OutputType")
     String OUTPUT_TYPE = "CamelAwsAthenaOutputType";
     @Metadata(label = "getQueryExecution getQueryResults startQueryExecution",

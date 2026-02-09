@@ -27,7 +27,7 @@ import org.apache.camel.spi.PredicateExceptionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValidatePredicateExceptionFactoryGlobalTest extends ContextTestSupport {
 
@@ -56,15 +56,13 @@ public class ValidatePredicateExceptionFactoryGlobalTest extends ContextTestSupp
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        try {
-            template.sendBody(startEndpoint, "Bye World");
-            fail("CamelExecutionException expected");
-        } catch (CamelExecutionException e) {
-            // expected
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            String s = "Dude was here myValidate";
-            assertStringContains(e.getCause().getMessage(), s);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(startEndpoint, "Bye World"),
+                "CamelExecutionException expected");
+
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        String s = "Dude was here myValidate";
+        assertStringContains(e.getCause().getMessage(), s);
 
         assertMockEndpointsSatisfied();
     }

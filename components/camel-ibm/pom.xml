@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ibm-parent</artifactId>
@@ -39,6 +39,7 @@
         <module>camel-ibm-watson-discovery</module>
         <module>camel-ibm-watson-text-to-speech</module>
         <module>camel-ibm-watson-speech-to-text</module>
+        <module>camel-ibm-watsonx-ai</module>
     </modules>
 
 </project>

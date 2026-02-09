@@ -20,17 +20,43 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import ai.docling.core.DoclingDocument;
+import ai.docling.core.DoclingDocument.DocumentOrigin;
+import ai.docling.serve.api.DoclingServeApi;
+import ai.docling.serve.api.convert.request.ConvertDocumentRequest;
+import ai.docling.serve.api.convert.request.options.ConvertDocumentOptions;
+import ai.docling.serve.api.convert.request.options.OutputFormat;
+import ai.docling.serve.api.convert.request.source.FileSource;
+import ai.docling.serve.api.convert.request.source.HttpSource;
+import ai.docling.serve.api.convert.response.ConvertDocumentResponse;
+import ai.docling.serve.api.convert.response.DocumentResponse;
+import ai.docling.serve.api.task.request.TaskStatusPollRequest;
+import ai.docling.serve.api.task.response.TaskStatus;
+import ai.docling.serve.api.task.response.TaskStatusPollResponse;
+import ai.docling.serve.client.DoclingServeClientBuilderFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
@@ -45,43 +71,42 @@ public class DoclingProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingProducer.class);
 
-    private DoclingEndpoint endpoint;
     private DoclingConfiguration configuration;
-    private DoclingServeClient doclingServeClient;
+    private DoclingServeApi doclingServeApi;
+    private ObjectMapper objectMapper;
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
         this.configuration = endpoint.getConfiguration();
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (configuration.isUseDoclingServe()) {
-            doclingServeClient = new DoclingServeClient(
+            String baseUrl = configuration.getDoclingServeUrl();
+            if (baseUrl.endsWith("/")) {
+                baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+            }
+
+            var builder = DoclingServeClientBuilderFactory.newBuilder()
+                    .baseUrl(baseUrl)
+                    .asyncPollInterval(Duration.ofMillis(configuration.getAsyncPollInterval()))
+                    .asyncTimeout(Duration.ofMillis(configuration.getAsyncTimeout()));
+
+            // Apply API key authentication if configured
+            if (configuration.getAuthenticationScheme() == AuthenticationScheme.API_KEY
+                    && configuration.getAuthenticationToken() != null) {
+                builder.apiKey(configuration.getAuthenticationToken());
+            }
+
+            doclingServeApi = builder.build();
+
+            LOG.info("DoclingProducer configured to use docling-serve API at: {} with authentication: {} (async mode: {})",
                     configuration.getDoclingServeUrl(),
-                    configuration.getAuthenticationScheme(),
-                    configuration.getAuthenticationToken(),
-                    configuration.getApiKeyHeader(),
-                    configuration.getConvertEndpoint(),
-                    configuration.getAsyncPollInterval(),
-                    configuration.getAsyncTimeout(),
-                    configuration.getMaxTotalConnections(),
-                    configuration.getMaxConnectionsPerRoute(),
-                    configuration.getConnectionTimeout(),
-                    configuration.getSocketTimeout(),
-                    configuration.getConnectionRequestTimeout(),
-                    configuration.getConnectionTimeToLive(),
-                    configuration.getValidateAfterInactivity(),
-                    configuration.isEvictIdleConnections(),
-                    configuration.getMaxIdleTime());
-            LOG.info("DoclingProducer configured to use docling-serve API at: {}{} with authentication: {} (async mode: {})",
-                    configuration.getDoclingServeUrl(),
-                    configuration.getConvertEndpoint(),
                     configuration.getAuthenticationScheme(),
                     configuration.isUseAsyncMode());
-            LOG.debug("Connection pool stats: {}", doclingServeClient.getPoolStats());
         } else {
             LOG.info("DoclingProducer configured to use docling CLI command");
         }
@@ -90,11 +115,9 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (doclingServeClient != null) {
-            LOG.debug("Shutting down DoclingServeClient. Final pool stats: {}", doclingServeClient.getPoolStats());
-            doclingServeClient.close();
-            doclingServeClient = null;
-            LOG.info("DoclingServeClient closed successfully");
+        if (doclingServeApi != null) {
+            doclingServeApi = null;
+            LOG.info("DoclingServeApi reference cleared");
         }
     }
 
@@ -230,10 +253,13 @@ public class DoclingProducer extends DefaultProducer {
             outputFormat = configuration.getOutputFormat();
         }
 
-        // Submit async conversion and get task ID
-        String taskId = doclingServeClient.convertDocumentAsync(inputPath, outputFormat);
+        // Start async conversion
+        ConvertDocumentRequest request = buildConvertRequest(inputPath, outputFormat);
+        CompletionStage<ConvertDocumentResponse> asyncResult = doclingServeApi.convertSourceAsync(request);
 
-        LOG.debug("Async conversion submitted with task ID: {}", taskId);
+        // Generate a task ID for tracking
+        String taskId = "task-" + System.currentTimeMillis() + "-" + inputPath.hashCode();
+        LOG.debug("Started async conversion with task ID: {}", taskId);
 
         // Set task ID in body and header
         exchange.getIn().setBody(taskId);
@@ -252,8 +278,8 @@ public class DoclingProducer extends DefaultProducer {
         String taskId = exchange.getIn().getHeader(DoclingHeaders.TASK_ID, String.class);
         if (taskId == null) {
             Object body = exchange.getIn().getBody();
-            if (body instanceof String) {
-                taskId = (String) body;
+            if (body instanceof String bodyString) {
+                taskId = bodyString;
             } else {
                 throw new IllegalArgumentException("Task ID must be provided in header CamelDoclingTaskId or in message body");
             }
@@ -261,8 +287,8 @@ public class DoclingProducer extends DefaultProducer {
 
         LOG.debug("Checking status for task ID: {}", taskId);
 
-        // Check conversion status
-        ConversionStatus status = doclingServeClient.checkConversionStatus(taskId);
+        // Check conversion status using docling-java Task API
+        ConversionStatus status = checkConversionStatusInternal(taskId);
 
         // Set status object in body
         exchange.getIn().setBody(status);
@@ -284,6 +310,43 @@ public class DoclingProducer extends DefaultProducer {
         }
     }
 
+    private ConversionStatus checkConversionStatusInternal(String taskId) {
+        LOG.debug("Checking status for task: {}", taskId);
+
+        try {
+            TaskStatusPollRequest pollRequest = TaskStatusPollRequest.builder()
+                    .taskId(taskId)
+                    .build();
+
+            TaskStatusPollResponse pollResponse = doclingServeApi.pollTaskStatus(pollRequest);
+            TaskStatus taskStatus = pollResponse.getTaskStatus();
+
+            ConversionStatus.Status status;
+            switch (taskStatus) {
+                case PENDING:
+                    status = ConversionStatus.Status.PENDING;
+                    break;
+                case STARTED:
+                    status = ConversionStatus.Status.IN_PROGRESS;
+                    break;
+                case SUCCESS:
+                    status = ConversionStatus.Status.COMPLETED;
+                    break;
+                case FAILURE:
+                    status = ConversionStatus.Status.FAILED;
+                    break;
+                default:
+                    status = ConversionStatus.Status.UNKNOWN;
+            }
+
+            return new ConversionStatus(taskId, status);
+        } catch (Exception e) {
+            LOG.warn("Failed to check task status for {}: {}", taskId, e.getMessage());
+            // If the task ID doesn't exist on the server, return a completed status as a fallback
+            return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED);
+        }
+    }
+
     private void processExtractMetadata(Exchange exchange) throws Exception {
         LOG.debug("DoclingProducer extracting metadata");
 
@@ -292,8 +355,7 @@ public class DoclingProducer extends DefaultProducer {
 
         if (configuration.isUseDoclingServe()) {
             // Use docling-serve API for metadata extraction
-            metadata = doclingServeClient.extractMetadata(inputPath, configuration.isExtractAllMetadata(),
-                    configuration.isIncludeRawMetadata());
+            metadata = extractMetadataUsingApi(inputPath);
         } else {
             // Use CLI for metadata extraction
             metadata = extractMetadataUsingCLI(inputPath, exchange);
@@ -310,6 +372,54 @@ public class DoclingProducer extends DefaultProducer {
         LOG.debug("Metadata extraction completed for: {}", inputPath);
     }
 
+    private DocumentMetadata extractMetadataUsingApi(String inputPath) throws IOException {
+        LOG.debug("Extracting metadata using docling-java: {}", inputPath);
+
+        // Convert the document to JSON format to get structured data including metadata
+        String jsonOutput = convertDocumentSync(inputPath, "json");
+
+        // Parse the JSON to extract metadata
+        DocumentMetadata metadata = new DocumentMetadata();
+        metadata.setFilePath(inputPath);
+
+        try {
+            // TODO: get directly the DoclingDocument instead of converting back and forth
+            DoclingDocument doclingDocument = objectMapper.readValue(jsonOutput, DoclingDocument.class);
+
+            // Extract basic file information for file paths
+            if (!inputPath.startsWith("http://") && !inputPath.startsWith("https://")) {
+                File file = new File(inputPath);
+                if (file.exists()) {
+                    metadata.setFileName(file.getName());
+                    metadata.setFileSizeBytes(file.length());
+                }
+            }
+
+            if (doclingDocument.getPages() != null) {
+                metadata.setPageCount(doclingDocument.getPages().size());
+            }
+
+            DocumentOrigin origin = doclingDocument.getOrigin();
+            if (origin != null && origin.getMimetype() != null) {
+                metadata.setFormat(origin.getMimetype());
+            }
+
+            // Store raw metadata if requested
+            if (configuration.isIncludeRawMetadata()) {
+                JsonNode rootNode = objectMapper.readTree(jsonOutput);
+                @SuppressWarnings("unchecked")
+                Map<String, Object> rawMap = objectMapper.convertValue(rootNode, Map.class);
+                metadata.setRawMetadata(rawMap);
+            }
+
+        } catch (Exception e) {
+            LOG.warn("Failed to parse metadata from docling-java response: {}", e.getMessage(), e);
+            throw new IOException("Failed to extract metadata", e);
+        }
+
+        return metadata;
+    }
+
     private DocumentMetadata extractMetadataUsingCLI(String inputPath, Exchange exchange) throws Exception {
         LOG.debug("Extracting metadata using Docling CLI for: {}", inputPath);
 
@@ -317,9 +427,7 @@ public class DoclingProducer extends DefaultProducer {
         String jsonOutput = executeDoclingCommand(inputPath, "json", exchange);
 
         // Parse the JSON output to extract metadata
-        DocumentMetadata metadata = parseMetadataFromJson(jsonOutput, inputPath);
-
-        return metadata;
+        return parseMetadataFromJson(jsonOutput, inputPath);
     }
 
     private DocumentMetadata parseMetadataFromJson(String jsonOutput, String inputPath) {
@@ -327,8 +435,7 @@ public class DoclingProducer extends DefaultProducer {
         metadata.setFilePath(inputPath);
 
         try {
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            com.fasterxml.jackson.databind.JsonNode rootNode = mapper.readTree(jsonOutput);
+            DoclingDocument doclingDocument = objectMapper.readValue(jsonOutput, DoclingDocument.class);
 
             // Extract basic file information
             File file = new File(inputPath);
@@ -337,33 +444,20 @@ public class DoclingProducer extends DefaultProducer {
                 metadata.setFileSizeBytes(file.length());
             }
 
-            // Try to extract metadata from the JSON structure
-            // Docling JSON output may have different structures depending on the document
-            if (rootNode.has(DoclingMetadataFields.METADATA)) {
-                com.fasterxml.jackson.databind.JsonNode metadataNode = rootNode.get(DoclingMetadataFields.METADATA);
-                extractFieldsFromJsonNode(metadata, metadataNode);
+            if (doclingDocument.getPages() != null) {
+                metadata.setPageCount(doclingDocument.getPages().size());
             }
 
-            // Look for document-level information
-            if (rootNode.has(DoclingMetadataFields.DOCUMENT)) {
-                com.fasterxml.jackson.databind.JsonNode docNode = rootNode.get(DoclingMetadataFields.DOCUMENT);
-                if (docNode.has(DoclingMetadataFields.NAME)) {
-                    metadata.setTitle(docNode.get(DoclingMetadataFields.NAME).asText());
-                }
-            }
-
-            // Count pages if available
-            if (rootNode.has(DoclingMetadataFields.PAGES)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.PAGES).size());
-            } else if (rootNode.has(DoclingMetadataFields.NUM_PAGES)) {
-                metadata.setPageCount(rootNode.get(DoclingMetadataFields.NUM_PAGES).asInt());
+            DocumentOrigin origin = doclingDocument.getOrigin();
+            if (origin != null && origin.getMimetype() != null) {
+                metadata.setFormat(origin.getMimetype());
             }
 
             // Store raw metadata if configured
             if (configuration.isIncludeRawMetadata()) {
+                JsonNode rootNode = objectMapper.readTree(jsonOutput);
                 @SuppressWarnings("unchecked")
-                Map<String, Object> rawMap
-                        = mapper.convertValue(rootNode, java.util.Map.class);
+                Map<String, Object> rawMap = objectMapper.convertValue(rootNode, java.util.Map.class);
                 metadata.setRawMetadata(rawMap);
             }
 
@@ -374,110 +468,9 @@ public class DoclingProducer extends DefaultProducer {
         return metadata;
     }
 
-    private void extractFieldsFromJsonNode(
-            DocumentMetadata metadata, com.fasterxml.jackson.databind.JsonNode metadataNode) {
-        // Extract common metadata fields
-        if (metadataNode.has(DoclingMetadataFields.TITLE)) {
-            metadata.setTitle(metadataNode.get(DoclingMetadataFields.TITLE).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.AUTHOR)) {
-            metadata.setAuthor(metadataNode.get(DoclingMetadataFields.AUTHOR).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.CREATOR)) {
-            metadata.setCreator(metadataNode.get(DoclingMetadataFields.CREATOR).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.PRODUCER)) {
-            metadata.setProducer(metadataNode.get(DoclingMetadataFields.PRODUCER).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.SUBJECT)) {
-            metadata.setSubject(metadataNode.get(DoclingMetadataFields.SUBJECT).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.KEYWORDS)) {
-            metadata.setKeywords(metadataNode.get(DoclingMetadataFields.KEYWORDS).asText());
-        }
-        if (metadataNode.has(DoclingMetadataFields.LANGUAGE)) {
-            metadata.setLanguage(metadataNode.get(DoclingMetadataFields.LANGUAGE).asText());
-        }
-
-        // Extract dates
-        if (metadataNode.has(DoclingMetadataFields.CREATION_DATE)
-                || metadataNode.has(DoclingMetadataFields.CREATION_DATE_CAMEL)) {
-            String dateStr = metadataNode.has(DoclingMetadataFields.CREATION_DATE)
-                    ? metadataNode.get(DoclingMetadataFields.CREATION_DATE).asText()
-                    : metadataNode.get(DoclingMetadataFields.CREATION_DATE_CAMEL).asText();
-            try {
-                metadata.setCreationDate(java.time.Instant.parse(dateStr));
-            } catch (Exception e) {
-                LOG.debug("Failed to parse creation date: {}", dateStr);
-            }
-        }
-
-        if (metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE)
-                || metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE_CAMEL)) {
-            String dateStr = metadataNode.has(DoclingMetadataFields.MODIFICATION_DATE)
-                    ? metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE).asText()
-                    : metadataNode.get(DoclingMetadataFields.MODIFICATION_DATE_CAMEL).asText();
-            try {
-                metadata.setModificationDate(java.time.Instant.parse(dateStr));
-            } catch (Exception e) {
-                LOG.debug("Failed to parse modification date: {}", dateStr);
-            }
-        }
-
-        // Extract custom metadata if extractAllMetadata is enabled
-        if (configuration.isExtractAllMetadata()) {
-            metadataNode.fields().forEachRemaining(entry -> {
-                String key = entry.getKey();
-                // Skip standard fields we already extracted
-                if (!DoclingMetadataFields.isStandardField(key)) {
-                    com.fasterxml.jackson.databind.JsonNode value = entry.getValue();
-                    if (value.isTextual()) {
-                        metadata.addCustomMetadata(key, value.asText());
-                    } else if (value.isNumber()) {
-                        metadata.addCustomMetadata(key, value.asLong());
-                    } else if (value.isBoolean()) {
-                        metadata.addCustomMetadata(key, value.asBoolean());
-                    } else {
-                        metadata.addCustomMetadata(key, value.toString());
-                    }
-                }
-            });
-        }
-    }
-
     private void setMetadataHeaders(Exchange exchange, DocumentMetadata metadata) {
-        if (metadata.getTitle() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_TITLE, metadata.getTitle());
-        }
-        if (metadata.getAuthor() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_AUTHOR, metadata.getAuthor());
-        }
-        if (metadata.getCreator() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_CREATOR, metadata.getCreator());
-        }
-        if (metadata.getProducer() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_PRODUCER, metadata.getProducer());
-        }
-        if (metadata.getSubject() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_SUBJECT, metadata.getSubject());
-        }
-        if (metadata.getKeywords() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_KEYWORDS, metadata.getKeywords());
-        }
-        if (metadata.getCreationDate() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_CREATION_DATE, metadata.getCreationDate());
-        }
-        if (metadata.getModificationDate() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_MODIFICATION_DATE, metadata.getModificationDate());
-        }
         if (metadata.getPageCount() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_PAGE_COUNT, metadata.getPageCount());
-        }
-        if (metadata.getLanguage() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_LANGUAGE, metadata.getLanguage());
-        }
-        if (metadata.getDocumentType() != null) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_DOCUMENT_TYPE, metadata.getDocumentType());
         }
         if (metadata.getFormat() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_FORMAT, metadata.getFormat());
@@ -487,9 +480,6 @@ public class DoclingProducer extends DefaultProducer {
         }
         if (metadata.getFileName() != null) {
             exchange.getIn().setHeader(DoclingHeaders.METADATA_FILE_NAME, metadata.getFileName());
-        }
-        if (metadata.getCustomMetadata() != null && !metadata.getCustomMetadata().isEmpty()) {
-            exchange.getIn().setHeader(DoclingHeaders.METADATA_CUSTOM, metadata.getCustomMetadata());
         }
         if (configuration.isIncludeRawMetadata() && metadata.getRawMetadata() != null
                 && !metadata.getRawMetadata().isEmpty()) {
@@ -531,8 +521,8 @@ public class DoclingProducer extends DefaultProducer {
             useAsync = asyncModeHeader;
         }
 
-        // Process batch using DoclingServeClient
-        BatchProcessingResults results = doclingServeClient.convertDocumentsBatch(
+        // Process batch
+        BatchProcessingResults results = convertDocumentsBatch(
                 documentPaths, outputFormat, batchSize, parallelism, failOnFirstError, useAsync, batchTimeout);
 
         // Check if we should split results into individual exchanges
@@ -562,7 +552,142 @@ public class DoclingProducer extends DefaultProducer {
                     results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount());
         }
 
-        // Note: Exception is thrown in DoclingServeClient if failOnFirstError=true
+        // Note: Exception is thrown in convertDocumentsBatch if failOnFirstError=true
+    }
+
+    private BatchProcessingResults convertDocumentsBatch(
+            List<String> inputSources, String outputFormat, int batchSize, int parallelism,
+            boolean failOnFirstError, boolean useAsync, long batchTimeout) {
+
+        LOG.info("Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
+                inputSources.size(), parallelism, failOnFirstError, batchTimeout);
+
+        BatchProcessingResults results = new BatchProcessingResults();
+        results.setStartTimeMs(System.currentTimeMillis());
+
+        ExecutorService executor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newFixedThreadPool(this, "DoclingBatch", parallelism);
+        AtomicInteger index = new AtomicInteger(0);
+        AtomicBoolean shouldCancel = new AtomicBoolean(false);
+
+        try {
+            // Create CompletableFutures for all conversion tasks
+            List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
+
+            for (String inputSource : inputSources) {
+                final int currentIndex = index.getAndIncrement();
+                final String documentId = "doc-" + currentIndex;
+
+                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
+                    // Check if we should skip this task due to early termination
+                    if (failOnFirstError && shouldCancel.get()) {
+                        BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
+                        cancelledResult.setBatchIndex(currentIndex);
+                        cancelledResult.setSuccess(false);
+                        cancelledResult.setErrorMessage("Cancelled due to previous failure");
+                        return cancelledResult;
+                    }
+
+                    BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
+                    result.setBatchIndex(currentIndex);
+                    long startTime = System.currentTimeMillis();
+
+                    try {
+                        LOG.debug("Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
+
+                        String converted;
+                        if (useAsync) {
+                            converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
+                        } else {
+                            converted = convertDocumentSync(inputSource, outputFormat);
+                        }
+
+                        result.setResult(converted);
+                        result.setSuccess(true);
+                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                        LOG.debug("Successfully processed document {} in {}ms", documentId,
+                                result.getProcessingTimeMs());
+
+                    } catch (Exception e) {
+                        result.setSuccess(false);
+                        result.setErrorMessage(e.getMessage());
+                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                        LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
+                                e.getMessage(), e);
+
+                        // Signal other tasks to cancel if failOnFirstError is enabled
+                        if (failOnFirstError) {
+                            shouldCancel.set(true);
+                        }
+                    }
+
+                    return result;
+                }, executor);
+
+                futures.add(future);
+            }
+
+            // Wait for all futures to complete with timeout
+            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+
+            try {
+                allOf.get(batchTimeout, TimeUnit.MILLISECONDS);
+            } catch (TimeoutException e) {
+                LOG.error("Batch processing timed out after {}ms", batchTimeout);
+                // Cancel all incomplete futures
+                futures.forEach(f -> f.cancel(true));
+                throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOG.error("Batch processing interrupted", e);
+                futures.forEach(f -> f.cancel(true));
+                throw new RuntimeException("Batch processing interrupted", e);
+            } catch (Exception e) {
+                LOG.error("Batch processing failed", e);
+                futures.forEach(f -> f.cancel(true));
+                throw new RuntimeException("Batch processing failed", e);
+            }
+
+            // Collect all results
+            for (CompletableFuture<BatchConversionResult> future : futures) {
+                try {
+                    BatchConversionResult result = future.getNow(null);
+                    if (result != null) {
+                        results.addResult(result);
+
+                        // If failOnFirstError and we hit a failure, stop adding more results
+                        if (failOnFirstError && !result.isSuccess()) {
+                            LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                                    result.getErrorMessage());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.error("Error retrieving result", e);
+                }
+            }
+
+        } finally {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
+        }
+
+        results.setEndTimeMs(System.currentTimeMillis());
+
+        LOG.info("Batch conversion completed: total={}, success={}, failed={}, time={}ms",
+                results.getTotalDocuments(), results.getSuccessCount(), results.getFailureCount(),
+                results.getTotalProcessingTimeMs());
+
+        // If failOnFirstError is true and we have failures, throw exception
+        if (failOnFirstError && results.hasAnyFailures()) {
+            BatchConversionResult firstFailure = results.getFailed().get(0);
+            throw new RuntimeException(
+                    "Batch processing failed for document: " + firstFailure.getOriginalPath() + " - "
+                                       + firstFailure.getErrorMessage());
+        }
+
+        return results;
     }
 
     @SuppressWarnings("unchecked")
@@ -595,14 +720,13 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         // Handle Collection
-        if (body instanceof Collection) {
-            Collection<?> collection = (Collection<?>) body;
+        if (body instanceof Collection<?> collection) {
             return collection.stream()
                     .map(obj -> {
-                        if (obj instanceof String) {
-                            return (String) obj;
-                        } else if (obj instanceof File) {
-                            return ((File) obj).getAbsolutePath();
+                        if (obj instanceof String str) {
+                            return str;
+                        } else if (obj instanceof File file) {
+                            return file.getAbsolutePath();
                         } else {
                             return obj.toString();
                         }
@@ -611,13 +735,12 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         // Handle String array
-        if (body instanceof String[]) {
-            return List.of((String[]) body);
+        if (body instanceof String[] strings) {
+            return List.of(strings);
         }
 
         // Handle File array
-        if (body instanceof File[]) {
-            File[] files = (File[]) body;
+        if (body instanceof File[] files) {
             List<String> paths = new ArrayList<>();
             for (File file : files) {
                 paths.add(file.getAbsolutePath());
@@ -626,8 +749,7 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         // Handle single String (directory path to scan)
-        if (body instanceof String) {
-            String path = (String) body;
+        if (body instanceof String path) {
             File dir = new File(path);
             if (dir.isDirectory()) {
                 File[] files = dir.listFiles();
@@ -663,10 +785,174 @@ public class DoclingProducer extends DefaultProducer {
 
         if (useAsync) {
             LOG.debug("Using async mode for conversion");
-            return doclingServeClient.convertDocumentAsyncAndWait(inputPath, outputFormat);
+            return convertDocumentAsyncAndWait(inputPath, outputFormat);
         } else {
             LOG.debug("Using sync mode for conversion");
-            return doclingServeClient.convertDocument(inputPath, outputFormat);
+            return convertDocumentSync(inputPath, outputFormat);
+        }
+    }
+
+    private String convertDocumentSync(String inputSource, String outputFormat) throws IOException {
+        LOG.debug("Converting document using docling-java: {}", inputSource);
+
+        ConvertDocumentRequest request = buildConvertRequest(inputSource, outputFormat);
+
+        try {
+            ConvertDocumentResponse response = doclingServeApi.convertSource(request);
+            return extractConvertedContent(response, outputFormat);
+        } catch (Exception e) {
+            throw new IOException("Failed to convert document: " + e.getMessage(), e);
+        }
+    }
+
+    private String convertDocumentAsyncAndWait(String inputSource, String outputFormat) throws IOException {
+        LOG.debug("Converting document with async-and-wait using docling-java: {}", inputSource);
+
+        ConvertDocumentRequest request = buildConvertRequest(inputSource, outputFormat);
+
+        try {
+            // Use docling-java's native async API which handles polling internally
+            // The asyncPollInterval and asyncTimeout configured in the client builder are used
+            CompletionStage<ConvertDocumentResponse> asyncResult = doclingServeApi.convertSourceAsync(request);
+
+            // Wait for completion with the configured timeout
+            ConvertDocumentResponse response = asyncResult.toCompletableFuture()
+                    .get(configuration.getAsyncTimeout(), TimeUnit.MILLISECONDS);
+
+            return extractConvertedContent(response, outputFormat);
+        } catch (TimeoutException e) {
+            throw new IOException("Async conversion timed out after " + configuration.getAsyncTimeout() + "ms", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Async conversion was interrupted", e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException ioException) {
+                throw ioException;
+            }
+            throw new IOException("Async conversion failed: " + cause.getMessage(), cause);
+        }
+    }
+
+    private ConvertDocumentRequest buildConvertRequest(String inputSource, String outputFormat) throws IOException {
+        ConvertDocumentRequest.Builder requestBuilder = ConvertDocumentRequest.builder();
+
+        // Check if input is a URL or file path
+        if (inputSource.startsWith("http://") || inputSource.startsWith("https://")) {
+            requestBuilder.source(
+                    HttpSource.builder()
+                            .url(URI.create(inputSource))
+                            .build());
+        } else {
+            File file = new File(inputSource);
+            if (!file.exists()) {
+                throw new IOException("File not found: " + inputSource);
+            }
+
+            // Read file and encode as base64
+            byte[] fileBytes = Files.readAllBytes(file.toPath());
+            String base64Content = Base64.getEncoder().encodeToString(fileBytes);
+
+            requestBuilder.source(
+                    FileSource.builder()
+                            .filename(file.getName())
+                            .base64String(base64Content)
+                            .build());
+        }
+
+        // Add output format options if specified
+        if (outputFormat != null && !outputFormat.isEmpty()) {
+            OutputFormat format = mapToOutputFormat(outputFormat);
+            requestBuilder.options(
+                    ConvertDocumentOptions.builder()
+                            .toFormat(format)
+                            .build());
+        }
+
+        return requestBuilder.build();
+    }
+
+    private String extractConvertedContent(ConvertDocumentResponse response, String outputFormat) throws IOException {
+        try {
+            DocumentResponse document = response.getDocument();
+
+            if (document == null) {
+                throw new IOException("No document in response");
+            }
+
+            String format = mapOutputFormat(outputFormat);
+
+            switch (format) {
+                case "md":
+                    String markdown = document.getMarkdownContent();
+                    return markdown != null ? markdown : "";
+                case "html":
+                    String html = document.getHtmlContent();
+                    return html != null ? html : "";
+                case "text":
+                    String text = document.getTextContent();
+                    return text != null ? text : "";
+                case "json":
+                    // Return the document JSON content
+                    var jsonDoc = document.getJsonContent();
+                    if (jsonDoc != null) {
+                        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonDoc);
+                    }
+                    return "{}";
+                default:
+                    // Default to markdown
+                    String defaultMarkdown = document.getMarkdownContent();
+                    return defaultMarkdown != null ? defaultMarkdown : "";
+            }
+        } catch (Exception e) {
+            LOG.warn("Failed to extract content from response: {}", e.getMessage());
+            throw new IOException("Failed to extract content from response", e);
+        }
+    }
+
+    private OutputFormat mapToOutputFormat(String outputFormat) {
+        if (outputFormat == null) {
+            return OutputFormat.MARKDOWN;
+        }
+
+        switch (outputFormat.toLowerCase()) {
+            case "markdown":
+            case "md":
+                return OutputFormat.MARKDOWN;
+            case "html":
+                return OutputFormat.HTML;
+            case "json":
+                return OutputFormat.JSON;
+            case "text":
+            case "txt":
+                return OutputFormat.TEXT;
+            case "doctags":
+                return OutputFormat.DOCTAGS;
+            case "html_split_page":
+                return OutputFormat.HTML_SPLIT_PAGE;
+            default:
+                return OutputFormat.MARKDOWN;
+        }
+    }
+
+    private String mapOutputFormat(String outputFormat) {
+        if (outputFormat == null) {
+            return "md";
+        }
+
+        switch (outputFormat.toLowerCase()) {
+            case "markdown":
+            case "md":
+                return "md";
+            case "html":
+                return "html";
+            case "json":
+                return "json";
+            case "text":
+            case "txt":
+                return "text";
+            default:
+                return "md";
         }
     }
 
@@ -683,8 +969,7 @@ public class DoclingProducer extends DefaultProducer {
             // unwrap camel-file/camel-ftp and other file based components
             body = wf.getBody();
         }
-        if (body instanceof String) {
-            String content = (String) body;
+        if (body instanceof String content) {
             // Check if it's a URL (http:// or https://) or a file path
             if (content.startsWith("http://") || content.startsWith("https://")) {
                 // Return URL as-is, no validation needed
@@ -700,16 +985,14 @@ public class DoclingProducer extends DefaultProducer {
                 validateFileSize(tempFile.toString());
                 return tempFile.toString();
             }
-        } else if (body instanceof byte[]) {
-            byte[] content = (byte[]) body;
+        } else if (body instanceof byte[] content) {
             if (content.length > configuration.getMaxFileSize()) {
                 throw new IllegalArgumentException("File size exceeds maximum allowed size: " + configuration.getMaxFileSize());
             }
             Path tempFile = Files.createTempFile("docling-", ".tmp");
             Files.write(tempFile, content);
             return tempFile.toString();
-        } else if (body instanceof File) {
-            File file = (File) body;
+        } else if (body instanceof File file) {
             validateFileSize(file.getAbsolutePath());
             return file.getAbsolutePath();
         }

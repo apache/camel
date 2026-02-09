@@ -108,6 +108,24 @@ public interface Aws2CwComponentBuilderFactory {
     
         
         /**
+         * The operation to perform. Defaults to putMetricData.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.aws2.cw.Cw2Operations&lt;/code&gt; type.
+         * 
+         * Default: putMetricData
+         * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
+         */
+        default Aws2CwComponentBuilder operation(org.apache.camel.component.aws2.cw.Cw2Operations operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+    
+        
+        /**
          * Set the need for overriding the endpoint. This option needs to be
          * used in combination with the uriEndpointOverride option.
          * 
@@ -486,6 +504,7 @@ public interface Aws2CwComponentBuilderFactory {
             case "configuration": ((Cw2Component) component).setConfiguration((org.apache.camel.component.aws2.cw.Cw2Configuration) value); return true;
             case "lazyStartProducer": ((Cw2Component) component).setLazyStartProducer((boolean) value); return true;
             case "name": getOrCreateConfiguration((Cw2Component) component).setName((java.lang.String) value); return true;
+            case "operation": getOrCreateConfiguration((Cw2Component) component).setOperation((org.apache.camel.component.aws2.cw.Cw2Operations) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((Cw2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "region": getOrCreateConfiguration((Cw2Component) component).setRegion((java.lang.String) value); return true;
             case "timestamp": getOrCreateConfiguration((Cw2Component) component).setTimestamp((java.time.Instant) value); return true;

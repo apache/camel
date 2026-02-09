@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class AsyncSendMockTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AsyncSendMockTest.class);
@@ -35,7 +35,7 @@ public class AsyncSendMockTest extends CamelTestSupport {
 
     @Test
     public void testMakeAsyncApiCall() {
-        try {
+        assertDoesNotThrow(() -> {
             getMockEndpoint("mock:seda:start").expectedHeaderReceived("username", "admin123");
             getMockEndpoint("mock:seda:start").expectedBodiesReceived("Hello");
             DefaultExchange dfex = new DefaultExchange(context);
@@ -44,9 +44,6 @@ public class AsyncSendMockTest extends CamelTestSupport {
             dfex.getIn().setBody("Hello");
             template.asyncSend("seda:start", dfex);
             MockEndpoint.assertIsSatisfied(context);
-        } catch (Exception e) {
-            LOG.warn("Failed to make async call to api: {}", e.getMessage(), e);
-            fail("Failed to make async call to api");
-        }
+        });
     }
 }

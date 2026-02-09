@@ -60,10 +60,7 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
                 super(DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
                         .asCompatibleSubstituteFor("apache/kafka"));
 
-                if (fixedPort) {
-                    addFixedExposedPort(9092, 9092);
-                }
-                // For random ports, testcontainers will handle port mapping automatically
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 9092);
             }
         }
 

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/cwe",
+  "title": "Cwe",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Cwe",
+  "additionalProperties": true,
+  "properties": {
+    "uid": {
+      "type": "string",
+      "title": "CWE ID"
+    },
+    "caption": {
+      "type": "string",
+      "title": "Caption"
+    },
+    "src_url": {
+      "type": "string",
+      "title": "Source URL"
+    }
+  },
+  "description": "The CWE object."
+}

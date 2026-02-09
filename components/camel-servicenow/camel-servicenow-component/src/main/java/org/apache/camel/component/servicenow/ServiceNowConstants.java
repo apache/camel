@@ -97,9 +97,9 @@ public final class ServiceNowConstants {
     public static final String SYSPARM_VIEW = "CamelServiceNowView";
     @Metadata(description = "True to suppress auto generation of system fields", javaType = "Boolean", defaultValue = "false")
     public static final String SYSPARM_SUPPRESS_AUTO_SYS_FIELD = "CamelServiceNowSuppressAutoSysField";
-    @Metadata(description = "Set this value to true to remove the Link header from the response. The Link header allows you to request\n"
-                            +
-                            " additional pages of data when the number of records matching your query exceeds the query limit",
+    @Metadata(description = """
+            Set this value to true to remove the Link header from the response. The Link header allows you to request
+            additional pages of data when the number of records matching your query exceeds the query limit""",
               javaType = "Boolean")
     public static final String SYSPARM_SUPPRESS_PAGINATION_HEADER = "CamelServiceNowSuppressPaginationHeader";
     @Metadata(description = "The sys param min fields", javaType = "String")
@@ -122,31 +122,30 @@ public final class ServiceNowConstants {
     public static final String SYSPARM_UUID = "CamelServiceNowUUID";
     @Metadata(description = "The sys param breakdown", javaType = "String")
     public static final String SYSPARM_BREAKDOWN = "CamelServiceNowBreakdown";
-    @Metadata(description = "Set this parameter to true to return all scores for a scorecard. If a value is not specified, this parameter\n"
-                            +
-                            " defaults to false and returns only the most recent score value.",
+    @Metadata(description = """
+            Set this parameter to true to return all scores for a scorecard. If a value is not specified, this parameter
+            defaults to false and returns only the most recent score value.""",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_SCORES = "CamelServiceNowIncludeScores";
-    @Metadata(description = "Set this parameter to true to return all notes associated with the score. The note element contains the note text\n"
-                            +
-                            " as well as the author and timestamp when the note was added.",
+    @Metadata(description = """
+            Set this parameter to true to return all notes associated with the score. The note element contains the note text
+            as well as the author and timestamp when the note was added.""",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_SCORE_NOTES = "CamelServiceNowIncludeScoreNotes";
-    @Metadata(description = "Set this parameter to true to always return all available aggregates for an indicator, including when an\n"
-                            +
-                            " aggregate has already been applied. If a value is not specified, this parameter defaults to false and returns no\n"
-                            +
-                            " aggregates.",
+    @Metadata(description = """
+            Set this parameter to true to always return all available aggregates for an indicator, including when an
+            aggregate has already been applied. If a value is not specified, this parameter defaults to false and returns no
+            aggregates.""",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_AGGREGATES = "CamelServiceNowIncludeAggregates";
-    @Metadata(description = "Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified, this\n"
-                            +
-                            " parameter defaults to false and returns no breakdowns.",
+    @Metadata(description = """
+            Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified, this
+            parameter defaults to false and returns no breakdowns.""",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_AVAILABLE_BREAKDOWNS = "CamelServiceNowIncludeAvailableBreakdowns";
-    @Metadata(description = "Set this parameter to true to return all available aggregates for an indicator when no aggregate has been\n"
-                            +
-                            " applied. If a value is not specified, this parameter defaults to false and returns no aggregates.",
+    @Metadata(description = """
+            Set this parameter to true to return all available aggregates for an indicator when no aggregate has been
+            applied. If a value is not specified, this parameter defaults to false and returns no aggregates.""",
               javaType = "Boolean")
     public static final String SYSPARM_INCLUDE_AVAILABLE_AGGREGATES = "CamelServiceNowIncludeAvailableAggregates";
     @Metadata(description = "Set this parameter to true to return only scorecards that are favorites of the querying user.",
@@ -156,22 +155,22 @@ public final class ServiceNowConstants {
     public static final String SYSPARM_KEY = "CamelServiceNowKey";
     @Metadata(description = "Set this parameter to true to return only scorecards that have a target.", javaType = "Boolean")
     public static final String SYSPARM_TARGET = "CamelServiceNowTarget";
-    @Metadata(description = "Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this\n"
-                            +
-                            " parameter to all to return scorecards with any Display field value.",
+    @Metadata(description = """
+            Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this
+            parameter to all to return scorecards with any Display field value.""",
               javaType = "String", defaultValue = "true")
     public static final String SYSPARM_DISPLAY = "CamelServiceNowDisplay";
-    @Metadata(description = "Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is\n"
-                            +
-                            " 100.",
+    @Metadata(description = """
+            Enter the maximum number of scorecards each query can return. By default this value is 10, and the maximum is
+            100.""",
               javaType = "Integer", defaultValue = "10")
     public static final String SYSPARM_PER_PAGE = "CamelServiceNowPerPage";
     @Metadata(description = "Specify the value to use when sorting results. By default, queries sort records by value.",
               javaType = "String")
     public static final String SYSPARM_SORT_BY = "CamelServiceNowSortBy";
-    @Metadata(description = "Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use\n"
-                            +
-                            " sysparm_sortdir=asc to sort in ascending order.",
+    @Metadata(description = """
+            Specify the sort direction, ascending or descending. By default, queries sort records in descending order. Use
+            sysparm_sortdir=asc to sort in ascending order.""",
               javaType = "String")
     public static final String SYSPARM_SORT_DIR = "CamelServiceNowSortDir";
     @Metadata(description = "The sys param contains.", javaType = "String")

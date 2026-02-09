@@ -104,9 +104,9 @@ public class VertxOAuth extends OAuth {
     public UserProfile authenticate(org.apache.camel.oauth.Credentials creds) throws OAuthException {
 
         Credentials vtxCreds;
-        if (creds instanceof org.apache.camel.oauth.UserCredentials) {
+        if (creds instanceof org.apache.camel.oauth.UserCredentials uc) {
 
-            var userProfile = ((UserCredentials) creds).getUserProfile();
+            var userProfile = uc.getUserProfile();
             log.info("Authenticate userProfile: {}", userProfile.subject());
             var scope = (String) userProfile.principal().get("scope");
             vtxCreds = new TokenCredentials()

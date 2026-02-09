@@ -1,10 +1,11 @@
-= Service Component
+= Service Component (deprecated)
 :doctitle: Service
 :shortname: service
 :artifactid: camel-service
 :description: Register a Camel endpoint to a Service Registry (such as Consul, Etcd) and delegate to it.
 :since: 2.22
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only consumer is supported
 //Manually maintained attributes

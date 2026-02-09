@@ -25,11 +25,26 @@ public interface GoogleCloudFunctionsConstants {
     @Metadata(description = "The name of the function (as defined in source code) that will be executed. Used for createFunction operation",
               javaType = "String")
     String ENTRY_POINT = "GoogleCloudFunctionsEntryPoint";
-    @Metadata(description = "The runtime in which to run the function.\n\nPossible values are:\n\n" +
-                            "* `nodejs10`\n* `nodejs12`\n* `nodejs14`\n* `python37`\n* `python38`\n* `python39`\n* `go111`\n* `go113`\n"
-                            +
-                            "* `java11`\n* `dotnet3`\n* `ruby26`\n* `nodejs6`\n* `nodejs8`\n" +
-                            "\nUsed for createFunction operation.",
+    @Metadata(description = """
+            The runtime in which to run the function.
+
+            Possible values are:
+
+            * `nodejs10`
+            * `nodejs12`
+            * `nodejs14`
+            * `python37`
+            * `python38`
+            * `python39`
+            * `go111`
+            * `go113`
+            * `java11`
+            * `dotnet3`
+            * `ruby26`
+            * `nodejs6`
+            * `nodejs8`
+
+            Used for createFunction operation.""",
               javaType = "String")
     String RUNTIME = "GoogleCloudFunctionsRuntime";
     @Metadata(description = "The Google Cloud Storage URL, starting with `gs://`, pointing to the zip archive which contains the function. Used for createFunction operation.",

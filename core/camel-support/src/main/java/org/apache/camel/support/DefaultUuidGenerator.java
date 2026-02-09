@@ -29,7 +29,7 @@ public class DefaultUuidGenerator implements UuidGenerator {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private final char[] seed
-            = (longToHex(new char[0], ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray();
+            = (longToHex(new char[0], ThreadLocalRandom.current().nextLong()).substring(1) + "-").toCharArray(); // NOSONAR
     private final AtomicLong index = new AtomicLong();
 
     @Override

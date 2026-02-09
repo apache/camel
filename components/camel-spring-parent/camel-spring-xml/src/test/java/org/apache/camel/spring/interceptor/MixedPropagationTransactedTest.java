@@ -28,8 +28,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * For testing with mixed transacted propagation (required, requires new)
@@ -98,15 +98,13 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
     @Test
     public void testRequiredOnlyRollback() throws Exception {
-        try {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> {
             template.sendBody("direct:required", "Donkey in Action");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected as we fail
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
-        }
+        });
+        // expected as we fail
+        assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+        assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
+        assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(Integer.valueOf(0),
@@ -116,15 +114,13 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
 
     @Test
     public void testRequiresNewOnlyRollback() throws Exception {
-        try {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> {
             template.sendBody("direct:new", "Donkey in Action");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected as we fail
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
-        }
+        });
+        // expected as we fail
+        assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+        assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
+        assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals(Integer.valueOf(0),

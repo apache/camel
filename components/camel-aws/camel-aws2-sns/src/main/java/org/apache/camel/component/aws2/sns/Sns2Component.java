@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
@@ -58,7 +59,8 @@ public class Sns2Component extends HealthCheckComponent {
 
         Map<String, Object> nonTransientParameters = getNonTransientParameters(parameters);
 
-        Sns2Configuration epConfiguration = this.configuration != null ? this.configuration.copy() : new Sns2Configuration();
+        Sns2Configuration epConfiguration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Sns2Configuration();
 
         if (remaining.startsWith("arn:")) {
             parseRemaining(epConfiguration, remaining);

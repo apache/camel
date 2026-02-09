@@ -1,0 +1,156 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/security_finding",
+  "title": "SecurityFinding",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.SecurityFinding",
+  "additionalProperties": true,
+  "description": "SecurityFinding event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "impact": {
+      "type": "string",
+      "title": "Impact"
+    },
+    "resources": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "ResourceDetails.json"
+      }
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "risk_score": {
+      "type": "integer",
+      "title": "Risk Score"
+    },
+    "process": {
+      "$ref": "Process.json"
+    },
+    "state": {
+      "type": "string",
+      "title": "State"
+    },
+    "kill_chain": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "KillChainPhase.json"
+      }
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "confidence_score": {
+      "type": "integer",
+      "title": "Confidence Score"
+    },
+    "state_id": {
+      "type": "integer",
+      "title": "State ID"
+    },
+    "impact_id": {
+      "type": "integer",
+      "title": "Impact ID"
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "malware": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Malware.json"
+      }
+    },
+    "confidence_id": {
+      "type": "integer",
+      "title": "Confidence ID"
+    },
+    "evidence": {
+      "type": [
+        "object",
+        "string",
+        "integer",
+        "number",
+        "boolean",
+        "array",
+        "null"
+      ],
+      "title": "Evidence"
+    },
+    "cis_csc": {
+      "type": "array",
+      "title": "CIS CSC",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "analytic": {
+      "$ref": "Analytic.json"
+    },
+    "vulnerabilities": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Vulnerability.json"
+      }
+    },
+    "risk_level_id": {
+      "type": "integer",
+      "title": "Risk Level ID"
+    },
+    "compliance": {
+      "$ref": "Compliance.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "attacks": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Attack.json"
+      }
+    },
+    "impact_score": {
+      "type": "integer",
+      "title": "Impact Score"
+    },
+    "confidence": {
+      "type": "string",
+      "title": "Confidence"
+    },
+    "nist": {
+      "type": "array",
+      "title": "NIST List",
+      "items": {
+        "type": "string"
+      }
+    },
+    "risk_level": {
+      "type": "string",
+      "title": "Risk Level"
+    },
+    "data_sources": {
+      "type": "array",
+      "title": "Data Sources",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

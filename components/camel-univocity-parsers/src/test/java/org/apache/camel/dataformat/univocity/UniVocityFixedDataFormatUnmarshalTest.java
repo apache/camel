@@ -35,8 +35,8 @@ import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This class tests the unmarshalling of {@link UniVocityFixedDataFormat}.
@@ -111,12 +111,7 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         assertEquals(Arrays.asList("A", "B", "C"), body.next());
 
         // Try to remove the element
-        try {
-            body.remove();
-            fail("Should have thrown a UnsupportedOperationException");
-        } catch (UnsupportedOperationException e) {
-            // Success
-        }
+        assertThrows(UnsupportedOperationException.class, body::remove);
 
         // Read all the lines
         assertTrue(body.hasNext());
@@ -126,12 +121,7 @@ public final class UniVocityFixedDataFormatUnmarshalTest extends CamelTestSuppor
         assertFalse(body.hasNext());
 
         // Try to read one more element
-        try {
-            body.next();
-            fail("Should have thrown a NoSuchElementException");
-        } catch (NoSuchElementException e) {
-            // Success
-        }
+        assertThrows(NoSuchElementException.class, body::next);
     }
 
     /**

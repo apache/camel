@@ -521,7 +521,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         }
     }
 
-    public SubscriptionHelper getSubscriptionHelper() throws Exception {
+    public SubscriptionHelper getSubscriptionHelper() {
         if (subscriptionHelper == null) {
             // lazily create subscription helper
             subscriptionHelper = new SubscriptionHelper(this);

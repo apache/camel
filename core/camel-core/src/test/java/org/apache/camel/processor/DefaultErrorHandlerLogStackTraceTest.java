@@ -21,18 +21,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultErrorHandlerLogStackTraceTest extends ContextTestSupport {
 
     @Test
     public void testLogStackTrace() {
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should fail");
-        } catch (Exception e) {
-            // ignore
-        }
+        assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"));
     }
 
     @Override

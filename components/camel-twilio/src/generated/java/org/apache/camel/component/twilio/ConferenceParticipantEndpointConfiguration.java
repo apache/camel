@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.account.conference.ParticipantCreator creator(String pathConferenceSid, com.twilio.type.Endpoint from, com.twilio.type.Endpoint to)", "com.twilio.rest.api.v2010.account.conference.ParticipantCreator creator(String pathAccountSid, String pathConferenceSid, com.twilio.type.Endpoint from, com.twilio.type.Endpoint to)"}), @ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.conference.ParticipantDeleter deleter(String pathConferenceSid, String pathCallSid)", "com.twilio.rest.api.v2010.account.conference.ParticipantDeleter deleter(String pathAccountSid, String pathConferenceSid, String pathCallSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.conference.ParticipantFetcher fetcher(String pathConferenceSid, String pathCallSid)", "com.twilio.rest.api.v2010.account.conference.ParticipantFetcher fetcher(String pathAccountSid, String pathConferenceSid, String pathCallSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.conference.ParticipantReader reader(String pathConferenceSid)", "com.twilio.rest.api.v2010.account.conference.ParticipantReader reader(String pathAccountSid, String pathConferenceSid)"}), @ApiMethod(methodName = "updater", signatures={"com.twilio.rest.api.v2010.account.conference.ParticipantUpdater updater(String pathConferenceSid, String pathCallSid)", "com.twilio.rest.api.v2010.account.conference.ParticipantUpdater updater(String pathAccountSid, String pathConferenceSid, String pathCallSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class ConferenceParticipantEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator")})

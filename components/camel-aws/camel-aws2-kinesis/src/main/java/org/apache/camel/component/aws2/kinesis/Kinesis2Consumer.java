@@ -162,7 +162,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
             throw new RuntimeException(e);
         }
 
-        if (shardIterator == null) {
+        if (ObjectHelper.isEmpty(shardIterator)) {
             // Unable to get an interator so shard must be closed
             processedExchangeCount.set(0);
             return;
@@ -241,7 +241,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
 
         var shardId = shard.shardId();
 
-        if (currentShardIterators.get(shardId) == null) {
+        if (ObjectHelper.isEmpty(currentShardIterators.get(shardId))) {
             if (currentShardIterators.containsKey(shardId)) {
                 // There was previously a shardIterator but shard is now closed
                 handleClosedShard(shardId);
@@ -312,12 +312,12 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     private void resume(String shardId, GetShardIteratorRequest.Builder req) {
-        if (resumeStrategy == null) {
+        if (ObjectHelper.isEmpty(resumeStrategy)) {
             return;
         }
 
         ResumeActionAware adapter = resumeStrategy.getAdapter(ResumeActionAware.class);
-        if (adapter == null) {
+        if (ObjectHelper.isEmpty(adapter)) {
             LOG.warn("There is a resume strategy setup, but no adapter configured or the type is incorrect");
 
             return;
@@ -332,7 +332,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         KinesisResumeAction action
                 = getEndpoint().getCamelContext().getRegistry().lookupByNameAndType(Kinesis2Constants.RESUME_ACTION,
                         KinesisResumeAction.class);
-        if (action == null) {
+        if (ObjectHelper.isEmpty(action)) {
             action = new KinesisResumeAction(req);
         } else {
             action.setBuilder(req);
@@ -359,7 +359,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, dataRecord.partitionKey());
         exchange.getIn().setHeader(Kinesis2Constants.SEQUENCE_NUMBER, dataRecord.sequenceNumber());
         exchange.getIn().setHeader(Kinesis2Constants.SHARD_ID, shard.shardId());
-        if (dataRecord.approximateArrivalTimestamp() != null) {
+        if (ObjectHelper.isNotEmpty(dataRecord.approximateArrivalTimestamp())) {
             long ts = dataRecord.approximateArrivalTimestamp().getEpochSecond() * 1000;
             exchange.getIn().setHeader(Kinesis2Constants.MESSAGE_TIMESTAMP, ts);
         }
@@ -388,7 +388,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
     }
 
     private Instant parseMessageTimestamp(String messageTimestamp) {
-        if (messageTimestamp == null) {
+        if (ObjectHelper.isEmpty(messageTimestamp)) {
             throw new IllegalArgumentException("Timestamp can't be null");
         }
         // Milliseconds format
@@ -423,14 +423,14 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         this.shardMonitorExecutor.scheduleAtFixedRate(new ShardMonitor(),
                 0, getConfiguration().getShardMonitorInterval(), TimeUnit.MILLISECONDS);
 
-        if (resumeStrategy != null) {
+        if (ObjectHelper.isNotEmpty(resumeStrategy)) {
             resumeStrategy.loadCache();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (this.shardMonitorExecutor != null) {
+        if (ObjectHelper.isNotEmpty(this.shardMonitorExecutor)) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(this.shardMonitorExecutor);
             this.shardMonitorExecutor = null;
         }
@@ -455,7 +455,7 @@ public class Kinesis2Consumer extends ScheduledBatchPollingConsumer implements R
         public void run() {
             try {
                 List<Shard> latestShardList = getShardList(connection);
-                if (latestShardList != null) {
+                if (ObjectHelper.isNotEmpty(latestShardList)) {
                     setCurrentShardList(latestShardList);
                 }
             } catch (Exception e) {

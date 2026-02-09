@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.pinecone.services;
 
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -43,11 +44,7 @@ public class PineconeIndexContainer extends GenericContainer<PineconeIndexContai
         withEnv("INDEX_TYPE", "serverless");
         withEnv("METRIC", "cosine");
         withEnv("PORT", String.valueOf(CLIENT_PORT));
-        if (fixedPort) {
-            addFixedExposedPort(CLIENT_PORT, CLIENT_PORT);
-        } else {
-            withExposedPorts(CLIENT_PORT);
-        }
+        ContainerEnvironmentUtil.configurePort(this, fixedPort, CLIENT_PORT);
     }
 
     public String getEndpoint() {

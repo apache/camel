@@ -1,0 +1,58 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.17 to 4.18
+
+=== camel-simple
+
+The *simple* language has deprecated binary operators that uses space in the name:
+
+- `not contains` use `!contains` instead
+- `not regex` use `!regex` instead
+- `not range` use `!range` instead
+- `starts with` use `startsWith` instead
+- `ends with` use `endsWith` instead
+
+=== camel-file
+
+The `org.apache.camel.component.file.GenericFileOperations` has added method `storeFileDirectly`.
+
+=== camel-docling
+
+All not working metadata headers have been removed.
+The option `extractAllMetadata` has been removed. Using `includeRawMetadata` will have the same effect given that there is no more `customMetadata` available.
+
+It corresponds to the removal of functionality no more working since 4.17. Given that this functionality was never available in a LTS version,that the next LST version is the next one and the fix requires important change in upstream dependency; it is not going through a deprecation phase and removed directly.
+
+=== camel-tahu
+
+The upgrade of Tahu from 1.0.17 to 1.0.18 introduced an API break. HostApplicationEventHandler has been renamed to MultiHostApplicationEventHandler and introduced one more parameter on all methods.
+
+Even if the interface HostApplicationEventHandler is public, I do not expect Camel users to use the implementation TahuHostApplicationEventHandler from Camel. Also the change would be relatively trivial. So replacing it without deprecating it first in order to be able to use the latest Tahu version right away.
+
+Consequently, there is an API break `org.apache.camel.tahu.handlers.TahuHostApplicationEventHandler` has been removed. It is replaced by `org.apache.camel.tahu.handlers.MultiTahuHostApplicationEventHandler`.
+
+=== camel-platform-http-vertx and Rest DSL contract-first
+
+When using Rest DSL in _contract first_ style, then the HTTP engine (vertx-web) instead of a single
+router to handle all incoming Rest API calls, is now one unique router per API endpoint. This change
+can affect HTTP request validation as vertx/Quarkus is now also performing this per API endpoint according
+to the API specification.
+
+All together this would make Camel behave similar for Rest DSL for both _code first_ and _contract first_ style.
+
+
+=== Component deprecation
+
+The `camel-olingo2` and `camel-olingo4` component are deprecated.
+This is due the Apache Olingo project is EOL and has been moved to the attic and is no longer maintained.

@@ -55,6 +55,7 @@ import org.apache.camel.spi.RestBindingJacksonXmlDataFormatFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.support.task.TaskManagerRegistry;
@@ -622,6 +623,20 @@ public final class PluginHelper {
      */
     public static TaskManagerRegistry getTaskManagerRegistry(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(TaskManagerRegistry.class);
+    }
+
+    /**
+     * Gets the {@link SimpleFunctionRegistry} to use.
+     */
+    public static SimpleFunctionRegistry getSimpleFunctionRegistry(CamelContext camelContext) {
+        return camelContext.getCamelContextExtension().getContextPlugin(SimpleFunctionRegistry.class);
+    }
+
+    /**
+     * Gets the {@link SimpleFunctionRegistry} to use.
+     */
+    public static SimpleFunctionRegistry getSimpleFunctionRegistry(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(SimpleFunctionRegistry.class);
     }
 
 }

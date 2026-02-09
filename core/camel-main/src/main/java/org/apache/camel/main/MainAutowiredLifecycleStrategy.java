@@ -97,6 +97,10 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
     }
 
     protected boolean isEnabled(String name, Component component) {
+        // skip autowiring sutbbed components
+        if (component.getClass().getSimpleName().equals("StubComponent")) {
+            return false;
+        }
         return camelContext.isAutowiredEnabled() && component.isAutowiredEnabled();
     }
 

@@ -66,14 +66,14 @@ public class AWSConfigEndpoint extends DefaultEndpoint implements EndpointServic
     public void doStart() throws Exception {
         super.doStart();
 
-        configClient = configuration.getConfigClient() != null
-                ? configuration.getConfigClient() : AWSConfigClientFactory.getConfigClient(configuration).getConfigClient();
+        configClient = ObjectHelper.isNotEmpty(configuration.getConfigClient())
+                ? configuration.getConfigClient() : AWSConfigClientFactory.getConfigClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getConfigClient())) {
-            if (configClient != null) {
+            if (ObjectHelper.isNotEmpty(configClient)) {
                 configClient.close();
             }
         }

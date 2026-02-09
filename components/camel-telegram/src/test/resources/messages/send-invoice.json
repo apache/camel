@@ -1,0 +1,26 @@
+{
+    "ok": true,
+    "result": {
+        "message_id": 1001,
+        "from": {
+            "id": 770882310,
+            "is_bot": true,
+            "first_name": "camelDemoBot",
+            "username": "camelDemoBot"
+        },
+        "chat": {
+            "id": 434822960,
+            "first_name": "John",
+            "last_name": "Doe",
+            "type": "private"
+        },
+        "date": 1576249600,
+        "invoice": {
+            "title": "Test Product",
+            "description": "Test product description",
+            "start_parameter": "test_start",
+            "currency": "USD",
+            "total_amount": 1000
+        }
+    }
+}

@@ -74,7 +74,7 @@ public class RouteStructureDevConsole extends AbstractDevConsole {
 
                 sb.append(String.format("    Id: %s", mrb.getRouteId()));
                 if (mrb.getSourceLocation() != null) {
-                    sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                    sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
                 }
                 sb.append("\n\n");
                 for (ModelDumpLine line : lines) {

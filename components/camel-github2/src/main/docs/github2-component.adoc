@@ -1,0 +1,151 @@
+= GitHub2 Component
+:doctitle: GitHub2
+:shortname: github2
+:artifactid: camel-github2
+:description: Interact with the GitHub API.
+:since: 4.18
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:camel-spring-boot-name: github2
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The GitHub2 component interacts with the GitHub API by
+encapsulating the https://github.com/hub4j/github-api[kohsuke github-api] library. It
+currently provides polling for new pull requests, pull request comments,
+tags, commits, and events. It is also able to produce comments on pull
+requests, as well as close the pull request entirely.
+
+This component supports GitHub Enterprise by allowing you to specify a custom API URL.
+
+Rather than webhooks, this endpoint relies on simple polling. Reasons
+include:
+
+* Concern for reliability/stability
+* The types of payloads we're polling aren't typically large (plus,
+paging is available in the API)
+* The need to support apps running somewhere not publicly accessible
+where a webhook would fail
+
+Note that the GitHub API is fairly expansive. Therefore, this component
+could be easily expanded to provide additional interactions.
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+-----------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-github2</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+-----------------------------------------
+
+== URI format
+
+---------------------------
+github2://endpoint[?options]
+---------------------------
+
+
+// component-configure options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component-configure options: END
+
+== Usage
+
+=== Configuring authentication
+
+The GitHub2 component requires to be configured with an authentication token on either the component or endpoint level.
+
+For example, to set it on the component:
+
+[source,java]
+----
+GitHub2Component ghc = context.getComponent("github2", GitHub2Component.class);
+ghc.setOauthToken("mytoken");
+----
+
+=== GitHub Enterprise
+
+To use with GitHub Enterprise, set the `apiUrl` parameter to your GitHub Enterprise API endpoint:
+
+[source,java]
+----
+from("github2:commit/main?repoOwner=myorg&repoName=myrepo&apiUrl=https://github.mycompany.com/api/v3")
+    .to("log:commits");
+----
+
+=== Consumer Endpoints
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|=======================================================================
+|Endpoint |Context |Body Type
+
+|pullRequest |polling |`org.kohsuke.github.GHPullRequest`
+
+|pullRequestComment |polling |`org.kohsuke.github.GHPullRequestReviewComment`
+
+|tag |polling |`org.kohsuke.github.GHTag`
+
+|commit |polling |`org.kohsuke.github.GHCommit` or `String` with commit message and headers with some metadata.
+This can be configured by the `commitMessageAsBody` option.
+
+|event |polling |`org.kohsuke.github.GHEventInfo`
+|=======================================================================
+
+=== Producer Endpoints
+
+[width="100%",cols="20%,20%,60%",options="header",]
+|=======================================================================
+|Endpoint |Body |Message Headers
+
+|pullRequestComment |String (comment text) | - `CamelGitHubPullRequest` (integer) (REQUIRED): Pull request number.
+
+- `CamelGitHubInResponseTo` (integer): Required if responding to another inline
+comment on the pull request diff. If left off, a general comment on the
+pull request discussion is assumed.
+
+|closePullRequest |none | - `CamelGitHubPullRequest` (integer) (REQUIRED): Pull request number.
+
+|createIssue |String (issue body text) | - `CamelGitHubIssueTitle` (String) (REQUIRED): Issue Title.
+
+|pullRequestState |none | - `CamelGitHubPullRequest` (integer) (REQUIRED): Pull request number.
+Sets the commit status on a pull request.
+
+|pullRequestFiles |none | - `CamelGitHubPullRequest` (integer) (REQUIRED): Pull request number.
+Returns the list of files changed in a pull request.
+
+|getCommitFile |none | - `CamelGitHubCommitSha` (String) (REQUIRED): Commit SHA.
+- `CamelGitHubFilePath` (String) (REQUIRED): File path.
+Returns the content of a file at a specific commit.
+|=======================================================================
+
+=== Example: Consuming commits
+
+[source,java]
+----
+from("github2:commit/main?repoOwner=apache&repoName=camel&oauthToken=mytoken")
+    .log("New commit: ${header.CamelGitHubCommitSha} by ${header.CamelGitHubCommitAuthor}")
+    .to("direct:processCommit");
+----
+
+=== Example: Creating an issue
+
+[source,java]
+----
+from("direct:createIssue")
+    .setHeader("CamelGitHubIssueTitle", constant("Bug Report"))
+    .setBody(constant("This is the issue description"))
+    .to("github2:createIssue?repoOwner=apache&repoName=camel&oauthToken=mytoken");
+----
+
+
+include::spring-boot:partial$starter.adoc[]

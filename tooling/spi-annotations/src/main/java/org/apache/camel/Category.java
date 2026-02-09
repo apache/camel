@@ -34,6 +34,7 @@ public enum Category {
     DATABASE("database"),
     DOCUMENT("document"),
     FILE("file"),
+    FINANCE("finance"),
     HEALTH("health"),
     HTTP("http"),
     IOT("iot"),

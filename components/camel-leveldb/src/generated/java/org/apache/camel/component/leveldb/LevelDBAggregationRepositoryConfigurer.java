@@ -27,6 +27,8 @@ public class LevelDBAggregationRepositoryConfigurer extends org.apache.camel.sup
         case "allowSerializedHeaders": target.setAllowSerializedHeaders(property(camelContext, boolean.class, value)); return true;
         case "deadletteruri":
         case "deadLetterUri": target.setDeadLetterUri(property(camelContext, java.lang.String.class, value)); return true;
+        case "deserializationfilter":
+        case "deserializationFilter": target.setDeserializationFilter(property(camelContext, java.lang.String.class, value)); return true;
         case "maximumredeliveries":
         case "maximumRedeliveries": target.setMaximumRedeliveries(property(camelContext, int.class, value)); return true;
         case "persistentfilename":
@@ -52,6 +54,8 @@ public class LevelDBAggregationRepositoryConfigurer extends org.apache.camel.sup
         case "allowSerializedHeaders": return boolean.class;
         case "deadletteruri":
         case "deadLetterUri": return java.lang.String.class;
+        case "deserializationfilter":
+        case "deserializationFilter": return java.lang.String.class;
         case "maximumredeliveries":
         case "maximumRedeliveries": return int.class;
         case "persistentfilename":
@@ -78,6 +82,8 @@ public class LevelDBAggregationRepositoryConfigurer extends org.apache.camel.sup
         case "allowSerializedHeaders": return target.isAllowSerializedHeaders();
         case "deadletteruri":
         case "deadLetterUri": return target.getDeadLetterUri();
+        case "deserializationfilter":
+        case "deserializationFilter": return target.getDeserializationFilter();
         case "maximumredeliveries":
         case "maximumRedeliveries": return target.getMaximumRedeliveries();
         case "persistentfilename":

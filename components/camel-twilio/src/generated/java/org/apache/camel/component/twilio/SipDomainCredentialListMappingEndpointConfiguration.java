@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingCreator creator(String pathDomainSid, String credentialListSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingCreator creator(String pathAccountSid, String pathDomainSid, String credentialListSid)"}), @ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingDeleter deleter(String pathDomainSid, String pathSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingDeleter deleter(String pathAccountSid, String pathDomainSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingFetcher fetcher(String pathDomainSid, String pathSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingFetcher fetcher(String pathAccountSid, String pathDomainSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingReader reader(String pathDomainSid)", "com.twilio.rest.api.v2010.account.sip.domain.CredentialListMappingReader reader(String pathAccountSid, String pathDomainSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class SipDomainCredentialListMappingEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator")})

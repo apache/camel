@@ -78,8 +78,8 @@ public class ActiveMQComponent extends JmsComponent {
      */
     public static ActiveMQComponent activeMQComponent(String brokerURL) {
         ActiveMQComponent answer = new ActiveMQComponent();
-        if (answer.getConfiguration() instanceof ActiveMQConfiguration) {
-            ((ActiveMQConfiguration) answer.getConfiguration()).setBrokerURL(brokerURL);
+        if (answer.getConfiguration() instanceof ActiveMQConfiguration activeMQConfiguration) {
+            activeMQConfiguration.setBrokerURL(brokerURL);
         }
 
         return answer;

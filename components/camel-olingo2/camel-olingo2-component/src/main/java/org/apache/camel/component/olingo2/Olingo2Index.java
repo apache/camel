@@ -28,6 +28,7 @@ import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.FeedMetadata;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 
+@Deprecated(since = "4.18")
 public class Olingo2Index {
 
     private Set<Integer> resultIndex = new HashSet<>();

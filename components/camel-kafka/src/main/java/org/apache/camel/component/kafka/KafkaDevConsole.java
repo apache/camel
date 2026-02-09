@@ -57,38 +57,38 @@ public class KafkaDevConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
         for (Route route : getCamelContext().getRoutes()) {
             if (route.getConsumer() instanceof KafkaConsumer kc) {
-                sb.append(String.format("\n    Route Id: %s", route.getRouteId()));
-                sb.append(String.format("\n    From: %s", route.getEndpoint().getEndpointUri()));
+                sb.append(String.format("%n    Route Id: %s", route.getRouteId()));
+                sb.append(String.format("%n    From: %s", route.getEndpoint().getEndpointUri()));
                 for (KafkaFetchRecords t : kc.tasks()) {
                     final DevConsoleMetricsCollector metricsCollector = t.getMetricsCollector();
-                    sb.append(String.format("\n        Worked Thread: %s", metricsCollector.getThreadId()));
-                    sb.append(String.format("\n        Worker State: %s", t.getState()));
+                    sb.append(String.format("%n        Worked Thread: %s", metricsCollector.getThreadId()));
+                    sb.append(String.format("%n        Worker State: %s", t.getState()));
                     TaskHealthState hs = t.healthState();
                     if (!hs.isReady()) {
-                        sb.append(String.format("\n        Worker Last Error: %s", hs.buildStateMessage()));
+                        sb.append(String.format("%n        Worker Last Error: %s", hs.buildStateMessage()));
                     }
                     DefaultMetricsCollector.GroupMetadata meta = metricsCollector.getGroupMetadata();
                     if (meta != null) {
-                        sb.append(String.format("\n        Group Id: %s", meta.groupId()));
-                        sb.append(String.format("\n        Group Instance Id: %s", meta.groupInstanceId()));
-                        sb.append(String.format("\n        Member Id: %s", meta.memberId()));
-                        sb.append(String.format("\n        Generation Id: %d", meta.generationId()));
+                        sb.append(String.format("%n        Group Id: %s", meta.groupId()));
+                        sb.append(String.format("%n        Group Instance Id: %s", meta.groupInstanceId()));
+                        sb.append(String.format("%n        Member Id: %s", meta.memberId()));
+                        sb.append(String.format("%n        Generation Id: %d", meta.generationId()));
                     }
                     if (metricsCollector.getLastRecord() != null) {
-                        sb.append(String.format("\n        Last Topic: %s", metricsCollector.getLastRecord().topic()));
-                        sb.append(String.format("\n        Last Partition: %d", metricsCollector.getLastRecord().partition()));
-                        sb.append(String.format("\n        Last Offset: %d", metricsCollector.getLastRecord().offset()));
+                        sb.append(String.format("%n        Last Topic: %s", metricsCollector.getLastRecord().topic()));
+                        sb.append(String.format("%n        Last Partition: %d", metricsCollector.getLastRecord().partition()));
+                        sb.append(String.format("%n        Last Offset: %d", metricsCollector.getLastRecord().offset()));
                     }
                     if (committed) {
                         List<DefaultMetricsCollector.KafkaTopicPosition> l = fetchCommitOffsets(kc, metricsCollector);
                         if (l != null) {
                             for (DefaultMetricsCollector.KafkaTopicPosition r : l) {
-                                sb.append(String.format("\n        Commit Topic: %s", r.topic()));
-                                sb.append(String.format("\n        Commit Partition: %s", r.partition()));
-                                sb.append(String.format("\n        Commit Offset: %s", r.offset()));
+                                sb.append(String.format("%n        Commit Topic: %s", r.topic()));
+                                sb.append(String.format("%n        Commit Partition: %s", r.partition()));
+                                sb.append(String.format("%n        Commit Offset: %s", r.offset()));
                                 if (r.epoch() > 0) {
                                     long delta = System.currentTimeMillis() - r.epoch();
-                                    sb.append(String.format("\n        Commit Offset Since: %s",
+                                    sb.append(String.format("%n        Commit Offset Since: %s",
                                             TimeUtils.printDuration(delta, true)));
                                 }
                             }

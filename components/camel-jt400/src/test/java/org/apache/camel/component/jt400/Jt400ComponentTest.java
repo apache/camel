@@ -20,8 +20,8 @@ import org.apache.camel.Endpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test case for {@link Jt400Component}
@@ -63,12 +63,8 @@ public class Jt400ComponentTest extends Jt400TestSupport {
      */
     @Test
     public void testCreateEndpointForOtherObjectType() {
-        try {
-            component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx");
-            fail("Exception should been thrown when trying to create an endpoint for an unsupported object type");
-        } catch (Exception e) {
-            // this is just what we expected
-        }
+        assertThrows(Exception.class,
+                () -> component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx"));
     }
 
     /**

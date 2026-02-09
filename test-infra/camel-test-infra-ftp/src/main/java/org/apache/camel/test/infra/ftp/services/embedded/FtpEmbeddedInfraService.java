@@ -133,10 +133,11 @@ public class FtpEmbeddedInfraService extends AbstractService implements FtpInfra
         serverFactory.setConnectionConfig(new ConnectionConfigFactory().createConnectionConfig());
 
         ListenerFactory factory = new ListenerFactory();
-        if (ContainerEnvironmentUtil.isFixedPort(this.getClass())) {
-            factory.setPort(2221);
-        } else {
+        // If port was already assigned (restart scenario), reuse it; otherwise get a new one
+        if (port > 0) {
             factory.setPort(port);
+        } else {
+            factory.setPort(ContainerEnvironmentUtil.getConfiguredPortOrRandom(FtpProperties.DEFAULT_FTP_PORT));
         }
         factory.setServerAddress(embeddedConfiguration.getServerAddress());
 

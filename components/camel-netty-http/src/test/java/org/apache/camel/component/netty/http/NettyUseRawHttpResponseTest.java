@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyUseRawHttpResponseTest extends BaseNettyTest {
+public class NettyUseRawHttpResponseTest extends BaseNettyTestSupport {
 
     @Test
     public void testAccessHttpRequest() throws Exception {

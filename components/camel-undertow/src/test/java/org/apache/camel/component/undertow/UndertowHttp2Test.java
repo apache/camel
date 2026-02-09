@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowHttp2Test extends BaseUndertowTest {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowHttp2Test.class);
@@ -41,16 +40,11 @@ public class UndertowHttp2Test extends BaseUndertowTest {
         final HttpClient httpClient = new HttpClient(new HttpClientTransportOverHTTP2(http2Client));
         httpClient.start();
 
-        try {
-            final ContentResponse resp = httpClient.GET("http://localhost:" + getPort() + "/myapp");
+        final ContentResponse resp = httpClient.GET("http://localhost:" + getPort() + "/myapp");
 
-            assertEquals(200, resp.getStatus());
-            assertEquals(HttpVersion.HTTP_2, resp.getVersion());
-            assertEquals(RESPONSE, new String(resp.getContent()));
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
-            fail("HTTP2 endpoint not exposed!, maybe it's not supported?");
-        }
+        assertEquals(200, resp.getStatus());
+        assertEquals(HttpVersion.HTTP_2, resp.getVersion());
+        assertEquals(RESPONSE, new String(resp.getContent()));
     }
 
     @Override

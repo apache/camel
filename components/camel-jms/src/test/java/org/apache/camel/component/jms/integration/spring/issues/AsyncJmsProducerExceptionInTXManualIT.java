@@ -27,7 +27,7 @@ import org.springframework.transaction.TransactionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @see <a href="https://issues.apache.org/jira/browse/CAMEL-4616">CAMEL-4616</a>
@@ -72,19 +72,18 @@ class AsyncJmsProducerExceptionInTXManualIT extends SpringJMSBasic {
 
     @Test
     void testAsyncEndpointException() {
-        try {
-            template.sendBody("direct:transacted_start", null);
-            fail("transaction should fail, otherwise looks like CAMEL-4616 has been emerged!");
-        } catch (CamelExecutionException e) {
-            Throwable cause = e.getCause();
-            assertInstanceOf(TransactionException.class, cause);
-            while (cause.getCause() != null) {
-                cause = cause.getCause();
-            }
-            assertEquals(
-                    "Usage Manager Memory Limit reached on queue://AsyncJmsProducerExceptionInTXTest. See http://activemq.apache.org/producer-flow-control.html for more info",
-                    cause.getMessage());
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:transacted_start", null),
+                "transaction should fail, otherwise looks like CAMEL-4616 has been emerged!");
+
+        Throwable cause = e.getCause();
+        assertInstanceOf(TransactionException.class, cause);
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
         }
+        assertEquals(
+                "Usage Manager Memory Limit reached on queue://AsyncJmsProducerExceptionInTXTest. See http://activemq.apache.org/producer-flow-control.html for more info",
+                cause.getMessage());
 
         // non-transacted not fail assertion
         template.sendBody("direct:non_transacted_start", null);

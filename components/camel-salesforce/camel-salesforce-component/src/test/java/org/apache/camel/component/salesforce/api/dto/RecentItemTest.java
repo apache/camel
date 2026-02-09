@@ -33,16 +33,16 @@ public class RecentItemTest {
     public void shouldDeserializeFromJSON() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        final Object read = mapper.readerFor(RecentItem.class).readValue("{ \n" + //
-                                                                         "    \"attributes\" : \n" + //
-                                                                         "    { \n" + //
-                                                                         "        \"type\" : \"Account\", \n" + //
-                                                                         "        \"url\" : \"/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ\" \n"
-                                                                         + //
-                                                                         "    }, \n" + //
-                                                                         "    \"Id\" : \"a06U000000CelH0IAJ\", \n" + //
-                                                                         "    \"Name\" : \"Acme\" \n" + //
-                                                                         "}");
+        final Object read = mapper.readerFor(RecentItem.class).readValue("""
+                {\s
+                    "attributes" :\s
+                    {\s
+                        "type" : "Account",\s
+                        "url" : "/services/data/v28.0/sobjects/Account/a06U000000CelH0IAJ"\s
+                    },\s
+                    "Id" : "a06U000000CelH0IAJ",\s
+                    "Name" : "Acme"\s
+                }""");
 
         assertThat("RecentItem should deserialize from JSON", read, instanceOf(RecentItem.class));
 

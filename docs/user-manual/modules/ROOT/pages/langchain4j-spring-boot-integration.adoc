@@ -1,0 +1,540 @@
+= LangChain4j Spring Boot Integration
+:doctitle: LangChain4j Spring Boot Integration
+:shortname: langchain4j-spring-boot
+:description: Integrating LangChain4j Spring Boot Starters with Apache Camel
+:since: 4.18
+:supportlevel: Stable
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+This guide explains how to integrate LangChain4j Spring Boot starters with Apache Camel Spring Boot applications.
+
+== Overview
+
+LangChain4j provides Spring Boot starters that offer auto-configuration for various AI/LLM providers. When using Camel's langchain4j components in a Spring Boot application, you can leverage these starters to simplify configuration and reduce boilerplate code.
+
+== Benefits
+
+* *Auto-configuration*: Automatic bean creation and configuration based on properties
+* *Type-safe configuration*: Configuration properties with IDE auto-completion support
+* *Simplified dependency management*: Single starter dependency per provider
+* *Production-ready*: Built-in health checks and metrics (when using Spring Boot Actuator)
+* *Consistent configuration*: Unified configuration approach across different LLM providers
+
+== Available LangChain4j Spring Boot Starters
+
+LangChain4j provides Spring Boot starters for various AI/LLM providers:
+
+=== Chat Models
+
+* `langchain4j-open-ai-spring-boot-starter` - OpenAI (GPT-3.5, GPT-4, etc.)
+* `langchain4j-azure-open-ai-spring-boot-starter` - Azure OpenAI
+* `langchain4j-google-ai-gemini-spring-boot-starter` - Google Gemini
+* `langchain4j-ollama-spring-boot-starter` - Ollama (local models)
+* `langchain4j-anthropic-spring-boot-starter` - Anthropic Claude
+* `langchain4j-mistral-ai-spring-boot-starter` - Mistral AI
+* `langchain4j-hugging-face-spring-boot-starter` - Hugging Face
+* `langchain4j-vertex-ai-spring-boot-starter` - Google Vertex AI
+
+=== Embedding Models
+
+Most chat model starters also include embedding model auto-configuration.
+
+=== Other Components
+
+* `langchain4j-spring-boot-starter` - Core LangChain4j functionality
+* Various embedding store starters (Chroma, Pinecone, Qdrant, etc.)
+
+== Getting Started
+
+=== Step 1: Add Dependencies
+
+Add the Camel Spring Boot starter and the LangChain4j component you need:
+
+[source,xml]
+----
+<dependencies>
+    <!-- Camel Spring Boot -->
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    
+    <!-- Camel LangChain4j Component -->
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-langchain4j-chat-starter</artifactId>
+    </dependency>
+    
+    <!-- LangChain4j Spring Boot Starter for OpenAI -->
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+        <version>1.10.0</version>
+    </dependency>
+</dependencies>
+----
+
+=== Step 2: Configure Properties
+
+Configure the LangChain4j provider in `application.properties` or `application.yml`:
+
+.application.properties
+[source,properties]
+----
+# OpenAI Chat Model Configuration
+langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
+langchain4j.open-ai.chat-model.model-name=gpt-4o
+langchain4j.open-ai.chat-model.temperature=0.7
+langchain4j.open-ai.chat-model.max-tokens=1000
+
+# OpenAI Embedding Model Configuration
+langchain4j.open-ai.embedding-model.api-key=${OPENAI_API_KEY}
+langchain4j.open-ai.embedding-model.model-name=text-embedding-ada-002
+----
+
+.application.yml
+[source,yaml]
+----
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: gpt-4o
+      temperature: 0.7
+      max-tokens: 1000
+    embedding-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: text-embedding-ada-002
+----
+
+=== Step 3: Use in Camel Routes
+
+The auto-configured beans are automatically available in your Camel routes:
+
+[source,java]
+----
+@Component
+public class MyRoutes extends RouteBuilder {
+    
+    @Override
+    public void configure() {
+        // Chat endpoint using auto-configured ChatLanguageModel
+        from("direct:chat")
+            .to("langchain4j-chat:openai?chatModel=#chatLanguageModel");
+        
+        // Embeddings endpoint using auto-configured EmbeddingModel
+        from("direct:embeddings")
+            .to("langchain4j-embeddings:openai?embeddingModel=#embeddingModel");
+    }
+}
+----
+
+== Complete Examples
+
+=== Example 1: OpenAI Chat Integration
+
+.pom.xml
+[source,xml]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-langchain4j-chat-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+        <version>1.10.0</version>
+    </dependency>
+</dependencies>
+----
+
+.application.properties
+[source,properties]
+----
+langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
+langchain4j.open-ai.chat-model.model-name=gpt-4o
+langchain4j.open-ai.chat-model.temperature=0.7
+----
+
+.ChatRoute.java
+[source,java]
+----
+import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ChatRoute extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        from("direct:chat")
+            .log("Sending message to OpenAI: ${body}")
+            .to("langchain4j-chat:openai?chatModel=#chatLanguageModel")
+            .log("Received response: ${body}");
+    }
+}
+----
+
+=== Example 2: Azure OpenAI with RAG
+
+.pom.xml
+[source,xml]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-langchain4j-chat-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-langchain4j-embeddings-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-azure-open-ai-spring-boot-starter</artifactId>
+        <version>1.10.0</version>
+    </dependency>
+</dependencies>
+----
+
+.application.yml
+[source,yaml]
+----
+langchain4j:
+  azure-open-ai:
+    chat-model:
+      endpoint: ${AZURE_OPENAI_ENDPOINT}
+      api-key: ${AZURE_OPENAI_API_KEY}
+      deployment-name: gpt-4
+    embedding-model:
+      endpoint: ${AZURE_OPENAI_ENDPOINT}
+      api-key: ${AZURE_OPENAI_API_KEY}
+      deployment-name: text-embedding-ada-002
+----
+
+.RagRoute.java
+[source,java]
+----
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.langchain4j.chat.LangChain4jRagAggregatorStrategy;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RagRoute extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        LangChain4jRagAggregatorStrategy ragStrategy = new LangChain4jRagAggregatorStrategy();
+
+        from("direct:rag-chat")
+            .log("Processing RAG query: ${body}")
+            .enrich("direct:retrieve-context", ragStrategy)
+            .to("langchain4j-chat:azure?chatModel=#chatLanguageModel")
+            .log("RAG response: ${body}");
+
+        from("direct:retrieve-context")
+            .to("langchain4j-embeddings:azure?embeddingModel=#embeddingModel")
+            .to("langchain4j-embeddingstore:search?embeddingStore=#embeddingStore")
+            .log("Retrieved context: ${body}");
+    }
+}
+----
+
+=== Example 3: Ollama (Local LLM)
+
+.pom.xml
+[source,xml]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.springboot</groupId>
+        <artifactId>camel-langchain4j-chat-starter</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-ollama-spring-boot-starter</artifactId>
+        <version>1.10.0</version>
+    </dependency>
+</dependencies>
+----
+
+.application.properties
+[source,properties]
+----
+langchain4j.ollama.chat-model.base-url=http://localhost:11434
+langchain4j.ollama.chat-model.model-name=llama2
+langchain4j.ollama.chat-model.temperature=0.8
+----
+
+== Configuration Properties Reference
+
+=== OpenAI Configuration
+
+[source,properties]
+----
+# Chat Model
+langchain4j.open-ai.chat-model.api-key=
+langchain4j.open-ai.chat-model.model-name=gpt-4o
+langchain4j.open-ai.chat-model.temperature=0.7
+langchain4j.open-ai.chat-model.max-tokens=
+langchain4j.open-ai.chat-model.timeout=60s
+langchain4j.open-ai.chat-model.max-retries=3
+
+# Embedding Model
+langchain4j.open-ai.embedding-model.api-key=
+langchain4j.open-ai.embedding-model.model-name=text-embedding-ada-002
+----
+
+=== Azure OpenAI Configuration
+
+[source,properties]
+----
+# Chat Model
+langchain4j.azure-open-ai.chat-model.endpoint=
+langchain4j.azure-open-ai.chat-model.api-key=
+langchain4j.azure-open-ai.chat-model.deployment-name=
+langchain4j.azure-open-ai.chat-model.temperature=0.7
+
+# Embedding Model
+langchain4j.azure-open-ai.embedding-model.endpoint=
+langchain4j.azure-open-ai.embedding-model.api-key=
+langchain4j.azure-open-ai.embedding-model.deployment-name=
+----
+
+=== Ollama Configuration
+
+[source,properties]
+----
+# Chat Model
+langchain4j.ollama.chat-model.base-url=http://localhost:11434
+langchain4j.ollama.chat-model.model-name=llama2
+langchain4j.ollama.chat-model.temperature=0.8
+langchain4j.ollama.chat-model.timeout=60s
+
+# Embedding Model
+langchain4j.ollama.embedding-model.base-url=http://localhost:11434
+langchain4j.ollama.embedding-model.model-name=nomic-embed-text
+----
+
+== Advanced Configuration
+
+=== Using Multiple LLM Providers
+
+You can configure multiple LLM providers in the same application by using different bean names:
+
+.application.yml
+[source,yaml]
+----
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: gpt-4o
+  ollama:
+    chat-model:
+      base-url: http://localhost:11434
+      model-name: llama2
+----
+
+.MultiProviderRoute.java
+[source,java]
+----
+@Component
+public class MultiProviderRoute extends RouteBuilder {
+
+    @Override
+    public void configure() {
+        // Use OpenAI for production
+        from("direct:production-chat")
+            .to("langchain4j-chat:openai?chatModel=#chatLanguageModel");
+
+        // Use Ollama for development/testing
+        from("direct:dev-chat")
+            .to("langchain4j-chat:ollama?chatModel=#ollamaChatModel");
+    }
+}
+----
+
+=== Custom Bean Configuration
+
+You can customize the auto-configured beans or create additional beans:
+
+[source,java]
+----
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+
+@Configuration
+public class CustomLangChain4jConfig {
+
+    @Bean
+    @ConditionalOnProperty(name = "custom.llm.enabled", havingValue = "true")
+    public ChatLanguageModel customChatModel() {
+        return OpenAiChatModel.builder()
+            .apiKey(System.getenv("CUSTOM_API_KEY"))
+            .modelName("gpt-4o-mini")
+            .temperature(0.5)
+            .logRequests(true)
+            .logResponses(true)
+            .build();
+    }
+}
+----
+
+=== Environment-Specific Configuration
+
+Use Spring profiles for environment-specific configuration:
+
+.application-dev.yml
+[source,yaml]
+----
+langchain4j:
+  ollama:
+    chat-model:
+      base-url: http://localhost:11434
+      model-name: llama2
+----
+
+.application-prod.yml
+[source,yaml]
+----
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${OPENAI_API_KEY}
+      model-name: gpt-4o
+      max-retries: 5
+      timeout: 120s
+----
+
+== Best Practices
+
+=== 1. Secure API Keys
+
+Never hardcode API keys in your code or configuration files. Use environment variables or external configuration:
+
+[source,properties]
+----
+langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
+----
+
+Or use Spring Cloud Config, Vault, or other secret management solutions.
+
+=== 2. Configure Timeouts and Retries
+
+Set appropriate timeouts and retry policies for production:
+
+[source,properties]
+----
+langchain4j.open-ai.chat-model.timeout=60s
+langchain4j.open-ai.chat-model.max-retries=3
+langchain4j.open-ai.chat-model.log-requests=false
+langchain4j.open-ai.chat-model.log-responses=false
+----
+
+=== 3. Use Streaming for Long Responses
+
+For long-running conversations, consider using streaming chat models:
+
+[source,java]
+----
+@Component
+public class StreamingChatRoute extends RouteBuilder {
+
+    @Autowired
+    private StreamingChatLanguageModel streamingChatModel;
+
+    @Override
+    public void configure() {
+        from("direct:streaming-chat")
+            .process(exchange -> {
+                String prompt = exchange.getIn().getBody(String.class);
+                streamingChatModel.generate(prompt, new StreamingResponseHandler<AiMessage>() {
+                    @Override
+                    public void onNext(String token) {
+                        // Handle streaming tokens
+                    }
+
+                    @Override
+                    public void onComplete(Response<AiMessage> response) {
+                        exchange.getIn().setBody(response.content().text());
+                    }
+
+                    @Override
+                    public void onError(Throwable error) {
+                        // Handle errors
+                    }
+                });
+            });
+    }
+}
+----
+
+=== 4. Monitor and Log
+
+Enable logging for debugging during development:
+
+[source,properties]
+----
+# Development
+langchain4j.open-ai.chat-model.log-requests=true
+langchain4j.open-ai.chat-model.log-responses=true
+
+# Production (disable for security and performance)
+langchain4j.open-ai.chat-model.log-requests=false
+langchain4j.open-ai.chat-model.log-responses=false
+----
+
+== Troubleshooting
+
+=== Common Issues
+
+==== Bean Not Found
+
+If you encounter "No qualifying bean" errors, ensure:
+
+1. The LangChain4j Spring Boot starter is in your dependencies
+2. The configuration properties are correctly set
+3. The bean name matches what you're referencing in your routes
+
+==== API Key Issues
+
+If you get authentication errors:
+
+1. Verify the API key is correctly set in environment variables
+2. Check that the property name matches the provider (e.g., `langchain4j.open-ai.chat-model.api-key`)
+3. Ensure the API key has the necessary permissions
+
+==== Timeout Errors
+
+If you experience timeout errors:
+
+1. Increase the timeout value: `langchain4j.open-ai.chat-model.timeout=120s`
+2. Check your network connectivity
+3. Verify the LLM service is available
+
+== Additional Resources
+
+* https://docs.langchain4j.dev/tutorials/spring-boot-integration[LangChain4j Spring Boot Integration Documentation]
+* xref:components::langchain4j-chat-component.adoc[Camel LangChain4j Chat Component]
+* xref:components::langchain4j-embeddings-component.adoc[Camel LangChain4j Embeddings Component]
+* xref:components::langchain4j-agent-component.adoc[Camel LangChain4j Agent Component]
+

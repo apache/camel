@@ -196,42 +196,44 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         public void done(boolean doneSync) {
             LOG.trace("onMessage.process END");
 
-            // now we evaluate the processing of the exchange and determine if it was a success or failure
-            // we also grab information from the exchange to be used for sending back a reply (if we are to do so)
-            // so the following logic seems a bit complicated at first glance
+            // Evaluate the processing of the exchange and determine if it was a success or failure
+            RuntimeCamelException rce = evaluateExchangeResult();
 
-            // if we send back a reply it can either be the message body or transferring a caused exception
-            org.apache.camel.Message body = null;
-            Exception cause = null;
-            RuntimeCamelException rce = null;
+            // Handle reply and exception
+            handleReplyIfNeeded(rce);
+            handleExceptionIfNeeded(rce, doneSync);
 
-            if (exchange.isFailed() || exchange.isRollbackOnly()) {
-                if (exchange.isRollbackOnly()) {
-                    // rollback only so wrap an exception so we can rethrow the exception to cause rollback
-                    rce = wrapRuntimeCamelException(new RollbackExchangeException(exchange));
-                } else if (exchange.getException() != null) {
-                    // an exception occurred while processing
-                    if (endpoint.isTransferException()) {
-                        // send the exception as reply, so null body and set the exception as the cause
-                        body = null;
-                        cause = exchange.getException();
-                    } else {
-                        // only throw exception if endpoint is not configured to transfer exceptions back to caller
-                        // do not send a reply but wrap and rethrow the exception
-                        rce = wrapRuntimeCamelException(exchange.getException());
-                    }
-                }
-            } else {
-                // process OK so get the reply body if we are InOut and has a body
-                // If the ppl don't want to send the message back, he should use the InOnly
-                if (sendReply && exchange.getPattern().isOutCapable()) {
-                    body = exchange.getMessage();
-                    cause = null;
-                }
+            if (!doneSync) {
+                // release back when in asynchronous mode
+                consumer.releaseExchange(exchange, false);
+            }
+        }
+
+        private RuntimeCamelException evaluateExchangeResult() {
+            if (exchange.isRollbackOnly()) {
+                return wrapRuntimeCamelException(new RollbackExchangeException(exchange));
+            }
+            if (exchange.isFailed() && exchange.getException() != null && !endpoint.isTransferException()) {
+                return wrapRuntimeCamelException(exchange.getException());
+            }
+            return null;
+        }
+
+        private void handleReplyIfNeeded(RuntimeCamelException rce) {
+            if (rce != null || !sendReply) {
+                return;
             }
 
-            // send back reply if there was no error and we are supposed to send back a reply
-            if (rce == null && sendReply && (body != null || cause != null)) {
+            org.apache.camel.Message body = null;
+            Exception cause = null;
+
+            if (exchange.isFailed() && exchange.getException() != null && endpoint.isTransferException()) {
+                cause = exchange.getException();
+            } else if (exchange.getPattern().isOutCapable()) {
+                body = exchange.getMessage();
+            }
+
+            if (body != null || cause != null) {
                 LOG.trace("onMessage.sendReply START");
                 if (replyDestination instanceof Destination destination) {
                     sendReply(destination, message, exchange, body, cause);
@@ -240,24 +242,16 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 }
                 LOG.trace("onMessage.sendReply END");
             }
+        }
 
-            // if an exception occurred
-            if (rce != null) {
-                if (doneSync) {
-                    // we were done sync, so put exception on exchange, so we can grab it in the onMessage
-                    // method and rethrow it
-                    exchange.setException(rce);
-                } else {
-                    // we were done async, so use the endpoint error handler
-                    if (endpoint.getErrorHandler() != null) {
-                        endpoint.getErrorHandler().handleError(rce);
-                    }
-                }
+        private void handleExceptionIfNeeded(RuntimeCamelException rce, boolean doneSync) {
+            if (rce == null) {
+                return;
             }
-
-            if (!doneSync) {
-                // release back when in asynchronous mode
-                consumer.releaseExchange(exchange, false);
+            if (doneSync) {
+                exchange.setException(rce);
+            } else if (endpoint.getErrorHandler() != null) {
+                endpoint.getErrorHandler().handleError(rce);
             }
         }
     }

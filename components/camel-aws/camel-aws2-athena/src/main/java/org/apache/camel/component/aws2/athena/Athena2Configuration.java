@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.athena;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -27,7 +28,7 @@ import software.amazon.awssdk.services.athena.model.EncryptionOption;
 import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable;
 
 @UriParams
-public class Athena2Configuration implements Cloneable {
+public class Athena2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Logical name")
     @Metadata(required = true)
@@ -134,6 +135,13 @@ public class Athena2Configuration implements Cloneable {
 
     @UriParam(label = "security")
     private String profileCredentialsName;
+
+    @UriParam(label = "security")
+    private boolean trustAllCertificates;
+    @UriParam
+    private boolean overrideEndpoint;
+    @UriParam
+    private String uriEndpointOverride;
 
     public String getAccessKey() {
         return accessKey;
@@ -458,7 +466,7 @@ public class Athena2Configuration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
-    public Boolean isUseDefaultCredentialsProvider() {
+    public boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
     }
 
@@ -494,6 +502,40 @@ public class Athena2Configuration implements Cloneable {
      */
     public void setProfileCredentialsName(String profileCredentialsName) {
         this.profileCredentialsName = profileCredentialsName;
+    }
+
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    /**
+     * If we want to trust all certificates in case of overriding the endpoint
+     */
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
+    }
+
+    public boolean isOverrideEndpoint() {
+        return overrideEndpoint;
+    }
+
+    /**
+     * Set the need for overriding the endpoint. This option needs to be used in combination with the
+     * uriEndpointOverride option
+     */
+    public void setOverrideEndpoint(boolean overrideEndpoint) {
+        this.overrideEndpoint = overrideEndpoint;
+    }
+
+    public String getUriEndpointOverride() {
+        return uriEndpointOverride;
+    }
+
+    /**
+     * Set the overriding uri endpoint. This option needs to be used in combination with overrideEndpoint option
+     */
+    public void setUriEndpointOverride(String uriEndpointOverride) {
+        this.uriEndpointOverride = uriEndpointOverride;
     }
 
     // *************************************************

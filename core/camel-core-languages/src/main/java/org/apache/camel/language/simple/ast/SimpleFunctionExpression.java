@@ -18,20 +18,24 @@ package org.apache.camel.language.simple.ast;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.BaseSimpleParser;
 import org.apache.camel.language.simple.SimpleExpressionBuilder;
+import org.apache.camel.language.simple.SimplePredicateParser;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
@@ -100,6 +104,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (answer != null) {
             return answer;
         }
+        // custom functions
+        answer = createSimpleCustomFunction(camelContext, function, strict);
+        if (answer != null) {
+            return answer;
+        }
+
         // custom languages
         answer = createSimpleCustomLanguage(function, strict);
         if (answer != null) {
@@ -336,10 +346,41 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (misc != null) {
             return misc;
         }
+        // math functions
+        Expression math = createSimpleExpressionMath(function);
+        if (math != null) {
+            return math;
+        }
 
         // attachments
-        if ("attachments".equals(function) || ifStartsWithReturnRemainder("attachment", function) != null) {
+        if ("attachments".equals(function) || "clearAttachments".equals(function)
+                || ifStartsWithReturnRemainder("setAttachment", function) != null
+                || ifStartsWithReturnRemainder("attachment", function) != null) {
             Expression exp = createSimpleAttachments(camelContext, function);
+            if (exp != null) {
+                return exp;
+            }
+        }
+        // base64
+        if ("base64Encode".equals(function) || "base64Decode".equals(function)
+                || ifStartsWithReturnRemainder("base64Encode", function) != null
+                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
+            Expression exp = createSimpleBase64(camelContext, function);
+            if (exp != null) {
+                return exp;
+            }
+        }
+
+        // it may be a custom function
+        String name = StringHelper.before(function, "(", function);
+        if (PluginHelper.getSimpleFunctionRegistry(camelContext).getFunction(name) != null) {
+            String after = StringHelper.after(function, "(");
+            if (after == null || after.equals(")")) {
+                function = "function(" + name + ")";
+            } else {
+                function = "function(" + name + "," + after;
+            }
+            Expression exp = createSimpleCustomFunction(camelContext, function, strict);
             if (exp != null) {
                 return exp;
             }
@@ -362,6 +403,20 @@ public class SimpleFunctionExpression extends LiteralExpression {
         if (factory.isEmpty()) {
             throw new IllegalArgumentException(
                     "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-attachments to classpath.");
+        }
+        return factory.get().createFunction(camelContext, function, token.getIndex());
+    }
+
+    private Expression createSimpleBase64(CamelContext camelContext, String function) {
+        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+                camelContext,
+                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
+                SimpleLanguageFunctionFactory.class);
+
+        if (factory.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-base64 to classpath.");
         }
         return factory.get().createFunction(camelContext, function, token.getIndex());
     }
@@ -566,6 +621,38 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return null;
     }
 
+    private Expression createSimpleCustomFunction(CamelContext camelContext, String function, boolean strict) {
+        String remainder = ifStartsWithReturnRemainder("function(", function);
+        if (remainder != null) {
+            String key;
+            String param = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length < 1 || tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${function(name)} or ${function(name,exp)} was: " + function,
+                        token.getIndex());
+            }
+            key = StringHelper.removeQuotes(tokens[0]);
+            key = key.trim();
+            if (tokens.length == 2) {
+                param = tokens[1];
+                param = StringHelper.removeLeadingAndEndingQuotes(param.trim());
+            }
+            if (param == null) {
+                param = "${body}";
+            }
+            return SimpleExpressionBuilder.customFunction(key, param);
+        }
+
+        return null;
+    }
+
     private Expression createSimpleCustomLanguage(String function, boolean strict) {
         // jq
         String remainder = ifStartsWithReturnRemainder("jq(", function);
@@ -639,6 +726,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private Expression createSimpleExpressionDirectly(CamelContext camelContext, String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
+        } else if (ObjectHelper.equal(expression, "bodyType")) {
+            return ExpressionBuilder.bodyTypeExpression();
         } else if (ObjectHelper.equal(expression, "prettyBody")) {
             return ExpressionBuilder.prettyBodyExpression();
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
@@ -723,10 +812,65 @@ public class SimpleFunctionExpression extends LiteralExpression {
     private Expression createSimpleExpressionMisc(String function) {
         String remainder;
 
+        // setHeader function
+        remainder = ifStartsWithReturnRemainder("setHeader(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String name = tokens[0];
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            type = StringHelper.removeQuotes(type);
+            return SimpleExpressionBuilder.setHeaderExpression(name, type, exp);
+        }
+        // setVariable function
+        remainder = ifStartsWithReturnRemainder("setVariable(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String name = tokens[0];
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            type = StringHelper.removeQuotes(type);
+            return SimpleExpressionBuilder.setVariableExpression(name, type, exp);
+        }
+
         // replace function
         remainder = ifStartsWithReturnRemainder("replace(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${replace(from,to)} or ${replace(from,to,expression)} was: " + function,
@@ -753,7 +897,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // substring function
         remainder = ifStartsWithReturnRemainder("substring(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substring(num)}, ${substring(num,num)}, or ${substring(num,num,expression)} was: "
@@ -776,11 +920,120 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             return SimpleExpressionBuilder.substringExpression(exp, num1, num2);
         }
+        remainder = ifStartsWithReturnRemainder("substringBefore(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBefore(exp)} or ${substringBefore(exp,exp)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBefore(exp)} or ${substringBefore(exp,exp)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String exp1 = "${body}";
+            String before;
+            if (tokens.length == 2) {
+                exp1 = tokens[0];
+                before = tokens[1];
+            } else {
+                before = tokens[0];
+            }
+            return SimpleExpressionBuilder.substringBeforeExpression(exp1, before);
+        }
+        remainder = ifStartsWithReturnRemainder("substringAfter(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringAfter(exp)} or ${substringAfter(exp,exp)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringAfter(exp)} or ${substringAfter(exp,exp)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String exp1 = "${body}";
+            String after;
+            if (tokens.length == 2) {
+                exp1 = tokens[0];
+                after = tokens[1];
+            } else {
+                after = tokens[0];
+            }
+            return SimpleExpressionBuilder.substringAfterExpression(exp1, after);
+        }
+        remainder = ifStartsWithReturnRemainder("substringBetween(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(after,before)} or ${substringAfter(exp,after,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(after,before)} or ${substringAfter(exp,after,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String exp1 = "${body}";
+            String after;
+            String before;
+            if (tokens.length == 3) {
+                exp1 = tokens[0];
+                after = tokens[1];
+                before = tokens[2];
+            } else {
+                after = tokens[0];
+                before = tokens[1];
+            }
+            return SimpleExpressionBuilder.substringBetweenExpression(exp1, after, before);
+        }
+
+        // contains function
+        remainder = ifStartsWithReturnRemainder("contains(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${contains(text)} or ${contains(exp,text)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 1 || tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${contains(text)} or ${contains(exp,text)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String exp = "${body}";
+            String pattern;
+            if (tokens.length == 1) {
+                pattern = tokens[0];
+            } else {
+                exp = tokens[0];
+                pattern = tokens[1];
+            }
+            return SimpleExpressionBuilder.containsExpression(exp, pattern);
+        }
 
         // random function
         remainder = ifStartsWithReturnRemainder("random(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${random(min,max)} or ${random(max)} was: " + function, token.getIndex());
@@ -796,7 +1049,62 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return SimpleExpressionBuilder.randomExpression("0", values.trim());
             }
         }
+        // range function
+        remainder = ifStartsWithReturnRemainder("range(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = values.split(",", 3);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, token.getIndex());
+                }
+                return SimpleExpressionBuilder.rangeExpression(tokens[0].trim(), tokens[1].trim());
+            } else {
+                return SimpleExpressionBuilder.rangeExpression("1", values.trim());
+            }
+        }
 
+        // distinct function
+        remainder = ifStartsWithReturnRemainder("distinct(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            } else {
+                tokens = new String[] { "${body}" };
+            }
+            return SimpleExpressionBuilder.distinctExpression(tokens);
+        }
+        // reverse function
+        remainder = ifStartsWithReturnRemainder("reverse(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            } else {
+                tokens = new String[] { "${body}" };
+            }
+            return SimpleExpressionBuilder.reverseExpression(tokens);
+        }
+        // shuffle function
+        remainder = ifStartsWithReturnRemainder("shuffle(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            } else {
+                tokens = new String[] { "${body}" };
+            }
+            return SimpleExpressionBuilder.shuffleExpression(tokens);
+        }
         // skip function
         remainder = ifStartsWithReturnRemainder("skip(", function);
         if (remainder != null) {
@@ -805,26 +1113,24 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
             }
             String exp = "${body}";
-            int num = Integer.parseInt(values.trim());
-            return SimpleExpressionBuilder.skipExpression(exp, num);
+            return SimpleExpressionBuilder.skipExpression(exp, values.trim());
         }
 
         // collate function
         remainder = ifStartsWithReturnRemainder("collate(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
             }
             String exp = "${body}";
-            int num = Integer.parseInt(values.trim());
-            return SimpleExpressionBuilder.collateExpression(exp, num);
+            return SimpleExpressionBuilder.collateExpression(exp, values.trim());
         }
 
         // join function
         remainder = ifStartsWithReturnRemainder("join(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             String separator = ",";
             String prefix = null;
             String exp = "${body}";
@@ -846,6 +1152,374 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 }
             }
             return SimpleExpressionBuilder.joinExpression(exp, separator, prefix);
+        }
+        // split function
+        remainder = ifStartsWithReturnRemainder("split(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String exp = "${body}";
+            String separator = ",";
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${split(separator)} or ${split(exp,separator)} was: " + function, token.getIndex());
+                }
+                if (tokens.length == 2) {
+                    exp = tokens[0];
+                    separator = tokens[1];
+                } else {
+                    separator = tokens[0];
+                }
+            } else if ("\n".equals(values)) {
+                separator = values;
+            }
+            return SimpleExpressionBuilder.splitStringExpression(exp, separator);
+        }
+        // foreach function
+        remainder = ifStartsWithReturnRemainder("forEach(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${forEach(exp,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${forEach(exp,exp)} was: " + function, token.getIndex());
+            }
+            String exp1 = tokens[0];
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.forEachExpression(exp1, exp2);
+        }
+        // filter function
+        remainder = ifStartsWithReturnRemainder("filter(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${filter(exp,exp)} was: " + function, token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+            if (tokens.length < 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${filter(exp,exp)} was: " + function, token.getIndex());
+            }
+            String exp1 = tokens[0];
+            // the function takes the remainder of the tokens
+            String exp2 = Arrays.stream(tokens).skip(1).collect(Collectors.joining(","));
+            return SimpleExpressionBuilder.filterExpression(exp1, exp2);
+        }
+
+        // isEmpty function
+        remainder = ifStartsWithReturnRemainder("isEmpty(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.isEmptyExpression(exp);
+        }
+
+        // isAlpha function
+        remainder = ifStartsWithReturnRemainder("isAlpha(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.isAlphaExpression(exp);
+        }
+        remainder = ifStartsWithReturnRemainder("isAlphaNumeric(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.isAlphaNumericExpression(exp);
+        }
+        // isNumeric function
+        remainder = ifStartsWithReturnRemainder("isNumeric(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.isNumericExpression(exp);
+        }
+        // not function
+        remainder = ifStartsWithReturnRemainder("not(", function);
+        if (remainder != null) {
+            String exp = "${body}";
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = value;
+            }
+            return SimpleExpressionBuilder.isNotPredicate(exp);
+        }
+
+        // whichKind function
+        remainder = ifStartsWithReturnRemainder("kindOfType(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.kindOfTypeExpression(exp);
+        }
+
+        // quote function
+        remainder = ifStartsWithReturnRemainder("quote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.quoteExpression(exp);
+        }
+        // safeQuote function
+        remainder = ifStartsWithReturnRemainder("safeQuote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.safeQuoteExpression(exp);
+        }
+        // unquote function
+        remainder = ifStartsWithReturnRemainder("unquote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.unquoteExpression(exp);
+        }
+
+        // trim function
+        remainder = ifStartsWithReturnRemainder("trim(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.trimExpression(exp);
+        }
+
+        // capitalize
+        remainder = ifStartsWithReturnRemainder("capitalize(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.capitalizeExpression(exp);
+        }
+
+        // pad function
+        remainder = ifStartsWithReturnRemainder("pad(", function);
+        if (remainder != null) {
+            String exp;
+            String len;
+            String separator = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(len)} or ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            exp = StringHelper.removeQuotes(tokens[0]);
+            len = StringHelper.removeQuotes(tokens[1]);
+            if (tokens.length == 3) {
+                separator = StringHelper.removeQuotes(tokens[2]);
+            }
+            return SimpleExpressionBuilder.padExpression(exp, len, separator);
+        }
+
+        // concat function
+        remainder = ifStartsWithReturnRemainder("concat(", function);
+        if (remainder != null) {
+            String separator = null;
+            String exp1 = "${body}";
+            String exp2;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+                if (tokens.length > 3) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: "
+                                                    + function,
+                            token.getIndex());
+                }
+                exp1 = StringHelper.removeQuotes(tokens[0]);
+                exp2 = StringHelper.removeQuotes(tokens[1]);
+                if (tokens.length == 3) {
+                    separator = StringHelper.removeQuotes(tokens[2]);
+                }
+            } else {
+                exp2 = StringHelper.removeQuotes(values.trim());
+            }
+            return SimpleExpressionBuilder.concatExpression(exp1, exp2, separator);
+        }
+
+        // throwException function
+        remainder = ifStartsWithReturnRemainder("throwException(", function);
+        if (remainder != null) {
+            String msg;
+            String type = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${throwException(msg)} or ${throwException(type,msg)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${throwException(msg)} or ${throwException(type,msg)} was: " + function,
+                            token.getIndex());
+                }
+                msg = StringHelper.removeQuotes(tokens[0]);
+                type = StringHelper.removeQuotes(tokens[1]);
+            } else {
+                msg = StringHelper.removeQuotes(values.trim());
+            }
+            return SimpleExpressionBuilder.throwExceptionExpression(msg, type);
+        }
+        // assert function
+        remainder = ifStartsWithReturnRemainder("assert(", function);
+        if (remainder != null) {
+            String exp;
+            String msg;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${assert(exp,msg)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+            if (tokens.length != 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${assert(exp,msg)} was: " + function,
+                        token.getIndex());
+            }
+            exp = tokens[0];
+            msg = StringHelper.removeQuotes(tokens[1]);
+            return SimpleExpressionBuilder.assertExpression(exp, msg);
+        }
+
+        // convertTo function
+        remainder = ifStartsWithReturnRemainder("convertTo(", function);
+        if (remainder != null) {
+            String exp = "${body}";
+            String type;
+            // do not use beforeLast as this supports OGNL
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                            token.getIndex());
+                }
+                exp = StringHelper.removeQuotes(tokens[0]);
+                type = StringHelper.removeQuotes(tokens[1]);
+            } else {
+                type = StringHelper.removeQuotes(values.trim());
+            }
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${convertTo(type).OGNL} or ${convertTo(exp,type).OGNL} was: " + function,
+                            token.getIndex());
+                }
+                return SimpleExpressionBuilder.convertToOgnlExpression(exp, type, remainder);
+            } else {
+                return SimpleExpressionBuilder.convertToExpression(exp, type);
+            }
+        }
+
+        // uppercase function
+        remainder = ifStartsWithReturnRemainder("uppercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.uppercaseExpression(exp);
+        }
+        // lowercase function
+        remainder = ifStartsWithReturnRemainder("lowercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.lowercaseExpression(exp);
+        }
+
+        // length function
+        remainder = ifStartsWithReturnRemainder("length(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.lengthExpression(exp);
+        }
+        // size function
+        remainder = ifStartsWithReturnRemainder("size(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.sizeExpression(exp);
+        }
+        // normalizeWhitespace function
+        remainder = ifStartsWithReturnRemainder("normalizeWhitespace(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.normalizeWhitespaceExpression(exp);
         }
 
         // messageHistory function
@@ -875,7 +1549,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         // hash function
         remainder = ifStartsWithReturnRemainder("hash(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${hash(value,algorithm)} or ${hash(value)} was: " + function, token.getIndex());
@@ -899,6 +1573,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (ObjectHelper.isEmpty(value)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${empty(<type>)} but was: " + function, token.getIndex());
+            }
+            return SimpleExpressionBuilder.newEmptyExpression(value);
+        }
+        // newEmpty function
+        remainder = ifStartsWithReturnRemainder("newEmpty(", function);
+        if (remainder != null) {
+            String value = StringHelper.before(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${newEmpty(<type>)} but was: " + function, token.getIndex());
             }
             return SimpleExpressionBuilder.newEmptyExpression(value);
         }
@@ -945,10 +1629,99 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return SimpleExpressionBuilder.mapExpression(tokens);
         }
 
+        // load function
+        remainder = ifStartsWithReturnRemainder("load(", function);
+        if (remainder != null) {
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${load(name)} but was: " + function, token.getIndex());
+            }
+            value = StringHelper.removeQuotes(value);
+            return SimpleExpressionBuilder.loadExpression(value);
+        }
+
         return null;
     }
 
-    private String ifStartsWithReturnRemainder(String prefix, String text) {
+    private Expression createSimpleExpressionMath(String function) {
+        String remainder;
+
+        // abs function
+        remainder = ifStartsWithReturnRemainder("abs(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.absExpression(exp);
+        }
+        // floor function
+        remainder = ifStartsWithReturnRemainder("floor(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.floorExpression(exp);
+        }
+        // ceil function
+        remainder = ifStartsWithReturnRemainder("ceil(", function);
+        if (remainder != null) {
+            String exp = null;
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(value)) {
+                exp = StringHelper.removeQuotes(value);
+            }
+            return SimpleExpressionBuilder.ceilExpression(exp);
+        }
+        // sum function
+        remainder = ifStartsWithReturnRemainder("sum(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            }
+            return SimpleExpressionBuilder.sumExpression(tokens);
+        }
+        // max function
+        remainder = ifStartsWithReturnRemainder("max(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            }
+            return SimpleExpressionBuilder.maxExpression(tokens);
+        }
+        // min function
+        remainder = ifStartsWithReturnRemainder("min(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            }
+            return SimpleExpressionBuilder.minExpression(tokens);
+        }
+        // average function
+        remainder = ifStartsWithReturnRemainder("average(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = StringQuoteHelper.splitSafeQuote(values, ',', true, false);
+            }
+            return SimpleExpressionBuilder.averageExpression(tokens);
+        }
+
+        return null;
+    }
+
+    public static String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {
             String remainder = text.substring(prefix.length());
             if (!remainder.isEmpty()) {
@@ -1060,6 +1833,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return createCodeFileExpression(remainder);
         }
 
+        if ("date:millis".equals(function)) {
+            return "System.currentTimeMillis()";
+        }
         // date: prefix
         remainder = ifStartsWithReturnRemainder("date:", function);
         if (remainder != null) {
@@ -1170,14 +1946,30 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
 
         // miscellaneous functions
-        String misc = createCodeExpressionMisc(function);
+        String misc = createCodeExpressionMisc(camelContext, function);
         if (misc != null) {
             return misc;
         }
+        // math functions
+        String math = createCodeExpressionMath(function);
+        if (math != null) {
+            return math;
+        }
 
         // attachments
-        if ("attachments".equals(function) || ifStartsWithReturnRemainder("attachment", function) != null) {
+        if ("attachments".equals(function) || "clearAttachments".equals(function)
+                || ifStartsWithReturnRemainder("setAttachment", function) != null
+                || ifStartsWithReturnRemainder("attachment", function) != null) {
             String code = createCodeAttachments(camelContext, function);
+            if (code != null) {
+                return code;
+            }
+        }
+        // base64
+        if ("base64Encode".equals(function) || "base64Decode".equals(function)
+                || ifStartsWithReturnRemainder("base64Encode", function) != null
+                || ifStartsWithReturnRemainder("base64Decode", function) != null) {
+            String code = createCodeBase64(camelContext, function);
             if (code != null) {
                 return code;
             }
@@ -1189,6 +1981,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     public String createCodeDirectly(String expression) throws SimpleParserException {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return "body";
+        } else if (ObjectHelper.equal(expression, "bodyType")) {
+            return "bodyType(exchange)";
         } else if (ObjectHelper.equal(expression, "prettyBody")) {
             return "prettyBody(exchange)";
         } else if (ObjectHelper.equal(expression, "bodyOneLine")) {
@@ -1800,13 +2594,118 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return factory.get().createCode(camelContext, function, token.getIndex());
     }
 
-    private String createCodeExpressionMisc(String function) {
+    private String createCodeBase64(CamelContext camelContext, String function) {
+        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+                camelContext,
+                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
+                SimpleLanguageFunctionFactory.class);
+
+        if (factory.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-base64 to classpath.");
+        }
+        return factory.get().createCode(camelContext, function, token.getIndex());
+    }
+
+    private String createCodeExpressionMisc(CamelContext camelContext, String function) {
         String remainder;
+
+        // setHeader function
+        remainder = ifStartsWithReturnRemainder("setHeader(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setHeader(name,exp)} or ${setHeader(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 1; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            // name must be in double quote as its a string value
+            String name = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+            name = StringQuoteHelper.doubleQuote(name);
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            if (type != null) {
+                type = StringHelper.removeQuotes(type);
+                type = type.trim();
+                type = appendClass(type);
+                type = type.replace('$', '.');
+            } else {
+                type = "null";
+            }
+            return "Object value = " + exp + ";\n        return setHeader(exchange, " + name + ", " + type + ", value);";
+        }
+        // setVariable function
+        remainder = ifStartsWithReturnRemainder("setVariable(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${setVariable(name,exp)} or ${setVariable(name,type,exp)} was: " + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 1; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            // name must be in double quote as its a string value
+            String name = StringHelper.removeLeadingAndEndingQuotes(tokens[0]);
+            name = StringQuoteHelper.doubleQuote(name);
+            String exp;
+            String type = null;
+            if (tokens.length == 3) {
+                type = tokens[1];
+                exp = tokens[2];
+            } else {
+                exp = tokens[1];
+            }
+            if (type != null) {
+                type = StringHelper.removeQuotes(type);
+                type = type.trim();
+                type = appendClass(type);
+                type = type.replace('$', '.');
+            } else {
+                type = "null";
+            }
+            return "Object value = " + exp + ";\n        return setVariable(exchange, " + name + ", " + type + ", value);";
+        }
 
         // substring function
         remainder = ifStartsWithReturnRemainder("substring(", function);
         if (remainder != null) {
-            String values = StringHelper.before(remainder, ")");
+            String values = StringHelper.beforeLast(remainder, ")");
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException(
                         "Valid syntax: ${substring(num)}, ${substring(num,num)} was: "
@@ -1826,6 +2725,201 @@ public class SimpleFunctionExpression extends LiteralExpression {
             num1 = num1.trim();
             num2 = num2.trim();
             return "substring(exchange, " + num1 + ", " + num2 + ")";
+        }
+        remainder = ifStartsWithReturnRemainder("substringBefore(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBefore(before)}, ${substringBefore(exp,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBefore(before)}, ${substringBefore(exp,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            String body = "body";
+            String before;
+            if (tokens.length > 1) {
+                body = tokens[0];
+                before = tokens[1];
+            } else {
+                before = tokens[0];
+            }
+            return "Object value = " + body + ";\n        Object before = " + before
+                   + ";\n        return substringBefore(exchange, value, before);";
+        }
+        remainder = ifStartsWithReturnRemainder("substringAfter(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringAfter(before)}, ${substringAfter(exp,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringAfter(before)}, ${substringAfter(exp,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            String body = "body";
+            String before;
+            if (tokens.length > 1) {
+                body = tokens[0];
+                before = tokens[1];
+            } else {
+                before = tokens[0];
+            }
+            return "Object value = " + body + ";\n        Object after = " + before
+                   + ";\n        return substringAfter(exchange, value, after);";
+        }
+        remainder = ifStartsWithReturnRemainder("substringBetween(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(after,before)}, ${substringBetween(exp,after,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${substringBetween(after,before)}, ${substringBetween(exp,after,before)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            String body = "body";
+            String after;
+            String before;
+            if (tokens.length == 3) {
+                body = tokens[0];
+                after = tokens[1];
+                before = tokens[2];
+            } else {
+                after = tokens[0];
+                before = tokens[1];
+            }
+            return "Object value = " + body + ";\n        Object after = " + after
+                   + ";\n        Object before = " + before
+                   + ";\n        return substringBetween(exchange, value, after, before);";
+        }
+        // split function
+        remainder = ifStartsWithReturnRemainder("split(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String exp = "body";
+            String separator = ",";
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${split(separator)} or ${split(exp,separator)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                for (int i = 0; i < tokens.length; i++) {
+                    String s = tokens[i];
+                    if (StringHelper.isSingleQuoted(s)) {
+                        s = StringHelper.removeLeadingAndEndingQuotes(s);
+                        s = StringQuoteHelper.doubleQuote(s);
+                        tokens[i] = s;
+                    }
+                }
+                if (tokens.length == 2) {
+                    exp = tokens[0];
+                    separator = tokens[1];
+                } else {
+                    separator = tokens[0];
+                }
+            }
+            // separator must be in double quotes
+            separator = StringHelper.removeLeadingAndEndingQuotes(separator);
+            separator = StringQuoteHelper.doubleQuote(separator);
+            return "Object value = " + exp + ";\n        String separator = " + separator
+                   + ";\n        return stringSplit(exchange, value, separator);";
+        }
+        // foreach function
+        remainder = ifStartsWithReturnRemainder("forEach(", function);
+        if (remainder != null) {
+            throw new UnsupportedOperationException("forEach is not supported in csimple language");
+        }
+        // filter function
+        remainder = ifStartsWithReturnRemainder("filter(", function);
+        if (remainder != null) {
+            throw new UnsupportedOperationException("filter is not supported in csimple language");
+        }
+
+        // contains function
+        remainder = ifStartsWithReturnRemainder("contains(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${contains(text)} or ${contains(exp,text)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 1 || tokens.length > 2) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${contains(text)} or ${contains(exp,text)} was: "
+                                                + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            String exp = "body";
+            String pattern;
+            if (tokens.length == 1) {
+                pattern = tokens[0];
+            } else {
+                exp = tokens[0];
+                pattern = tokens[1];
+            }
+            pattern = StringHelper.removeLeadingAndEndingQuotes(pattern);
+            pattern = StringQuoteHelper.doubleQuote(pattern);
+            return "Object value = " + exp + ";\n        return containsIgnoreCase(exchange, value, " + pattern + ");";
         }
 
         // random function
@@ -1847,6 +2941,26 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 return "random(exchange, " + before + ", " + after + ")";
             } else {
                 return "random(exchange, 0, " + values.trim() + ")";
+            }
+        }
+        remainder = ifStartsWithReturnRemainder("range(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${range(min,max)} or ${range(max)} was: " + function, token.getIndex());
+            }
+            if (values.contains(",")) {
+                String before = StringHelper.before(remainder, ",");
+                before = before.trim();
+                String after = StringHelper.after(remainder, ",");
+                after = after.trim();
+                if (after.endsWith(")")) {
+                    after = after.substring(0, after.length() - 1);
+                }
+                return "rangeList(exchange, " + before + ", " + after + ")";
+            } else {
+                return "rangeList(exchange, 0, " + values.trim() + ")";
             }
         }
 
@@ -1881,6 +2995,70 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "replace(exchange, " + from + ", " + to + ")";
         }
 
+        // distinct function
+        remainder = ifStartsWithReturnRemainder("distinct(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "body";
+            return "distinct(exchange, " + p + ")";
+        }
+        // reverse function
+        remainder = ifStartsWithReturnRemainder("reverse(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "body";
+            return "reverse(exchange, " + p + ")";
+        }
+        // shuffle function
+        remainder = ifStartsWithReturnRemainder("shuffle(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "body";
+            return "shuffle(exchange, " + p + ")";
+        }
+
         // skip function
         remainder = ifStartsWithReturnRemainder("skip(", function);
         if (remainder != null) {
@@ -1889,6 +3067,566 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
             }
             return "skip(exchange, " + values.trim() + ")";
+        }
+
+        // pad function
+        remainder = ifStartsWithReturnRemainder("pad(", function);
+        if (remainder != null) {
+            String separator = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(len)} or ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            String[] tokens = codeSplitSafe(values, ',', true, true);
+            if (tokens.length < 2 || tokens.length > 3) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${pad(exp,len)} or ${pad(exp,len,separator)} was: " + function,
+                        token.getIndex());
+            }
+            // single quotes should be double quotes
+            for (int i = 0; i < tokens.length; i++) {
+                String s = tokens[i];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                    tokens[i] = s;
+                }
+            }
+            if (tokens.length == 3) {
+                separator = tokens[2];
+            }
+            // separator must be in double quotes
+            separator = StringHelper.removeLeadingAndEndingQuotes(separator);
+            separator = separator != null ? StringQuoteHelper.doubleQuote(separator) : "null";
+            return "Object value = " + tokens[0] + ";\n        " + "Object width = " + tokens[1]
+                   + ";\n        String separator = " + separator
+                   + ";\n        return pad(exchange, value, width, separator);";
+        }
+
+        // kindOfType function
+        remainder = ifStartsWithReturnRemainder("kindOfType(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${kindOfType(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return kindOfType(exchange, o);";
+        }
+
+        // quote function
+        remainder = ifStartsWithReturnRemainder("quote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${quote(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return quote(exchange, o);";
+        }
+        // safaeQuote function
+        remainder = ifStartsWithReturnRemainder("safeQuote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${safeQuote(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return safeQuote(exchange, o);";
+        }
+        // unquote function
+        remainder = ifStartsWithReturnRemainder("unquote(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${unquote(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    // need to escape double quotes
+                    s = s.replace("\"", "\\\"");
+                    // and enclose in a string
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return unquote(exchange, o);";
+        }
+
+        // trim function
+        remainder = ifStartsWithReturnRemainder("trim(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${trim(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return trim(exchange, o);";
+        }
+
+        // isEmpty function
+        remainder = ifStartsWithReturnRemainder("isEmpty(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${isEmpty(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return isEmpty(exchange, o);";
+        }
+
+        // isNumeric function
+        remainder = ifStartsWithReturnRemainder("isAlpha(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${isAlpha(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return isAlpha(exchange, o);";
+        }
+        // isAlphaNumeric function
+        remainder = ifStartsWithReturnRemainder("isAlphaNumeric(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${isAlphaNumeric(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return isAlphaNumeric(exchange, o);";
+        }
+        // isNumeric function
+        remainder = ifStartsWithReturnRemainder("isNumeric(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${isNumeric(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return isNumeric(exchange, o);";
+        }
+        // not function
+        remainder = ifStartsWithReturnRemainder("not(", function);
+        if (remainder != null) {
+            String exp = "body";
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${not(exp)} was: " + function, token.getIndex());
+                }
+
+                // Parse the condition as a predicate and generate code
+                SimplePredicateParser predicateParser
+                        = new SimplePredicateParser(camelContext, tokens[0], true, skipFileFunctions, null);
+                exp = predicateParser.parseCode();
+            }
+            return "Object o = " + exp + ";\n        return isNot(exchange, o);";
+        }
+
+        // capitalize function
+        remainder = ifStartsWithReturnRemainder("capitalize(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${capitalize(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return capitalize(exchange, o);";
+        }
+
+        // concat function
+        remainder = ifStartsWithReturnRemainder("concat(", function);
+        if (remainder != null) {
+            String separator = "null";
+            String exp1 = "body";
+            String exp2;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length > 3) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${concat(exp)} or ${concat(exp,exp)} or ${concat(exp,exp,separator)} was: "
+                                                    + function,
+                            token.getIndex());
+                }
+                // single quotes should be double quotes
+                for (int i = 0; i < tokens.length; i++) {
+                    String s = tokens[i];
+                    if (StringHelper.isSingleQuoted(s)) {
+                        s = StringHelper.removeLeadingAndEndingQuotes(s);
+                        s = StringQuoteHelper.doubleQuote(s);
+                        tokens[i] = s;
+                    }
+                }
+                if (tokens.length == 1) {
+                    exp2 = tokens[0];
+                } else {
+                    exp1 = tokens[0];
+                    exp2 = tokens[1];
+                }
+                if (tokens.length == 3) {
+                    separator = tokens[2];
+                }
+            } else {
+                String s = values.trim();
+                s = StringHelper.removeLeadingAndEndingQuotes(s);
+                s = StringQuoteHelper.doubleQuote(s);
+                exp2 = s;
+            }
+            return "Object right = " + exp2 + ";\n        Object left = " + exp1 + ";\n        " + "Object separator = "
+                   + separator + ";\n        return concat(exchange, left, right, separator);";
+        }
+
+        // convertTo function
+        remainder = ifStartsWithReturnRemainder("convertTo(", function);
+        if (remainder != null) {
+            String ognl = null;
+            String exp = "body";
+            String type;
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${convertTo(type)} or ${convertTo(exp,type)} was: " + function,
+                            token.getIndex());
+                }
+                String s = tokens[0].trim();
+                s = StringHelper.removeLeadingAndEndingQuotes(s);
+                s = StringQuoteHelper.doubleQuote(s);
+                exp = s;
+                type = tokens[1];
+            } else {
+                type = values.trim();
+            }
+            type = appendClass(type);
+            type = type.replace('$', '.');
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+
+            remainder = StringHelper.after(remainder, ")");
+            if (ObjectHelper.isNotEmpty(remainder)) {
+                boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+                if (invalid) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${convertTo(type).OGNL} or ${convertTo(exp,type).OGNL} was: " + function,
+                            token.getIndex());
+                }
+                ognl = ognlCodeMethods(remainder, type);
+            }
+
+            String code = "Object value = " + exp + ";\n        return convertTo(exchange, " + type + ", value)";
+            if (ognl != null) {
+                code += ognl;
+            }
+            code += ";";
+            return code;
+        }
+        // throwException function
+        remainder = ifStartsWithReturnRemainder("throwException(", function);
+        if (remainder != null) {
+            String msg;
+            String type = "IllegalArgumentException";
+            String values = StringHelper.before(remainder, ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${throwException(msg)} or ${throwException(msg,type)} was: " + function,
+                        token.getIndex());
+            }
+            if (values.contains(",")) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length > 2) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${throwException(msg)} or ${throwException(msg,type)} was: " + function,
+                            token.getIndex());
+                }
+                msg = tokens[0];
+                type = tokens[1];
+            } else {
+                msg = values.trim();
+            }
+            msg = StringHelper.removeLeadingAndEndingQuotes(msg);
+            msg = StringQuoteHelper.doubleQuote(msg);
+            type = appendClass(type);
+            type = type.replace('$', '.');
+            return "return throwException(exchange, " + msg + ", " + type + ");";
+        }
+        // assertExpression function
+        remainder = ifStartsWithReturnRemainder("assertExpression(", function);
+        if (remainder != null) {
+            throw new UnsupportedOperationException("assertExpression is not supported in csimple language");
+        }
+
+        // uppercase function
+        remainder = ifStartsWithReturnRemainder("uppercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${uppercase(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return uppercase(exchange, o);";
+        }
+        // lowercase
+        remainder = ifStartsWithReturnRemainder("lowercase(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${lowercase(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return lowercase(exchange, o);";
+        }
+
+        // length function
+        remainder = ifStartsWithReturnRemainder("length(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${length(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return length(exchange, o);";
+        }
+        // size function
+        remainder = ifStartsWithReturnRemainder("size(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${size(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "body";
+            }
+            return "Object o = " + exp + ";\n        return size(exchange, o);";
+        }
+        // normalizeWhitespace function
+        remainder = ifStartsWithReturnRemainder("normalizeWhitespace(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${normalizeWhitespace(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return normalizeWhitespace(exchange, o);";
         }
 
         // collate function
@@ -1916,7 +3654,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return "messageHistory(exchange, true)";
         }
 
-        // join
+        // join function
         remainder = ifStartsWithReturnRemainder("join(", function);
         if (remainder != null) {
             String values = StringHelper.beforeLast(remainder, ")");
@@ -1964,7 +3702,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         "Valid syntax: ${empty(<type>)} but was: " + function, token.getIndex());
             }
             value = StringQuoteHelper.doubleQuote(value);
-            return "empty(exchange, " + value + ")";
+            return "newEmpty(exchange, " + value + ")";
+        }
+        // newEmpty
+        remainder = ifStartsWithReturnRemainder("newEmpty(", function);
+        if (remainder != null) {
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${newEmpty(<type>)} but was: " + function, token.getIndex());
+            }
+            value = StringQuoteHelper.doubleQuote(value);
+            return "newEmpty(exchange, " + value + ")";
         }
 
         // list function
@@ -1987,6 +3736,27 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             String p = sj.length() > 0 ? sj.toString() : "null";
             return "list(exchange, " + p + ")";
+        }
+        // distinct function
+        remainder = ifStartsWithReturnRemainder("distinct(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "body";
+            return "distinct(exchange, " + p + ")";
         }
 
         // map function
@@ -2105,6 +3875,22 @@ public class SimpleFunctionExpression extends LiteralExpression {
                    + tokens[1] + " : " + tokens[2];
         }
 
+        // load function
+        remainder = ifStartsWithReturnRemainder("load(", function);
+        if (remainder != null) {
+            String value = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isEmpty(value)) {
+                throw new SimpleParserException(
+                        "Valid syntax: ${load(name)} but was: " + function, token.getIndex());
+            }
+            // single quotes should be double quotes
+            if (StringHelper.isSingleQuoted(value)) {
+                value = StringHelper.removeLeadingAndEndingQuotes(value);
+                value = StringQuoteHelper.doubleQuote(value);
+            }
+            return "Object o = " + value + ";\n        return load(exchange, o);";
+        }
+
         return null;
     }
 
@@ -2134,7 +3920,170 @@ public class SimpleFunctionExpression extends LiteralExpression {
         return answer;
     }
 
-    private static String ognlCodeMethods(String remainder, String type) {
+    private String createCodeExpressionMath(String function) {
+        String remainder;
+
+        // sum function
+        remainder = ifStartsWithReturnRemainder("sum(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "null";
+            return "sum(exchange, " + p + ")";
+        }
+        // abs function
+        remainder = ifStartsWithReturnRemainder("abs(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${abs(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return abs(exchange, o);";
+        }
+        // floor function
+        remainder = ifStartsWithReturnRemainder("floor(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${floor(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return floor(exchange, o);";
+        }
+        remainder = ifStartsWithReturnRemainder("ceil(", function);
+        if (remainder != null) {
+            String exp = null;
+            String values = StringHelper.beforeLast(remainder, ")");
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = codeSplitSafe(values, ',', true, true);
+                if (tokens.length != 1) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${ceil(exp)} was: " + function, token.getIndex());
+                }
+                // single quotes should be double quotes
+                String s = tokens[0];
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                exp = s;
+            }
+            if (ObjectHelper.isEmpty(exp)) {
+                exp = "null";
+            }
+            return "Object o = " + exp + ";\n        return ceil(exchange, o);";
+        }
+
+        // max function
+        remainder = ifStartsWithReturnRemainder("max(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "null";
+            return "max(exchange, " + p + ")";
+        }
+        // min function
+        remainder = ifStartsWithReturnRemainder("min(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "null";
+            return "min(exchange, " + p + ")";
+        }
+        // average function
+        remainder = ifStartsWithReturnRemainder("average(", function);
+        if (remainder != null) {
+            String values = StringHelper.beforeLast(remainder, ")");
+            String[] tokens = null;
+            if (ObjectHelper.isNotEmpty(values)) {
+                tokens = codeSplitSafe(values, ',', true, true);
+            }
+            StringJoiner sj = new StringJoiner(", ");
+            for (int i = 0; tokens != null && i < tokens.length; i++) {
+                String s = tokens[i];
+                // single quotes should be double quotes
+                if (StringHelper.isSingleQuoted(s)) {
+                    s = StringHelper.removeLeadingAndEndingQuotes(s);
+                    s = StringQuoteHelper.doubleQuote(s);
+                }
+                sj.add(s);
+            }
+            String p = sj.length() > 0 ? sj.toString() : "null";
+            return "average(exchange, " + p + ")";
+        }
+
+        return null;
+    }
+
+    public static String ognlCodeMethods(String remainder, String type) {
         StringBuilder sb = new StringBuilder(256);
 
         if (remainder != null) {
@@ -2213,7 +4162,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
         }
     }
 
-    private static String[] codeSplitSafe(String input, char separator, boolean trim, boolean keepQuotes) {
+    public static String[] codeSplitSafe(String input, char separator, boolean trim, boolean keepQuotes) {
         if (input == null) {
             return null;
         }

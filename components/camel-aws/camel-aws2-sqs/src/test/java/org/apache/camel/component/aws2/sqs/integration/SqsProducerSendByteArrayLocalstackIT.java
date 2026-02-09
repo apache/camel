@@ -49,7 +49,8 @@ public class SqsProducerSendByteArrayLocalstackIT extends Aws2SQSBaseTest {
         });
 
         MockEndpoint.assertIsSatisfied(context);
-        Assertions.assertEquals(3, result.getExchanges().get(0).getMessage().getHeaders().size());
+        // 3 original headers + 1 new SEQUENCE_NUMBER header (null for non-FIFO queues)
+        Assertions.assertEquals(4, result.getExchanges().get(0).getMessage().getHeaders().size());
         Assertions.assertEquals("HeaderTest",
                 Strings.fromByteArray((byte[]) result.getExchanges().get(0).getMessage().getHeaders().get("value1")));
     }

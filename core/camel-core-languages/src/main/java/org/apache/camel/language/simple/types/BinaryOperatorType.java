@@ -16,6 +16,9 @@
  */
 package org.apache.camel.language.simple.types;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Types of binary operators supported
  */
@@ -42,7 +45,11 @@ public enum BinaryOperatorType {
     RANGE,
     NOT_RANGE,
     STARTS_WITH,
-    ENDS_WITH;
+    NOT_STARTS_WITH,
+    ENDS_WITH,
+    NOT_ENDS_WITH;
+
+    private static final Logger LOG = LoggerFactory.getLogger(BinaryOperatorType.class);
 
     public static BinaryOperatorType asOperator(String text) {
         if ("==".equals(text)) {
@@ -63,7 +70,10 @@ public enum BinaryOperatorType {
             return NOT_EQ_IGNORE;
         } else if ("contains".equals(text)) {
             return CONTAINS;
-        } else if ("!contains".equals(text) || "not contains".equals(text)) {
+        } else if ("!contains".equals(text)) {
+            return NOT_CONTAINS;
+        } else if ("not contains".equals(text)) {
+            LOG.warn("Simple operator `not contains` is deprecated, use `!contains` instead");
             return NOT_CONTAINS;
         } else if ("~~".equals(text)) {
             return CONTAINS_IGNORECASE;
@@ -71,24 +81,46 @@ public enum BinaryOperatorType {
             return NOT_CONTAINS_IGNORECASE;
         } else if ("regex".equals(text)) {
             return REGEX;
-        } else if ("!regex".equals(text) || "not regex".equals(text)) {
+        } else if ("!regex".equals(text)) {
+            return NOT_REGEX;
+        } else if ("not regex".equals(text)) {
+            LOG.warn("Simple operator `not regex` is deprecated, use `!regex` instead");
             return NOT_REGEX;
         } else if ("in".equals(text)) {
             return IN;
-        } else if ("!in".equals(text) || "not in".equals(text)) {
+        } else if ("!in".equals(text)) {
+            return NOT_IN;
+        } else if ("not in".equals(text)) {
+            LOG.warn("Simple operator `not in` is deprecated, use `!in` instead");
             return NOT_IN;
         } else if ("is".equals(text)) {
             return IS;
-        } else if ("!is".equals(text) || "not is".equals(text)) {
+        } else if ("!is".equals(text)) {
+            return NOT_IS;
+        } else if ("not is".equals(text)) {
+            LOG.warn("Simple operator `not is` is deprecated, use `!is` instead");
             return NOT_IS;
         } else if ("range".equals(text)) {
             return RANGE;
-        } else if ("!range".equals(text) || "not range".equals(text)) {
+        } else if ("!range".equals(text)) {
             return NOT_RANGE;
-        } else if ("startsWith".equals(text) || "starts with".equals(text)) {
+        } else if ("not range".equals(text)) {
+            LOG.warn("Simple operator `not range` is deprecated, use `!range` instead");
+            return NOT_RANGE;
+        } else if ("startsWith".equals(text)) {
             return STARTS_WITH;
-        } else if ("endsWith".equals(text) || "ends with".equals(text)) {
+        } else if ("starts with".equals(text)) {
+            LOG.warn("Simple operator `starts with` is deprecated, use `startsWith` instead");
+            return STARTS_WITH;
+        } else if ("endsWith".equals(text)) {
             return ENDS_WITH;
+        } else if ("ends with".equals(text)) {
+            LOG.warn("Simple operator `ends with` is deprecated, use `endsWith` instead");
+            return ENDS_WITH;
+        } else if ("!startsWith".equals(text)) {
+            return NOT_STARTS_WITH;
+        } else if ("!endsWith".equals(text)) {
+            return NOT_ENDS_WITH;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -136,8 +168,12 @@ public enum BinaryOperatorType {
             return "!range";
         } else if (operator == STARTS_WITH) {
             return "startsWith";
+        } else if (operator == NOT_STARTS_WITH) {
+            return "!startsWith";
         } else if (operator == ENDS_WITH) {
             return "endsWith";
+        } else if (operator == NOT_ENDS_WITH) {
+            return "!endsWith";
         }
         return "";
     }
@@ -238,9 +274,9 @@ public enum BinaryOperatorType {
             return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
         } else if (operator == NOT_RANGE) {
             return new ParameterType[] { ParameterType.LiteralWithFunction, ParameterType.Function };
-        } else if (operator == STARTS_WITH) {
+        } else if (operator == STARTS_WITH || operator == NOT_STARTS_WITH) {
             return null;
-        } else if (operator == ENDS_WITH) {
+        } else if (operator == ENDS_WITH || operator == NOT_ENDS_WITH) {
             return null;
         }
         return null;

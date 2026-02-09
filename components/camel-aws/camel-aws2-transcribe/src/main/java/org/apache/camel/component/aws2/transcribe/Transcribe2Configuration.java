@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.transcribe;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
 @UriParams
-public class Transcribe2Configuration implements Cloneable {
+public class Transcribe2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Logical name")
     @Metadata(required = true)
@@ -64,8 +65,8 @@ public class Transcribe2Configuration implements Cloneable {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
-    @UriParam(defaultValue = "HTTPS")
-    private String proxyProtocol = "HTTPS";
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "security", secret = true)
     private String proxyUsername;
     @UriParam(label = "security", secret = true)
@@ -334,14 +335,14 @@ public class Transcribe2Configuration implements Cloneable {
     /**
      * To define a proxy protocol when instantiating the Transcribe client
      */
-    public String getProxyProtocol() {
+    public Protocol getProxyProtocol() {
         return proxyProtocol;
     }
 
     /**
      * To define a proxy protocol when instantiating the Transcribe client
      */
-    public void setProxyProtocol(String proxyProtocol) {
+    public void setProxyProtocol(Protocol proxyProtocol) {
         this.proxyProtocol = proxyProtocol;
     }
 

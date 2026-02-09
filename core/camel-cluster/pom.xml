@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cluster</artifactId>
@@ -36,7 +36,6 @@
         <firstVersion>3.2.0</firstVersion>
         <label>core</label>
         <camel-prepare-component>false</camel-prepare-component>
-        <supportLevel>preview</supportLevel>
     </properties>
 
     <dependencies>

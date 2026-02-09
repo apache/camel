@@ -90,88 +90,88 @@ public class RouteDevConsole extends AbstractDevConsole {
             }
             sb.append(String.format("    Id: %s", mrb.getRouteId()));
             if (mrb.getNodePrefixId() != null) {
-                sb.append(String.format("\n    Node Prefix Id: %s", mrb.getNodePrefixId()));
+                sb.append(String.format("%n    Node Prefix Id: %s", mrb.getNodePrefixId()));
             }
             if (mrb.getRouteGroup() != null) {
-                sb.append(String.format("\n    Group: %s", mrb.getRouteGroup()));
+                sb.append(String.format("%n    Group: %s", mrb.getRouteGroup()));
             }
             if (mrb.getDescription() != null) {
-                sb.append(String.format("\n    Description: %s", mrb.getDescription()));
+                sb.append(String.format("%n    Description: %s", mrb.getDescription()));
             }
             if (mrb.getNote() != null) {
-                sb.append(String.format("\n    Note: %s", mrb.getNote()));
+                sb.append(String.format("%n    Note: %s", mrb.getNote()));
             }
             if (mrb.isCreatedByKamelet()) {
-                sb.append(String.format("\n    Created By Kamelet: %s", true));
+                sb.append(String.format("%n    Created By Kamelet: %s", true));
             }
             if (mrb.isCreatedByRouteTemplate()) {
-                sb.append(String.format("\n    Created By Route Template: %s", true));
+                sb.append(String.format("%n    Created By Route Template: %s", true));
             }
-            sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
-            sb.append(String.format("\n    Remote: %s", mrb.isRemoteEndpoint()));
+            sb.append(String.format("%n    From: %s", mrb.getEndpointUri()));
+            sb.append(String.format("%n    Remote: %s", mrb.isRemoteEndpoint()));
             if (mrb.getSourceLocation() != null) {
-                sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
             }
-            sb.append(String.format("\n    State: %s", mrb.getState()));
+            sb.append(String.format("%n    State: %s", mrb.getState()));
             if (mrb.getLastError() != null) {
                 String phase = StringHelper.capitalize(mrb.getLastError().getPhase().name().toLowerCase());
                 String ago = TimeUtils.printSince(mrb.getLastError().getDate().getTime());
-                sb.append(String.format("\n    Error Ago: %s", ago));
-                sb.append(String.format("\n    Error Phase: %s", phase));
+                sb.append(String.format("%n    Error Ago: %s", ago));
+                sb.append(String.format("%n    Error Phase: %s", phase));
                 Throwable cause = mrb.getLastError().getException();
                 if (cause != null) {
-                    sb.append(String.format("\n    Error Message: %s", cause.getMessage()));
+                    sb.append(String.format("%n    Error Message: %s", cause.getMessage()));
                     final String stackTrace = ExceptionHelper.stackTraceToString(cause);
                     sb.append("\n\n");
                     sb.append(stackTrace);
                     sb.append("\n\n");
                 }
             }
-            sb.append(String.format("\n    Uptime: %s", mrb.getUptime()));
+            sb.append(String.format("%n    Uptime: %s", mrb.getUptime()));
             String coverage = calculateRouteCoverage(mrb, true);
             if (coverage != null) {
-                sb.append(String.format("\n    Coverage: %s", coverage));
+                sb.append(String.format("%n    Coverage: %s", coverage));
             }
             String load1 = getLoad1(mrb);
             String load5 = getLoad5(mrb);
             String load15 = getLoad15(mrb);
             if (!load1.isEmpty() || !load5.isEmpty() || !load15.isEmpty()) {
-                sb.append(String.format("\n    Load Average: %s %s %s", load1, load5, load15));
+                sb.append(String.format("%n    Load Average: %s %s %s", load1, load5, load15));
             }
             String thp = getThroughput(mrb);
             if (!thp.isEmpty()) {
-                sb.append(String.format("\n    Messages/Sec: %s", thp));
+                sb.append(String.format("%n    Messages/Sec: %s", thp));
             }
-            sb.append(String.format("\n    Total: %s", mrb.getExchangesTotal()));
-            sb.append(String.format("\n    Failed: %s", mrb.getExchangesFailed()));
-            sb.append(String.format("\n    Inflight: %s", mrb.getExchangesInflight()));
+            sb.append(String.format("%n    Total: %s", mrb.getExchangesTotal()));
+            sb.append(String.format("%n    Failed: %s", mrb.getExchangesFailed()));
+            sb.append(String.format("%n    Inflight: %s", mrb.getExchangesInflight()));
             long idle = mrb.getIdleSince();
             if (idle > 0) {
-                sb.append(String.format("\n    Idle Since: %s", TimeUtils.printDuration(idle)));
+                sb.append(String.format("%n    Idle Since: %s", TimeUtils.printDuration(idle)));
             } else {
-                sb.append(String.format("\n    Idle Since: %s", ""));
+                sb.append(String.format("%n    Idle Since: %s", ""));
             }
-            sb.append(String.format("\n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
-            sb.append(String.format("\n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
-            sb.append(String.format("\n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
+            sb.append(String.format("%n    Mean Time: %s", TimeUtils.printDuration(mrb.getMeanProcessingTime(), true)));
+            sb.append(String.format("%n    Max Time: %s", TimeUtils.printDuration(mrb.getMaxProcessingTime(), true)));
+            sb.append(String.format("%n    Min Time: %s", TimeUtils.printDuration(mrb.getMinProcessingTime(), true)));
             if (mrb.getExchangesTotal() > 0) {
-                sb.append(String.format("\n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
-                sb.append(String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
+                sb.append(String.format("%n    Last Time: %s", TimeUtils.printDuration(mrb.getLastProcessingTime(), true)));
+                sb.append(String.format("%n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
             }
             Date last = mrb.getLastExchangeCreatedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n    Since Last Started: %s", ago));
+                sb.append(String.format("%n    Since Last Started: %s", ago));
             }
             last = mrb.getLastExchangeCompletedTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n    Since Last Completed: %s", ago));
+                sb.append(String.format("%n    Since Last Completed: %s", ago));
             }
             last = mrb.getLastExchangeFailureTimestamp();
             if (last != null) {
                 String ago = TimeUtils.printSince(last.getTime());
-                sb.append(String.format("\n    Since Last Failed: %s", ago));
+                sb.append(String.format("%n    Since Last Failed: %s", ago));
             }
             if (processors) {
                 includeProcessorsText(mrb, sb);

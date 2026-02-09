@@ -94,7 +94,7 @@ public class SourceDirDevConsole extends AbstractDevConsole {
                                             t = reader.readLine();
                                             if (t != null) {
                                                 i++;
-                                                code.append(String.format("\n    #%s %s", i, t));
+                                                code.append(String.format("%n    #%s %s", i, t));
                                             }
                                         } while (t != null);
                                     } catch (Exception e) {

@@ -56,8 +56,8 @@ public class MDCAsyncWiretapTest extends ExchangeTestSupport {
         mock.setAssertPeriod(5000);
         context.createProducerTemplate().sendBody("direct:start", null);
         mock.assertIsSatisfied(1000);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+
+        // NOTE: more assertions directly in process as it was simpler to verify the condition while executing the async process.
     }
 
     @Override

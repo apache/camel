@@ -39,8 +39,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
 
         if (getCamelContext().getPropertiesComponent().hasPropertiesFunction("hashicorp")) {
             PropertiesFunction pf = getCamelContext().getPropertiesComponent().getPropertiesFunction("hashicorp");
-            if (pf instanceof HashicorpVaultPropertiesFunction) {
-                propertiesFunction = (HashicorpVaultPropertiesFunction) pf;
+            if (pf instanceof HashicorpVaultPropertiesFunction hvpf) {
+                propertiesFunction = hvpf;
             }
         }
     }
@@ -52,9 +52,9 @@ public class SecretsDevConsole extends AbstractDevConsole {
         HashicorpVaultConfiguration hashicorp = getCamelContext().getVaultConfiguration().getHashicorpVaultConfiguration();
         sb.append("Hashicorp Vault Secrets:");
         if (hashicorp != null) {
-            sb.append(String.format("\n    Host: %s", hashicorp.getHost()));
-            sb.append(String.format("\n    Port: %s", hashicorp.getPort()));
-            sb.append(String.format("\n    Scheme: %s", hashicorp.getScheme()));
+            sb.append(String.format("%n    Host: %s", hashicorp.getHost()));
+            sb.append(String.format("%n    Port: %s", hashicorp.getPort()));
+            sb.append(String.format("%n    Scheme: %s", hashicorp.getScheme()));
             sb.append("\n    Login: OAuth Token");
         }
 

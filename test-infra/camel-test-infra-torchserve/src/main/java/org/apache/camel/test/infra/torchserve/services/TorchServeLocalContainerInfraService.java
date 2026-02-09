@@ -70,13 +70,10 @@ public class TorchServeLocalContainerInfraService implements TorchServeInfraServ
                         .waitingFor(Wait.forListeningPorts(INFERENCE_PORT, MANAGEMENT_PORT, METRICS_PORT))
                         .withCommand(CONTAINER_COMMAND);
 
-                if (fixedPort) {
-                    addFixedExposedPort(INFERENCE_PORT, INFERENCE_PORT);
-                    addFixedExposedPort(MANAGEMENT_PORT, MANAGEMENT_PORT);
-                    addFixedExposedPort(METRICS_PORT, METRICS_PORT);
-                } else {
-                    withExposedPorts(INFERENCE_PORT, MANAGEMENT_PORT, METRICS_PORT);
-                }
+                ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                        ContainerEnvironmentUtil.PortConfig.primary(INFERENCE_PORT),
+                        ContainerEnvironmentUtil.PortConfig.secondary(MANAGEMENT_PORT),
+                        ContainerEnvironmentUtil.PortConfig.secondary(METRICS_PORT));
             }
         }
 
@@ -124,5 +121,10 @@ public class TorchServeLocalContainerInfraService implements TorchServeInfraServ
     @Override
     public int metricsPort() {
         return container.getMappedPort(METRICS_PORT);
+    }
+
+    @Override
+    public String host() {
+        return container.getHost();
     }
 }

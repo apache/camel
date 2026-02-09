@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.google.mail.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component GoogleMail
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum GoogleMailApiName implements ApiName {
 
     THREADS("threads"),

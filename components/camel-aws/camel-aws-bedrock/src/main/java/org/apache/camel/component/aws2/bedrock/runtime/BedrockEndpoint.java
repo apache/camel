@@ -72,25 +72,25 @@ public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointSe
         super.doStart();
 
         // Get sync client
-        bedrockRuntimeClient = configuration.getBedrockRuntimeClient() != null
+        bedrockRuntimeClient = ObjectHelper.isNotEmpty(configuration.getBedrockRuntimeClient())
                 ? configuration.getBedrockRuntimeClient()
-                : BedrockClientFactory.getBedrockRuntimeClient(configuration).getBedrockRuntimeClient();
+                : BedrockClientFactory.getBedrockRuntimeClient(configuration);
 
         // Get async client for streaming operations
-        bedrockRuntimeAsyncClient = configuration.getBedrockRuntimeAsyncClient() != null
+        bedrockRuntimeAsyncClient = ObjectHelper.isNotEmpty(configuration.getBedrockRuntimeAsyncClient())
                 ? configuration.getBedrockRuntimeAsyncClient()
-                : BedrockClientFactory.getBedrockRuntimeClient(configuration).getBedrockRuntimeAsyncClient();
+                : BedrockClientFactory.getBedrockRuntimeAsyncClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getBedrockRuntimeClient())) {
-            if (bedrockRuntimeClient != null) {
+            if (ObjectHelper.isNotEmpty(bedrockRuntimeClient)) {
                 bedrockRuntimeClient.close();
             }
         }
         if (ObjectHelper.isEmpty(configuration.getBedrockRuntimeAsyncClient())) {
-            if (bedrockRuntimeAsyncClient != null) {
+            if (ObjectHelper.isNotEmpty(bedrockRuntimeAsyncClient)) {
                 bedrockRuntimeAsyncClient.close();
             }
         }
@@ -129,7 +129,7 @@ public class BedrockEndpoint extends ScheduledPollEndpoint implements EndpointSe
     @Override
     public Map<String, String> getServiceMetadata() {
         HashMap<String, String> metadata = new HashMap<>();
-        if (configuration.getModelId() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getModelId())) {
             metadata.put("modelId", configuration.getModelId());
         }
         return metadata;

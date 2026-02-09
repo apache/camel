@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.test.infra.aws.common.AWSProperties;
 import org.apache.camel.test.infra.aws2.common.TestAWSCredentialsProvider;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -81,11 +82,7 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
     }
 
     protected void setupContainer(boolean fixedPort) {
-        if (fixedPort) {
-            addFixedExposedPort(SERVICE_PORT, SERVICE_PORT);
-        } else {
-            withExposedPorts(SERVICE_PORT);
-        }
+        ContainerEnvironmentUtil.configurePort(this, fixedPort, SERVICE_PORT);
 
         waitingFor(Wait.forLogMessage(".*Ready\\.\n", 1));
     }

@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "scheme": "aws2-kinesis-firehose",
     "extendsScheme": "",
     "syntax": "aws2-kinesis-firehose:streamName",
@@ -48,7 +48,11 @@
   "headers": {
     "CamelAwsKinesisFirehoseRecordId": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The record ID, as defined in http:\/\/docs.aws.amazon.com\/firehose\/latest\/APIReference\/API_PutRecord.html#API_PutRecord_ResponseSyntaxResponse Syntax", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#RECORD_ID" },
     "CamelAwsKinesisFirehoseOperation": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation we want to perform", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#KINESIS_FIREHOSE_OPERATION" },
-    "CamelAwsKinesisFirehoseDeliveryStreamName": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the delivery stream.", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#KINESIS_FIREHOSE_STREAM_NAME" }
+    "CamelAwsKinesisFirehoseDeliveryStreamName": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the delivery stream.", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#KINESIS_FIREHOSE_STREAM_NAME" },
+    "CamelAwsKinesisFirehoseDeliveryStreamArn": { "index": 3, "kind": "header", "displayName": "", "group": "createDeliveryStream", "label": "createDeliveryStream", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ARN of the delivery stream.", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#DELIVERY_STREAM_ARN" },
+    "CamelAwsKinesisFirehoseFailedRecordCount": { "index": 4, "kind": "header", "displayName": "", "group": "sendBatchRecord", "label": "sendBatchRecord", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of records that failed in a batch put operation.", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#FAILED_RECORD_COUNT" },
+    "CamelAwsKinesisFirehoseEncrypted": { "index": 5, "kind": "header", "displayName": "", "group": "sendBatchRecord", "label": "sendBatchRecord", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Whether the batch operation was encrypted.", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#ENCRYPTED" },
+    "CamelAwsKinesisFirehoseDeliveryStreamStatus": { "index": 6, "kind": "header", "displayName": "", "group": "describeDeliveryStream", "label": "describeDeliveryStream", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The status of the delivery stream.", "constantName": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Constants#DELIVERY_STREAM_STATUS" }
   },
   "properties": {
     "streamName": { "index": 0, "kind": "path", "displayName": "Stream Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration", "configurationField": "configuration", "description": "Name of the stream" },

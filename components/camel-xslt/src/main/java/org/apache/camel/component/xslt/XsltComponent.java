@@ -36,6 +36,8 @@ public class XsltComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
 
+    private static final String XPATH_TOTAL_OP_LIMIT = "jdk.xml.xpathTotalOpLimit";
+
     @Metadata(label = "advanced")
     private URIResolver uriResolver;
     @Metadata(label = "advanced")
@@ -48,6 +50,8 @@ public class XsltComponent extends DefaultComponent {
     private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
     @Metadata(label = "advanced")
     private String transformerFactoryClass;
+    @Metadata(label = "advanced", defaultValue = "10000")
+    private int xpathTotalOpLimit;
 
     public XsltComponent() {
     }
@@ -125,11 +129,40 @@ public class XsltComponent extends DefaultComponent {
         this.transformerFactoryClass = transformerFactoryClass;
     }
 
+    public int getXpathTotalOpLimit() {
+        return xpathTotalOpLimit;
+    }
+
+    /**
+     * Limits the total number of XPath operators in an XSL Stylesheet. The default (from JDK) is 10000.
+     *
+     * Configuring this corresponds to setting JVM system property: jdk.xml.xpathTotalOpLimit
+     */
+    public void setXpathTotalOpLimit(int xpathTotalOpLimit) {
+        this.xpathTotalOpLimit = xpathTotalOpLimit;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+        if (xpathTotalOpLimit > 0) {
+            LOG.info("XsltComponent is setting JVM system property: jdk.xml.xpathTotalOpLimit=" + xpathTotalOpLimit);
+            System.setProperty(XPATH_TOTAL_OP_LIMIT, "" + xpathTotalOpLimit);
+        }
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        if (xpathTotalOpLimit > 0) {
+            System.clearProperty(XPATH_TOTAL_OP_LIMIT);
+        }
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
         XsltEndpoint endpoint = createXsltEndpoint(uri);
         configureEndpoint(endpoint, remaining, parameters);
-
         return endpoint;
     }
 

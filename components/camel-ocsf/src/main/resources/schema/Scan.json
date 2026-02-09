@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/scan",
+  "title": "Scan",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Scan",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Scan UID"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    }
+  },
+  "description": "The Scan object."
+}

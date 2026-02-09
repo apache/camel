@@ -66,15 +66,15 @@ public class Translate2Endpoint extends ScheduledPollEndpoint implements Endpoin
         super.doStart();
 
         translateClient
-                = configuration.getTranslateClient() != null
+                = ObjectHelper.isNotEmpty(configuration.getTranslateClient())
                         ? configuration.getTranslateClient()
-                        : Translate2ClientFactory.getTranslateClient(configuration).getTranslateClient();
+                        : Translate2ClientFactory.getTranslateClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getTranslateClient())) {
-            if (translateClient != null) {
+            if (ObjectHelper.isNotEmpty(translateClient)) {
                 translateClient.close();
             }
         }

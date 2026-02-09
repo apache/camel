@@ -679,6 +679,7 @@ public class MimeTypeHelper {
             case "prc" -> "application/x-mobipocket-ebook";
             case "pre" -> "application/vnd.lotus-freelance";
             case "prf" -> "application/pics-rules";
+            case "properties" -> "text/plain";
             case "ps" -> "application/postscript";
             case "psb" -> "application/vnd.3gpp.pic-bw-small";
             case "psd" -> "image/vnd.adobe.photoshop";

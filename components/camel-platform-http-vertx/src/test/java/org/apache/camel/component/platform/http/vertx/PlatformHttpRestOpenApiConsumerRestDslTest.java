@@ -21,14 +21,13 @@ import java.io.FileInputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlatformHttpRestOpenApiConsumerRestDslTest {
 
@@ -135,22 +134,19 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
         final CamelContext context = VertxPlatformHttpEngineTest.createCamelContext();
 
         try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    rest().openApi("openapi-v3.json");
+            assertThrows(Exception.class, () -> {
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        rest().openApi("openapi-v3.json");
 
-                    from("direct:getPetById")
-                            .setBody().constant("{\"pet\": \"tony the tiger\"}");
-                }
-            });
+                        from("direct:getPetById")
+                                .setBody().constant("{\"pet\": \"tony the tiger\"}");
+                    }
+                });
 
-            context.start();
-            fail();
-        } catch (Exception e) {
-            Assertions.assertTrue(
-                    e.getCause().getMessage()
-                            .startsWith("OpenAPI specification has 18 unmapped operations to corresponding routes"));
+                context.start();
+            }, "OpenAPI specification has 18 unmapped operations to corresponding routes");
         } finally {
             context.stop();
         }
@@ -228,7 +224,7 @@ public class PlatformHttpRestOpenApiConsumerRestDslTest {
             context.start();
 
             given()
-                    .when()
+                    .when().contentType("application/json")
                     .put("/api/v3/pet")
                     .then()
                     .statusCode(400); // no request body

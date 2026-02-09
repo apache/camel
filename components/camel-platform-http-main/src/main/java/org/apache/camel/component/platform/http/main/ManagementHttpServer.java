@@ -85,6 +85,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HomeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -390,6 +391,9 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
             consumer = camelContext.createConsumerTemplate();
         }
 
+        // Mark this as the management server so the engine can identify it
+        configuration.setServerType(VertxPlatformHttpRouter.SERVER_TYPE_MANAGEMENT);
+
         VertxPlatformHttpServer mainServer = camelContext.hasService(VertxPlatformHttpServer.class);
         if (mainServer != null && mainServer.getConfigurationPort() == configuration.getPort()) {
             // reuse main server as we should use same port
@@ -506,7 +510,7 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
                     jo.put("version", String.format("%s", System.getProperty("java.version")));
                     jo.put("user", System.getProperty("user.name"));
                     jo.put("dir", System.getProperty("user.dir"));
-                    jo.put("home", System.getProperty("user.home"));
+                    jo.put("home", HomeHelper.resolveHomeDir());
                 }
 
                 jo = new JsonObject();

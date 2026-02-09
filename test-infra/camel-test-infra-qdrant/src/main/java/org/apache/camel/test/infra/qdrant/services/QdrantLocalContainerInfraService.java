@@ -60,10 +60,9 @@ public class QdrantLocalContainerInfraService implements QdrantInfraService, Con
                 super(DockerImageName.parse(imageName)
                         .asCompatibleSubstituteFor("qdrant/qdrant"));
 
-                if (fixedPort) {
-                    addFixedExposedPort(6333, 6333);
-                    addFixedExposedPort(6334, 6334);
-                }
+                ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                        ContainerEnvironmentUtil.PortConfig.primary(HTTP_PORT),
+                        ContainerEnvironmentUtil.PortConfig.secondary(GRPC_PORT));
             }
         }
 

@@ -1,0 +1,122 @@
+== Examples
+
+The `camel explain` command uses AI/LLM to explain Camel routes in plain English.
+It supports multiple LLM providers including Ollama (local), OpenAI, Azure OpenAI, vLLM, LM Studio, and LocalAI.
+
+=== Prerequisites
+
+Start Ollama locally using Camel infra:
+
+[source,bash]
+----
+camel infra run ollama
+----
+
+=== Basic Usage
+
+Explain a YAML route:
+
+[source,bash]
+----
+camel explain my-route.yaml
+----
+
+Explain a Java route:
+
+[source,bash]
+----
+camel explain OrderRoute.java
+----
+
+Explain multiple route files:
+
+[source,bash]
+----
+camel explain route1.yaml route2.xml MyRoute.java
+----
+
+=== Output Options
+
+Use verbose mode for detailed technical information:
+
+[source,bash]
+----
+camel explain my-route.yaml --verbose
+----
+
+Output as Markdown for documentation:
+
+[source,bash]
+----
+camel explain my-route.yaml --format=markdown
+----
+
+=== Prompt Options
+
+Include Camel Catalog descriptions for more accurate explanations:
+
+[source,bash]
+----
+camel explain my-route.yaml --catalog-context
+----
+
+Show the prompt sent to the LLM (useful for debugging):
+
+[source,bash]
+----
+camel explain my-route.yaml --show-prompt
+----
+
+Use a custom system prompt:
+
+[source,bash]
+----
+camel explain my-route.yaml --system-prompt="Focus on error handling and security aspects."
+----
+
+=== LLM Configuration
+
+Use OpenAI or compatible services:
+
+[source,bash]
+----
+camel explain my-route.yaml --url=https://api.openai.com --api-type=openai --api-key=sk-...
+----
+
+Use environment variables for the API key:
+
+[source,bash]
+----
+export OPENAI_API_KEY=sk-...
+camel explain my-route.yaml --url=https://api.openai.com --api-type=openai
+----
+
+Use a specific model:
+
+[source,bash]
+----
+camel explain my-route.yaml --model=llama3.1:70b
+----
+
+=== Advanced Options
+
+Disable streaming (wait for complete response):
+
+[source,bash]
+----
+camel explain my-route.yaml --stream=false
+----
+
+Adjust temperature (0.0 = deterministic, 2.0 = creative):
+
+[source,bash]
+----
+camel explain my-route.yaml --temperature=0.3
+----
+
+Set a custom timeout (in seconds):
+
+[source,bash]
+----
+camel explain my-route.yaml --timeout=300
+----

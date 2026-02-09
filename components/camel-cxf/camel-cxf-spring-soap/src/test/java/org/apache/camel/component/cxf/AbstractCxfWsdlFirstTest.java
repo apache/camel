@@ -38,8 +38,8 @@ import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     static int port1 = CXFTestSupport.getPort1();
@@ -77,24 +77,17 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         assertEquals("Bonjour", name.value, "we should get the right answer from router");
 
         personId.value = "";
-        try {
-            client.getPerson(personId, ssn, name);
-            fail("We expect to get the UnknowPersonFault here");
-        } catch (UnknownPersonFault fault) {
-            // We expect to get fault here
-        }
+        assertThrows(UnknownPersonFault.class,
+                () -> client.getPerson(personId, ssn, name));
 
         personId.value = "Invoking getPerson with invalid length string, expecting exception...xxxxxxxxx";
-        try {
-            client.getPerson(personId, ssn, name);
-            fail("We expect to get the WebSerivceException here");
-        } catch (WebServiceException ex) {
-            // Caught expected WebServiceException here
-            assertTrue(ex.getMessage().indexOf("MyStringType") > 0
-                    || ex.getMessage().indexOf("Could not parse the XML stream") != -1
-                    || ex.getMessage().indexOf("the required maximum is 30") > 0,
-                    "Should get the xml vaildate error! " + ex.getMessage());
-        }
+        WebServiceException ex = assertThrows(WebServiceException.class,
+                () -> client.getPerson(personId, ssn, name));
+        // Caught expected WebServiceException here
+        assertTrue(ex.getMessage().indexOf("MyStringType") > 0
+                || ex.getMessage().indexOf("Could not parse the XML stream") != -1
+                || ex.getMessage().indexOf("the required maximum is 30") > 0,
+                "Should get the xml vaildate error! " + ex.getMessage());
 
         verifyJaxwsHandlers(fromHandler, toHandler);
     }

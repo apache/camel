@@ -256,8 +256,8 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
         Path root = findCamelDirectory(project.getBasedir(), "catalog/camel-allcomponents").toPath();
         Path pomFile = root.resolve("pom.xml");
 
-        final String startDependenciesMarker = "<dependencies>";
-        final String endDependenciesMarker = "</dependencies>";
+        final String startDependenciesMarker = "<!-- CODEGEN DEPENDENCIES START -->";
+        final String endDependenciesMarker = "<!-- CODEGEN DEPENDENCIES END -->";
 
         if (!Files.isRegularFile(pomFile)) {
             throw new MojoExecutionException("Pom file " + pomFile + " does not exist");
@@ -267,7 +267,18 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
             final String pomText = loadText(pomFile);
 
             final String before = Strings.before(pomText, startDependenciesMarker);
+            if (before == null) {
+                getLog().warn("The POM file should have a comment marking the beginning of the dependencies section such as"
+                              + startDependenciesMarker + "'");
+                throw new MojoExecutionException("POM file " + pomFile + " does not have the start of dependencies marker");
+            }
+
             final String after = Strings.after(pomText, endDependenciesMarker);
+            if (after == null) {
+                getLog().warn("The POM file should have a comment marking the end of the dependencies section such as"
+                              + endDependenciesMarker + "'");
+                throw new MojoExecutionException("POM file " + pomFile + " does not have the end of dependencies marker");
+            }
 
             final String between = pomText.substring(before.length(), pomText.length() - after.length());
 
@@ -276,11 +287,13 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     "<dependency>\\s*<groupId>(?<groupId>.*)</groupId>\\s*<artifactId>(?<artifactId>.*)</artifactId>");
             Matcher matcher = pattern.matcher(between);
             TreeSet<MavenGav> dependencies = new TreeSet<>();
+            TreeSet<MavenGav> unsupportedArchDependencies = new TreeSet<>();
             while (matcher.find()) {
                 MavenGav gav = new MavenGav(matcher.group(1), matcher.group(2), "${project.version}", null);
                 dependencies.add(gav);
             }
-            // add ourselves
+
+            // Add this component into the regular list of dependencies
             dependencies.add(new MavenGav(project.getGroupId(), project.getArtifactId(), "${project.version}", null));
 
             // generate string output of all dependencies
@@ -291,7 +304,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     .collect(Collectors.joining("\n"));
             final String updatedPom = before + startDependenciesMarker
                                       + "\n" + s + "\n"
-                                      + "    " + endDependenciesMarker + after;
+                                      + "        " + endDependenciesMarker + after;
 
             updateResource(root, "pom.xml", updatedPom);
         } catch (IOException e) {

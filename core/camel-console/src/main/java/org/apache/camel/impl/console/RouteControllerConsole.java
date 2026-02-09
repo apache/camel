@@ -63,20 +63,20 @@ public class RouteControllerConsole extends AbstractDevConsole {
             long started = routes.stream().filter(r -> src.getRouteStatus(r.getRouteId()).isStarted())
                     .count();
 
-            sb.append(String.format("\nInitial Starting Routes: %b", src.isStartingRoutes()));
-            sb.append(String.format("\nUnhealthy Routes: %b", src.hasUnhealthyRoutes()));
+            sb.append(String.format("%nInitial Starting Routes: %b", src.isStartingRoutes()));
+            sb.append(String.format("%nUnhealthy Routes: %b", src.hasUnhealthyRoutes()));
             sb.append(String.format("Total Routes: %d", routes.size()));
-            sb.append(String.format("\nStarted Routes: %d", started));
-            sb.append(String.format("\nRestarting Routes: %d", src.getRestartingRoutes().size()));
-            sb.append(String.format("\nExhausted Routes: %d", src.getExhaustedRoutes().size()));
-            sb.append(String.format("\nInitial Delay: %d", src.getInitialDelay()));
-            sb.append(String.format("\nBackoff Delay: %d", src.getBackOffDelay()));
-            sb.append(String.format("\nBackoff Max Delay: %d", src.getBackOffMaxDelay()));
-            sb.append(String.format("\nBackoff Max Elapsed Time: %d", src.getBackOffMaxElapsedTime()));
-            sb.append(String.format("\nBackoff Max Attempts: %d", src.getBackOffMaxAttempts()));
-            sb.append(String.format("\nThread Pool Size: %d", src.getThreadPoolSize()));
-            sb.append(String.format("\nUnhealthy On Restarting: %b", src.isUnhealthyOnRestarting()));
-            sb.append(String.format("\nUnhealthy On Exhaust: %b", src.isUnhealthyOnExhausted()));
+            sb.append(String.format("%nStarted Routes: %d", started));
+            sb.append(String.format("%nRestarting Routes: %d", src.getRestartingRoutes().size()));
+            sb.append(String.format("%nExhausted Routes: %d", src.getExhaustedRoutes().size()));
+            sb.append(String.format("%nInitial Delay: %d", src.getInitialDelay()));
+            sb.append(String.format("%nBackoff Delay: %d", src.getBackOffDelay()));
+            sb.append(String.format("%nBackoff Max Delay: %d", src.getBackOffMaxDelay()));
+            sb.append(String.format("%nBackoff Max Elapsed Time: %d", src.getBackOffMaxElapsedTime()));
+            sb.append(String.format("%nBackoff Max Attempts: %d", src.getBackOffMaxAttempts()));
+            sb.append(String.format("%nThread Pool Size: %d", src.getThreadPoolSize()));
+            sb.append(String.format("%nUnhealthy On Restarting: %b", src.isUnhealthyOnRestarting()));
+            sb.append(String.format("%nUnhealthy On Exhaust: %b", src.isUnhealthyOnExhausted()));
             sb.append("\n\nRoutes:\n");
 
             for (Route route : routes) {
@@ -116,20 +116,20 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 }
 
                 if (supervising != null) {
-                    sb.append(String.format("\n    %s %s (%s) ", status, routeId, uri));
-                    sb.append(String.format("\n        Supervising: %s", supervising));
-                    sb.append(String.format("\n            Attempts: %s", attempts));
-                    sb.append(String.format("\n            Last: %s", last));
-                    sb.append(String.format("\n            Next Attempt: %s", next));
-                    sb.append(String.format("\n            Elapsed: %s", elapsed));
+                    sb.append(String.format("%n    %s %s (%s) ", status, routeId, uri));
+                    sb.append(String.format("%n        Supervising: %s", supervising));
+                    sb.append(String.format("%n            Attempts: %s", attempts));
+                    sb.append(String.format("%n            Last: %s", last));
+                    sb.append(String.format("%n            Next Attempt: %s", next));
+                    sb.append(String.format("%n            Elapsed: %s", elapsed));
                     if (error != null) {
-                        sb.append(String.format("\n            Error: %s", error));
+                        sb.append(String.format("%n            Error: %s", error));
                         if (stacktrace != null) {
-                            sb.append(String.format("\n            Stacktrace:\n%s", stacktrace));
+                            sb.append(String.format("%n            Stacktrace:%n%s", stacktrace));
                         }
                     }
                 } else {
-                    sb.append(String.format("\n    %s %s (%s) ", status, routeId, uri));
+                    sb.append(String.format("%n    %s %s (%s) ", status, routeId, uri));
                 }
             }
         } else {
@@ -147,7 +147,7 @@ public class RouteControllerConsole extends AbstractDevConsole {
                 String status = rc.getRouteStatus(routeId).name();
                 String uri = route.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);
-                sb.append(String.format("\n    %s %s (%s)", status, routeId, uri));
+                sb.append(String.format("%n    %s %s (%s)", status, routeId, uri));
             }
         }
 

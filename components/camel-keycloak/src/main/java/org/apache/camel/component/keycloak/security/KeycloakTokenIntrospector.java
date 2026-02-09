@@ -160,8 +160,8 @@ public class KeycloakTokenIntrospector {
 
             return result;
         } catch (Exception e) {
-            if (e instanceof IOException) {
-                throw (IOException) e;
+            if (e instanceof IOException ioException) {
+                throw ioException;
             }
             throw new IOException("Failed to introspect token", e);
         }
@@ -249,7 +249,7 @@ public class KeycloakTokenIntrospector {
          */
         public boolean isActive() {
             Object active = claims.get("active");
-            return active instanceof Boolean && (Boolean) active;
+            return active instanceof Boolean b && b;
         }
 
         /**
@@ -304,8 +304,8 @@ public class KeycloakTokenIntrospector {
          */
         public Long getExpiration() {
             Object exp = claims.get("exp");
-            if (exp instanceof Number) {
-                return ((Number) exp).longValue();
+            if (exp instanceof Number number) {
+                return number.longValue();
             }
             return null;
         }
@@ -317,8 +317,8 @@ public class KeycloakTokenIntrospector {
          */
         public Long getIssuedAt() {
             Object iat = claims.get("iat");
-            if (iat instanceof Number) {
-                return ((Number) iat).longValue();
+            if (iat instanceof Number number) {
+                return number.longValue();
             }
             return null;
         }

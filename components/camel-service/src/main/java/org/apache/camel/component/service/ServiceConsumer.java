@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed Service Consumer")
+@Deprecated(since = "4.8.0")
 public class ServiceConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(ServiceConsumer.class);
 
@@ -64,8 +65,8 @@ public class ServiceConsumer extends DefaultConsumer {
 
         // start delegate
         delegatedConsumer = delegatedEndpoint.createConsumer(processor);
-        if (delegatedConsumer instanceof StartupListener) {
-            getEndpoint().getCamelContext().addStartupListener((StartupListener) delegatedConsumer);
+        if (delegatedConsumer instanceof StartupListener startuplistener) {
+            getEndpoint().getCamelContext().addStartupListener(startuplistener);
         }
 
         ServiceHelper.startService(delegatedEndpoint);
@@ -91,28 +92,28 @@ public class ServiceConsumer extends DefaultConsumer {
 
     @Override
     protected void doResume() throws Exception {
-        if (delegatedConsumer instanceof SuspendableService) {
+        if (delegatedConsumer instanceof SuspendableService suspendableService) {
             final ServiceEndpoint endpoint = (ServiceEndpoint) getEndpoint();
             final ServiceDefinition definition = endpoint.getServiceDefinition();
 
             // register service
             serviceRegistry.register(definition);
 
-            ((SuspendableService) delegatedConsumer).resume();
+            suspendableService.resume();
         }
         super.doResume();
     }
 
     @Override
     protected void doSuspend() throws Exception {
-        if (delegatedConsumer instanceof SuspendableService) {
+        if (delegatedConsumer instanceof SuspendableService suspendableservice) {
             final ServiceEndpoint endpoint = (ServiceEndpoint) getEndpoint();
             final ServiceDefinition definition = endpoint.getServiceDefinition();
 
             // de-register service
             serviceRegistry.deregister(definition);
 
-            ((SuspendableService) delegatedConsumer).suspend();
+            suspendableservice.suspend();
         }
         super.doSuspend();
     }

@@ -126,7 +126,9 @@ public class KubernetesExport extends Export {
     protected String registryMirror;
 
     @CommandLine.Option(names = { "--cluster-type" },
-                        description = "The target cluster type. Special configurations may be applied to different cluster types such as Kind or Minikube or Openshift.")
+                        completionCandidates = ClusterTypeCompletionCandidates.class,
+                        converter = ClusterTypeConverter.class,
+                        description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
     protected String clusterType;
 
     private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";
@@ -195,10 +197,12 @@ public class KubernetesExport extends Export {
         // special if user type: camel run . or camel run dirName
         if (files != null && files.size() == 1) {
             String name = FileUtil.stripTrailingSeparator(files.get(0));
-            Path first = Path.of(name);
-            if (Files.isDirectory(first)) {
-                exportBaseDir = first;
-                RunHelper.dirToFiles(name, files);
+            if (getScheme(name) == null) {
+                Path first = Path.of(name);
+                if (Files.isDirectory(first)) {
+                    exportBaseDir = first;
+                    RunHelper.dirToFiles(name, files);
+                }
             }
         }
         if (exportBaseDir == null) {
@@ -272,6 +276,10 @@ public class KubernetesExport extends Export {
         // app.kubernetes.io/version
         //
         context.addLabel("app.kubernetes.io/runtime", "camel");
+        if (observe) {
+            // Add the default label for camel dashboard to pick up the camel application
+            context.addLabel("camel.apache.org/app", context.getName());
+        }
         if (labels != null) {
             context.addLabels(Arrays.stream(labels)
                     .map(item -> item.split("="))

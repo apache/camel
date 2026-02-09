@@ -83,6 +83,12 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     private File cachedir;
 
     /**
+     * To use a file system for the api source code location, instead of attempting to load from classpath -source JARs
+     */
+    @Parameter
+    protected File apiSrcDir;
+
+    /**
      * Names of options that can be set to null value if not specified.
      */
     @Parameter
@@ -108,6 +114,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         String newHash = new HashHelper()
                 .hash("ApiComponentGeneratorMojo")
                 .hash("apis", apis)
+                .hash("apiSrcDir", apiSrcDir)
                 .hash("fromJavasource", fromJavasource)
                 .hash("nullableOptions", nullableOptions)
                 .hash("aliases", aliases)
@@ -278,6 +285,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                     ? apiFromJavasource.getIncludeSetters() : fromJavasource.getIncludeSetters();
             mojo.aliases = api.getAliases().isEmpty() ? aliases : api.getAliases();
             mojo.nullableOptions = api.getNullableOptions() != null ? api.getNullableOptions() : nullableOptions;
+            mojo.apiSrcDir = apiSrcDir;
             apiMethodGenerator = mojo;
         }
 

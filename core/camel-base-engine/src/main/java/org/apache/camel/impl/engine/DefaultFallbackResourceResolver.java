@@ -51,10 +51,7 @@ public class DefaultFallbackResourceResolver extends ResourceResolverSupport {
         Resource answer = classpath.resolve(classpath.getSupportedScheme() + ":" + location);
         if (answer == null || !answer.exists() && location.endsWith(".groovy")) {
             // special for groovy sources as they can be located in src/main/resources/camel-groovy
-            Resource special = super.resolve(classpath.getSupportedScheme() + ":camel-groovy/" + location);
-            if (special != null && special.exists()) {
-                answer = special;
-            }
+            answer = classpath.resolve(classpath.getSupportedScheme() + ":camel-groovy/" + location);
         }
         // fallback to file location
         if (answer == null || !answer.exists()) {

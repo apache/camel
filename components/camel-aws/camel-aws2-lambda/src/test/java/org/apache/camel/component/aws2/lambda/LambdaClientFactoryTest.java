@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.lambda;
 
 import org.apache.camel.component.aws2.lambda.client.Lambda2ClientFactory;
-import org.apache.camel.component.aws2.lambda.client.Lambda2InternalClient;
-import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.lambda.client.impl.Lambda2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.lambda.LambdaClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class LambdaClientFactoryTest {
 
     @Test
-    public void getStandardLambdaClientDefault() {
-        Lambda2Configuration lambda2Configuration = new Lambda2Configuration();
-        Lambda2InternalClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
-        assertTrue(lambdaClient instanceof Lambda2ClientStandardImpl);
-    }
-
-    @Test
-    public void getStandardLambdaClient() {
-        Lambda2Configuration lambda2Configuration = new Lambda2Configuration();
-        lambda2Configuration.setUseDefaultCredentialsProvider(false);
-        Lambda2InternalClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
-        assertTrue(lambdaClient instanceof Lambda2ClientStandardImpl);
-    }
-
-    @Test
-    public void getIAMOptimizedLambdaClient() {
+    public void getLambdaClientWithDefaultCredentials() {
         Lambda2Configuration lambda2Configuration = new Lambda2Configuration();
         lambda2Configuration.setUseDefaultCredentialsProvider(true);
-        Lambda2InternalClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
-        assertTrue(lambdaClient instanceof Lambda2ClientOptimizedImpl);
+        lambda2Configuration.setRegion("eu-west-1");
+        LambdaClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
+        assertNotNull(lambdaClient);
+        lambdaClient.close();
     }
 
     @Test
-    public void getSessionTokenLambdaClient() {
+    public void getLambdaClientWithStaticCredentials() {
         Lambda2Configuration lambda2Configuration = new Lambda2Configuration();
-        lambda2Configuration.setUseSessionCredentials(true);
-        Lambda2InternalClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
-        assertTrue(lambdaClient instanceof Lambda2ClientSessionTokenImpl);
+        lambda2Configuration.setAccessKey("testAccessKey");
+        lambda2Configuration.setSecretKey("testSecretKey");
+        lambda2Configuration.setRegion("eu-west-1");
+        LambdaClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
+        assertNotNull(lambdaClient);
+        lambdaClient.close();
+    }
+
+    @Test
+    public void getLambdaClientWithEndpointOverride() {
+        Lambda2Configuration lambda2Configuration = new Lambda2Configuration();
+        lambda2Configuration.setUseDefaultCredentialsProvider(true);
+        lambda2Configuration.setRegion("eu-west-1");
+        lambda2Configuration.setOverrideEndpoint(true);
+        lambda2Configuration.setUriEndpointOverride("http://localhost:4566");
+        LambdaClient lambdaClient = Lambda2ClientFactory.getLambdaClient(lambda2Configuration);
+        assertNotNull(lambdaClient);
+        lambdaClient.close();
     }
 }

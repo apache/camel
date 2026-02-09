@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.mail;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "delete", description="Immediately and permanently deletes the specified thread", signatures={"com.google.api.services.gmail.Gmail$Users$Threads$Delete delete(String userId, String id)"}), @ApiMethod(methodName = "get", description="Gets the specified thread", signatures={"com.google.api.services.gmail.Gmail$Users$Threads$Get get(String userId, String id)"}), @ApiMethod(methodName = "list", description="Lists the threads in the user's mailbox", signatures={"com.google.api.services.gmail.Gmail$Users$Threads$List list(String userId)"}), @ApiMethod(methodName = "modify", description="Modifies the labels applied to the thread", signatures={"com.google.api.services.gmail.Gmail$Users$Threads$Modify modify(String userId, String id, com.google.api.services.gmail.model.ModifyThreadRequest content)"}), @ApiMethod(methodName = "trash", description="Moves the specified thread to the trash", signatures={"com.google.api.services.gmail.Gmail$Users$Threads$Trash trash(String userId, String id)"}), @ApiMethod(methodName = "untrash", description="Removes the specified thread from the trash", signatures={"com.google.api.services.gmail.Gmail$Users$Threads$Untrash untrash(String userId, String id)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class GmailUsersThreadsEndpointConfiguration extends GoogleMailConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "modify", description="The com.google.api.services.gmail.model.ModifyThreadRequest")})

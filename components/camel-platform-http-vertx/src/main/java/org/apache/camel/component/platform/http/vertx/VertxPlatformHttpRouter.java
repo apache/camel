@@ -38,18 +38,31 @@ public class VertxPlatformHttpRouter implements Router {
     public static final String PLATFORM_HTTP_ROUTER_NAME_ZERO
             = PlatformHttpConstants.PLATFORM_HTTP_COMPONENT_NAME + "-router-0";
 
+    /**
+     * Server type constants for distinguishing between main server and management server routers.
+     */
+    public static final String SERVER_TYPE_SERVER = "server";
+    public static final String SERVER_TYPE_MANAGEMENT = "management";
+
     private final String name;
+    private final String serverType;
     private final VertxPlatformHttpServer server;
     private final Vertx vertx;
     private final Router delegate;
     private AllowForwardHeaders allowForward;
 
     public VertxPlatformHttpRouter(VertxPlatformHttpServer server, Vertx vertx, Router delegate, String name) {
+        this(server, vertx, delegate, name, null);
+    }
+
+    public VertxPlatformHttpRouter(VertxPlatformHttpServer server, Vertx vertx, Router delegate, String name,
+                                   String serverType) {
         this.server = server;
         this.vertx = vertx;
         this.delegate = delegate;
         this.allowForward = AllowForwardHeaders.NONE;
         this.name = name;
+        this.serverType = serverType;
     }
 
     public Vertx vertx() {
@@ -62,6 +75,27 @@ public class VertxPlatformHttpRouter implements Router {
 
     public String getName() {
         return this.name;
+    }
+
+    /**
+     * Returns the server type (e.g., "server" or "management"), or null if not set.
+     */
+    public String getServerType() {
+        return this.serverType;
+    }
+
+    /**
+     * Returns true if this router is for the main server (not management).
+     */
+    public boolean isMainServer() {
+        return SERVER_TYPE_SERVER.equals(serverType);
+    }
+
+    /**
+     * Returns true if this router is for the management server.
+     */
+    public boolean isManagementServer() {
+        return SERVER_TYPE_MANAGEMENT.equals(serverType);
     }
 
     @Override

@@ -19,8 +19,10 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -28,6 +30,7 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.impl.engine.DefaultChannel;
 import org.apache.camel.impl.engine.SharedCamelInternalProcessor;
+import org.apache.camel.spi.CamelInternalProcessorAdvice;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.InternalProcessorFactory;
@@ -42,6 +45,11 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
         CamelInternalProcessor internal = new CamelInternalProcessor(camelContext, processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(route, camelContext));
         return internal;
+    }
+
+    @Override
+    public CamelInternalProcessorAdvice<?> createAggregateBacklogTracerAdvice(CamelContext camelContext, NamedNode definition) {
+        return new CamelInternalProcessor.BacklogTracerAggregateAdvice(camelContext, definition);
     }
 
     @Override
@@ -73,6 +81,7 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     @Override
     public AsyncProducer createAsyncProducer(Endpoint endpoint) throws Exception {
         AsyncProducer answer = endpoint.createAsyncProducer();
+        CamelContextAware.trySetCamelContext(answer, endpoint.getCamelContext());
         // is auto mocked intercepting enabled?
         if (!endpoint.getCamelContext().getCamelContextExtension().getAutoMockInterceptStrategies().isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);
@@ -83,6 +92,7 @@ public class DefaultInternalProcessorFactory implements InternalProcessorFactory
     @Override
     public Producer createProducer(Endpoint endpoint) throws Exception {
         Producer answer = endpoint.createProducer();
+        CamelContextAware.trySetCamelContext(answer, endpoint.getCamelContext());
         // is auto mocked intercepting enabled?
         if (!endpoint.getCamelContext().getCamelContextExtension().getAutoMockInterceptStrategies().isEmpty()) {
             answer = new AutoMockInterceptProducer(answer);

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-aws-parent</artifactId>
@@ -39,10 +39,12 @@
     </properties>
 
     <modules>
+        <module>camel-aws-common</module>
         <module>camel-aws2-athena</module>
         <module>camel-aws-bedrock</module>
         <module>camel-aws-cloudtrail</module>
         <module>camel-aws-config</module>
+        <module>camel-aws2-comprehend</module>
         <module>camel-aws2-cw</module>
         <module>camel-aws2-ddb</module>
         <module>camel-aws2-ec2</module>
@@ -55,8 +57,11 @@
         <module>camel-aws2-lambda</module>
         <module>camel-aws2-msk</module>
         <module>camel-aws2-mq</module>
+        <module>camel-aws2-polly</module>
+        <module>camel-aws-parameter-store</module>
         <module>camel-aws2-redshift</module>
         <module>camel-aws2-s3</module>
+        <module>camel-aws2-s3-vectors</module>
         <module>camel-aws-secrets-manager</module>
         <module>camel-aws2-ses</module>
         <module>camel-aws2-sns</module>
@@ -68,6 +73,8 @@
         <module>camel-aws2-transcribe</module>
         <module>camel-aws2-translate</module>
         <module>camel-aws-xray</module>
+        <module>camel-aws2-rekognition</module>
+        <module>camel-aws-security-hub</module>
     </modules>
 
 </project>

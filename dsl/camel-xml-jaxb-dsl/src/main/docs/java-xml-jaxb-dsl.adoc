@@ -3,7 +3,7 @@
 //Header attributes written by hand.
 :doctitle: Jaxb XML Dsl
 :artifactid: camel-xml-jaxb-dsl
-:description: Camel DSL with YAML
+:description: Camel DSL with XML using camel-jaxb
 :since: 3.9
 :supportlevel: Stable
 //Manually maintained attributes

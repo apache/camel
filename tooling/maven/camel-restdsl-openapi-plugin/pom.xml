@@ -24,13 +24,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-restdsl-openapi-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>Camel :: Maven Plugins :: OpenApi REST DSL Generator Maven Plugin</name>
+    <name>Camel :: Maven Plugins :: OpenApi REST DSL Generator</name>
     <description>Maven Plugin that generates REST DSL RouteBuilder from OpenApi specification</description>
 
     <properties>

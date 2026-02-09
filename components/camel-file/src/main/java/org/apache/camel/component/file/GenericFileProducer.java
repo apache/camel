@@ -17,7 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,12 +27,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,7 +189,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             }
 
             // any checksum file to write?
-            if (endpoint.getChecksumFileAlgorithm() != null) {
+            if (endpoint.isChecksumWriteFile() && endpoint.getChecksumFileAlgorithm() != null) {
                 writeChecksumFile(exchange, target);
             }
 
@@ -291,21 +288,14 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
         String algorithm = endpoint.getChecksumFileAlgorithm();
         String checksumFileName = target + "." + algorithm;
 
-        // create exchange with checksum as body to write as the checksum file
-        MessageHelper.resetStreamCache(exchange.getIn());
-        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-        Exchange checksumExchange = new DefaultExchange(exchange);
-        checksumExchange.getIn().setBody(new DigestUtils(algorithm).digestAsHex(is));
-
-        LOG.trace("Writing checksum file: [{}]", checksumFileName);
-        // delete any existing done file
-        if (operations.existsFile(checksumFileName)) {
-            if (!operations.deleteFile(checksumFileName)) {
-                throw new GenericFileOperationFailedException(
-                        "Cannot delete existing checksum file: " + checksumFileName);
+        String hash = exchange.getMessage().getHeader(FileConstants.FILE_CHECKSUM, String.class);
+        if (hash != null) {
+            LOG.trace("Writing checksum file: [{}]", checksumFileName);
+            boolean success = operations.storeFileDirectly(checksumFileName, hash);
+            if (!success) {
+                throw new GenericFileOperationFailedException("Error writing checksum file [" + checksumFileName + "]");
             }
         }
-        writeFile(checksumExchange, checksumFileName);
     }
 
     /**
@@ -374,7 +364,7 @@ public class GenericFileProducer<T> extends DefaultAsyncProducer {
             exchange.getIn().setHeader(FileConstants.FILE_NAME, value);
         }
 
-        if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
+        if (value instanceof String str && StringHelper.hasStartToken(str, "simple")) {
             LOG.warn(
                     "Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).",
                     value, FileConstants.FILE_NAME);

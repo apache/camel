@@ -34,7 +34,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = CxfComponentEnableMtomTest.TestConfig.class)
@@ -48,48 +47,36 @@ public class CxfComponentEnableMtomTest {
     public void testIsMtomEnabledEnabledThroughBeanSetter() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByBeanSetter");
 
-        if (endpoint instanceof CxfEndpoint) {
-            CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
-        } else {
-            fail("CXF Endpoint not found");
-        }
+        assertTrue(endpoint instanceof CxfEndpoint, "CXF Endpoint not found");
+        CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
+        assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
     }
 
     @Test
     public void testIsMtomEnabledEnabledThroughBeanProperties() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByBeanProperties");
 
-        if (endpoint instanceof CxfEndpoint) {
-            CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
-        } else {
-            fail("CXF Endpoint not found");
-        }
+        assertTrue(endpoint instanceof CxfEndpoint, "CXF Endpoint not found");
+        CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
+        assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
     }
 
     @Test
     public void testIsMtomEnabledEnabledThroughURIProperties() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByURIProperties?properties.mtom-enabled=true");
 
-        if (endpoint instanceof CxfEndpoint) {
-            CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
-        } else {
-            fail("CXF Endpoint not found");
-        }
+        assertTrue(endpoint instanceof CxfEndpoint, "CXF Endpoint not found");
+        CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
+        assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
     }
 
     @Test
     public void testIsMtomEnabledEnabledThroughQueryParameters() throws InterruptedException {
         Endpoint endpoint = context.getEndpoint("cxf:bean:mtomByQueryParameters?mtomEnabled=true");
 
-        if (endpoint instanceof CxfEndpoint) {
-            CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
-            assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
-        } else {
-            fail("CXF Endpoint not found");
-        }
+        assertTrue(endpoint instanceof CxfEndpoint, "CXF Endpoint not found");
+        CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
+        assertTrue(cxfEndpoint.isMtomEnabled(), "Mtom should be enabled");
     }
 
     @Configuration

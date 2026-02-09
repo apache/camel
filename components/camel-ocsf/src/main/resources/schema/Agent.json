@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/agent",
+  "title": "Agent",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Agent",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Agent Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Agent Type"
+    },
+    "version": {
+      "type": "string",
+      "title": "Agent Version"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Agent ID"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "policies": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Policy.json"
+      }
+    },
+    "uid_alt": {
+      "type": "string",
+      "title": "Alternate Agent ID"
+    },
+    "vendor_name": {
+      "type": "string",
+      "title": "Vendor Name"
+    }
+  },
+  "description": "The Agent object."
+}

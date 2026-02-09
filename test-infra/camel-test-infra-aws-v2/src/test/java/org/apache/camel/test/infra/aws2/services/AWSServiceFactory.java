@@ -139,6 +139,10 @@ public final class AWSServiceFactory {
         return createService(AWSTestServices.AWSSecretsManagerLocalContainerTestService::new);
     }
 
+    public static AWSService createSSMService() {
+        return createService(AWSTestServices.AWSSSMLocalContainerTestService::new);
+    }
+
     public static AWSService createTranscribeService() {
         return createService(AWSTestServices.AWSTranscribeLocalContainerTestService::new);
     }

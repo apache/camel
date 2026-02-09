@@ -1061,6 +1061,15 @@ Rest security OAuth2 definition
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+  <xs:element name="ocsf" type="tns:ocsfDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+<![CDATA[
+Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.
+]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:element name="ognl" type="tns:ognlExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -2781,7 +2790,9 @@ Sets the id of this node.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Whether to trim the value to remove leading and trailing whitespaces and line breaks. Default value: true
+Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs
+where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.
+Default value: true
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6290,6 +6301,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
             <xs:element ref="tns:mimeMultipart"/>
+            <xs:element ref="tns:ocsf"/>
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
@@ -6305,6 +6317,7 @@ messages, or any custom logic needed before the looping executes.
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:pgp"/>
+            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -6743,6 +6756,15 @@ Whether to use Csv, Fixed, or KeyValue.
             <xs:documentation xml:lang="en">
 <![CDATA[
 Name of model class to use.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="defaultValueStringAsNull" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To change the default value for string types to be null instead of an empty string. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8497,6 +8519,78 @@ false. Default value: false
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="ocsfDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="objectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Lookup and use the existing ObjectMapper with the given id when using Jackson.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useDefaultObjectMapper" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to lookup and use default Jackson ObjectMapper from the registry. Default value: true
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="unmarshalType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="collectionType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to
+use different collection types than java.util.Collection based as default.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="useList" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To unmarshal to a List of OCSF events. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="allowUnmarshallType" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled
+when desired to be used. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="prettyPrint" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To enable pretty printing output nicely formatted. Is by default false. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="parquetAvroDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
@@ -9534,6 +9628,78 @@ verification is executed. no_signature_allowed: The PGP message must not contain
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  <xs:complexType name="pqcDataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="keyEncapsulationAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
+NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyAlgorithm" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
+CAST5, CAST6, CHACHA7539, etc. Default value: AES
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="symmetricKeyLength" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The length (in bits) of the symmetric key. Default value: 128
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyPair" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to the KeyPair to lookup from the register to use for KEM operations.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="bufferSize" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The size of the buffer used for streaming encryption/decryption. Default value: 4096
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="provider" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The JCE security provider to use.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="keyGenerator" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Refers to a custom KeyGenerator to lookup from the register for KEM operations.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:complexType name="yamlDataFormat">
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
@@ -9894,9 +10060,9 @@ behavior is to not stop but continue processing till the end. Default value: fal
 <![CDATA[
 Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to send and
 process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out and continues.
-Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the
-timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in
-a graceful manner may continue to run. So use this option with a bit of care. Default value: 0
+The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain
+tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with
+a bit of care. Default value: 0
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10949,9 +11115,9 @@ routing after the recipient list is complete, even if parallel processing is ena
 <![CDATA[
 Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able to send
 and process all replies within the given timeframe, then the timeout triggers and the Recipient List breaks out and
-continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking
-out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to
-shut down in a graceful manner may continue to run. So use this option with a bit of care. Default value: 0
+continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still
+remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So
+use this option with a bit of care. Default value: 0
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12618,11 +12784,11 @@ behavior is to not stop but continue processing till the end. Default value: fal
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to split and
-process all the sub messages within the given timeframe, then the timeout triggers and the Splitter breaks out and
-continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking
-out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to
-shut down in a graceful manner may continue to run. So use this option with a bit of care. Default value: 0
+Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and
+process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The
+timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain
+tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with
+a bit of care. Default value: 0
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -13650,6 +13816,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:jsonApi"/>
             <xs:element ref="tns:lzf"/>
             <xs:element ref="tns:mimeMultipart"/>
+            <xs:element ref="tns:ocsf"/>
             <xs:element ref="tns:parquetAvro"/>
             <xs:element ref="tns:protobuf"/>
             <xs:element ref="tns:rss"/>
@@ -13665,6 +13832,7 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:univocityTsv"/>
             <xs:element ref="tns:xmlSecurity"/>
             <xs:element ref="tns:pgp"/>
+            <xs:element ref="tns:pqc"/>
             <xs:element ref="tns:yaml"/>
             <xs:element ref="tns:zipDeflater"/>
             <xs:element ref="tns:zipFile"/>
@@ -15947,81 +16115,30 @@ Set a reference to a custom Expression to use.
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="pqcDataFormat">
-    <xs:complexContent>
-      <xs:extension base="tns:dataFormat">
-        <xs:sequence/>
-        <xs:attribute name="keyEncapsulationAlgorithm" type="xs:string">
+  <xs:complexType name="cSimpleExpression">
+    <xs:simpleContent>
+      <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="trimResult" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The Post-Quantum KEM algorithm to use for key encapsulation. Supported values: MLKEM, BIKE, HQC, CMCE, SABER, FRODO,
-NTRU, NTRULPRime, SNTRUPrime, KYBER. Default value: MLKEM
+Whether to trim the returned values when this language are in use. For example the output result may contain unwanted
+line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be
+backwards compatible with existing behavior. Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="symmetricKeyAlgorithm" type="xs:string">
+        <xs:attribute name="pretty" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-The symmetric encryption algorithm to use with the shared secret. Supported values: AES, ARIA, RC2, RC5, CAMELLIA,
-CAST5, CAST6, CHACHA7539, etc. Default value: AES
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="symmetricKeyLength" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The length (in bits) of the symmetric key. Default value: 128
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyPair" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to the KeyPair to lookup from the register to use for KEM operations.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="bufferSize" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The size of the buffer used for streaming encryption/decryption. Default value: 4096
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="provider" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The JCE security provider to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="keyGenerator" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to a custom KeyGenerator to lookup from the register for KEM operations.
+To pretty format the output (only JSon or XML supported). Default value: false
 ]]>
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="cSimpleExpression">
-    <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition"/>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType abstract="true" name="typedExpressionDefinition">
@@ -16328,7 +16445,37 @@ Whether to validate the bean has the configured method. Default value: true
   </xs:complexType>
   <xs:complexType name="simpleExpression">
     <xs:simpleContent>
-      <xs:extension base="tns:typedExpressionDefinition"/>
+      <xs:extension base="tns:typedExpressionDefinition">
+        <xs:attribute name="trimResult" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Whether to trim the returned values when this language are in use. For example the output result may contain unwanted
+line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be
+backwards compatible with existing behavior. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="pretty" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+To pretty format the output (only JSon or XML supported). Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="nested" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+If the result is a nested simple expression should this expression be evaluated as well. Default value: false
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="spELExpression">

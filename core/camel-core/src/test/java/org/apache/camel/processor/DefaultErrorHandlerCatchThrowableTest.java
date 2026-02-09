@@ -24,20 +24,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultErrorHandlerCatchThrowableTest extends ContextTestSupport {
 
     @Test
     public void testDefaultErrorHandlerCatchThrowable() {
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Hello World", e.getExchange().getIn().getBody());
-            NoSuchMethodError cause = assertIsInstanceOf(NoSuchMethodError.class, e.getCause());
-            assertEquals("This is an Error not an Exception", cause.getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        assertEquals("Hello World", exception.getExchange().getIn().getBody());
+        NoSuchMethodError cause = assertIsInstanceOf(NoSuchMethodError.class, exception.getCause());
+        assertEquals("This is an Error not an Exception", cause.getMessage());
     }
 
     @Override

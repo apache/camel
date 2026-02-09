@@ -20,7 +20,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "plugin",
-                     description = "Manage plugins that add sub-commands to this CLI.")
+                     description = "Manage plugins that add sub-commands to this CLI")
 public class PluginCommand extends PluginBaseCommand {
 
     public PluginCommand(CamelJBangMain main) {
@@ -29,7 +29,6 @@ public class PluginCommand extends PluginBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // defaults to list integrations deployed on Kubernetes
         new CommandLine(new PluginGet(getMain())).execute();
         return 0;
     }

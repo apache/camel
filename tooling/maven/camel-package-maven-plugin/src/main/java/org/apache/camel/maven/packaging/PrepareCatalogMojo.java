@@ -924,6 +924,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-as2":
                 case "camel-avro-rpc":
                 case "camel-aws":
+                case "camel-aws-common":
                 case "camel-azure":
                 case "camel-box":
                 case "camel-cxf":

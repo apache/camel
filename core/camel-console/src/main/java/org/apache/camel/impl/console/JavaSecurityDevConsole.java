@@ -44,15 +44,15 @@ public class JavaSecurityDevConsole extends AbstractDevConsole {
             sb.append("Security Providers:");
             sb.append("\n");
             for (Provider p : providers) {
-                sb.append(String.format("\n    %s (%s)\n", p.getName(), p.getVersionStr()));
+                sb.append(String.format("%n    %s (%s)%n", p.getName(), p.getVersionStr()));
                 if (p.getInfo() != null) {
-                    sb.append(String.format("\n        %s\n", p.getInfo()));
+                    sb.append(String.format("%n        %s%n", p.getInfo()));
                 }
                 List<Provider.Service> services = p.getServices().stream()
                         .sorted(JavaSecurityDevConsole::compare)
                         .toList();
                 for (Provider.Service s : services) {
-                    sb.append(String.format("\n        %s: %s (%s)", s.getType(), s.getAlgorithm(), s.getClassName()));
+                    sb.append(String.format("%n        %s: %s (%s)", s.getType(), s.getAlgorithm(), s.getClassName()));
                 }
                 sb.append("\n");
             }

@@ -16,12 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.version;
 
+import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -41,6 +45,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -51,6 +56,8 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.RepositoryResolver;
 import org.apache.camel.tooling.model.ReleaseModel;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
@@ -59,6 +66,8 @@ import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_IN
 @CommandLine.Command(name = "list", description = "Displays available Camel versions",
                      sortOptions = false, showDefaultValues = true)
 public class VersionList extends CamelCommand {
+
+    private static final String VERSION_LIST_CHECKER = ".camel-jbang-version-list.json";
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
 
@@ -74,61 +83,65 @@ public class VersionList extends CamelCommand {
                         completionCandidates = RuntimeCompletionCandidates.class,
                         converter = RuntimeTypeConverter.class,
                         description = "Runtime (${COMPLETION-CANDIDATES})")
-    RuntimeType runtime = RuntimeType.main;
+    public RuntimeType runtime = RuntimeType.main;
 
     @CommandLine.Option(names = { "--from-version" },
                         description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
-    String fromVersion;
+    public String fromVersion;
 
     @CommandLine.Option(names = { "--to-version" },
                         description = "Filter by Camel version (exclusive)")
-    String toVersion;
+    public String toVersion;
 
     @CommandLine.Option(names = { "--from-date" },
                         description = "Filter by release date (inclusive)")
-    String fromDate;
+    public String fromDate;
 
     @CommandLine.Option(names = { "--to-date" },
                         description = "Filter by release date (exclusive)")
-    String toDate;
+    public String toDate;
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by (version, date, or days)", defaultValue = "version")
-    String sort;
+    public String sort;
 
     @CommandLine.Option(names = { "--repo", "--repos" },
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
-    String repositories;
+    public String repositories;
 
     @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
-    boolean lts;
+    public boolean lts;
 
     @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true")
-    boolean eol = true;
+    public boolean eol = true;
 
     @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
-    boolean patch = true;
+    public boolean patch = true;
 
     @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
-    boolean rc;
+    public boolean rc;
 
     @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true")
-    boolean days;
+    public boolean days;
 
     @CommandLine.Option(names = { "--date-format" }, description = "The format to show the date (such as dd-MM-yyyy)",
                         defaultValue = DEFAULT_DATE_FORMAT)
-    String dateFormat;
+    public String dateFormat;
 
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of lines from the end of the table to show.")
-    int tail;
+    public int tail;
 
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
                         defaultValue = "false")
-    boolean fresh;
+    public boolean fresh;
+
+    @CommandLine.Option(names = { "--download" }, defaultValue = "true",
+                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    public boolean download = true;
 
     @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format", defaultValue = "false")
-    boolean jsonOutput;
+    public boolean jsonOutput;
 
     public VersionList(CamelJBangMain main) {
         super(main);
@@ -154,7 +167,7 @@ public class VersionList extends CamelCommand {
 
         // only download if fresh, using a custom repo, or special runtime based
         List<String[]> versions = new ArrayList<>();
-        if (fresh || repositories != null || runtime != RuntimeType.main) {
+        if (download || fresh || repositories != null || runtime != RuntimeType.main) {
             downloadReleases(versions);
         }
 
@@ -203,6 +216,11 @@ public class VersionList extends CamelCommand {
             }
         }
 
+        JsonObject checker = loadCheckerFile();
+        if (fresh && download) {
+            checker = updateCheckerFile(checker, runtime.runtime(), repositories);
+        }
+
         if (jsonOutput) {
             printer().println(
                     Jsoner.serialize(
@@ -231,9 +249,91 @@ public class VersionList extends CamelCommand {
                             .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate),
                     new Column().header("DAYS").visible(days)
                             .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::daysAgo))));
+            String date = null;
+            if (checker != null) {
+                JsonArray arr = checker.getCollection("checker");
+                if (repositories == null) {
+                    repositories = "";
+                }
+                for (int i = 0; i < arr.size(); i++) {
+                    JsonObject e = arr.getMap(i);
+                    boolean match = e.getString("runtime").equals(runtime.runtime())
+                            && e.getStringOrDefault("repo", "").equals(repositories);
+                    if (match) {
+                        date = e.getString("lastUpdated");
+                        break;
+                    }
+                }
+            }
+            if (date != null) {
+                printer().println("Last updated: " + date + " (use --fresh to update list from internet)");
+            } else {
+                printer().println("Last updated: none (use --fresh to update list from internet)");
+            }
         }
 
         return 0;
+    }
+
+    public static JsonObject updateCheckerFile(JsonObject root, String runtime, String repositories) {
+        if (repositories == null) {
+            repositories = "";
+        }
+        if (root == null) {
+            root = new JsonObject();
+        }
+        JsonArray arr = root.getCollection("checker");
+        if (arr == null) {
+            arr = new JsonArray();
+            root.put("checker", arr);
+        }
+
+        JsonObject target = null;
+        for (int i = 0; i < arr.size(); i++) {
+            JsonObject e = arr.getMap(i);
+            boolean match = e.getString("runtime").equals(runtime)
+                    && e.getStringOrDefault("repo", "").equals(repositories);
+            if (match) {
+                target = e;
+                break;
+            }
+        }
+        String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        if (target == null) {
+            target = new JsonObject();
+            target.put("runtime", runtime);
+            if (!repositories.isBlank()) {
+                target.put("repo", repositories);
+            }
+            arr.add(target);
+        }
+        target.put("lastUpdated", today);
+
+        String json = Jsoner.serialize(root);
+        try {
+            Path f = CommandLineHelper.getHomeDir().resolve(VERSION_LIST_CHECKER);
+            Files.writeString(f, json,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            // ignore
+        }
+        return root;
+    }
+
+    static JsonObject loadCheckerFile() {
+        try {
+            Path f = CommandLineHelper.getHomeDir().resolve(VERSION_LIST_CHECKER);
+            if (Files.exists(f)) {
+                String json = Files.readString(f);
+                return (JsonObject) Jsoner.deserialize(json);
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return null;
     }
 
     protected Integer downloadReleases(List<String[]> answer) {
@@ -241,6 +341,7 @@ public class VersionList extends CamelCommand {
 
         try {
             main.setFresh(fresh);
+            main.setDownload(download);
             main.setRepositories(repositories);
             main.start();
 
@@ -276,28 +377,74 @@ public class VersionList extends CamelCommand {
     }
 
     private void filterVersions(List<String[]> versions, List<Row> rows, List<ReleaseModel> releases) throws Exception {
-        if (versions.isEmpty()) {
-            for (ReleaseModel rm : releases) {
-                boolean accept = true;
-                if (fromVersion != null || toVersion != null) {
-                    if (fromVersion == null) {
-                        fromVersion = "1.0";
-                    }
-                    if (toVersion == null) {
-                        toVersion = "99.0";
-                    }
-                    accept = VersionHelper.isBetween(rm.getVersion(), fromVersion, toVersion);
+        for (String[] v : versions) {
+            Row row = new Row();
+            row.coreVersion = v[0];
+            row.runtimeVersion = v[1];
+
+            // enrich with details from catalog (if we can find any)
+            String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
+            ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
+            if (download && rm == null) {
+                // unknown release but if it's an Apache Camel release we can grab from online
+                int dots = StringHelper.countChar(v[0], '.');
+                if (dots == 2) {
+                    rm = onlineRelease(runtime, row.coreVersion);
                 }
-                if (accept && fromDate != null || toDate != null) {
-                    if (fromDate == null) {
-                        fromDate = "2000-01-01";
-                    }
-                    if (toDate == null) {
-                        toDate = "9999-01-01";
-                    }
-                    accept = rm.getDate() == null || isDateBetween(rm.getDate(), fromDate, toDate);
+            }
+            if (rm != null) {
+                row.releaseDate = rm.getDate();
+                row.daysSince = daysSince(rm.getDate());
+                row.eolDate = rm.getEol();
+                row.jdks = rm.getJdk();
+                row.kind = rm.getKind();
+            }
+            boolean accept = true;
+            if (fromVersion != null || toVersion != null) {
+                if (fromVersion == null) {
+                    fromVersion = "1.0";
                 }
-                if (accept) {
+                if (toVersion == null) {
+                    toVersion = "99.0";
+                }
+                accept = VersionHelper.isBetween(row.coreVersion, fromVersion, toVersion);
+            }
+            if (accept && fromDate != null || toDate != null) {
+                if (fromDate == null) {
+                    fromDate = "2000-01-01";
+                }
+                if (toDate == null) {
+                    toDate = "9999-01-01";
+                }
+                accept = row.releaseDate == null || isDateBetween(row.releaseDate, fromDate, toDate);
+            }
+            if (accept) {
+                rows.add(row);
+            }
+        }
+        for (ReleaseModel rm : releases) {
+            boolean accept = true;
+            if (fromVersion != null || toVersion != null) {
+                if (fromVersion == null) {
+                    fromVersion = "1.0";
+                }
+                if (toVersion == null) {
+                    toVersion = "99.0";
+                }
+                accept = VersionHelper.isBetween(rm.getVersion(), fromVersion, toVersion);
+            }
+            if (accept && fromDate != null || toDate != null) {
+                if (fromDate == null) {
+                    fromDate = "2000-01-01";
+                }
+                if (toDate == null) {
+                    toDate = "9999-01-01";
+                }
+                accept = rm.getDate() == null || isDateBetween(rm.getDate(), fromDate, toDate);
+            }
+            if (accept) {
+                // only add if this is a new fresh release
+                if (rows.stream().filter(r -> r.coreVersion.equals(rm.getVersion())).findAny().isEmpty()) {
                     Row row = new Row();
                     rows.add(row);
                     row.coreVersion = rm.getVersion();
@@ -306,52 +453,6 @@ public class VersionList extends CamelCommand {
                     row.eolDate = rm.getEol();
                     row.jdks = rm.getJdk();
                     row.kind = rm.getKind();
-                }
-            }
-        } else {
-            for (String[] v : versions) {
-                Row row = new Row();
-                row.coreVersion = v[0];
-                row.runtimeVersion = v[1];
-
-                // enrich with details from catalog (if we can find any)
-                String catalogVersion = RuntimeType.quarkus == runtime ? v[1] : v[0];
-                ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
-                if (rm == null) {
-                    // unknown release but if it's an Apache Camel release we can grab from online
-                    int dots = StringHelper.countChar(v[0], '.');
-                    if (dots == 2) {
-                        rm = onlineRelease(runtime, row.coreVersion);
-                    }
-                }
-                if (rm != null) {
-                    row.releaseDate = rm.getDate();
-                    row.daysSince = daysSince(rm.getDate());
-                    row.eolDate = rm.getEol();
-                    row.jdks = rm.getJdk();
-                    row.kind = rm.getKind();
-                }
-                boolean accept = true;
-                if (fromVersion != null || toVersion != null) {
-                    if (fromVersion == null) {
-                        fromVersion = "1.0";
-                    }
-                    if (toVersion == null) {
-                        toVersion = "99.0";
-                    }
-                    accept = VersionHelper.isBetween(row.coreVersion, fromVersion, toVersion);
-                }
-                if (accept && fromDate != null || toDate != null) {
-                    if (fromDate == null) {
-                        fromDate = "2000-01-01";
-                    }
-                    if (toDate == null) {
-                        toDate = "9999-01-01";
-                    }
-                    accept = row.releaseDate == null || isDateBetween(row.releaseDate, fromDate, toDate);
-                }
-                if (accept) {
-                    rows.add(row);
                 }
             }
         }

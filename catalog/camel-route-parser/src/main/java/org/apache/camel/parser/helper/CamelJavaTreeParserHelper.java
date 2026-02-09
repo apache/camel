@@ -162,10 +162,10 @@ public final class CamelJavaTreeParserHelper {
 
         // find out if this is from a Camel route (eg from, route etc.)
         Expression sub = exp;
-        while (sub instanceof MethodInvocation) {
-            sub = ((MethodInvocation) sub).getExpression();
-            if (sub instanceof MethodInvocation) {
-                Expression parent = ((MethodInvocation) sub).getExpression();
+        while (sub instanceof MethodInvocation methodinvocation) {
+            sub = methodinvocation.getExpression();
+            if (sub instanceof MethodInvocation mi2) {
+                Expression parent = mi2.getExpression();
                 if (parent == null) {
                     break;
                 }
@@ -270,29 +270,25 @@ public final class CamelJavaTreeParserHelper {
         return node;
     }
 
-    /**
-     * @deprecated currently not in use
-     */
-    @Deprecated
     public static String getLiteralValue(JavaClassSource clazz, Block block, Expression expression) {
         // unwrap parenthesis
-        if (expression instanceof ParenthesizedExpression) {
-            expression = ((ParenthesizedExpression) expression).getExpression();
+        if (expression instanceof ParenthesizedExpression parenthesizedexpression) {
+            expression = (parenthesizedexpression).getExpression();
         }
 
-        if (expression instanceof StringLiteral) {
-            return ((StringLiteral) expression).getLiteralValue();
-        } else if (expression instanceof BooleanLiteral) {
-            return String.valueOf(((BooleanLiteral) expression).booleanValue());
-        } else if (expression instanceof NumberLiteral) {
-            return ((NumberLiteral) expression).getToken();
+        if (expression instanceof StringLiteral stringliteral) {
+            return (stringliteral).getLiteralValue();
+        } else if (expression instanceof BooleanLiteral booleanliteral) {
+            return String.valueOf((booleanliteral).booleanValue());
+        } else if (expression instanceof NumberLiteral numberliteral) {
+            return (numberliteral).getToken();
         } else if (expression instanceof TextBlock textBlock) {
             return textBlock.getLiteralValue();
         }
 
         // if it's a method invocation then add a dummy value assuming the method invocation will return a valid response
-        if (expression instanceof MethodInvocation) {
-            String name = ((MethodInvocation) expression).getName().getIdentifier();
+        if (expression instanceof MethodInvocation methodinvocation) {
+            String name = (methodinvocation).getName().getIdentifier();
             return "{{" + name + "}}";
         }
 
@@ -304,20 +300,19 @@ public final class CamelJavaTreeParserHelper {
             return "{{" + name + "}}";
         }
 
-        if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, (SimpleName) expression);
+        if (expression instanceof SimpleName simplename) {
+            FieldSource<JavaClassSource> field = ParserCommon.getField(clazz, block, simplename);
             if (field != null) {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
                     for (Annotation<JavaClassSource> ann : field.getAnnotations()) {
-                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+                        boolean valid = "org.apache.camel.EndpointInject".equals(ann.getQualifiedName());
                         if (valid) {
                             Expression exp = (Expression) ann.getInternal();
-                            if (exp instanceof SingleMemberAnnotation) {
-                                exp = ((SingleMemberAnnotation) exp).getValue();
-                            } else if (exp instanceof NormalAnnotation) {
-                                List<?> values = ((NormalAnnotation) exp).values();
+                            if (exp instanceof SingleMemberAnnotation singlememberannotation) {
+                                exp = (singlememberannotation).getValue();
+                            } else if (exp instanceof NormalAnnotation normalannotation) {
+                                List<?> values = (normalannotation).values();
                                 for (Object value : values) {
                                     MemberValuePair pair = (MemberValuePair) value;
                                     if ("uri".equals(pair.getName().toString())) {

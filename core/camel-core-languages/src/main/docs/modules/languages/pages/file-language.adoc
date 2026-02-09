@@ -224,4 +224,3 @@ is pretty powerful for those common file path patterns.
 
 The File language is part of *camel-core*.
 
-include::spring-boot:partial$starter.adoc[]

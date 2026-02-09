@@ -22,8 +22,8 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Same route but not transacted
@@ -33,14 +33,12 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
     @Override
     @Test
     public void testTransactionRollback() throws Exception {
-        try {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> {
             template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected as we fail
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
-        }
+        });
+        // expected as we fail
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
+        assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
 
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // should get 2 books as the first operation will succeed and we are not transacted

@@ -7,9 +7,9 @@
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "database",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-redis",
-    "version": "4.17.0-SNAPSHOT"
+    "version": "4.18.0-SNAPSHOT"
   }
 }

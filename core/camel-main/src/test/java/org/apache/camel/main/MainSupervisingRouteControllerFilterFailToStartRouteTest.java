@@ -29,7 +29,7 @@ import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
 
@@ -45,12 +45,8 @@ public class MainSupervisingRouteControllerFilterFailToStartRouteTest {
         main.configure().routeControllerConfig().setThreadPoolSize(2);
         main.configure().routeControllerConfig().setExcludeRoutes("inbox");
 
-        try {
-            main.start();
-            fail("Should fail");
-        } catch (FailedToStartRouteException e) {
-            assertEquals("inbox", e.getRouteId());
-        }
+        FailedToStartRouteException e = assertThrows(FailedToStartRouteException.class, () -> main.start());
+        assertEquals("inbox", e.getRouteId());
 
         main.stop();
     }

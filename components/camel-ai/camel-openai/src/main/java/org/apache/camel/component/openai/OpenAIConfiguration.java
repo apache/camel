@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.openai;
 
+import java.util.Map;
+
+import com.openai.core.ClientOptions;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -31,16 +34,17 @@ public class OpenAIConfiguration implements Cloneable {
     private String apiKey;
 
     @UriParam
-    @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.")
-    private String baseUrl;
+    @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.",
+              defaultValue = ClientOptions.PRODUCTION_URL)
+    private String baseUrl = ClientOptions.PRODUCTION_URL;
 
-    @UriParam(defaultValue = "gpt-5")
+    @UriParam
     @Metadata(description = "The model to use for chat completion")
-    private String model = "gpt-5";
+    private String model;
 
-    @UriParam(defaultValue = "1.0")
+    @UriParam
     @Metadata(description = "Temperature for response generation (0.0 to 2.0)")
-    private Double temperature = 1.0;
+    private Double temperature;
 
     @UriParam
     @Metadata(description = "Top P for response generation (0.0 to 1.0)")
@@ -87,6 +91,25 @@ public class OpenAIConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     @Metadata(description = "Store the full response in the exchange property 'CamelOpenAIResponse' in non-streaming mode")
     private boolean storeFullResponse = false;
+
+    @UriParam(prefix = "additionalBodyProperty.", multiValue = true)
+    @Metadata(description = "Additional JSON properties to include in the request body (e.g. additionalBodyProperty.traceId=123)")
+    private Map<String, Object> additionalBodyProperty;
+
+    // ========== EMBEDDINGS CONFIGURATION ==========
+
+    @UriParam
+    @Metadata(description = "The model to use for embeddings")
+    private String embeddingModel;
+
+    @UriParam
+    @Metadata(description = "Number of dimensions for the embedding output. Only supported by text-embedding-3 models. " +
+                            "Reducing dimensions can lower costs and improve performance without significant quality loss.")
+    private Integer dimensions;
+
+    @UriParam(enums = "float,base64", defaultValue = "float")
+    @Metadata(description = "The format for embedding output: 'float' for list of floats, 'base64' for compressed format")
+    private String encodingFormat = "float";
 
     public String getApiKey() {
         return apiKey;
@@ -206,6 +229,38 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setStoreFullResponse(boolean storeFullResponse) {
         this.storeFullResponse = storeFullResponse;
+    }
+
+    public Map<String, Object> getAdditionalBodyProperty() {
+        return additionalBodyProperty;
+    }
+
+    public void setAdditionalBodyProperty(Map<String, Object> additionalBodyProperty) {
+        this.additionalBodyProperty = additionalBodyProperty;
+    }
+
+    public String getEmbeddingModel() {
+        return embeddingModel;
+    }
+
+    public void setEmbeddingModel(String embeddingModel) {
+        this.embeddingModel = embeddingModel;
+    }
+
+    public Integer getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(Integer dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public String getEncodingFormat() {
+        return encodingFormat;
+    }
+
+    public void setEncodingFormat(String encodingFormat) {
+        this.encodingFormat = encodingFormat;
     }
 
     public OpenAIConfiguration copy() {

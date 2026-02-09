@@ -18,12 +18,12 @@ package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RestNettyHttpOptionsTest extends BaseNettyTest {
+public class RestNettyHttpOptionsTest extends BaseNettyTestSupport {
 
     @Test
     public void testNettyServerOptions() {

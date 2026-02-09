@@ -23,23 +23,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
-            assertTrue(ie.getMessage().startsWith(
-                    "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
-        }
+        });
+        FailedToCreateRouteException fe = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        IllegalArgumentException ie = assertIsInstanceOf(IllegalArgumentException.class, fe.getCause());
+        assertTrue(ie.getMessage().startsWith(
+                "Loadbalancer already configured to: RandomLoadBalancer. Cannot set it to: LoadBalanceType[RoundRobinLoadBalancer"));
     }
 
     @Test

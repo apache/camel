@@ -72,15 +72,15 @@ public class BedrockAgentEndpoint extends ScheduledPollEndpoint implements Endpo
     public void doStart() throws Exception {
         super.doStart();
 
-        bedrockAgentClient = configuration.getBedrockAgentClient() != null
+        bedrockAgentClient = ObjectHelper.isNotEmpty(configuration.getBedrockAgentClient())
                 ? configuration.getBedrockAgentClient()
-                : BedrockAgentClientFactory.getBedrockAgentClient(configuration).getBedrockAgentClient();
+                : BedrockAgentClientFactory.getBedrockAgentClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getBedrockAgentClient())) {
-            if (bedrockAgentClient != null) {
+            if (ObjectHelper.isNotEmpty(bedrockAgentClient)) {
                 bedrockAgentClient.close();
             }
         }
@@ -115,7 +115,7 @@ public class BedrockAgentEndpoint extends ScheduledPollEndpoint implements Endpo
     @Override
     public Map<String, String> getServiceMetadata() {
         HashMap<String, String> metadata = new HashMap<>();
-        if (configuration.getModelId() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getModelId())) {
             metadata.put("modelId", configuration.getModelId());
         }
         return metadata;

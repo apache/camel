@@ -7,9 +7,9 @@
     "deprecated": false,
     "firstVersion": "3.2.0",
     "label": "core",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cluster",
-    "version": "4.17.0-SNAPSHOT"
+    "version": "4.18.0-SNAPSHOT"
   }
 }

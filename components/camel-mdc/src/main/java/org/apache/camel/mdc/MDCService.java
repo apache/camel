@@ -16,6 +16,8 @@
  */
 package org.apache.camel.mdc;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -137,8 +139,13 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
 
     private final class MDCLogListener implements LogListener {
 
+        // NOTE: the onLog and afterLog are executed on the same thread, so we can
+        // reliably store the context here.
+        Map<String, String> previousContext;
+
         @Override
         public String onLog(Exchange exchange, CamelLogger camelLogger, String message) {
+            previousContext = MDC.getCopyOfContextMap();
             setMDC(exchange);
             return message;
         }
@@ -146,6 +153,7 @@ public class MDCService extends ServiceSupport implements CamelMDCService {
         @Override
         public void afterLog(Exchange exchange, CamelLogger camelLogger, String message) {
             unsetMDC(exchange);
+            MDC.setContextMap(previousContext);
         }
     }
 

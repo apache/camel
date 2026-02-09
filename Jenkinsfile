@@ -19,7 +19,7 @@ def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dkafka.instance.type=local-st
 def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 /*
 Below parameters are required for camel/core/camel-core module's test cases to pass on ppc64 and s390x
-- xpathExprGrpLimit: limits the number of groups an Xpath expression can contain 
+- xpathExprGrpLimit: limits the number of groups an Xpath expression can contain
 - xpathExprOpLimit: limits the number of operators an Xpath expression can contain
 */
 def MAVEN_TEST_PARAMS_ALT_ARCHS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000"
@@ -36,6 +36,11 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         disableConcurrentBuilds()
+        throttleJobProperty(
+          categories: ['camel'],
+          throttleEnabled: true,
+          throttleOption: 'category'
+      )
 
         // This is required if you want to clean before build
         skipDefaultCheckout(true)
@@ -52,6 +57,9 @@ pipeline {
             matrix {
                 agent {
                     label "${PLATFORM}"
+                }
+                options {
+                    throttle(['camel'])
                 }
                 when { anyOf {
                     expression { params.PLATFORM_FILTER == 'all' }
@@ -123,47 +131,26 @@ pipeline {
                         }
                     }
 
-                    stage('Build') {
+                    stage('Build and test') {
                         steps {
-                            echo "Do Build for ${PLATFORM}-${JDK_NAME}"
+                            echo "Do Build and test for ${PLATFORM}-${JDK_NAME}"
                             sh 'java -version'
-                            sh "./mvnw -U $MAVEN_PARAMS -Dskip.camel.maven.plugin.tests -Darchetype.test.skip -DskipTests clean install"
-                        }
-                    }
-
-                    stage('Code Quality Review') {
-                        steps {
-                            script {
-                                if ("${PLATFORM}" == "ubuntu-avx") {
-                                    if ("${JDK_NAME}" == "jdk_17_latest") {
-                                        withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
-                                            echo "Code quality review ENABLED for ${PLATFORM}"
-                                            sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
-                                        }
-                                    } else {
-                                        echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
-                                    }
-                                } else {
-                                    echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
-                                }
-                            }
-                        }
-                    }   
-
-                    stage('Test') {
-                        steps {
-                            echo "Do Test for ${PLATFORM}-${JDK_NAME}"
                             timeout(unit: 'HOURS', time: 7) {
                                 script {
                                     if ("${PLATFORM}" == "ubuntu-avx") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
-                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD}"
+                                            // Enable virtual threads
+                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD}"
+                                        } else if ("${JDK_NAME}" == "jdk_17_latest") {
+                                            // Enable coverage required later by Sonar check
+                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Pcoverage"
                                         } else {
-                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify"
+                                            sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install"
                                         }
                                     } else {
                                         // Skip the test case execution of modules which are either not supported on ppc64le or vendor images are not available for ppc64le.
-                                        sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_PARAMS_ALT_ARCHS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs'"
+                                        sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_PARAMS_ALT_ARCHS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -pl '!docs'"
+                                        echo "Code quality review disabled for ${PLATFORM} with JDK ${JDK_NAME}"
                                     }
                                 }
                             }
@@ -172,6 +159,23 @@ pipeline {
                             always {
                                 junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml', skipPublishingChecks: true
                                 junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml', skipPublishingChecks: true
+                            }
+                        }
+                    }
+
+                    stage('Static code analysis') {
+                        steps {
+                            script {
+                                echo "Do Static code analysis for ${PLATFORM}-${JDK_NAME}"
+                                // We only execute this on the main PLATFORM/JDK target
+                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_17_latest") {
+                                    withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
+                                        echo "Code quality review ENABLED for ${PLATFORM} with ${JDK_NAME}"
+                                        sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar"
+                                    }
+                                } else {
+                                    echo "Code quality review DISABLED for ${PLATFORM} with ${JDK_NAME}"
+                                }
                             }
                         }
                     }

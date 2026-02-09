@@ -22,7 +22,7 @@ import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ConfigGetTest extends BaseConfigTest {
+class ConfigGetTest extends BaseConfigTestSupport {
 
     @Test
     public void shouldGetConfig() throws Exception {

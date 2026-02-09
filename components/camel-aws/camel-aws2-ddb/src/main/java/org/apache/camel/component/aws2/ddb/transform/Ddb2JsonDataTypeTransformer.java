@@ -36,6 +36,7 @@ import org.apache.camel.component.jackson.transform.Json;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
@@ -95,7 +96,8 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
 
         String operation
                 = Optional.ofNullable(jsonBody.get("operation")).map(JsonNode::asText).orElse(Ddb2Operations.PutItem.name());
-        if (message.getExchange().hasProperties() && message.getExchange().getProperty("operation", String.class) != null) {
+        if (message.getExchange().hasProperties()
+                && ObjectHelper.isNotEmpty(message.getExchange().getProperty("operation", String.class))) {
             operation = message.getExchange().getProperty("operation", String.class);
         }
 
@@ -107,7 +109,7 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
         JsonNode item = jsonBody.get("item");
 
         Map<String, Object> keyProps;
-        if (key != null) {
+        if (ObjectHelper.isNotEmpty(key)) {
             keyProps = dataFormat.getObjectMapper().convertValue(key, new TypeReference<>() {
             });
         } else {
@@ -116,7 +118,7 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
         }
 
         Map<String, Object> itemProps;
-        if (item != null) {
+        if (ObjectHelper.isNotEmpty(item)) {
             itemProps = dataFormat.getObjectMapper().convertValue(item, new TypeReference<>() {
             });
         } else {

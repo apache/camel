@@ -23,19 +23,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RollbackDefaultMessageTest extends ContextTestSupport {
 
     @Test
     public void testRollback() {
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(RollbackExchangeException.class, e.getCause());
-            assertNotNull(e.getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        assertIsInstanceOf(RollbackExchangeException.class, exception.getCause());
+        assertNotNull(exception.getCause().getMessage());
     }
 
     @Override

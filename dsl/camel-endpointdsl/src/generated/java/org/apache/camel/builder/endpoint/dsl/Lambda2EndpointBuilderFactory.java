@@ -987,6 +987,344 @@ public interface Lambda2EndpointBuilderFactory {
         public String awsLambdaAliasFunctionDescription() {
             return "CamelAwsLambdaAliasFunctionDescription";
         }
+        /**
+         * The marker for the next set of results.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: listFunctions listVersions listAliases listEventSourceMapping
+         * listTags
+         * 
+         * @return the name of the header {@code AwsLambdaMarker}.
+         */
+        public String awsLambdaMarker() {
+            return "CamelAwsLambdaMarker";
+        }
+        /**
+         * The maximum number of results to return.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: listFunctions listVersions listAliases listEventSourceMapping
+         * 
+         * @return the name of the header {@code AwsLambdaMaxItems}.
+         */
+        public String awsLambdaMaxItems() {
+            return "CamelAwsLambdaMaxItems";
+        }
+        /**
+         * Whether the response has more results (is truncated).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: listFunctions listVersions listAliases listEventSourceMapping
+         * 
+         * @return the name of the header {@code AwsLambdaIsTruncated}.
+         */
+        public String awsLambdaIsTruncated() {
+            return "CamelAwsLambdaIsTruncated";
+        }
+        /**
+         * The Amazon Resource Name (ARN) of the function.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunction getFunction publishVersion createAlias getAlias
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionArn}.
+         */
+        public String awsLambdaFunctionArn() {
+            return "CamelAwsLambdaFunctionArn";
+        }
+        /**
+         * The HTTP status code of the function invocation.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaStatusCode}.
+         */
+        public String awsLambdaStatusCode() {
+            return "CamelAwsLambdaStatusCode";
+        }
+        /**
+         * If present, indicates that an error occurred during function
+         * execution.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionError}.
+         */
+        public String awsLambdaFunctionError() {
+            return "CamelAwsLambdaFunctionError";
+        }
+        /**
+         * The last 4 KB of the execution log.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: invokeFunction
+         * 
+         * @return the name of the header {@code AwsLambdaLogResult}.
+         */
+        public String awsLambdaLogResult() {
+            return "CamelAwsLambdaLogResult";
+        }
+        /**
+         * The type of authentication that the function URL uses. Set to AWS_IAM
+         * to restrict access to authenticated users only. Set to NONE to bypass
+         * IAM authentication and allow any user to invoke the function.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionUrlAuthType}.
+         */
+        public String awsLambdaFunctionUrlAuthType() {
+            return "CamelAwsLambdaFunctionUrlAuthType";
+        }
+        /**
+         * The alias name or $LATEST for the function URL.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * getFunctionUrlConfig deleteFunctionUrlConfig
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionUrlQualifier}.
+         */
+        public String awsLambdaFunctionUrlQualifier() {
+            return "CamelAwsLambdaFunctionUrlQualifier";
+        }
+        /**
+         * The cross-origin resource sharing (CORS) settings for the function
+         * URL.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaFunctionUrlCorsAllowCredentials}.
+         */
+        public String awsLambdaFunctionUrlCorsAllowCredentials() {
+            return "CamelAwsLambdaFunctionUrlCorsAllowCredentials";
+        }
+        /**
+         * The allowed origins for CORS.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaFunctionUrlCorsAllowOrigins}.
+         */
+        public String awsLambdaFunctionUrlCorsAllowOrigins() {
+            return "CamelAwsLambdaFunctionUrlCorsAllowOrigins";
+        }
+        /**
+         * The allowed HTTP methods for CORS.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaFunctionUrlCorsAllowMethods}.
+         */
+        public String awsLambdaFunctionUrlCorsAllowMethods() {
+            return "CamelAwsLambdaFunctionUrlCorsAllowMethods";
+        }
+        /**
+         * The allowed HTTP headers for CORS.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaFunctionUrlCorsAllowHeaders}.
+         */
+        public String awsLambdaFunctionUrlCorsAllowHeaders() {
+            return "CamelAwsLambdaFunctionUrlCorsAllowHeaders";
+        }
+        /**
+         * The exposed headers for CORS.
+         * 
+         * The option is a: {@code List<String>} type.
+         * 
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaFunctionUrlCorsExposeHeaders}.
+         */
+        public String awsLambdaFunctionUrlCorsExposeHeaders() {
+            return "CamelAwsLambdaFunctionUrlCorsExposeHeaders";
+        }
+        /**
+         * The max age in seconds for CORS.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: createFunctionUrlConfig updateFunctionUrlConfig
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaFunctionUrlCorsMaxAge}.
+         */
+        public String awsLambdaFunctionUrlCorsMaxAge() {
+            return "CamelAwsLambdaFunctionUrlCorsMaxAge";
+        }
+        /**
+         * The function URL endpoint.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: createFunctionUrlConfig getFunctionUrlConfig
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionUrl}.
+         */
+        public String awsLambdaFunctionUrl() {
+            return "CamelAwsLambdaFunctionUrl";
+        }
+        /**
+         * The amount of memory available to the function at runtime. Increasing
+         * the function memory also increases its CPU allocation. The default
+         * value is 128 MB. The value can be any multiple of 1 MB.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: updateFunctionConfiguration
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionMemorySize}.
+         */
+        public String awsLambdaFunctionMemorySize() {
+            return "CamelAwsLambdaFunctionMemorySize";
+        }
+        /**
+         * The amount of time (in seconds) that Lambda allows a function to run
+         * before stopping it. The default is 3 seconds. The maximum allowed
+         * value is 900 seconds.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: updateFunctionConfiguration
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionTimeout}.
+         */
+        public String awsLambdaFunctionTimeout() {
+            return "CamelAwsLambdaFunctionTimeout";
+        }
+        /**
+         * The new runtime environment for the function.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: updateFunctionConfiguration
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionRuntime}.
+         */
+        public String awsLambdaFunctionRuntime() {
+            return "CamelAwsLambdaFunctionRuntime";
+        }
+        /**
+         * The new function handler.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: updateFunctionConfiguration
+         * 
+         * @return the name of the header {@code AwsLambdaFunctionHandler}.
+         */
+        public String awsLambdaFunctionHandler() {
+            return "CamelAwsLambdaFunctionHandler";
+        }
+        /**
+         * The number of simultaneous executions to reserve for the function.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Required: true
+         * Group: putFunctionConcurrency
+         * 
+         * @return the name of the header {@code
+         * AwsLambdaReservedConcurrentExecutions}.
+         */
+        public String awsLambdaReservedConcurrentExecutions() {
+            return "CamelAwsLambdaReservedConcurrentExecutions";
+        }
+        /**
+         * A unique statement identifier for the permission.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: addPermission
+         * 
+         * @return the name of the header {@code AwsLambdaStatementId}.
+         */
+        public String awsLambdaStatementId() {
+            return "CamelAwsLambdaStatementId";
+        }
+        /**
+         * The action that the principal can use on the function. For example,
+         * lambda:InvokeFunction or lambda:GetFunction.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: addPermission
+         * 
+         * @return the name of the header {@code AwsLambdaAction}.
+         */
+        public String awsLambdaAction() {
+            return "CamelAwsLambdaAction";
+        }
+        /**
+         * The Amazon Web Services service, Amazon Web Services account, IAM
+         * user, or IAM role that invokes the function. For example,
+         * s3.amazonaws.com or 123456789012.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Required: true
+         * Group: addPermission
+         * 
+         * @return the name of the header {@code AwsLambdaPrincipal}.
+         */
+        public String awsLambdaPrincipal() {
+            return "CamelAwsLambdaPrincipal";
+        }
+        /**
+         * The Amazon Web Services account ID of the principal.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: addPermission
+         * 
+         * @return the name of the header {@code AwsLambdaSourceAccount}.
+         */
+        public String awsLambdaSourceAccount() {
+            return "CamelAwsLambdaSourceAccount";
+        }
+        /**
+         * The ARN of the Amazon Web Services resource that invokes the
+         * function. For example, an Amazon S3 bucket or Amazon SNS topic.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: addPermission
+         * 
+         * @return the name of the header {@code AwsLambdaSourceArn}.
+         */
+        public String awsLambdaSourceArn() {
+            return "CamelAwsLambdaSourceArn";
+        }
     }
     static Lambda2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Lambda2EndpointBuilderImpl extends AbstractEndpointBuilder implements Lambda2EndpointBuilder, AdvancedLambda2EndpointBuilder {

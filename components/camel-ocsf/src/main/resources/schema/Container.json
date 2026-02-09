@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/container",
+  "title": "Container",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Container",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "runtime": {
+      "type": "string",
+      "title": "Runtime"
+    },
+    "size": {
+      "type": "integer",
+      "title": "Size"
+    },
+    "tag": {
+      "type": "string",
+      "title": "Image Tag"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "image": {
+      "$ref": "Image.json"
+    },
+    "hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "labels": {
+      "type": "array",
+      "title": "Labels",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tags": {
+      "type": "array",
+      "title": "Tags",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "network_driver": {
+      "type": "string",
+      "title": "Network Driver"
+    },
+    "orchestrator": {
+      "type": "string",
+      "title": "Orchestrator"
+    },
+    "pod_uuid": {
+      "type": "string",
+      "title": "Pod UUID",
+      "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+    }
+  },
+  "description": "The Container object."
+}

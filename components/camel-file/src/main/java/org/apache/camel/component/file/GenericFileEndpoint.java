@@ -168,10 +168,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected String appendChars;
     @UriParam(label = "producer",
               enums = "MD2,MD5,SHA_1,SHA_224,SHA_256,SHA_384,SHA_512,SHA_512_224,SHA_512_256,SHA3_224,SHA3_256,SHA3_384,SHA3_512",
-              description = "If provided, then Camel will write a checksum file when the original file has been written. The checksum file"
-                            + " will contain the checksum created with the provided algorithm for the original file. The checksum file will"
-                            + " always be written in the same folder as the original file.")
+              description = "If provided, then Camel will calculate a checksum from the file that has been written, and store the result in the CamelFileChecksum header.")
     protected String checksumFileAlgorithm;
+    @UriParam(label = "producer", defaultValue = "true",
+              description = "If checksumFileAlgorithm has been configured then this option controls whether to write a checksum file as well or not."
+                            + " The checksum file will always be written in the same folder as the original file.")
+    protected boolean checksumWriteFile = true;
 
     // consumer options
 
@@ -1613,13 +1615,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return checksumFileAlgorithm;
     }
 
-    /**
-     * If provided, then Camel will write a checksum file when the original file has been written. The checksum file
-     * will contain the checksum created with the provided algorithm for the original file. The checksum file will
-     * always be written in the same folder as the original file.
-     */
     public void setChecksumFileAlgorithm(String checksumFileAlgorithm) {
         this.checksumFileAlgorithm = checksumFileAlgorithm;
+    }
+
+    public boolean isChecksumWriteFile() {
+        return checksumWriteFile;
+    }
+
+    public void setChecksumWriteFile(boolean checksumWriteFile) {
+        this.checksumWriteFile = checksumWriteFile;
     }
 
     /**
@@ -1744,6 +1749,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         }
         if (readLockIdempotentReleaseExecutorService != null) {
             params.put("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+        }
+        if (checksumFileAlgorithm != null) {
+            params.put("checksumFileAlgorithm", checksumFileAlgorithm);
         }
         return params;
     }

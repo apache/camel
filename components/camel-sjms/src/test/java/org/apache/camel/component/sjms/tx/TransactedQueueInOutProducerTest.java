@@ -33,7 +33,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TransactedQueueInOutProducerTest extends CamelTestSupport {
 
@@ -48,12 +48,10 @@ public class TransactedQueueInOutProducerTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World 2");
         getMockEndpoint("mock:result2").expectedBodiesReceived("Changed Hello World 2");
 
-        try {
+        // expected
+        assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("direct:start", "Hello World 1", "isfailed", true);
-            fail("Should fail");
-        } catch (Exception e) {
-            // expected
-        }
+        });
         template.sendBodyAndHeader("direct:start", "Hello World 2", "isfailed", false);
 
         MockEndpoint.assertIsSatisfied(context);

@@ -16,9 +16,16 @@
  */
 package org.apache.camel.component.mock;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -30,6 +37,9 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.support.builder.PredicateBuilder;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * A builder of expressions or predicates based on values.
@@ -215,6 +225,77 @@ public class MockValueBuilder implements Expression, Predicate {
      */
     public Predicate regex(String regex) {
         return onNewPredicate(PredicateBuilder.regex(expression, regex));
+    }
+
+    /**
+     * Creates a predicate that compares JSON content semantically, ignoring element order in arrays.
+     * <p>
+     * This method is useful when testing Camel routes with JSON payloads where the order of elements in JSON arrays or
+     * objects can vary, making exact string comparison unreliable.
+     * </p>
+     * <p>
+     * Example usage:
+     * </p>
+     *
+     * <pre>
+     * MockEndpoint mock = getMockEndpoint("mock:result");
+     * mock.message(0).body().jsonEquals("{\"items\":[{\"id\":1},{\"id\":2}]}");
+     * </pre>
+     * <p>
+     * The above will match even if the actual JSON has the items in a different order:
+     * {@code {"items":[{"id":2},{"id":1}]}}
+     * </p>
+     *
+     * @param  expected the expected JSON value (can be String, byte[], InputStream, JsonObject, or JsonArray)
+     * @return          a predicate which evaluates to true if the JSON content matches semantically, ignoring array
+     *                  element order
+     */
+    public Predicate jsonEquals(Object expected) {
+        return jsonEquals(expected, true);
+    }
+
+    /**
+     * Creates a predicate that compares JSON content semantically.
+     * <p>
+     * This method is useful when testing Camel routes with JSON payloads where the order of elements in JSON arrays or
+     * objects can vary, making exact string comparison unreliable.
+     * </p>
+     * <p>
+     * Example usage:
+     * </p>
+     *
+     * <pre>
+     * MockEndpoint mock = getMockEndpoint("mock:result");
+     * // Ignore array element order
+     * mock.message(0).body().jsonEquals("{\"items\":[{\"id\":1},{\"id\":2}]}", true);
+     *
+     * // Strict array order comparison
+     * mock.message(1).body().jsonEquals("{\"items\":[{\"id\":1},{\"id\":2}]}", false);
+     * </pre>
+     *
+     * @param  expected    the expected JSON value (can be String, byte[], InputStream, JsonObject, or JsonArray)
+     * @param  ignoreOrder if true, ignores the order of elements in JSON arrays; if false, array order must match
+     * @return             a predicate which evaluates to true if the JSON content matches semantically
+     */
+    public Predicate jsonEquals(Object expected, boolean ignoreOrder) {
+        return onNewPredicate(new Predicate() {
+            @Override
+            public boolean matches(Exchange exchange) {
+                Object actual = expression.evaluate(exchange, Object.class);
+                try {
+                    Object expectedJson = parseJson(expected);
+                    Object actualJson = parseJson(actual);
+                    return jsonDeepEquals(expectedJson, actualJson, ignoreOrder);
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return expression + " jsonEquals(" + expected + ", ignoreOrder=" + ignoreOrder + ")";
+            }
+        });
     }
 
     // Expression builders
@@ -539,5 +620,227 @@ public class MockValueBuilder implements Expression, Predicate {
 
     protected MockValueBuilder onNewValueBuilder(Expression exp) {
         return new MockValueBuilder(exp);
+    }
+
+    /**
+     * Parses a JSON value from various input types.
+     *
+     * @param  value     the value to parse (String, byte[], InputStream, JsonObject, JsonArray, or already parsed
+     *                   object)
+     * @return           the parsed JSON object (JsonObject, JsonArray, String, Number, Boolean, or null)
+     * @throws Exception if parsing fails
+     */
+    private Object parseJson(Object value) throws Exception {
+        if (value == null) {
+            return null;
+        }
+
+        // Already parsed JSON objects
+        if (value instanceof JsonObject || value instanceof JsonArray) {
+            return value;
+        }
+
+        // Primitives that are valid JSON values
+        if (value instanceof String || value instanceof Number || value instanceof Boolean) {
+            // For strings, we need to check if it's a JSON string or a plain string
+            if (value instanceof String str) {
+                str = str.trim();
+                // Check if it looks like JSON
+                if (str.startsWith("{") || str.startsWith("[") || str.equals("null")
+                        || str.equals("true") || str.equals("false")
+                        || (str.startsWith("\"") && str.endsWith("\""))
+                        || str.matches("-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?")) {
+                    try (Reader reader = new StringReader(str)) {
+                        return Jsoner.deserialize(reader);
+                    }
+                }
+                // Plain string - return as is for comparison
+                return str;
+            }
+            return value;
+        }
+
+        // byte[] input
+        if (value instanceof byte[] byteArray) {
+            try (InputStream is = new ByteArrayInputStream(byteArray);
+                 Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                return Jsoner.deserialize(reader);
+            }
+        }
+
+        // InputStream input
+        if (value instanceof InputStream inputstream) {
+            try (Reader reader = new InputStreamReader(inputstream, StandardCharsets.UTF_8)) {
+                return Jsoner.deserialize(reader);
+            }
+        }
+
+        // Try to convert to string and parse
+        String str = value.toString();
+        try (Reader reader = new StringReader(str)) {
+            return Jsoner.deserialize(reader);
+        }
+    }
+
+    /**
+     * Performs deep equality comparison of JSON values.
+     *
+     * @param  expected    the expected JSON value
+     * @param  actual      the actual JSON value
+     * @param  ignoreOrder if true, ignores the order of elements in JSON arrays
+     * @return             true if the JSON values are equal, false otherwise
+     */
+    private boolean jsonDeepEquals(Object expected, Object actual, boolean ignoreOrder) {
+        // Both null
+        if (expected == null && actual == null) {
+            return true;
+        }
+
+        // One is null
+        if (expected == null || actual == null) {
+            return false;
+        }
+
+        // Same reference
+        if (expected == actual) {
+            return true;
+        }
+
+        // JsonObject comparison
+        if (expected instanceof JsonObject jsonobject && actual instanceof JsonObject actualJsonObject) {
+            return jsonObjectEquals(jsonobject, actualJsonObject, ignoreOrder);
+        }
+
+        // Map comparison (in case of deserialized maps)
+        if (expected instanceof Map && actual instanceof Map) {
+            return jsonMapEquals((Map<?, ?>) expected, (Map<?, ?>) actual, ignoreOrder);
+        }
+
+        // JsonArray comparison
+        if (expected instanceof JsonArray jsonarray && actual instanceof JsonArray actualJsonArray) {
+            return jsonArrayEquals(jsonarray, actualJsonArray, ignoreOrder);
+        }
+
+        // List comparison (in case of deserialized lists)
+        if (expected instanceof List && actual instanceof List) {
+            return jsonListEquals((List<?>) expected, (List<?>) actual, ignoreOrder);
+        }
+
+        // Primitive comparison (String, Number, Boolean)
+        return expected.equals(actual);
+    }
+
+    /**
+     * Compares two JsonObjects for equality.
+     */
+    private boolean jsonObjectEquals(JsonObject expected, JsonObject actual, boolean ignoreOrder) {
+        if (expected.size() != actual.size()) {
+            return false;
+        }
+
+        for (Map.Entry<String, Object> entry : expected.entrySet()) {
+            String key = entry.getKey();
+            if (!actual.containsKey(key)) {
+                return false;
+            }
+            if (!jsonDeepEquals(entry.getValue(), actual.get(key), ignoreOrder)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Compares two Maps for equality (used for deserialized JSON objects).
+     */
+    private boolean jsonMapEquals(Map<?, ?> expected, Map<?, ?> actual, boolean ignoreOrder) {
+        if (expected.size() != actual.size()) {
+            return false;
+        }
+
+        for (Map.Entry<?, ?> entry : expected.entrySet()) {
+            Object key = entry.getKey();
+            if (!actual.containsKey(key)) {
+                return false;
+            }
+            if (!jsonDeepEquals(entry.getValue(), actual.get(key), ignoreOrder)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Compares two JsonArrays for equality.
+     */
+    private boolean jsonArrayEquals(JsonArray expected, JsonArray actual, boolean ignoreOrder) {
+        if (expected.size() != actual.size()) {
+            return false;
+        }
+
+        if (ignoreOrder) {
+            // For unordered comparison, we need to find a matching element for each expected element
+            List<Object> actualCopy = new ArrayList<>(actual);
+            for (Object expectedElement : expected) {
+                boolean found = false;
+                for (int i = 0; i < actualCopy.size(); i++) {
+                    if (jsonDeepEquals(expectedElement, actualCopy.get(i), ignoreOrder)) {
+                        actualCopy.remove(i);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            // For ordered comparison, compare elements at the same index
+            for (int i = 0; i < expected.size(); i++) {
+                if (!jsonDeepEquals(expected.get(i), actual.get(i), ignoreOrder)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Compares two Lists for equality (used for deserialized JSON arrays).
+     */
+    private boolean jsonListEquals(List<?> expected, List<?> actual, boolean ignoreOrder) {
+        if (expected.size() != actual.size()) {
+            return false;
+        }
+
+        if (ignoreOrder) {
+            // For unordered comparison, we need to find a matching element for each expected element
+            List<Object> actualCopy = new ArrayList<>(actual);
+            for (Object expectedElement : expected) {
+                boolean found = false;
+                for (int i = 0; i < actualCopy.size(); i++) {
+                    if (jsonDeepEquals(expectedElement, actualCopy.get(i), ignoreOrder)) {
+                        actualCopy.remove(i);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            // For ordered comparison, compare elements at the same index
+            for (int i = 0; i < expected.size(); i++) {
+                if (!jsonDeepEquals(expected.get(i), actual.get(i), ignoreOrder)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

@@ -29,6 +29,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "baseurl":
         case "baseUrl": target.setBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "embeddingmodel":
+        case "embeddingModel": target.setEmbeddingModel(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "model": target.setModel(property(camelContext, java.lang.String.class, value)); return true;
@@ -45,6 +47,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return boolean.class;
         case "baseurl":
         case "baseUrl": return java.lang.String.class;
+        case "embeddingmodel":
+        case "embeddingModel": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "model": return java.lang.String.class;
@@ -62,6 +66,8 @@ public class OpenAIComponentConfigurer extends PropertyConfigurerSupport impleme
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "baseurl":
         case "baseUrl": return target.getBaseUrl();
+        case "embeddingmodel":
+        case "embeddingModel": return target.getEmbeddingModel();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "model": return target.getModel();

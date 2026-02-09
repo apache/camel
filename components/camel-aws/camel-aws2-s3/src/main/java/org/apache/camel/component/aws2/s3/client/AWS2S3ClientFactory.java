@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.s3.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMProfileOptimizedImpl;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
+import software.amazon.awssdk.services.s3.S3Client;
 
 /**
- * Factory class to return the correct type of AWS S3 aws.
+ * Factory class to create AWS S3 clients using common configuration.
  */
 public final class AWS2S3ClientFactory {
 
@@ -31,20 +29,20 @@ public final class AWS2S3ClientFactory {
     }
 
     /**
-     * Return the correct aws s3 client (based on remote vs local).
+     * Create an S3 client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               AWSS3Client
+     * @param  configuration The S3 configuration
+     * @return               Configured S3Client
      */
-    public static AWS2CamelS3InternalClient getAWSS3Client(AWS2S3Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new AWS2S3ClientIAMOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new AWS2S3ClientIAMProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new AWS2S3ClientSessionTokenImpl(configuration);
-        } else {
-            return new AWS2S3ClientStandardImpl(configuration);
-        }
+    public static S3Client getS3Client(AWS2S3Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                S3Client::builder,
+                builder -> {
+                    // S3-specific configuration
+                    if (configuration.isForcePathStyle()) {
+                        builder.forcePathStyle(true);
+                    }
+                });
     }
 }

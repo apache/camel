@@ -93,17 +93,18 @@ public class ImageRecognitionEndpoint extends DefaultEndpoint {
     private String endpoint;
 
     @UriParam(
-              description = "Indicates the Base64 character string converted from the image. The size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels."
-                            + "The supported image formats include JPG, PNG, and BMP. \n"
-                            + "Configure either this parameter or imageUrl, and this one carries higher precedence than imageUrl.",
+              description = """
+                      Indicates the Base64 character string converted from the image. The size cannot exceed 10 MB. The image resolution of the narrow sides must be greater than 15 pixels, and that of the wide sides cannot exceed 4096 pixels.The supported image formats include JPG, PNG, and BMP.\s
+                      Configure either this parameter or imageUrl, and this one carries higher precedence than imageUrl.""",
               displayName = "Image in Base64")
     @Metadata(required = false)
     private String imageContent;
 
-    @UriParam(description = "Indicates the URL of an image. The options are as follows:\n"
-                            + "HTTP/HTTPS URLs on the public network\n"
-                            + "OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS. \n"
-                            + "Configure either this parameter or imageContent, and this one carries lower precedence than imageContent.",
+    @UriParam(description = """
+            Indicates the URL of an image. The options are as follows:
+            HTTP/HTTPS URLs on the public network
+            OBS URLs. To use OBS data, authorization is required, including service authorization, temporary authorization, and anonymous public authorization. For details, see Configuring the Access Permission of OBS.\s
+            Configure either this parameter or imageContent, and this one carries lower precedence than imageContent.""",
               displayName = "Image Url")
     @Metadata(required = false)
     private String imageUrl;
@@ -114,9 +115,10 @@ public class ImageRecognitionEndpoint extends DefaultEndpoint {
     @Metadata(required = false)
     private String tagLanguage = ImageRecognitionConstants.TAG_LANGUAGE_ZH;
 
-    @UriParam(description = "Indicates the threshold of confidence.\n"
-                            + "When the operation is tagRecognition, this parameter ranges from 0 to 100. Tags whose confidence score is lower than the threshold will not be returned. The default value is 60.\n"
-                            + "When the operation is celebrityRecognition, this parameter ranges from 0 to 1. Labels whose confidence score is lower than the threshold will not be returned. The default value is 0.48.",
+    @UriParam(description = """
+            Indicates the threshold of confidence.
+            When the operation is tagRecognition, this parameter ranges from 0 to 100. Tags whose confidence score is lower than the threshold will not be returned. The default value is 60.
+            When the operation is celebrityRecognition, this parameter ranges from 0 to 1. Labels whose confidence score is lower than the threshold will not be returned. The default value is 0.48.""",
               displayName = "Threshold of confidence")
     @Metadata(required = false)
     private float threshold = -1;

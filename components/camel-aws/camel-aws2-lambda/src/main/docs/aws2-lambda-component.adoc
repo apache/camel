@@ -90,6 +90,19 @@ For more information about this you can look at https://docs.aws.amazon.com/sdk-
 - deleteAlias
 - getAlias
 - listAliases
+- createFunctionUrlConfig
+- getFunctionUrlConfig
+- updateFunctionUrlConfig
+- deleteFunctionUrlConfig
+- listFunctionUrlConfigs
+- getFunctionConfiguration
+- updateFunctionConfiguration
+- putFunctionConcurrency
+- deleteFunctionConcurrency
+- getFunctionConcurrency
+- addPermission
+- removePermission
+- getPolicy
 
 == Examples
 
@@ -128,6 +141,175 @@ and by sending
                 exchange.getIn().setBody(inputStream);
             }
         });
+--------------------------------------------------------------------------------
+
+=== Function URL Operations
+
+Function URLs provide a dedicated HTTP(S) endpoint for your Lambda function, enabling direct invocation via HTTP without needing API Gateway.
+
+- createFunctionUrlConfig: this operation will create a function URL for your Lambda function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createFunctionUrl")
+    .setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, constant("NONE"))
+    .to("aws2-lambda://myFunction?operation=createFunctionUrlConfig")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The `FUNCTION_URL_AUTH_TYPE` can be either `NONE` (public access) or `AWS_IAM` (authenticated access).
+
+- getFunctionUrlConfig: this operation will retrieve the function URL configuration
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getFunctionUrl")
+    .to("aws2-lambda://myFunction?operation=getFunctionUrlConfig")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- updateFunctionUrlConfig: this operation will update the function URL configuration
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:updateFunctionUrl")
+    .setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, constant("AWS_IAM"))
+    .to("aws2-lambda://myFunction?operation=updateFunctionUrlConfig")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- deleteFunctionUrlConfig: this operation will delete the function URL
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteFunctionUrl")
+    .to("aws2-lambda://myFunction?operation=deleteFunctionUrlConfig")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- listFunctionUrlConfigs: this operation will list all function URLs for a function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listFunctionUrls")
+    .to("aws2-lambda://myFunction?operation=listFunctionUrlConfigs")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Function Configuration Operations
+
+Function Configuration operations allow you to view and modify your Lambda function's runtime settings.
+
+- getFunctionConfiguration: this operation will retrieve the configuration details of a function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getFunctionConfiguration")
+    .to("aws2-lambda://myFunction?operation=getFunctionConfiguration")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- updateFunctionConfiguration: this operation will update the configuration of a function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:updateFunctionConfiguration")
+    .process(exchange -> {
+        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_MEMORY_SIZE, 512);
+        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_TIMEOUT, 60);
+        exchange.getIn().setHeader(Lambda2Constants.DESCRIPTION, "Updated function description");
+    })
+    .to("aws2-lambda://myFunction?operation=updateFunctionConfiguration")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Concurrency Operations
+
+Concurrency operations allow you to manage reserved concurrency for your Lambda functions.
+
+- putFunctionConcurrency: this operation will set the reserved concurrency for a function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:putFunctionConcurrency")
+    .setHeader(Lambda2Constants.RESERVED_CONCURRENT_EXECUTIONS, constant(100))
+    .to("aws2-lambda://myFunction?operation=putFunctionConcurrency")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- deleteFunctionConcurrency: this operation will remove reserved concurrency from a function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:deleteFunctionConcurrency")
+    .to("aws2-lambda://myFunction?operation=deleteFunctionConcurrency")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- getFunctionConcurrency: this operation will retrieve the reserved concurrency for a function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getFunctionConcurrency")
+    .to("aws2-lambda://myFunction?operation=getFunctionConcurrency")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Permission Operations
+
+Permission operations allow you to manage the resource-based policy for your Lambda functions.
+
+- addPermission: this operation will add a permission to the function's resource-based policy
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:addPermission")
+    .process(exchange -> {
+        exchange.getIn().setHeader(Lambda2Constants.STATEMENT_ID, "s3-invoke");
+        exchange.getIn().setHeader(Lambda2Constants.ACTION, "lambda:InvokeFunction");
+        exchange.getIn().setHeader(Lambda2Constants.PRINCIPAL, "s3.amazonaws.com");
+        exchange.getIn().setHeader(Lambda2Constants.SOURCE_ARN, "arn:aws:s3:::my-bucket");
+    })
+    .to("aws2-lambda://myFunction?operation=addPermission")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- removePermission: this operation will remove a permission from the function's resource-based policy
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:removePermission")
+    .setHeader(Lambda2Constants.STATEMENT_ID, constant("s3-invoke"))
+    .to("aws2-lambda://myFunction?operation=removePermission")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+- getPolicy: this operation will retrieve the resource-based policy for a function
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:getPolicy")
+    .to("aws2-lambda://myFunction?operation=getPolicy")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+You can also configure CORS settings for function URLs:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:createFunctionUrlWithCors")
+    .process(exchange -> {
+        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, "NONE");
+        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_ORIGINS,
+            Arrays.asList("https://example.com"));
+        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_METHODS,
+            Arrays.asList("GET", "POST"));
+        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_ALLOW_HEADERS,
+            Arrays.asList("Content-Type", "Authorization"));
+        exchange.getIn().setHeader(Lambda2Constants.FUNCTION_URL_CORS_MAX_AGE, 3600);
+    })
+    .to("aws2-lambda://myFunction?operation=createFunctionUrlConfig")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 == Using a POJO as body

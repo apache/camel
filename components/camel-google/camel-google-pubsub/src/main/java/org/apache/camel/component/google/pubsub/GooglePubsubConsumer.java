@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +46,11 @@ import org.apache.camel.component.google.pubsub.consumer.AcknowledgeSync;
 import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
 import org.apache.camel.component.google.pubsub.consumer.GooglePubsubAcknowledge;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.UnitOfWorkHelper;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,20 +168,61 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                 MessageReceiver messageReceiver = new CamelMessageReceiver(GooglePubsubConsumer.this, endpoint, processor);
 
                 Subscriber subscriber = endpoint.getComponent().getSubscriber(subscriptionName, messageReceiver, endpoint);
+                boolean subscriberAdded = false;
                 try {
-                    subscribers.add(subscriber);
                     subscriber.startAsync().awaitRunning();
+                    // Only add to list after successful startup
+                    subscribers.add(subscriber);
+                    subscriberAdded = true;
                     subscriber.awaitTerminated();
                 } catch (Exception e) {
-                    localLog.error("Failure getting messages from PubSub", e);
+                    // Remove from list if it was added
+                    if (subscriberAdded) {
+                        subscribers.remove(subscriber);
+                    }
+
+                    // Check if error is recoverable
+                    boolean isRecoverable = false;
+                    if (e instanceof ApiException ae) {
+                        isRecoverable = ae.isRetryable();
+                    } else if (e.getCause() instanceof ApiException ae) {
+                        isRecoverable = ae.isRetryable();
+                    }
+
+                    if (isRecoverable) {
+                        localLog.error("Retryable error getting messages from PubSub", e);
+                    } else {
+                        localLog.error("Non-recoverable error getting messages from PubSub, stopping subscriber loop", e);
+                    }
 
                     // allow camel error handler to be aware
                     if (endpoint.isBridgeErrorHandler()) {
                         getExceptionHandler().handleException(e);
                     }
+
+                    // For non-recoverable errors, exit the loop
+                    if (!isRecoverable) {
+                        break;
+                    }
+
+                    // Add backoff delay for recoverable errors to prevent tight loop
+                    // We use initialDelay for the actual delay, and maxIterations(1) to run once
+                    Tasks.foregroundTask()
+                            .withBudget(Budgets.iterationBudget()
+                                    .withMaxIterations(1)
+                                    .withInitialDelay(Duration.ofSeconds(5))
+                                    .withInterval(Duration.ZERO)
+                                    .build())
+                            .withName("PubSubRetryDelay")
+                            .build()
+                            .run(getEndpoint().getCamelContext(), () -> true);
                 } finally {
                     localLog.debug("Stopping async subscriber {}", subscriptionName);
                     subscriber.stopAsync();
+                    // Ensure cleanup from list
+                    if (subscriberAdded) {
+                        subscribers.remove(subscriber);
+                    }
                 }
             }
         }
@@ -207,6 +253,12 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         // Deprecated:  replaced by headerFilterStrategy
                         exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, pubsubMessage.getAttributesMap());
 
+                        // Delivery attempt (requires dead-letter policy on subscription)
+                        int deliveryAttempt = message.getDeliveryAttempt();
+                        if (deliveryAttempt > 0) {
+                            exchange.getIn().setHeader(GooglePubsubConstants.DELIVERY_ATTEMPT, deliveryAttempt);
+                        }
+
                         //existing subscriber can not be propagated, because it will be closed at the end of this block
                         //subscriber will be created at the moment of use
                         // (see  https://issues.apache.org/jira/browse/CAMEL-18447)
@@ -231,7 +283,21 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                         try {
                             processor.process(exchange);
                         } catch (Exception e) {
-                            getExceptionHandler().handleException(e);
+                            exchange.setException(e);
+                        }
+
+                        // Handle exception if one occurred
+                        if (exchange.getException() != null) {
+                            getExceptionHandler().handleException("Error processing exchange", exchange,
+                                    exchange.getException());
+                        }
+
+                        // Execute synchronization callbacks (ACK/NACK) based on exchange status
+                        // This is required because we are directly calling processor.process() outside of the normal
+                        // Camel routing engine, so we must manually trigger the OnCompletion callbacks
+                        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
+                            List<Synchronization> synchronizations = exchange.getExchangeExtension().handoverCompletions();
+                            UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations);
                         }
                     }
                 } catch (CancellationException e) {

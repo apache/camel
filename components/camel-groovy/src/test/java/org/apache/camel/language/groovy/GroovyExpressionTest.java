@@ -28,8 +28,8 @@ import static org.apache.camel.test.junit5.TestSupport.assertExpression;
 import static org.apache.camel.test.junit5.TestSupport.assertInMessageHeader;
 import static org.apache.camel.test.junit5.TestSupport.assertPredicate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class GroovyExpressionTest {
     private static final Logger LOG = LoggerFactory.getLogger(GroovyExpressionTest.class);
@@ -104,14 +104,12 @@ public class GroovyExpressionTest {
 
     @Test
     public void testInvalidExpressionFailsWithMeaningfulException() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             GroovyLanguage.groovy("exchange.doesNotExist").evaluate(exchange);
-            fail("This test case should have thrown an exception!");
-        } catch (Exception e) {
-            LOG.debug("Caught expected exception: {}", e.getMessage(), e);
-            String message = e.getMessage();
-            assertTrue(message.contains("doesNotExist"), "The message should include 'doesNotExist' but was: " + message);
-        }
+        });
+        LOG.debug("Caught expected exception: {}", e.getMessage(), e);
+        String message = e.getMessage();
+        assertTrue(message.contains("doesNotExist"), "The message should include 'doesNotExist' but was: " + message);
     }
 
     @BeforeEach

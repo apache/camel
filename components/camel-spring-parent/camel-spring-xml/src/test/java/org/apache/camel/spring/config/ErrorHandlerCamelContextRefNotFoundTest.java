@@ -25,23 +25,21 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ErrorHandlerCamelContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());
-            assertEquals(
-                    "No bean could be found in the registry for: foo of type: org.apache.camel.ErrorHandlerFactory",
-                    nsbe.getMessage());
-        }
+        });
+        FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        NoSuchBeanException nsbe = assertIsInstanceOf(NoSuchBeanException.class, cause.getCause());
+        assertEquals(
+                "No bean could be found in the registry for: foo of type: org.apache.camel.ErrorHandlerFactory",
+                nsbe.getMessage());
     }
 
     @Override

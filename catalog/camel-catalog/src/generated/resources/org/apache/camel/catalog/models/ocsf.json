@@ -1,0 +1,25 @@
+{
+  "model": {
+    "kind": "model",
+    "name": "ocsf",
+    "title": "OCSF",
+    "description": "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to\/from JSON.",
+    "deprecated": false,
+    "firstVersion": "4.18.0",
+    "label": "dataformat,transformation,json,security",
+    "javaType": "org.apache.camel.model.dataformat.OcsfDataFormat",
+    "abstract": false,
+    "input": false,
+    "output": false
+  },
+  "properties": {
+    "id": { "index": 0, "kind": "attribute", "displayName": "Id", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The id of this node" },
+    "objectMapper": { "index": 1, "kind": "attribute", "displayName": "Object Mapper", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Lookup and use the existing ObjectMapper with the given id when using Jackson." },
+    "useDefaultObjectMapper": { "index": 2, "kind": "attribute", "displayName": "Use Default Object Mapper", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to lookup and use default Jackson ObjectMapper from the registry." },
+    "unmarshalType": { "index": 3, "kind": "attribute", "displayName": "Unmarshal Type", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent." },
+    "collectionType": { "index": 4, "kind": "attribute", "displayName": "Collection Type", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default." },
+    "useList": { "index": 5, "kind": "attribute", "displayName": "Use List", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To unmarshal to a List of OCSF events." },
+    "allowUnmarshallType": { "index": 6, "kind": "attribute", "displayName": "Allow Unmarshall Type", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled when desired to be used." },
+    "prettyPrint": { "index": 7, "kind": "attribute", "displayName": "Pretty Print", "group": "common", "required": false, "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "To enable pretty printing output nicely formatted. Is by default false." }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/api",
+  "title": "Api",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Api",
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "request": {
+      "$ref": "Request.json"
+    },
+    "service": {
+      "$ref": "Service.json"
+    },
+    "group": {
+      "$ref": "Group.json"
+    },
+    "response": {
+      "$ref": "Response.json"
+    },
+    "operation": {
+      "type": "string",
+      "title": "Operation"
+    }
+  },
+  "description": "The API object."
+}

@@ -1,0 +1,63 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 525704124,
+            "message": {
+                "message_id": 2312,
+                "from": {
+                    "id": 149961111,
+                    "first_name": "John",
+                    "last_name": "Doe"
+                },
+                "chat": {
+                    "id": 149961666,
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "type": "private"
+                },
+                "date": 1463668900,
+                "video": {
+                    "file_id": "BAADBAADAgADyzvwCC7_extended_video",
+                    "file_unique_id": "AgADyzvwCC7_extended_unique",
+                    "width": 1920,
+                    "height": 1080,
+                    "duration": 300,
+                    "thumb": {
+                        "file_id": "AAQEABMlaUQZAAT1thumb_old",
+                        "file_size": 1958,
+                        "width": 90,
+                        "height": 50
+                    },
+                    "thumbnail": {
+                        "file_id": "AAQEABMlaUQZAAT1thumb_new",
+                        "file_unique_id": "thumb_new_unique",
+                        "file_size": 2048,
+                        "width": 320,
+                        "height": 180
+                    },
+                    "cover": [
+                        {
+                            "file_id": "cover_small_id",
+                            "file_unique_id": "cover_small_unique",
+                            "file_size": 1024,
+                            "width": 160,
+                            "height": 90
+                        },
+                        {
+                            "file_id": "cover_large_id",
+                            "file_unique_id": "cover_large_unique",
+                            "file_size": 4096,
+                            "width": 640,
+                            "height": 360
+                        }
+                    ],
+                    "start_timestamp": 15,
+                    "file_name": "extended_video.mp4",
+                    "mime_type": "video/mp4",
+                    "file_size": 104857600
+                }
+            }
+        }
+    ]
+}

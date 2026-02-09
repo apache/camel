@@ -1,0 +1,171 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/file",
+  "title": "File",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.File",
+  "additionalProperties": true,
+  "properties": {
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "drive_type": {
+      "type": "string",
+      "title": "Drive Type"
+    },
+    "encryption_details": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "internal_name": {
+      "type": "string",
+      "title": "Internal Name"
+    },
+    "accessed_time": {
+      "type": "integer",
+      "title": "Accessed Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "confidentiality": {
+      "type": "string",
+      "title": "Confidentiality"
+    },
+    "product": {
+      "$ref": "Product.json"
+    },
+    "uri": {
+      "type": "string",
+      "title": "File URI"
+    },
+    "size": {
+      "type": "integer",
+      "title": "Size"
+    },
+    "xattributes": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "hashes": {
+      "type": "array",
+      "title": "Hashes",
+      "items": {
+        "$ref": "Fingerprint.json"
+      }
+    },
+    "attributes": {
+      "type": "integer",
+      "title": "Attributes"
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "tags": {
+      "type": "array",
+      "title": "Tags",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "creator": {
+      "$ref": "User.json"
+    },
+    "owner": {
+      "$ref": "User.json"
+    },
+    "security_descriptor": {
+      "type": "string",
+      "title": "Security Descriptor"
+    },
+    "volume": {
+      "type": "string",
+      "title": "Volume"
+    },
+    "is_system": {
+      "type": "boolean",
+      "title": "System"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "path": {
+      "type": "string",
+      "title": "Path"
+    },
+    "drive_type_id": {
+      "type": "integer",
+      "title": "Drive Type ID"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "confidentiality_id": {
+      "type": "integer",
+      "title": "Confidentiality ID"
+    },
+    "is_encrypted": {
+      "type": "boolean",
+      "title": "Encrypted"
+    },
+    "modified_time": {
+      "type": "integer",
+      "title": "Modified Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "url": {
+      "$ref": "Url.json"
+    },
+    "modifier": {
+      "$ref": "User.json"
+    },
+    "is_deleted": {
+      "type": "boolean",
+      "title": "Deleted"
+    },
+    "parent_folder": {
+      "type": "string",
+      "title": "Parent Folder"
+    },
+    "company_name": {
+      "type": "string",
+      "title": "Company Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "mime_type": {
+      "type": "string",
+      "title": "MIME type"
+    },
+    "is_readonly": {
+      "type": "boolean",
+      "title": "Read-Only"
+    },
+    "ext": {
+      "type": "string",
+      "title": "File Extension"
+    },
+    "accessor": {
+      "$ref": "User.json"
+    }
+  },
+  "description": "The File object."
+}

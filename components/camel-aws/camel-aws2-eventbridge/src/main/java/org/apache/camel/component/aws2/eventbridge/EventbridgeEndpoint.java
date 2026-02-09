@@ -71,15 +71,15 @@ public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServ
     public void doStart() throws Exception {
         super.doStart();
 
-        eventbridgeClient = configuration.getEventbridgeClient() != null
+        eventbridgeClient = ObjectHelper.isNotEmpty(configuration.getEventbridgeClient())
                 ? configuration.getEventbridgeClient()
-                : EventbridgeClientFactory.getEventbridgeClient(configuration).getEventbridgeClient();
+                : EventbridgeClientFactory.getEventbridgeClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEventbridgeClient())) {
-            if (eventbridgeClient != null) {
+            if (ObjectHelper.isNotEmpty(eventbridgeClient)) {
                 eventbridgeClient.close();
             }
         }
@@ -113,7 +113,7 @@ public class EventbridgeEndpoint extends DefaultEndpoint implements EndpointServ
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getEventbusName() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getEventbusName())) {
             return Map.of("eventbus", configuration.getEventbusName());
         }
         return null;

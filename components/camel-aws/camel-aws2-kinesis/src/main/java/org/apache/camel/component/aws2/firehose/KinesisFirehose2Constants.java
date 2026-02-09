@@ -28,4 +28,18 @@ public interface KinesisFirehose2Constants {
     String KINESIS_FIREHOSE_OPERATION = "CamelAwsKinesisFirehoseOperation";
     @Metadata(description = "The name of the delivery stream.", javaType = "String")
     String KINESIS_FIREHOSE_STREAM_NAME = "CamelAwsKinesisFirehoseDeliveryStreamName";
+
+    // Response metadata
+    @Metadata(label = "createDeliveryStream",
+              description = "The ARN of the delivery stream.", javaType = "String")
+    String DELIVERY_STREAM_ARN = "CamelAwsKinesisFirehoseDeliveryStreamArn";
+    @Metadata(label = "sendBatchRecord",
+              description = "The number of records that failed in a batch put operation.", javaType = "Integer")
+    String FAILED_RECORD_COUNT = "CamelAwsKinesisFirehoseFailedRecordCount";
+    @Metadata(label = "sendBatchRecord",
+              description = "Whether the batch operation was encrypted.", javaType = "Boolean")
+    String ENCRYPTED = "CamelAwsKinesisFirehoseEncrypted";
+    @Metadata(label = "describeDeliveryStream",
+              description = "The status of the delivery stream.", javaType = "String")
+    String DELIVERY_STREAM_STATUS = "CamelAwsKinesisFirehoseDeliveryStreamStatus";
 }

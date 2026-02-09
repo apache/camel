@@ -269,6 +269,22 @@ public class BlobExchangeHeaders {
         return getObjectFromHeaders(exchange, BlobConstants.LEASE_DURATION_IN_SECONDS, Integer.class);
     }
 
+    public static String getFilePathFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.FILE_PATH, String.class);
+    }
+
+    public static Long getBlockSizeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.BLOCK_SIZE, Long.class);
+    }
+
+    public static Integer getMaxConcurrencyFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.MAX_CONCURRENCY, Integer.class);
+    }
+
+    public static Long getMaxSingleUploadSizeFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, BlobConstants.MAX_SINGLE_UPLOAD_SIZE, Long.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }

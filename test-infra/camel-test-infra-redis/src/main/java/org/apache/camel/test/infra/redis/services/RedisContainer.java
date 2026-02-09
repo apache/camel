@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.redis.services;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.redis.common.RedisProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -38,12 +39,18 @@ public class RedisContainer extends GenericContainer<RedisContainer> {
         super(DockerImageName.parse(imageName));
     }
 
+    public RedisContainer withFixedPort(int hostPort, int containerPort) {
+        addFixedExposedPort(hostPort, containerPort);
+        return this;
+    }
+
     @SuppressWarnings("resource")
     // NOTE: the object must be closed by the client.
     public static RedisContainer initContainer(String imageName, String networkAlias, boolean fixedPort) {
-        return new RedisContainer(imageName) // NOSONAR
+        RedisContainer container = new RedisContainer(imageName) // NOSONAR
                 .withNetworkAliases(networkAlias)
-                .withExposedPorts(RedisProperties.DEFAULT_PORT)
                 .waitingFor(Wait.forListeningPort());
+        ContainerEnvironmentUtil.configurePort(container, fixedPort, RedisProperties.DEFAULT_PORT);
+        return container;
     }
 }

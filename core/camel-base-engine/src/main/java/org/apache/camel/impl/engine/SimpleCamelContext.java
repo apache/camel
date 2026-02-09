@@ -91,6 +91,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.SimpleFunctionRegistry;
 import org.apache.camel.spi.StartupConditionStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
@@ -483,6 +484,11 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 GroovyScriptCompiler.class);
         // camel-groovy is optional
         return result.orElse(null);
+    }
+
+    @Override
+    protected SimpleFunctionRegistry createSimpleFunctionRegistry() {
+        return new DefaultSimpleFunctionRegistry(getCamelContextReference());
     }
 
     private CliConnectorFactory createCliConnectorFactory() {

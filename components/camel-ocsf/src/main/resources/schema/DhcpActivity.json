@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/dhcp_activity",
+  "title": "DhcpActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.DhcpActivity",
+  "additionalProperties": true,
+  "description": "DhcpActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "relay": {
+      "$ref": "NetworkInterface.json"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "transaction_uid": {
+      "type": "string",
+      "title": "Transaction UID"
+    },
+    "is_renewal": {
+      "type": "boolean",
+      "title": "Renewal"
+    },
+    "lease_dur": {
+      "type": "integer",
+      "title": "Lease Duration"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    }
+  }
+}

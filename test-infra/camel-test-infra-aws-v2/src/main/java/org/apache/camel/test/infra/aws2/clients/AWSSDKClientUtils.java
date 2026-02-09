@@ -43,6 +43,7 @@ import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.transcribe.TranscribeClient;
 
@@ -106,8 +107,8 @@ public final class AWSSDKClientUtils {
             clientBuilder.credentialsProvider(new SystemPropertiesAWSCredentialsProvider());
         }
 
-        if (clientBuilder instanceof S3ClientBuilder) {
-            ((S3ClientBuilder) clientBuilder).forcePathStyle(true);
+        if (clientBuilder instanceof S3ClientBuilder s3Builder) {
+            s3Builder.forcePathStyle(true);
         }
 
         return clientBuilder.build();
@@ -175,6 +176,10 @@ public final class AWSSDKClientUtils {
 
     public static SecretsManagerClient newSecretsManagerClient() {
         return newClient("SecretsManager", SecretsManagerClient::builder);
+    }
+
+    public static SsmClient newSsmClient() {
+        return newClient("SSM", SsmClient::builder);
     }
 
     public static StsClient newSTSClient() {

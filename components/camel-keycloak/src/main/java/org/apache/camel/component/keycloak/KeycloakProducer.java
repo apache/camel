@@ -33,6 +33,9 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.authorization.client.AuthzClient;
+import org.keycloak.authorization.client.Configuration;
+import org.keycloak.authorization.client.resource.AuthorizationResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.ClientScopeRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -42,18 +45,18 @@ import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.UserSessionRepresentation;
+import org.keycloak.representations.idm.authorization.AuthorizationRequest;
+import org.keycloak.representations.idm.authorization.AuthorizationResponse;
+import org.keycloak.representations.idm.authorization.Permission;
 import org.keycloak.representations.idm.authorization.PolicyRepresentation;
 import org.keycloak.representations.idm.authorization.ResourcePermissionRepresentation;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Producer which sends messages to Keycloak Admin API
  */
 public class KeycloakProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KeycloakProducer.class);
     public static final String MISSING_REALM_NAME = "Realm name must be specified";
     public static final String MISSING_USER_NAME = "Username must be specified";
     public static final String MISSING_ROLE_NAME = "Role name must be specified";
@@ -1304,9 +1307,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof IdentityProviderRepresentation) {
+            if (payload instanceof IdentityProviderRepresentation idpRepresentation) {
                 Response response
-                        = keycloakClient.realm(realmName).identityProviders().create((IdentityProviderRepresentation) payload);
+                        = keycloakClient.realm(realmName).identityProviders().create(idpRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1362,9 +1365,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof IdentityProviderRepresentation) {
+            if (payload instanceof IdentityProviderRepresentation idpRepresentation) {
                 keycloakClient.realm(realmName).identityProviders().get(idpAlias)
-                        .update((IdentityProviderRepresentation) payload);
+                        .update(idpRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Identity provider updated successfully");
             }
@@ -1399,9 +1402,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourceRepresentation) {
+            if (payload instanceof ResourceRepresentation resourceRepresentation) {
                 Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources()
-                        .create((ResourceRepresentation) payload);
+                        .create(resourceRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1472,9 +1475,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourceRepresentation) {
+            if (payload instanceof ResourceRepresentation resourceRepresentation) {
                 keycloakClient.realm(realmName).clients().get(clientUuid).authorization().resources().resource(resourceId)
-                        .update((ResourceRepresentation) payload);
+                        .update(resourceRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Resource updated successfully");
             }
@@ -1513,9 +1516,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation) {
+            if (payload instanceof PolicyRepresentation policyRepresentation) {
                 Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies()
-                        .create((PolicyRepresentation) payload);
+                        .create(policyRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1586,9 +1589,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation) {
+            if (payload instanceof PolicyRepresentation policyRepresentation) {
                 keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(policyId)
-                        .update((PolicyRepresentation) payload);
+                        .update(policyRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Policy updated successfully");
             }
@@ -1627,9 +1630,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ResourcePermissionRepresentation) {
+            if (payload instanceof ResourcePermissionRepresentation permissionRepresentation) {
                 Response response = keycloakClient.realm(realmName).clients().get(clientUuid).authorization().permissions()
-                        .resource().create((ResourcePermissionRepresentation) payload);
+                        .resource().create(permissionRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1702,10 +1705,10 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PolicyRepresentation) {
+            if (payload instanceof PolicyRepresentation policyRepresentation) {
                 // Use policy endpoint for permissions
                 keycloakClient.realm(realmName).clients().get(clientUuid).authorization().policies().policy(permissionId)
-                        .update((PolicyRepresentation) payload);
+                        .update(policyRepresentation);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Permission updated successfully");
             }
@@ -1733,10 +1736,125 @@ public class KeycloakProducer extends DefaultProducer {
     }
 
     private void evaluatePermission(Keycloak keycloakClient, Exchange exchange) {
-        // This would require more complex implementation with AuthzClient
-        // For now, provide a placeholder that can be extended
-        throw new UnsupportedOperationException(
-                "Permission evaluation requires AuthzClient and will be implemented in future versions");
+        KeycloakConfiguration config = getConfiguration();
+
+        // Validate required configuration
+        if (ObjectHelper.isEmpty(config.getServerUrl())) {
+            throw new IllegalArgumentException("Server URL must be specified for permission evaluation");
+        }
+        if (ObjectHelper.isEmpty(config.getRealm())) {
+            throw new IllegalArgumentException("Realm must be specified for permission evaluation");
+        }
+        if (ObjectHelper.isEmpty(config.getClientId())) {
+            throw new IllegalArgumentException("Client ID must be specified for permission evaluation");
+        }
+        if (ObjectHelper.isEmpty(config.getClientSecret())) {
+            throw new IllegalArgumentException("Client secret must be specified for permission evaluation");
+        }
+
+        // Create AuthzClient configuration
+        Map<String, Object> credentials = new HashMap<>();
+        credentials.put("secret", config.getClientSecret());
+
+        Configuration authzConfig = new Configuration(
+                config.getServerUrl(),
+                config.getRealm(),
+                config.getClientId(),
+                credentials,
+                null);
+
+        AuthzClient authzClient = AuthzClient.create(authzConfig);
+
+        // Get access token from header or use username/password credentials
+        String accessToken = exchange.getIn().getHeader(KeycloakConstants.ACCESS_TOKEN, String.class);
+        String subjectToken = exchange.getIn().getHeader(KeycloakConstants.SUBJECT_TOKEN, String.class);
+
+        AuthorizationResource authzResource;
+        if (ObjectHelper.isNotEmpty(accessToken)) {
+            // Use provided access token
+            authzResource = authzClient.authorization(accessToken);
+        } else if (ObjectHelper.isNotEmpty(config.getUsername()) && ObjectHelper.isNotEmpty(config.getPassword())) {
+            // Use username/password to obtain token
+            authzResource = authzClient.authorization(config.getUsername(), config.getPassword());
+        } else {
+            // Use client credentials (default for service accounts)
+            authzResource = authzClient.authorization();
+        }
+
+        // Build authorization request
+        AuthorizationRequest request = new AuthorizationRequest();
+
+        // Set subject token if provided (for token exchange scenarios)
+        if (ObjectHelper.isNotEmpty(subjectToken)) {
+            request.setSubjectToken(subjectToken);
+        }
+
+        // Set audience if provided
+        String audience = exchange.getIn().getHeader(KeycloakConstants.PERMISSION_AUDIENCE, String.class);
+        if (ObjectHelper.isNotEmpty(audience)) {
+            request.setAudience(audience);
+        }
+
+        // Add specific resource permissions if provided
+        String resourceNames = exchange.getIn().getHeader(KeycloakConstants.PERMISSION_RESOURCE_NAMES, String.class);
+        String scopes = exchange.getIn().getHeader(KeycloakConstants.PERMISSION_SCOPES, String.class);
+
+        if (ObjectHelper.isNotEmpty(resourceNames)) {
+            String[] resources = resourceNames.split(",");
+            String[] scopeArray = ObjectHelper.isNotEmpty(scopes) ? scopes.split(",") : new String[0];
+
+            for (String resource : resources) {
+                String trimmedResource = resource.trim();
+                if (!trimmedResource.isEmpty()) {
+                    if (scopeArray.length > 0) {
+                        // Trim each scope
+                        String[] trimmedScopes = Arrays.stream(scopeArray)
+                                .map(String::trim)
+                                .filter(s -> !s.isEmpty())
+                                .toArray(String[]::new);
+                        request.addPermission(trimmedResource, trimmedScopes);
+                    } else {
+                        request.addPermission(trimmedResource);
+                    }
+                }
+            }
+        } else if (ObjectHelper.isNotEmpty(scopes)) {
+            // If only scopes are provided without resources, add them to the request
+            String[] scopeArray = scopes.split(",");
+            for (String scope : scopeArray) {
+                String trimmedScope = scope.trim();
+                if (!trimmedScope.isEmpty()) {
+                    // When no resource is specified, use null resource with scope
+                    request.addPermission(null, trimmedScope);
+                }
+            }
+        }
+
+        // Check if we should only return permissions without obtaining RPT
+        Boolean permissionsOnly = exchange.getIn().getHeader(KeycloakConstants.PERMISSIONS_ONLY, Boolean.class);
+
+        Message message = getMessageForResponse(exchange);
+
+        if (Boolean.TRUE.equals(permissionsOnly)) {
+            // Get permissions directly without RPT
+            List<Permission> permissions = authzResource.getPermissions(request);
+            Map<String, Object> result = new HashMap<>();
+            result.put("permissions", permissions);
+            result.put("permissionCount", permissions.size());
+            result.put("granted", !permissions.isEmpty());
+            message.setBody(result);
+        } else {
+            // Obtain RPT (Requesting Party Token) with permissions
+            AuthorizationResponse authzResponse = authzResource.authorize(request);
+            Map<String, Object> result = new HashMap<>();
+            result.put("token", authzResponse.getToken());
+            result.put("tokenType", authzResponse.getTokenType());
+            result.put("expiresIn", authzResponse.getExpiresIn());
+            result.put("refreshToken", authzResponse.getRefreshToken());
+            result.put("refreshExpiresIn", authzResponse.getRefreshExpiresIn());
+            result.put("upgraded", authzResponse.isUpgraded());
+            message.setBody(result);
+        }
     }
 
     // User Attribute operations

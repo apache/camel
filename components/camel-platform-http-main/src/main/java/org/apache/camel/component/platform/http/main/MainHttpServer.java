@@ -207,6 +207,9 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     protected void doInit() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
+        // Mark this as the main server (not management) so the engine can identify it
+        configuration.setServerType(VertxPlatformHttpRouter.SERVER_TYPE_SERVER);
+
         server = new VertxPlatformHttpServer(configuration);
         // adding server to camel-context which will manage shutdown the server, so we should not do this here
         camelContext.addService(server);

@@ -98,16 +98,26 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
         InputStream is;
         Object obj = exchange.getIn().getMandatoryBody();
+        long fileLength = -1;
 
         // Need to check if the message body is WrappedFile
-        if (obj instanceof WrappedFile) {
-            obj = ((WrappedFile<?>) obj).getFile();
+        if (obj instanceof WrappedFile<?> wf) {
+            // Get file length from WrappedFile before unwrapping (works for remote files like SFTP)
+            fileLength = wf.getFileLength();
+            obj = wf.getFile();
         }
         if (obj instanceof File) {
             File filePayload = (File) obj;
             is = new FileInputStream(filePayload);
+            if (fileLength <= 0) {
+                fileLength = filePayload.length();
+            }
         } else {
             is = exchange.getIn().getMandatoryBody(InputStream.class);
+        }
+        // Set content length from WrappedFile if available and not already set
+        if (fileLength > 0 && !objectMetadata.containsKey("Content-Length")) {
+            objectMetadata.put("Content-Length", String.valueOf(fileLength));
         }
         // Handle Content-Length if not already set
         is = setContentLength(objectMetadata, is);

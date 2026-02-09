@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/url",
+  "title": "Url",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Url",
+  "additionalProperties": true,
+  "properties": {
+    "port": {
+      "type": "integer",
+      "title": "Port",
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "scheme": {
+      "type": "string",
+      "title": "Scheme"
+    },
+    "path": {
+      "type": "string",
+      "title": "Path"
+    },
+    "domain": {
+      "type": "string",
+      "title": "Domain"
+    },
+    "hostname": {
+      "type": "string",
+      "title": "Hostname"
+    },
+    "query_string": {
+      "type": "string",
+      "title": "HTTP Query String"
+    },
+    "categories": {
+      "type": "array",
+      "title": "Website Categorization",
+      "items": {
+        "type": "string"
+      }
+    },
+    "category_ids": {
+      "type": "array",
+      "title": "Website Categorization IDs",
+      "items": {
+        "type": "integer",
+        "enum": [
+          5,
+          83,
+          35,
+          6,
+          93,
+          65,
+          64,
+          11,
+          49,
+          32,
+          51,
+          27,
+          97,
+          66,
+          50,
+          96,
+          86,
+          98,
+          52,
+          25,
+          38,
+          85,
+          110,
+          23,
+          29,
+          118,
+          53,
+          56,
+          3,
+          36,
+          17,
+          9,
+          63,
+          89,
+          112,
+          121,
+          44,
+          107,
+          68,
+          33,
+          92,
+          114,
+          106,
+          45,
+          108,
+          55,
+          84,
+          101,
+          111,
+          87,
+          4,
+          0,
+          15,
+          88,
+          20,
+          40,
+          18,
+          71,
+          61,
+          30,
+          22,
+          47,
+          14,
+          59,
+          58,
+          60,
+          95,
+          113,
+          16,
+          54,
+          46,
+          67,
+          103,
+          24,
+          57,
+          109,
+          102,
+          7,
+          99,
+          34,
+          26,
+          43,
+          90,
+          37,
+          31,
+          21,
+          1
+        ]
+      }
+    },
+    "resource_type": {
+      "type": "string",
+      "title": "Resource Type"
+    },
+    "subdomain": {
+      "type": "string",
+      "title": "Subdomain"
+    },
+    "url_string": {
+      "type": "string",
+      "title": "URL String"
+    }
+  },
+  "description": "The Uniform Resource Locator object."
+}

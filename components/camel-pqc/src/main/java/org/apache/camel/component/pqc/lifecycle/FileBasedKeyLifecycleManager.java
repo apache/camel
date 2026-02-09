@@ -82,10 +82,10 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
         // Initialize with parameter spec if provided
         if (parameterSpec != null) {
-            if (parameterSpec instanceof AlgorithmParameterSpec) {
-                generator.initialize((AlgorithmParameterSpec) parameterSpec, new SecureRandom());
-            } else if (parameterSpec instanceof Integer) {
-                generator.initialize((Integer) parameterSpec, new SecureRandom());
+            if (parameterSpec instanceof AlgorithmParameterSpec algorithmParamSpec) {
+                generator.initialize(algorithmParamSpec, new SecureRandom());
+            } else if (parameterSpec instanceof Integer keySize) {
+                generator.initialize(keySize, new SecureRandom());
             }
         } else {
             // Use default parameter spec for the algorithm

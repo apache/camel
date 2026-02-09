@@ -73,8 +73,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
         }
 
         NumberFormat format = NumberFormat.getNumberInstance(locale);
-        if (format instanceof DecimalFormat) {
-            DecimalFormat df = (DecimalFormat) format;
+        if (format instanceof DecimalFormat df) {
             if (decimalSeparator != null && groupingSeparator != null) {
                 if (!decimalSeparator.isEmpty() && !groupingSeparator.isEmpty()) {
                     DecimalFormatSymbols dfs = new DecimalFormatSymbols(locale);

@@ -20,7 +20,7 @@ import net.thisptr.jackson.jq.exception.JsonQueryException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JqLanguageValidateTest {
 
@@ -29,12 +29,10 @@ public class JqLanguageValidateTest {
         JqLanguage lan = new JqLanguage();
         lan.init();
         Assertions.assertTrue(lan.validateExpression(". + [{\"array\": body()}]"));
-        try {
+        JsonQueryException e = assertThrows(JsonQueryException.class, () -> {
             Assertions.assertFalse(lan.validateExpression(". ^^+ [{\"array\": body()}]"));
-            fail();
-        } catch (JsonQueryException e) {
-            Assertions.assertTrue(e.getMessage().startsWith("Cannot compile query"));
-        }
+        });
+        Assertions.assertTrue(e.getMessage().startsWith("Cannot compile query"));
     }
 
 }

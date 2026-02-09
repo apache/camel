@@ -49,4 +49,3 @@ from("direct:a").recipientList(exchangeProperty("myProperty"));
 
 The ExchangeProperty language is part of *camel-core*.
 
-include::spring-boot:partial$starter.adoc[]

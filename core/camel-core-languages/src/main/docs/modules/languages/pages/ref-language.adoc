@@ -57,4 +57,3 @@ from("seda:a").split().ref("myExpression").to("seda:b");
 
 The Ref language is part of *camel-core*.
 
-include::spring-boot:partial$starter.adoc[]

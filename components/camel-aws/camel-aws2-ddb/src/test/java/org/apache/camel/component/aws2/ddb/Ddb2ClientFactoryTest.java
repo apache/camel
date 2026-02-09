@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.ddb;
 
 import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
-import org.apache.camel.component.aws2.ddb.client.Ddb2InternalClient;
-import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientIAMOptimizedImpl;
-import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.ddb.client.impl.Ddb2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Ddb2ClientFactoryTest {
 
     @Test
-    public void getStandardDdb2ClientDefault() {
-        Ddb2Configuration ddb2Configuration = new Ddb2Configuration();
-        Ddb2InternalClient ddb2Client = Ddb2ClientFactory.getDynamoDBClient(ddb2Configuration);
-        assertTrue(ddb2Client instanceof Ddb2ClientStandardImpl);
-    }
-
-    @Test
-    public void getStandardDdb2Client() {
-        Ddb2Configuration ddb2Configuration = new Ddb2Configuration();
-        ddb2Configuration.setUseDefaultCredentialsProvider(false);
-        Ddb2InternalClient ddb2Client = Ddb2ClientFactory.getDynamoDBClient(ddb2Configuration);
-        assertTrue(ddb2Client instanceof Ddb2ClientStandardImpl);
-    }
-
-    @Test
-    public void getIAMOptimizedDdb2Client() {
+    public void getDdb2ClientWithDefaultCredentials() {
         Ddb2Configuration ddb2Configuration = new Ddb2Configuration();
         ddb2Configuration.setUseDefaultCredentialsProvider(true);
-        Ddb2InternalClient ddb2Client = Ddb2ClientFactory.getDynamoDBClient(ddb2Configuration);
-        assertTrue(ddb2Client instanceof Ddb2ClientIAMOptimizedImpl);
+        ddb2Configuration.setRegion("eu-west-1");
+        DynamoDbClient ddbClient = Ddb2ClientFactory.getDynamoDBClient(ddb2Configuration);
+        assertNotNull(ddbClient);
+        ddbClient.close();
     }
 
     @Test
-    public void getSessionTokenDdb2Client() {
+    public void getDdb2ClientWithStaticCredentials() {
         Ddb2Configuration ddb2Configuration = new Ddb2Configuration();
-        ddb2Configuration.setUseSessionCredentials(true);
-        Ddb2InternalClient ddb2Client = Ddb2ClientFactory.getDynamoDBClient(ddb2Configuration);
-        assertTrue(ddb2Client instanceof Ddb2ClientSessionTokenImpl);
+        ddb2Configuration.setAccessKey("testAccessKey");
+        ddb2Configuration.setSecretKey("testSecretKey");
+        ddb2Configuration.setRegion("eu-west-1");
+        DynamoDbClient ddbClient = Ddb2ClientFactory.getDynamoDBClient(ddb2Configuration);
+        assertNotNull(ddbClient);
+        ddbClient.close();
+    }
+
+    @Test
+    public void getDdb2ClientWithEndpointOverride() {
+        Ddb2Configuration ddb2Configuration = new Ddb2Configuration();
+        ddb2Configuration.setUseDefaultCredentialsProvider(true);
+        ddb2Configuration.setRegion("eu-west-1");
+        ddb2Configuration.setOverrideEndpoint(true);
+        ddb2Configuration.setUriEndpointOverride("http://localhost:4566");
+        DynamoDbClient ddbClient = Ddb2ClientFactory.getDynamoDBClient(ddb2Configuration);
+        assertNotNull(ddbClient);
+        ddbClient.close();
     }
 }

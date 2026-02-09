@@ -53,8 +53,10 @@ public class RestJettyNoContentTest extends BaseJettyTest {
         });
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                     "<address:address xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\"/>\n",
+        assertEquals("""
+                <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                <address:address xmlns:address="http://www.camel.apache.org/jaxb/example/address/1"/>
+                """,
                 MessageHelper.extractBodyAsString(exchange.getMessage()));
     }
 
@@ -120,13 +122,15 @@ public class RestJettyNoContentTest extends BaseJettyTest {
         });
 
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                     "<address:address xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\">\n" +
-                     "    <address:street>Main Street</address:street>\n" +
-                     "    <address:streetNumber>3a</address:streetNumber>\n" +
-                     "    <address:zip>65843</address:zip>\n" +
-                     "    <address:city>Sulzbach</address:city>\n" +
-                     "</address:address>\n",
+        assertEquals("""
+                <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                <address:address xmlns:address="http://www.camel.apache.org/jaxb/example/address/1">
+                    <address:street>Main Street</address:street>
+                    <address:streetNumber>3a</address:streetNumber>
+                    <address:zip>65843</address:zip>
+                    <address:city>Sulzbach</address:city>
+                </address:address>
+                """,
                 MessageHelper.extractBodyAsString(exchange.getMessage()));
     }
 

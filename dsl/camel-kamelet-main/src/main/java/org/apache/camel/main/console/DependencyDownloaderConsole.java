@@ -73,6 +73,8 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
 
         ClassLoader cl = getCamelContext().getApplicationContextClassLoader();
         if (cl instanceof DependencyDownloaderClassLoader) {
+            @SuppressWarnings("resource")
+            // The resource should not be closed as it belongs to the CamelContext and may be reused.
             DependencyDownloaderClassLoader ddcl = (DependencyDownloaderClassLoader) cl;
             String[] cp = ddcl.getDownloaded().toArray(new String[0]);
             root.put("dependencies", cp);

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
 
@@ -49,12 +49,9 @@ public class JmsRouteWithDefaultKeyFormatStrategyTest extends AbstractJMSTest {
 
     @Test
     public void testIllegalOption() {
-        try {
-            context.getEndpoint("activemq:queue:bar?jmsHeaderStrategy=xxx");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // expected
-        }
+        assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("activemq:queue:bar?jmsHeaderStrategy=xxx"),
+                "Should have thrown a ResolveEndpointFailedException");
     }
 
     @Test

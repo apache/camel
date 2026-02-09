@@ -38,31 +38,51 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.model.AddPermissionRequest;
+import software.amazon.awssdk.services.lambda.model.AddPermissionResponse;
+import software.amazon.awssdk.services.lambda.model.Cors;
 import software.amazon.awssdk.services.lambda.model.CreateAliasRequest;
 import software.amazon.awssdk.services.lambda.model.CreateAliasResponse;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.CreateEventSourceMappingResponse;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.CreateFunctionResponse;
+import software.amazon.awssdk.services.lambda.model.CreateFunctionUrlConfigRequest;
+import software.amazon.awssdk.services.lambda.model.CreateFunctionUrlConfigResponse;
 import software.amazon.awssdk.services.lambda.model.DeadLetterConfig;
 import software.amazon.awssdk.services.lambda.model.DeleteAliasRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteAliasResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteEventSourceMappingRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteEventSourceMappingResponse;
+import software.amazon.awssdk.services.lambda.model.DeleteFunctionConcurrencyRequest;
+import software.amazon.awssdk.services.lambda.model.DeleteFunctionConcurrencyResponse;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.DeleteFunctionResponse;
+import software.amazon.awssdk.services.lambda.model.DeleteFunctionUrlConfigRequest;
+import software.amazon.awssdk.services.lambda.model.DeleteFunctionUrlConfigResponse;
 import software.amazon.awssdk.services.lambda.model.Environment;
 import software.amazon.awssdk.services.lambda.model.FunctionCode;
+import software.amazon.awssdk.services.lambda.model.FunctionUrlAuthType;
 import software.amazon.awssdk.services.lambda.model.GetAliasRequest;
 import software.amazon.awssdk.services.lambda.model.GetAliasResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionConcurrencyRequest;
+import software.amazon.awssdk.services.lambda.model.GetFunctionConcurrencyResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionConfigurationRequest;
+import software.amazon.awssdk.services.lambda.model.GetFunctionConfigurationResponse;
 import software.amazon.awssdk.services.lambda.model.GetFunctionRequest;
 import software.amazon.awssdk.services.lambda.model.GetFunctionResponse;
+import software.amazon.awssdk.services.lambda.model.GetFunctionUrlConfigRequest;
+import software.amazon.awssdk.services.lambda.model.GetFunctionUrlConfigResponse;
+import software.amazon.awssdk.services.lambda.model.GetPolicyRequest;
+import software.amazon.awssdk.services.lambda.model.GetPolicyResponse;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
 import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import software.amazon.awssdk.services.lambda.model.ListAliasesRequest;
 import software.amazon.awssdk.services.lambda.model.ListAliasesResponse;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsRequest;
 import software.amazon.awssdk.services.lambda.model.ListEventSourceMappingsResponse;
+import software.amazon.awssdk.services.lambda.model.ListFunctionUrlConfigsRequest;
+import software.amazon.awssdk.services.lambda.model.ListFunctionUrlConfigsResponse;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsRequest;
 import software.amazon.awssdk.services.lambda.model.ListFunctionsResponse;
 import software.amazon.awssdk.services.lambda.model.ListTagsRequest;
@@ -71,6 +91,10 @@ import software.amazon.awssdk.services.lambda.model.ListVersionsByFunctionReques
 import software.amazon.awssdk.services.lambda.model.ListVersionsByFunctionResponse;
 import software.amazon.awssdk.services.lambda.model.PublishVersionRequest;
 import software.amazon.awssdk.services.lambda.model.PublishVersionResponse;
+import software.amazon.awssdk.services.lambda.model.PutFunctionConcurrencyRequest;
+import software.amazon.awssdk.services.lambda.model.PutFunctionConcurrencyResponse;
+import software.amazon.awssdk.services.lambda.model.RemovePermissionRequest;
+import software.amazon.awssdk.services.lambda.model.RemovePermissionResponse;
 import software.amazon.awssdk.services.lambda.model.TagResourceRequest;
 import software.amazon.awssdk.services.lambda.model.TagResourceResponse;
 import software.amazon.awssdk.services.lambda.model.TracingConfig;
@@ -78,6 +102,10 @@ import software.amazon.awssdk.services.lambda.model.UntagResourceRequest;
 import software.amazon.awssdk.services.lambda.model.UntagResourceResponse;
 import software.amazon.awssdk.services.lambda.model.UpdateFunctionCodeRequest;
 import software.amazon.awssdk.services.lambda.model.UpdateFunctionCodeResponse;
+import software.amazon.awssdk.services.lambda.model.UpdateFunctionConfigurationRequest;
+import software.amazon.awssdk.services.lambda.model.UpdateFunctionConfigurationResponse;
+import software.amazon.awssdk.services.lambda.model.UpdateFunctionUrlConfigRequest;
+import software.amazon.awssdk.services.lambda.model.UpdateFunctionUrlConfigResponse;
 import software.amazon.awssdk.services.lambda.model.VpcConfig;
 
 /**
@@ -153,6 +181,45 @@ public class Lambda2Producer extends DefaultProducer {
             case listAliases:
                 listAliases(getEndpoint().getAwsLambdaClient(), exchange);
                 break;
+            case createFunctionUrlConfig:
+                createFunctionUrlConfig(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case getFunctionUrlConfig:
+                getFunctionUrlConfig(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case updateFunctionUrlConfig:
+                updateFunctionUrlConfig(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case deleteFunctionUrlConfig:
+                deleteFunctionUrlConfig(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case listFunctionUrlConfigs:
+                listFunctionUrlConfigs(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case getFunctionConfiguration:
+                getFunctionConfiguration(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case updateFunctionConfiguration:
+                updateFunctionConfiguration(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case putFunctionConcurrency:
+                putFunctionConcurrency(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case deleteFunctionConcurrency:
+                deleteFunctionConcurrency(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case getFunctionConcurrency:
+                getFunctionConcurrency(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case addPermission:
+                addPermission(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case removePermission:
+                removePermission(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
+            case getPolicy:
+                getPolicy(getEndpoint().getAwsLambdaClient(), exchange);
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
         }
@@ -207,6 +274,14 @@ public class Lambda2Producer extends DefaultProducer {
             request = exchange.getIn().getMandatoryBody(ListFunctionsRequest.class);
         } else {
             ListFunctionsRequest.Builder builder = ListFunctionsRequest.builder();
+            String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
+            if (ObjectHelper.isNotEmpty(marker)) {
+                builder.marker(marker);
+            }
+            Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
+            if (ObjectHelper.isNotEmpty(maxItems)) {
+                builder.maxItems(maxItems);
+            }
             request = builder.build();
         }
         try {
@@ -217,6 +292,8 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
     }
 
     private void invokeFunction(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
@@ -237,6 +314,9 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result.payload().asUtf8String());
+        message.setHeader(Lambda2Constants.STATUS_CODE, result.statusCode());
+        message.setHeader(Lambda2Constants.FUNCTION_ERROR, result.functionError());
+        message.setHeader(Lambda2Constants.LOG_RESULT, result.logResult());
     }
 
     @SuppressWarnings("unchecked")
@@ -339,12 +419,12 @@ public class Lambda2Producer extends DefaultProducer {
 
             Map<String, String> environmentVariables
                     = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
-            if (environmentVariables != null) {
+            if (ObjectHelper.isNotEmpty(environmentVariables)) {
                 builder.environment(Environment.builder().variables(environmentVariables).build());
             }
 
             Map<String, String> tags = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.TAGS, Map.class));
-            if (tags != null) {
+            if (ObjectHelper.isNotEmpty(tags)) {
                 builder.tags(tags);
             }
 
@@ -352,12 +432,12 @@ public class Lambda2Producer extends DefaultProducer {
                     (Class<List<String>>) (Object) List.class));
             List<String> subnetIds = CastUtils.cast(
                     exchange.getIn().getHeader(Lambda2Constants.SUBNET_IDS, (Class<List<String>>) (Object) List.class));
-            if (securityGroupIds != null || subnetIds != null) {
+            if (ObjectHelper.isNotEmpty(securityGroupIds) || ObjectHelper.isNotEmpty(subnetIds)) {
                 VpcConfig.Builder vpcConfig = VpcConfig.builder();
-                if (securityGroupIds != null) {
+                if (ObjectHelper.isNotEmpty(securityGroupIds)) {
                     vpcConfig.securityGroupIds(securityGroupIds);
                 }
-                if (subnetIds != null) {
+                if (ObjectHelper.isNotEmpty(subnetIds)) {
                     vpcConfig.subnetIds(subnetIds);
                 }
                 builder.vpcConfig(vpcConfig.build());
@@ -374,6 +454,7 @@ public class Lambda2Producer extends DefaultProducer {
 
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.FUNCTION_ARN, result.functionArn());
     }
 
     private void updateFunction(LambdaClient lambdaClient, Exchange exchange) throws Exception {
@@ -609,16 +690,26 @@ public class Lambda2Producer extends DefaultProducer {
         } else {
             ListVersionsByFunctionRequest.Builder builder = ListVersionsByFunctionRequest.builder();
             builder.functionName(getEndpoint().getFunction());
+            String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
+            if (ObjectHelper.isNotEmpty(marker)) {
+                builder.marker(marker);
+            }
+            Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
+            if (ObjectHelper.isNotEmpty(maxItems)) {
+                builder.maxItems(maxItems);
+            }
             request = builder.build();
         }
         try {
             result = lambdaClient.listVersionsByFunction(request);
         } catch (AwsServiceException ase) {
-            LOG.trace("publishVersion command returned the error code {}", ase.awsErrorDetails().errorCode());
+            LOG.trace("listVersions command returned the error code {}", ase.awsErrorDetails().errorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
     }
 
     private void createAlias(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
@@ -711,9 +802,17 @@ public class Lambda2Producer extends DefaultProducer {
         } else {
             ListAliasesRequest.Builder builder = ListAliasesRequest.builder();
             builder.functionName(getEndpoint().getFunction());
-            String version = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_VERSION, String.class);
-            if (!ObjectHelper.isEmpty(version)) {
+            String version = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_VERSION, String.class);
+            if (ObjectHelper.isNotEmpty(version)) {
                 builder.functionVersion(version);
+            }
+            String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
+            if (ObjectHelper.isNotEmpty(marker)) {
+                builder.marker(marker);
+            }
+            Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
+            if (ObjectHelper.isNotEmpty(maxItems)) {
+                builder.maxItems(maxItems);
             }
             request = builder.build();
         }
@@ -725,12 +824,483 @@ public class Lambda2Producer extends DefaultProducer {
         }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void createFunctionUrlConfig(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        CreateFunctionUrlConfigRequest request = null;
+        CreateFunctionUrlConfigResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(CreateFunctionUrlConfigRequest.class);
+        } else {
+            CreateFunctionUrlConfigRequest.Builder builder = CreateFunctionUrlConfigRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String authType = exchange.getIn().getHeader(Lambda2Constants.FUNCTION_URL_AUTH_TYPE, String.class);
+            if (ObjectHelper.isEmpty(authType)) {
+                throw new IllegalArgumentException("Auth type must be specified (AWS_IAM or NONE)");
+            }
+            builder.authType(FunctionUrlAuthType.fromValue(authType));
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            Cors cors = buildCorsConfig(exchange);
+            if (ObjectHelper.isNotEmpty(cors)) {
+                builder.cors(cors);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.createFunctionUrlConfig(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("createFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        message.setHeader(Lambda2Constants.FUNCTION_URL, result.functionUrl());
+        message.setHeader(Lambda2Constants.FUNCTION_ARN, result.functionArn());
+    }
+
+    private void getFunctionUrlConfig(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        GetFunctionUrlConfigRequest request = null;
+        GetFunctionUrlConfigResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(GetFunctionUrlConfigRequest.class);
+        } else {
+            GetFunctionUrlConfigRequest.Builder builder = GetFunctionUrlConfigRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.getFunctionUrlConfig(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        message.setHeader(Lambda2Constants.FUNCTION_URL, result.functionUrl());
+        message.setHeader(Lambda2Constants.FUNCTION_ARN, result.functionArn());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateFunctionUrlConfig(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        UpdateFunctionUrlConfigRequest request = null;
+        UpdateFunctionUrlConfigResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(UpdateFunctionUrlConfigRequest.class);
+        } else {
+            UpdateFunctionUrlConfigRequest.Builder builder = UpdateFunctionUrlConfigRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String authType = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_AUTH_TYPE, String.class);
+            if (ObjectHelper.isNotEmpty(authType)) {
+                builder.authType(FunctionUrlAuthType.fromValue(authType));
+            }
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            Cors cors = buildCorsConfig(exchange);
+            if (ObjectHelper.isNotEmpty(cors)) {
+                builder.cors(cors);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.updateFunctionUrlConfig(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("updateFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        message.setHeader(Lambda2Constants.FUNCTION_URL, result.functionUrl());
+        message.setHeader(Lambda2Constants.FUNCTION_ARN, result.functionArn());
+    }
+
+    private void deleteFunctionUrlConfig(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        DeleteFunctionUrlConfigRequest request = null;
+        DeleteFunctionUrlConfigResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(DeleteFunctionUrlConfigRequest.class);
+        } else {
+            DeleteFunctionUrlConfigRequest.Builder builder = DeleteFunctionUrlConfigRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.deleteFunctionUrlConfig(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteFunctionUrlConfig command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void listFunctionUrlConfigs(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        ListFunctionUrlConfigsRequest request = null;
+        ListFunctionUrlConfigsResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(ListFunctionUrlConfigsRequest.class);
+        } else {
+            ListFunctionUrlConfigsRequest.Builder builder = ListFunctionUrlConfigsRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String marker = getOptionalHeader(exchange, Lambda2Constants.MARKER, String.class);
+            if (ObjectHelper.isNotEmpty(marker)) {
+                builder.marker(marker);
+            }
+            Integer maxItems = getOptionalHeader(exchange, Lambda2Constants.MAX_ITEMS, Integer.class);
+            if (ObjectHelper.isNotEmpty(maxItems)) {
+                builder.maxItems(maxItems);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.listFunctionUrlConfigs(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("listFunctionUrlConfigs command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        message.setHeader(Lambda2Constants.MARKER, result.nextMarker());
+        message.setHeader(Lambda2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextMarker()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Cors buildCorsConfig(Exchange exchange) {
+        Boolean allowCredentials
+                = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_ALLOW_CREDENTIALS, Boolean.class);
+        List<String> allowOrigins = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_ALLOW_ORIGINS, List.class);
+        List<String> allowMethods = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_ALLOW_METHODS, List.class);
+        List<String> allowHeaders = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_ALLOW_HEADERS, List.class);
+        List<String> exposeHeaders = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_EXPOSE_HEADERS, List.class);
+        Integer maxAge = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_CORS_MAX_AGE, Integer.class);
+
+        if (ObjectHelper.isNotEmpty(allowCredentials) || ObjectHelper.isNotEmpty(allowOrigins)
+                || ObjectHelper.isNotEmpty(allowMethods)
+                || ObjectHelper.isNotEmpty(allowHeaders) || ObjectHelper.isNotEmpty(exposeHeaders)
+                || ObjectHelper.isNotEmpty(maxAge)) {
+            Cors.Builder corsBuilder = Cors.builder();
+            if (ObjectHelper.isNotEmpty(allowCredentials)) {
+                corsBuilder.allowCredentials(allowCredentials);
+            }
+            if (ObjectHelper.isNotEmpty(allowOrigins)) {
+                corsBuilder.allowOrigins(allowOrigins);
+            }
+            if (ObjectHelper.isNotEmpty(allowMethods)) {
+                corsBuilder.allowMethods(allowMethods);
+            }
+            if (ObjectHelper.isNotEmpty(allowHeaders)) {
+                corsBuilder.allowHeaders(allowHeaders);
+            }
+            if (ObjectHelper.isNotEmpty(exposeHeaders)) {
+                corsBuilder.exposeHeaders(exposeHeaders);
+            }
+            if (ObjectHelper.isNotEmpty(maxAge)) {
+                corsBuilder.maxAge(maxAge);
+            }
+            return corsBuilder.build();
+        }
+        return null;
+    }
+
+    private void getFunctionConfiguration(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        GetFunctionConfigurationRequest request = null;
+        GetFunctionConfigurationResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(GetFunctionConfigurationRequest.class);
+        } else {
+            GetFunctionConfigurationRequest.Builder builder = GetFunctionConfigurationRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.getFunctionConfiguration(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getFunctionConfiguration command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        message.setHeader(Lambda2Constants.FUNCTION_ARN, result.functionArn());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateFunctionConfiguration(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        UpdateFunctionConfigurationRequest request = null;
+        UpdateFunctionConfigurationResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(UpdateFunctionConfigurationRequest.class);
+        } else {
+            UpdateFunctionConfigurationRequest.Builder builder = UpdateFunctionConfigurationRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            Integer memorySize = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_MEMORY_SIZE, Integer.class);
+            if (ObjectHelper.isNotEmpty(memorySize)) {
+                builder.memorySize(memorySize);
+            }
+
+            Integer timeout = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_TIMEOUT, Integer.class);
+            if (ObjectHelper.isNotEmpty(timeout)) {
+                builder.timeout(timeout);
+            }
+
+            String runtime = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_RUNTIME, String.class);
+            if (ObjectHelper.isNotEmpty(runtime)) {
+                builder.runtime(runtime);
+            }
+
+            String handler = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_HANDLER, String.class);
+            if (ObjectHelper.isNotEmpty(handler)) {
+                builder.handler(handler);
+            }
+
+            String description = getOptionalHeader(exchange, Lambda2Constants.DESCRIPTION, String.class);
+            if (ObjectHelper.isNotEmpty(description)) {
+                builder.description(description);
+            }
+
+            String role = getOptionalHeader(exchange, Lambda2Constants.ROLE, String.class);
+            if (ObjectHelper.isNotEmpty(role)) {
+                builder.role(role);
+            }
+
+            Map<String, String> environmentVariables
+                    = CastUtils.cast(exchange.getIn().getHeader(Lambda2Constants.ENVIRONMENT_VARIABLES, Map.class));
+            if (ObjectHelper.isNotEmpty(environmentVariables)) {
+                builder.environment(Environment.builder().variables(environmentVariables).build());
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.updateFunctionConfiguration(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("updateFunctionConfiguration command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+        message.setHeader(Lambda2Constants.FUNCTION_ARN, result.functionArn());
+    }
+
+    private void putFunctionConcurrency(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        PutFunctionConcurrencyRequest request = null;
+        PutFunctionConcurrencyResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(PutFunctionConcurrencyRequest.class);
+        } else {
+            PutFunctionConcurrencyRequest.Builder builder = PutFunctionConcurrencyRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            Integer reservedConcurrentExecutions
+                    = exchange.getIn().getHeader(Lambda2Constants.RESERVED_CONCURRENT_EXECUTIONS, Integer.class);
+            if (ObjectHelper.isEmpty(reservedConcurrentExecutions)) {
+                throw new IllegalArgumentException("Reserved concurrent executions must be specified");
+            }
+            builder.reservedConcurrentExecutions(reservedConcurrentExecutions);
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.putFunctionConcurrency(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("putFunctionConcurrency command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void deleteFunctionConcurrency(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        DeleteFunctionConcurrencyRequest request = null;
+        DeleteFunctionConcurrencyResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(DeleteFunctionConcurrencyRequest.class);
+        } else {
+            DeleteFunctionConcurrencyRequest.Builder builder = DeleteFunctionConcurrencyRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.deleteFunctionConcurrency(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("deleteFunctionConcurrency command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void getFunctionConcurrency(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        GetFunctionConcurrencyRequest request = null;
+        GetFunctionConcurrencyResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(GetFunctionConcurrencyRequest.class);
+        } else {
+            GetFunctionConcurrencyRequest.Builder builder = GetFunctionConcurrencyRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.getFunctionConcurrency(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getFunctionConcurrency command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void addPermission(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        AddPermissionRequest request = null;
+        AddPermissionResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(AddPermissionRequest.class);
+        } else {
+            AddPermissionRequest.Builder builder = AddPermissionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String statementId = exchange.getIn().getHeader(Lambda2Constants.STATEMENT_ID, String.class);
+            if (ObjectHelper.isEmpty(statementId)) {
+                throw new IllegalArgumentException("Statement ID must be specified");
+            }
+            builder.statementId(statementId);
+
+            String action = exchange.getIn().getHeader(Lambda2Constants.ACTION, String.class);
+            if (ObjectHelper.isEmpty(action)) {
+                throw new IllegalArgumentException("Action must be specified");
+            }
+            builder.action(action);
+
+            String principal = exchange.getIn().getHeader(Lambda2Constants.PRINCIPAL, String.class);
+            if (ObjectHelper.isEmpty(principal)) {
+                throw new IllegalArgumentException("Principal must be specified");
+            }
+            builder.principal(principal);
+
+            String sourceAccount = getOptionalHeader(exchange, Lambda2Constants.SOURCE_ACCOUNT, String.class);
+            if (ObjectHelper.isNotEmpty(sourceAccount)) {
+                builder.sourceAccount(sourceAccount);
+            }
+
+            String sourceArn = getOptionalHeader(exchange, Lambda2Constants.SOURCE_ARN, String.class);
+            if (ObjectHelper.isNotEmpty(sourceArn)) {
+                builder.sourceArn(sourceArn);
+            }
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.addPermission(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("addPermission command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void removePermission(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        RemovePermissionRequest request = null;
+        RemovePermissionResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(RemovePermissionRequest.class);
+        } else {
+            RemovePermissionRequest.Builder builder = RemovePermissionRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String statementId = exchange.getIn().getHeader(Lambda2Constants.STATEMENT_ID, String.class);
+            if (ObjectHelper.isEmpty(statementId)) {
+                throw new IllegalArgumentException("Statement ID must be specified");
+            }
+            builder.statementId(statementId);
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.removePermission(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("removePermission command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+
+    private void getPolicy(LambdaClient lambdaClient, Exchange exchange) throws InvalidPayloadException {
+        GetPolicyRequest request = null;
+        GetPolicyResponse result;
+        if (getConfiguration().isPojoRequest()) {
+            request = exchange.getIn().getMandatoryBody(GetPolicyRequest.class);
+        } else {
+            GetPolicyRequest.Builder builder = GetPolicyRequest.builder();
+            builder.functionName(getEndpoint().getFunction());
+
+            String qualifier = getOptionalHeader(exchange, Lambda2Constants.FUNCTION_URL_QUALIFIER, String.class);
+            if (ObjectHelper.isNotEmpty(qualifier)) {
+                builder.qualifier(qualifier);
+            }
+
+            request = builder.build();
+        }
+        try {
+            result = lambdaClient.getPolicy(request);
+        } catch (AwsServiceException ase) {
+            LOG.trace("getPolicy command returned the error code {}", ase.awsErrorDetails().errorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private Lambda2Operations determineOperation(Exchange exchange) {
         Lambda2Operations operation = exchange.getIn().getHeader(Lambda2Constants.OPERATION, Lambda2Operations.class);
-        if (operation == null) {
-            operation = getConfiguration().getOperation() == null
+        if (ObjectHelper.isEmpty(operation)) {
+            operation = ObjectHelper.isEmpty(getConfiguration().getOperation())
                     ? Lambda2Operations.invokeFunction : getConfiguration().getOperation();
         }
         return operation;
@@ -749,6 +1319,13 @@ public class Lambda2Producer extends DefaultProducer {
         return exchange.getMessage();
     }
 
+    /**
+     * Gets an optional header value.
+     */
+    private <T> T getOptionalHeader(Exchange exchange, String headerName, Class<T> headerType) {
+        return exchange.getIn().getHeader(headerName, headerType);
+    }
+
     @Override
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
@@ -757,7 +1334,7 @@ public class Lambda2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Lambda2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -767,7 +1344,7 @@ public class Lambda2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

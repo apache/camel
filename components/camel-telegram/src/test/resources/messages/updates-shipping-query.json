@@ -1,0 +1,25 @@
+{
+    "ok": true,
+    "result": [
+        {
+            "update_id": 219398825,
+            "shipping_query": {
+                "id": "shipping_query_123",
+                "from": {
+                    "id": 1585844777,
+                    "first_name": "John",
+                    "last_name": "Doe"
+                },
+                "invoice_payload": "test_payload",
+                "shipping_address": {
+                    "country_code": "US",
+                    "state": "California",
+                    "city": "San Francisco",
+                    "street_line1": "123 Main St",
+                    "street_line2": "Apt 4",
+                    "post_code": "94102"
+                }
+            }
+        }
+    ]
+}

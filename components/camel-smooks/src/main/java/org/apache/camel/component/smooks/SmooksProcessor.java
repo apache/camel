@@ -184,24 +184,24 @@ public class SmooksProcessor extends ServiceSupport implements Processor, CamelC
     private Source getSource(final Exchange exchange) throws InvalidPayloadException {
         final Object payload = exchange.getIn().getBody();
 
-        if (payload instanceof Source) {
-            return (Source) payload;
+        if (payload instanceof Source source) {
+            return source;
         }
 
-        if (payload instanceof byte[]) {
-            return new ByteSource((byte[]) payload);
+        if (payload instanceof byte[] byteArray) {
+            return new ByteSource(byteArray);
         }
 
         if (payload instanceof Node) {
             return new DOMSource((Node) payload);
         }
 
-        if (payload instanceof InputStream) {
-            return new StreamSource<>((InputStream) payload);
+        if (payload instanceof InputStream inputstream) {
+            return new StreamSource<>(inputstream);
         }
 
-        if (payload instanceof Reader) {
-            return new ReaderSource<>((Reader) payload);
+        if (payload instanceof Reader reader) {
+            return new ReaderSource<>(reader);
         }
 
         if (payload instanceof WrappedFile) {

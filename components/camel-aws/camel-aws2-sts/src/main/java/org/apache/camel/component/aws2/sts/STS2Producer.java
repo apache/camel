@@ -67,7 +67,7 @@ public class STS2Producer extends DefaultProducer {
 
     private STS2Operations determineOperation(Exchange exchange) {
         STS2Operations operation = exchange.getIn().getHeader(STS2Constants.OPERATION, STS2Operations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -79,7 +79,7 @@ public class STS2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (stsProducerToString == null) {
+        if (ObjectHelper.isEmpty(stsProducerToString)) {
             stsProducerToString = "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return stsProducerToString;
@@ -133,6 +133,15 @@ public class STS2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (ObjectHelper.isNotEmpty(result.credentials())) {
+                message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
+                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
+                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
+                message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
+            }
+            if (ObjectHelper.isNotEmpty(result.assumedRoleUser())) {
+                message.setHeader(STS2Constants.ASSUMED_ROLE_ARN, result.assumedRoleUser().arn());
+            }
         }
     }
 
@@ -162,6 +171,12 @@ public class STS2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (ObjectHelper.isNotEmpty(result.credentials())) {
+                message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
+                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
+                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
+                message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
+            }
         }
     }
 
@@ -197,6 +212,12 @@ public class STS2Producer extends DefaultProducer {
             }
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            if (ObjectHelper.isNotEmpty(result.credentials())) {
+                message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
+                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
+                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
+                message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
+            }
         }
     }
 

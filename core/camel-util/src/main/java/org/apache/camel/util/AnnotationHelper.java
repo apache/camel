@@ -80,7 +80,9 @@ public final class AnnotationHelper {
         if (checkMetaAnnotations) {
             for (Annotation a : elem.getAnnotations()) {
                 for (Annotation meta : a.annotationType().getAnnotations()) {
-                    if (meta.annotationType().getName().equals(annotationType.getName())) {
+                    // NOTE: we perform an equality check as, by design, this has
+                    // to be also supported in OSGI environments, therefore, instance equality may differ.
+                    if (meta.annotationType().getName().equals(annotationType.getName())) { // NOSONAR
                         return true;
                     }
                 }

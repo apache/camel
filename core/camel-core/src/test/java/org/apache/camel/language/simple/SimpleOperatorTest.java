@@ -18,12 +18,15 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimpleOperatorTest extends LanguageTestSupport {
 
@@ -38,6 +41,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     public void testValueWithSpace() {
         exchange.getIn().setBody("Hello Big World");
         assertPredicate("${in.body} == 'Hello Big World'", true);
+        assertPredicate("${in.body} == ${body}", true);
     }
 
     @Test
@@ -784,6 +788,20 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testNotStartsWith() {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} !startsWith 'Bye'", true);
+        assertPredicate("${in.body} !startsWith 'Hello'", false);
+        assertPredicate("${in.body} !startsWith 'B'", true);
+        assertPredicate("${in.body} !startsWith 'H'", false);
+        assertPredicate("${in.body} !startsWith 'Bye there'", true);
+        assertPredicate("${in.body} !startsWith 'Hello there'", false);
+        assertPredicate("${in.body} !startsWith 'Hello ther'", false);
+        assertPredicate("${in.body} !startsWith 'ello there'", true);
+        assertPredicate("${in.body} !startsWith 'Hi'", true);
+    }
+
+    @Test
     public void testEndsWith() {
         exchange.getIn().setBody("Hello there");
         assertPredicate("${in.body} ends with 'there'", true);
@@ -798,6 +816,150 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.body} endsWith 'Hello there'", true);
         assertPredicate("${in.body} endsWith 'Hello ther'", false);
         assertPredicate("${in.body} endsWith 'Hi'", false);
+    }
+
+    @Test
+    public void testNotEndsWith() {
+        exchange.getIn().setBody("Hello there");
+        assertPredicate("${in.body} !endsWith 'B'", true);
+        assertPredicate("${in.body} !endsWith 'world'", true);
+        assertPredicate("${in.body} !endsWith 'there'", false);
+        assertPredicate("${in.body} !endsWith 're'", false);
+        assertPredicate("${in.body} !endsWith ' there'", false);
+        assertPredicate("${in.body} !endsWith 'Hello there'", false);
+        assertPredicate("${in.body} !endsWith 'Hello ther'", true);
+        assertPredicate("${in.body} !endsWith 'Hi'", true);
+    }
+
+    @Test
+    public void testElvis() {
+        exchange.getIn().setBody(false);
+        assertPredicate("${body} ?: 'true'", true);
+        assertPredicate("${body} ?: 'false'", false);
+        exchange.getIn().setBody("Hello");
+        assertPredicate("${body} ?: 'false'", true);
+        exchange.getIn().setBody(0);
+        assertPredicate("${body} ?: 'true'", true);
+        assertPredicate("${body} ?: 'false'", false);
+        exchange.getIn().setBody(1);
+        assertPredicate("${body} ?: 'true'", true);
+        assertPredicate("${body} ?: 'false'", true);
+
+        exchange.getIn().setBody(null);
+        assertExpression("${body} ?: 'World'", "World");
+        exchange.getIn().setBody("");
+        assertExpression("${body} ?: 'World'", "World");
+        exchange.getIn().setBody("Hello");
+        assertExpression("${body} ?: 'World'", "Hello");
+        exchange.getIn().setBody(false);
+        assertExpression("${body} ?: 'World'", "World");
+        exchange.getIn().setBody(true);
+        assertExpression("${body} ?: 'World'", true);
+        exchange.getIn().setHeader("myHeader", "Camel");
+        assertExpression("${header.myHeader} ?: 'World'", "Camel");
+        exchange.getIn().setBody(0);
+        assertExpression("${body} ?: 'World'", "World");
+        exchange.getIn().setBody(1);
+        assertExpression("${body} ?: 'World'", 1);
+    }
+
+    @Test
+    public void testTernary() {
+        exchange.getIn().setBody(false);
+        assertPredicate("${body == true ? 'true' : 'false'}", false);
+        assertPredicate("${body == true ? 'false' : 'true'}", true);
+        exchange.getIn().setBody("Hello");
+        assertPredicate("${body != null ? 'true' : 'false'}", true);
+        assertPredicate("${body != null ? 'false' : 'true'}", false);
+        exchange.getIn().setBody(0);
+        assertPredicate("${body == 0 ? 'true' : 'false'}", true);
+        assertPredicate("${body == 0 ? 'false' : 'true'}", false);
+        exchange.getIn().setBody(1);
+        assertPredicate("${body > 0 ? 'true' : 'false'}", true);
+        assertPredicate("${body > 0 ? 'false' : 'true'}", false);
+
+        exchange.getIn().setBody(null);
+        assertExpression("${body != null ? 'A' : 'B'}", "B");
+        exchange.getIn().setBody("");
+        assertExpression("${body == '' ? 'A' : 'B'}", "A");
+        exchange.getIn().setBody("Hello");
+        assertExpression("${body != 'Hello' ? 'A' : 'B'}", "B");
+        exchange.getIn().setBody(false);
+        assertExpression("${body == true ? 'A' : 'B'}", "B");
+        exchange.getIn().setBody(false);
+        assertExpression("${body != true ? 'A' : 'B'}", "A");
+    }
+
+    @Test
+    public void testTernaryLog() {
+        exchange.getIn().setBody("Hello World");
+        assertExpression(">>> Message received from WebSocket Client : ${body}",
+                ">>> Message received from WebSocket Client : Hello World");
+    }
+
+    @Test
+    public void testChain() {
+        exchange.getIn().setBody(null);
+        assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", null);
+        exchange.getIn().setBody("   Hello    World   ");
+        assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", "WORLD");
+        // run 2nd time give same result
+        assertExpression("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()}", "WORLD");
+
+        exchange.getIn().setBody("  Hello    World   ");
+        Predicate predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()} == 'WORLD'");
+        boolean matches = predicate.matches(exchange);
+        assertTrue(matches);
+        // run 2nd time give same result
+        matches = predicate.matches(exchange);
+        assertTrue(matches);
+
+        exchange.getIn().setBody("  Hello    Camel   ");
+        predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ~> ${trim()} ~> ${uppercase()} == 'WORLD'");
+        matches = predicate.matches(exchange);
+        assertFalse(matches);
+    }
+
+    @Test
+    public void testChainNullSafe() {
+        exchange.getIn().setBody(null);
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${uppercase()}", null);
+        // run 2nd time give same result
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${uppercase()}", null);
+
+        Predicate predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${uppercase()}");
+        boolean matches = predicate.matches(exchange);
+        assertFalse(matches);
+        // run 2nd time give same result
+        matches = predicate.matches(exchange);
+        assertFalse(matches);
+
+        exchange.getIn().setBody("Hello World,Hello Camel");
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${kindOfType()}", "object");
+        // run 2nd time give same result
+        assertExpression("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${kindOfType()}", "object");
+
+        predicate = context.resolveLanguage("simple")
+                .createPredicate("${substringAfter('Hello')} ?~> ${collate(2)} ~> ${kindOfType()} == 'object'");
+        matches = predicate.matches(exchange);
+        assertTrue(matches);
+        // run 2nd time give same result
+        matches = predicate.matches(exchange);
+        assertTrue(matches);
+    }
+
+    @Test
+    public void testChainParam() {
+        exchange.getIn().setBody("   Hello World from the Camel   ");
+        // no param
+        assertExpression("${trim()} ~> ${replace('Hello','Hi')}", "Hi World from the Camel");
+        assertExpression("${trim()} ~> ${replace('Hello','Hi')} ~> ${split(' ')} ~> ${size()}", 5);
+        // with $param
+        assertExpression("${trim()} ~> ${replace('Hello','Hi',$param)}", "Hi World from the Camel");
+        assertExpression("${trim()} ~> ${replace('Hello','Hi',$param)} ~> ${split($param,' ')} ~> ${size($param)}", 5);
     }
 
     @Override

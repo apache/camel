@@ -34,7 +34,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
+public class NettyHttpBridgeEncodedPathTest extends BaseNettyTestSupport {
 
     final AvailablePortFinder.Port port1 = port;
     @RegisterExtension

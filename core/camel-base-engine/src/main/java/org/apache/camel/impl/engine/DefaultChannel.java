@@ -210,7 +210,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         if (camelContext.isBacklogTracingStandby() || route.isBacklogTracing()) {
             // add jmx backlog tracer
             BacklogTracer backlogTracer = getOrCreateBacklogTracer(camelContext);
-            addAdvice(new BacklogTracerAdvice(camelContext, backlogTracer, targetOutputDef, routeDefinition, first));
+            addAdvice(new BacklogTracerAdvice(camelContext, backlogTracer, targetOutputDef, routeDefinition));
         }
         if (route.isTracing() || camelContext.isTracingStandby()) {
             // add logger tracer
@@ -234,7 +234,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
         Processor target = nextProcessor;
-        boolean skip = target instanceof InterceptableProcessor && !((InterceptableProcessor) target).canIntercept();
+        boolean skip = target instanceof InterceptableProcessor ip && !ip.canIntercept();
         if (!skip) {
             for (InterceptStrategy strategy : interceptors) {
                 Processor next = target == nextProcessor ? null : nextProcessor;
@@ -293,7 +293,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
     }
 
-    private static BacklogTracer getOrCreateBacklogTracer(CamelContext camelContext) {
+    static BacklogTracer getOrCreateBacklogTracer(CamelContext camelContext) {
         BacklogTracer tracer = null;
         if (camelContext.getRegistry() != null) {
             // lookup in registry

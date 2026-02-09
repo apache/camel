@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpClientProxyTransferExceptionTest extends BaseJettyTest {
 
@@ -37,14 +37,13 @@ public class HttpClientProxyTransferExceptionTest extends BaseJettyTest {
 
     @Test
     public void testHttpClientNoProxyException() {
-        try {
-            template.requestBody("direct:cool", "Kaboom");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            MyAppException cause = assertIsInstanceOf(MyAppException.class, e.getCause());
-            assertNotNull(cause);
-            assertEquals("Kaboom", cause.getName());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:cool", "Kaboom"),
+                "Should have thrown an exception");
+
+        MyAppException cause = assertIsInstanceOf(MyAppException.class, e.getCause());
+        assertNotNull(cause);
+        assertEquals("Kaboom", cause.getName());
     }
 
     @Test
@@ -58,12 +57,9 @@ public class HttpClientProxyTransferExceptionTest extends BaseJettyTest {
     @Test
     public void testHttpClientProxyException() throws Exception {
         MyCoolService proxy = new ProxyBuilder(context).endpoint("direct:cool").build(MyCoolService.class);
-        try {
-            proxy.hello("Kaboom");
-            fail("Should have thrown exception");
-        } catch (MyAppException e) {
-            assertEquals("Kaboom", e.getName());
-        }
+
+        MyAppException e = assertThrows(MyAppException.class, () -> proxy.hello("Kaboom"), "Should have thrown exception");
+        assertEquals("Kaboom", e.getName());
     }
 
     @Override

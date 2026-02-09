@@ -27,7 +27,9 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.Resource;
 
 /**
  * Route to be executed when Circuit Breaker EIP executes fallback
@@ -125,7 +127,25 @@ public class OnFallbackDefinition extends OptionalIdentifiedDefinition<OnFallbac
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
+        output.setParent(getParent());
         outputs.add(output);
+
+        // grab camel context depends on if this is a regular route or a route configuration
+        CamelContext context = this.getCamelContext();
+        if (context == null) {
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(this);
+            if (route != null) {
+                context = route.getCamelContext();
+            }
+        }
+
+        if (context != null && (context.isSourceLocationEnabled()
+                || context.isDebugging() || context.isDebugStandby()
+                || context.isTracing() || context.isTracingStandby())) {
+            // we want to capture source location:line for every output (also when debugging or tracing enabled/standby)
+            Resource resource = ProcessorDefinitionHelper.getResource(this);
+            ProcessorDefinitionHelper.prepareSourceLocation(resource, output);
+        }
     }
 
 }

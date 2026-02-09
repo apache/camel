@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
           description = "Aggregation repository that uses LevelDB to store exchanges.",
           annotations = { "interfaceName=org.apache.camel.spi.AggregationRepository" })
 @Configurer(metadataOnly = true)
+@Deprecated
 public class LevelDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregationRepository.class);
@@ -77,6 +78,20 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     @Metadata(label = "advanced",
               description = "To use a custom serializer for LevelDB")
     private LevelDBSerializer serializer;
+
+    /**
+     * Sets a deserialization filter while reading Object from Aggregation Repository. By default the filter will allow
+     * all java packages and subpackages and all org.apache.camel packages and subpackages, while the remaining will be
+     * blacklisted and not deserialized. This parameter should be customized if you're using classes you trust to be
+     * deserialized.
+     */
+    @Metadata(label = "advanced",
+              description = "Sets a deserialization filter while reading Object from Aggregation Repository."
+                            + " By default the filter will allow all java packages and subpackages and all org.apache.camel packages and subpackages,"
+                            + " while the remaining will be blacklisted and not deserialized."
+                            + " This parameter should be customized if you're using classes you trust to be deserialized.",
+              defaultValue = "java.**;org.apache.camel.**;!*")
+    private String deserializationFilter = "java.**;org.apache.camel.**;!*";
 
     /**
      * Creates an aggregation repository
@@ -142,9 +157,9 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
             // only return old exchange if enabled
             if (isReturnOldExchange()) {
-                return codec().unmarshallExchange(camelContext, rc);
+                return codec().unmarshallExchange(camelContext, rc, deserializationFilter);
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeCamelException("Error adding to repository " + repositoryName + " with key " + key, e);
         }
 
@@ -161,9 +176,9 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             byte[] rc = levelDBFile.getDb().get(lDbKey);
 
             if (rc != null) {
-                answer = codec().unmarshallExchange(camelContext, rc);
+                answer = codec().unmarshallExchange(camelContext, rc, deserializationFilter);
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeCamelException("Error getting key " + key + " from repository " + repositoryName, e);
         }
 
@@ -308,9 +323,9 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             byte[] rc = levelDBFile.getDb().get(completedLDBKey);
 
             if (rc != null) {
-                answer = codec().unmarshallExchange(camelContext, rc);
+                answer = codec().unmarshallExchange(camelContext, rc, deserializationFilter);
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeCamelException(
                     "Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
         }
@@ -494,6 +509,14 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
     public void setSerializer(LevelDBSerializer serializer) {
         this.serializer = serializer;
+    }
+
+    public String getDeserializationFilter() {
+        return deserializationFilter;
+    }
+
+    public void setDeserializationFilter(String deserializationFilter) {
+        this.deserializationFilter = deserializationFilter;
     }
 
     public LevelDBCamelCodec codec() {

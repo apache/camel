@@ -24,8 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends SpringTestSupport {
 
@@ -38,14 +38,12 @@ public class SpringDeadLetterChannelInvalidOptionDeadLetterUriTest extends Sprin
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
-            assertTrue(cause.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
-        }
+        });
+        FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, ftcre.getCause());
+        assertTrue(cause.getMessage().endsWith("Unknown parameters=[{foo=bar}]"));
     }
 
     @Test

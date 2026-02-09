@@ -57,7 +57,7 @@ public abstract class CsvMarshaller {
         String[] headers = format.getHeader();
         // If we don't want the header record, clear it
         if (format.getSkipHeaderRecord()) {
-            format = format.withHeader((String[]) null);
+            format = format.builder().setHeader((String[]) null).get();
         }
 
         if (headers != null && headers.length != 0) {
@@ -80,8 +80,7 @@ public abstract class CsvMarshaller {
             throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
-            if (object instanceof Map) {
-                Map map = (Map) object;
+            if (object instanceof Map map) {
                 printer.printRecord(getMapRecordValues(map));
             } else {
                 Iterator it = ObjectHelper.createIterator(object);

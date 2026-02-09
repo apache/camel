@@ -34,9 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
-    private static final String REQUEST_STRING = "user: Willem\n"
-                                                 + "GET http://localhost:%s/test HTTP/1.1\n"
-                                                 + "another: value\n Host: localhost\n";
+    private static final String REQUEST_STRING = """
+            user: Willem
+            GET http://localhost:%s/test HTTP/1.1
+            another: value
+             Host: localhost
+            """;
     private int port1;
 
     @BindToRegistry("string-decoder")

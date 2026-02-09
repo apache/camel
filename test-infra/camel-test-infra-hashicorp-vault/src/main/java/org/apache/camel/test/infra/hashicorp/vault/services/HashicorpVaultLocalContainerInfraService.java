@@ -92,12 +92,7 @@ public class HashicorpVaultLocalContainerInfraService
                         .waitingFor(Wait.forListeningPort())
                         .waitingFor(Wait.forLogMessage(".*Development.*mode.*should.*", 1));
 
-                if (fixedPort) {
-                    addFixedExposedPort(HashicorpVaultProperties.DEFAULT_SERVICE_PORT,
-                            HashicorpVaultProperties.DEFAULT_SERVICE_PORT);
-                } else {
-                    withExposedPorts(HashicorpVaultProperties.DEFAULT_SERVICE_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, HashicorpVaultProperties.DEFAULT_SERVICE_PORT);
             }
         }
 

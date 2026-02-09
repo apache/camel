@@ -2,7 +2,7 @@
 :doctitle: YAML DSL
 :shortname: yaml-dsl
 :artifactid: camel-yaml-dsl
-:description: Camel DSL with YAML
+:description: Camel YAML DSL
 :since: 3.9
 :supportlevel: Stable
 :tabs-sync-option:
@@ -139,18 +139,18 @@ To define an endpoint with the YAML dsl you have two options:
 *Available as of Camel 4.15*
 
 It is now possible to inline Maps in the `parameters` section. However Camel components rarely have options
-that are Map based, but when they do this makes it easier to use. For example the plc4j component allow to
+that are Map based, but when they do this makes it easier to use. For example the plc4x component allow to
 configure _tags_ as a Map:
 
 [source,yaml]
 ----
 - from:
-    uri: "timer://tick"
+    uri: "timer:tick"
     parameters:
-      period: "1s"
+      period: "1000"
     steps:
       - to:
-          uri: "plc4j"
+          uri: "plc4x"
           parameters:
             driver: "some driver url here"
             tags:
@@ -160,6 +160,8 @@ configure _tags_ as a Map:
 
 In this example the _tags_ options is of Map type and can be configured using YAML map syntax.
 Because the keys use underscore, then they are quoted.
+
+IMPORTANT: To use map values for parameters, then the `uri` must only refer to the name of the component, ie `plc4x` and not `plc4x:foo`
 
 == Defining beans
 

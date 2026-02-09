@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-kinesis",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "scheme": "aws2-kinesis",
     "extendsScheme": "",
     "syntax": "aws2-kinesis:streamName",
@@ -67,7 +67,9 @@
     "CamelAwsKinesisPartitionKey": { "index": 2, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Identifies which shard in the stream the data record is assigned to.", "constantName": "org.apache.camel.component.aws2.kinesis.Kinesis2Constants#PARTITION_KEY" },
     "CamelMessageTimestamp": { "index": 3, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "long", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The timestamp of the message", "constantName": "org.apache.camel.component.aws2.kinesis.Kinesis2Constants#MESSAGE_TIMESTAMP" },
     "CamelKinesisDbResumeAction": { "index": 4, "kind": "header", "displayName": "", "group": "consumer", "label": "consumer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The resume action to execute when resuming.", "constantName": "org.apache.camel.component.aws2.kinesis.Kinesis2Constants#RESUME_ACTION" },
-    "CamelAwsKinesisShardId": { "index": 5, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The shard ID of the shard where the data record was placed.", "constantName": "org.apache.camel.component.aws2.kinesis.Kinesis2Constants#SHARD_ID" }
+    "CamelAwsKinesisShardId": { "index": 5, "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The shard ID of the shard where the data record was placed.", "constantName": "org.apache.camel.component.aws2.kinesis.Kinesis2Constants#SHARD_ID" },
+    "CamelAwsKinesisFailedRecordCount": { "index": 6, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The number of records that failed in a batch put operation.", "constantName": "org.apache.camel.component.aws2.kinesis.Kinesis2Constants#FAILED_RECORD_COUNT" },
+    "CamelAwsKinesisRecordCount": { "index": 7, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Integer", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The total number of records in a batch put operation.", "constantName": "org.apache.camel.component.aws2.kinesis.Kinesis2Constants#RECORD_COUNT" }
   },
   "properties": {
     "streamName": { "index": 0, "kind": "path", "displayName": "Stream Name", "group": "common", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "configurationClass": "org.apache.camel.component.aws2.kinesis.Kinesis2Configuration", "configurationField": "configuration", "description": "Name of the stream" },

@@ -32,7 +32,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Checks that a static soap request is unmarshalled to the correct java objects
@@ -62,13 +62,11 @@ public class Soap12UnMarshalTest extends CamelTestSupport {
 
     @Test
     public void testUnMarshalSoapFaultWithoutDetail() throws IOException, InterruptedException {
-        try {
-            InputStream in = this.getClass().getResourceAsStream("faultWithoutDetail.xml");
-            producer.sendBody(in);
-            fail("Should have thrown an Exception.");
-        } catch (Exception e) {
-            assertEquals(SOAPFaultException.class, e.getCause().getClass());
-        }
+        InputStream in = this.getClass().getResourceAsStream("faultWithoutDetail.xml");
+        Exception e = assertThrows(Exception.class,
+                () -> producer.sendBody(in),
+                "Should have thrown an Exception.");
+        assertEquals(SOAPFaultException.class, e.getCause().getClass());
     }
 
     @Override

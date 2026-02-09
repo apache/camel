@@ -17,7 +17,7 @@ The camel-cli-debug enables Camel debugger for Camel CLI (camel-jbang).
 ====
 The camel-cli-debug is only for development purposes, it should **not** be used for production.
 
-Do not use both `camel-debug` and `camel-cli-debug` JARs in the Camel application classpath. Use only `camel-debug` JAR.
+Do not use both `camel-debug` and `camel-cli-debug` JARs in the Camel application classpath. Use only `camel-cli-debug` JAR.
 ====
 
 == Auto-detection from classpath
@@ -49,7 +49,7 @@ Where `<pid>` is the process id of the running Camel integration. You can see th
 ----
 2025-12-04T15:48:12.542+01:00  INFO 6667 --- [           main] o.a.c.impl.engine.AbstractCamelContext   : Detected: camel-cli-debug JAR (Enabling Camel Debugging)
 2025-12-04T15:48:12.543+01:00  INFO 6667 --- [           main] o.a.c.c.c.debug.CamelCliDebuggerFactory  : ================================================================================
-2025-12-04T15:48:12.543+01:00  INFO 6667 --- [           main] o.a.c.c.c.debug.CamelCliDebuggerFactory  : Waiting for CLI to remote attach (camel debug --remote-attach --name=6667)
+2025-12-04T15:48:12.543+01:00  INFO 6667 --- [           main] o.a.c.c.c.debug.CamelCliDebuggerFactory  : Waiting for CLI to remote attach: camel debug --remote-attach --name=6667
 ----
 
 To connect the CLI to the Camel application that will then continue to start and perform debugging from the CLI terminal.

@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test to duplicate issues with Camel's exec command in Java 8 on Unix This issue appears to be caused by a race
@@ -54,9 +54,7 @@ public class ExecJava8IssueTest {
     @BeforeEach
     public void setUp() {
         tempDir = new File("target", tempDirName);
-        if (!(tempDir.mkdir())) {
-            fail("Couldn't create temp dir for test");
-        }
+        assertTrue(tempDir.mkdir(), "Couldn't create temp dir for test");
     }
 
     @AfterEach

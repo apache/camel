@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HazelcastSedaConfigurationTest extends CamelTestSupport {
 
@@ -91,12 +91,10 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithIllegalOnErrorDelayParam() throws Exception {
-        try {
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class, () -> {
             context.getEndpoint("hazelcast-seda:foo?onErrorDelay=-1");
-            fail("Should have thrown exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertIsInstanceOf(PropertyBindingException.class, e.getCause());
-        }
+        });
+        assertIsInstanceOf(PropertyBindingException.class, e.getCause());
     }
 
 }

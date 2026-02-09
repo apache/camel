@@ -64,7 +64,7 @@ public class Translate2Producer extends DefaultProducer {
 
     private Translate2Operations determineOperation(Exchange exchange) {
         Translate2Operations operation = exchange.getIn().getHeader(Translate2Constants.OPERATION, Translate2Operations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -76,7 +76,7 @@ public class Translate2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (translateProducerToString == null) {
+        if (ObjectHelper.isEmpty(translateProducerToString)) {
             translateProducerToString = "TranslateProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return translateProducerToString;
@@ -163,7 +163,7 @@ public class Translate2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Translate2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -173,7 +173,7 @@ public class Translate2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

@@ -22,6 +22,7 @@ import jakarta.activation.DataHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SimpleAttachmentTest extends LanguageTestSupport {
@@ -67,6 +68,9 @@ public class SimpleAttachmentTest extends LanguageTestSupport {
         exchange.getMessage(AttachmentMessage.class).removeAttachment("123.txt");
         assertExpression("${attachments.size}", 0);
         assertExpression("${attachments.length}", 0);
+
+        var set = exchange.getMessage(AttachmentMessage.class).getAttachmentNames();
+        assertExpression("${attachmentsKeys}", set);
     }
 
     @Test
@@ -133,5 +137,77 @@ public class SimpleAttachmentTest extends LanguageTestSupport {
         assertExpression("${attachment[2].name}", "123.txt");
         assertExpression("${attachment[2].contentType}", "text/plain");
         assertExpression("${attachment[2].content}", "456");
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("message1.xml").getContent();
+        String xml1 = context.getTypeConverter().convertTo(String.class, is1);
+        assertExpression("${attachmentContent(0)}", xml1);
+
+        Object is2 = map.get("message2.xml").getContent();
+        String xml2 = context.getTypeConverter().convertTo(String.class, is2);
+        assertExpression("${attachmentContent(1)}", xml2);
     }
+
+    @Test
+    public void testSetAttachmentFromBody() throws Exception {
+        exchange.getMessage(AttachmentMessage.class).clearAttachments();
+        assertExpression("${attachments.size}", 0);
+
+        exchange.getMessage().setBody("{id: 123, sku: 456}");
+
+        assertExpression("${setAttachment(myorder.json)}", null);
+
+        assertExpression("${attachment[0].name}", "myorder.json");
+        assertExpression("${attachment[0].contentType}", "application/json");
+        assertExpression("${attachment[0].content}", "{id: 123, sku: 456}");
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("myorder.json").getContent();
+        String json1 = context.getTypeConverter().convertTo(String.class, is1);
+        assertExpression("{id: 123, sku: 456}", json1);
+    }
+
+    @Test
+    public void testSetAttachmentFromVariable() throws Exception {
+        exchange.getMessage(AttachmentMessage.class).clearAttachments();
+        assertExpression("${attachments.size}", 0);
+
+        exchange.getMessage().setBody(null);
+        exchange.setVariable("myOrder", "{id: 123, sku: 456}");
+
+        assertExpression("${setAttachment(myorder.json,${variable.myOrder})}", null);
+
+        assertExpression("${attachment[0].name}", "myorder.json");
+        assertExpression("${attachment[0].contentType}", "application/json");
+        assertExpression("${attachment[0].content}", "{id: 123, sku: 456}");
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("myorder.json").getContent();
+        String json1 = context.getTypeConverter().convertTo(String.class, is1);
+        assertExpression("{id: 123, sku: 456}", json1);
+    }
+
+    @Test
+    public void testSetAttachmentFile() throws Exception {
+        exchange.getMessage(AttachmentMessage.class).clearAttachments();
+        assertExpression("${attachments.size}", 0);
+
+        assertExpression("${setAttachment(logger.properties,resource:file:src/test/resources/log4j2.properties)}", null);
+
+        assertExpression("${attachment[0].name}", "logger.properties");
+        assertExpression("${attachment[0].contentType}", "text/plain");
+
+        var map = exchange.getMessage(AttachmentMessage.class).getAttachments();
+        Object is1 = map.get("logger.properties").getContent();
+        String data = context.getTypeConverter().convertTo(String.class, is1);
+        Assertions.assertTrue(data.contains("target/camel-attachments-test.log"));
+    }
+
+    @Test
+    public void testClearAttachments() {
+        assertExpression("${attachments.size}", 3);
+        assertExpression("${clearAttachments}", null);
+        assertExpression("${attachments.size}", 0);
+    }
+
 }

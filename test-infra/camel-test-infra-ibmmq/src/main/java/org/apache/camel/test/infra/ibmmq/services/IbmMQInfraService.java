@@ -28,4 +28,24 @@ public interface IbmMQInfraService extends InfrastructureService {
     String queueManager();
 
     int listenerPort();
+
+    default String host() {
+        return "localhost";
+    }
+
+    default int port() {
+        return listenerPort();
+    }
+
+    default String username() {
+        return "app";
+    }
+
+    default String password() {
+        return "";
+    }
+
+    default String brokerUrl() {
+        return String.format("amqp://%s:%d", host(), port());
+    }
 }

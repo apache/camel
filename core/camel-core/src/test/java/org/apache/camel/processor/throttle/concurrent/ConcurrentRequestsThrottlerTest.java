@@ -32,7 +32,6 @@ import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 // time-bound that does not run well in shared environments
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI")
@@ -191,7 +190,7 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
             assertTrue(executorService.awaitTermination(10, TimeUnit.SECONDS),
                     "Test ExecutorService shutdown is not expected to take longer than 10 seconds.");
         } catch (InterruptedException e) {
-            fail("Test ExecutorService shutdown is not expected to be interrupted.");
+            throw new AssertionError("Test ExecutorService shutdown is not expected to be interrupted.", e);
         }
     }
 

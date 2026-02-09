@@ -26,23 +26,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpRedirectTest extends BaseJettyTest {
 
     @Test
     public void testHttpRedirect() {
-        try {
-            template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(301, cause.getStatusCode());
-            assertEquals(true, cause.isRedirectError());
-            assertEquals(true, cause.hasRedirectLocation());
-            assertEquals("http://localhost:" + getPort() + "/test", cause.getUri());
-            assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class),
+                "Should have thrown an exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(301, cause.getStatusCode());
+        assertEquals(true, cause.isRedirectError());
+        assertEquals(true, cause.hasRedirectLocation());
+        assertEquals("http://localhost:" + getPort() + "/test", cause.getUri());
+        assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
     }
 
     @Test
@@ -51,13 +50,14 @@ public class HttpRedirectTest extends BaseJettyTest {
         errorEndpoint.expectedMessageCount(1);
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(0);
-        try {
-            template.requestBody("direct:start", "Hello World", String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(302, cause.getStatusCode());
-        }
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("direct:start", "Hello World", String.class),
+                "Should have thrown an exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(302, cause.getStatusCode());
+
         errorEndpoint.assertIsSatisfied();
         resultEndpoint.assertIsSatisfied();
     }

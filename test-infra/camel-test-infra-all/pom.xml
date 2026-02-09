@@ -24,11 +24,11 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>test-infra</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-test-infra-all</artifactId>
-    <name>Camel :: Test Infra :: Collection of all test services</name>
+    <name>Camel :: Test Infra :: All test services</name>
 
     <dependencies>
         <dependency>
@@ -264,6 +264,36 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-docling</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-consul</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-iggy</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-ignite</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-neo4j</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-pinecone</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-weaviate</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -508,12 +538,6 @@
                                 <fileSet>
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
-                                        <artifactId>camel-test-infra-milvus</artifactId>
-                                    </dependency>
-                                </fileSet>
-                                <fileSet>
-                                    <dependency>
-                                        <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-hazelcast</artifactId>
                                     </dependency>
                                 </fileSet>
@@ -546,7 +570,43 @@
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-docling</artifactId>
                                     </dependency>
-                                </fileSet>                                 
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-consul</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-iggy</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-ignite</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-neo4j</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-pinecone</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-weaviate</artifactId>
+                                    </dependency>
+                                </fileSet>
                             </fileSets>
                         </configuration>
                     </execution>

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/display",
+  "title": "Display",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Display",
+  "additionalProperties": true,
+  "properties": {
+    "color_depth": {
+      "type": "integer",
+      "title": "Color Depth"
+    },
+    "physical_height": {
+      "type": "integer",
+      "title": "Physical Height"
+    },
+    "physical_orientation": {
+      "type": "integer",
+      "title": "Physical Orientation"
+    },
+    "physical_width": {
+      "type": "integer",
+      "title": "Physical Width"
+    },
+    "scale_factor": {
+      "type": "integer",
+      "title": "Scale Factor"
+    }
+  },
+  "description": "The Display object."
+}

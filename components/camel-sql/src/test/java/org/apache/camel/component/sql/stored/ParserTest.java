@@ -21,6 +21,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.stored.template.TemplateParser;
 import org.apache.camel.component.sql.stored.template.ast.InOutParameter;
@@ -28,7 +29,9 @@ import org.apache.camel.component.sql.stored.template.ast.InParameter;
 import org.apache.camel.component.sql.stored.template.ast.OutParameter;
 import org.apache.camel.component.sql.stored.template.ast.ParseRuntimeException;
 import org.apache.camel.component.sql.stored.template.ast.Template;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -153,13 +156,17 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void nableIssueSyntax() {
-        Map<String, String> params = new HashMap<>();
-        params.put("P_STR_IN", "a");
-        Template template
-                = parser.parseTemplate("IBS.\"Z$IMS_INTERFACE_WS\".TEST_STR(VARCHAR :#P_STR_IN,OUT VARCHAR P_STR_OUT)");
-        assertEquals("a", ((InParameter) template.getParameterList().get(0)).getValueExtractor().eval(null, params));
-        assertEquals("IBS.\"Z$IMS_INTERFACE_WS\".TEST_STR", template.getProcedureName());
+    public void nableIssueSyntax() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            Exchange dummy = new DefaultExchange(context);
+
+            Map<String, String> params = new HashMap<>();
+            params.put("P_STR_IN", "a");
+            Template template
+                    = parser.parseTemplate("IBS.\"Z$IMS_INTERFACE_WS\".TEST_STR(VARCHAR :#P_STR_IN,OUT VARCHAR P_STR_OUT)");
+            assertEquals("a", ((InParameter) template.getParameterList().get(0)).getValueExtractor().eval(dummy, params));
+            assertEquals("IBS.\"Z$IMS_INTERFACE_WS\".TEST_STR", template.getProcedureName());
+        }
     }
 
     @Test

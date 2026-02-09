@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RouteOneInputAllowedTest extends ContextTestSupport {
 
@@ -32,17 +32,14 @@ public class RouteOneInputAllowedTest extends ContextTestSupport {
 
     @Test
     public void testOneInput() throws Exception {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:a").from("direct:b").to("mock:ab");
-                }
-            });
-            fail("Should fail");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Only one input is allowed per route. Cannot accept input: From[direct:b]", e.getMessage());
-        }
+        IllegalArgumentException exception
+                = assertThrows(IllegalArgumentException.class, () -> context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() {
+                        from("direct:a").from("direct:b").to("mock:ab");
+                    }
+                }));
+        assertEquals("Only one input is allowed per route. Cannot accept input: From[direct:b]", exception.getMessage());
     }
 
 }

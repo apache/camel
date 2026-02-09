@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.bedrockruntime.model.ConverseStreamResponseHandler;
@@ -51,18 +52,18 @@ public final class ConverseStreamHandler {
         return ConverseStreamResponseHandler.builder()
                 .subscriber(ConverseStreamResponseHandler.Visitor.builder()
                         .onContentBlockDelta(delta -> {
-                            if (delta.delta() != null && delta.delta().text() != null) {
+                            if (ObjectHelper.isNotEmpty(delta.delta()) && ObjectHelper.isNotEmpty(delta.delta().text())) {
                                 fullText.append(delta.delta().text());
                             }
                             chunkCount[0]++;
                         })
                         .onMetadata(metadataEvent -> {
-                            if (metadataEvent.usage() != null) {
+                            if (ObjectHelper.isNotEmpty(metadataEvent.usage())) {
                                 metadata.setUsage(metadataEvent.usage());
                             }
                         })
                         .onMessageStop(stop -> {
-                            if (stop.stopReason() != null) {
+                            if (ObjectHelper.isNotEmpty(stop.stopReason())) {
                                 metadata.setStopReason(stop.stopReason().toString());
                             }
                         })
@@ -92,22 +93,22 @@ public final class ConverseStreamHandler {
         return ConverseStreamResponseHandler.builder()
                 .subscriber(ConverseStreamResponseHandler.Visitor.builder()
                         .onContentBlockDelta(delta -> {
-                            if (delta.delta() != null && delta.delta().text() != null) {
+                            if (ObjectHelper.isNotEmpty(delta.delta()) && ObjectHelper.isNotEmpty(delta.delta().text())) {
                                 String text = delta.delta().text();
                                 chunks.add(text);
-                                if (chunkConsumer != null) {
+                                if (ObjectHelper.isNotEmpty(chunkConsumer)) {
                                     chunkConsumer.accept(text);
                                 }
                             }
                             chunkCount[0]++;
                         })
                         .onMetadata(metadataEvent -> {
-                            if (metadataEvent.usage() != null) {
+                            if (ObjectHelper.isNotEmpty(metadataEvent.usage())) {
                                 metadata.setUsage(metadataEvent.usage());
                             }
                         })
                         .onMessageStop(stop -> {
-                            if (stop.stopReason() != null) {
+                            if (ObjectHelper.isNotEmpty(stop.stopReason())) {
                                 metadata.setStopReason(stop.stopReason().toString());
                             }
                         })

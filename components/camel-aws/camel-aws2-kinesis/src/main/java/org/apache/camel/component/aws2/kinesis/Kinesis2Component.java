@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
 @Component("aws2-kinesis")
 public class Kinesis2Component extends HealthCheckComponent {
@@ -44,7 +45,7 @@ public class Kinesis2Component extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Kinesis2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new Kinesis2Configuration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Kinesis2Configuration();
         configuration.setStreamName(remaining);
         Kinesis2Endpoint endpoint = new Kinesis2Endpoint(uri, configuration, this);
         setProperties(endpoint, parameters);

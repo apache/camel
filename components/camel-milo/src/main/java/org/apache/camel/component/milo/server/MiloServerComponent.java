@@ -203,11 +203,11 @@ public class MiloServerComponent extends DefaultComponent {
 
         if (certificateValidator != null) {
             LOG.debug("Using validator: {}", certificateValidator);
-            if (certificateValidator instanceof Closeable) {
+            if (certificateValidator instanceof Closeable closeable) {
                 runOnStop(() -> {
                     try {
                         LOG.debug("Closing: {}", certificateValidator);
-                        ((Closeable) certificateValidator).close();
+                        closeable.close();
                     } catch (IOException e) {
                         LOG.debug("Failed to close. This exception is ignored.", e);
                     }
@@ -350,7 +350,10 @@ public class MiloServerComponent extends DefaultComponent {
                 .build();
     }
 
+    // May be useful in the future although unused now.
+    @SuppressWarnings("unused")
     private static final class DenyAllCertificateValidator implements CertificateValidator {
+        @SuppressWarnings("unused")
         public static final CertificateValidator INSTANCE = new DenyAllCertificateValidator();
 
         private DenyAllCertificateValidator() {
@@ -380,7 +383,7 @@ public class MiloServerComponent extends DefaultComponent {
         this.runOnStop.add(runnable);
     }
 
-    private Map createUserMap() {
+    private Map<String, String> createUserMap() {
         Map<String, String> userMap = null;
         if (userAuthenticationCredentials != null) {
             userMap = new HashMap<>();
@@ -437,13 +440,21 @@ public class MiloServerComponent extends DefaultComponent {
          * desired, do it explicitly.
          */
         Objects.requireNonNull(result, "Setting a null is not supported. call setCertificateManager(null) instead.)");
-        loadServerCertificate(result.getKeyPair(), result.getCertificate());
+        loadServerCertificate(result.getKeyPair(), result.getCertificate(), result.getCertificateChain());
     }
 
     /**
      * Server certificate
      */
     public void loadServerCertificate(final KeyPair keyPair, final X509Certificate certificate) {
+        loadServerCertificate(keyPair, certificate, new X509Certificate[] { certificate });
+    }
+
+    /**
+     * Server certificate with full certificate chain
+     */
+    public void loadServerCertificate(
+            final KeyPair keyPair, final X509Certificate certificate, final X509Certificate[] certificateChain) {
         this.certificate = certificate;
         // TODO evaluate migration to CertificateGroup
         //        setCertificateManager(new DefaultCertificateManager(keyPair, certificate));
@@ -452,7 +463,7 @@ public class MiloServerComponent extends DefaultComponent {
                 this.certificateGroup.updateCertificate(
                         NodeIds.ServerConfiguration_CertificateGroups_DefaultApplicationGroup,
                         keyPair,
-                        new X509Certificate[] { certificate });
+                        certificateChain);
             } catch (Exception e) {
                 throw new RuntimeCamelException(e);
             }

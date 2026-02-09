@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -85,7 +86,7 @@ public class ConfluentContainer extends GenericContainer<ConfluentContainer> {
 
     @Override
     public void start() {
-        addFixedExposedPort(KAFKA_PORT, KAFKA_PORT);
+        ContainerEnvironmentUtil.configurePort(this, true, KAFKA_PORT);
         super.start();
     }
 }

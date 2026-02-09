@@ -28,7 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FailOverAllFailedExceptionTest extends ContextTestSupport {
 
@@ -79,13 +79,10 @@ public class FailOverAllFailedExceptionTest extends ContextTestSupport {
         y.expectedMessageCount(1);
         z.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertEquals("Not Again", e.getCause().getMessage());
-            assertIsInstanceOf(SocketException.class, e.getCause());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        assertEquals("Not Again", exception.getCause().getMessage());
+        assertIsInstanceOf(SocketException.class, exception.getCause());
 
         assertMockEndpointsSatisfied();
     }

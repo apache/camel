@@ -38,6 +38,11 @@ public interface RestRegistry extends StaticService {
         Consumer getConsumer();
 
         /**
+         * Is this the API contract specification (ie api-doc)
+         */
+        boolean isSpecification();
+
+        /**
          * Is the rest service based on code-first or contract-first
          */
         boolean isContractFirst();
@@ -138,6 +143,29 @@ public interface RestRegistry extends StaticService {
      * @return all the REST services
      */
     List<RestService> listAllRestServices();
+
+    /**
+     * Adds information about the API specification (ie api-doc)
+     *
+     * @param consumer      the consumer
+     * @param contractFirst is the rest service based on code-first or contract-first
+     * @param url           the absolute url of the REST service
+     * @param baseUrl       the base url of the REST service
+     * @param basePath      the base path
+     * @param method        the HTTP method
+     * @param produces      optional details about what media-types the REST service returns
+     * @param description   optional description about the service
+     */
+    void addRestSpecification(
+            Consumer consumer, boolean contractFirst, String url, String baseUrl, String basePath, String method,
+            String produces, String description);
+
+    /**
+     * List all REST API specification (ie api-doc)
+     *
+     * @return all the API specification (ie api-doc)
+     */
+    List<RestService> listAllRestSpecifications();
 
     /**
      * Number of rest services in the registry.

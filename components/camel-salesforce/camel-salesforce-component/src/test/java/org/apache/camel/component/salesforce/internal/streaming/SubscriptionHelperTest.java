@@ -34,7 +34,6 @@ import org.cometd.client.BayeuxClient;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.REPLAY_EXTENSION;
 import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.determineReplayIdFor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.cometd.client.transport.ClientTransport.MAX_NETWORK_DELAY_OPTION;
@@ -144,6 +143,8 @@ public class SubscriptionHelperTest {
         when(component.getLoginConfig()).thenReturn(loginConfig);
         when(component.getConfig()).thenReturn(endpointConfig);
         when(component.getSession()).thenReturn(session);
+        final SubscriptionHelper subscriptionHelper = new SubscriptionHelper(component);
+        when(component.getSubscriptionHelper()).thenReturn(subscriptionHelper);
 
         BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component, session);
 
@@ -167,6 +168,8 @@ public class SubscriptionHelperTest {
         when(component.getLoginConfig()).thenReturn(loginConfig);
         when(component.getConfig()).thenReturn(endpointConfig);
         when(component.getSession()).thenReturn(session);
+        final SubscriptionHelper subscriptionHelper = new SubscriptionHelper(component);
+        when(component.getSubscriptionHelper()).thenReturn(subscriptionHelper);
 
         BayeuxClient bayeuxClient = SubscriptionHelper.createClient(component, session);
 
@@ -183,6 +186,8 @@ public class SubscriptionHelperTest {
         when(component.getLoginConfig()).thenReturn(new SalesforceLoginConfig());
         when(component.getConfig()).thenReturn(endpointConfig);
         when(component.getSession()).thenReturn(session);
+        final SubscriptionHelper subscriptionHelper = new SubscriptionHelper(component);
+        when(component.getSubscriptionHelper()).thenReturn(subscriptionHelper);
         var bayeuxClient = SubscriptionHelper.createClient(component, session);
 
         var longPollingTimeout = bayeuxClient.getTransport("long-polling").getOption(MAX_NETWORK_DELAY_OPTION);
@@ -207,20 +212,23 @@ public class SubscriptionHelperTest {
         when(endpoint.getReplayId()).thenReturn(null);
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(endpointConfig);
+        final SubscriptionHelper subscriptionHelper = new SubscriptionHelper(component);
+        when(component.getSubscriptionHelper()).thenReturn(subscriptionHelper);
 
         assertEquals(Optional.of(2L), determineReplayIdFor(endpoint, "my-topic-1"),
                 "Expecting replayId for `my-topic-1` to be 2, from initial reply id map");
 
-        REPLAY_EXTENSION.setReplayIdIfAbsent("my-topic-1", 3L);
-        REPLAY_EXTENSION.setReplayIdIfAbsent("my-topic-1", 4L);
+        ReplayExtension replayExtension = component.getSubscriptionHelper().getReplayExtension();
+        replayExtension.setReplayIdIfAbsent("my-topic-1", 3L);
+        replayExtension.setReplayIdIfAbsent("my-topic-1", 4L);
 
         // should still be 3L
-        Field f = REPLAY_EXTENSION.getClass().getDeclaredField("dataMap");
-        Map m = (Map) ReflectionHelper.getField(f, REPLAY_EXTENSION);
+        Field f = replayExtension.getClass().getDeclaredField("dataMap");
+        Map m = (Map) ReflectionHelper.getField(f, replayExtension);
         assertEquals(3L, m.get("my-topic-1"));
 
         // there is some subscription error due to INVALID_REPLAY_ID_PATTERN so we force setting another reply id
-        REPLAY_EXTENSION.setReplayId("my-topic-1", -2L);
+        replayExtension.setReplayId("my-topic-1", -2L);
         assertEquals(-2L, m.get("my-topic-1"));
     }
 

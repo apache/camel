@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven;
 
+import java.io.File;
 import java.util.Arrays;
 
 import com.google.common.hash.Hasher;
@@ -39,6 +40,8 @@ public class HashHelper {
                 hasher.putUnencodedChars((String) f);
             } else if (f instanceof Boolean) {
                 hasher.putBoolean((Boolean) f);
+            } else if (f instanceof File file) {
+                hasher.putUnencodedChars(file.getAbsolutePath());
             } else if (f instanceof Iterable) {
                 for (Object a : (Iterable<?>) f) {
                     hash(a);

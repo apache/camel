@@ -33,7 +33,7 @@ import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This test verifies the system property to un-select platform mbean server.
@@ -59,12 +59,8 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
     @Override
     @Test
     public void testMBeanServerType() throws Exception {
-        try {
-            mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
-            fail(); // should not get here
-        } catch (InstanceNotFoundException e) {
-            // expected
-        }
+        assertThrows(InstanceNotFoundException.class,
+                () -> mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));
     }
 
     @Override

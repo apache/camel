@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValidatorXmlSchemaTest extends ContextTestSupport {
 
@@ -46,12 +46,10 @@ public class ValidatorXmlSchemaTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
 
         mock.expectedMessageCount(0);
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:in", body);
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ValidationException.class, e.getCause());
-        }
+        });
+        assertIsInstanceOf(ValidationException.class, e.getCause());
 
         assertMockEndpointsSatisfied();
     }

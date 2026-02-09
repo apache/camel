@@ -62,16 +62,16 @@ public class StepFunctions2Endpoint extends DefaultEndpoint implements EndpointS
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        awsSfnClient = configuration.getAwsSfnClient() != null
+        awsSfnClient = ObjectHelper.isNotEmpty(configuration.getAwsSfnClient())
                 ? configuration.getAwsSfnClient()
-                : StepFunctions2ClientFactory.getSfnClient(configuration).getSfnClient();
+                : StepFunctions2ClientFactory.getSfnClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
 
         if (ObjectHelper.isEmpty(configuration.getAwsSfnClient())) {
-            if (awsSfnClient != null) {
+            if (ObjectHelper.isNotEmpty(awsSfnClient)) {
                 awsSfnClient.close();
             }
         }

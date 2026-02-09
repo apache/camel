@@ -23,12 +23,12 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-leveldb</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: LevelDB</name>
+    <name>Camel :: LevelDB (deprecated)</name>
     <description>Using LevelDB as persistent EIP store</description>
 
     <properties>

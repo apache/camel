@@ -31,8 +31,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.xbill.DNS.Record;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A set of test cases to make DNS lookups.
@@ -58,24 +58,20 @@ public class DnsLookupEndpointTest extends CamelTestSupport {
     @Test
     void testDNSWithNoHeaders() throws Exception {
         resultEndpoint.expectedMessageCount(0);
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             template.sendBody("hello");
-            fail("Should have thrown exception");
-        } catch (Exception t) {
-            assertTrue(t.getCause() instanceof IllegalArgumentException);
-        }
+        });
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     void testDNSWithEmptyNameHeader() throws Exception {
         resultEndpoint.expectedMessageCount(0);
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("hello", "dns.name", "");
-            fail("Should have thrown exception");
-        } catch (Exception t) {
-            assertTrue(t.getCause() instanceof IllegalArgumentException, t.toString());
-        }
+        });
+        assertTrue(e.getCause() instanceof IllegalArgumentException, e.toString());
         resultEndpoint.assertIsSatisfied();
     }
 

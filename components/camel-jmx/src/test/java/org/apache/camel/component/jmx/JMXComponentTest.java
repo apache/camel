@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test behavior in the component for initializing an endpoint. Not much here beyond checking that the code for the
@@ -63,31 +63,25 @@ public class JMXComponentTest {
 
     @Test
     public void withObjectNameAndObjectProperties() {
-        try {
-            context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&key.propOne=prop1");
-            fail("expected exception");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-        }
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&key.propOne=prop1"),
+                "expected exception");
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
     }
 
     @Test
     public void withoutDomain() {
-        try {
-            context.getEndpoint("jmx:platform?objectName=theObjectName");
-            fail("missing domain should have caused failure");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-        }
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("jmx:platform?objectName=theObjectName"),
+                "missing domain should have caused failure");
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
     }
 
     @Test
     public void withoutObjectNameAndObjectProperties() {
-        try {
-            context.getEndpoint("jmx:platform?objectDomain=theObjectDomain");
-            fail("missing name should have caused failure");
-        } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-        }
+        ResolveEndpointFailedException e = assertThrows(ResolveEndpointFailedException.class,
+                () -> context.getEndpoint("jmx:platform?objectDomain=theObjectDomain"),
+                "missing name should have caused failure");
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
     }
 }

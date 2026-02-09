@@ -113,6 +113,7 @@ public class Sqs2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setHeader(Sqs2Constants.MESSAGE_ID, result.messageId());
         message.setHeader(Sqs2Constants.MD5_OF_BODY, result.md5OfMessageBody());
+        message.setHeader(Sqs2Constants.SEQUENCE_NUMBER, result.sequenceNumber());
     }
 
     private void sendBatchMessage(SqsClient amazonSQS, Exchange exchange) {
@@ -134,6 +135,10 @@ public class Sqs2Producer extends DefaultProducer {
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(request.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(result.failed()) ? result.failed().size() : 0);
+            message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(result.successful()) ? result.successful().size() : 0);
         } else if (exchange.getIn().getBody() instanceof String) {
             String c = exchange.getIn().getBody(String.class);
             String[] elements = c.split(getConfiguration().getBatchSeparator());
@@ -150,11 +155,19 @@ public class Sqs2Producer extends DefaultProducer {
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(request.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(result.failed()) ? result.failed().size() : 0);
+            message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(result.successful()) ? result.successful().size() : 0);
         } else {
             SendMessageBatchRequest req = exchange.getIn().getBody(SendMessageBatchRequest.class);
             SendMessageBatchResponse result = amazonSQS.sendMessageBatch(req);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
+            message.setHeader(Sqs2Constants.FAILED_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(result.failed()) ? result.failed().size() : 0);
+            message.setHeader(Sqs2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(result.successful()) ? result.successful().size() : 0);
         }
     }
 
@@ -173,12 +186,23 @@ public class Sqs2Producer extends DefaultProducer {
 
     private void listQueues(SqsClient amazonSQS, Exchange exchange) {
         ListQueuesRequest.Builder request = ListQueuesRequest.builder();
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX))) {
-            request.queueNamePrefix(exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX, String.class));
+        String prefix = exchange.getIn().getHeader(Sqs2Constants.SQS_QUEUE_PREFIX, String.class);
+        if (ObjectHelper.isNotEmpty(prefix)) {
+            request.queueNamePrefix(prefix);
+        }
+        String nextToken = exchange.getIn().getHeader(Sqs2Constants.NEXT_TOKEN, String.class);
+        if (ObjectHelper.isNotEmpty(nextToken)) {
+            request.nextToken(nextToken);
+        }
+        Integer maxResults = exchange.getIn().getHeader(Sqs2Constants.MAX_RESULTS, Integer.class);
+        if (ObjectHelper.isNotEmpty(maxResults)) {
+            request.maxResults(maxResults);
         }
         ListQueuesResponse result = amazonSQS.listQueues(request.build());
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
+        message.setHeader(Sqs2Constants.NEXT_TOKEN, result.nextToken());
+        message.setHeader(Sqs2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(result.nextToken()));
     }
 
     private void purgeQueue(SqsClient amazonSQS, Exchange exchange) {
@@ -234,7 +258,7 @@ public class Sqs2Producer extends DefaultProducer {
     private void addDelay(SendMessageRequest.Builder request, Exchange exchange) {
         Integer headerValue = exchange.getIn().getHeader(Sqs2Constants.DELAY_HEADER, Integer.class);
         Integer delayValue;
-        if (headerValue == null) {
+        if (ObjectHelper.isEmpty(headerValue)) {
             LOG.trace("Using the config delay");
             delayValue = getEndpoint().getConfiguration().getDelaySeconds();
         } else {
@@ -242,7 +266,7 @@ public class Sqs2Producer extends DefaultProducer {
             delayValue = headerValue;
         }
         LOG.trace("found delay: {}", delayValue);
-        if (delayValue != null) {
+        if (ObjectHelper.isNotEmpty(delayValue)) {
             request.delaySeconds(delayValue);
         }
     }
@@ -250,7 +274,7 @@ public class Sqs2Producer extends DefaultProducer {
     private void addDelay(SendMessageBatchRequestEntry.Builder request, Exchange exchange) {
         Integer headerValue = exchange.getIn().getHeader(Sqs2Constants.DELAY_HEADER, Integer.class);
         Integer delayValue;
-        if (headerValue == null) {
+        if (ObjectHelper.isEmpty(headerValue)) {
             LOG.trace("Using the config delay");
             delayValue = getEndpoint().getConfiguration().getDelaySeconds();
         } else {
@@ -258,7 +282,7 @@ public class Sqs2Producer extends DefaultProducer {
             delayValue = headerValue;
         }
         LOG.trace("found delay: {}", delayValue);
-        if (delayValue != null) {
+        if (ObjectHelper.isNotEmpty(delayValue)) {
             request.delaySeconds(delayValue);
         }
     }
@@ -282,7 +306,7 @@ public class Sqs2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (sqsProducerToString == null) {
+        if (ObjectHelper.isEmpty(sqsProducerToString)) {
             sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return sqsProducerToString;
@@ -298,7 +322,7 @@ public class Sqs2Producer extends DefaultProducer {
                 // We are going to put the first MAX_ATTRIBUTES headers, because this is the maximum Attributes an SQS Message could accept
                 if (result.size() < MAX_ATTRIBUTES) {
                     MessageAttributeValue mav = Sqs2MessageHelper.toMessageAttributeValue(entry.getValue());
-                    if (mav != null) {
+                    if (ObjectHelper.isNotEmpty(mav)) {
                         result.put(entry.getKey(), mav);
                     }
                 } else {
@@ -325,7 +349,7 @@ public class Sqs2Producer extends DefaultProducer {
 
     private Sqs2Operations determineOperation(Exchange exchange) {
         Sqs2Operations operation = exchange.getIn().getHeader(Sqs2Constants.SQS_OPERATION, Sqs2Operations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;

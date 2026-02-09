@@ -28,7 +28,7 @@ import org.apache.camel.support.processor.PredicateValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValidatePredicateExceptionFactoryTest extends ContextTestSupport {
 
@@ -57,15 +57,13 @@ public class ValidatePredicateExceptionFactoryTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        try {
-            template.sendBody(startEndpoint, "Bye World");
-            fail("CamelExecutionException expected");
-        } catch (CamelExecutionException e) {
-            // expected
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            String s = "Dude was here myValidate";
-            assertStringContains(e.getCause().getMessage(), s);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(startEndpoint, "Bye World"),
+                "CamelExecutionException expected");
+
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        String s = "Dude was here myValidate";
+        assertStringContains(e.getCause().getMessage(), s);
 
         assertMockEndpointsSatisfied();
     }
@@ -74,13 +72,11 @@ public class ValidatePredicateExceptionFactoryTest extends ContextTestSupport {
     public void testSkip() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        try {
-            template.sendBody(startEndpoint, "Skip World");
-            fail("CamelExecutionException expected");
-        } catch (CamelExecutionException e) {
-            // expected normal exception
-            assertIsInstanceOf(PredicateValidationException.class, e.getCause());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(startEndpoint, "Skip World"),
+                "CamelExecutionException expected");
+
+        assertIsInstanceOf(PredicateValidationException.class, e.getCause());
 
         assertMockEndpointsSatisfied();
     }

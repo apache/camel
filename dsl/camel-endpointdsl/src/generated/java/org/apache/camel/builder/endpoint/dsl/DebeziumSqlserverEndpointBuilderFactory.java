@@ -445,6 +445,24 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
+         * Regular expression identifying configuration keys whose values should
+         * be masked. When set, this custom pattern replaces Debeziums default
+         * password masking pattern.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default:
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * Group: sqlserver
+         * 
+         * @param customSanitizePattern the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverEndpointBuilder customSanitizePattern(String customSanitizePattern) {
+            doSetProperty("customSanitizePattern", customSanitizePattern);
+            return this;
+        }
+        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -580,14 +598,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
             return this;
         }
         /**
-         * Controls how the connector queries CDC data. The default is
-         * 'function', which means the data is queried by means of calling
-         * cdc.fn_cdc_get_all_changes_# function. The value of 'direct' makes
-         * the connector to query the change tables directly.
+         * Controls how the connector queries CDC data. The default is 'direct',
+         * which makes the connector to query the change tables directly. The
+         * value of 'function' means the data is queried by means of calling
+         * cdc.fn_cdc_get_all_changes_# function.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: function
+         * Default: direct
          * Group: sqlserver
          * 
          * @param dataQueryMode the value to set
@@ -1665,7 +1683,9 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         }
         /**
          * The name of the data collection that is used to send signals/commands
-         * to Debezium. Signaling is disabled when not set.
+         * to Debezium. For multi-partition mode connectors, multiple signal
+         * data collections can be specified as a comma-separated list.
+         * Signaling is disabled when not set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

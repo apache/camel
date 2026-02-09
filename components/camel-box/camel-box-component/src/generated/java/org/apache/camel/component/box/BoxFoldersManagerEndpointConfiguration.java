@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.box;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "copyFolder", description="Copy folder to destination folder while optionally giving it a new name", signatures={"com.box.sdk.BoxFolder copyFolder(String folderId, String destinationFolderId, String newName)"}), @ApiMethod(methodName = "createFolder", description="Create a folder specified by path from parent folder with given parentFolderId, creating intermediate directories as required", signatures={"com.box.sdk.BoxFolder createFolder(String parentFolderId, String folderName)", "com.box.sdk.BoxFolder createFolder(String parentFolderId, String[] path)"}), @ApiMethod(methodName = "createFolderSharedLink", description="Create a shared link to folder", signatures={"com.box.sdk.BoxSharedLink createFolderSharedLink(String folderId, com.box.sdk.BoxSharedLink$Access access, java.util.Date unshareDate, com.box.sdk.BoxSharedLink$Permissions permissions)"}), @ApiMethod(methodName = "deleteFolder", description="Delete folder", signatures={"void deleteFolder(String folderId)"}), @ApiMethod(methodName = "getFolder", description="Return the Box folder referenced by path", signatures={"com.box.sdk.BoxFolder getFolder(String[] path)"}), @ApiMethod(methodName = "getFolderInfo", description="Get folder information", signatures={"com.box.sdk.BoxFolder$Info getFolderInfo(String folderId, String[] fields)"}), @ApiMethod(methodName = "getFolderItems", description="Returns a specific range of child items in folder and specifies which fields of each item to retrieve", signatures={"java.util.Collection<com.box.sdk.BoxItem$Info> getFolderItems(String folderId, Long offset, Long limit, String[] fields)"}), @ApiMethod(methodName = "getRootFolder", description="Return the root folder of authenticated user", signatures={"com.box.sdk.BoxFolder getRootFolder()"}), @ApiMethod(methodName = "moveFolder", description="Move folder to destination folder while optionally giving it a new name", signatures={"com.box.sdk.BoxFolder moveFolder(String folderId, String destinationFolderId, String newName)"}), @ApiMethod(methodName = "renameFolder", description="Rename folder giving it the name newName", signatures={"com.box.sdk.BoxFolder renameFolder(String folderId, String newFolderName)"}), @ApiMethod(methodName = "updateFolderInfo", description="Update folder information", signatures={"com.box.sdk.BoxFolder updateFolderInfo(String folderId, com.box.sdk.BoxFolder$Info info)"})}, aliases = {"getRootFolder=root", "createFolder=create", "copyFolder=copy", "moveFolder=move", "renameFolder=rename", "createFolderSharedLink=link", "deleteFolder=delete", "getFolder=folder", "getFolderInfo=info", "getFolderItems=items", "updateFolderInfo=updateInfo"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxFoldersManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "createFolderSharedLink", description="The access level of the shared link")})

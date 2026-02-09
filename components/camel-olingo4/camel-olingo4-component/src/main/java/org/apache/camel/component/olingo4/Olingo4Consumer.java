@@ -39,6 +39,7 @@ import org.apache.olingo.client.core.domain.ClientPropertyImpl;
 /**
  * The Olingo4 consumer.
  */
+@Deprecated(since = "4.18")
 public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4Configuration> {
 
     private Olingo4Index resultIndex;

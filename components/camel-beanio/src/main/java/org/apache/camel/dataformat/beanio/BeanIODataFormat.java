@@ -201,8 +201,8 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
             in.setErrorHandler(errorHandler);
             Object readObject;
             while ((readObject = in.read()) != null) {
-                if (readObject instanceof BeanIOHeader) {
-                    exchange.getOut().getHeaders().putAll(((BeanIOHeader) readObject).getHeaders());
+                if (readObject instanceof BeanIOHeader beanioheader) {
+                    exchange.getOut().getHeaders().putAll(beanioheader.getHeaders());
                 }
                 results.add(readObject);
             }

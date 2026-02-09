@@ -17,6 +17,7 @@
 package org.apache.camel.component.platform.http.vertx;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -72,6 +73,7 @@ import static org.apache.camel.util.CollectionHelper.appendEntry;
  */
 public class VertxPlatformHttpConsumer extends DefaultConsumer
         implements PlatformHttpConsumer, Suspendable {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxPlatformHttpConsumer.class);
     private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
@@ -79,9 +81,9 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     private final String fileNameExtWhitelist;
     private final boolean muteExceptions;
     private final boolean handleWriteResponseError;
+    private final List<Route> routes = new ArrayList<>();
     private Set<Method> methods;
     private String path;
-    private Route route;
     private VertxPlatformHttpRouter router;
     private HttpRequestBodyHandler httpRequestBodyHandler;
     private CookieConfiguration cookieConfiguration;
@@ -110,7 +112,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     protected void doInit() throws Exception {
         super.doInit();
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
-        path = configureEndpointPath(getEndpoint());
+        path = configureEndpointPath(getEndpoint());  // in vertx-web we should replace path parameters from {xxx} to :xxx syntax
         router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), routerName);
         if (router == null) {
             // dynamic assigned port number, then lookup using -0
@@ -135,50 +137,126 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
-        final Route newRoute = router.route(path);
+        if (startRestServicesContractFirst()) {
+            // rest-dsl contract first using multiple routers per api endpoint
+            return;
+        }
 
+        // standard http consumer using a single router
+        final Route newRoute = router.route(path);
         if (getEndpoint().getRequestTimeout() > 0) {
             newRoute.handler(TimeoutHandler.create(getEndpoint().getRequestTimeout()));
         }
-
         if (getEndpoint().getCamelContext().getRestConfiguration().isEnableCORS() && getEndpoint().getConsumes() != null) {
             ((RouteImpl) newRoute).setEmptyBodyPermittedWithConsumes(true);
         }
-
         if (!methods.equals(Method.getAll())) {
             methods.forEach(m -> newRoute.method(HttpMethod.valueOf(m.name())));
         }
-
-        if (getEndpoint().getConsumes() != null) {
-            //comma separated contentTypes has to be registered one by one
-            for (String c : getEndpoint().getConsumes().split(",")) {
-                newRoute.consumes(c);
+        if (getEndpoint().getComponent().isServerRequestValidation()) {
+            if (getEndpoint().getConsumes() != null) {
+                //comma separated contentTypes has to be registered one by one
+                for (String c : getEndpoint().getConsumes().split(",")) {
+                    newRoute.consumes(c);
+                }
+            }
+            if (getEndpoint().getProduces() != null) {
+                //comma separated contentTypes has to be registered one by one
+                for (String p : getEndpoint().getProduces().split(",")) {
+                    newRoute.produces(p);
+                }
             }
         }
-        if (getEndpoint().getProduces() != null) {
-            //comma separated contentTypes has to be registered one by one
-            for (String p : getEndpoint().getProduces().split(",")) {
-                newRoute.produces(p);
-            }
-        }
-
         httpRequestBodyHandler.configureRoute(newRoute);
         for (Handler<RoutingContext> handler : handlers) {
             newRoute.handler(handler);
         }
-
         newRoute.handler(this::handleRequest);
-
-        this.route = newRoute;
+        this.routes.add(newRoute);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (route != null) {
-            route.remove();
-            route = null;
-        }
+        this.routes.forEach(Route::remove);
+        this.routes.clear();
         super.doStop();
+    }
+
+    /**
+     * Special start logic for Rest DSL with contract-first, which need to use fine-grained vertx router to make this
+     * consistent with Camel, otherwise there is only 1 vertx router to handle all the API endpoints (coarse grained)
+     * which distorts the observability in vertx and camel-quarkus.
+     *
+     * @return true if in rest-dsl contract-first mode, false if standard mode
+     */
+    protected boolean startRestServicesContractFirst() throws Exception {
+        boolean matched = false;
+        for (var r : getEndpoint().getCamelContext().getRestRegistry().listAllRestServices()) {
+            // rest-dsl contract-first we need to create a new unique router per API endpoint
+            String target = path;
+            if (target.endsWith("*")) {
+                target = target.substring(0, target.length() - 1);
+            }
+            if (r.isContractFirst() && target.equals(r.getBasePath())) {
+                matched = true;
+                String u = r.getBasePath() + r.getBaseUrl();
+                u = configureEndpointPath(u); // in vertx-web we should replace path parameters from {xxx} to :xxx syntax
+                String v = r.getMethod();
+                String c = r.getConsumes();
+                String p = r.getProduces();
+
+                Route sr = router.route(u);
+                sr.method(HttpMethod.valueOf(v));
+                if (getEndpoint().getComponent().isServerRequestValidation()) {
+                    if (c != null) {
+                        for (String cc : c.split(",")) {
+                            sr.consumes(cc);
+                        }
+                    }
+                    if (p != null) {
+                        for (String pp : p.split(",")) {
+                            sr.produces(pp);
+                        }
+                    }
+                }
+                httpRequestBodyHandler.configureRoute(sr);
+                for (Handler<RoutingContext> handler : handlers) {
+                    sr.handler(handler);
+                }
+                sr.handler(this::handleRequest);
+                this.routes.add(sr);
+            }
+        }
+        for (var r : getEndpoint().getCamelContext().getRestRegistry().listAllRestSpecifications()) {
+            // rest-dsl contract-first we need to see if there is an api spec
+            // that should be exposed via a vertx http router
+            String target = path;
+            if (target.endsWith("*")) {
+                target = target.substring(0, target.length() - 1);
+            }
+            if (r.isSpecification() && target.equals(r.getBasePath())) {
+                String u = r.getBasePath() + r.getBaseUrl();
+                String v = r.getMethod();
+                String p = r.getProduces();
+
+                Route sr = router.route(u);
+                sr.method(HttpMethod.valueOf(v));
+                if (getEndpoint().getComponent().isServerRequestValidation()) {
+                    if (p != null) {
+                        for (String pp : p.split(",")) {
+                            sr.produces(pp);
+                        }
+                    }
+                }
+                httpRequestBodyHandler.configureRoute(sr);
+                for (Handler<RoutingContext> handler : handlers) {
+                    sr.handler(handler);
+                }
+                sr.handler(this::handleRequest);
+                this.routes.add(sr);
+            }
+        }
+        return matched;
     }
 
     private String configureEndpointPath(PlatformHttpEndpoint endpoint) {
@@ -186,6 +264,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
         if (endpoint.isMatchOnUriPrefix() && !path.endsWith("*")) {
             path += "*";
         }
+        return configureEndpointPath(path);
+    }
+
+    private String configureEndpointPath(String path) {
         // Transform from the Camel path param syntax /path/{key} to vert.x web's /path/:key
         return PATH_PARAMETER_PATTERN.matcher(path).replaceAll(":$1");
     }

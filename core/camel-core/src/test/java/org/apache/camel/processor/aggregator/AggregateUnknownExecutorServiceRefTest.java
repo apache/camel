@@ -21,8 +21,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
@@ -36,7 +36,7 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
 
     @Test
     public void testAggregateUnknownExecutorServiceRef() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -46,11 +46,9 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
                 }
             });
             context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(cause.getMessage().contains("myUnknownProfile"));
-        }
+        });
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("myUnknownProfile"));
     }
 
 }

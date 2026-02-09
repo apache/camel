@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon KMS.
@@ -42,7 +43,8 @@ public class KMS2Component extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KMS2Configuration configuration = this.configuration != null ? this.configuration.copy() : new KMS2Configuration();
+        KMS2Configuration configuration
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new KMS2Configuration();
 
         KMS2Endpoint endpoint = new KMS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

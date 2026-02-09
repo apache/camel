@@ -32,8 +32,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for testing request timeout with a InOut exchange.
@@ -50,13 +50,11 @@ public class JmsRouteTimeoutCheckerIntervalTest extends AbstractJMSTest {
 
     @Test
     public void testTimeout() {
-        try {
-            // send a in-out with a timeout for 1 sec
-            template.requestBody("activemq:queue:JmsRouteTimeoutCheckerIntervalTest.slow?requestTimeout=1000", "Hello World");
-            fail("Should have timed out with an exception");
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should have timed out with an exception");
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody("activemq:queue:JmsRouteTimeoutCheckerIntervalTest.slow?requestTimeout=1000",
+                        "Hello World"),
+                "Should have timed out with an exception");
+        assertTrue(e.getCause() instanceof ExchangeTimedOutException, "Should have timed out with an exception");
     }
 
     @Test

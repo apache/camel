@@ -111,7 +111,7 @@ public class CatalogConsole extends AbstractDevConsole {
             if (model.isDeprecated()) {
                 level += "-deprecated";
             }
-            sb.append(String.format("\n    %s %s %s %s: %s", model.getArtifactId(), level,
+            sb.append(String.format("%n    %s %s %s %s: %s", model.getArtifactId(), level,
                     model.getFirstVersionShort(), model.getTitle(), model.getDescription()));
         }
     }

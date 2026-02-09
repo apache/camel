@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.athena;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,7 @@ class Athena2QueryHelper {
     private static final Logger LOG = LoggerFactory.getLogger(Athena2QueryHelper.class);
 
     // configuration ======================
+    private final Exchange exchange;
     private final Clock clock = Clock.systemUTC();
     private final long waitTimeout;
     private final long delay;
@@ -56,6 +60,7 @@ class Athena2QueryHelper {
     private boolean interrupted;
 
     Athena2QueryHelper(Exchange exchange, Athena2Configuration configuration) {
+        this.exchange = exchange;
         this.waitTimeout = determineWaitTimeout(exchange, configuration);
         this.delay = determineDelay(exchange, configuration);
         this.maxAttempts = determineMaxAttempts(exchange, configuration);
@@ -162,15 +167,18 @@ class Athena2QueryHelper {
     }
 
     void doWait() {
-        try {
-            Thread.sleep(this.currentDelay);
-        } catch (InterruptedException e) {
-            this.interrupted = Thread.interrupted(); // store, then clear, interrupt status
-            LOG.trace(
-                    "AWS Athena start query execution wait thread was interrupted; will return at earliest opportunity");
+        // Use Camel's task API for polling delay instead of Thread.sleep()
+        // We use initialDelay for the actual delay, and maxIterations(1) to run once
+        Tasks.foregroundTask()
+                .withBudget(Budgets.iterationBudget()
+                        .withMaxIterations(1)
+                        .withInitialDelay(Duration.ofMillis(this.currentDelay))
+                        .withInterval(Duration.ZERO)
+                        .build())
+                .withName("AthenaQueryPollingDelay")
+                .build()
+                .run(exchange.getContext(), () -> true);
 
-            Thread.currentThread().interrupt();
-        }
         this.currentDelay = this.delay;
     }
 
@@ -232,7 +240,7 @@ class Athena2QueryHelper {
         }
 
         // Generic errors happen sometimes in Athena.  It's possible that a retry will fix the problem.
-        if (stateChangeReason != null && stateChangeReason.contains("GENERIC_INTERNAL_ERROR")
+        if (ObjectHelper.isNotEmpty(stateChangeReason) && stateChangeReason.contains("GENERIC_INTERNAL_ERROR")
                 && (this.retry.contains("generic") || this.retry.contains("retryable"))) {
             LOG.trace("AWS Athena start query execution detected generic error ({}), marked as retryable",
                     stateChangeReason);
@@ -240,7 +248,7 @@ class Athena2QueryHelper {
         }
 
         // Resource exhaustion happens sometimes in Athena.  It's possible that a retry will fix the problem.
-        if (stateChangeReason != null && stateChangeReason.contains("exhausted resources at this scale factor")
+        if (ObjectHelper.isNotEmpty(stateChangeReason) && stateChangeReason.contains("exhausted resources at this scale factor")
                 && (this.retry.contains("exhausted") || this.retry.contains("retryable"))) {
             LOG.trace("AWS Athena start query execution detected resource exhaustion error ({}), marked as retryable",
                     stateChangeReason);

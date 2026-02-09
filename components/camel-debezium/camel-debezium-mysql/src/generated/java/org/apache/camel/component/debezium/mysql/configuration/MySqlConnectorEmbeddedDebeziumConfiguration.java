@@ -1,5 +1,6 @@
 package org.apache.camel.component.debezium.mysql.configuration;
 
+import javax.annotation.processing.Generated;
 import io.debezium.config.Configuration;
 import io.debezium.connector.mysql.MySqlConnector;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
@@ -8,6 +9,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
+@Generated("org.apache.camel.maven.GenerateConnectorConfigMojo")
 @UriParams
 public class MySqlConnectorEmbeddedDebeziumConfiguration
         extends
@@ -189,6 +191,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int maxQueueSize = 8192;
     @UriParam(label = LABEL_NAME, defaultValue = "warn")
     private String guardrailCollectionsLimitAction = "warn";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME, defaultValue = "select_all")
@@ -343,7 +347,9 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The name of the data collection that is used to send signals/commands to
-     * Debezium. Signaling is disabled when not set.
+     * Debezium. For multi-partition mode connectors, multiple signal data
+     * collections can be specified as a comma-separated list. Signaling is
+     * disabled when not set.
      */
     public void setSignalDataCollection(String signalDataCollection) {
         this.signalDataCollection = signalDataCollection;
@@ -1431,6 +1437,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Regular expression identifying configuration keys whose values should be
+     * masked. When set, this custom pattern replaces Debeziums default password
+     * masking pattern.
+     */
+    public void setCustomSanitizePattern(String customSanitizePattern) {
+        this.customSanitizePattern = customSanitizePattern;
+    }
+
+    public String getCustomSanitizePattern() {
+        return customSanitizePattern;
+    }
+
+    /**
      * Enables transaction metadata extraction together with event counting
      */
     public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
@@ -1798,6 +1817,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
+        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "snapshot.query.mode", snapshotQueryMode);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);

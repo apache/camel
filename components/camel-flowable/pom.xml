@@ -24,17 +24,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-flowable</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Flowable</name>
     <description>Camel Flowable support</description>
-
-    <properties>
-        <supportLevel>Preview</supportLevel>
-    </properties>
 
     <dependencies>
         <dependency>

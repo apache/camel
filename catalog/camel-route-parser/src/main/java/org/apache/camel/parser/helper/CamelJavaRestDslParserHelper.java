@@ -175,8 +175,8 @@ public final class CamelJavaRestDslParserHelper {
         Expression sub = exp;
         while (sub instanceof MethodInvocation methodInvocation) {
             sub = methodInvocation.getExpression();
-            if (sub instanceof MethodInvocation) {
-                Expression parent = ((MethodInvocation) sub).getExpression();
+            if (sub instanceof MethodInvocation methodinvocation) {
+                Expression parent = (methodinvocation).getExpression();
                 if (parent == null) {
                     break;
                 }
@@ -420,10 +420,10 @@ public final class CamelJavaRestDslParserHelper {
 
         // find out if this is from a Camel route (eg from, route etc.)
         Expression sub = mi;
-        while (sub instanceof MethodInvocation) {
-            sub = ((MethodInvocation) sub).getExpression();
-            if (sub instanceof MethodInvocation) {
-                name = ((MethodInvocation) sub).getName().getIdentifier();
+        while (sub instanceof MethodInvocation methodinvocation) {
+            sub = methodinvocation.getExpression();
+            if (sub instanceof MethodInvocation mi2) {
+                name = mi2.getName().getIdentifier();
                 if (parentName.equals(name)) {
                     return true;
                 }
@@ -467,8 +467,8 @@ public final class CamelJavaRestDslParserHelper {
     private static FieldSource<JavaClassSource> findFieldInBlock(JavaClassSource clazz, Block block, String fieldName) {
         for (Object statement : block.statements()) {
             // try local statements first in the block
-            if (statement instanceof VariableDeclarationStatement) {
-                final Type type = ((VariableDeclarationStatement) statement).getType();
+            if (statement instanceof VariableDeclarationStatement variabledeclarationstatement) {
+                final Type type = (variabledeclarationstatement).getType();
                 for (Object obj : ((VariableDeclarationStatement) statement).fragments()) {
                     if (obj instanceof VariableDeclarationFragment fragment) {
                         SimpleName name = fragment.getName();
@@ -507,16 +507,16 @@ public final class CamelJavaRestDslParserHelper {
 
     public static String getLiteralValue(JavaClassSource clazz, Block block, Expression expression) {
         // unwrap parenthesis
-        if (expression instanceof ParenthesizedExpression) {
-            expression = ((ParenthesizedExpression) expression).getExpression();
+        if (expression instanceof ParenthesizedExpression parenthesizedexpression) {
+            expression = (parenthesizedexpression).getExpression();
         }
 
-        if (expression instanceof StringLiteral) {
-            return ((StringLiteral) expression).getLiteralValue();
-        } else if (expression instanceof BooleanLiteral) {
-            return String.valueOf(((BooleanLiteral) expression).booleanValue());
-        } else if (expression instanceof NumberLiteral) {
-            return ((NumberLiteral) expression).getToken();
+        if (expression instanceof StringLiteral stringliteral) {
+            return (stringliteral).getLiteralValue();
+        } else if (expression instanceof BooleanLiteral booleanliteral) {
+            return String.valueOf((booleanliteral).booleanValue());
+        } else if (expression instanceof NumberLiteral numberliteral) {
+            return (numberliteral).getToken();
         } else if (expression instanceof TextBlock textBlock) {
             return textBlock.getLiteralValue();
         }
@@ -532,8 +532,8 @@ public final class CamelJavaRestDslParserHelper {
             return qn.getName().getIdentifier();
         }
 
-        if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
+        if (expression instanceof SimpleName simplename) {
+            FieldSource<JavaClassSource> field = getField(clazz, block, simplename);
             if (field != null) {
                 // is the field annotated with a Camel endpoint
                 if (field.getAnnotations() != null) {
@@ -623,15 +623,14 @@ public final class CamelJavaRestDslParserHelper {
     }
 
     private static boolean isValid(Annotation<JavaClassSource> ann) {
-        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName())
-                || "org.apache.camel.cdi.Uri".equals(ann.getQualifiedName());
+        return "org.apache.camel.EndpointInject".equals(ann.getQualifiedName());
     }
 
     private static boolean isNumericOperator(JavaClassSource clazz, Block block, Expression expression) {
         if (expression instanceof NumberLiteral) {
             return true;
-        } else if (expression instanceof SimpleName) {
-            FieldSource<JavaClassSource> field = getField(clazz, block, (SimpleName) expression);
+        } else if (expression instanceof SimpleName simplename) {
+            FieldSource<JavaClassSource> field = getField(clazz, block, simplename);
             if (field != null) {
                 return field.getType().isType("int") || field.getType().isType("long")
                         || field.getType().isType("Integer") || field.getType().isType("Long");

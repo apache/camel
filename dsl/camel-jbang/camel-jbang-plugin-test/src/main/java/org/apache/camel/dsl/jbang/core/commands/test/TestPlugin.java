@@ -87,21 +87,19 @@ public class TestPlugin implements Plugin {
 
             // Prepare commands
             if ("init".equals(command)) {
-                prepareInitCommand(citrus);
+                return executeInitCommand(citrus, args);
             } else if ("run".equals(command)) {
-                args = prepareRunCommand(citrus, args);
+                return executeRunCommand(citrus, args);
             }
 
-            ProcessAndOutput pao = citrus.run(command, args);
-            main.getOut().print(pao.getOutput());
-            return pao.getProcess().exitValue();
+            return execute(citrus, command, args);
         }
 
         /**
-         * Prepare init command. Automatically uses test subfolder as a working directory for creating new tests.
-         * Automatically adds a jbang.properties configuration to add required Camel Citrus dependencies.
+         * Prepare and execute init command. Automatically uses test subfolder as a working directory for creating new
+         * tests. Automatically adds a jbang.properties configuration to add required Camel Citrus dependencies.
          */
-        private void prepareInitCommand(JBangSupport citrus) {
+        private int executeInitCommand(JBangSupport citrus, List<String> args) {
             Path currentDir = Paths.get(".");
             Path workingDir;
             // Automatically set test subfolder as a working directory
@@ -134,14 +132,18 @@ public class TestPlugin implements Plugin {
                     main.getOut().println("Failed to create jbang.properties for tests in:" + jbangProperties);
                 }
             }
+
+            return execute(citrus, "init", args);
         }
 
         /**
-         * Prepare run command. Automatically navigates to test subfolder if it is present and uses this as a working
-         * directory.
+         * Prepare and execute Citrus run command. Automatically navigates to test subfolder if it is present and uses
+         * this as a working directory. Runs command asynchronous streaming logs to the main output of this Camel JBang
+         * process.
          */
-        private List<String> prepareRunCommand(JBangSupport citrus, List<String> args) {
+        private int executeRunCommand(JBangSupport citrus, List<String> args) {
             Path currentDir = Paths.get(".");
+            List<String> runArgs = new ArrayList<>(args);
             // automatically navigate to test subfolder for test execution
             if (currentDir.resolve(TEST_DIR).toFile().exists()) {
                 // set test subfolder as working directory
@@ -149,13 +151,31 @@ public class TestPlugin implements Plugin {
 
                 // remove test folder prefix in test file path if present
                 if (!args.isEmpty() && args.get(0).startsWith(TEST_DIR + "/")) {
-                    List<String> newArgs = new ArrayList<>(args.subList(1, args.size()));
-                    newArgs.add(0, args.get(0).substring((TEST_DIR + "/").length()));
-                    return newArgs;
+                    runArgs = new ArrayList<>(args.subList(1, args.size()));
+                    runArgs.add(0, args.get(0).substring((TEST_DIR + "/").length()));
                 }
             }
 
-            return args;
+            citrus.withOutputListener(output -> main.getOut().print(output));
+            ProcessAndOutput pao = citrus.runAsync("run", runArgs);
+            try {
+                pao.waitFor();
+            } catch (InterruptedException e) {
+                main.getOut().printErr("Interrupted while running Citrus command", e);
+            }
+
+            return pao.getProcess().exitValue();
+        }
+
+        /**
+         * Uses given Citrus JBang instance to run the given command using the given arguments.
+         *
+         * @return exit code of the command process.
+         */
+        private int execute(JBangSupport citrus, String command, List<String> args) {
+            ProcessAndOutput pao = citrus.run(command, args);
+            main.getOut().print(pao.getOutput());
+            return pao.getProcess().exitValue();
         }
     }
 }

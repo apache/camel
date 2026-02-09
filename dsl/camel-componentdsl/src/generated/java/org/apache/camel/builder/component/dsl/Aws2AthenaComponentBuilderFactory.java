@@ -253,6 +253,24 @@ public interface Aws2AthenaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Set the need for overriding the endpoint. This option needs to be
+         * used in combination with the uriEndpointOverride option.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param overrideEndpoint the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder overrideEndpoint(boolean overrideEndpoint) {
+            doSetProperty("overrideEndpoint", overrideEndpoint);
+            return this;
+        }
+    
         /**
          * The unique ID identifying the query execution.
          * 
@@ -344,6 +362,22 @@ public interface Aws2AthenaComponentBuilderFactory {
          */
         default Aws2AthenaComponentBuilder retry(java.lang.String retry) {
             doSetProperty("retry", retry);
+            return this;
+        }
+    
+        /**
+         * Set the overriding uri endpoint. This option needs to be used in
+         * combination with overrideEndpoint option.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param uriEndpointOverride the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder uriEndpointOverride(java.lang.String uriEndpointOverride) {
+            doSetProperty("uriEndpointOverride", uriEndpointOverride);
             return this;
         }
     
@@ -633,6 +667,24 @@ public interface Aws2AthenaComponentBuilderFactory {
     
         
         /**
+         * If we want to trust all certificates in case of overriding the
+         * endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
+         */
+        default Aws2AthenaComponentBuilder trustAllCertificates(boolean trustAllCertificates) {
+            doSetProperty("trustAllCertificates", trustAllCertificates);
+            return this;
+        }
+    
+        
+        /**
          * Set whether the Athena client should expect to load credentials
          * through a default credentials provider or to expect static
          * credentials to be passed in.
@@ -718,11 +770,13 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((Athena2Component) component).setOperation((org.apache.camel.component.aws2.athena.Athena2Operations) value); return true;
             case "outputLocation": getOrCreateConfiguration((Athena2Component) component).setOutputLocation((java.lang.String) value); return true;
             case "outputType": getOrCreateConfiguration((Athena2Component) component).setOutputType((org.apache.camel.component.aws2.athena.Athena2OutputType) value); return true;
+            case "overrideEndpoint": getOrCreateConfiguration((Athena2Component) component).setOverrideEndpoint((boolean) value); return true;
             case "queryExecutionId": getOrCreateConfiguration((Athena2Component) component).setQueryExecutionId((java.lang.String) value); return true;
             case "queryString": getOrCreateConfiguration((Athena2Component) component).setQueryString((java.lang.String) value); return true;
             case "region": getOrCreateConfiguration((Athena2Component) component).setRegion((java.lang.String) value); return true;
             case "resetWaitTimeoutOnRetry": getOrCreateConfiguration((Athena2Component) component).setResetWaitTimeoutOnRetry((boolean) value); return true;
             case "retry": getOrCreateConfiguration((Athena2Component) component).setRetry((java.lang.String) value); return true;
+            case "uriEndpointOverride": getOrCreateConfiguration((Athena2Component) component).setUriEndpointOverride((java.lang.String) value); return true;
             case "waitTimeout": getOrCreateConfiguration((Athena2Component) component).setWaitTimeout((long) value); return true;
             case "workGroup": getOrCreateConfiguration((Athena2Component) component).setWorkGroup((java.lang.String) value); return true;
             case "amazonAthenaClient": getOrCreateConfiguration((Athena2Component) component).setAmazonAthenaClient((software.amazon.awssdk.services.athena.AthenaClient) value); return true;
@@ -740,6 +794,7 @@ public interface Aws2AthenaComponentBuilderFactory {
             case "profileCredentialsName": getOrCreateConfiguration((Athena2Component) component).setProfileCredentialsName((java.lang.String) value); return true;
             case "secretKey": getOrCreateConfiguration((Athena2Component) component).setSecretKey((java.lang.String) value); return true;
             case "sessionToken": getOrCreateConfiguration((Athena2Component) component).setSessionToken((java.lang.String) value); return true;
+            case "trustAllCertificates": getOrCreateConfiguration((Athena2Component) component).setTrustAllCertificates((boolean) value); return true;
             case "useDefaultCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseDefaultCredentialsProvider((boolean) value); return true;
             case "useProfileCredentialsProvider": getOrCreateConfiguration((Athena2Component) component).setUseProfileCredentialsProvider((boolean) value); return true;
             case "useSessionCredentials": getOrCreateConfiguration((Athena2Component) component).setUseSessionCredentials((boolean) value); return true;

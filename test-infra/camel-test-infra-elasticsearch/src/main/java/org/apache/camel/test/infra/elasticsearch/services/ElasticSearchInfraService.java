@@ -25,10 +25,13 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 public interface ElasticSearchInfraService extends InfrastructureService {
 
+    @Deprecated
     int getPort();
 
+    @Deprecated
     String getElasticSearchHost();
 
+    @Deprecated
     default String getHttpHostAddress() {
         return String.format("%s:%d", getElasticSearchHost(), getPort());
     }
@@ -40,4 +43,16 @@ public interface ElasticSearchInfraService extends InfrastructureService {
     String getUsername();
 
     String getPassword();
+
+    default String hostAddresses() {
+        return getHttpHostAddress();
+    }
+
+    default String user() {
+        return getUsername();
+    }
+
+    default String password() {
+        return getPassword();
+    }
 }

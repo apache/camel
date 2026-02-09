@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.leveldb.serializer.DefaultLevelDBSerializer;
 
+@Deprecated
 public final class LevelDBCamelCodec {
 
     private final LevelDBSerializer serializer;
@@ -51,6 +52,21 @@ public final class LevelDBCamelCodec {
 
     public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer) throws IOException {
         Exchange answer = serializer.deserializeExchange(camelContext, buffer);
+
+        // restore the from endpoint
+        String fromEndpointUri = (String) answer.removeProperty("CamelAggregatedFromEndpoint");
+        if (fromEndpointUri != null) {
+            Endpoint fromEndpoint = camelContext.hasEndpoint(fromEndpointUri);
+            if (fromEndpoint != null) {
+                answer.getExchangeExtension().setFromEndpoint(fromEndpoint);
+            }
+        }
+        return answer;
+    }
+
+    public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer, String deserializationFilter)
+            throws IOException, ClassNotFoundException {
+        Exchange answer = serializer.deserializeExchange(camelContext, buffer, deserializationFilter);
 
         // restore the from endpoint
         String fromEndpointUri = (String) answer.removeProperty("CamelAggregatedFromEndpoint");

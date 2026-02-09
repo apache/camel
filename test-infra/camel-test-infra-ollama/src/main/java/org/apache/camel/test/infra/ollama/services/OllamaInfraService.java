@@ -28,9 +28,46 @@ public interface OllamaInfraService extends InfrastructureService {
 
     String modelName();
 
+    String embeddingModelName();
+
     String baseUrl();
 
     String baseUrlV1();
 
     String apiKey();
+
+    default String host() {
+        // Extract host from baseUrl (e.g., "http://localhost:11434" -> "localhost")
+        String url = baseUrl();
+        if (url != null) {
+            url = url.replace("http://", "").replace("https://", "");
+            int colonIdx = url.indexOf(':');
+            if (colonIdx > 0) {
+                return url.substring(0, colonIdx);
+            }
+            return url;
+        }
+        return "localhost";
+    }
+
+    default int port() {
+        // Extract port from baseUrl (e.g., "http://localhost:11434" -> 11434)
+        String url = baseUrl();
+        if (url != null) {
+            url = url.replace("http://", "").replace("https://", "");
+            int colonIdx = url.indexOf(':');
+            if (colonIdx > 0) {
+                try {
+                    return Integer.parseInt(url.substring(colonIdx + 1));
+                } catch (NumberFormatException e) {
+                    // Fall through to default
+                }
+            }
+        }
+        return 11434;
+    }
+
+    default String endpointUri() {
+        return String.format("http:%s:%d/api/generate", host(), port());
+    }
 }

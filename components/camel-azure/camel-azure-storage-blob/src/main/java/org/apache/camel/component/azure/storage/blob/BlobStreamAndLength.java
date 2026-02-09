@@ -43,9 +43,12 @@ public final class BlobStreamAndLength {
         Long blobSize = exchange.getIn().getHeader(BlobConstants.BLOB_UPLOAD_SIZE, () -> null, Long.class);
         exchange.getIn().removeHeader(BlobConstants.BLOB_UPLOAD_SIZE); // remove to avoid issues for further uploads
 
-        if (body instanceof WrappedFile) {
-            // unwrap file
-            body = ((WrappedFile) body).getFile();
+        if (body instanceof WrappedFile wf) {
+            // Get file length from WrappedFile before unwrapping (works for remote files like SFTP)
+            if (blobSize == null) {
+                blobSize = wf.getFileLength();
+            }
+            body = wf.getFile();
         }
 
         if (body instanceof InputStream) {

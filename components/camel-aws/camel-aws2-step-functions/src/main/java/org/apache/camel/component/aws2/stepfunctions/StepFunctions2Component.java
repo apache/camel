@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 @Component(value = "aws2-step-functions")
 public class StepFunctions2Component extends HealthCheckComponent {
@@ -41,7 +42,7 @@ public class StepFunctions2Component extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         StepFunctions2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new StepFunctions2Configuration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new StepFunctions2Configuration();
         StepFunctions2Endpoint endpoint = new StepFunctions2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())

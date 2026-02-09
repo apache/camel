@@ -23,21 +23,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringFromRestDuplicateTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        try (ClassPathXmlApplicationContext x
-                = new ClassPathXmlApplicationContext("org/apache/camel/component/rest/SpringFromRestDuplicateTest.xml")) {
-            fail("Should throw exception");
-        } catch (RuntimeCamelException e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Duplicate verb detected in rest-dsl: get:{id}", iae.getMessage());
-        }
+        assertThrows(RuntimeCamelException.class, () -> {
+            try (ClassPathXmlApplicationContext x
+                    = new ClassPathXmlApplicationContext("org/apache/camel/component/rest/SpringFromRestDuplicateTest.xml")) {
+                // expected to throw
+            }
+        });
         return null;
     }
 

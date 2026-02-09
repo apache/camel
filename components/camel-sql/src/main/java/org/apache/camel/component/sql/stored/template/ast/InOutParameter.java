@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.sql.stored.template.ast;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
+import org.apache.camel.component.sql.SqlHelper;
 import org.apache.camel.component.sql.stored.template.generated.SSPTParserConstants;
 import org.apache.camel.component.sql.stored.template.generated.Token;
 
@@ -52,7 +51,7 @@ public class InOutParameter {
         } else if (SSPTParserConstants.PARAMETER_POS_TOKEN == valueSrcToken.kind) {
             //remove leading :#
             final String mapKey = valueSrcToken.toString().substring(2);
-            this.valueExtractor = (exchange, container) -> ((Map) container).get(mapKey);
+            this.valueExtractor = (exchange, container) -> SqlHelper.lookupParameter(mapKey, exchange, container);
         }
     }
 

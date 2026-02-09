@@ -25,6 +25,7 @@ import org.apache.camel.component.aws2.timestream.write.Timestream2WriteEndpoint
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 @Component(value = "aws2-timestream")
 public class Timestream2Component extends HealthCheckComponent {
@@ -43,7 +44,7 @@ public class Timestream2Component extends HealthCheckComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Timestream2Configuration configuration
-                = this.configuration != null ? this.configuration.copy() : new Timestream2Configuration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new Timestream2Configuration();
 
         if (!remaining.isBlank()) {
             String[] uriPath = remaining.split(":");

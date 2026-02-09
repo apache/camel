@@ -53,7 +53,7 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
         if (!attributes.isEmpty()) {
             eventsRequestBuilder.lookupAttributes(attributes);
         }
-        if (lastTime != null) {
+        if (ObjectHelper.isNotEmpty(lastTime)) {
             eventsRequestBuilder.startTime(lastTime.plusMillis(1000));
         }
 

@@ -49,18 +49,18 @@ public class PlatformHttpConsole extends AbstractDevConsole {
             Set<HttpEndpointModel> models = http.getHttpEndpoints();
             for (HttpEndpointModel model : models) {
                 if (model.getVerbs() != null) {
-                    sb.append(String.format("    %s%s (%s)\n", server, model.getUri(), model.getVerbs()));
+                    sb.append(String.format("    %s%s (%s)%n", server, model.getUri(), model.getVerbs()));
                 } else {
-                    sb.append(String.format("    %s%s\n", server, model.getUri()));
+                    sb.append(String.format("    %s%s%n", server, model.getUri()));
                 }
             }
             sb.append("\nManagement Endpoints:\n");
             models = http.getHttpManagementEndpoints();
             for (HttpEndpointModel model : models) {
                 if (model.getVerbs() != null) {
-                    sb.append(String.format("    %s%s (%s)\n", server, model.getUri(), model.getVerbs()));
+                    sb.append(String.format("    %s%s (%s)%n", server, model.getUri(), model.getVerbs()));
                 } else {
-                    sb.append(String.format("    %s%s\n", server, model.getUri()));
+                    sb.append(String.format("    %s%s%n", server, model.getUri()));
                 }
             }
         }

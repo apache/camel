@@ -23,21 +23,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringTryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             createSpringCamelContext(this,
                     "org/apache/camel/spring/processor/SpringTryCatchMustHaveExceptionConfiguredTest.xml");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
-            assertEquals("At least one Exception must be configured to catch", iae.getMessage());
-        }
+        });
+        FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ftcre.getCause());
+        assertEquals("At least one Exception must be configured to catch", iae.getMessage());
 
         // return a working context instead, to let this test pass
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");

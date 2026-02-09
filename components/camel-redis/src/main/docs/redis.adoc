@@ -4,7 +4,7 @@
 :artifactid: camel-redis
 :description: Aggregation repository using Redis as datastore
 :since: 3.5
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 
 *Since Camel {since}*

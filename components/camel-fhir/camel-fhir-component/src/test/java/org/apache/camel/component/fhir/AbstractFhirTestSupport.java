@@ -64,10 +64,6 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
         }
     }
 
-    private void deletePatient() {
-        fhirClient.delete().resourceConditionalByUrl("Patient?given=Vincent&family=Freeman").execute();
-    }
-
     private void createPatient() {
         this.patient = new Patient().addName(new HumanName().addGiven("Vincent").setFamily("Freeman")).setActive(false);
         this.patient.setId(fhirClient.create().resource(patient).execute().getId());

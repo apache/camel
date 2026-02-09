@@ -183,6 +183,8 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
     protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
         BindyKeyValuePairFactory bindyKeyValuePairFactory = new BindyKeyValuePairFactory(getClassType());
         bindyKeyValuePairFactory.setFormatFactory(formatFactory);
+        bindyKeyValuePairFactory.setLocale(getLocale());
+        bindyKeyValuePairFactory.setDefaultValueStringAsNull(isDefaultValueStringAsNull());
         return bindyKeyValuePairFactory;
     }
 }

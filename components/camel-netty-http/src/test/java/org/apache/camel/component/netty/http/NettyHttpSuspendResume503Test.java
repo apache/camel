@@ -27,10 +27,10 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.WINDOWS)
-public class NettyHttpSuspendResume503Test extends BaseNettyTest {
+public class NettyHttpSuspendResume503Test extends BaseNettyTestSupport {
 
     private final String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true";
 
@@ -48,13 +48,11 @@ public class NettyHttpSuspendResume503Test extends BaseNettyTest {
         // suspend
         consumer.suspend();
 
-        try {
-            template.requestBody(serverUri, "Moon", String.class);
-            fail("Should throw exception");
-        } catch (Exception e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(503, cause.getStatusCode());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.requestBody(serverUri, "Moon", String.class),
+                "Should throw exception");
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(503, cause.getStatusCode());
 
         // resume
         consumer.resume();

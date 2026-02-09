@@ -54,21 +54,19 @@ public class ValidateRegExpTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        try {
-            template.sendBody(startEndpoint, "1.1.2010");
-            fail("CamelExecutionException expected");
-        } catch (CamelExecutionException e) {
-            // expected
-            PredicateValidationException cause = assertIsInstanceOf(PredicateValidationException.class, e.getCause());
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(startEndpoint, "1.1.2010"),
+                "CamelExecutionException expected");
 
-            // as the Expression could be different between the DSL and simple
-            // language, here we just check part of the message
-            assertTrue(cause.getMessage().startsWith("Validation failed for Predicate"), "Get a wrong exception message");
-            assertTrue(cause.getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
+        PredicateValidationException cause = assertIsInstanceOf(PredicateValidationException.class, e.getCause());
 
-            String body = cause.getExchange().getIn().getBody(String.class);
-            assertEquals("1.1.2010", body);
-        }
+        // as the Expression could be different between the DSL and simple
+        // language, here we just check part of the message
+        assertTrue(cause.getMessage().startsWith("Validation failed for Predicate"), "Get a wrong exception message");
+        assertTrue(cause.getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
+
+        String body = cause.getExchange().getIn().getBody(String.class);
+        assertEquals("1.1.2010", body);
 
         assertMockEndpointsSatisfied();
     }

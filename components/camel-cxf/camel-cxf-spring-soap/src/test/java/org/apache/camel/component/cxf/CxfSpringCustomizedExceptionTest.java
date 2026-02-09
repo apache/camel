@@ -34,8 +34,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CxfSpringCustomizedExceptionTest extends CamelSpringTestSupport {
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
@@ -64,18 +64,15 @@ public class CxfSpringCustomizedExceptionTest extends CamelSpringTestSupport {
 
     @Test
     public void testInvokingServiceFromCamel() throws Exception {
-        try {
-            template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world", CxfConstants.OPERATION_NAME,
-                    "echo");
-            fail("Should have thrown an exception");
-        } catch (Exception ex) {
-            Throwable result = ex.getCause();
-            assertTrue(result instanceof SoapFault, "Exception is not instance of SoapFault");
-            assertEquals(DETAIL_TEXT, ((SoapFault) result).getDetail().getTextContent(), "Expect to get right detail message");
-            assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault) result).getFaultCode().toString(),
-                    "Expect to get right fault-code");
-        }
-
+        Exception ex = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world",
+                        CxfConstants.OPERATION_NAME,
+                        "echo"));
+        Throwable result = ex.getCause();
+        assertTrue(result instanceof SoapFault, "Exception is not instance of SoapFault");
+        assertEquals(DETAIL_TEXT, ((SoapFault) result).getDetail().getTextContent(), "Expect to get right detail message");
+        assertEquals("{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault) result).getFaultCode().toString(),
+                "Expect to get right fault-code");
     }
 
     protected AbstractApplicationContext createApplicationContext() {

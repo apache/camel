@@ -52,7 +52,7 @@ public class Transcribe2Component extends DefaultComponent {
         }
 
         Transcribe2Configuration configuration
-                = this.configuration != null ? this.configuration.clone() : new Transcribe2Configuration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.clone() : new Transcribe2Configuration();
         configuration.setLabel(remaining);
         Transcribe2Endpoint endpoint = new Transcribe2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
@@ -65,8 +65,9 @@ public class Transcribe2Component extends DefaultComponent {
         if (ObjectHelper.isEmpty(endpoint.getConfiguration().getRegion())) {
             setRegionOnEndpoint(endpoint);
         }
-        if (endpoint.getConfiguration().getTranscribeClient() == null
-                && (endpoint.getConfiguration().getAccessKey() == null || endpoint.getConfiguration().getSecretKey() == null)) {
+        if (ObjectHelper.isEmpty(endpoint.getConfiguration().getTranscribeClient())
+                && (ObjectHelper.isEmpty(endpoint.getConfiguration().getAccessKey())
+                        || ObjectHelper.isEmpty(endpoint.getConfiguration().getSecretKey()))) {
             throw new IllegalArgumentException("Amazon transcribe client or accessKey and secretKey must be specified");
         }
 
@@ -83,30 +84,30 @@ public class Transcribe2Component extends DefaultComponent {
 
     private void setAccessKeyOnEndpoint(Transcribe2Endpoint endpoint) {
         String accessKey = System.getProperty("aws.accessKeyId");
-        if (accessKey == null) {
+        if (ObjectHelper.isEmpty(accessKey)) {
             accessKey = System.getenv("AWS_ACCESS_KEY_ID");
         }
-        if (accessKey != null) {
+        if (ObjectHelper.isNotEmpty(accessKey)) {
             endpoint.getConfiguration().setAccessKey(accessKey);
         }
     }
 
     private void setSecretKeyOnEndpoint(Transcribe2Endpoint endpoint) {
         String secretKey = System.getProperty("aws.secretKey");
-        if (secretKey == null) {
+        if (ObjectHelper.isEmpty(secretKey)) {
             secretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
         }
-        if (secretKey != null) {
+        if (ObjectHelper.isNotEmpty(secretKey)) {
             endpoint.getConfiguration().setSecretKey(secretKey);
         }
     }
 
     private void setRegionOnEndpoint(Transcribe2Endpoint endpoint) {
         String region = System.getProperty("aws.region");
-        if (region == null) {
+        if (ObjectHelper.isEmpty(region)) {
             region = System.getenv("AWS_REGION");
         }
-        if (region != null) {
+        if (ObjectHelper.isNotEmpty(region)) {
             endpoint.getConfiguration().setRegion(region);
         }
     }

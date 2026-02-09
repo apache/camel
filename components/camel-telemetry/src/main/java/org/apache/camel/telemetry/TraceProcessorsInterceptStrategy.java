@@ -16,11 +16,15 @@
  */
 package org.apache.camel.telemetry;
 
+import java.util.concurrent.CompletableFuture;
+
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 /**
@@ -39,32 +43,65 @@ public class TraceProcessorsInterceptStrategy implements InterceptStrategy {
             CamelContext camelContext,
             NamedNode processorDefinition, Processor target, Processor nextTarget)
             throws Exception {
-        return new DelegateAsyncProcessor(new TraceProcessor(target, processorDefinition));
+        return new TraceProcessor(target, processorDefinition);
     }
 
-    private class TraceProcessor implements Processor {
+    private class TraceProcessor extends DelegateAsyncProcessor {
         private final NamedNode processorDefinition;
-        private final Processor target;
 
         public TraceProcessor(Processor target, NamedNode processorDefinition) {
-            this.target = target;
+            super(target);
             this.processorDefinition = processorDefinition;
         }
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            String processor = processorDefinition.getId() + "-" + processorDefinition.getShortName();
-            if (tracer.isTraceProcessors() && !tracer.exclude(processor, exchange.getContext())) {
-                tracer.beginProcessorSpan(exchange, processor);
+            String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
+            if (tracer.isTraceProcessors() && !tracer.exclude(processorName, exchange.getContext())) {
+                tracer.beginProcessorSpan(exchange, processorName);
                 try {
-                    target.process(exchange);
+                    processor.process(exchange);
                 } finally {
-                    tracer.endProcessorSpan(exchange, processor);
+                    tracer.endProcessorSpan(exchange, processorName);
                 }
             } else {
                 // We must always execute this
-                target.process(exchange);
+                processor.process(exchange);
             }
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            String processorName = processorDefinition.getId() + "-" + processorDefinition.getShortName();
+            boolean isTraceProcessor = tracer.isTraceProcessors() && !tracer.exclude(processorName, exchange.getContext());
+            if (isTraceProcessor) {
+                try {
+                    tracer.beginProcessorSpan(exchange, processorName);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+            }
+            return processor.process(exchange, doneSync -> {
+                try {
+                    callback.done(doneSync);
+                } finally {
+                    if (isTraceProcessor) {
+                        try {
+                            tracer.endProcessorSpan(exchange, processorName);
+                        } catch (Exception e) {
+                            exchange.setException(e);
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback
+                    = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            process(exchange, callback);
+            return callback.getFuture();
         }
     }
 

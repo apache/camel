@@ -72,7 +72,7 @@ public final class RouteCoverageHelper {
                     if (routeId.equals(id)) {
                         // parse each route and build a List<CoverageData> for line by line coverage data
                         AtomicInteger counter = new AtomicInteger();
-                        parseRouteData(catalog, route, answer, counter);
+                        parseRouteData(catalog, route, answer, counter, routeId);
                     }
                 }
             }
@@ -117,7 +117,7 @@ public final class RouteCoverageHelper {
                         // parse each route and build a List<CoverageData> for line by line coverage data
                         AtomicInteger counter = new AtomicInteger();
                         List<CoverageData> list = new ArrayList<>();
-                        parseRouteData(catalog, route, list, counter);
+                        parseRouteData(catalog, route, list, counter, id);
                         if (id != null && !list.isEmpty()) {
                             list.get(0).setRouteId(id);
                         }
@@ -147,10 +147,12 @@ public final class RouteCoverageHelper {
                 NodeList routes = dom.getElementsByTagName("route");
                 for (int i = 0; i < routes.getLength(); i++) {
                     Node route = routes.item(i);
+                    Node n = route.getAttributes().getNamedItem("id");
+                    String id = n != null ? n.getNodeValue() : null;
                     // parse each route and build a List<CoverageData> for line by line coverage data
                     AtomicInteger counter = new AtomicInteger();
                     List<CoverageData> data = new ArrayList<>();
-                    parseRouteData(catalog, route, data, counter);
+                    parseRouteData(catalog, route, data, counter, id);
                     // create a key which is based on the file name without extension
                     String key = file.getName();
                     // strip .xml extension
@@ -169,7 +171,8 @@ public final class RouteCoverageHelper {
         return answer;
     }
 
-    private static void parseRouteData(CamelCatalog catalog, Node node, List<CoverageData> data, AtomicInteger counter) {
+    private static void parseRouteData(
+            CamelCatalog catalog, Node node, List<CoverageData> data, AtomicInteger counter, String routeId) {
         // must be a known EIP model
         String key = node.getNodeName();
         boolean valid = catalog.findModelNames().contains(key); // skip route as we use from instead
@@ -196,12 +199,26 @@ public final class RouteCoverageHelper {
             if (holder != null && holder.getNode().equals(key)) {
                 count += holder.getCount();
             }
+
+            String id = null;
+            Node nid = node.getAttributes().getNamedItem("id");
+            if (nid != null) {
+                id = nid.getNodeValue();
+            }
+            int lineNumber = 0;
+            Node ln = node.getAttributes().getNamedItem("sourceLineNumber");
+            if (ln != null) {
+                lineNumber = Integer.parseInt(ln.getNodeValue());
+            }
+
+            CoverageData cd = new CoverageData(id, key, count, routeId);
+            cd.setLineNumber(lineNumber);
             if (holder == null) {
                 // add new
-                data.add(counter.get(), new CoverageData(key, count));
+                data.add(counter.get(), cd);
             } else {
                 // replace existing
-                data.set(counter.get(), new CoverageData(key, count));
+                data.set(counter.get(), cd);
             }
             // advance counter
             counter.incrementAndGet();
@@ -209,12 +226,10 @@ public final class RouteCoverageHelper {
 
         // any children
         NodeList children = node.getChildNodes();
-        if (children != null) {
-            for (int i = 0; i < children.getLength(); i++) {
-                Node child = children.item(i);
-                if (child instanceof Element) {
-                    parseRouteData(catalog, child, data, counter);
-                }
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child instanceof Element) {
+                parseRouteData(catalog, child, data, counter, routeId);
             }
         }
     }

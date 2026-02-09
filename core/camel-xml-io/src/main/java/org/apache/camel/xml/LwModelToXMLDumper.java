@@ -104,10 +104,12 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
                 }
                 // write location information
                 if (sourceLocation || context.isDebugging()) {
-                    String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
                     int line = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLineNumber();
                     if (line != -1) {
                         writer.addAttribute("sourceLineNumber", Integer.toString(line));
+                    }
+                    String loc = (def instanceof RouteDefinition ? ((RouteDefinition) def).getInput() : def).getLocation();
+                    if (loc != null) {
                         writer.addAttribute("sourceLocation", loc);
                     }
                 }

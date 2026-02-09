@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
 import org.apache.camel.support.DefaultConsumer;
+import org.eclipse.neoscada.protocol.iec60870.asdu.types.QualityInformation;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 
 public class ClientConsumer extends DefaultConsumer {
@@ -65,5 +66,18 @@ public class ClientConsumer extends DefaultConsumer {
         message.setHeader(Constants.IEC60870_TIMESTAMP, value.getTimestamp());
         message.setHeader(Constants.IEC60870_QUALITY, value.getQualityInformation());
         message.setHeader(Constants.IEC60870_OVERFLOW, value.isOverflow());
+
+        // Add connection state and uptime to value messages
+        message.setHeader(Constants.IEC60870_CONNECTION_STATE, connection.getConnectionState());
+        message.setHeader(Constants.IEC60870_CONNECTION_UPTIME, connection.getConnectionUptime());
+
+        // Add individual quality flags
+        QualityInformation quality = value.getQualityInformation();
+        if (quality != null) {
+            message.setHeader(Constants.IEC60870_QUALITY_BLOCKED, quality.isBlocked());
+            message.setHeader(Constants.IEC60870_QUALITY_SUBSTITUTED, quality.isSubstituted());
+            message.setHeader(Constants.IEC60870_QUALITY_NOT_TOPICAL, quality.isTopical() == false);
+            message.setHeader(Constants.IEC60870_QUALITY_VALID, quality.isValid());
+        }
     }
 }

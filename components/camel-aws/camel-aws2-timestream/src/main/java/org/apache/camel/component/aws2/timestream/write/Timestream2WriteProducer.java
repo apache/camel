@@ -81,7 +81,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
     private Timestream2Operations determineOperation(Exchange exchange) throws InvalidPayloadException {
         Timestream2Operations operation
                 = exchange.getIn().getHeader(Timestream2Constants.OPERATION, Timestream2Operations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -93,7 +93,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (timestreamWriteProducerToString == null) {
+        if (ObjectHelper.isEmpty(timestreamWriteProducerToString)) {
             timestreamWriteProducerToString
                     = "TimestreamWriteProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
@@ -746,7 +746,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Timestream2WriteProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -756,7 +756,7 @@ public class Timestream2WriteProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

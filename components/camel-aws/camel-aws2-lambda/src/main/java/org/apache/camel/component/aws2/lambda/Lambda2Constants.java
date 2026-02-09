@@ -26,8 +26,10 @@ public interface Lambda2Constants {
     @Metadata(label = "all", description = "The operation we want to perform. Override operation passed as query parameter",
               javaType = "String", required = true)
     String OPERATION = "CamelAwsLambdaOperation";
-    @Metadata(label = "createFunction", description = "Amazon S3 bucket name where the .zip file containing\n" +
-                                                      "your deployment package is stored. This bucket must reside in the same AWS region where you are creating the Lambda function.",
+    @Metadata(label = "createFunction",
+              description = """
+                      Amazon S3 bucket name where the .zip file containing
+                      your deployment package is stored. This bucket must reside in the same AWS region where you are creating the Lambda function.""",
               javaType = "String")
     String S3_BUCKET = "CamelAwsLambdaS3Bucket";
     @Metadata(label = "createFunction", description = "The Amazon S3 object (the deployment package) key name\n" +
@@ -132,4 +134,109 @@ public interface Lambda2Constants {
     String FUNCTION_ALIAS_NAME = "CamelAwsLambdaAliasFunctionName";
     @Metadata(label = "createAlias", description = "The function description to set in the alias", javaType = "String")
     String FUNCTION_ALIAS_DESCRIPTION = "CamelAwsLambdaAliasFunctionDescription";
+
+    // Pagination constants
+    @Metadata(label = "listFunctions listVersions listAliases listEventSourceMapping listTags",
+              description = "The marker for the next set of results.", javaType = "String")
+    String MARKER = "CamelAwsLambdaMarker";
+    @Metadata(label = "listFunctions listVersions listAliases listEventSourceMapping",
+              description = "The maximum number of results to return.", javaType = "Integer")
+    String MAX_ITEMS = "CamelAwsLambdaMaxItems";
+    @Metadata(label = "listFunctions listVersions listAliases listEventSourceMapping",
+              description = "Whether the response has more results (is truncated).", javaType = "Boolean")
+    String IS_TRUNCATED = "CamelAwsLambdaIsTruncated";
+
+    // Response metadata
+    @Metadata(label = "createFunction getFunction publishVersion createAlias getAlias",
+              description = "The Amazon Resource Name (ARN) of the function.", javaType = "String")
+    String FUNCTION_ARN = "CamelAwsLambdaFunctionArn";
+    @Metadata(label = "invokeFunction",
+              description = "The HTTP status code of the function invocation.", javaType = "Integer")
+    String STATUS_CODE = "CamelAwsLambdaStatusCode";
+    @Metadata(label = "invokeFunction",
+              description = "If present, indicates that an error occurred during function execution.", javaType = "String")
+    String FUNCTION_ERROR = "CamelAwsLambdaFunctionError";
+    @Metadata(label = "invokeFunction",
+              description = "The last 4 KB of the execution log.", javaType = "String")
+    String LOG_RESULT = "CamelAwsLambdaLogResult";
+
+    // Function URL constants
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
+              description = "The type of authentication that the function URL uses. " +
+                            "Set to AWS_IAM to restrict access to authenticated users only. " +
+                            "Set to NONE to bypass IAM authentication and allow any user to invoke the function.",
+              javaType = "String", required = true)
+    String FUNCTION_URL_AUTH_TYPE = "CamelAwsLambdaFunctionUrlAuthType";
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig getFunctionUrlConfig deleteFunctionUrlConfig",
+              description = "The alias name or $LATEST for the function URL.", javaType = "String")
+    String FUNCTION_URL_QUALIFIER = "CamelAwsLambdaFunctionUrlQualifier";
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
+              description = "The cross-origin resource sharing (CORS) settings for the function URL.", javaType = "String")
+    String FUNCTION_URL_CORS_ALLOW_CREDENTIALS = "CamelAwsLambdaFunctionUrlCorsAllowCredentials";
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
+              description = "The allowed origins for CORS.", javaType = "List<String>")
+    String FUNCTION_URL_CORS_ALLOW_ORIGINS = "CamelAwsLambdaFunctionUrlCorsAllowOrigins";
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
+              description = "The allowed HTTP methods for CORS.", javaType = "List<String>")
+    String FUNCTION_URL_CORS_ALLOW_METHODS = "CamelAwsLambdaFunctionUrlCorsAllowMethods";
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
+              description = "The allowed HTTP headers for CORS.", javaType = "List<String>")
+    String FUNCTION_URL_CORS_ALLOW_HEADERS = "CamelAwsLambdaFunctionUrlCorsAllowHeaders";
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
+              description = "The exposed headers for CORS.", javaType = "List<String>")
+    String FUNCTION_URL_CORS_EXPOSE_HEADERS = "CamelAwsLambdaFunctionUrlCorsExposeHeaders";
+    @Metadata(label = "createFunctionUrlConfig updateFunctionUrlConfig",
+              description = "The max age in seconds for CORS.", javaType = "Integer")
+    String FUNCTION_URL_CORS_MAX_AGE = "CamelAwsLambdaFunctionUrlCorsMaxAge";
+    @Metadata(label = "createFunctionUrlConfig getFunctionUrlConfig",
+              description = "The function URL endpoint.", javaType = "String")
+    String FUNCTION_URL = "CamelAwsLambdaFunctionUrl";
+
+    // Function configuration constants
+    @Metadata(label = "updateFunctionConfiguration",
+              description = "The amount of memory available to the function at runtime. Increasing the function " +
+                            "memory also increases its CPU allocation. The default value is 128 MB. The value can be " +
+                            "any multiple of 1 MB.",
+              javaType = "Integer")
+    String FUNCTION_MEMORY_SIZE = "CamelAwsLambdaFunctionMemorySize";
+    @Metadata(label = "updateFunctionConfiguration",
+              description = "The amount of time (in seconds) that Lambda allows a function to run before stopping it. " +
+                            "The default is 3 seconds. The maximum allowed value is 900 seconds.",
+              javaType = "Integer")
+    String FUNCTION_TIMEOUT = "CamelAwsLambdaFunctionTimeout";
+    @Metadata(label = "updateFunctionConfiguration",
+              description = "The new runtime environment for the function.", javaType = "String")
+    String FUNCTION_RUNTIME = "CamelAwsLambdaFunctionRuntime";
+    @Metadata(label = "updateFunctionConfiguration",
+              description = "The new function handler.", javaType = "String")
+    String FUNCTION_HANDLER = "CamelAwsLambdaFunctionHandler";
+
+    // Concurrency constants
+    @Metadata(label = "putFunctionConcurrency",
+              description = "The number of simultaneous executions to reserve for the function.", javaType = "Integer",
+              required = true)
+    String RESERVED_CONCURRENT_EXECUTIONS = "CamelAwsLambdaReservedConcurrentExecutions";
+
+    // Permission constants
+    @Metadata(label = "addPermission",
+              description = "A unique statement identifier for the permission.", javaType = "String", required = true)
+    String STATEMENT_ID = "CamelAwsLambdaStatementId";
+    @Metadata(label = "addPermission",
+              description = "The action that the principal can use on the function. For example, lambda:InvokeFunction " +
+                            "or lambda:GetFunction.",
+              javaType = "String", required = true)
+    String ACTION = "CamelAwsLambdaAction";
+    @Metadata(label = "addPermission",
+              description = "The Amazon Web Services service, Amazon Web Services account, IAM user, or IAM role that " +
+                            "invokes the function. For example, s3.amazonaws.com or 123456789012.",
+              javaType = "String", required = true)
+    String PRINCIPAL = "CamelAwsLambdaPrincipal";
+    @Metadata(label = "addPermission",
+              description = "The Amazon Web Services account ID of the principal.", javaType = "String")
+    String SOURCE_ACCOUNT = "CamelAwsLambdaSourceAccount";
+    @Metadata(label = "addPermission",
+              description = "The ARN of the Amazon Web Services resource that invokes the function. For example, " +
+                            "an Amazon S3 bucket or Amazon SNS topic.",
+              javaType = "String")
+    String SOURCE_ARN = "CamelAwsLambdaSourceArn";
 }

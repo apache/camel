@@ -28,7 +28,7 @@ import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TransactedTopicProducerTest extends JmsTestSupport {
 
@@ -45,12 +45,10 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World 2");
 
-        try {
+        // expected
+        assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("direct:start", "Hello World 1", "isfailed", true);
-            fail("Should throw exception");
-        } catch (Exception e) {
-            // expected
-        }
+        });
         template.sendBodyAndHeader("direct:start", "Hello World 2", "isfailed", false);
 
         mock.assertIsSatisfied();

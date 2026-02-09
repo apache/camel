@@ -440,14 +440,333 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             outputAsync.process(exchange, this);
         }
 
+        /**
+         * Handles bridged errors from consumers with bridgeErrorHandler=true.
+         * <p>
+         * When a consumer is configured with bridgeErrorHandler=true, exceptions that occur in the consumer are bridged
+         * to the Camel error handler. These bridged errors are marked with ERRORHANDLER_BRIDGE=true and
+         * RedeliveryExhausted=true properties.
+         * <p>
+         * This method ensures that the onException route (failure processor) is properly invoked for bridged errors,
+         * even when handled(false) is configured. This allows error handling logic in subroutes to execute while
+         * keeping the exchange in a failed state.
+         * <p>
+         * This fix addresses CAMEL-22907 where bridged errors with handled(false) were not executing the onException
+         * route body.
+         *
+         * @see BridgeExceptionHandlerToErrorHandler
+         */
         private void handlePreviousFailure() {
             handleException();
             onExceptionOccurred();
-            prepareExchangeAfterFailure(exchange);
-            // we do not support redelivery so continue callback
-            AsyncCallback cb = callback;
-            taskFactory.release(this);
-            reactiveExecutor.schedule(cb);
+
+            // For bridged errors, we need to invoke the failure processor (onException route)
+            // similar to how RedeliveryTask handles exhausted redeliveries
+            Processor failureProcessor = null;
+            Predicate handledPredicate = null;
+            Predicate continuedPredicate = null;
+            boolean useOriginalInMessage = false;
+            boolean useOriginalInBody = false;
+
+            Exception e = exchange.getException();
+            if (e != null) {
+                ExceptionPolicy exceptionPolicy = getExceptionPolicy(exchange, e);
+                if (exceptionPolicy != null) {
+                    Route rc = ExchangeHelper.getRoute(exchange);
+                    if (rc != null) {
+                        failureProcessor = rc.getOnException(exceptionPolicy.getId());
+                    }
+                    handledPredicate = exceptionPolicy.getHandledPolicy();
+                    continuedPredicate = exceptionPolicy.getContinuedPolicy();
+                    useOriginalInMessage = exceptionPolicy.isUseOriginalInMessage();
+                    useOriginalInBody = exceptionPolicy.isUseOriginalInBody();
+                }
+            }
+
+            // Determine the target processor (failure processor or dead letter)
+            Processor target = failureProcessor != null ? failureProcessor : deadLetter;
+            boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
+
+            // If we have a target processor, deliver to it
+            if (target != null) {
+                deliverToFailureProcessor(target, isDeadLetterChannel, handledPredicate, continuedPredicate,
+                        useOriginalInMessage, useOriginalInBody);
+            } else {
+                // No failure processor, just prepare and continue
+                prepareExchangeAfterFailure(exchange);
+                AsyncCallback cb = callback;
+                taskFactory.release(this);
+                reactiveExecutor.schedule(cb);
+            }
+        }
+
+        /**
+         * Delivers the exchange to the failure processor (onException route) for bridged errors.
+         * <p>
+         * This method processes the onException route for bridged errors from consumers. It temporarily clears the
+         * exception to allow the route to execute, then restores it based on the handled/continued predicates.
+         * <p>
+         * The key behavior is:
+         * <ul>
+         * <li>If handled(true): exception is cleared and exchange is marked as successful</li>
+         * <li>If handled(false): exception is restored and exchange remains failed</li>
+         * <li>If continued(true): exception is cleared but exchange continues processing</li>
+         * </ul>
+         *
+         * @param processor            the failure processor (onException route) to invoke
+         * @param isDeadLetterChannel  true if using dead letter channel
+         * @param handledPredicate     predicate to determine if exception should be handled
+         * @param continuedPredicate   predicate to determine if processing should continue
+         * @param useOriginalInMessage whether to use original IN message
+         * @param useOriginalInBody    whether to use original IN body
+         */
+        private void deliverToFailureProcessor(
+                final Processor processor, final boolean isDeadLetterChannel,
+                final Predicate handledPredicate, final Predicate continuedPredicate,
+                final boolean useOriginalInMessage, final boolean useOriginalInBody) {
+
+            // we did not success so now we let the failure processor handle it
+            // clear exception as we let the failure processor handle it
+            Exception caught = exchange.getException();
+            if (caught != null) {
+                exchange.setException(null);
+            }
+
+            final boolean shouldHandle = shouldHandle(exchange, handledPredicate);
+            final boolean shouldContinue = shouldContinue(exchange, continuedPredicate);
+
+            // always handle if dead letter channel
+            boolean handleOrContinue = isDeadLetterChannel || shouldHandle || shouldContinue;
+            if (handleOrContinue) {
+                // its handled then remove traces of redelivery attempted
+                exchange.getIn().removeHeader(Exchange.REDELIVERED);
+                exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+                exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+                exchange.getExchangeExtension().setRedeliveryExhausted(false);
+
+                // and remove traces of rollback only and uow exhausted markers
+                exchange.setRollbackOnly(false);
+                exchange.removeProperty(ExchangePropertyKey.UNIT_OF_WORK_EXHAUSTED);
+            }
+
+            // we should allow using the failure processor if we should not continue
+            // or in case of continue then the failure processor is NOT a dead letter channel
+            // because you can continue and still let the failure processor do some routing
+            // before continue in the main route.
+            boolean allowFailureProcessor = !shouldContinue || !isDeadLetterChannel;
+
+            if (allowFailureProcessor && processor != null) {
+
+                // prepare original IN message/body if it should be moved instead of current message/body
+                if (useOriginalInMessage || useOriginalInBody) {
+                    Message original = ExchangeHelper.getOriginalInMessage(exchange);
+                    if (useOriginalInMessage) {
+                        LOG.trace("Using the original IN message instead of current");
+                        exchange.setIn(original);
+                    } else {
+                        LOG.trace("Using the original IN message body instead of current");
+                        exchange.getIn().setBody(original.getBody());
+                    }
+                    if (exchange.hasOut()) {
+                        LOG.trace("Removing the out message to avoid some uncertain behavior");
+                        exchange.setOut(null);
+                    }
+                }
+
+                // reset cached streams so they can be read again
+                MessageHelper.resetStreamCache(exchange.getIn());
+
+                // store the last to endpoint as the failure endpoint
+                exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                        exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+                // and store the route id, so we know in which route we failed
+                Route rc = ExchangeHelper.getRoute(exchange);
+                if (rc != null) {
+                    exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
+                }
+
+                // invoke custom on prepare
+                if (onPrepareProcessor != null) {
+                    try {
+                        LOG.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
+                        onPrepareProcessor.process(exchange);
+                    } catch (Exception e) {
+                        // a new exception was thrown during prepare
+                        exchange.setException(e);
+                    }
+                }
+
+                LOG.trace("Failure processor {} is processing Exchange: {}", processor, exchange);
+
+                // fire event as we had a failure processor to handle it, which there is a event for
+                final boolean deadLetterChannel = processor == deadLetter;
+
+                if (camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
+                    EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel,
+                            deadLetterUri);
+                }
+
+                // the failure processor could also be asynchronous
+                AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
+                afp.process(exchange, sync -> {
+                    LOG.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);
+                    try {
+                        prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
+                        // fire event as we had a failure processor to handle it, which there is a event for
+                        if (camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
+                            EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor,
+                                    deadLetterChannel, deadLetterUri);
+                        }
+                    } finally {
+                        // if the fault was handled asynchronously, this should be reflected in the callback as well
+                        reactiveExecutor.schedule(callback);
+
+                        // create log message
+                        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                        msg = msg + ". Caught: " + caught;
+                        if (isDeadLetterChannel && deadLetterUri != null) {
+                            msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+                        } else {
+                            msg = msg + ". Processed by failure processor: " + processor;
+                        }
+
+                        // log that we failed delivery
+                        logFailedDelivery(exchange, msg, null);
+
+                        // we are done so we can release the task
+                        taskFactory.release(this);
+                    }
+                });
+            } else {
+                try {
+                    // store the last to endpoint as the failure endpoint
+                    exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                            exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+                    // and store the route id, so we know in which route we failed
+                    Route rc = ExchangeHelper.getRoute(exchange);
+                    if (rc != null) {
+                        exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
+                    }
+
+                    // invoke custom on prepare
+                    if (onPrepareProcessor != null) {
+                        try {
+                            LOG.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
+                            onPrepareProcessor.process(exchange);
+                        } catch (Exception e) {
+                            // a new exception was thrown during prepare
+                            exchange.setException(e);
+                        }
+                    }
+                    // no processor but we need to prepare after failure as well
+                    prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
+                } finally {
+                    // callback we are done
+                    reactiveExecutor.schedule(callback);
+
+                    // create log message
+                    String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                    msg = msg + ". Caught: " + caught;
+                    if (processor != null) {
+                        if (deadLetterUri != null) {
+                            msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+                        } else {
+                            msg = msg + ". Processed by failure processor: " + processor;
+                        }
+                    }
+
+                    // log that we failed delivery
+                    logFailedDelivery(exchange, msg, null);
+
+                    // we are done so we can release the task
+                    taskFactory.release(this);
+                }
+            }
+        }
+
+        private boolean shouldHandle(Exchange exchange, Predicate handledPredicate) {
+            if (handledPredicate != null) {
+                return handledPredicate.matches(exchange);
+            }
+            return false;
+        }
+
+        private boolean shouldContinue(Exchange exchange, Predicate continuedPredicate) {
+            if (continuedPredicate != null) {
+                return continuedPredicate.matches(exchange);
+            }
+            return false;
+        }
+
+        protected void prepareExchangeAfterFailure(
+                final Exchange exchange, final boolean isDeadLetterChannel,
+                final boolean shouldHandle, final boolean shouldContinue) {
+
+            Exception newException = exchange.getException();
+
+            // we could not process the exchange so we let the failure processor handled it
+            ExchangeHelper.setFailureHandled(exchange);
+
+            // honor if already set a handling
+            boolean alreadySet = exchange.getExchangeExtension().isErrorHandlerHandledSet();
+            if (alreadySet) {
+                boolean handled = exchange.getExchangeExtension().isErrorHandlerHandled();
+                LOG.trace("This exchange has already been marked for handling: {}", handled);
+                if (!handled) {
+                    // exception not handled, put exception back in the exchange
+                    exchange.setException(exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class));
+                    // and put failure endpoint back as well
+                    exchange.setProperty(ExchangePropertyKey.FAILURE_ENDPOINT,
+                            exchange.getProperty(ExchangePropertyKey.TO_ENDPOINT));
+                }
+                return;
+            }
+
+            // dead letter channel is special
+            if (shouldContinue) {
+                LOG.trace("This exchange is continued: {}", exchange);
+                // okay we want to continue then prepare the exchange for that as well
+                prepareExchangeForContinue(exchange, isDeadLetterChannel);
+            } else if (shouldHandle) {
+                LOG.trace("This exchange is handled so its marked as not failed: {}", exchange);
+                exchange.getExchangeExtension().setErrorHandlerHandled(true);
+            } else {
+                // okay the redelivery policy are not explicit set to true, so we should allow to check for some
+                // special situations when using dead letter channel
+                if (isDeadLetterChannel) {
+
+                    // DLC is always handling the first thrown exception,
+                    // but if its a new exception then use the configured option
+                    boolean handled = newException == null || deadLetterHandleNewException;
+
+                    if (handled) {
+                        LOG.trace("This exchange is handled so its marked as not failed: {}", exchange);
+                        exchange.getExchangeExtension().setErrorHandlerHandled(true);
+                        return;
+                    }
+                }
+
+                // not handled by default
+                prepareExchangeAfterFailureNotHandled(exchange);
+            }
+        }
+
+        private void prepareExchangeForContinue(Exchange exchange, boolean isDeadLetterChannel) {
+            Exception e = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Exception.class);
+
+            // we continue so clear any exceptions
+            exchange.setException(null);
+            exchange.removeProperty(ExchangePropertyKey.EXCEPTION_CAUGHT);
+            // clear rollback flags
+            exchange.setRollbackOnly(false);
+            // and remove traces of rollback only and uow exhausted markers
+            exchange.removeProperty(ExchangePropertyKey.UNIT_OF_WORK_EXHAUSTED);
+            // continue but keep the caused exception stored as a property
+            // (by default we do not log the failure as we continue routing)
+            exchange.setProperty(ExchangePropertyKey.EXCEPTION_HANDLED, e);
+            exchange.getExchangeExtension().setErrorHandlerHandled(true);
+
+            LOG.trace("This exchange is continued: {}", exchange);
         }
 
         private void runInterrupted() {
@@ -478,7 +797,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // e is never null
 
             Throwable previous = exchange.getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
-            if (previous != null && previous != e) {
+            if (previous != null && previous != e && e != null) {
                 // a 2nd exception was thrown while handling a previous exception
                 // so we need to add the previous as suppressed by the new exception
                 // see also FatalFallbackErrorHandler
@@ -501,7 +820,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // store the original caused exception in a property, so we can restore it later
-            exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
+            if (e != null) {
+                exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
+            }
 
             // store where the exception happened
             Route rc = ExchangeHelper.getRoute(exchange);

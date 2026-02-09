@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.braintree.BraintreeConfiguration;
 import org.apache.camel.component.braintree.AddOnGatewayEndpointConfiguration;
@@ -37,6 +38,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for Braintree
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName, BraintreeConfiguration> {
 
     private BraintreeApiCollection() {

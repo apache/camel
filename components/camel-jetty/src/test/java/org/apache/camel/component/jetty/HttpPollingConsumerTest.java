@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpPollingConsumerTest extends BaseJettyTest {
 
@@ -42,12 +42,11 @@ public class HttpPollingConsumerTest extends BaseJettyTest {
 
     @Test
     public void testReceiveTimeoutTriggered() {
-        try {
-            consumer.receiveBody("http://localhost:{{port}}/test", 250, String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> consumer.receiveBody("http://localhost:{{port}}/test", 250, String.class),
+                "Should have thrown an exception");
+
+        assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
     }
 
     @Override

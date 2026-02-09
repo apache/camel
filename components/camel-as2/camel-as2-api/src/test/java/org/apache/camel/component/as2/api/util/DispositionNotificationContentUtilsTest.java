@@ -39,17 +39,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DispositionNotificationContentUtilsTest {
 
-    public static final String DISPOSITION_NOTIFICATION_CONTENT = "Reporting-UA: AS2 Server\r\n"
-                                                                  + "MDN-Gateway: dns; example.com\r\n"
-                                                                  + "Original-Recipient: rfc822; 0123456780000\r\n"
-                                                                  + "Final-Recipient: rfc822; 0123456780000\r\n"
-                                                                  + "Original-Message-ID: <200207310834482A70BF63@\\\"~~foo~~\\\">\r\n"
-                                                                  + "Disposition: automatic-action/MDN-sent-automatically;\r\n"
-                                                                  + "  processed/warning: you're awesome\r\n"
-                                                                  + "Failure: oops-a-failure\r\n"
-                                                                  + "Error: oops-an-error\r\n" + "Warning: oops-a-warning\r\n"
-                                                                  + "Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r\n"
-                                                                  + "\r\n";
+    public static final String DISPOSITION_NOTIFICATION_CONTENT = """
+            Reporting-UA: AS2 Server\r
+            MDN-Gateway: dns; example.com\r
+            Original-Recipient: rfc822; 0123456780000\r
+            Final-Recipient: rfc822; 0123456780000\r
+            Original-Message-ID: <200207310834482A70BF63@\\"~~foo~~\\">\r
+            Disposition: automatic-action/MDN-sent-automatically;\r
+              processed/warning: you're awesome\r
+            Failure: oops-a-failure\r
+            Error: oops-an-error\r
+            Warning: oops-a-warning\r
+            Received-content-MIC: 7v7F++fQaNB1sVLFtMRp+dF+eG4=, sha1\r
+            \r
+            """;
 
     public static final String EXPECTED_REPORTING_UA = "AS2 Server";
     public static final String EXPECTED_MTN_NAME = "example.com";

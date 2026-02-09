@@ -64,6 +64,9 @@ class ExportQuarkus extends Export {
             printer().printErr("--build-tool must either be maven or gradle, was: " + buildTool);
             return 1;
         }
+        if (buildTool.equals("gradle")) {
+            printer().println("WARN: --build-tool=gradle is deprecated.");
+        }
 
         exportBaseDir = exportBaseDir != null ? exportBaseDir : Path.of(".");
         Path profile = exportBaseDir.resolve("application.properties");
@@ -125,6 +128,9 @@ class ExportQuarkus extends Export {
                 if (port != -1) {
                     prop.put("quarkus.management.port", port);
                 }
+            }
+            if (hawtio) {
+                prop.setProperty("quarkus.hawtio.authenticationEnabled", "false");
             }
             return prop;
         });
@@ -538,6 +544,11 @@ class ExportQuarkus extends Export {
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
+
+        if (hawtio) {
+            answer.add("mvn:org.apache.camel:camel-management");
+            answer.add("mvn:io.hawt:hawtio-quarkus:" + hawtioVersion);
+        }
 
         return answer;
     }

@@ -316,19 +316,7 @@ public class JmsBinding {
                 if (!force) {
                     // answer must match endpoint type
                     JmsMessageType type = endpoint != null ? endpoint.getConfiguration().getJmsMessageType() : null;
-                    if (type != null && answer != null) {
-                        if (type == JmsMessageType.Text) {
-                            answer = answer instanceof TextMessage ? answer : null;
-                        } else if (type == JmsMessageType.Bytes) {
-                            answer = answer instanceof BytesMessage ? answer : null;
-                        } else if (type == JmsMessageType.Map) {
-                            answer = answer instanceof MapMessage ? answer : null;
-                        } else if (type == JmsMessageType.Object) {
-                            answer = answer instanceof ObjectMessage ? answer : null;
-                        } else if (type == Stream) {
-                            answer = answer instanceof StreamMessage ? answer : null;
-                        }
-                    }
+                    answer = filterMessageByType(answer, type);
                 }
             }
         }
@@ -485,28 +473,38 @@ public class JmsBinding {
      * @return             the value to use, <tt>null</tt> to ignore this header
      */
     protected Object getValidJMSHeaderValue(String headerName, Object headerValue) {
-        if (headerValue instanceof String) {
-            return headerValue;
-        } else if (headerValue instanceof BigInteger) {
-            return headerValue.toString();
-        } else if (headerValue instanceof BigDecimal) {
-            return headerValue.toString();
-        } else if (headerValue instanceof Number) {
-            return headerValue;
-        } else if (headerValue instanceof Character) {
-            return headerValue;
-        } else if (headerValue instanceof CharSequence) {
-            return headerValue.toString();
-        } else if (headerValue instanceof Boolean) {
-            return headerValue;
-        } else if (headerValue instanceof Date date) {
-            if (this.endpoint.getConfiguration().isFormatDateHeadersToIso8601()) {
-                return ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC).toString();
-            } else {
-                return date.toString();
-            }
+        if (headerValue instanceof String s) {
+            return s;
+        }
+        if (headerValue instanceof BigInteger bi) {
+            return bi.toString();
+        }
+        if (headerValue instanceof BigDecimal bd) {
+            return bd.toString();
+        }
+        if (headerValue instanceof Number n) {
+            return n;
+        }
+        if (headerValue instanceof Character c) {
+            return c;
+        }
+        if (headerValue instanceof CharSequence cs) {
+            return cs.toString();
+        }
+        if (headerValue instanceof Boolean b) {
+            return b;
+        }
+        if (headerValue instanceof Date date) {
+            return formatDateHeaderValue(date);
         }
         return null;
+    }
+
+    private String formatDateHeaderValue(Date date) {
+        if (this.endpoint.getConfiguration().isFormatDateHeadersToIso8601()) {
+            return ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC).toString();
+        }
+        return date.toString();
     }
 
     protected Message createJmsMessage(Exception cause, Session session) throws JMSException {
@@ -772,6 +770,35 @@ public class JmsBinding {
             Object headerValue, Exchange exchange) {
         return headerFilterStrategy == null
                 || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
+    }
+
+    /**
+     * Filters the JMS message to ensure it matches the expected type.
+     *
+     * @param  message the JMS message to filter
+     * @param  type    the expected message type, or null to accept any type
+     * @return         the message if it matches the type, or null if it doesn't match
+     */
+    private Message filterMessageByType(Message message, JmsMessageType type) {
+        if (type == null || message == null) {
+            return message;
+        }
+        if (type == JmsMessageType.Text) {
+            return message instanceof TextMessage ? message : null;
+        }
+        if (type == JmsMessageType.Bytes) {
+            return message instanceof BytesMessage ? message : null;
+        }
+        if (type == JmsMessageType.Map) {
+            return message instanceof MapMessage ? message : null;
+        }
+        if (type == JmsMessageType.Object) {
+            return message instanceof ObjectMessage ? message : null;
+        }
+        if (type == Stream) {
+            return message instanceof StreamMessage ? message : null;
+        }
+        return message;
     }
 
 }

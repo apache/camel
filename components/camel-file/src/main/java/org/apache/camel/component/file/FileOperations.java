@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,9 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -279,13 +283,14 @@ public class FileOperations implements GenericFileOperations<File> {
             // is there an explicit charset configured we must write the file as
             String charset = endpoint.getCharset();
 
-            // we can optimize and use file based if no charset must be used,
+            // we can optimize and use file based if no charset & no checksum must be used,
             // and the input body is a file
             // however optimization cannot be applied when content should be
             // appended to target file
             File source = null;
             boolean fileBased = false;
-            if (charset == null && endpoint.getFileExist() != GenericFileExist.Append) {
+            if (charset == null && endpoint.getFileExist() != GenericFileExist.Append
+                    && endpoint.getChecksumFileAlgorithm() == null) {
                 // if no charset and not in appending mode, then we can try
                 // using file directly (optimized)
                 final Object body = extractBodyFromExchange(exchange);
@@ -308,16 +313,32 @@ public class FileOperations implements GenericFileOperations<File> {
                 }
             }
 
+            // if we use checksum them we need to use an input stream to calculate while writing the file
+            DigestInputStream dis = null;
+            if (endpoint.getChecksumFileAlgorithm() != null) {
+                MessageDigest digest = MessageDigest.getInstance(endpoint.getChecksumFileAlgorithm());
+                // prefer FileInputStream over general stream
+                InputStream is = exchange.getMessage().getBody(FileInputStream.class);
+                if (is == null) {
+                    is = exchange.getMessage().getMandatoryBody(InputStream.class);
+                }
+                dis = new DigestInputStream(is, digest);
+            }
             if (charset != null) {
                 // charset configured so we must use a reader so we can write
                 // with encoding
-                handleReaderAsFileSource(exchange, file, charset);
-            } else if (exchange.getIn().getBody() instanceof String) {
+                handleReaderAsFileSource(exchange, file, charset, dis);
+            } else if (dis == null && exchange.getIn().getBody() instanceof String) {
                 // If the body is a string, write it directly
                 handleStringAsFileSource(exchange, file);
             } else {
                 // fallback and use stream based
-                handleStreamAsFileSource(exchange, file);
+                handleStreamAsFileSource(exchange, file, dis);
+            }
+
+            if (dis != null) {
+                String hash = StringHelper.bytesToHex(dis.getMessageDigest().digest());
+                exchange.getMessage().setHeader(FileConstants.FILE_CHECKSUM, hash);
             }
 
             // try to keep last modified timestamp if configured to do so
@@ -326,14 +347,29 @@ public class FileOperations implements GenericFileOperations<File> {
             setPermissions(file);
 
             return true;
-        } catch (InvalidPayloadException | IOException e) {
+        } catch (InvalidPayloadException | NoSuchAlgorithmException | IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         }
     }
 
-    private void handleStreamAsFileSource(Exchange exchange, File file) throws InvalidPayloadException, IOException {
-        InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
-        writeFileByStream(in, file);
+    @Override
+    public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        File file = new File(name);
+        try {
+            Files.writeString(file.toPath(), payload, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
+        }
+        return true;
+    }
+
+    private void handleStreamAsFileSource(Exchange exchange, File file, InputStream is)
+            throws InvalidPayloadException, IOException {
+        if (is == null) {
+            is = exchange.getIn().getMandatoryBody(InputStream.class);
+        }
+        writeFileByStream(is, file);
     }
 
     private void handleStringAsFileSource(Exchange exchange, File file) throws IOException {
@@ -341,14 +377,19 @@ public class FileOperations implements GenericFileOperations<File> {
         writeFileByString(stringBody, file);
     }
 
-    private void handleReaderAsFileSource(Exchange exchange, File file, String charset)
+    private void handleReaderAsFileSource(Exchange exchange, File file, String charset, InputStream is)
             throws InvalidPayloadException, IOException {
-        Reader in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
-                exchange.getIn().getBody());
+        Reader in = null;
+        if (is == null) {
+            in = exchange.getContext().getTypeConverter().tryConvertTo(Reader.class, exchange,
+                    exchange.getIn().getBody());
+        }
         if (in == null) {
             // okay no direct reader conversion, so use an input stream
             // (which a lot can be converted as)
-            InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+            if (is == null) {
+                is = exchange.getIn().getMandatoryBody(InputStream.class);
+            }
             in = new InputStreamReader(is);
         }
         // buffer the reader

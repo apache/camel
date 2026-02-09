@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.aws2.ses.client;
 
+import org.apache.camel.component.aws.common.AwsClientBuilderUtil;
 import org.apache.camel.component.aws2.ses.Ses2Configuration;
-import org.apache.camel.component.aws2.ses.client.impl.Ses2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.ses.client.impl.Ses2ClientProfileOptimizedImpl;
-import org.apache.camel.component.aws2.ses.client.impl.Ses2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.ses.client.impl.Ses2ClientStandardImpl;
+import software.amazon.awssdk.services.ses.SesClient;
 
 /**
- * Factory class to return the correct type of AWS SES client.
+ * Factory class to create AWS SES clients using common configuration.
  */
 public final class Ses2ClientFactory {
 
@@ -31,20 +29,14 @@ public final class Ses2ClientFactory {
     }
 
     /**
-     * Return the correct AWS SES client (based on remote vs local).
+     * Create a SES client based on configuration.
      *
-     * @param  configuration configuration
-     * @return               SesClient
+     * @param  configuration The SES configuration
+     * @return               Configured SesClient
      */
-    public static Ses2InternalClient getSesClient(Ses2Configuration configuration) {
-        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
-            return new Ses2ClientOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
-            return new Ses2ClientProfileOptimizedImpl(configuration);
-        } else if (Boolean.TRUE.equals(configuration.isUseSessionCredentials())) {
-            return new Ses2ClientSessionTokenImpl(configuration);
-        } else {
-            return new Ses2ClientStandardImpl(configuration);
-        }
+    public static SesClient getSesClient(Ses2Configuration configuration) {
+        return AwsClientBuilderUtil.buildClient(
+                configuration,
+                SesClient::builder);
     }
 }

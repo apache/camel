@@ -61,15 +61,15 @@ public class KMS2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     public void doStart() throws Exception {
         super.doStart();
 
-        kmsClient = configuration.getKmsClient() != null
+        kmsClient = ObjectHelper.isNotEmpty(configuration.getKmsClient())
                 ? configuration.getKmsClient()
-                : KMS2ClientFactory.getKmsClient(configuration).getKmsClient();
+                : KMS2ClientFactory.getKmsClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getKmsClient())) {
-            if (kmsClient != null) {
+            if (ObjectHelper.isNotEmpty(kmsClient)) {
                 kmsClient.close();
             }
         }

@@ -36,7 +36,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
@@ -66,13 +66,11 @@ public class JmsAllowNullBodyTest extends AbstractJMSTest {
 
     @Test
     public void testNoAllowNullBody() {
-        try {
-            template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=false", null, "bar", 123);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            JMSException cause = assertIsInstanceOf(JMSException.class, e.getCause().getCause());
-            assertEquals("Cannot send message as message body is null, and option allowNullBody is false.", cause.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=false", null, "bar", 123),
+                "Should have thrown exception");
+        JMSException cause = assertIsInstanceOf(JMSException.class, e.getCause().getCause());
+        assertEquals("Cannot send message as message body is null, and option allowNullBody is false.", cause.getMessage());
     }
 
     @Override

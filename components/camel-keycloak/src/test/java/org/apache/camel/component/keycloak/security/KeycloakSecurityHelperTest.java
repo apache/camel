@@ -132,31 +132,44 @@ public class KeycloakSecurityHelperTest {
     }
 
     @Test
-    void testParseAccessTokenWithPublicKey() {
-        // Test that verification fails with wrong public key
+    void testParseAndVerifyAccessTokenWithInvalidToken() throws Exception {
+        // Test that verification fails with invalid token
         String invalidToken = "invalid.jwt.token";
+        String expectedIssuer = "http://localhost:8080/realms/test";
 
-        try {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048);
-            KeyPair keyPair = keyGen.generateKeyPair();
-            PublicKey publicKey = keyPair.getPublic();
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
 
-            assertThrows(VerificationException.class, () -> {
-                KeycloakSecurityHelper.parseAccessToken(invalidToken, publicKey);
-            });
-        } catch (Exception e) {
-            fail("Failed to generate test keys: " + e.getMessage());
-        }
+        assertThrows(VerificationException.class, () -> {
+            KeycloakSecurityHelper.parseAndVerifyAccessToken(invalidToken, publicKey, expectedIssuer);
+        });
     }
 
     @Test
-    void testParseAccessTokenWithNullKey() {
+    void testParseAndVerifyAccessTokenWithNullKey() {
+        String invalidToken = "invalid.jwt.token";
+        String expectedIssuer = "http://localhost:8080/realms/test";
+
+        // Should throw exception with null key
+        assertThrows(VerificationException.class, () -> {
+            KeycloakSecurityHelper.parseAndVerifyAccessToken(invalidToken, null, expectedIssuer);
+        });
+    }
+
+    @Test
+    void testParseAndVerifyAccessTokenWithNullIssuer() throws Exception {
         String invalidToken = "invalid.jwt.token";
 
-        // Should not throw exception with null key, just parse without verification
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        KeyPair keyPair = keyGen.generateKeyPair();
+        PublicKey publicKey = keyPair.getPublic();
+
+        // Should throw exception with null issuer
         assertThrows(VerificationException.class, () -> {
-            KeycloakSecurityHelper.parseAccessToken(invalidToken, null);
+            KeycloakSecurityHelper.parseAndVerifyAccessToken(invalidToken, publicKey, null);
         });
     }
 

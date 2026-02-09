@@ -17,23 +17,24 @@
 package org.apache.camel.component.mllp;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.Principal;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -51,6 +52,7 @@ import org.apache.camel.component.mllp.internal.TcpServerBindThread;
 import org.apache.camel.component.mllp.internal.TcpServerConsumerValidationRunnable;
 import org.apache.camel.component.mllp.internal.TcpSocketConsumerRunnable;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
@@ -62,12 +64,12 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "MLLP Producer")
 public class MllpTcpServerConsumer extends DefaultConsumer {
     final Logger log;
-    final ExecutorService validationExecutor;
-    final ExecutorService consumerExecutor;
     final Charset charset;
     final Hl7Util hl7Util;
     final boolean logPhi;
 
+    ExecutorService validationExecutor;
+    ExecutorService consumerExecutor;
     TcpServerBindThread bindThread;
     TcpServerAcceptThread acceptThread;
 
@@ -80,11 +82,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         MllpComponent component = endpoint.getComponent();
         this.logPhi = component.getLogPhi();
         hl7Util = new Hl7Util(component.getLogPhiMaxBytes(), logPhi);
-
-        validationExecutor = Executors.newCachedThreadPool();
-        consumerExecutor = new ThreadPoolExecutor(
-                1, getConfiguration().getMaxConcurrentConsumers(), getConfiguration().getAcceptTimeout(), TimeUnit.MILLISECONDS,
-                new SynchronousQueue<>());
     }
 
     @Override
@@ -154,6 +151,22 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
+        // Create executor services using Camel's ExecutorServiceManager for virtual threads support
+        validationExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newCachedThreadPool(this, "MllpValidation");
+
+        // Create a custom profile with maxQueueSize=0 to use SynchronousQueue for direct handoff.
+        // This is required because MLLP needs immediate task scheduling to process incoming messages
+        // and send acknowledgments before the producer times out.
+        ThreadPoolProfile consumerProfile = new ThreadPoolProfile("MllpConsumer");
+        consumerProfile.setPoolSize(1);
+        consumerProfile.setMaxPoolSize(getConfiguration().getMaxConcurrentConsumers());
+        consumerProfile.setMaxQueueSize(0);
+        consumerProfile.setKeepAliveTime((long) getConfiguration().getAcceptTimeout());
+        consumerProfile.setTimeUnit(TimeUnit.MILLISECONDS);
+        consumerExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newThreadPool(this, "MllpConsumer", consumerProfile);
+
         if (bindThread == null || !bindThread.isAlive()) {
             bindThread = new TcpServerBindThread(this, getEndpoint().getSslContextParameters());
 
@@ -176,11 +189,17 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        consumerExecutor.shutdownNow();
+        if (consumerExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(consumerExecutor);
+            consumerExecutor = null;
+        }
         if (acceptThread != null) {
             acceptThread.interrupt();
         }
-        validationExecutor.shutdownNow();
+        if (validationExecutor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(validationExecutor);
+            validationExecutor = null;
+        }
     }
 
     public void handleMessageTimeout(String message, byte[] payload, Throwable cause) {
@@ -255,6 +274,10 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
 
             Message message = exchange.getIn();
 
+            if (consumerRunnable.getSocket() instanceof SSLSocket sslSocket) {
+                enrichWithClientCertInformation(sslSocket.getSession(), message);
+            }
+
             if (consumerRunnable.hasLocalAddress()) {
                 message.setHeader(MllpConstants.MLLP_LOCAL_ADDRESS, consumerRunnable.getLocalAddress());
             }
@@ -302,6 +325,46 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
         } finally {
             doneUoW(exchange);
             releaseExchange(exchange, false);
+        }
+    }
+
+    /**
+     * Enriches the message with client certificate details such as subject name, serial number, etc.
+     * <p/>
+     * If the certificate is unverified then the headers is not enriched.
+     *
+     * @param sslSession the SSL session
+     * @param message    the message to enrich
+     */
+    protected void enrichWithClientCertInformation(SSLSession sslSession, Message message) {
+        if (sslSession == null || message == null) {
+            return;
+        }
+
+        try {
+            Certificate[] certificates = sslSession.getPeerCertificates();
+            if (certificates != null && certificates.length > 0) {
+                if (!(certificates[0] instanceof X509Certificate cert)) {
+                    return;
+                }
+
+                Principal subject = cert.getSubjectX500Principal();
+                if (subject != null) {
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SUBJECT_NAME, subject.toString());
+                }
+                Principal issuer = cert.getIssuerX500Principal();
+                if (issuer != null) {
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_ISSUER_NAME, issuer.toString());
+                }
+                BigInteger serial = cert.getSerialNumber();
+                if (serial != null) {
+                    message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_SERIAL_NO, serial.toString());
+                }
+                message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_BEFORE, cert.getNotBefore());
+                message.setHeader(MllpConstants.MLLP_SSL_CLIENT_CERT_NOT_AFTER, cert.getNotAfter());
+            }
+        } catch (SSLPeerUnverifiedException e) {
+            // ignore
         }
     }
 

@@ -27,6 +27,11 @@ public class OllamaRemoteInfraService implements OllamaInfraService {
         }
 
         @Override
+        public String embeddingModelName() {
+            return System.getProperty(OllamaProperties.EMBEDDING_MODEL);
+        }
+
+        @Override
         public String apiKey() {
             return System.getProperty(OllamaProperties.API_KEY);
         }
@@ -70,6 +75,11 @@ public class OllamaRemoteInfraService implements OllamaInfraService {
     @Override
     public String modelName() {
         return configuration.modelName();
+    }
+
+    @Override
+    public String embeddingModelName() {
+        return configuration.embeddingModelName();
     }
 
     @Override

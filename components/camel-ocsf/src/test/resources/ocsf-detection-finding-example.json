@@ -1,0 +1,168 @@
+{
+  "class_uid": 2004,
+  "class_name": "Detection Finding",
+  "category_uid": 2,
+  "category_name": "Findings",
+  "activity_id": 1,
+  "activity_name": "Create",
+  "severity_id": 4,
+  "severity": "High",
+  "status_id": 1,
+  "status": "New",
+  "time": 1706198400,
+  "time_dt": "2024-01-25T12:00:00Z",
+  "timezone_offset": 0,
+  "type_uid": 200401,
+  "type_name": "Detection Finding: Create",
+  "message": "Potential cryptocurrency mining activity detected on EC2 instance",
+
+  "metadata": {
+    "version": "1.7.0",
+    "product": {
+      "name": "GuardDuty",
+      "vendor_name": "AWS",
+      "uid": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+      "version": "2.0"
+    },
+    "profiles": ["cloud", "security_control"],
+    "log_name": "Security Hub Findings",
+    "log_provider": "AWS",
+    "original_time": "2024-01-25T11:58:32Z"
+  },
+
+  "is_alert": true,
+  "risk_level": "High",
+  "risk_level_id": 4,
+  "risk_score": 78,
+  "confidence": "High",
+  "confidence_id": 3,
+  "confidence_score": 85,
+
+  "finding_info": {
+    "uid": "arn:aws:securityhub:us-east-1:123456789012:finding/a1b2c3d4-5678-90ab-cdef-example11111",
+    "title": "CryptoCurrency:EC2/BitcoinTool.B!DNS",
+    "desc": "EC2 instance i-1234567890abcdef0 is querying a domain name that is associated with Bitcoin-related activity.",
+    "types": ["TTPs/Impact/Resource Hijacking"],
+    "first_seen_time": 1706194800,
+    "last_seen_time": 1706198400,
+    "created_time": 1706198400,
+    "modified_time": 1706198400,
+    "src_url": "https://console.aws.amazon.com/guardduty/home?region=us-east-1#/findings",
+    "attacks": [
+      {
+        "tactic": {
+          "name": "Impact",
+          "uid": "TA0040"
+        },
+        "technique": {
+          "name": "Resource Hijacking",
+          "uid": "T1496"
+        },
+        "version": "14.0"
+      }
+    ]
+  },
+
+  "resources": [
+    {
+      "uid": "arn:aws:ec2:us-east-1:123456789012:instance/i-1234567890abcdef0",
+      "name": "production-web-server",
+      "type": "AWS::EC2::Instance",
+      "cloud_partition": "aws",
+      "region": "us-east-1",
+      "labels": ["Environment:Production", "Team:WebPlatform"],
+      "data": {
+        "InstanceId": "i-1234567890abcdef0",
+        "InstanceType": "t3.large",
+        "LaunchTime": "2024-01-10T08:30:00Z",
+        "ImageId": "ami-0abcdef1234567890",
+        "VpcId": "vpc-1234567890abcdef0",
+        "SubnetId": "subnet-1234567890abcdef0",
+        "PrivateIpAddress": "10.0.1.50",
+        "PublicIpAddress": "54.123.45.67"
+      }
+    }
+  ],
+
+  "evidences": [
+    {
+      "data": {
+        "dns_query": "pool.bitcoin.com",
+        "dns_record_type": "A",
+        "query_count": 150,
+        "first_query_time": "2024-01-25T10:00:00Z",
+        "last_query_time": "2024-01-25T11:58:00Z"
+      }
+    }
+  ],
+
+  "actor": {
+    "process": {
+      "name": "xmrig",
+      "pid": 12345,
+      "cmd_line": "/tmp/xmrig --donate-level 1 -o pool.bitcoin.com:3333",
+      "file": {
+        "name": "xmrig",
+        "path": "/tmp/xmrig",
+        "type": "Regular File",
+        "type_id": 1
+      },
+      "user": {
+        "name": "ec2-user",
+        "uid": "1000"
+      }
+    }
+  },
+
+  "cloud": {
+    "provider": "AWS",
+    "region": "us-east-1",
+    "zone": "us-east-1a",
+    "account": {
+      "uid": "123456789012",
+      "name": "production-account",
+      "type": "AWS Account"
+    },
+    "org": {
+      "uid": "o-exampleorgid",
+      "name": "MyCompany"
+    }
+  },
+
+  "remediation": {
+    "desc": "Investigate the EC2 instance for unauthorized cryptocurrency mining software. Check running processes and terminate suspicious ones. Review security groups and network ACLs.",
+    "references": [
+      "https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-ec2.html",
+      "https://attack.mitre.org/techniques/T1496/"
+    ]
+  },
+
+  "observables": [
+    {
+      "name": "dst_endpoint.domain",
+      "type": "Hostname",
+      "type_id": 1,
+      "value": "pool.bitcoin.com"
+    },
+    {
+      "name": "src_endpoint.ip",
+      "type": "IP Address",
+      "type_id": 2,
+      "value": "10.0.1.50"
+    },
+    {
+      "name": "actor.process.name",
+      "type": "Process Name",
+      "type_id": 9,
+      "value": "xmrig"
+    }
+  ],
+
+  "unmapped": {
+    "ProductArn": "arn:aws:securityhub:us-east-1::product/aws/guardduty",
+    "GeneratorId": "arn:aws:guardduty:us-east-1:123456789012:detector/12abc34d567e8fa901bc2d34e56789f0",
+    "AwsAccountId": "123456789012",
+    "WorkflowState": "NEW",
+    "RecordState": "ACTIVE"
+  }
+}

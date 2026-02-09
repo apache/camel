@@ -50,4 +50,12 @@ public interface ArangoDBInfraService extends InfrastructureService {
     default String documentCollection() {
         return "myCollection";
     }
+
+    default String user() {
+        return "root";
+    }
+
+    default String password() {
+        return "";
+    }
 }

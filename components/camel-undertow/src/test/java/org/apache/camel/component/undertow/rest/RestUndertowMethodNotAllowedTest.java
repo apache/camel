@@ -24,30 +24,24 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestUndertowMethodNotAllowedTest extends BaseUndertowTest {
 
     @Test
     public void testPostMethodNotAllowed() {
-        try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
-                    "POST");
-            fail("Shall not pass!");
-        } catch (Exception e) {
-            HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(405, hofe.getStatusCode());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body",
+                        Exchange.HTTP_METHOD,
+                        "POST"));
+        HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(405, hofe.getStatusCode());
     }
 
     @Test
     public void testGetMethodAllowed() {
-        try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
-                    "GET");
-        } catch (Exception e) {
-            fail("Shall pass with GET http method!");
-        }
+        template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
+                "GET");
     }
 
     @Override

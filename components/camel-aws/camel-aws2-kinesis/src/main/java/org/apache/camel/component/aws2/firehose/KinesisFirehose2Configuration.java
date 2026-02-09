@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.firehose;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.aws.common.AwsCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -25,7 +26,7 @@ import software.amazon.awssdk.core.Protocol;
 import software.amazon.awssdk.services.firehose.FirehoseClient;
 
 @UriParams
-public class KinesisFirehose2Configuration implements Cloneable {
+public class KinesisFirehose2Configuration implements Cloneable, AwsCommonConfiguration {
 
     @UriPath(description = "Name of the stream")
     @Metadata(required = true)

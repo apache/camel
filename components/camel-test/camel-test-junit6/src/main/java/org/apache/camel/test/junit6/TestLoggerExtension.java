@@ -72,7 +72,7 @@ public class TestLoggerExtension
         testStartHeader(testClass, currentTestName);
         final ExtensionContext.Store store = getStore(context, testClass);
 
-        store.getOrComputeIfAbsent(START_TIME, key -> new StopWatch(), Object.class);
+        store.computeIfAbsent(START_TIME, key -> new StopWatch(), Object.class);
     }
 
     private ExtensionContext.Store getStore(ExtensionContext context, Class<?> testClass) {

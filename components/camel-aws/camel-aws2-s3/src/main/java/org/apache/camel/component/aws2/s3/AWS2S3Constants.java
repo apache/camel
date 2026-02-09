@@ -37,40 +37,47 @@ public interface AWS2S3Constants {
     @Metadata(description = "Whether the bucket exists when using the headBucket operation",
               javaType = "boolean")
     String BUCKET_EXISTS = "CamelAwsS3BucketExists";
-    @Metadata(description = "The *optional* Cache-Control HTTP header which allows the user to\n" +
-                            "specify caching behavior along the HTTP request/reply chain.",
+    @Metadata(description = """
+            The *optional* Cache-Control HTTP header which allows the user to
+            specify caching behavior along the HTTP request/reply chain.""",
               javaType = "String")
     String CACHE_CONTROL = "CamelAwsS3ContentControl";
-    @Metadata(description = "The *optional* Content-Disposition HTTP header, which specifies\n" +
-                            "presentational information such as the recommended filename for the\n" +
-                            "object to be saved as.",
+    @Metadata(description = """
+            The *optional* Content-Disposition HTTP header, which specifies
+            presentational information such as the recommended filename for the
+            object to be saved as.""",
               javaType = "String")
     String CONTENT_DISPOSITION = "CamelAwsS3ContentDisposition";
-    @Metadata(description = "The *optional* Content-Encoding HTTP header specifying what content\n" +
-                            "encodings have been applied to the object and what decoding mechanisms\n" +
-                            "must be applied in order to obtain the media-type referenced by the\n" +
-                            "Content-Type field.",
+    @Metadata(description = """
+            The *optional* Content-Encoding HTTP header specifying what content
+            encodings have been applied to the object and what decoding mechanisms
+            must be applied in order to obtain the media-type referenced by the
+            Content-Type field.""",
               javaType = "String")
     String CONTENT_ENCODING = "CamelAwsS3ContentEncoding";
-    @Metadata(description = "The Content-Length HTTP header indicating the size of the associated\n" +
-                            "object in bytes.",
+    @Metadata(description = """
+            The Content-Length HTTP header indicating the size of the associated
+            object in bytes.""",
               javaType = "Long")
     String CONTENT_LENGTH = "CamelAwsS3ContentLength";
-    @Metadata(description = "The base64 encoded 128-bit MD5 digest of the associated object (content\n" +
-                            "- not including headers) according to RFC 1864. This data is used as a\n" +
-                            "message integrity check to verify that the data received by Amazon S3 is\n" +
-                            "the same data that the caller sent.",
+    @Metadata(description = """
+            The base64 encoded 128-bit MD5 digest of the associated object (content
+            - not including headers) according to RFC 1864. This data is used as a
+            message integrity check to verify that the data received by Amazon S3 is
+            the same data that the caller sent.""",
               javaType = "String")
     String CONTENT_MD5 = "CamelAwsS3ContentMD5";
-    @Metadata(description = "The Content-Type HTTP header, which indicates the type of content stored\n" +
-                            "in the associated object. The value of this header is a standard MIME\n" +
-                            "type.",
+    @Metadata(description = """
+            The Content-Type HTTP header, which indicates the type of content stored
+            in the associated object. The value of this header is a standard MIME
+            type.""",
               javaType = "String")
     String CONTENT_TYPE = "CamelAwsS3ContentType";
-    @Metadata(description = "(producer) The ETag value for the newly uploaded object.\n" +
-                            "(consumer) The hex encoded 128-bit MD5 digest of the associated object according to\n" +
-                            "RFC 1864. This data is used as an integrity check to verify that the\n" +
-                            "data received by the caller is the same data that was sent by Amazon S3.",
+    @Metadata(description = """
+            (producer) The ETag value for the newly uploaded object.
+            (consumer) The hex encoded 128-bit MD5 digest of the associated object according to
+            RFC 1864. This data is used as an integrity check to verify that the
+            data received by the caller is the same data that was sent by Amazon S3.""",
               javaType = "String")
     String E_TAG = "CamelAwsS3ETag";
     @Metadata(description = "The key (can be dynamic using the simple language in the producer) under which this object is stored or will be stored or which will be used for the current operation",
@@ -82,21 +89,24 @@ public interface AWS2S3Constants {
     @Metadata(label = "producer", description = "The Destination key which will be used for the current operation",
               javaType = "String")
     String DESTINATION_KEY = "CamelAwsS3DestinationKey";
-    @Metadata(description = "The value of the Last-Modified header, indicating the date and time at\n" +
-                            "which Amazon S3 last recorded a modification to the associated object.",
+    @Metadata(description = """
+            The value of the Last-Modified header, indicating the date and time at
+            which Amazon S3 last recorded a modification to the associated object.""",
               javaType = "Date")
     String LAST_MODIFIED = "CamelAwsS3LastModified";
     @Metadata(description = "The storage class of this object.", javaType = "String")
     String STORAGE_CLASS = "CamelAwsS3StorageClass";
-    @Metadata(description = "(producer) The *optional* version ID of the newly uploaded object.\n" +
-                            "(consumer) The version ID of the associated Amazon S3 object if available. Version\n" +
-                            "IDs are only assigned to objects when an object is uploaded to an Amazon\n" +
-                            "S3 bucket that has object versioning enabled.",
+    @Metadata(description = """
+            (producer) The *optional* version ID of the newly uploaded object.
+            (consumer) The version ID of the associated Amazon S3 object if available. Version
+            IDs are only assigned to objects when an object is uploaded to an Amazon
+            S3 bucket that has object versioning enabled.""",
               javaType = "String")
     String VERSION_ID = "CamelAwsS3VersionId";
-    @Metadata(label = "producer", description = "The canned acl that will be applied to the object. see\n" +
-                                                "`software.amazon.awssdk.services.s3.model.ObjectCannedACL` for allowed\n" +
-                                                "values.",
+    @Metadata(label = "producer", description = """
+            The canned acl that will be applied to the object. see
+            `software.amazon.awssdk.services.s3.model.ObjectCannedACL` for allowed
+            values.""",
               javaType = "String")
     String CANNED_ACL = "CamelAwsS3CannedAcl";
     @Metadata(label = "producer", description = "A well constructed Amazon S3 Access Control List object.",
@@ -105,8 +115,9 @@ public interface AWS2S3Constants {
     @Metadata(description = "The operation to perform. Permitted values are copyObject, deleteObject, listBuckets, deleteBucket, listObjects",
               javaType = "String")
     String S3_OPERATION = "CamelAwsS3Operation";
-    @Metadata(description = "Sets the server-side encryption algorithm when encrypting\n" +
-                            "the object using AWS-managed keys. For example use AES256.",
+    @Metadata(description = """
+            Sets the server-side encryption algorithm when encrypting
+            the object using AWS-managed keys. For example use AES256.""",
               javaType = "String")
     String SERVER_SIDE_ENCRYPTION = "CamelAwsS3ServerSideEncryption";
     @Metadata(label = "consumer",
@@ -133,8 +144,9 @@ public interface AWS2S3Constants {
               description = "The request payload that is needed by the service (not needed when BrowserCompatible is true)",
               javaType = "String")
     String DOWNLOAD_LINK_SIGNED_PAYLOAD = "CamelAwsS3DownloadLinkSignedPayload";
-    @Metadata(description = "A map of metadata to be stored or stored with the object in S3. More details about\n" +
-                            "metadata https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].",
+    @Metadata(description = """
+            A map of metadata to be stored or stored with the object in S3. More details about
+            metadata https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].""",
               javaType = "Map<String, String>")
     String METADATA = "CamelAwsS3Metadata";
     @Metadata(label = "consumer", description = "The timestamp of the message", javaType = "long")

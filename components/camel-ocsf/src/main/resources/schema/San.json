@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/san",
+  "title": "San",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.San",
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    }
+  },
+  "description": "The Subject Alternative Name object."
+}

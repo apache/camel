@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.twilio;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "creator", signatures={"com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressCreator creator(String pathIpAccessControlListSid, String friendlyName, String ipAddress)", "com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressCreator creator(String pathAccountSid, String pathIpAccessControlListSid, String friendlyName, String ipAddress)"}), @ApiMethod(methodName = "deleter", signatures={"com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressDeleter deleter(String pathIpAccessControlListSid, String pathSid)", "com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressDeleter deleter(String pathAccountSid, String pathIpAccessControlListSid, String pathSid)"}), @ApiMethod(methodName = "fetcher", signatures={"com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressFetcher fetcher(String pathIpAccessControlListSid, String pathSid)", "com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressFetcher fetcher(String pathAccountSid, String pathIpAccessControlListSid, String pathSid)"}), @ApiMethod(methodName = "reader", signatures={"com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressReader reader(String pathIpAccessControlListSid)", "com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressReader reader(String pathAccountSid, String pathIpAccessControlListSid)"}), @ApiMethod(methodName = "updater", signatures={"com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressUpdater updater(String pathIpAccessControlListSid, String pathSid)", "com.twilio.rest.api.v2010.account.sip.ipaccesscontrollist.IpAddressUpdater updater(String pathAccountSid, String pathIpAccessControlListSid, String pathSid)"}), }, aliases = {"^creator$=create", "^deleter$=delete", "^fetcher$=fetch", "^reader$=read", "^updater$=update"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class SipIpAccessControlListIpAddressEndpointConfiguration extends TwilioConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "creator")})

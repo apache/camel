@@ -16,16 +16,13 @@
  */
 package org.apache.camel.mdc;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MDCSelectedPropertiesTest extends ExchangeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MDCAllPropertiesTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -47,10 +42,31 @@ public class MDCSelectedPropertiesTest extends ExchangeTestSupport {
     }
 
     @Test
-    void testRouteSingleRequest() throws IOException {
+    void testRouteSingleRequest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:assertMdc");
+        mock.expectedMessageCount(1);
+
+        mock.whenAnyExchangeReceived(exchange -> {
+            // Required MDC entries
+            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID), "MDC_MESSAGE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID), "MDC_EXCHANGE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID), "MDC_ROUTE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID), "MDC_CAMEL_CONTEXT_ID should be set");
+
+            // Properties propagated to MDC
+            assertEquals("Property1", MDC.get("prop1"));
+            assertEquals("Property2", MDC.get("prop2"));
+
+            // Properties that were not set remain null
+            assertNull(MDC.get("prop3"));
+            assertNull(MDC.get("prop4")); // intentionally not included
+        });
+
+        // Trigger the route
         template.request("direct:start", null);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+
+        // Wait for assertions
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -61,21 +77,12 @@ public class MDCSelectedPropertiesTest extends ExchangeTestSupport {
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
-                        .setProperty("prop1", simple("Property1"))
-                        .setProperty("prop2", simple("Property2"))
-                        // prop3 is missing on purpose!
-                        .setProperty("prop4", simple("Property4"))
-                        .process(exchange -> {
-                            LOG.info("A process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                            assertEquals("Property1", MDC.get("prop1"));
-                            assertEquals("Property2", MDC.get("prop2"));
-                            assertNull(MDC.get("prop3"));
-                            assertNull(MDC.get("prop4"));
-                        })
+                        .setProperty("prop1", constant("Property1"))
+                        .setProperty("prop2", constant("Property2"))
+                        // prop3 is missing on purpose
+                        .setProperty("prop4", constant("Property4"))
+                        // No assertions inside the route
+                        .to("mock:assertMdc")
                         .to("log:info");
             }
         };

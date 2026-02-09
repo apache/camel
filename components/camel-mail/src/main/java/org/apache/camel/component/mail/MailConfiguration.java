@@ -239,10 +239,16 @@ public class MailConfiguration implements Cloneable {
         if (session != null) {
             answer.setSession(session);
             String hostPropertyValue = session.getProperty("mail.smtp.host");
+            if (hostPropertyValue == null || hostPropertyValue.isEmpty()) {
+                hostPropertyValue = session.getProperty("mail.smtps.host");
+            }
             if (hostPropertyValue != null && !hostPropertyValue.isEmpty()) {
                 answer.setHost(hostPropertyValue);
             }
             String portPropertyValue = session.getProperty("mail.smtp.port");
+            if (portPropertyValue == null || portPropertyValue.isEmpty()) {
+                portPropertyValue = session.getProperty("mail.smtps.port");
+            }
             if (portPropertyValue != null && !portPropertyValue.isEmpty()) {
                 answer.setPort(Integer.parseInt(portPropertyValue));
             }

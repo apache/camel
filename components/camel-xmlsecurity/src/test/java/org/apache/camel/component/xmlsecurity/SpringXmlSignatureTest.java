@@ -66,6 +66,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -320,7 +321,7 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
     public void xades() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendBody("direct:xades", payload);
+        TestSupport.sendBody(this.template, "direct:xades", payload);
         MockEndpoint.assertIsSatisfied(context);
 
         Message message = getMessage(mock);

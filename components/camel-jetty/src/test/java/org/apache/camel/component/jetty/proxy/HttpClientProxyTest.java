@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpClientProxyTest extends BaseJettyTest {
 
@@ -41,15 +41,13 @@ public class HttpClientProxyTest extends BaseJettyTest {
 
     @Test
     public void testHttpClientNoProxyException() {
-        try {
-            template.requestBody("direct:cool", "Kaboom", String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(500, cause.getStatusCode());
-            assertNotNull(cause.getResponseBody());
-            assertTrue(cause.getResponseBody().contains("MyAppException"));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:cool", "Kaboom", String.class), "Should have thrown exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(500, cause.getStatusCode());
+        assertNotNull(cause.getResponseBody());
+        assertTrue(cause.getResponseBody().contains("MyAppException"));
     }
 
     @Test
@@ -63,15 +61,14 @@ public class HttpClientProxyTest extends BaseJettyTest {
     @Test
     public void testHttpClientProxyException() throws Exception {
         MyCoolService proxy = new ProxyBuilder(context).endpoint("direct:cool").build(MyCoolService.class);
-        try {
-            proxy.hello("Kaboom");
-            fail("Should have thrown exception");
-        } catch (UndeclaredThrowableException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(500, cause.getStatusCode());
-            assertNotNull(cause.getResponseBody());
-            assertTrue(cause.getResponseBody().contains("MyAppException"));
-        }
+
+        UndeclaredThrowableException e = assertThrows(UndeclaredThrowableException.class,
+                () -> proxy.hello("Kaboom"), "Should have thrown exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(500, cause.getStatusCode());
+        assertNotNull(cause.getResponseBody());
+        assertTrue(cause.getResponseBody().contains("MyAppException"));
     }
 
     @Override

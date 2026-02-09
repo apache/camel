@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RecipientListDoNotStopOnExceptionTest extends ContextTestSupport {
 
@@ -33,13 +33,10 @@ public class RecipientListDoNotStopOnExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:c").expectedMessageCount(1);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Damn", e.getCause().getMessage());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "Hello World", "foo", "direct:a,direct:b,direct:c"));
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertEquals("Damn", exception.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

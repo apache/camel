@@ -94,12 +94,22 @@ public interface GenericFileOperations<T> {
      * Stores the content as a new remote file (upload)
      *
      * @param  name                                name of new file
-     * @param  exchange                            with the content content of the file
+     * @param  exchange                            with the content of the file
      * @param  size                                the total file size to store, if possible to determine
      * @return                                     true if the file was stored, false if not
      * @throws GenericFileOperationFailedException can be thrown
      */
     boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException;
+
+    /**
+     * Stores the content as a new file directly (truncate existing)
+     *
+     * @param  name                                name of new file
+     * @param  payload                             the payload
+     * @return                                     true if the file was stored, false if not
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException;
 
     /**
      * Gets the current remote directory

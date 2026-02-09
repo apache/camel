@@ -95,10 +95,6 @@ public class DoclingConfiguration implements Cloneable {
     private String apiKeyHeader = "X-API-Key";
 
     @UriParam(label = "advanced")
-    @Metadata(description = "Docling-serve API convert endpoint path", defaultValue = "/v1/convert/source")
-    private String convertEndpoint = "/v1/convert/source";
-
-    @UriParam(label = "advanced")
     @Metadata(description = "Use asynchronous conversion mode (docling-serve API only)", defaultValue = "false")
     private boolean useAsyncMode = false;
 
@@ -109,47 +105,6 @@ public class DoclingConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     @Metadata(description = "Maximum time to wait for async conversion completion in milliseconds", defaultValue = "300000")
     private long asyncTimeout = 300000; // 5 minutes
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "API request timeout in milliseconds", defaultValue = "60000")
-    private long apiTimeout = 60000;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Maximum total connections in the connection pool", defaultValue = "20")
-    private int maxTotalConnections = 20;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Maximum connections per route in the connection pool", defaultValue = "10")
-    private int maxConnectionsPerRoute = 10;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Connection timeout in milliseconds", defaultValue = "30000")
-    private int connectionTimeout = 30000;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Socket timeout in milliseconds", defaultValue = "60000")
-    private int socketTimeout = 60000;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Connection request timeout in milliseconds (timeout when requesting connection from pool)",
-              defaultValue = "30000")
-    private int connectionRequestTimeout = 30000;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Time to live for connections in milliseconds (-1 for infinite)", defaultValue = "-1")
-    private long connectionTimeToLive = -1;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Validate connections after inactivity in milliseconds", defaultValue = "2000")
-    private int validateAfterInactivity = 2000;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Enable eviction of idle connections from the pool", defaultValue = "true")
-    private boolean evictIdleConnections = true;
-
-    @UriParam(label = "advanced")
-    @Metadata(description = "Maximum idle time for connections in milliseconds before eviction", defaultValue = "60000")
-    private long maxIdleTime = 60000;
 
     @UriParam(label = "batch")
     @Metadata(description = "Maximum number of documents to process in a single batch (batch operations only)",
@@ -177,10 +132,6 @@ public class DoclingConfiguration implements Cloneable {
     @UriParam(label = "metadata")
     @Metadata(description = "Include metadata in message headers when extracting metadata", defaultValue = "true")
     private boolean includeMetadataInHeaders = true;
-
-    @UriParam(label = "metadata")
-    @Metadata(description = "Extract all available metadata fields including custom/raw fields", defaultValue = "false")
-    private boolean extractAllMetadata = false;
 
     @UriParam(label = "metadata")
     @Metadata(description = "Include raw metadata as returned by the parser", defaultValue = "false")
@@ -306,14 +257,6 @@ public class DoclingConfiguration implements Cloneable {
         this.apiKeyHeader = apiKeyHeader;
     }
 
-    public String getConvertEndpoint() {
-        return convertEndpoint;
-    }
-
-    public void setConvertEndpoint(String convertEndpoint) {
-        this.convertEndpoint = convertEndpoint;
-    }
-
     public boolean isUseAsyncMode() {
         return useAsyncMode;
     }
@@ -336,86 +279,6 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setAsyncTimeout(long asyncTimeout) {
         this.asyncTimeout = asyncTimeout;
-    }
-
-    public long getApiTimeout() {
-        return apiTimeout;
-    }
-
-    public void setApiTimeout(long apiTimeout) {
-        this.apiTimeout = apiTimeout;
-    }
-
-    public int getMaxTotalConnections() {
-        return maxTotalConnections;
-    }
-
-    public void setMaxTotalConnections(int maxTotalConnections) {
-        this.maxTotalConnections = maxTotalConnections;
-    }
-
-    public int getMaxConnectionsPerRoute() {
-        return maxConnectionsPerRoute;
-    }
-
-    public void setMaxConnectionsPerRoute(int maxConnectionsPerRoute) {
-        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
-    }
-
-    public int getConnectionTimeout() {
-        return connectionTimeout;
-    }
-
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public int getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    public void setSocketTimeout(int socketTimeout) {
-        this.socketTimeout = socketTimeout;
-    }
-
-    public int getConnectionRequestTimeout() {
-        return connectionRequestTimeout;
-    }
-
-    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
-        this.connectionRequestTimeout = connectionRequestTimeout;
-    }
-
-    public long getConnectionTimeToLive() {
-        return connectionTimeToLive;
-    }
-
-    public void setConnectionTimeToLive(long connectionTimeToLive) {
-        this.connectionTimeToLive = connectionTimeToLive;
-    }
-
-    public int getValidateAfterInactivity() {
-        return validateAfterInactivity;
-    }
-
-    public void setValidateAfterInactivity(int validateAfterInactivity) {
-        this.validateAfterInactivity = validateAfterInactivity;
-    }
-
-    public boolean isEvictIdleConnections() {
-        return evictIdleConnections;
-    }
-
-    public void setEvictIdleConnections(boolean evictIdleConnections) {
-        this.evictIdleConnections = evictIdleConnections;
-    }
-
-    public long getMaxIdleTime() {
-        return maxIdleTime;
-    }
-
-    public void setMaxIdleTime(long maxIdleTime) {
-        this.maxIdleTime = maxIdleTime;
     }
 
     public int getBatchSize() {
@@ -464,14 +327,6 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setIncludeMetadataInHeaders(boolean includeMetadataInHeaders) {
         this.includeMetadataInHeaders = includeMetadataInHeaders;
-    }
-
-    public boolean isExtractAllMetadata() {
-        return extractAllMetadata;
-    }
-
-    public void setExtractAllMetadata(boolean extractAllMetadata) {
-        this.extractAllMetadata = extractAllMetadata;
     }
 
     public boolean isIncludeRawMetadata() {

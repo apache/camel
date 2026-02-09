@@ -33,24 +33,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ConvertHeaderTest extends ContextTestSupport {
 
     @Test
     public void testConvertBodyTo() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     // set an invalid charset
                     from("direct:invalid").convertHeaderTo("foo", String.class, "ASSI").to("mock:endpoint");
                 }
             });
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(UnsupportedCharsetException.class, e.getCause());
-        }
+        });
+        assertIsInstanceOf(UnsupportedCharsetException.class, e.getCause());
     }
 
     @Test
@@ -118,12 +116,10 @@ public class ConvertHeaderTest extends ContextTestSupport {
     @Test
     public void testConvertToIntegerNotMandatory() throws Exception {
         // mandatory should fail
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("direct:start", null, "foo", "xxx");
-            fail();
-        } catch (Exception e) {
-            assertIsInstanceOf(TypeConversionException.class, e.getCause());
-        }
+        });
+        assertIsInstanceOf(TypeConversionException.class, e.getCause());
 
         // optional should cause null body
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -149,13 +145,11 @@ public class ConvertHeaderTest extends ContextTestSupport {
     public void testConvertFailed() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> {
             template.sendBodyAndHeader("direct:invalid", null, "foo", "11");
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            boolean b = e.getCause() instanceof NoTypeConversionAvailableException;
-            assertTrue(b);
-        }
+        });
+        boolean b = e.getCause() instanceof NoTypeConversionAvailableException;
+        assertTrue(b);
 
         assertMockEndpointsSatisfied();
     }

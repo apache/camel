@@ -49,6 +49,7 @@ import org.apache.camel.support.DefaultEndpoint;
              title = "Service",
              lenientProperties = true,
              category = { Category.CLOUD })
+@Deprecated(since = "4.8.0")
 public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint {
     private final Endpoint delegateEndpoint;
     private final ServiceRegistry serviceRegistry;
@@ -105,8 +106,8 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     private ServiceDefinition computeServiceDefinition(CamelContext context, Endpoint delegateEndpoint) {
         Map<String, String> parameters = new HashMap<>();
 
-        if (delegateEndpoint instanceof DiscoverableService) {
-            parameters.putAll(((DiscoverableService) delegateEndpoint).getServiceProperties());
+        if (delegateEndpoint instanceof DiscoverableService discoverableservice) {
+            parameters.putAll(discoverableservice.getServiceProperties());
         }
 
         parameters.putAll(serviceParameters);

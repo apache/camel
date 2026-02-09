@@ -24,4 +24,8 @@ import org.apache.camel.test.infra.common.services.InfrastructureService;
 public interface DoclingInfraService extends InfrastructureService {
 
     String doclingServerUrl();
+
+    default String doclingServeUrl() {
+        return doclingServerUrl();
+    }
 }

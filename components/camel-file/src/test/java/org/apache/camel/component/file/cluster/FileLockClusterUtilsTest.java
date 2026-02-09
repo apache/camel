@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.cluster;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FileLockClusterUtilsTest {
     @Test
     void nullLeaderInfoIsStale() {
-        assertTrue(FileLockClusterUtils.isLeaderStale(null, null, System.nanoTime(), 5));
+        assertTrue(FileLockClusterUtils.isLeaderStale(null, null, System.currentTimeMillis(), 5));
     }
 
     @Test
@@ -48,34 +47,36 @@ class FileLockClusterUtilsTest {
         String clusterMemberId = UUID.randomUUID().toString();
         FileLockClusterLeaderInfo previousClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
-                System.nanoTime());
+                TimeUnit.SECONDS.toMillis(1),
+                System.currentTimeMillis());
 
         FileLockClusterLeaderInfo latestClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
-                System.nanoTime());
+                TimeUnit.SECONDS.toMillis(1),
+                System.currentTimeMillis());
 
         assertFalse(
-                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo, System.nanoTime(), 5));
+                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo,
+                        System.currentTimeMillis(), 5));
     }
 
     @Test
     void sameHeartbeatIsStale() {
         String clusterMemberId = UUID.randomUUID().toString();
-        long heartbeatNanoseconds = System.nanoTime() - TimeUnit.SECONDS.toNanos(10);
+        long heartbeatMilliseconds = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(10);
         FileLockClusterLeaderInfo previousClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
-                heartbeatNanoseconds);
+                TimeUnit.SECONDS.toMillis(1),
+                heartbeatMilliseconds);
 
         FileLockClusterLeaderInfo latestClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
-                heartbeatNanoseconds);
+                TimeUnit.SECONDS.toMillis(1),
+                heartbeatMilliseconds);
 
         assertTrue(
-                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo, System.nanoTime(), 3));
+                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo,
+                        System.currentTimeMillis(), 3));
     }
 
     @Test
@@ -83,34 +84,35 @@ class FileLockClusterUtilsTest {
         String clusterMemberId = UUID.randomUUID().toString();
         FileLockClusterLeaderInfo previousClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
-                System.nanoTime() - TimeUnit.SECONDS.toNanos(5));
+                TimeUnit.SECONDS.toMillis(1),
+                System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(5));
 
         FileLockClusterLeaderInfo latestClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
-                System.nanoTime() - TimeUnit.SECONDS.toNanos(10));
+                TimeUnit.SECONDS.toMillis(1),
+                System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(10));
 
         assertTrue(
-                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo, System.nanoTime(), 3));
+                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo,
+                        System.currentTimeMillis(), 3));
     }
 
     @Test
     void heartbeatExactlyAtThreshold() {
         int heartbeatMultiplier = 3;
-        long now = System.nanoTime();
-        long updateInterval = TimeUnit.SECONDS.toNanos(1);
+        long now = System.currentTimeMillis();
+        long updateInterval = TimeUnit.SECONDS.toMillis(1);
         long heartbeat = now - (updateInterval * heartbeatMultiplier);
 
         String clusterMemberId = UUID.randomUUID().toString();
         FileLockClusterLeaderInfo previousClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
+                TimeUnit.SECONDS.toMillis(1),
                 heartbeat);
 
         FileLockClusterLeaderInfo latestClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 clusterMemberId,
-                TimeUnit.SECONDS.toNanos(1),
+                TimeUnit.SECONDS.toMillis(1),
                 heartbeat);
 
         assertFalse(FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo, now,
@@ -121,16 +123,17 @@ class FileLockClusterUtilsTest {
     void leaderChangedNotStale() {
         FileLockClusterLeaderInfo previousClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 UUID.randomUUID().toString(),
-                TimeUnit.SECONDS.toNanos(1),
-                System.nanoTime());
+                TimeUnit.SECONDS.toMillis(1),
+                System.currentTimeMillis());
 
         FileLockClusterLeaderInfo latestClusterLeaderInfo = new FileLockClusterLeaderInfo(
                 UUID.randomUUID().toString(),
-                TimeUnit.SECONDS.toNanos(1),
-                System.nanoTime());
+                TimeUnit.SECONDS.toMillis(1),
+                System.currentTimeMillis());
 
         assertFalse(
-                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo, System.nanoTime(), 3));
+                FileLockClusterUtils.isLeaderStale(latestClusterLeaderInfo, previousClusterLeaderInfo,
+                        System.currentTimeMillis(), 3));
     }
 
     @Test
@@ -167,7 +170,7 @@ class FileLockClusterUtilsTest {
     }
 
     @Test
-    void writeClusterLeaderInfoData(@TempDir Path tempDir) throws IOException {
+    void writeClusterLeaderInfoData(@TempDir Path tempDir) throws Exception {
         Path clusterData = tempDir.resolve("leader.dat");
         try (RandomAccessFile raf = new RandomAccessFile(clusterData.toFile(), "rw")) {
             FileLockClusterLeaderInfo leaderInfo = new FileLockClusterLeaderInfo(UUID.randomUUID().toString(), 1L, 2L);
@@ -189,8 +192,8 @@ class FileLockClusterUtilsTest {
         FileLockClusterLeaderInfo clusterLeaderInfo = FileLockClusterUtils.readClusterLeaderInfo(lockFile);
         assertNotNull(clusterLeaderInfo);
 
-        assertEquals(1L, clusterLeaderInfo.getHeartbeatUpdateIntervalNanoseconds());
-        assertEquals(2L, clusterLeaderInfo.getHeartbeatNanoseconds());
+        assertEquals(1L, clusterLeaderInfo.getHeartbeatUpdateIntervalMilliseconds());
+        assertEquals(2L, clusterLeaderInfo.getHeartbeatMilliseconds());
         assertDoesNotThrow(() -> UUID.fromString(clusterLeaderInfo.getId()));
     }
 }

@@ -46,14 +46,12 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
     }
 
     @BeforeEach
@@ -144,10 +142,13 @@ public class LangChain4jAgentGuardrailsIntegrationIT extends CamelTestSupport {
 
     @Test
     void testAgentWithJsonOutputGuardrailFailure() throws InterruptedException {
+        // Disable reprompting so the guardrail fails immediately with fatal error
+        TestJsonOutputGuardrail.setAllowReprompt(false);
+
         MockEndpoint mockEndpoint = this.context.getEndpoint("mock:agent-response", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(0); // No message should reach the endpoint due to guardrail failure
 
-        String nonJsonRequest = "Tell me a simple story about a cat in one sentence.";
+        String nonJsonRequest = "Tell me a simple story about a cat in one sentence";
 
         // Expect an exception due to guardrail failure
         Exception exception = assertThrows(Exception.class, () -> {

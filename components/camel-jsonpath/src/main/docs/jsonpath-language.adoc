@@ -342,30 +342,44 @@ If a book array contains only one book, it will be converted into a Book object.
 === Using header as input
 
 By default, JSONPath uses the message body as the input source. However, you can also use a header as input
-by specifying the `headerName` option.
+by specifying the `source` option.
 
 For example, to count the number of books from a JSON document that
 was stored in a header named `books` you can do:
 
 [source,java]
 ----
+var jp = expression().jsonpath("$..store.book.length()").resultType(int.class)
+        .source("header:books").end();
+
 from("direct:start")
-    .setHeader("numberOfBooks")
-        .jsonpath("$..store.book.length()", false, int.class, "books")
+    .setHeader("numberOfBooks", jp)
+    .to("mock:result");
+----
+
+And you can also inline the expression:
+
+[source,java]
+----
+from("direct:start")
+    .setHeader("numberOfBooks", expression().jsonpath("$..store.book.length()").resultType(int.class)
+            .source("header:books").end())
     .to("mock:result");
 ----
 
 In the `jsonpath` expression above we specify the name of the header as `books`,
 and we also told that we wanted the result to be converted as an integer by `int.class`.
 
-The same example in XML DSL would be:
+TIP: You can also use `variable:` as source prefix to refer to an Exchange variable instead of a header.
+
+The same example in XML DSL would be easier to do:
 
 [source,xml]
 ----
 <route>
   <from uri="direct:start"/>
   <setHeader name="numberOfBooks">
-    <jsonpath headerName="books" resultType="int">$..store.book.length()</jsonpath>
+    <jsonpath source="header:books" resultType="int">$..store.book.length()</jsonpath>
   </setHeader>
   <to uri="mock:result"/>
 </route>

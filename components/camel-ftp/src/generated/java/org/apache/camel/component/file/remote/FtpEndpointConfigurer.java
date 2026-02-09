@@ -52,6 +52,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": target.setCharset(property(camelContext, java.lang.String.class, value)); return true;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": target.setChecksumFileAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "checksumwritefile":
+        case "checksumWriteFile": target.setChecksumWriteFile(property(camelContext, boolean.class, value)); return true;
         case "chmod": target.getConfiguration().setChmod(property(camelContext, java.lang.String.class, value)); return true;
         case "connecttimeout":
         case "connectTimeout": target.getConfiguration().setConnectTimeout(property(camelContext, int.class, value)); return true;
@@ -260,6 +262,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": return java.lang.String.class;
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return java.lang.String.class;
+        case "checksumwritefile":
+        case "checksumWriteFile": return boolean.class;
         case "chmod": return java.lang.String.class;
         case "connecttimeout":
         case "connectTimeout": return int.class;
@@ -469,6 +473,8 @@ public class FtpEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "charset": return target.getCharset();
         case "checksumfilealgorithm":
         case "checksumFileAlgorithm": return target.getChecksumFileAlgorithm();
+        case "checksumwritefile":
+        case "checksumWriteFile": return target.isChecksumWriteFile();
         case "chmod": return target.getConfiguration().getChmod();
         case "connecttimeout":
         case "connectTimeout": return target.getConfiguration().getConnectTimeout();

@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
 
@@ -45,12 +45,8 @@ public class ServletChoiceBeanTest extends ServletCamelRouterTestSupport {
         getMockEndpoint("mock:bean").expectedMessageCount(1);
 
         WebRequest req = new GetMethodWebRequest(contextUrl + "/services/hello");
-        try {
-            query(req);
-            fail("Should throw exception");
-        } catch (HttpNotFoundException e) {
-            assertEquals(404, e.getResponseCode());
-        }
+        HttpNotFoundException e = assertThrows(HttpNotFoundException.class, () -> query(req));
+        assertEquals(404, e.getResponseCode());
 
         MockEndpoint.assertIsSatisfied(context);
     }

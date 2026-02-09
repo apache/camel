@@ -21,7 +21,7 @@ import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-public class NettyEnricherLeakTest extends BaseNettyTest {
+public class NettyEnricherLeakTest extends BaseNettyTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {

@@ -50,12 +50,11 @@ public class XPathFeatureTest extends ContextTestSupport {
 
     @Test
     public void testXPathDocTypeDisallowed() {
-        try {
-            xpath("/").stringResult().evaluate(createExchange(XML_DATA));
-            fail();
-        } catch (Exception e) {
-            assertIsInstanceOf(SAXParseException.class, e.getCause());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> xpath("/").stringResult().evaluate(createExchange(XML_DATA)),
+                "Should have thrown exception");
+
+        assertIsInstanceOf(SAXParseException.class, e.getCause());
     }
 
     @Test
@@ -64,9 +63,10 @@ public class XPathFeatureTest extends ContextTestSupport {
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities", "true");
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl", "false");
         try {
-            xpath("/").stringResult().evaluate(createExchange(XML_DATA));
-            fail("Expect an Exception here");
-        } catch (TypeConversionException ex) {
+            TypeConversionException ex = assertThrows(TypeConversionException.class,
+                    () -> xpath("/").stringResult().evaluate(createExchange(XML_DATA)),
+                    "Expect an Exception here");
+
             boolean b = ex.getCause() instanceof FileNotFoundException;
             assertTrue(b,
                     "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class);
@@ -78,27 +78,25 @@ public class XPathFeatureTest extends ContextTestSupport {
 
     @Test
     public void testXPathNoTypeConverter() {
-        try {
-            // define a class without type converter as document type
-            xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA));
-            fail("Expect an Exception here");
-        } catch (RuntimeCamelException ex) {
-            boolean b = ex.getCause() instanceof NoTypeConversionAvailableException;
-            assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
-                          + NoTypeConversionAvailableException.class);
-        }
+        // define a class without type converter as document type
+        RuntimeCamelException ex = assertThrows(RuntimeCamelException.class,
+                () -> xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA)),
+                "Expect an Exception here");
+
+        boolean b = ex.getCause() instanceof NoTypeConversionAvailableException;
+        assertTrue(b, "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of "
+                      + NoTypeConversionAvailableException.class);
     }
 
     @Test
     public void testXPathResultOnInvalidData() {
-        try {
-            xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID));
-            fail("Expect an Exception here");
-        } catch (TypeConversionException ex) {
-            boolean b = ex.getCause() instanceof SAXParseException;
-            assertTrue(b,
-                    "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + SAXParseException.class);
-        }
+        TypeConversionException ex = assertThrows(TypeConversionException.class,
+                () -> xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID)),
+                "Expect an Exception here");
+
+        boolean b = ex.getCause() instanceof SAXParseException;
+        assertTrue(b,
+                "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + SAXParseException.class);
     }
 
     protected Exchange createExchange(Object xml) {

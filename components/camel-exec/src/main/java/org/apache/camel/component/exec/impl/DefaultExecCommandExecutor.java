@@ -88,9 +88,9 @@ public class DefaultExecCommandExecutor implements ExecCommandExecutor {
             InputStream stderr = err.size() == 0 ? null : new ByteArrayInputStream(err.toByteArray());
 
             int exitValue = 0; // use 0 as exit value as the executor didn't return the value
-            if (executor instanceof ExecDefaultExecutor) {
+            if (executor instanceof ExecDefaultExecutor execDefaultExecutor) {
                 // get the exit value from the executor as it captures this to work around the common-exec bug
-                exitValue = ((ExecDefaultExecutor) executor).getExitValue();
+                exitValue = execDefaultExecutor.getExitValue();
             }
 
             // workaround to Disabled if the stream was already closes due some race condition in commons-exec

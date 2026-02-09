@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-sql",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "scheme": "sql-stored",
     "extendsScheme": "",
     "syntax": "sql-stored:template",
@@ -27,7 +27,7 @@
     "dataSource": { "index": 0, "kind": "property", "displayName": "Data Source", "group": "producer", "label": "", "required": false, "type": "object", "javaType": "javax.sql.DataSource", "deprecated": false, "autowired": true, "secret": false, "description": "Sets the DataSource to use to communicate with the database." },
     "lazyStartProducer": { "index": 1, "kind": "property", "displayName": "Lazy Start Producer", "group": "producer", "label": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing." },
     "autowiredEnabled": { "index": 2, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
-    "serviceLocationEnabled": { "index": 3, "kind": "property", "displayName": "Service Location Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to detect the network address location of the JMS broker on startup. This information is gathered via reflection on the ConnectionFactory, and is vendor specific. This option can be used to turn this off." }
+    "serviceLocationEnabled": { "index": 3, "kind": "property", "displayName": "Service Location Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether to detect the network address location of the database on startup. This information is gathered via reflection on the DataSource, and is vendor specific. This option can be used to turn this off." }
   },
   "headers": {
     "CamelSqlStoredTemplate": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The template", "constantName": "org.apache.camel.component.sql.stored.SqlStoredConstants#SQL_STORED_TEMPLATE" },

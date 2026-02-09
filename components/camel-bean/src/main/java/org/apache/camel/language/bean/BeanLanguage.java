@@ -134,8 +134,8 @@ public class BeanLanguage extends TypedLanguageSupport implements ScriptingLangu
             throw new IllegalArgumentException("Bean language requires bean, beanType, or ref argument");
         }
         Object scope = property(Object.class, properties, 5, null);
-        if (scope instanceof BeanScope) {
-            answer.setScope((BeanScope) scope);
+        if (scope instanceof BeanScope beanscope) {
+            answer.setScope(beanscope);
         } else if (scope != null) {
             answer.setScope(BeanScope.valueOf(scope.toString()));
         }

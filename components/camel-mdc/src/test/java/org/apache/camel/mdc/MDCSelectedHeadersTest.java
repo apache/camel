@@ -16,16 +16,13 @@
  */
 package org.apache.camel.mdc;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MDCSelectedHeadersTest extends ExchangeTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MDCAllPropertiesTest.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -47,10 +42,30 @@ public class MDCSelectedHeadersTest extends ExchangeTestSupport {
     }
 
     @Test
-    void testRouteSingleRequest() throws IOException {
+    void testRouteSingleRequest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:assertMdc");
+        mock.expectedMessageCount(1);
+        mock.whenAnyExchangeReceived(exchange -> {
+            // Required MDC entries
+            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID), "MDC_MESSAGE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID), "MDC_EXCHANGE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID), "MDC_ROUTE_ID should be set");
+            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID), "MDC_CAMEL_CONTEXT_ID should be set");
+
+            // Headers propagated to MDC
+            assertEquals("Header1", MDC.get("head1"));
+            assertEquals("Header2", MDC.get("head2"));
+
+            // Headers that were not set remain null
+            assertNull(MDC.get("head3"));
+            assertNull(MDC.get("head4")); // note: intentionally not included
+        });
+
+        // Trigger the route
         template.request("direct:start", null);
-        // We should get no MDC after the route has been executed
-        assertEquals(0, MDC.getCopyOfContextMap().size());
+
+        // Wait for expectations
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -61,21 +76,11 @@ public class MDCSelectedHeadersTest extends ExchangeTestSupport {
                 from("direct:start")
                         .routeId("start")
                         .log("A message")
-                        .setHeader("head1", simple("Header1"))
-                        .setHeader("head2", simple("Header2"))
-                        // head3 is missing on purpose!
-                        .setHeader("head4", simple("Header4"))
-                        .process(exchange -> {
-                            LOG.info("A process");
-                            assertNotNull(MDC.get(MDCService.MDC_MESSAGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_EXCHANGE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_ROUTE_ID));
-                            assertNotNull(MDC.get(MDCService.MDC_CAMEL_CONTEXT_ID));
-                            assertEquals("Header1", MDC.get("head1"));
-                            assertEquals("Header2", MDC.get("head2"));
-                            assertNull(MDC.get("head3"));
-                            assertNull(MDC.get("head4"));
-                        })
+                        .setHeader("head1", constant("Header1"))
+                        .setHeader("head2", constant("Header2"))
+                        // head3 is missing on purpose
+                        .setHeader("head4", constant("Header4"))
+                        .to("mock:assertMdc")
                         .to("log:info");
             }
         };

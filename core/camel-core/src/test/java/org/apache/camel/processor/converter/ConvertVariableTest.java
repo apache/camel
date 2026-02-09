@@ -35,8 +35,8 @@ import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ConvertVariableTest extends ContextTestSupport {
 
@@ -49,17 +49,15 @@ public class ConvertVariableTest extends ContextTestSupport {
 
     @Test
     public void testConvertBodyTo() {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     // set an invalid charset
                     from("direct:invalid").convertVariableTo("foo", String.class, "ASSI").to("mock:endpoint");
                 }
             });
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(UnsupportedCharsetException.class, e.getCause());
-        }
+        });
+        assertIsInstanceOf(UnsupportedCharsetException.class, e.getCause());
     }
 
     @Test

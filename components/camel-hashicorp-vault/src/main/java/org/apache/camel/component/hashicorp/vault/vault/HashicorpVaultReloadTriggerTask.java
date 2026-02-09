@@ -121,8 +121,8 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
         // auto-detect secrets in-use
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         PropertiesFunction pf = pc.getPropertiesFunction("hashicorp");
-        if (pf instanceof HashicorpVaultPropertiesFunction) {
-            propertiesFunction = (HashicorpVaultPropertiesFunction) pf;
+        if (pf instanceof HashicorpVaultPropertiesFunction vaultPropertiesFunction) {
+            propertiesFunction = vaultPropertiesFunction;
             LOG.debug("Auto-detecting secrets from properties-function: {}", pf.getName());
         }
         // specific secrets

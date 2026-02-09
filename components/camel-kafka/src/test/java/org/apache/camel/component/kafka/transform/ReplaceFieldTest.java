@@ -33,10 +33,11 @@ class ReplaceFieldTest {
 
     private ReplaceField processor;
 
-    private final String baseJson = "{" + "\n" +
-                                    "  \"name\" : \"Rajesh Koothrappali\"," + "\n" +
-                                    "  \"age\" : \"29\"" + "\n" +
-                                    "}";
+    private final String baseJson = """
+            {
+              "name" : "Rajesh Koothrappali",
+              "age" : "29"
+            }""";
 
     @BeforeEach
     void setup() {

@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit test based on user forum problem.
@@ -66,12 +66,8 @@ public class ChoicePredicateThrowExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:f").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail();
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        Exception exception = assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"));
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
 
         assertMockEndpointsSatisfied();
     }
@@ -112,12 +108,8 @@ public class ChoicePredicateThrowExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:f").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail();
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-        }
+        Exception exception = assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"));
+        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
 
         assertMockEndpointsSatisfied();
     }

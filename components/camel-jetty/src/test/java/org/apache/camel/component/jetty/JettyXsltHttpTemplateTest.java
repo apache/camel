@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,8 +33,8 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
 
     @Test
     void testXsltHttpTemplate() throws Exception {
-        // give Jetty a bit time to startup and be ready
-        Thread.sleep(1000);
+        // give Jetty a bit of time to startup and be ready
+        Awaitility.await().atMost(1, TimeUnit.SECONDS).until(() -> context.isStarted());
 
         String xml = template.requestBody("xslt:http://0.0.0.0:" + port + "/myxslt",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>", String.class);

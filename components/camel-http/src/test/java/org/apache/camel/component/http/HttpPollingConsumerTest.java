@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpPollingConsumerTest extends BaseHttpTest {
 
@@ -88,11 +88,9 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
 
     @Test
     public void testReceiveTimeoutTriggered() {
-        try {
-            consumer.receiveBody(endpointUrl + "/", 250, String.class);
-            fail("Should have thrown an exception");
-        } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(SocketTimeoutException.class, e.getCause());
-        }
+        RuntimeCamelException ex = assertThrows(RuntimeCamelException.class,
+                () -> consumer.receiveBody(endpointUrl + "/", 250, String.class),
+                "Should have thrown exception");
+        assertIsInstanceOf(SocketTimeoutException.class, ex.getCause());
     }
 }

@@ -56,15 +56,13 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
         createThreadToInterrupt();
-        try {
-            template.sendBody("direct:start", "Hello Camel");
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            Throwable cause = e.getCause();
-            boolean interrupted = cause.getMessage().startsWith("Interrupted while waiting for asynchronous callback");
-            if (!interrupted) {
-                log.warn("Did not find exception caused exception", cause);
-            }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello Camel"),
+                "Should throw exception");
+        Throwable cause = e.getCause();
+        boolean interrupted = cause.getMessage().startsWith("Interrupted while waiting for asynchronous callback");
+        if (!interrupted) {
+            log.warn("Did not find exception caused exception", cause);
         }
 
         assertMockEndpointsSatisfied();

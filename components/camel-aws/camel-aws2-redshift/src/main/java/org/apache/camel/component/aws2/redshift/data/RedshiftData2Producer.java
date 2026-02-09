@@ -65,7 +65,7 @@ public class RedshiftData2Producer extends DefaultProducer {
     private RedshiftData2Operations determineOperation(Exchange exchange) {
         RedshiftData2Operations operation
                 = exchange.getIn().getHeader(RedshiftData2Constants.OPERATION, RedshiftData2Operations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -77,7 +77,7 @@ public class RedshiftData2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (redshiftDataProducerToString == null) {
+        if (ObjectHelper.isEmpty(redshiftDataProducerToString)) {
             redshiftDataProducerToString
                     = "RedshiftDataProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }

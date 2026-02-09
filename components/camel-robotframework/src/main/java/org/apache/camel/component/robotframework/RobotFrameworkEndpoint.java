@@ -184,7 +184,6 @@ public class RobotFrameworkEndpoint extends ResourceEndpoint {
             configuration.setXunitFile("TEST-" + path.replace(' ', '_') + ".xml");
         }
         generatedArguments.addFileToArguments(configuration.getXunitFile(), "-x");
-        generatedArguments.addFlagToArguments(true, "--xunitskipnoncritical");
 
         generatedArguments.add(path);
 

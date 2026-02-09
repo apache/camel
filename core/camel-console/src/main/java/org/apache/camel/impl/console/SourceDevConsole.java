@@ -76,7 +76,7 @@ public class SourceDevConsole extends AbstractDevConsole {
                             t = reader.readLine();
                             if (t != null) {
                                 i++;
-                                code.append(String.format("\n    #%s %s", i, t));
+                                code.append(String.format("%n    #%s %s", i, t));
                             }
                         } while (t != null);
                         IOHelper.close(reader);
@@ -86,7 +86,7 @@ public class SourceDevConsole extends AbstractDevConsole {
                 }
                 sb.append(String.format("    Id: %s", mrb.getRouteId()));
                 if (mrb.getSourceLocation() != null) {
-                    sb.append(String.format("\n    Source: %s", mrb.getSourceLocation()));
+                    sb.append(String.format("%n    Source: %s", mrb.getSourceLocation()));
                 }
                 if (!code.isEmpty()) {
                     sb.append("\n");

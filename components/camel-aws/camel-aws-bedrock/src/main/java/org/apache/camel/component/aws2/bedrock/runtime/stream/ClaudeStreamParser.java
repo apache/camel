@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.bedrock.runtime.stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Parser for Anthropic Claude model streaming responses (v3+ format)
@@ -41,13 +42,13 @@ public class ClaudeStreamParser implements StreamResponseParser {
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
 
-        if (type != null && "content_block_delta".equals(type.asText())) {
+        if (ObjectHelper.isNotEmpty(type) && "content_block_delta".equals(type.asText())) {
             JsonNode delta = node.get("delta");
-            if (delta != null) {
+            if (ObjectHelper.isNotEmpty(delta)) {
                 JsonNode deltaType = delta.get("type");
-                if (deltaType != null && "text_delta".equals(deltaType.asText())) {
+                if (ObjectHelper.isNotEmpty(deltaType) && "text_delta".equals(deltaType.asText())) {
                     JsonNode text = delta.get("text");
-                    return text != null && !text.isNull() ? text.asText() : "";
+                    return ObjectHelper.isNotEmpty(text) && !text.isNull() ? text.asText() : "";
                 }
             }
         }
@@ -62,11 +63,11 @@ public class ClaudeStreamParser implements StreamResponseParser {
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
 
-        if (type != null && "message_delta".equals(type.asText())) {
+        if (ObjectHelper.isNotEmpty(type) && "message_delta".equals(type.asText())) {
             JsonNode delta = node.get("delta");
-            if (delta != null) {
+            if (ObjectHelper.isNotEmpty(delta)) {
                 JsonNode stopReason = delta.get("stop_reason");
-                return stopReason != null && !stopReason.isNull() ? stopReason.asText() : null;
+                return ObjectHelper.isNotEmpty(stopReason) && !stopReason.isNull() ? stopReason.asText() : null;
             }
         }
         return null;
@@ -80,11 +81,11 @@ public class ClaudeStreamParser implements StreamResponseParser {
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
 
-        if (type != null && "message_delta".equals(type.asText())) {
+        if (ObjectHelper.isNotEmpty(type) && "message_delta".equals(type.asText())) {
             JsonNode usage = node.get("usage");
-            if (usage != null) {
+            if (ObjectHelper.isNotEmpty(usage)) {
                 JsonNode outputTokens = usage.get("output_tokens");
-                return outputTokens != null && !outputTokens.isNull() ? outputTokens.asInt() : null;
+                return ObjectHelper.isNotEmpty(outputTokens) && !outputTokens.isNull() ? outputTokens.asInt() : null;
             }
         }
         return null;
@@ -97,6 +98,6 @@ public class ClaudeStreamParser implements StreamResponseParser {
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode type = node.get("type");
-        return type != null && "message_stop".equals(type.asText());
+        return ObjectHelper.isNotEmpty(type) && "message_stop".equals(type.asText());
     }
 }

@@ -101,15 +101,15 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Override
     public void doInit() throws Exception {
         super.doInit();
-        snsClient = configuration.getAmazonSNSClient() != null
-                ? configuration.getAmazonSNSClient() : Sns2ClientFactory.getSnsClient(configuration).getSNSClient();
+        snsClient = ObjectHelper.isNotEmpty(configuration.getAmazonSNSClient())
+                ? configuration.getAmazonSNSClient() : Sns2ClientFactory.getSnsClient(configuration);
 
         // check the setting the headerFilterStrategy
-        if (headerFilterStrategy == null) {
+        if (ObjectHelper.isEmpty(headerFilterStrategy)) {
             headerFilterStrategy = new Sns2HeaderFilterStrategy();
         }
 
-        if (configuration.getTopicArn() == null) {
+        if (ObjectHelper.isEmpty(configuration.getTopicArn())) {
             try {
                 String nextToken = null;
                 final String arnSuffix = ":" + configuration.getTopicName();
@@ -124,14 +124,14 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
                             break;
                         }
                     }
-                } while (nextToken != null);
+                } while (ObjectHelper.isNotEmpty(nextToken));
             } catch (final AwsServiceException ase) {
                 LOG.trace("The list topics operation return the following error code {}", ase.awsErrorDetails().errorCode());
                 throw ase;
             }
         }
 
-        if (configuration.getTopicArn() == null && configuration.isAutoCreateTopic()) {
+        if (ObjectHelper.isEmpty(configuration.getTopicArn()) && configuration.isAutoCreateTopic()) {
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest.Builder builder = CreateTopicRequest.builder().name(configuration.getTopicName());
 
@@ -189,7 +189,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonSNSClient())) {
-            if (snsClient != null) {
+            if (ObjectHelper.isNotEmpty(snsClient)) {
                 snsClient.close();
             }
         }
@@ -229,10 +229,10 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @Override
     public Map<String, String> getServiceMetadata() {
         HashMap<String, String> metadata = new HashMap<>();
-        if (configuration.getQueueArn() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getQueueArn())) {
             metadata.put("queueArn", configuration.getQueueArn());
         }
-        if (configuration.getTopicArn() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getTopicArn())) {
             metadata.put("topicArn", configuration.getTopicArn());
         }
         return metadata;

@@ -22,7 +22,7 @@ import org.apache.camel.spi.StartupCondition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MainStartupConditionTest {
 
@@ -33,9 +33,7 @@ public class MainStartupConditionTest {
             main.configure().withRoutesBuilderClasses("org.apache.camel.main.MainStartupConditionTest$MyRoute");
             main.configure().startupCondition().withEnabled(true).withTimeout(250).withInterval(100)
                     .withCustomClassNames("org.apache.camel.main.MainStartupConditionTest$MyCondition");
-            main.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
+            Exception e = assertThrows(Exception.class, () -> main.start());
             Assertions.assertEquals("Startup condition timeout error", e.getCause().getMessage());
         } finally {
             main.stop();

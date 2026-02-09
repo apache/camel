@@ -43,10 +43,10 @@ public class ThreadDevConsole extends AbstractDevConsole {
         boolean st = "true".equals(options.getOrDefault("stackTrace", "false"));
         ThreadMXBean tb = ManagementFactory.getThreadMXBean();
         if (tb != null) {
-            sb.append(String.format("Threads: %s\n", tb.getThreadCount()));
-            sb.append(String.format("Daemon Threads: %s\n", tb.getDaemonThreadCount()));
-            sb.append(String.format("Total Started Threads: %s\n", tb.getTotalStartedThreadCount()));
-            sb.append(String.format("Peak Threads: %s\n", tb.getPeakThreadCount()));
+            sb.append(String.format("Threads: %s%n", tb.getThreadCount()));
+            sb.append(String.format("Daemon Threads: %s%n", tb.getDaemonThreadCount()));
+            sb.append(String.format("Total Started Threads: %s%n", tb.getTotalStartedThreadCount()));
+            sb.append(String.format("Peak Threads: %s%n", tb.getPeakThreadCount()));
 
             long[] ids = tb.getAllThreadIds();
             Arrays.sort(ids);
@@ -54,11 +54,11 @@ public class ThreadDevConsole extends AbstractDevConsole {
                 ThreadInfo ti = st ? tb.getThreadInfo(id, Integer.MAX_VALUE) : tb.getThreadInfo(id);
                 if (ti != null) {
                     String lock = ti.getLockName() != null ? "locked: " + ti.getLockName() : "";
-                    sb.append(String.format("\n    Thread %s: %s (%s) %s", id, ti.getThreadName(), ti.getThreadState().name(),
+                    sb.append(String.format("%n    Thread %s: %s (%s) %s", id, ti.getThreadName(), ti.getThreadState().name(),
                             lock));
                     if (st) {
                         for (StackTraceElement e : ti.getStackTrace()) {
-                            sb.append(String.format("\n        %s", e));
+                            sb.append(String.format("%n        %s", e));
                         }
                     }
                 }

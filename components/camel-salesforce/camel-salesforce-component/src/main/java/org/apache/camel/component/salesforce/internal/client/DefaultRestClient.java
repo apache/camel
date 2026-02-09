@@ -264,9 +264,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                 try {
                     field.setAccessible(true);
                     Object value = field.get(sObject);
-                    if (value instanceof InputStream) {
+                    if (value instanceof InputStream is) {
                         String originalFieldName = fieldName.replace("Binary", "");
-                        binaryFields.put(originalFieldName, (InputStream) value);
+                        binaryFields.put(originalFieldName, is);
                     }
                 } catch (Exception e) {
                     // Skip inaccessible fields

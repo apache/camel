@@ -1783,6 +1783,7 @@ public class ModelParser extends BaseParser {
         return doParse(new BindyDataFormat(), (def, key, val) -> switch (key) {
                 case "allowEmptyStream": def.setAllowEmptyStream(val); yield true;
                 case "classType": def.setClassTypeAsString(val); yield true;
+                case "defaultValueStringAsNull": def.setDefaultValueStringAsNull(val); yield true;
                 case "locale": def.setLocale(val); yield true;
                 case "type": def.setType(val); yield true;
                 case "unwrapSingleInstance": def.setUnwrapSingleInstance(val); yield true;
@@ -2085,6 +2086,18 @@ public class ModelParser extends BaseParser {
                 default: yield identifiedTypeAttributeHandler().accept(def, key, val);
             }, noElementHandler(), noValueHandler());
     }
+    protected OcsfDataFormat doParseOcsfDataFormat() throws IOException, XmlPullParserException {
+        return doParse(new OcsfDataFormat(), (def, key, val) -> switch (key) {
+                case "allowUnmarshallType": def.setAllowUnmarshallType(val); yield true;
+                case "collectionType": def.setCollectionTypeName(val); yield true;
+                case "objectMapper": def.setObjectMapper(val); yield true;
+                case "prettyPrint": def.setPrettyPrint(val); yield true;
+                case "unmarshalType": def.setUnmarshalTypeName(val); yield true;
+                case "useDefaultObjectMapper": def.setUseDefaultObjectMapper(val); yield true;
+                case "useList": def.setUseList(val); yield true;
+                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), noValueHandler());
+    }
     protected PGPDataFormat doParsePGPDataFormat() throws IOException, XmlPullParserException {
         return doParse(new PGPDataFormat(), (def, key, val) -> switch (key) {
                 case "algorithm": def.setAlgorithm(val); yield true;
@@ -2364,7 +2377,11 @@ public class ModelParser extends BaseParser {
         return doParse(new SpringTransactionErrorHandlerDefinition(), transactionErrorHandlerDefinitionAttributeHandler(), defaultErrorHandlerDefinitionElementHandler(), noValueHandler());
     }
     protected CSimpleExpression doParseCSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new CSimpleExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+        return doParse(new CSimpleExpression(), (def, key, val) -> switch (key) {
+                case "pretty": def.setPretty(val); yield true;
+                case "trimResult": def.setTrimResult(val); yield true;
+                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected <T extends TypedExpressionDefinition> AttributeHandler<T> typedExpressionDefinitionAttributeHandler() {
         return (def, key, val) -> switch (key) {
@@ -2460,7 +2477,12 @@ public class ModelParser extends BaseParser {
         return doParse(new RefExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
     }
     protected SimpleExpression doParseSimpleExpression() throws IOException, XmlPullParserException {
-        return doParse(new SimpleExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
+        return doParse(new SimpleExpression(), (def, key, val) -> switch (key) {
+                case "nested": def.setNested(val); yield true;
+                case "pretty": def.setPretty(val); yield true;
+                case "trimResult": def.setTrimResult(val); yield true;
+                default: yield typedExpressionDefinitionAttributeHandler().accept(def, key, val);
+            }, noElementHandler(), expressionDefinitionValueHandler());
     }
     protected SpELExpression doParseSpELExpression() throws IOException, XmlPullParserException {
         return doParse(new SpELExpression(), typedExpressionDefinitionAttributeHandler(), noElementHandler(), expressionDefinitionValueHandler());
@@ -2983,6 +3005,7 @@ public class ModelParser extends BaseParser {
             case "json": return doParseJsonDataFormat();
             case "lzf": return doParseLZFDataFormat();
             case "mimeMultipart": return doParseMimeMultipartDataFormat();
+            case "ocsf": return doParseOcsfDataFormat();
             case "pgp": return doParsePGPDataFormat();
             case "pqc": return doParsePQCDataFormat();
             case "parquetAvro": return doParseParquetAvroDataFormat();

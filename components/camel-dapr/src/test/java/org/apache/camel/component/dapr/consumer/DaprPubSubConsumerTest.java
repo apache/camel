@@ -98,7 +98,7 @@ public class DaprPubSubConsumerTest extends CamelTestSupport {
     void testConsumer() throws Exception {
         consumer.doStart();
 
-        verify(mockClient).subscribeToEvents(anyString(), anyString(), any(), any());
+        verify(mockClient).subscribeToEvents(anyString(), anyString(), any(), any(TypeRef.class));
 
         String payload = "testBody";
         String pubSubName = "myPubSub";

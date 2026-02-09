@@ -47,7 +47,6 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        super.doPreSetup();
         this.serverPort = AvailablePortFinder.getNextAvailable();
     }
 

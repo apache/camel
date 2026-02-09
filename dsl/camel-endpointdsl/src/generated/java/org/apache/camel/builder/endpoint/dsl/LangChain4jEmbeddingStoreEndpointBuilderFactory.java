@@ -45,6 +45,36 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
         }
 
         /**
+         * The operation to perform: ADD, REMOVE, or SEARCH.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder action(org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
+         * The operation to perform: ADD, REMOVE, or SEARCH.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder action(String action) {
+            doSetProperty("action", action);
+            return this;
+        }
+        /**
          * Direct embedding store instance for vector operations.
          * 
          * The option is a:
@@ -104,6 +134,95 @@ public interface LangChain4jEmbeddingStoreEndpointBuilderFactory {
          */
         default LangChain4jEmbeddingStoreEndpointBuilder embeddingStoreFactory(String embeddingStoreFactory) {
             doSetProperty("embeddingStoreFactory", embeddingStoreFactory);
+            return this;
+        }
+        /**
+         * Maximum number of results to return for SEARCH operation.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder maxResults(Integer maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Maximum number of results to return for SEARCH operation.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Default: 5
+         * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder maxResults(String maxResults) {
+            doSetProperty("maxResults", maxResults);
+            return this;
+        }
+        /**
+         * Minimum similarity score threshold for SEARCH operation (0.0 to 1.0).
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param minScore the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder minScore(Double minScore) {
+            doSetProperty("minScore", minScore);
+            return this;
+        }
+        /**
+         * Minimum similarity score threshold for SEARCH operation (0.0 to 1.0).
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param minScore the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder minScore(String minScore) {
+            doSetProperty("minScore", minScore);
+            return this;
+        }
+        /**
+         * When true, SEARCH returns List with text content instead of List.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param returnTextContent the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder returnTextContent(boolean returnTextContent) {
+            doSetProperty("returnTextContent", returnTextContent);
+            return this;
+        }
+        /**
+         * When true, SEARCH returns List with text content instead of List.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param returnTextContent the value to set
+         * @return the dsl builder
+         */
+        default LangChain4jEmbeddingStoreEndpointBuilder returnTextContent(String returnTextContent) {
+            doSetProperty("returnTextContent", returnTextContent);
             return this;
         }
     }

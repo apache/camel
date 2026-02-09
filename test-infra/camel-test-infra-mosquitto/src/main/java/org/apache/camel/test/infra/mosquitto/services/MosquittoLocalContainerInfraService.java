@@ -74,8 +74,9 @@ public class MosquittoLocalContainerInfraService implements MosquittoInfraServic
                     .withExposedPorts(CONTAINER_PORT);
         } else {
             @SuppressWarnings("deprecation")
+            int configuredPort = ContainerEnvironmentUtil.getConfiguredPort(port);
             GenericContainer<?> fixedPortContainer = new FixedHostPortGenericContainer<>(imageName) // NOSONAR
-                    .withFixedExposedPort(port, CONTAINER_PORT);
+                    .withFixedExposedPort(configuredPort, CONTAINER_PORT);
             ret = fixedPortContainer;
         }
 

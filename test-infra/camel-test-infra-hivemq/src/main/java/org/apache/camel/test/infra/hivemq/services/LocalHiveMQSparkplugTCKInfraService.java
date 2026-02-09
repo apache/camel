@@ -49,11 +49,7 @@ public class LocalHiveMQSparkplugTCKInfraService extends AbstractLocalHiveMQServ
                 super(DockerImageName.parse(newImageName)
                         .asCompatibleSubstituteFor("hivemq/hivemq-ce"));
 
-                if (fixedPort) {
-                    addFixedExposedPort(1883, 1883);
-                } else {
-                    addExposedPort(1883);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, 1883);
             }
         }
 

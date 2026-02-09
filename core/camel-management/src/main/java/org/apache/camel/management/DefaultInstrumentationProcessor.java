@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * faster and the latter is required when the error handler has been configured with redelivery enabled.
  */
 public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
-        implements InstrumentationProcessor<StopWatch>, Ordered {
+        implements InstrumentationProcessor<StopWatch> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultInstrumentationProcessor.class);
 

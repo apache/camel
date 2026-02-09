@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
+public class NettyHttpProducerKeepAliveTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpKeepAlive() throws Exception {

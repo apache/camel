@@ -25,7 +25,7 @@ import org.apache.camel.support.processor.PredicateValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValidateSimpleTest extends ContextTestSupport {
 
@@ -54,15 +54,13 @@ public class ValidateSimpleTest extends ContextTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        try {
-            template.sendBody(startEndpoint, "Bye World");
-            fail("CamelExecutionException expected");
-        } catch (CamelExecutionException e) {
-            // expected
-            assertIsInstanceOf(PredicateValidationException.class, e.getCause());
-            String s = "Validation failed for Predicate[body contains Camel].";
-            assertStringContains(e.getCause().getMessage(), s);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(startEndpoint, "Bye World"),
+                "CamelExecutionException expected");
+
+        assertIsInstanceOf(PredicateValidationException.class, e.getCause());
+        String s = "Validation failed for Predicate[body contains Camel].";
+        assertStringContains(e.getCause().getMessage(), s);
 
         assertMockEndpointsSatisfied();
     }

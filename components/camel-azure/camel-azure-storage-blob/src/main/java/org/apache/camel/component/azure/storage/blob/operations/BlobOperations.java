@@ -53,6 +53,7 @@ import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.azure.storage.blob.specialized.BlobLeaseClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.azure.storage.blob.BlobBlock;
 import org.apache.camel.component.azure.storage.blob.BlobCommonRequestOptions;
 import org.apache.camel.component.azure.storage.blob.BlobConfiguration;
@@ -62,6 +63,8 @@ import org.apache.camel.component.azure.storage.blob.BlobExchangeHeaders;
 import org.apache.camel.component.azure.storage.blob.BlobStreamAndLength;
 import org.apache.camel.component.azure.storage.blob.BlobUtils;
 import org.apache.camel.component.azure.storage.blob.client.BlobClientWrapper;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,8 +103,20 @@ public class BlobOperations {
                     = client.openInputStream(blobRange, blobCommonRequestOptions.getBlobRequestConditions());
             final BlobExchangeHeaders blobExchangeHeaders = BlobExchangeHeaders
                     .createBlobExchangeHeadersFromBlobProperties((BlobProperties) blobInputStream.get("properties"));
+            InputStream is = (InputStream) blobInputStream.get("inputStream");
 
-            return BlobOperationResponse.create(blobInputStream.get("inputStream"), blobExchangeHeaders.toMap());
+            // Wrap to ensure closure when Exchange completes
+            if (exchange != null && configurationProxy.getConfiguration().isCloseStreamAfterRead()) {
+                // Register stream for auto-close on Exchange completion to avoid potential OOM during downloads
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        IOHelper.close(is);
+                    }
+                });
+            }
+
+            return BlobOperationResponse.create(is, blobExchangeHeaders.toMap());
         }
         // we have an outputStream set, so we use it
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
@@ -203,6 +218,99 @@ public class BlobOperations {
             closeInputStreamIfNeeded(blobStreamAndLength.getInputStream());
             releaseLeaseIfAcquired(leaseClient);
         }
+    }
+
+    public BlobOperationResponse uploadBlockBlobChunked(final Exchange exchange) throws IOException {
+        ObjectHelper.notNull(exchange, MISSING_EXCHANGE);
+
+        final BlobCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
+        final ParallelTransferOptions parallelTransferOptions = configurationProxy.getUploadParallelTransferOptions(exchange);
+
+        // Try to determine file path first (for file-based uploads which are most efficient)
+        final String filePath = determineFilePath(exchange);
+
+        BlobLeaseClient leaseClient = null;
+        try {
+            leaseClient = acquireLeaseIfConfigured(commonRequestOptions.getBlobRequestConditions(), exchange);
+
+            Response<BlockBlobItem> response;
+
+            if (filePath != null) {
+                // File-based upload (uses memory-mapped I/O, most efficient)
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Uploading block blob from file [{}] to blob [{}] from exchange [{}]...",
+                            filePath, configurationProxy.getBlobName(exchange), exchange);
+                }
+
+                response = client.uploadBlockBlobChunked(
+                        filePath,
+                        parallelTransferOptions,
+                        commonRequestOptions.getBlobHttpHeaders(),
+                        commonRequestOptions.getMetadata(),
+                        commonRequestOptions.getAccessTier(),
+                        commonRequestOptions.getBlobRequestConditions(),
+                        commonRequestOptions.getTimeout());
+            } else {
+                // Stream-based upload with parallel options (for InputStream bodies)
+                final BlobStreamAndLength blobStreamAndLength
+                        = BlobStreamAndLength.createBlobStreamAndLengthFromExchangeBody(exchange);
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Uploading block blob from stream (length: {}) to blob [{}] from exchange [{}]...",
+                            blobStreamAndLength.getStreamLength(), configurationProxy.getBlobName(exchange), exchange);
+                }
+
+                try {
+                    response = client.uploadBlockBlobWithParallelOptions(
+                            blobStreamAndLength.getInputStream(),
+                            blobStreamAndLength.getStreamLength(),
+                            parallelTransferOptions,
+                            commonRequestOptions.getBlobHttpHeaders(),
+                            commonRequestOptions.getMetadata(),
+                            commonRequestOptions.getAccessTier(),
+                            commonRequestOptions.getBlobRequestConditions(),
+                            commonRequestOptions.getTimeout());
+                } finally {
+                    closeInputStreamIfNeeded(blobStreamAndLength.getInputStream());
+                }
+            }
+
+            final BlobExchangeHeaders blobExchangeHeaders
+                    = BlobExchangeHeaders.createBlobExchangeHeadersFromBlockBlobItem(response.getValue())
+                            .httpHeaders(response.getHeaders());
+
+            return BlobOperationResponse.create(true, blobExchangeHeaders.toMap());
+        } finally {
+            releaseLeaseIfAcquired(leaseClient);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private String determineFilePath(final Exchange exchange) {
+        // First check header
+        String filePath = configurationProxy.getFilePath(exchange);
+        if (filePath != null) {
+            return filePath;
+        }
+
+        // Then check body - only return file path if body is File/Path/String (not InputStream)
+        Object body = exchange.getIn().getBody();
+
+        if (body instanceof java.nio.file.Path path) {
+            return path.toAbsolutePath().toString();
+        }
+        if (body instanceof File file) {
+            return file.getAbsolutePath();
+        }
+        if (body instanceof WrappedFile wrappedFile) {
+            Object file = wrappedFile.getFile();
+            if (file instanceof File f) {
+                return f.getAbsolutePath();
+            }
+        }
+
+        // For InputStream or other types, return null to trigger stream-based upload
+        return null;
     }
 
     public BlobOperationResponse stageBlockBlobList(final Exchange exchange) throws Exception {

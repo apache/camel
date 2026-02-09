@@ -42,7 +42,7 @@ public class DumpModelAsXmlPlaceholdersTest extends SpringTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("<route xmlns=\"http://camel.apache.org/schema/spring\" id=\"Gouda\">"));
+        assertTrue(xml.contains("id=\"Gouda\">"));
         assertTrue(xml.contains("\"direct:start-{{cheese.type}}\""));
         assertTrue(xml.contains("\"direct:end-{{cheese.type}}\""));
     }

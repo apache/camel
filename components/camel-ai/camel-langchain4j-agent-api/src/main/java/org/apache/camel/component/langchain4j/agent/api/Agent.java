@@ -70,7 +70,10 @@ public interface Agent {
      * <li>The {@link Headers#MEMORY_ID} header value as the memory identifier (if present)</li>
      * </ul>
      * </li>
-     * <li>For any other payload type, it throws an {@link InvalidPayloadRuntimeException}</li>
+     * <li>For other payload types (WrappedFile, byte[], InputStream), it uses the Camel TypeConverter to convert to an
+     * {@link AiAgentBody} with the appropriate content type. This supports file, ftp, sftp, aws2-s3,
+     * azure-storage-blob, and other components.</li>
+     * <li>If no conversion is possible, it throws an {@link InvalidPayloadRuntimeException}</li>
      * </ul>
      *
      * <p>
@@ -93,14 +96,20 @@ public interface Agent {
             return payload;
         }
 
-        if (!(messagePayload instanceof String)) {
-            throw new InvalidPayloadRuntimeException(exchange, AiAgentBody.class);
+        if (messagePayload instanceof String stringPayload) {
+            String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
+            Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
+            return new AiAgentBody<>(stringPayload, systemMessage, memoryId);
         }
 
-        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
-        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
+        // Try to convert using TypeConverter (supports WrappedFile, byte[], InputStream, etc.)
+        AiAgentBody<?> body = exchange.getContext().getTypeConverter()
+                .tryConvertTo(AiAgentBody.class, exchange, messagePayload);
+        if (body != null) {
+            return body;
+        }
 
-        return new AiAgentBody<>((String) messagePayload, systemMessage, memoryId);
+        throw new InvalidPayloadRuntimeException(exchange, AiAgentBody.class);
     }
 
     /**

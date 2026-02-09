@@ -36,22 +36,23 @@ public class SObjectTreeResponseTest {
 
     @Test
     public void shouldDeserializeJsonFromSalesforceExample() throws Exception {
-        final String json = "{\n"//
-                            + "    \"hasErrors\" : false,\n"//
-                            + "    \"results\" : [{\n"//
-                            + "     \"referenceId\" : \"ref1\",\n"//
-                            + "     \"id\" : \"001D000000K0fXOIAZ\"\n"//
-                            + "     },{\n"//
-                            + "     \"referenceId\" : \"ref4\",\n"//
-                            + "     \"id\" : \"001D000000K0fXPIAZ\"\n"//
-                            + "     },{\n"//
-                            + "     \"referenceId\" : \"ref2\",\n"//
-                            + "     \"id\" : \"003D000000QV9n2IAD\"\n"//
-                            + "     },{\n"//
-                            + "     \"referenceId\" : \"ref3\",\n"//
-                            + "     \"id\" : \"003D000000QV9n3IAD\"\n"//
-                            + "     }]\n"//
-                            + "}";
+        final String json = """
+                {
+                    "hasErrors" : false,
+                    "results" : [{
+                     "referenceId" : "ref1",
+                     "id" : "001D000000K0fXOIAZ"
+                     },{
+                     "referenceId" : "ref4",
+                     "id" : "001D000000K0fXPIAZ"
+                     },{
+                     "referenceId" : "ref2",
+                     "id" : "003D000000QV9n2IAD"
+                     },{
+                     "referenceId" : "ref3",
+                     "id" : "003D000000QV9n3IAD"
+                     }]
+                }""";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
@@ -72,17 +73,18 @@ public class SObjectTreeResponseTest {
 
     @Test
     public void shouldDeserializeJsonFromSalesforceFailureExample() throws Exception {
-        final String json = "{\n"//
-                            + "   \"hasErrors\" : true,\n"//
-                            + "   \"results\" : [{\n"//
-                            + "     \"referenceId\" : \"ref2\",\n"//
-                            + "     \"errors\" : [{\n"//
-                            + "       \"statusCode\" : \"INVALID_EMAIL_ADDRESS\",\n"//
-                            + "       \"message\" : \"Email: invalid email address: 123\",\n"//
-                            + "       \"fields\" : [ \"Email\" ]\n"//
-                            + "       }]\n"//
-                            + "     }]\n"//
-                            + "}";
+        final String json = """
+                {
+                   "hasErrors" : true,
+                   "results" : [{
+                     "referenceId" : "ref2",
+                     "errors" : [{
+                       "statusCode" : "INVALID_EMAIL_ADDRESS",
+                       "message" : "Email: invalid email address: 123",
+                       "fields" : [ "Email" ]
+                       }]
+                     }]
+                }""";
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 

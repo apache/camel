@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.box;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "addAssignmentToTask", description="Add assignment for task", signatures={"com.box.sdk.BoxTask addAssignmentToTask(String taskId, com.box.sdk.BoxUser assignTo)"}), @ApiMethod(methodName = "addFileTask", description="Add task to file", signatures={"com.box.sdk.BoxTask addFileTask(String fileId, com.box.sdk.BoxTask$Action action, java.util.Date dueAt, String message)"}), @ApiMethod(methodName = "deleteTask", description="Delete task", signatures={"void deleteTask(String taskId)"}), @ApiMethod(methodName = "deleteTaskAssignment", description="Delete task assignment", signatures={"void deleteTaskAssignment(String taskAssignmentId)"}), @ApiMethod(methodName = "getFileTasks", description="Get a list of any tasks on file", signatures={"java.util.List<com.box.sdk.BoxTask$Info> getFileTasks(String fileId)"}), @ApiMethod(methodName = "getTaskAssignmentInfo", description="Get task assignment information", signatures={"com.box.sdk.BoxTaskAssignment$Info getTaskAssignmentInfo(String taskAssignmentId)"}), @ApiMethod(methodName = "getTaskAssignments", description="Get a list of any assignments for task", signatures={"java.util.List<com.box.sdk.BoxTaskAssignment$Info> getTaskAssignments(String taskId)"}), @ApiMethod(methodName = "getTaskInfo", description="Get task information", signatures={"com.box.sdk.BoxTask$Info getTaskInfo(String taskId)"}), @ApiMethod(methodName = "updateTaskInfo", description="Update task information", signatures={"com.box.sdk.BoxTask updateTaskInfo(String taskId, com.box.sdk.BoxTask$Info info)"})}, aliases = {"addFileTask=add", "deleteTask=delete", "getFileTasks=tasks", "getTaskInfo=info", "updateTaskInfo=updateInfo", "addAssignmentToTask=addAssignment", "deleteTaskAssignment=deleteAssignment", "getTaskAssignments=assignments", "getTaskAssignmentInfo=assignmentInfo"})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class BoxTasksManagerEndpointConfiguration extends BoxConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "addFileTask", description="The action the task assignee will be prompted to do")})

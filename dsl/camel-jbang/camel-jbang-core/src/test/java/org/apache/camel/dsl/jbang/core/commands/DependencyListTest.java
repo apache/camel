@@ -19,8 +19,6 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,15 +33,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
-class DependencyListTest extends CamelCommandBaseTest {
+class DependencyListTest extends CamelCommandBaseTestSupport {
 
     private File workingDir;
 
     @BeforeEach
     public void setup() throws Exception {
         super.setup();
-        Path base = Paths.get("target");
-        workingDir = Files.createTempDirectory(base, "camel-export").toFile();
+        workingDir = Files.createTempDirectory("camel-export").toFile();
     }
 
     @AfterEach

@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/policy",
+  "title": "Policy",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Policy",
+  "additionalProperties": true,
+  "properties": {
+    "data": {
+      "type": [
+        "object",
+        "string",
+        "integer",
+        "number",
+        "boolean",
+        "array",
+        "null"
+      ],
+      "title": "Data"
+    },
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "group": {
+      "$ref": "Group.json"
+    },
+    "desc": {
+      "type": "string",
+      "title": "Description"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "is_applied": {
+      "type": "boolean",
+      "title": "Applied"
+    }
+  },
+  "description": "The Policy object."
+}

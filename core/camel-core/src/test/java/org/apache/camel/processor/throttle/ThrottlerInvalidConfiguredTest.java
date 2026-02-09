@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThrottlerInvalidConfiguredTest extends ContextTestSupport {
 
@@ -34,13 +34,11 @@ public class ThrottlerInvalidConfiguredTest extends ContextTestSupport {
                 from("seda:a").throttle(null).to("mock:result");
             }
         });
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("MaxRequestsPerPeriod expression must be provided"));
-        }
+        });
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertTrue(cause.getMessage().startsWith("MaxRequestsPerPeriod expression must be provided"));
         context.stop();
     }
 

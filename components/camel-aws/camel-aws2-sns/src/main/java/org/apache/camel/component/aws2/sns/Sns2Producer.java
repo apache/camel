@@ -78,6 +78,7 @@ public class Sns2Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setHeader(Sns2Constants.MESSAGE_ID, result.messageId());
+            message.setHeader(Sns2Constants.SEQUENCE_NUMBER, result.sequenceNumber());
         } else {
             PublishBatchRequest.Builder publishBatchRequestBuilder = PublishBatchRequest.builder();
             publishBatchRequestBuilder.topicArn(getConfiguration().getTopicArn());
@@ -85,13 +86,24 @@ public class Sns2Producer extends DefaultProducer {
             PublishBatchResponse response = getEndpoint().getSNSClient().publishBatch(publishBatchRequestBuilder.build());
             Message message = getMessageForResponse(exchange);
             message.setBody(response);
+            message.setHeader(Sns2Constants.FAILED_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(response.failed()) ? response.failed().size() : 0);
+            message.setHeader(Sns2Constants.SUCCESSFUL_MESSAGE_COUNT,
+                    ObjectHelper.isNotEmpty(response.successful()) ? response.successful().size() : 0);
         }
     }
 
     private String determineSubject(Exchange exchange) {
         String subject = exchange.getIn().getHeader(Sns2Constants.SUBJECT, String.class);
-        if (subject == null) {
+        if (ObjectHelper.isEmpty(subject)) {
             subject = getConfiguration().getSubject();
+        }
+
+        // AWS SNS has a maximum subject length of 100 characters
+        if (subject != null && subject.length() > Sns2Constants.MAX_SUBJECT_LENGTH) {
+            LOG.debug("Subject exceeds AWS SNS maximum length of {} characters, truncating from {} to {} characters",
+                    Sns2Constants.MAX_SUBJECT_LENGTH, subject.length(), Sns2Constants.MAX_SUBJECT_LENGTH);
+            subject = subject.substring(0, Sns2Constants.MAX_SUBJECT_LENGTH);
         }
 
         return subject;
@@ -99,7 +111,7 @@ public class Sns2Producer extends DefaultProducer {
 
     private String determineMessageStructure(Exchange exchange) {
         String structure = exchange.getIn().getHeader(Sns2Constants.MESSAGE_STRUCTURE, String.class);
-        if (structure == null) {
+        if (ObjectHelper.isEmpty(structure)) {
             structure = getConfiguration().getMessageStructure();
         }
 
@@ -183,7 +195,7 @@ public class Sns2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (snsProducerToString == null) {
+        if (ObjectHelper.isEmpty(snsProducerToString)) {
             snsProducerToString = "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return snsProducerToString;
@@ -206,7 +218,7 @@ public class Sns2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Sns2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -216,7 +228,7 @@ public class Sns2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

@@ -24,6 +24,7 @@ public class BindyKeyValuePairDataFormatConfigurer extends org.apache.camel.supp
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("AllowEmptyStream", boolean.class);
         map.put("ClassType", java.lang.Class.class);
+        map.put("DefaultValueStringAsNull", boolean.class);
         map.put("Locale", java.lang.String.class);
         map.put("UnwrapSingleInstance", boolean.class);
         ALL_OPTIONS = map;
@@ -37,6 +38,8 @@ public class BindyKeyValuePairDataFormatConfigurer extends org.apache.camel.supp
         case "allowEmptyStream": target.setAllowEmptyStream(property(camelContext, boolean.class, value)); return true;
         case "classtype":
         case "classType": target.setClassType(property(camelContext, java.lang.Class.class, value)); return true;
+        case "defaultvaluestringasnull":
+        case "defaultValueStringAsNull": target.setDefaultValueStringAsNull(property(camelContext, boolean.class, value)); return true;
         case "locale": target.setLocale(property(camelContext, java.lang.String.class, value)); return true;
         case "unwrapsingleinstance":
         case "unwrapSingleInstance": target.setUnwrapSingleInstance(property(camelContext, boolean.class, value)); return true;
@@ -56,6 +59,8 @@ public class BindyKeyValuePairDataFormatConfigurer extends org.apache.camel.supp
         case "allowEmptyStream": return boolean.class;
         case "classtype":
         case "classType": return java.lang.Class.class;
+        case "defaultvaluestringasnull":
+        case "defaultValueStringAsNull": return boolean.class;
         case "locale": return java.lang.String.class;
         case "unwrapsingleinstance":
         case "unwrapSingleInstance": return boolean.class;
@@ -71,6 +76,8 @@ public class BindyKeyValuePairDataFormatConfigurer extends org.apache.camel.supp
         case "allowEmptyStream": return target.isAllowEmptyStream();
         case "classtype":
         case "classType": return target.getClassType();
+        case "defaultvaluestringasnull":
+        case "defaultValueStringAsNull": return target.isDefaultValueStringAsNull();
         case "locale": return target.getLocale();
         case "unwrapsingleinstance":
         case "unwrapSingleInstance": return target.isUnwrapSingleInstance();

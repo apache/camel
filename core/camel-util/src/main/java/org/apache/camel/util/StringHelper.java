@@ -512,13 +512,23 @@ public final class StringHelper {
     }
 
     /**
-     * Capitalize the string (upper case first character)
+     * Capitalize the string (upper case only first character)
      *
      * @param  text the string
-     * @return      the string capitalized (upper case first character)
+     * @return      the string capitalized (upper case only first character)
      */
     public static String capitalize(String text) {
         return capitalize(text, false);
+    }
+
+    /**
+     * Capitalize the string (upper case first character in every word)
+     *
+     * @param  text the string
+     * @return      the string capitalized (upper case first character in every world)
+     */
+    public static String capitalizeAll(String text) {
+        return doCapitalize(text, true);
     }
 
     /**
@@ -534,10 +544,10 @@ public final class StringHelper {
         if (dashToCamelCase) {
             ret = dashToCamelCase(text);
         }
-        return doCapitalize(ret);
+        return doCapitalize(ret, false);
     }
 
-    private static String doCapitalize(String ret) {
+    private static String doCapitalize(String ret, boolean all) {
         if (ret == null) {
             return null;
         }
@@ -548,6 +558,14 @@ public final class StringHelper {
         // for which it does not return the capitalized value should not be used here (this is
         // mostly used to capitalize setters/getters)
         chars[0] = Character.toUpperCase(chars[0]);
+        if (all && chars.length > 2) {
+            for (int i = 2; i < chars.length; i++) {
+                char prev = chars[i - 1];
+                if (prev == ' ') {
+                    chars[i] = Character.toUpperCase(chars[i]);
+                }
+            }
+        }
         return new String(chars);
     }
 
@@ -1161,7 +1179,7 @@ public final class StringHelper {
 
     /**
      * Outputs the bytes in human-readable format in units of KB,MB,GB etc.
-     *
+     * <p>
      * The locale always used is the one returned by {@link java.util.Locale#getDefault()}.
      *
      * @param  bytes number of bytes
@@ -1174,7 +1192,7 @@ public final class StringHelper {
 
     /**
      * Check for string pattern matching with a number of strategies in the following order:
-     *
+     * <p>
      * - equals - null pattern always matches - * always matches - Ant style matching - Regexp
      *
      * @param  pattern the pattern
@@ -1404,6 +1422,9 @@ public final class StringHelper {
         }
     }
 
+    /**
+     * Is the given string only numbers
+     */
     public static boolean isDigit(String s) {
         for (char ch : s.toCharArray()) {
             if (!Character.isDigit(ch)) {
@@ -1413,6 +1434,9 @@ public final class StringHelper {
         return true;
     }
 
+    /**
+     * Converts the bytes to hex decimal
+     */
     public static String bytesToHex(byte[] hash) {
         StringBuilder sb = new StringBuilder(2 * hash.length);
         for (byte b : hash) {
@@ -1423,6 +1447,37 @@ public final class StringHelper {
             sb.append(hex);
         }
         return sb.toString();
+    }
+
+    /**
+     * Normalizes the whitespaces by removing any excess spaces so there are only at most a single whitespace.
+     */
+    public static String normalizeWhitespace(String text) {
+        if (text == null) {
+            return null;
+        }
+        if (text.isBlank()) {
+            return "";
+        }
+
+        // must have at least double spaces
+        if (!text.contains("  ")) {
+            return text.trim();
+        }
+        StringBuilder sb = new StringBuilder(text.length());
+        final char[] chars = text.toCharArray();
+        for (int i = 1; i < chars.length; i++) {
+            char prev = chars[i - 1];
+            char ch = chars[i];
+            if (Character.isWhitespace(ch) && Character.isWhitespace(prev)) {
+                continue;
+            }
+            if (i == 1) {
+                sb.append(prev);
+            }
+            sb.append(ch);
+        }
+        return sb.toString().trim();
     }
 
 }

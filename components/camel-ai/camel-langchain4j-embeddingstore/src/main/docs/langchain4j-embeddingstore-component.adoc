@@ -51,3 +51,177 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 include::spring-boot:partial$starter.adoc[]
+
+== Usage
+
+=== Configuring an Embedding Store
+
+The component requires an `EmbeddingStore` instance. Register it in the Camel registry:
+
+[source,java]
+----
+EmbeddingStore<TextSegment> embeddingStore = PgVectorEmbeddingStore.builder()
+    .host("localhost")
+    .port(5432)
+    .database("vectordb")
+    .user("postgres")
+    .password("postgres")
+    .table("embeddings")
+    .dimension(384)
+    .build();
+
+context.getRegistry().bind("myEmbeddingStore", embeddingStore);
+----
+
+=== Storing Embeddings (ADD Operation)
+
+Store embeddings with optional text segments:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:store")
+    .to("langchain4j-embeddings:embed")
+    .to("langchain4j-embeddingstore:myStore?action=ADD");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:store"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - to: "langchain4j-embeddingstore:myStore?action=ADD"
+----
+====
+
+The response body contains the generated embedding ID.
+
+=== Searching Embeddings (SEARCH Operation)
+
+Perform similarity search to find relevant content:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:search")
+    .to("langchain4j-embeddings:embed")
+    .to("langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&minScore=0.7");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:search"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&minScore=0.7"
+----
+====
+
+The response contains a list of `EmbeddingMatch` objects with the matching text segments and scores.
+
+==== Returning Text Content Directly
+
+Use the `returnTextContent` option to get a list of strings instead of `EmbeddingMatch` objects:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:search")
+    .to("langchain4j-embeddings:embed")
+    .to("langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&returnTextContent=true")
+    .log("Found texts: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:search"
+    steps:
+      - to: "langchain4j-embeddings:embed"
+      - to: "langchain4j-embeddingstore:myStore?action=SEARCH&maxResults=5&returnTextContent=true"
+      - log: "Found texts: ${body}"
+----
+====
+
+=== Removing Embeddings (REMOVE Operation)
+
+Delete embeddings by their ID:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:remove")
+    .setBody(simple("${header.embeddingId}"))
+    .to("langchain4j-embeddingstore:myStore?action=REMOVE");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "direct:remove"
+    steps:
+      - setBody:
+          simple: "${header.embeddingId}"
+      - to: "langchain4j-embeddingstore:myStore?action=REMOVE"
+----
+====
+
+=== Complete RAG Pipeline Example
+
+A complete example showing document ingestion and retrieval:
+
+[source,java]
+----
+// Ingestion route: chunk, embed, and store documents
+from("file:documents?include=.*\\.txt")
+    .split().tokenize("\n\n") // Split by paragraphs
+    .to("langchain4j-embeddings:embed")
+    .to("langchain4j-embeddingstore:ragStore?action=ADD")
+    .log("Stored embedding with ID: ${body}");
+
+// Query route: embed query, search, and return text results
+from("direct:query")
+    .to("langchain4j-embeddings:embed")
+    .to("langchain4j-embeddingstore:ragStore?action=SEARCH&maxResults=3&returnTextContent=true");
+----
+
+=== Supported Vector Databases
+
+The component supports any vector database that LangChain4j provides an `EmbeddingStore` implementation for:
+
+* **PGVector** - PostgreSQL with pgvector extension
+* **Qdrant** - High-performance vector database
+* **Milvus** - Cloud-native vector database
+* **Weaviate** - Vector search engine
+* **Chroma** - Open-source embedding database
+* **Pinecone** - Managed vector database
+* **Neo4j** - Graph database with vector capabilities
+* **InMemoryEmbeddingStore** - For testing purposes
+
+Refer to the https://docs.langchain4j.dev/integrations/embedding-stores/[LangChain4j Embedding Stores documentation] for the complete list and configuration options.

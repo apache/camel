@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.jms;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.spi.BeanIntrospection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ObjectHelper.invokeMethodSafe;
 
 final class JmsServiceLocationHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JmsServiceLocationHelper.class);
 
     private JmsServiceLocationHelper() {
     }
@@ -35,14 +38,12 @@ final class JmsServiceLocationHelper {
         if (cf == null) {
             return null;
         }
-        Map<String, Object> props = new HashMap<>();
-        bi.getProperties(cf, props, null, false);
-        Object url = props.get("brokerURL");
+        Object url = bi.getOrElseProperty(cf, "brokerURL", null, false);
         if (url != null) {
             return url.toString();
         } else {
             // nested connection factory which can be wrapped in connection pooling
-            ConnectionFactory ncf = (ConnectionFactory) props.get("connectionFactory");
+            ConnectionFactory ncf = (ConnectionFactory) bi.getOrElseProperty(cf, "connectionFactory", null, false);
             if (ncf != null) {
                 return getBrokerURLFromConnectionFactory(bi, ncf);
             }
@@ -55,20 +56,18 @@ final class JmsServiceLocationHelper {
         if (cf == null) {
             return null;
         }
-        Map<String, Object> props = new HashMap<>();
-        bi.getProperties(cf, props, null, false);
-        Object user = props.get("user");
+        Object user = bi.getOrElseProperty(cf, "user", null, false);
         if (user == null) {
-            user = props.get("username");
+            user = bi.getOrElseProperty(cf, "username", null, false);
         }
         if (user == null) {
-            user = props.get("userName");
+            user = bi.getOrElseProperty(cf, "userName", null, false);
         }
         if (user != null) {
             return user.toString();
         } else {
             // nested connection factory which can be wrapped in connection pooling
-            ConnectionFactory ncf = (ConnectionFactory) props.get("connectionFactory");
+            ConnectionFactory ncf = (ConnectionFactory) bi.getOrElseProperty(cf, "connectionFactory", null, false);
             if (ncf != null) {
                 return getUsernameFromConnectionFactory(bi, ncf);
             }
@@ -78,7 +77,8 @@ final class JmsServiceLocationHelper {
 
     private static String artemisBrokerURL(ConnectionFactory cf) {
         try {
-            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) {
+            // NOTE: the dependency has to be provided by final user.
+            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) { // NOSONAR
                 Object obj = invokeMethodSafe("getServerLocator", cf);
                 if (obj != null) {
                     Object[] arr = (Object[]) invokeMethodSafe("getStaticTransportConfigurations", obj);
@@ -96,18 +96,19 @@ final class JmsServiceLocationHelper {
                 }
             }
         } catch (Exception e) {
-            // ignore
+            LOG.warn("An exception occurred while parsing broker url: ignoring", e);
         }
         return null;
     }
 
     private static String artemisUsername(ConnectionFactory cf) {
         try {
-            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) {
+            // NOTE: the dependency has to be provided by final user.
+            if ("org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory".equals(cf.getClass().getName())) { // NOSONAR
                 return (String) invokeMethodSafe("getUser", cf);
             }
         } catch (Exception e) {
-            // ignore
+            LOG.warn("An exception occurred while parsing username: ignoring", e);
         }
         return null;
     }

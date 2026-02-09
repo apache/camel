@@ -182,8 +182,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             maxRead -= uploadAggregate.buffer.size();
         }
 
-        while ((b = AWS2S3Utils.toByteArray(is, maxRead)).length
-               > 0) {
+        while ((b = AWS2S3Utils.toByteArray(is, maxRead)) != null && b.length > 0) {
             totalSize += b.length;
             if (getConfiguration().isMultiPartUpload())
                 maxRead -= b.length;
@@ -325,7 +324,6 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
         long timestampWindow = getTimestampWindow(messageTimestamp);
 
         byte[] b;
-        int totalSize = 0;
         int maxRead = (getConfiguration().isMultiPartUpload()
                 ? Math.toIntExact(getConfiguration().getPartSize()) : getConfiguration().getBufferSize());
 
@@ -336,8 +334,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             maxRead -= state.buffer.size();
         }
 
-        while ((b = AWS2S3Utils.toByteArray(is, maxRead)).length > 0) {
-            totalSize += b.length;
+        while ((b = AWS2S3Utils.toByteArray(is, maxRead)) != null && b.length > 0) {
             if (getConfiguration().isMultiPartUpload())
                 maxRead -= b.length;
 

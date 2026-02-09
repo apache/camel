@@ -24,26 +24,24 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
+public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttp500Error() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
-            fail("Should have failed");
-        } catch (CamelExecutionException e) {
-            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
-            assertEquals(500, cause.getStatusCode());
-            String trace = cause.getContentAsString();
-            assertNotNull(trace);
-            assertTrue(trace.startsWith("java.lang.IllegalArgumentException: Camel cannot do this"));
-            assertEquals("http://localhost:" + getPort() + "/foo", cause.getUri());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class),
+                "Should have failed");
+        NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+        assertEquals(500, cause.getStatusCode());
+        String trace = cause.getContentAsString();
+        assertNotNull(trace);
+        assertTrue(trace.startsWith("java.lang.IllegalArgumentException: Camel cannot do this"));
+        assertEquals("http://localhost:" + getPort() + "/foo", cause.getUri());
 
         MockEndpoint.assertIsSatisfied(context);
     }

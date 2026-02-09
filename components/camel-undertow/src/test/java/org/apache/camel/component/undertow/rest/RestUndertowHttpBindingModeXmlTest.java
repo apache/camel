@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestUndertowHttpBindingModeXmlTest extends BaseUndertowTest {
 
@@ -52,12 +52,7 @@ public class RestUndertowHttpBindingModeXmlTest extends BaseUndertowTest {
 
         // we bind to xml, but send in json, which is not possible
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        try {
-            template.sendBody("http://localhost:" + getPort() + "/users/new", body);
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class, () -> template.sendBody("http://localhost:" + getPort() + "/users/new", body));
 
         MockEndpoint.assertIsSatisfied(context);
     }

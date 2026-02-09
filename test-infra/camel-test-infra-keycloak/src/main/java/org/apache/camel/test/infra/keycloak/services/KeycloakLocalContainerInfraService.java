@@ -23,6 +23,7 @@ import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.keycloak.common.KeycloakProperties;
+import org.apache.commons.lang3.SystemUtils;
 import org.keycloak.admin.client.Keycloak;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,16 +71,21 @@ public class KeycloakLocalContainerInfraService implements KeycloakInfraService,
             public TestInfraKeycloakContainer(boolean fixedPort) {
                 super(DockerImageName.parse(keycloakImage));
 
-                withExposedPorts(KEYCLOAK_PORT)
-                        .withEnv("KEYCLOAK_ADMIN", DEFAULT_ADMIN_USERNAME)
+                String startCommand;
+
+                if ("ppc64le".equals(SystemUtils.OS_ARCH)) {
+                    startCommand = "/opt/bitnami/keycloak/bin/kc.sh start-dev";
+                } else {
+                    startCommand = "start-dev";
+                }
+
+                withEnv("KEYCLOAK_ADMIN", DEFAULT_ADMIN_USERNAME)
                         .withEnv("KEYCLOAK_ADMIN_PASSWORD", DEFAULT_ADMIN_PASSWORD)
-                        .withCommand("start-dev")
+                        .withCommand(startCommand.split(" "))
                         .waitingFor(Wait.forListeningPorts(KEYCLOAK_PORT))
                         .withStartupTimeout(Duration.ofMinutes(3L));
 
-                if (fixedPort) {
-                    addFixedExposedPort(KEYCLOAK_PORT, KEYCLOAK_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, KEYCLOAK_PORT);
             }
         }
 

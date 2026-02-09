@@ -21,6 +21,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Constants for Olingo2 component.
  */
+@Deprecated(since = "4.18")
 public interface Olingo2Constants {
 
     // prefix for parameters when passed as exchange header properties

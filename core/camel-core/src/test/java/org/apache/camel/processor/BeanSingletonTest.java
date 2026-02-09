@@ -74,14 +74,14 @@ public class BeanSingletonTest extends ContextTestSupport {
         context.bind("something", new MyBean());
         // Make sure we can get the object from the registry
         assertNotSame(registry.lookupByName("something"), originalInstance);
-        try {
-            template.sendBody("direct:cached", null);
-            fail("The IllegalStateException is expected");
-        } catch (CamelExecutionException ex) {
-            boolean b = ex.getCause() instanceof IllegalStateException;
-            assertTrue(b, "IllegalStateException is expected!");
-            assertEquals("This bean is not supported to be invoked again!", ex.getCause().getMessage());
-        }
+
+        CamelExecutionException ex = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:cached", null),
+                "The IllegalStateException is expected");
+
+        boolean b = ex.getCause() instanceof IllegalStateException;
+        assertTrue(b, "IllegalStateException is expected!");
+        assertEquals("This bean is not supported to be invoked again!", ex.getCause().getMessage());
     }
 
     public static class MyBean {

@@ -8,10 +8,10 @@
     "firstVersion": "4.9.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.dataformat.smooks.SmooksDataFormat",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-smooks",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "modelName": "smooks",
     "modelJavaType": "org.apache.camel.model.dataformat.SmooksDataFormat"
   },

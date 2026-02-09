@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -114,8 +114,8 @@
         <module>camel-crypto</module>
         <module>camel-crypto-pgp</module>
         <module>camel-csimple-joor</module>
-	<module>camel-csv</module>
-	<module>camel-cyberark-vault</module>
+        <module>camel-csv</module>
+        <module>camel-cyberark-vault</module>
         <module>camel-dapr</module>
         <module>camel-datasonnet</module>
         <module>camel-debug</module>
@@ -146,6 +146,7 @@
         <module>camel-geocoder</module>
         <module>camel-git</module>
         <module>camel-github</module>
+        <module>camel-github2</module>
         <module>camel-google</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>
@@ -163,6 +164,7 @@
         <module>camel-ical</module>
         <module>camel-iec60870</module>
         <module>camel-ignite</module>
+        <module>camel-iggy</module>
         <module>camel-infinispan</module>
         <module>camel-influxdb</module>
         <module>camel-influxdb2</module>
@@ -238,9 +240,11 @@
         <module>camel-oaipmh</module>
         <module>camel-oauth</module>
         <module>camel-observation</module>
+        <module>camel-ocsf</module>
         <module>camel-ognl</module>
         <module>camel-olingo2</module>
         <module>camel-olingo4</module>
+        <module>camel-once</module>
         <module>camel-openstack</module>
         <module>camel-opentelemetry</module>
         <module>camel-opentelemetry2</module>
@@ -304,6 +308,7 @@
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>
+        <module>camel-stripe</module>
         <module>camel-swift</module>
         <module>camel-openapi-java</module>
         <module>camel-openapi-validator</module>
@@ -348,6 +353,7 @@
         <module>camel-jooq</module>
         <!-- observability-services requires the availability of other components -->
         <module>camel-observability-services</module>
+        <module>camel-mina-sftp</module>
     </modules>
 
     <properties>
@@ -550,7 +556,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <argLine>${camel.failsafe.fork.vmargs}</argLine>
                             <reuseForks>${camel.failsafe.reuseForks}</reuseForks>
                             <forkedProcessTimeoutInSeconds>${camel.failsafe.forkTimeout}</forkedProcessTimeoutInSeconds>
                             <redirectTestOutputToFile>false</redirectTestOutputToFile>
@@ -565,8 +570,6 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>integration-test</id>
-                                <phase>verify</phase>
                                 <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>

@@ -69,7 +69,8 @@ public class GoogleBigQueryEndpoint extends DefaultEndpoint implements EndpointS
         if (connFactory == null) {
             connFactory = new GoogleBigQueryConnectionFactory()
                     .setCamelContext(getCamelContext())
-                    .setServiceAccountKeyFile(configuration.getServiceAccountKey());
+                    .setServiceAccountKeyFile(configuration.getServiceAccountKey())
+                    .setProjectId(configuration.getProjectId());
             configuration.setConnectionFactory(connFactory);
         }
         bigQuery = connFactory.getDefaultClient();

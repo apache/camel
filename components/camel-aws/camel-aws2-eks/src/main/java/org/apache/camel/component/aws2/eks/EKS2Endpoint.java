@@ -66,14 +66,14 @@ public class EKS2Endpoint extends ScheduledPollEndpoint implements EndpointServi
     public void doStart() throws Exception {
         super.doStart();
 
-        eksClient = configuration.getEksClient() != null
-                ? configuration.getEksClient() : EKS2ClientFactory.getEksClient(configuration).getEksClient();
+        eksClient = ObjectHelper.isNotEmpty(configuration.getEksClient())
+                ? configuration.getEksClient() : EKS2ClientFactory.getEksClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getEksClient())) {
-            if (eksClient != null) {
+            if (ObjectHelper.isNotEmpty(eksClient)) {
                 eksClient.close();
             }
         }

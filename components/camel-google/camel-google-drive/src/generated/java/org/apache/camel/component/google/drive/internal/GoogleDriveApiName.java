@@ -3,11 +3,14 @@
  */
 package org.apache.camel.component.google.drive.internal;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component GoogleDrive
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public enum GoogleDriveApiName implements ApiName {
 
     DRIVE_ABOUT("drive-about"),

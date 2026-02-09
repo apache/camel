@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/ja4_fingerprint",
+  "title": "Ja4Fingerprint",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Ja4Fingerprint",
+  "additionalProperties": true,
+  "properties": {
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "value": {
+      "type": "string",
+      "title": "Value"
+    },
+    "type_id": {
+      "type": "integer",
+      "title": "Type ID"
+    },
+    "section_a": {
+      "type": "string",
+      "title": "JA4 Section A"
+    },
+    "section_b": {
+      "type": "string",
+      "title": "JA4 Section B"
+    },
+    "section_c": {
+      "type": "string",
+      "title": "JA4 Section C"
+    },
+    "section_d": {
+      "type": "string",
+      "title": "JA4 Section D"
+    }
+  },
+  "description": "The JA4+ Fingerprint object."
+}

@@ -66,6 +66,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputLocation": getOrCreateConfiguration(target).setOutputLocation(property(camelContext, java.lang.String.class, value)); return true;
         case "outputtype":
         case "outputType": getOrCreateConfiguration(target).setOutputType(property(camelContext, org.apache.camel.component.aws2.athena.Athena2OutputType.class, value)); return true;
+        case "overrideendpoint":
+        case "overrideEndpoint": getOrCreateConfiguration(target).setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "profilecredentialsname":
         case "profileCredentialsName": getOrCreateConfiguration(target).setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
@@ -86,6 +88,10 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": getOrCreateConfiguration(target).setSecretKey(property(camelContext, java.lang.String.class, value)); return true;
         case "sessiontoken":
         case "sessionToken": getOrCreateConfiguration(target).setSessionToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "trustallcertificates":
+        case "trustAllCertificates": getOrCreateConfiguration(target).setTrustAllCertificates(property(camelContext, boolean.class, value)); return true;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": getOrCreateConfiguration(target).setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "useprofilecredentialsprovider":
@@ -144,6 +150,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputLocation": return java.lang.String.class;
         case "outputtype":
         case "outputType": return org.apache.camel.component.aws2.athena.Athena2OutputType.class;
+        case "overrideendpoint":
+        case "overrideEndpoint": return boolean.class;
         case "profilecredentialsname":
         case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
@@ -164,6 +172,10 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": return java.lang.String.class;
         case "sessiontoken":
         case "sessionToken": return java.lang.String.class;
+        case "trustallcertificates":
+        case "trustAllCertificates": return boolean.class;
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
         case "useprofilecredentialsprovider":
@@ -218,6 +230,8 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "outputLocation": return getOrCreateConfiguration(target).getOutputLocation();
         case "outputtype":
         case "outputType": return getOrCreateConfiguration(target).getOutputType();
+        case "overrideendpoint":
+        case "overrideEndpoint": return getOrCreateConfiguration(target).isOverrideEndpoint();
         case "profilecredentialsname":
         case "profileCredentialsName": return getOrCreateConfiguration(target).getProfileCredentialsName();
         case "proxyhost":
@@ -238,6 +252,10 @@ public class Athena2ComponentConfigurer extends PropertyConfigurerSupport implem
         case "secretKey": return getOrCreateConfiguration(target).getSecretKey();
         case "sessiontoken":
         case "sessionToken": return getOrCreateConfiguration(target).getSessionToken();
+        case "trustallcertificates":
+        case "trustAllCertificates": return getOrCreateConfiguration(target).isTrustAllCertificates();
+        case "uriendpointoverride":
+        case "uriEndpointOverride": return getOrCreateConfiguration(target).getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
         case "useprofilecredentialsprovider":

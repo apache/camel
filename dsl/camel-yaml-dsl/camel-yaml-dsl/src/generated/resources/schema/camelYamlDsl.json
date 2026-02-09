@@ -3058,9 +3058,13 @@
               }, {
                 "required" : [ "mimeMultipart" ]
               }, {
+                "required" : [ "ocsf" ]
+              }, {
                 "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
+              }, {
+                "required" : [ "pqc" ]
               }, {
                 "required" : [ "protobuf" ]
               }, {
@@ -3305,6 +3309,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ocsf" ],
+            "properties" : {
+              "ocsf" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "parquetAvro" ],
             "properties" : {
               "parquetAvro" : {
@@ -3317,6 +3329,14 @@
             "properties" : {
               "pgp" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "pqc" ],
+            "properties" : {
+              "pqc" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
               }
             }
           }, {
@@ -3508,8 +3528,10 @@
           "jsonApi" : { },
           "lzf" : { },
           "mimeMultipart" : { },
+          "ocsf" : { },
           "parquetAvro" : { },
           "pgp" : { },
+          "pqc" : { },
           "protobuf" : { },
           "rss" : { },
           "smooks" : { },
@@ -3627,7 +3649,7 @@
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
-            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
+            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Multicast hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Multicast breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
             "default" : "0"
           }
         }
@@ -3910,6 +3932,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
+                "description" : "The predicate to use",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }
@@ -4827,7 +4850,7 @@
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
-            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Recipient List breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
+            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Recipient List breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
             "default" : "0"
           },
           "constant" : { },
@@ -7317,7 +7340,7 @@
           "timeout" : {
             "type" : "string",
             "title" : "Timeout",
-            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to split and process all the sub messages within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
+            "description" : "Sets a total timeout specified in millis, when using parallel processing. If the Splitter hasn't been able to send and process all replies within the given timeframe, then the timeout triggers and the Splitter breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a bit of care.",
             "default" : "0"
           },
           "constant" : { },
@@ -8391,8 +8414,10 @@
           "jsonApi" : { },
           "lzf" : { },
           "mimeMultipart" : { },
+          "ocsf" : { },
           "parquetAvro" : { },
           "pgp" : { },
+          "pqc" : { },
           "protobuf" : { },
           "rss" : { },
           "smooks" : { },
@@ -8476,9 +8501,13 @@
               }, {
                 "required" : [ "mimeMultipart" ]
               }, {
+                "required" : [ "ocsf" ]
+              }, {
                 "required" : [ "parquetAvro" ]
               }, {
                 "required" : [ "pgp" ]
+              }, {
+                "required" : [ "pqc" ]
               }, {
                 "required" : [ "protobuf" ]
               }, {
@@ -8723,6 +8752,14 @@
             }
           }, {
             "type" : "object",
+            "required" : [ "ocsf" ],
+            "properties" : {
+              "ocsf" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.OcsfDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
             "required" : [ "parquetAvro" ],
             "properties" : {
               "parquetAvro" : {
@@ -8735,6 +8772,14 @@
             "properties" : {
               "pgp" : {
                 "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PGPDataFormat"
+              }
+            }
+          }, {
+            "type" : "object",
+            "required" : [ "pqc" ],
+            "properties" : {
+              "pqc" : {
+                "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.PQCDataFormat"
               }
             }
           }, {
@@ -10910,6 +10955,12 @@
             "title" : "Class Type",
             "description" : "Name of model class to use."
           },
+          "defaultValueStringAsNull" : {
+            "type" : "boolean",
+            "title" : "Default Value String As Null",
+            "description" : "To change the default value for string types to be null instead of an empty string.",
+            "default" : false
+          },
           "id" : {
             "type" : "string",
             "title" : "Id",
@@ -12353,6 +12404,58 @@
             "type" : "boolean",
             "title" : "Multipart Without Attachment",
             "description" : "Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false.",
+            "default" : false
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.OcsfDataFormat" : {
+        "title" : "OCSF",
+        "description" : "Marshal and unmarshal OCSF (Open Cybersecurity Schema Framework) security events to/from JSON.",
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "allowUnmarshallType" : {
+            "type" : "boolean",
+            "title" : "Allow Unmarshall Type",
+            "description" : "If enabled then the unmarshal type can be specified via the CamelOcsfUnmarshalType header. This should only be enabled when desired to be used.",
+            "default" : false
+          },
+          "collectionType" : {
+            "type" : "string",
+            "title" : "Collection Type",
+            "description" : "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default."
+          },
+          "id" : {
+            "type" : "string",
+            "title" : "Id",
+            "description" : "The id of this node"
+          },
+          "objectMapper" : {
+            "type" : "string",
+            "title" : "Object Mapper",
+            "description" : "Lookup and use the existing ObjectMapper with the given id when using Jackson."
+          },
+          "prettyPrint" : {
+            "type" : "boolean",
+            "title" : "Pretty Print",
+            "description" : "To enable pretty printing output nicely formatted. Is by default false.",
+            "default" : false
+          },
+          "unmarshalType" : {
+            "type" : "string",
+            "title" : "Unmarshal Type",
+            "description" : "Class name of the OCSF event type to use when unmarshalling. Defaults to OcsfEvent."
+          },
+          "useDefaultObjectMapper" : {
+            "type" : "boolean",
+            "title" : "Use Default Object Mapper",
+            "description" : "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+            "default" : true
+          },
+          "useList" : {
+            "type" : "boolean",
+            "title" : "Use List",
+            "description" : "To unmarshal to a List of OCSF events.",
             "default" : false
           }
         }
@@ -13860,6 +13963,12 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
+            "pretty" : {
+              "type" : "boolean",
+              "title" : "Pretty",
+              "description" : "To pretty format the output (only JSon or XML supported)",
+              "default" : false
+            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
@@ -13868,8 +13977,14 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
+            },
+            "trimResult" : {
+              "type" : "boolean",
+              "title" : "Trim Result",
+              "description" : "Whether to trim the returned values when this language are in use. For example the output result may contain unwanted line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be backwards compatible with existing behavior.",
+              "default" : false
             }
           }
         } ],
@@ -13902,7 +14017,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -13951,7 +14066,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -13980,7 +14095,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14256,7 +14371,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14285,7 +14400,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14324,7 +14439,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14370,7 +14485,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14404,7 +14519,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14451,7 +14566,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14490,7 +14605,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14553,7 +14668,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             },
             "unpackArray" : {
@@ -14596,7 +14711,7 @@
           "trim" : {
             "type" : "boolean",
             "title" : "Trim",
-            "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+            "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
             "default" : true
           }
         },
@@ -14646,7 +14761,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             },
             "validate" : {
@@ -14685,7 +14800,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14720,7 +14835,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14754,7 +14869,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14788,7 +14903,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14814,6 +14929,18 @@
               "title" : "Id",
               "description" : "Sets the id of this node"
             },
+            "nested" : {
+              "type" : "boolean",
+              "title" : "Nested",
+              "description" : "If the result is a nested simple expression should this expression be evaluated as well",
+              "default" : false
+            },
+            "pretty" : {
+              "type" : "boolean",
+              "title" : "Pretty",
+              "description" : "To pretty format the output (only JSon or XML supported)",
+              "default" : false
+            },
             "resultType" : {
               "type" : "string",
               "title" : "Result Type",
@@ -14822,8 +14949,14 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
+            },
+            "trimResult" : {
+              "type" : "boolean",
+              "title" : "Trim Result",
+              "description" : "Whether to trim the returned values when this language are in use. For example the output result may contain unwanted line breaks at the beginning and end such as when using Java DSL with multi-line blocks. Is default false to be backwards compatible with existing behavior.",
+              "default" : false
             }
           }
         } ],
@@ -14856,7 +14989,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -14933,7 +15066,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             },
             "xml" : {
@@ -14968,7 +15101,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15007,7 +15140,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15066,7 +15199,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15159,7 +15292,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -15211,7 +15344,7 @@
             "trim" : {
               "type" : "boolean",
               "title" : "Trim",
-              "description" : "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+              "description" : "Whether to trim the source code to remove leading and trailing whitespaces and line breaks. For example when using DSLs where the source will span across multiple lines and there may be additional line breaks at both the beginning and end.",
               "default" : true
             }
           }
@@ -18085,6 +18218,7 @@
             "properties" : {
               "expression" : {
                 "title" : "Expression",
+                "description" : "The predicate to use for validation.",
                 "$ref" : "#/items/definitions/org.apache.camel.model.language.ExpressionDefinition"
               }
             }

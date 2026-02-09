@@ -528,6 +528,9 @@ public class ModelWriter extends BaseWriter {
     public void writeMimeMultipartDataFormat(MimeMultipartDataFormat def) throws IOException {
         doWriteMimeMultipartDataFormat("mimeMultipart", def);
     }
+    public void writeOcsfDataFormat(OcsfDataFormat def) throws IOException {
+        doWriteOcsfDataFormat("ocsf", def);
+    }
     public void writePGPDataFormat(PGPDataFormat def) throws IOException {
         doWritePGPDataFormat("pgp", def);
     }
@@ -1236,6 +1239,7 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) v);
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) v);
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) v);
+                case "OcsfDataFormat" -> doWriteOcsfDataFormat("ocsf", (OcsfDataFormat) v);
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
@@ -1251,6 +1255,7 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
                 case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
+                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -2004,6 +2009,7 @@ public class ModelWriter extends BaseWriter {
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) v);
                 case "LZFDataFormat" -> doWriteLZFDataFormat("lzf", (LZFDataFormat) v);
                 case "MimeMultipartDataFormat" -> doWriteMimeMultipartDataFormat("mimeMultipart", (MimeMultipartDataFormat) v);
+                case "OcsfDataFormat" -> doWriteOcsfDataFormat("ocsf", (OcsfDataFormat) v);
                 case "ParquetAvroDataFormat" -> doWriteParquetAvroDataFormat("parquetAvro", (ParquetAvroDataFormat) v);
                 case "ProtobufDataFormat" -> doWriteProtobufDataFormat("protobuf", (ProtobufDataFormat) v);
                 case "RssDataFormat" -> doWriteRssDataFormat("rss", (RssDataFormat) v);
@@ -2019,6 +2025,7 @@ public class ModelWriter extends BaseWriter {
                 case "UniVocityTsvDataFormat" -> doWriteUniVocityTsvDataFormat("univocityTsv", (UniVocityTsvDataFormat) v);
                 case "XMLSecurityDataFormat" -> doWriteXMLSecurityDataFormat("xmlSecurity", (XMLSecurityDataFormat) v);
                 case "PGPDataFormat" -> doWritePGPDataFormat("pgp", (PGPDataFormat) v);
+                case "PQCDataFormat" -> doWritePQCDataFormat("pqc", (PQCDataFormat) v);
                 case "YAMLDataFormat" -> doWriteYAMLDataFormat("yaml", (YAMLDataFormat) v);
                 case "ZipDeflaterDataFormat" -> doWriteZipDeflaterDataFormat("zipDeflater", (ZipDeflaterDataFormat) v);
                 case "ZipFileDataFormat" -> doWriteZipFileDataFormat("zipFile", (ZipFileDataFormat) v);
@@ -2462,6 +2469,7 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("unwrapSingleInstance", def.getUnwrapSingleInstance(), "true");
+        doWriteAttribute("defaultValueStringAsNull", def.getDefaultValueStringAsNull(), null);
         doWriteAttribute("classType", def.getClassTypeAsString(), null);
         doWriteAttribute("locale", def.getLocale(), null);
         doWriteAttribute("type", def.getType(), null);
@@ -2795,6 +2803,18 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("binaryContent", def.getBinaryContent(), null);
         endElement(name);
     }
+    protected void doWriteOcsfDataFormat(String name, OcsfDataFormat def) throws IOException {
+        startElement(name);
+        doWriteIdentifiedTypeAttributes(def);
+        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), "false");
+        doWriteAttribute("useDefaultObjectMapper", def.getUseDefaultObjectMapper(), "true");
+        doWriteAttribute("prettyPrint", def.getPrettyPrint(), "false");
+        doWriteAttribute("objectMapper", def.getObjectMapper(), null);
+        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
+        doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
+        doWriteAttribute("useList", def.getUseList(), "false");
+        endElement(name);
+    }
     protected void doWritePGPDataFormat(String name, PGPDataFormat def) throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
@@ -3095,6 +3115,8 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteCSimpleExpression(String name, CSimpleExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("pretty", def.getPretty(), "false");
+        doWriteAttribute("trimResult", def.getTrimResult(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }
@@ -3241,6 +3263,9 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteSimpleExpression(String name, SimpleExpression def) throws IOException {
         startElement(name);
         doWriteTypedExpressionDefinitionAttributes(def);
+        doWriteAttribute("pretty", def.getPretty(), "false");
+        doWriteAttribute("trimResult", def.getTrimResult(), "false");
+        doWriteAttribute("nested", def.getNested(), "false");
         doWriteValue(def.getExpression());
         endElement(name);
     }

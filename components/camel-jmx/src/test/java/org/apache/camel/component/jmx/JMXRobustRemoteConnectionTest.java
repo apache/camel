@@ -32,8 +32,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test to verify:
@@ -91,13 +91,11 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     public void testRobustConnection() throws Exception {
 
         // the JMX service should not be started
-        try {
-            getSimpleMXBean().touch();
-            fail("The mxbean should not be available.");
-        } catch (Exception e) {
-            assertTrue(e instanceof java.lang.IllegalArgumentException);
-            assertEquals("Null connection", e.getMessage());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> getSimpleMXBean().touch(),
+                "The mxbean should not be available.");
+        assertTrue(e instanceof java.lang.IllegalArgumentException);
+        assertEquals("Null connection", e.getMessage());
 
         // start the server;  the JMX consumer should connect and start;  the mock should receive a notification
         initServer();

@@ -124,79 +124,79 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         CSVFormat answer = csvFormat;
 
         if (commentMarkerDisabled) {
-            answer = answer.withCommentMarker(null); // null disables the comment marker
+            answer = answer.builder().setCommentMarker(null).get(); // null disables the comment marker
         } else if (commentMarker != null) {
-            answer = answer.withCommentMarker(commentMarker);
+            answer = answer.builder().setCommentMarker(commentMarker).get();
         }
 
         if (delimiter != null) {
-            answer = answer.withDelimiter(delimiter);
+            answer = answer.builder().setDelimiter(delimiter).get();
         }
 
         if (escapeDisabled) {
-            answer = answer.withEscape(null); // null disables the escape
+            answer = answer.builder().setEscape(null).get(); // null disables the escape
         } else if (escape != null) {
-            answer = answer.withEscape(escape);
+            answer = answer.builder().setEscape(escape).get();
         }
 
         if (headerDisabled) {
-            answer = answer.withHeader((String[]) null); // null disables the header
+            answer = answer.builder().setHeader((String[]) null).get(); // null disables the header
         } else if (header != null) {
             if (header.indexOf(',') != -1) {
-                answer = answer.withHeader(header.split(","));
+                answer = answer.builder().setHeader(header.split(",")).get();
             } else {
-                answer = answer.withHeader(header);
+                answer = answer.builder().setHeader(header).get();
             }
         }
 
         if (allowMissingColumnNames != null) {
-            answer = answer.withAllowMissingColumnNames(allowMissingColumnNames);
+            answer = answer.builder().setAllowMissingColumnNames(allowMissingColumnNames).get();
         }
 
         if (ignoreEmptyLines != null) {
-            answer = answer.withIgnoreEmptyLines(ignoreEmptyLines);
+            answer = answer.builder().setIgnoreEmptyLines(ignoreEmptyLines).get();
         }
 
         if (ignoreSurroundingSpaces != null) {
-            answer = answer.withIgnoreSurroundingSpaces(ignoreSurroundingSpaces);
+            answer = answer.builder().setIgnoreSurroundingSpaces(ignoreSurroundingSpaces).get();
         }
 
         if (nullStringDisabled) {
-            answer = answer.withNullString(null); // null disables the null string replacement
+            answer = answer.builder().setNullString(null).get(); // null disables the null string replacement
         } else if (nullString != null) {
-            answer = answer.withNullString(nullString);
+            answer = answer.builder().setNullString(nullString).get();
         }
 
         if (quoteDisabled) {
-            answer = answer.withQuote(null); // null disables quotes
+            answer = answer.builder().setQuote(null).get(); // null disables quotes
         } else if (quote != null) {
-            answer = answer.withQuote(quote);
+            answer = answer.builder().setQuote(quote).get();
         }
 
         if (quoteMode != null) {
-            answer = answer.withQuoteMode(quoteMode);
+            answer = answer.builder().setQuoteMode(quoteMode).get();
         }
 
         if (recordSeparatorDisabled) {
-            answer = answer.withRecordSeparator(null); // null disables the record separator
+            answer = answer.builder().setRecordSeparator(null).get(); // null disables the record separator
         } else if (recordSeparator != null) {
-            answer = answer.withRecordSeparator(recordSeparator);
+            answer = answer.builder().setRecordSeparator(recordSeparator).get();
         }
 
         if (skipHeaderRecord != null) {
-            answer = answer.withSkipHeaderRecord(skipHeaderRecord);
+            answer = answer.builder().setSkipHeaderRecord(skipHeaderRecord).get();
         }
 
         if (trim != null) {
-            answer = answer.withTrim(trim);
+            answer = answer.builder().setTrim(trim).get();
         }
 
         if (ignoreHeaderCase != null) {
-            answer = answer.withIgnoreHeaderCase(ignoreHeaderCase);
+            answer = answer.builder().setIgnoreHeaderCase(ignoreHeaderCase).get();
         }
 
         if (trailingDelimiter != null) {
-            answer = answer.withTrailingDelimiter(trailingDelimiter);
+            answer = answer.builder().setTrailingDelimiter(trailingDelimiter).get();
         }
 
         return answer;

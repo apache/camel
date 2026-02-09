@@ -64,15 +64,15 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements Endpoin
     public void doStart() throws Exception {
         super.doStart();
 
-        ddbStreamClient = configuration.getAmazonDynamoDbStreamsClient() != null
+        ddbStreamClient = ObjectHelper.isNotEmpty(configuration.getAmazonDynamoDbStreamsClient())
                 ? configuration.getAmazonDynamoDbStreamsClient()
-                : Ddb2StreamClientFactory.getDynamoDBStreamClient(configuration).getDynamoDBStreamClient();
+                : Ddb2StreamClientFactory.getDynamoDBStreamClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonDynamoDbStreamsClient())) {
-            if (ddbStreamClient != null) {
+            if (ObjectHelper.isNotEmpty(ddbStreamClient)) {
                 ddbStreamClient.close();
             }
         }
@@ -119,7 +119,7 @@ public class Ddb2StreamEndpoint extends ScheduledPollEndpoint implements Endpoin
 
     @Override
     public Map<String, String> getServiceMetadata() {
-        if (configuration.getTableName() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getTableName())) {
             return Map.of("table", configuration.getTableName());
         }
         return null;

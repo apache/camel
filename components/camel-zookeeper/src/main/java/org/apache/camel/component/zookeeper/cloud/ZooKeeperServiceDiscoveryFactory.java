@@ -32,7 +32,7 @@ import org.apache.curator.framework.CuratorFramework;
 
 @CloudServiceFactory("zookeeper-service-discovery")
 @Configurer
-@Deprecated
+@Deprecated(since = "4.7.0")
 public class ZooKeeperServiceDiscoveryFactory implements ServiceDiscoveryFactory {
 
     private ZooKeeperCuratorConfiguration configuration;

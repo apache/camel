@@ -30,12 +30,12 @@ public class RejectableFutureTask<V> extends FutureTask<V> implements Rejectable
 
     public RejectableFutureTask(Callable<V> callable) {
         super(callable);
-        this.rejectable = callable instanceof Rejectable ? (Rejectable) callable : null;
+        this.rejectable = callable instanceof Rejectable rejectable2 ? rejectable2 : null;
     }
 
     public RejectableFutureTask(Runnable runnable, V result) {
         super(runnable, result);
-        this.rejectable = runnable instanceof Rejectable ? (Rejectable) runnable : null;
+        this.rejectable = runnable instanceof Rejectable rejectable2 ? rejectable2 : null;
     }
 
     @Override

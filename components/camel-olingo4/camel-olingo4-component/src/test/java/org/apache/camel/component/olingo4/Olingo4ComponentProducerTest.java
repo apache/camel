@@ -56,11 +56,19 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4WireMockTestSup
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo4ComponentProducerTest.class);
 
-    private static final String TEST_CREATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n"
-                                                   + "  \"LastName\": \"Black\"\n" + "}";
-    private static final String TEST_UPDATE_JSON
-            = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"MiddleName\": \"Black\",\n"
-              + "  \"LastName\": \"Black\"\n" + "}";
+    private static final String TEST_CREATE_JSON = """
+            {
+              "UserName": "lewisblack",
+              "FirstName": "Lewis",
+              "LastName": "Black"
+            }""";
+    private static final String TEST_UPDATE_JSON = """
+            {
+              "UserName": "lewisblack",
+              "FirstName": "Lewis",
+              "MiddleName": "Black",
+              "LastName": "Black"
+            }""";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

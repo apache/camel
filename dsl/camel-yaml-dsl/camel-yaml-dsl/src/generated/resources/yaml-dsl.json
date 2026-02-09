@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "yaml-dsl",
     "title": "YAML DSL",
-    "description": "Camel DSL with YAML",
+    "description": "Camel YAML DSL",
     "deprecated": false,
     "firstVersion": "3.9.0",
     "label": "dsl",
@@ -11,6 +11,6 @@
     "metadata": { "routes.language": "yaml" },
     "groupId": "org.apache.camel",
     "artifactId": "camel-yaml-dsl",
-    "version": "4.17.0-SNAPSHOT"
+    "version": "4.18.0-SNAPSHOT"
   }
 }

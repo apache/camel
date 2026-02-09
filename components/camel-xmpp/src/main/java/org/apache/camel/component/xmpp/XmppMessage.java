@@ -29,6 +29,7 @@ import org.jivesoftware.smack.packet.Stanza;
  * Represents a {@link org.apache.camel.Message} for working with XMPP
  */
 public class XmppMessage extends DefaultMessage {
+
     private Stanza xmppPacket;
 
     public XmppMessage(CamelContext camelContext) {
@@ -87,6 +88,11 @@ public class XmppMessage extends DefaultMessage {
             }
         }
         return null;
+    }
+
+    @Override
+    protected boolean isPopulateHeadersSupported() {
+        return true;
     }
 
     @Override

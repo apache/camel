@@ -23,8 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSupport {
 
@@ -71,13 +71,10 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
 
         template.sendBodyAndHeader("direct:start", "A", "id", 1);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "B", "id", null);
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Invalid correlation key"));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "B", "id", null));
+        CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+        assertTrue(cause.getMessage().startsWith("Invalid correlation key"));
 
         template.sendBodyAndHeader("direct:start", "C", "id", 1);
 

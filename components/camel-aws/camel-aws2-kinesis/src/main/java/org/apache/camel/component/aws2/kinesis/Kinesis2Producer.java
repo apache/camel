@@ -77,18 +77,25 @@ public class Kinesis2Producer extends DefaultProducer {
         Object partitionKey = exchange.getIn().getHeader(Kinesis2Constants.PARTITION_KEY);
         ensurePartitionKeyNotNull(partitionKey);
         List<List<PutRecordsRequestEntry>> requestBatchList = createRequestBatchList(exchange, partitionKey);
+        int totalRecordCount = 0;
+        int totalFailedCount = 0;
         for (List<PutRecordsRequestEntry> requestBatch : requestBatchList) {
             PutRecordsRequest putRecordsRequest = PutRecordsRequest.builder()
                     .streamName(getEndpoint().getConfiguration().getStreamName())
                     .records(requestBatch)
                     .build();
             PutRecordsResponse putRecordsResponse = connection.getClient(getEndpoint()).putRecords(putRecordsRequest);
+            totalRecordCount += putRecordsResponse.records().size();
+            totalFailedCount += putRecordsResponse.failedRecordCount();
             if (putRecordsResponse.failedRecordCount() > 0) {
                 throw new RuntimeException(
                         "Failed to send records " + putRecordsResponse.failedRecordCount() + " of "
                                            + putRecordsResponse.records().size());
             }
         }
+        Message message = exchange.getMessage();
+        message.setHeader(Kinesis2Constants.RECORD_COUNT, totalRecordCount);
+        message.setHeader(Kinesis2Constants.FAILED_RECORD_COUNT, totalFailedCount);
     }
 
     private List<List<PutRecordsRequestEntry>> createRequestBatchList(Exchange exchange, Object partitionKey) {
@@ -144,14 +151,14 @@ public class Kinesis2Producer extends DefaultProducer {
         putRecordRequest.streamName(getEndpoint().getConfiguration().getStreamName());
         ensurePartitionKeyNotNull(partitionKey);
         putRecordRequest.partitionKey(partitionKey.toString());
-        if (sequenceNumber != null) {
+        if (ObjectHelper.isNotEmpty(sequenceNumber)) {
             putRecordRequest.sequenceNumberForOrdering(sequenceNumber.toString());
         }
         return putRecordRequest.build();
     }
 
     private void ensurePartitionKeyNotNull(Object partitionKey) {
-        if (partitionKey == null) {
+        if (ObjectHelper.isEmpty(partitionKey)) {
             throw new IllegalArgumentException("Partition key must be specified");
         }
     }

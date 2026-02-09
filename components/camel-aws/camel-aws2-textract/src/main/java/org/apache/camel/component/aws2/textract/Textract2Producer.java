@@ -87,7 +87,7 @@ public class Textract2Producer extends DefaultProducer {
 
     private Textract2Operations determineOperation(Exchange exchange) {
         Textract2Operations operation = exchange.getIn().getHeader(Textract2Constants.OPERATION, Textract2Operations.class);
-        if (operation == null) {
+        if (ObjectHelper.isEmpty(operation)) {
             operation = getConfiguration().getOperation();
         }
         return operation;
@@ -99,7 +99,7 @@ public class Textract2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        if (textractProducerToString == null) {
+        if (ObjectHelper.isEmpty(textractProducerToString)) {
             textractProducerToString = "TextractProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return textractProducerToString;
@@ -343,7 +343,7 @@ public class Textract2Producer extends DefaultProducer {
             request.jobId(jobId);
 
             Integer maxResults = exchange.getIn().getHeader(Textract2Constants.MAX_RESULTS, Integer.class);
-            if (maxResults != null) {
+            if (ObjectHelper.isNotEmpty(maxResults)) {
                 request.maxResults(maxResults);
             }
 
@@ -391,7 +391,7 @@ public class Textract2Producer extends DefaultProducer {
             request.jobId(jobId);
 
             Integer maxResults = exchange.getIn().getHeader(Textract2Constants.MAX_RESULTS, Integer.class);
-            if (maxResults != null) {
+            if (ObjectHelper.isNotEmpty(maxResults)) {
                 request.maxResults(maxResults);
             }
 
@@ -439,7 +439,7 @@ public class Textract2Producer extends DefaultProducer {
             request.jobId(jobId);
 
             Integer maxResults = exchange.getIn().getHeader(Textract2Constants.MAX_RESULTS, Integer.class);
-            if (maxResults != null) {
+            if (ObjectHelper.isNotEmpty(maxResults)) {
                 request.maxResults(maxResults);
             }
 
@@ -541,7 +541,7 @@ public class Textract2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Textract2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -551,7 +551,7 @@ public class Textract2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

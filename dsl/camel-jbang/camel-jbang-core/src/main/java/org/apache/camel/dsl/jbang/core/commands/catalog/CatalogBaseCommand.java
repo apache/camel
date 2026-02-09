@@ -161,7 +161,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                                 .with(r -> r.name),
                         new Column().header("ARTIFACT-ID").visible(displayGav).dataAlign(HorizontalAlign.LEFT)
                                 .with(this::shortGav),
-                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(this::level),
                         new Column().header("NATIVE").dataAlign(HorizontalAlign.CENTER)
                                 .visible(RuntimeType.quarkus == runtime).with(this::nativeSupported),
                         new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
@@ -207,6 +207,13 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         } else {
             return r.description;
         }
+    }
+
+    String level(Row r) {
+        if (r.deprecated) {
+            return "Deprecated";
+        }
+        return r.level;
     }
 
     String nativeSupported(Row r) {

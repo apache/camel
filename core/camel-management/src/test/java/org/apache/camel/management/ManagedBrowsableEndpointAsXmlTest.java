@@ -32,7 +32,7 @@ import org.junit.jupiter.api.condition.OS;
 import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TYPE_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisabledOnOs(OS.AIX)
 public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
@@ -297,14 +297,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
         ObjectName name = getCamelObjectName(TYPE_ENDPOINT, "mock://result");
 
-        try {
-            mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[] { 3, 1, false },
-                    new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" });
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("From index cannot be larger than to index, was: 3 > 1", e.getCause().getMessage());
-        }
+        Exception e = assertThrows(Exception.class, () -> mbeanServer.invoke(name, "browseRangeMessagesAsXml",
+                new Object[] { 3, 1, false },
+                new String[] { "java.lang.Integer", "java.lang.Integer", "java.lang.Boolean" }));
+        assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("From index cannot be larger than to index, was: 3 > 1", e.getCause().getMessage());
     }
 
     @Override

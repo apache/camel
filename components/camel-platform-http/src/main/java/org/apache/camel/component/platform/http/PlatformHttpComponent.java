@@ -64,6 +64,13 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
     @Metadata(label = "advanced,consumer",
               description = "The period in milliseconds after which the request should be timed out.")
     private long requestTimeout;
+    @Metadata(label = "advanced,consumer", defaultValue = "true",
+              description = "Whether HTTP server should do preliminary validation of incoming requests, validating if Content-Type/Accept header, matches what"
+                            + " is allowed according to consumes/produces configuration (if set). If validation fails HTTP Status 415/406 is returned."
+                            + " The HTTP server performs this validation before Camel is involved, and as such if validation fails then Camel is never activated."
+                            + " Setting this option to false, allows Camel to process any incoming requests such as to do custom validation"
+                            + " or all requests must be handled by Camel.")
+    private boolean serverRequestValidation = true;
 
     private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
     private final Set<HttpEndpointModel> httpManagementEndpoints = new TreeSet<>();
@@ -246,6 +253,14 @@ public class PlatformHttpComponent extends HeaderFilterStrategyComponent
 
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
+    }
+
+    public boolean isServerRequestValidation() {
+        return serverRequestValidation;
+    }
+
+    public void setServerRequestValidation(boolean serverRequestValidation) {
+        this.serverRequestValidation = serverRequestValidation;
     }
 
     private Consumer doCreateConsumer(

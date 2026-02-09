@@ -22,7 +22,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ToDynamicTest extends ContextTestSupport {
 
@@ -39,12 +39,9 @@ public class ToDynamicTest extends ContextTestSupport {
 
     @Test
     public void testToDynamicInvalid() {
-        try {
-            template.sendBody("direct:start", "Hello Camel");
-            fail("Should fail");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello Camel"));
+        assertIsInstanceOf(ResolveEndpointFailedException.class, exception.getCause());
     }
 
     @Override

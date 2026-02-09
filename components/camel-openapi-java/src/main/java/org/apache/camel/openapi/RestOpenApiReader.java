@@ -693,19 +693,18 @@ public class RestOpenApiReader {
                 op.setResponses(new ApiResponses());
             }
 
-            String[] parts;
             if (produces != null) {
-                parts = produces.split(",");
+                ApiResponse response = new ApiResponse().description("OK");
+                Content responseContent = new Content();
+                Schema<?> model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi);
+                String[] parts = produces.split(",");
                 for (String produce : parts) {
-                    ApiResponse response = new ApiResponse().description("Output type"); // ??
-                    Content responseContent = new Content();
                     MediaType contentType = new MediaType();
-                    responseContent.addMediaType(produce, contentType);
-                    Schema<?> model = modelTypeAsProperty(getValue(camelContext, verb.getOutType()), openApi);
                     contentType.setSchema(model);
-                    response.setContent(responseContent);
-                    op.getResponses().addApiResponse("200", response);
+                    responseContent.addMediaType(produce, contentType);
                 }
+                response.setContent(responseContent);
+                op.getResponses().addApiResponse("200", response);
             }
         }
 

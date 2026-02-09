@@ -28,22 +28,35 @@ import com.sun.net.httpserver.HttpHandler;
  * Dispatcher that routes incoming requests to the appropriate request handler.
  */
 public class OpenAIMockServerHandler implements HttpHandler {
-    private final RequestHandler requestHandler;
+    private final RequestHandler chatRequestHandler;
+    private final EmbeddingRequestHandler embeddingRequestHandler;
 
-    public OpenAIMockServerHandler(List<MockExpectation> expectations, ObjectMapper objectMapper) {
-        this.requestHandler = new RequestHandler(expectations, objectMapper);
+    public OpenAIMockServerHandler(List<MockExpectation> expectations,
+                                   List<EmbeddingExpectation> embeddingExpectations,
+                                   ObjectMapper objectMapper) {
+        this.chatRequestHandler = new RequestHandler(expectations, objectMapper);
+        this.embeddingRequestHandler = new EmbeddingRequestHandler(embeddingExpectations, objectMapper);
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
             try {
-                byte[] response = requestHandler.handleRequest(exchange).getBytes();
+                String path = exchange.getRequestURI().getPath();
+                String response;
+
+                if (path.endsWith("/embeddings")) {
+                    response = embeddingRequestHandler.handleRequest(exchange);
+                } else {
+                    response = chatRequestHandler.handleRequest(exchange);
+                }
+
+                byte[] responseBytes = response.getBytes();
                 if (exchange.getResponseCode() == -1) {
-                    exchange.sendResponseHeaders(200, response.length);
+                    exchange.sendResponseHeaders(200, responseBytes.length);
                 }
                 try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(response);
+                    os.write(responseBytes);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

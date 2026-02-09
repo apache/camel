@@ -18,15 +18,15 @@ package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RestNettyHttpBindingModeXmlTest extends BaseNettyTest {
+public class RestNettyHttpBindingModeXmlTest extends BaseNettyTestSupport {
 
     @Test
     public void testBindingMode() throws Exception {
@@ -52,12 +52,9 @@ public class RestNettyHttpBindingModeXmlTest extends BaseNettyTest {
 
         // we bind to xml, but send in json, which is not possible
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        try {
-            template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-        }
+        assertThrows(Exception.class,
+                () -> template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body),
+                "Should have thrown exception");
 
         MockEndpoint.assertIsSatisfied(context);
     }

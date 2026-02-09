@@ -8,10 +8,10 @@
     "firstVersion": "4.9.0",
     "label": "dataformat,transformation",
     "javaType": "org.apache.camel.component.fory.ForyDataFormat",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-fory",
-    "version": "4.17.0-SNAPSHOT",
+    "version": "4.18.0-SNAPSHOT",
     "modelName": "fory",
     "modelJavaType": "org.apache.camel.model.dataformat.ForyDataFormat"
   },

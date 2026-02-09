@@ -37,6 +37,7 @@ public class LabelTrait extends BaseTrait {
                         .addToLabels(KUBERNETES_LABEL_NAME, context.getName())
                         .addToLabels(context.getLabels())
                         .endMetadata());
+
         context.doWithServices(
                 s -> s.editOrNewMetadata()
                         .addToLabels(KUBERNETES_LABEL_NAME, context.getName())

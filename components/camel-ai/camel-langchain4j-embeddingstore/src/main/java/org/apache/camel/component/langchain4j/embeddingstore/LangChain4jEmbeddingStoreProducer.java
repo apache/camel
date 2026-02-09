@@ -18,6 +18,7 @@ package org.apache.camel.component.langchain4j.embeddingstore;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
@@ -75,13 +76,18 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
 
-        final LangChain4jEmbeddingStoreAction action
+        // Get action from header, fallback to endpoint configuration
+        LangChain4jEmbeddingStoreAction action
                 = in.getHeader(LangChain4jEmbeddingStoreHeaders.ACTION, LangChain4jEmbeddingStoreAction.class);
+        if (action == null) {
+            action = getEndpoint().getConfiguration().getAction();
+        }
 
         try {
             if (action == null) {
                 throw new NoSuchHeaderException(
-                        "The action is a required header", exchange, LangChain4jEmbeddingStoreHeaders.ACTION);
+                        "The action is a required header or endpoint property", exchange,
+                        LangChain4jEmbeddingStoreHeaders.ACTION);
             }
 
             switch (action) {
@@ -182,35 +188,50 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
      */
     private void search(Exchange exchange) throws Exception {
         final Message in = exchange.getMessage();
-        Embedding embedding = null;
-        if (in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING) != null) {
-            embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
-        }
+        LangChain4jEmbeddingStoreConfiguration config = getEndpoint().getConfiguration();
 
-        int maxResults = Integer.parseInt(LangChain4jEmbeddingStore.DEFAULT_MAX_RESULTS);
-        if (in.getHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, Integer.class) != null) {
-            maxResults = in.getHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, Integer.class);
+        Embedding embedding = in.getHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, Embedding.class);
+
+        // Get maxResults from header, fallback to endpoint config
+        Integer maxResults = in.getHeader(LangChain4jEmbeddingStoreHeaders.MAX_RESULTS, Integer.class);
+        if (maxResults == null) {
+            maxResults = config.getMaxResults();
         }
 
         EmbeddingSearchRequestBuilder esrb = EmbeddingSearchRequest.builder()
                 .queryEmbedding(embedding)
                 .maxResults(maxResults);
 
-        if (in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Integer.class) != null) {
-            Double minScore = in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Double.class);
+        // Get minScore from header, fallback to endpoint config
+        Double minScore = in.getHeader(LangChain4jEmbeddingStoreHeaders.MIN_SCORE, Double.class);
+        if (minScore == null) {
+            minScore = config.getMinScore();
+        }
+        if (minScore != null) {
             esrb = esrb.minScore(minScore);
         }
 
-        if (in.getHeader(LangChain4jEmbeddingStoreHeaders.FILTER, Filter.class) != null) {
-            Filter filter = in.getHeader(LangChain4jEmbeddingStoreHeaders.FILTER, Filter.class);
+        Filter filter = in.getHeader(LangChain4jEmbeddingStoreHeaders.FILTER, Filter.class);
+        if (filter != null) {
             esrb = esrb.filter(filter);
         }
-        EmbeddingSearchRequest embeddingSearchRequest = esrb.build();
 
-        List<EmbeddingMatch<TextSegment>> result
-                = getEndpoint().getConfiguration().getEmbeddingStore().search(embeddingSearchRequest).matches();
+        EmbeddingSearchRequest embeddingSearchRequest = esrb.build();
+        List<EmbeddingMatch<TextSegment>> matches
+                = config.getEmbeddingStore().search(embeddingSearchRequest).matches();
+
         Message out = exchange.getMessage();
-        out.setBody(result);
+
+        // Return text content if configured
+        if (config.isReturnTextContent()) {
+            List<String> texts = matches.stream()
+                    .filter(m -> m.embedded() != null)
+                    .map(m -> m.embedded().text())
+                    .collect(Collectors.toList());
+            out.setBody(texts);
+        } else {
+            out.setBody(matches);
+        }
     }
 
     private CamelContext getCamelContext() {

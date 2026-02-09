@@ -35,6 +35,7 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 /**
  * The Olingo2 consumer.
  */
+@Deprecated(since = "4.18")
 public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2Configuration> {
 
     private Olingo2Index resultIndex;

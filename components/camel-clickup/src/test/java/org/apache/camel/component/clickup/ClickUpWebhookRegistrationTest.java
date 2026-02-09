@@ -81,7 +81,7 @@ public class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
                 assertInstanceOf(WebhookCreationCommand.class, command);
             } catch (IOException e) {
-                fail(e);
+                throw new AssertionError("Failed to parse recorded message", e);
             }
 
             mockProcessor.clearRecordedMessages();

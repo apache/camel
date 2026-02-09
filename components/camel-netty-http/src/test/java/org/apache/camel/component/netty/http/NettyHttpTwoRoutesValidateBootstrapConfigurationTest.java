@@ -19,10 +19,10 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNettyTest {
+public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNettyTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -44,12 +44,10 @@ public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNe
                         .transform().constant("Bye Camel");
             }
         });
-        try {
-            context.start();
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Bootstrap configuration must be identical when adding additional consumer"));
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> context.start(),
+                "Should have thrown exception");
+        assertTrue(e.getMessage().startsWith("Bootstrap configuration must be identical when adding additional consumer"));
     }
 
 }

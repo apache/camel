@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.athena;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -132,6 +133,7 @@ public class Athena2Producer extends DefaultProducer {
             GetQueryResultsRequest request = doGetQueryResultsRequest(queryExecutionId, exchange).build();
             GetQueryResultsResponse response = athenaClient.getQueryResults(request);
             message.setHeader(Athena2Constants.NEXT_TOKEN, response.nextToken());
+            message.setHeader(Athena2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
             message.setBody(response);
         } else if (outputType == Athena2OutputType.S3Pointer) {
             GetQueryExecutionResponse response = doGetQueryExecution(queryExecutionId, athenaClient);
@@ -148,14 +150,12 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private Athena2OutputType determineOutputType(Exchange exchange) {
-        Athena2OutputType outputType = exchange.getIn().getHeader(Athena2Constants.OUTPUT_TYPE, Athena2OutputType.class);
-
-        if (ObjectHelper.isEmpty(outputType)) {
-            outputType = getConfiguration().getOutputType();
-            LOG.trace("AWS Athena output type is missing, using default one [{}]", outputType);
-        }
-
-        return outputType;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.OUTPUT_TYPE,
+                Athena2OutputType.class,
+                () -> getConfiguration().getOutputType(),
+                "output type");
     }
 
     private GetQueryResultsRequest.Builder doGetQueryResultsRequest(String queryExecutionId, Exchange exchange) {
@@ -190,6 +190,7 @@ public class Athena2Producer extends DefaultProducer {
         ListQueryExecutionsResponse response = athenaClient.listQueryExecutions(request.build());
         Message message = getMessageForResponse(exchange);
         message.setHeader(Athena2Constants.NEXT_TOKEN, response.nextToken());
+        message.setHeader(Athena2Constants.IS_TRUNCATED, ObjectHelper.isNotEmpty(response.nextToken()));
         message.setBody(response);
     }
 
@@ -281,72 +282,58 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private String determineQueryExecutionId(final Exchange exchange) {
-        String queryExecutionId = exchange.getIn().getHeader(Athena2Constants.QUERY_EXECUTION_ID, String.class);
-
-        if (ObjectHelper.isEmpty(queryExecutionId)) {
-            queryExecutionId = getConfiguration().getQueryExecutionId();
-        }
-
-        if (ObjectHelper.isEmpty(queryExecutionId)) {
-            throw new IllegalArgumentException("AWS Athena query execution id is required.");
-        }
-
-        return queryExecutionId;
+        return getRequiredHeader(
+                exchange,
+                Athena2Constants.QUERY_EXECUTION_ID,
+                String.class,
+                () -> getConfiguration().getQueryExecutionId(),
+                "AWS Athena query execution id is required.");
     }
 
     private Integer determineMaxResults(final Exchange exchange) {
-        Integer maxResults = exchange.getIn().getHeader(Athena2Constants.MAX_RESULTS, Integer.class);
-
-        if (ObjectHelper.isEmpty(maxResults)) {
-            maxResults = getConfiguration().getMaxResults();
-            LOG.trace("AWS Athena max results is missing, using default one [{}]", maxResults);
-        }
-
-        return maxResults;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.MAX_RESULTS,
+                Integer.class,
+                () -> getConfiguration().getMaxResults(),
+                "max results");
     }
 
     private boolean determineIncludeTrace(final Exchange exchange) {
-        Boolean includeTrace = exchange.getIn().getHeader(Athena2Constants.INCLUDE_TRACE, Boolean.class);
-
-        if (ObjectHelper.isEmpty(includeTrace)) {
-            includeTrace = getConfiguration().isIncludeTrace();
-            LOG.trace("AWS Athena include trace is missing, using default one [{}]", includeTrace);
-        }
-
-        return includeTrace;
+        Boolean includeTrace = getOptionalHeader(
+                exchange,
+                Athena2Constants.INCLUDE_TRACE,
+                Boolean.class,
+                () -> getConfiguration().isIncludeTrace(),
+                "include trace");
+        return ObjectHelper.isNotEmpty(includeTrace) ? includeTrace : false;
     }
 
     private String determineNextToken(final Exchange exchange) {
-        String nextToken = exchange.getIn().getHeader(Athena2Constants.NEXT_TOKEN, String.class);
-
-        if (ObjectHelper.isEmpty(nextToken)) {
-            nextToken = getConfiguration().getNextToken();
-            LOG.trace("AWS Athena next token is missing, using default one [{}]", nextToken);
-        }
-
-        return nextToken;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.NEXT_TOKEN,
+                String.class,
+                () -> getConfiguration().getNextToken(),
+                "next token");
     }
 
     private String determineClientRequestToken(final Exchange exchange) {
-        String clientRequestToken = exchange.getIn().getHeader(Athena2Constants.CLIENT_REQUEST_TOKEN, String.class);
-
-        if (ObjectHelper.isEmpty(clientRequestToken)) {
-            clientRequestToken = getConfiguration().getClientRequestToken();
-            LOG.trace("AWS Athena client request token is missing, using default one [{}]", clientRequestToken);
-        }
-
-        return clientRequestToken;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.CLIENT_REQUEST_TOKEN,
+                String.class,
+                () -> getConfiguration().getClientRequestToken(),
+                "client request token");
     }
 
     private String determineDatabase(final Exchange exchange) {
-        String database = exchange.getIn().getHeader(Athena2Constants.DATABASE, String.class);
-
-        if (ObjectHelper.isEmpty(database)) {
-            database = getConfiguration().getDatabase();
-            LOG.trace("AWS Athena database is missing, using default one [{}]", database);
-        }
-
-        return database;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.DATABASE,
+                String.class,
+                () -> getConfiguration().getDatabase(),
+                "database");
     }
 
     private String determineQueryString(final Exchange exchange) {
@@ -377,51 +364,39 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private EncryptionOption determineEncryptionOption(final Exchange exchange) {
-        EncryptionOption encryptionOption
-                = exchange.getIn().getHeader(Athena2Constants.ENCRYPTION_OPTION, EncryptionOption.class);
-
-        if (ObjectHelper.isEmpty(encryptionOption)) {
-            encryptionOption = getConfiguration().getEncryptionOption();
-            LOG.trace("AWS Athena encryption option is missing, using default one [{}]", encryptionOption);
-        }
-
-        return encryptionOption;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.ENCRYPTION_OPTION,
+                EncryptionOption.class,
+                () -> getConfiguration().getEncryptionOption(),
+                "encryption option");
     }
 
     private String determineKmsKey(final Exchange exchange) {
-        String kmsKey = exchange.getIn().getHeader(Athena2Constants.KMS_KEY, String.class);
-
-        if (ObjectHelper.isEmpty(kmsKey)) {
-            kmsKey = getConfiguration().getKmsKey();
-            LOG.trace("AWS Athena kms key is missing, using default one [{}]", kmsKey);
-        }
-
-        return kmsKey;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.KMS_KEY,
+                String.class,
+                () -> getConfiguration().getKmsKey(),
+                "kms key");
     }
 
     private String determineOutputLocation(final Exchange exchange) {
-        String outputLocation = exchange.getIn().getHeader(Athena2Constants.OUTPUT_LOCATION, String.class);
-
-        if (ObjectHelper.isEmpty(outputLocation)) {
-            outputLocation = getConfiguration().getOutputLocation();
-        }
-
-        if (ObjectHelper.isEmpty(outputLocation)) {
-            throw new IllegalArgumentException("AWS Athena output location is required.");
-        }
-
-        return outputLocation;
+        return getRequiredHeader(
+                exchange,
+                Athena2Constants.OUTPUT_LOCATION,
+                String.class,
+                () -> getConfiguration().getOutputLocation(),
+                "AWS Athena output location is required.");
     }
 
     private String determineWorkGroup(final Exchange exchange) {
-        String workGroup = exchange.getIn().getHeader(Athena2Constants.WORK_GROUP, String.class);
-
-        if (ObjectHelper.isEmpty(workGroup)) {
-            workGroup = getConfiguration().getWorkGroup();
-            LOG.trace("AWS Athena work group is missing, using default one [{}]", workGroup);
-        }
-
-        return workGroup;
+        return getOptionalHeader(
+                exchange,
+                Athena2Constants.WORK_GROUP,
+                String.class,
+                () -> getConfiguration().getWorkGroup(),
+                "work group");
     }
 
     protected Athena2Configuration getConfiguration() {
@@ -433,6 +408,59 @@ public class Athena2Producer extends DefaultProducer {
         return (Athena2Endpoint) super.getEndpoint();
     }
 
+    /**
+     * Gets an optional value from the exchange header, falling back to configuration if not present.
+     *
+     * @param  exchange           the Camel exchange
+     * @param  headerName         the header name to check
+     * @param  headerType         the expected type
+     * @param  configurationValue supplier for the configuration fallback value
+     * @param  parameterName      name of the parameter for logging
+     * @param  <T>                the value type
+     * @return                    the value from header or configuration, may be null
+     */
+    private <T> T getOptionalHeader(
+            Exchange exchange,
+            String headerName,
+            Class<T> headerType,
+            Supplier<T> configurationValue,
+            String parameterName) {
+        T value = exchange.getIn().getHeader(headerName, headerType);
+        if (ObjectHelper.isEmpty(value)) {
+            value = configurationValue.get();
+            LOG.trace("AWS Athena {} is missing, using default one [{}]", parameterName, value);
+        }
+        return value;
+    }
+
+    /**
+     * Gets a required value from the exchange header, falling back to configuration if not present.
+     *
+     * @param  exchange                 the Camel exchange
+     * @param  headerName               the header name to check
+     * @param  headerType               the expected type
+     * @param  configurationValue       supplier for the configuration fallback value
+     * @param  errorMessage             error message if value is not found
+     * @param  <T>                      the value type
+     * @return                          the value from header or configuration
+     * @throws IllegalArgumentException if value is not found in header or configuration
+     */
+    private <T> T getRequiredHeader(
+            Exchange exchange,
+            String headerName,
+            Class<T> headerType,
+            Supplier<T> configurationValue,
+            String errorMessage) {
+        T value = exchange.getIn().getHeader(headerName, headerType);
+        if (ObjectHelper.isEmpty(value)) {
+            value = configurationValue.get();
+        }
+        if (ObjectHelper.isEmpty(value)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+        return value;
+    }
+
     @Override
     protected void doStart() throws Exception {
         // health-check is optional so discover and resolve
@@ -441,7 +469,7 @@ public class Athena2Producer extends DefaultProducer {
                 "producers",
                 WritableHealthCheckRepository.class);
 
-        if (healthCheckRepository != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository)) {
             String id = getEndpoint().getId();
             producerHealthCheck = new Athena2ProducerHealthCheck(getEndpoint(), id);
             producerHealthCheck.setEnabled(getEndpoint().getComponent().isHealthCheckProducerEnabled());
@@ -451,7 +479,7 @@ public class Athena2Producer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (healthCheckRepository != null && producerHealthCheck != null) {
+        if (ObjectHelper.isNotEmpty(healthCheckRepository) && ObjectHelper.isNotEmpty(producerHealthCheck)) {
             healthCheckRepository.removeHealthCheck(producerHealthCheck);
             producerHealthCheck = null;
         }

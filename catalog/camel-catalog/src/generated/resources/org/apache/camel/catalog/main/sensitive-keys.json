@@ -58,6 +58,7 @@
   "refreshtoken",
   "sascredential",
   "sasljaasconfig",
+  "saslpassword",
   "sassignature",
   "secret",
   "secretkey",

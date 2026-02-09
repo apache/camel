@@ -19,8 +19,8 @@ package org.apache.camel.component.hazelcast;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
 
@@ -31,14 +31,12 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
                 from("hazelcast-atomicvalue:foo").to("seda:out");
             }
         };
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(builder);
             context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getCause().getMessage()
-                    .contains("You cannot send messages to this endpoint: hazelcast-atomicvalue://foo"));
-        }
+        });
+        assertTrue(e.getCause().getMessage()
+                .contains("You cannot send messages to this endpoint: hazelcast-atomicvalue://foo"));
     }
 
     @Test
@@ -49,14 +47,12 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
             }
         };
 
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.addRoutes(builder);
             context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(
-                    e.getCause().getMessage().contains("You cannot send messages to this endpoint: hazelcast-instance://foo"));
-        }
+        });
+        assertTrue(
+                e.getCause().getMessage().contains("You cannot send messages to this endpoint: hazelcast-instance://foo"));
     }
 
     @Override

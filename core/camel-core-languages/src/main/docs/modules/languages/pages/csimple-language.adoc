@@ -187,7 +187,9 @@ include::partial$language-options.adoc[]
 Currently, the csimple language does **not** support:
 
 - nested functions (aka functions inside functions)
-- the _null safe_ operator (`?`).
+- the _null safe_ operator (`?.`).
+
+NOTE: The ternary operator (`? :`) IS supported in csimple. The limitation above refers only to the null-safe operator used in OGNL expressions (e.g., `${body?.address}`).
 
 For example the following scripts cannot compile:
 
@@ -254,4 +256,6 @@ The _echo()_ alias will be replaced with its value resulting in a script as:
 
 See the xref:simple-language.adoc[Simple] language as csimple has the same set of functions as simple language.
 
-include::spring-boot:partial$starter.adoc[]
+== Dependencies
+
+The CSimple language is part of *camel-core* and also requires *camel-simple-joor* JAR.

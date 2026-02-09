@@ -30,8 +30,8 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
     public String getHttpMethod(Exchange exchange, Endpoint endpoint) {
         // 1. Use method provided in header.
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
-        if (method instanceof String) {
-            return (String) method;
+        if (method instanceof String str) {
+            return str;
         } else if (method instanceof Enum) {
             return ((Enum<?>) method).name();
         } else if (method != null) {
@@ -76,12 +76,12 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
 
     protected String getHttpURL(Exchange exchange, Endpoint endpoint) {
         Object url = exchange.getIn().getHeader(Exchange.HTTP_URL);
-        if (url instanceof String) {
-            return (String) url;
+        if (url instanceof String str) {
+            return str;
         } else {
             Object uri = exchange.getIn().getHeader(Exchange.HTTP_URI);
-            if (uri instanceof String) {
-                return (String) uri;
+            if (uri instanceof String str) {
+                return str;
             } else {
                 // Try to obtain from endpoint
                 int index = endpoint.getEndpointUri().lastIndexOf("http:");

@@ -1,0 +1,15 @@
+{
+  "console": {
+    "kind": "console",
+    "group": "camel",
+    "name": "eval-language",
+    "title": "Evaluate Language",
+    "description": "Evaluate Language and display result",
+    "deprecated": false,
+    "javaType": "org.apache.camel.impl.console.EvalLanguageDevConsole",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-console",
+    "version": "4.18.0-SNAPSHOT"
+  }
+}
+

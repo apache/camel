@@ -23,7 +23,9 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
 
@@ -49,14 +51,11 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "B", "id", 1);
 
         // should be closed
-        try {
-            template.sendBodyAndHeader("direct:start", "C", "id", 1);
-            fail("Should throw an exception");
-        } catch (CamelExecutionException e) {
-            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
-            assertEquals("1", cause.getCorrelationKey());
-            assertTrue(cause.getMessage().startsWith("The correlation key [1] has been closed."));
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start", "C", "id", 1));
+        ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
+        assertEquals("1", cause.getCorrelationKey());
+        assertTrue(cause.getMessage().startsWith("The correlation key [1] has been closed."));
 
         assertMockEndpointsSatisfied();
     }
@@ -88,9 +87,9 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         // the two last used
         try {
             template.sendBodyAndHeader("direct:start", "G", "id", 1);
-        } catch (CamelExecutionException e) {
+        } catch (CamelExecutionException ex) {
             closed++;
-            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
+            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, ex.getCause());
             assertEquals("1", cause.getCorrelationKey());
             assertTrue(cause.getMessage().startsWith("The correlation key [1] has been closed."));
         }
@@ -98,9 +97,9 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         // should be closed
         try {
             template.sendBodyAndHeader("direct:start", "H", "id", 2);
-        } catch (CamelExecutionException e) {
+        } catch (CamelExecutionException ex) {
             closed++;
-            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
+            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, ex.getCause());
             assertEquals("2", cause.getCorrelationKey());
             assertTrue(cause.getMessage().startsWith("The correlation key [2] has been closed."));
         }
@@ -108,9 +107,9 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         // should be closed
         try {
             template.sendBodyAndHeader("direct:start", "I", "id", 3);
-        } catch (CamelExecutionException e) {
+        } catch (CamelExecutionException ex) {
             closed++;
-            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, e.getCause());
+            ClosedCorrelationKeyException cause = assertIsInstanceOf(ClosedCorrelationKeyException.class, ex.getCause());
             assertEquals("3", cause.getCorrelationKey());
             assertTrue(cause.getMessage().startsWith("The correlation key [3] has been closed."));
         }

@@ -25,23 +25,27 @@ public final class FileWatchConstants {
     public static final String EVENT_TYPE_HEADER = "CamelFileEventType";
     @Metadata(description = "Only the file name (the name with no leading paths).", javaType = "String")
     public static final String FILE_NAME_ONLY = Exchange.FILE_NAME_ONLY;
-    @Metadata(description = "A `boolean` option specifying whether the consumed file denotes an\n" +
-                            "absolute path or not. Should normally be `false` for relative paths.\n" +
-                            "Absolute paths should normally not be used but we added to the move\n" +
-                            "option to allow moving files to absolute paths. But can be used\n" +
-                            "elsewhere as well.",
+    @Metadata(description = """
+            A `boolean` option specifying whether the consumed file denotes an
+            absolute path or not. Should normally be `false` for relative paths.
+            Absolute paths should normally not be used but we added to the move
+            option to allow moving files to absolute paths. But can be used
+            elsewhere as well.""",
               javaType = "Boolean")
     public static final String FILE_ABSOLUTE = "CamelFileAbsolute";
-    @Metadata(description = "The absolute path to the file. For relative files this path holds the\n" +
-                            "relative path instead.",
+    @Metadata(description = """
+            The absolute path to the file. For relative files this path holds the
+            relative path instead.""",
               javaType = "String")
     public static final String FILE_ABSOLUTE_PATH = "CamelFileAbsolutePath";
-    @Metadata(description = "The file path. For relative files this is the starting directory + the\n" +
-                            "relative filename. For absolute files this is the absolute path.",
+    @Metadata(description = """
+            The file path. For relative files this is the starting directory + the
+            relative filename. For absolute files this is the absolute path.""",
               javaType = "String")
     public static final String FILE_PATH = Exchange.FILE_PATH;
-    @Metadata(description = "Name of the consumed file as a relative file path with offset from the\n" +
-                            "starting directory configured on the endpoint.",
+    @Metadata(description = """
+            Name of the consumed file as a relative file path with offset from the
+            starting directory configured on the endpoint.""",
               javaType = "String", important = true)
     public static final String FILE_NAME = Exchange.FILE_NAME;
     @Metadata(description = "The relative path.", javaType = "String")

@@ -26,6 +26,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for Olingo4 component.
  */
+@Deprecated(since = "4.18")
 public final class Olingo4PropertiesHelper extends ApiMethodPropertiesHelper<Olingo4Configuration> {
 
     private static final Lock LOCK = new ReentrantLock();

@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.qdrant.Qdrant;
 import org.apache.camel.component.qdrant.QdrantAction;
 import org.apache.camel.component.qdrant.QdrantComponent;
+import org.apache.camel.component.qdrant.QdrantHeaders;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.test.infra.qdrant.services.QdrantService;
 import org.apache.camel.test.infra.qdrant.services.QdrantServiceFactory;
@@ -70,7 +71,7 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
     @Order(1)
     public void createCollection() {
         Exchange result = fluentTemplate.to(QDRANT_URI)
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.CREATE_COLLECTION)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.CREATE_COLLECTION)
                 .withBody(
                         Collections.VectorParams.newBuilder()
                                 .setSize(384)
@@ -96,7 +97,7 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
     @Order(3)
     public void retrieve() {
         Exchange result = fluentTemplate.to(QDRANT_URI)
-                .withHeader(Qdrant.Headers.ACTION, QdrantAction.RETRIEVE)
+                .withHeader(QdrantHeaders.ACTION, QdrantAction.RETRIEVE)
                 .withBody(PointIdFactory.id(POINT_ID))
                 .request(Exchange.class);
 
@@ -126,8 +127,8 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
             public void configure() {
                 from("direct:in")
                         .to("langchain4j-embeddings:test")
-                        .setHeader(Qdrant.Headers.ACTION).constant(QdrantAction.UPSERT)
-                        .setHeader(Qdrant.Headers.POINT_ID).constant(POINT_ID)
+                        .setHeader(QdrantHeaders.ACTION).constant(QdrantAction.UPSERT)
+                        .setHeader(QdrantHeaders.POINT_ID).constant(POINT_ID)
                         // transform data to embed to a vecto embeddings
                         .transformDataType(
                                 new DataType("qdrant:embeddings"))
@@ -138,9 +139,9 @@ public class LangChain4jEmbeddingsComponentQdrantTargetIT extends CamelTestSuppo
                         // transform prompt into embeddings for search
                         .transformDataType(
                                 new DataType("qdrant:embeddings"))
-                        .setHeader(Qdrant.Headers.ACTION, constant(QdrantAction.SIMILARITY_SEARCH))
-                        .setHeader(Qdrant.Headers.INCLUDE_VECTORS, constant(true))
-                        .setHeader(Qdrant.Headers.INCLUDE_PAYLOAD, constant(true))
+                        .setHeader(QdrantHeaders.ACTION, constant(QdrantAction.SIMILARITY_SEARCH))
+                        .setHeader(QdrantHeaders.INCLUDE_VECTORS, constant(true))
+                        .setHeader(QdrantHeaders.INCLUDE_PAYLOAD, constant(true))
                         .to(QDRANT_URI)
                         // decode retrieved embeddings for RAG
                         .transformDataType(

@@ -51,6 +51,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "responsePayloadAsByteArray": target.setResponsePayloadAsByteArray(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
+        case "tracingpolicy":
+        case "tracingPolicy": target.setTracingPolicy(property(camelContext, io.vertx.core.tracing.TracingPolicy.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
         case "vertx": target.setVertx(property(camelContext, io.vertx.core.Vertx.class, value)); return true;
@@ -95,6 +97,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "responsePayloadAsByteArray": return boolean.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
+        case "tracingpolicy":
+        case "tracingPolicy": return io.vertx.core.tracing.TracingPolicy.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
         case "vertx": return io.vertx.core.Vertx.class;
@@ -140,6 +144,8 @@ public class VertxHttpComponentConfigurer extends PropertyConfigurerSupport impl
         case "responsePayloadAsByteArray": return target.isResponsePayloadAsByteArray();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
+        case "tracingpolicy":
+        case "tracingPolicy": return target.getTracingPolicy();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();
         case "vertx": return target.getVertx();

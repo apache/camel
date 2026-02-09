@@ -21,39 +21,39 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "function", annotations = { "prefix=${", "suffix=}" })
 public final class FileConstants {
 
-    @Metadata(description = "The file name (relative from starting directory)", javaType = "String", label = "function")
+    @Metadata(description = "The file name (relative from starting directory)", javaType = "String", label = "file")
     public static final String FILE_NAME = "file:name";
     @Metadata(description = "The file name (relative from starting directory) without extension", javaType = "String",
-              label = "function")
+              label = "file")
     public static final String FILE_NO_EXT = "file:name.noext";
     @Metadata(description = "The file name (relative from starting directory) without extension. If the file name has multiple dots, then this expression strips and only returns the last part.",
-              javaType = "String", label = "function")
+              javaType = "String", label = "file")
     public static final String FILE_NO_EXT_SINGLE = "file:name.noext.single";
-    @Metadata(description = "The file extension", javaType = "String", label = "function")
+    @Metadata(description = "The file extension", javaType = "String", label = "file")
     public static final String FILE_EXT = "file:name.ext";
     @Metadata(description = "The file extension. If the file extension has multiple dots, then this expression strips and only returns the last part.",
-              javaType = "String", label = "function")
+              javaType = "String", label = "file")
     public static final String FILE_EXT_SINGLE = "file:name.ext.single";
-    @Metadata(description = "†he file name (without any leading paths)", javaType = "String", label = "function")
+    @Metadata(description = "†he file name (without any leading paths)", javaType = "String", label = "file")
     public static final String FILE_ONLY_NAME = "file:onlyname";
     @Metadata(description = "†he file name (without any leading paths) without extension", javaType = "String",
-              label = "function")
+              label = "file")
     public static final String FILE_ONLY_NAME_NO_EXT = "file:onlyname.noext";
     @Metadata(description = "†he file name (without any leading paths) without extension. If the file name has multiple dots, then this expression strips and only returns the last part.",
-              javaType = "String", label = "function")
+              javaType = "String", label = "file")
     public static final String FILE_ONLY_NAME_NO_EXT_SINGLE = "file:onlyname.noext.single";
-    @Metadata(description = "The file parent directory (null if no parent directory)", javaType = "String", label = "function")
+    @Metadata(description = "The file parent directory (null if no parent directory)", javaType = "String", label = "file")
     public static final String FILE_PARENT = "file:parent";
-    @Metadata(description = "The file path", javaType = "String", label = "function")
+    @Metadata(description = "The file path", javaType = "String", label = "file")
     public static final String FILE_PATH = "file:path";
-    @Metadata(description = "Whether the file is regarded as absolute or relative", javaType = "boolean", label = "function")
+    @Metadata(description = "Whether the file is regarded as absolute or relative", javaType = "boolean", label = "file")
     public static final String FILE_ABSOLUTE = "file:absolute";
-    @Metadata(description = "The absolute file path", javaType = "String", label = "function")
+    @Metadata(description = "The absolute file path", javaType = "String", label = "file")
     public static final String FILE_ABSOLUTE_PATH = "file:absolute.path";
-    @Metadata(description = "The size of the file", javaType = "long", label = "function")
+    @Metadata(description = "The size of the file", javaType = "long", label = "file")
     public static final String FILE_LENGTH = "file:length";
-    @Metadata(description = "The size of the file", javaType = "long", label = "function")
+    @Metadata(description = "The size of the file", javaType = "long", label = "file")
     public static final String FILE_SIZE = "file:size";
-    @Metadata(description = "The file modification date", javaType = "long", label = "function")
+    @Metadata(description = "The file modification date", javaType = "long", label = "file")
     public static final String FILE_MODIFIED = "file:modified";
 }

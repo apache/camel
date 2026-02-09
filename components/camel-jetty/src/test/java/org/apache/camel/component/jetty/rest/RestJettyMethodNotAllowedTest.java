@@ -23,30 +23,28 @@ import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RestJettyMethodNotAllowedTest extends BaseJettyTest {
 
     @Test
     public void testMethodNotAllowed() {
-        try {
-            template.sendBody("http://localhost:" + getPort() + "/users/123/basic", "body");
-            fail("Shall not pass!");
-        } catch (Exception e) {
-            HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(405, hofe.getStatusCode());
-        }
+        Exception e = assertThrows(Exception.class,
+                () -> template.sendBody("http://localhost:" + getPort() + "/users/123/basic", "body"),
+                "Shall not pass!");
+
+        HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(405, hofe.getStatusCode());
     }
 
     @Test
     public void testMethodAllowed() {
-        try {
-            template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body", Exchange.HTTP_METHOD,
-                    "GET");
-        } catch (Exception e) {
-            fail("Shall pass with GET http method!");
-        }
+        assertDoesNotThrow(
+                () -> template.sendBodyAndHeader("http://localhost:" + getPort() + "/users/123/basic", "body",
+                        Exchange.HTTP_METHOD, "GET"),
+                "Shall pass with GET http method!");
     }
 
     @Override

@@ -24,11 +24,14 @@ import java.net.SocketException;
 import java.net.URI;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -89,9 +92,18 @@ public class AS2ServerConnection {
     private final String accessToken;
 
     /**
-     * Stores the configuration for each consumer endpoint path (e.g., "/consumerA")
+     * Stores the configuration for each consumer endpoint path (e.g., "/consumerA"). Uses LinkedHashMap to preserve
+     * insertion order, ensuring that when multiple patterns match a request, the first registered pattern (in route
+     * definition order) takes precedence.
      */
-    private final Map<String, AS2ConsumerConfiguration> consumerConfigurations = new ConcurrentHashMap<>();
+    private final Map<String, AS2ConsumerConfiguration> consumerConfigurations
+            = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    /**
+     * Cache of compiled regex patterns for wildcard matching. Key is the pattern string, value is the compiled Pattern
+     * object.
+     */
+    private final Map<String, Pattern> compiledPatterns = new ConcurrentHashMap<>();
 
     /**
      * Simple wrapper class to associate the AS2ConsumerConfiguration with the specific request URI path that was
@@ -160,13 +172,98 @@ public class AS2ServerConnection {
     }
 
     /**
-     * Retrieves the specific AS2 consumer configuration associated with the given request path.
+     * Retrieves the specific AS2 consumer configuration associated with the given request path. Supports wildcard
+     * patterns (e.g., "/consumer/*") in addition to exact matches.
+     *
+     * <p>
+     * Pattern matching examples:
+     * <ul>
+     * <li>Pattern "/consumer/*" matches "/consumer/orders", "/consumer/invoices", "/consumer/a/b/c"</li>
+     * <li>Pattern "/api/&#42;/orders" matches "/api/v1/orders", "/api/v2/orders"</li>
+     * <li>Pattern "/*" matches any path</li>
+     * </ul>
+     *
+     * <p>
+     * When multiple patterns match, the first registered pattern (in route definition order) takes precedence. Exact
+     * matches always take precedence over wildcard matches.
      *
      * @param  path The canonical request URI path (e.g., "/consumerA").
      * @return      An Optional containing the configuration if a match is found, otherwise empty.
      */
     public Optional<AS2ConsumerConfiguration> getConfigurationForPath(String path) {
-        return Optional.ofNullable(consumerConfigurations.get(path));
+        // First try exact match for performance - this is the most common case
+        AS2ConsumerConfiguration exactMatch = consumerConfigurations.get(path);
+        if (exactMatch != null) {
+            LOG.debug("Found exact match for path: {}", path);
+            return Optional.of(exactMatch);
+        }
+
+        LOG.debug("No exact match for path: {}, trying pattern matching", path);
+
+        // Then try pattern matching for wildcards - first match wins (in insertion order)
+        for (String pattern : consumerConfigurations.keySet()) {
+            if (matchesPattern(path, pattern)) {
+                LOG.debug("Path {} matched pattern: {}", path, pattern);
+                return Optional.ofNullable(consumerConfigurations.get(pattern));
+            }
+        }
+
+        LOG.debug("No pattern matched for path: {}", path);
+        return Optional.empty();
+    }
+
+    /**
+     * Checks if a request path matches a pattern that may contain wildcards. Supports wildcard '*' which matches any
+     * sequence of characters.
+     *
+     * <p>
+     * This method uses compiled regex patterns with caching for performance. All regex special characters in the
+     * pattern are properly escaped using Pattern.quote(), ensuring that only the wildcard '*' has special meaning.
+     *
+     * @param  requestPath the incoming request path
+     * @param  pattern     the pattern to match against (may contain wildcards)
+     * @return             true if the path matches the pattern, false otherwise
+     */
+    private boolean matchesPattern(String requestPath, String pattern) {
+        // Exact match - fast path
+        if (requestPath.equals(pattern)) {
+            return true;
+        }
+
+        // No wildcard in pattern, and not exact match
+        if (!pattern.contains("*")) {
+            return false;
+        }
+
+        // Get or compile the pattern
+        Pattern compiledPattern = getCompiledPattern(pattern);
+        return compiledPattern.matcher(requestPath).matches();
+    }
+
+    /**
+     * Gets a compiled regex Pattern for the given wildcard pattern string. Patterns are cached for performance.
+     *
+     * <p>
+     * This method splits the pattern by '*' and uses Pattern.quote() to properly escape all regex special characters in
+     * each segment, then joins them with '.*' to create the final regex pattern.
+     *
+     * @param  pattern the wildcard pattern string (e.g., "/consumer/*")
+     * @return         the compiled Pattern object
+     */
+    private Pattern getCompiledPattern(String pattern) {
+        return compiledPatterns.computeIfAbsent(pattern, p -> {
+            // Split by * and quote each segment, then join with .*
+            String[] segments = p.split("\\*", -1);
+            StringBuilder regex = new StringBuilder();
+            for (int i = 0; i < segments.length; i++) {
+                // Pattern.quote() properly escapes all regex special characters
+                regex.append(Pattern.quote(segments[i]));
+                if (i < segments.length - 1) {
+                    regex.append(".*");
+                }
+            }
+            return Pattern.compile(regex.toString());
+        });
     }
 
     /**
@@ -264,9 +361,9 @@ public class AS2ServerConnection {
         @Override
         public void process(HttpRequest request, EntityDetails entityDetails, HttpContext context)
                 throws HttpException, IOException {
-            if (request instanceof ClassicHttpRequest) {
+            if (request instanceof ClassicHttpRequest classicHttpRequest) {
                 // Now safely calling the method on the outer class instance (AS2ServerConnection.this)
-                AS2ServerConnection.this.setupConfigurationForRequest((ClassicHttpRequest) request, context);
+                AS2ServerConnection.this.setupConfigurationForRequest(classicHttpRequest, context);
             }
         }
     }

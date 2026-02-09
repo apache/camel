@@ -21,24 +21,20 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ThreadsCoreAndMaxPoolInvalidTest extends ContextTestSupport {
 
     @Test
     public void testInvalidSyntax() {
-        try {
-            context.addRoutes(new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("direct:start").threads(5, 2).to("mock:result");
-                }
-            });
+        Exception exception = assertThrows(Exception.class, () -> context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").threads(5, 2).to("mock:result");
+            }
+        }));
 
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("MaxPoolSize must be >= corePoolSize, was 2 >= 5", iae.getMessage());
-        }
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+        assertEquals("MaxPoolSize must be >= corePoolSize, was 2 >= 5", iae.getMessage());
     }
 }

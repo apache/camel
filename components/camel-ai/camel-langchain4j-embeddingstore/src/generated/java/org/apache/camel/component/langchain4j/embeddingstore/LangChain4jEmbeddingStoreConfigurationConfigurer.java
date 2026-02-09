@@ -23,10 +23,17 @@ public class LangChain4jEmbeddingStoreConfigurationConfigurer extends org.apache
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration target = (org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": target.setAction(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class, value)); return true;
         case "embeddingstore":
         case "embeddingStore": target.setEmbeddingStore(property(camelContext, dev.langchain4j.store.embedding.EmbeddingStore.class, value)); return true;
         case "embeddingstorefactory":
         case "embeddingStoreFactory": target.setEmbeddingStoreFactory(property(camelContext, org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory.class, value)); return true;
+        case "maxresults":
+        case "maxResults": target.setMaxResults(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "minscore":
+        case "minScore": target.setMinScore(property(camelContext, java.lang.Double.class, value)); return true;
+        case "returntextcontent":
+        case "returnTextContent": target.setReturnTextContent(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -34,10 +41,17 @@ public class LangChain4jEmbeddingStoreConfigurationConfigurer extends org.apache
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreAction.class;
         case "embeddingstore":
         case "embeddingStore": return dev.langchain4j.store.embedding.EmbeddingStore.class;
         case "embeddingstorefactory":
         case "embeddingStoreFactory": return org.apache.camel.component.langchain4j.embeddingstore.EmbeddingStoreFactory.class;
+        case "maxresults":
+        case "maxResults": return java.lang.Integer.class;
+        case "minscore":
+        case "minScore": return java.lang.Double.class;
+        case "returntextcontent":
+        case "returnTextContent": return boolean.class;
         default: return null;
         }
     }
@@ -46,10 +60,17 @@ public class LangChain4jEmbeddingStoreConfigurationConfigurer extends org.apache
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration target = (org.apache.camel.component.langchain4j.embeddingstore.LangChain4jEmbeddingStoreConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "action": return target.getAction();
         case "embeddingstore":
         case "embeddingStore": return target.getEmbeddingStore();
         case "embeddingstorefactory":
         case "embeddingStoreFactory": return target.getEmbeddingStoreFactory();
+        case "maxresults":
+        case "maxResults": return target.getMaxResults();
+        case "minscore":
+        case "minScore": return target.getMinScore();
+        case "returntextcontent":
+        case "returnTextContent": return target.isReturnTextContent();
         default: return null;
         }
     }

@@ -478,8 +478,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, cast(definition));
             } else if (target instanceof Enricher) {
                 answer = new ManagedEnricher(context, (Enricher) target, cast(definition));
-            } else if (target instanceof PollProcessor) {
-                answer = new ManagedPoll(context, (PollProcessor) target, cast(definition));
+            } else if (target instanceof PollProcessor pp) {
+                answer = new ManagedPoll(context, pp, cast(definition));
             } else if (target instanceof PollEnricher) {
                 answer = new ManagedPollEnricher(context, (PollEnricher) target, cast(definition));
             }

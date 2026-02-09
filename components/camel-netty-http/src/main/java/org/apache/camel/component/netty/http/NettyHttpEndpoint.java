@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.http;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
@@ -50,7 +49,7 @@ import org.slf4j.LoggerFactory;
           annotations = {
                   "protocol=http",
           })
-public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
+public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     static final String PROXY_NOT_SUPPORTED_MESSAGE = "Netty Http Producer does not support proxy mode";

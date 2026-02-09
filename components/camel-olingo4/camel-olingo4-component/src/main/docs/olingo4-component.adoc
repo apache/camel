@@ -1,10 +1,11 @@
-= Olingo4 Component
+= Olingo4 Component (deprecated)
 :doctitle: Olingo4
 :shortname: olingo4
 :artifactid: camel-olingo4
 :description: Communicate with OData 4.0 services using Apache Olingo OData API.
 :since: 2.19
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
@@ -13,6 +14,12 @@
 *Since Camel {since}*
 
 *{component-header}*
+
+[NOTE]
+====
+This component is deprecated since Camel 4.18 and will be removed in a future release.
+Apache Olingo project has been moved to the Apache Attic and is no longer maintained.
+====
 
 The Olingo4 component uses http://olingo.apache.org/[Apache Olingo]
 version 4.0 APIs to interact with OData 4.0 compliant service.

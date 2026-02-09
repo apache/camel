@@ -61,10 +61,10 @@ public class ResilienceConsole extends AbstractDevConsole {
             long npc = cb.getNumberOfNotPermittedCalls();
             float fr = cb.getFailureRate();
             if (fr > 0) {
-                sb.append(String.format("    %s/%s: %s (buffered: %d success: %d failure: %d/%.0f%% not-permitted: %d)\n", rid,
+                sb.append(String.format("    %s/%s: %s (buffered: %d success: %d failure: %d/%.0f%% not-permitted: %d)%n", rid,
                         id, state, bc, sc, fc, fr, npc));
             } else {
-                sb.append(String.format("    %s/%s: %s (buffered: %d success: %d failure: 0 not-permitted: %d)\n", rid, id,
+                sb.append(String.format("    %s/%s: %s (buffered: %d success: %d failure: 0 not-permitted: %d)%n", rid, id,
                         state, bc, sc, npc));
             }
         }

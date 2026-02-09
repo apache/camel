@@ -28,7 +28,7 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.crypto.cipher.AesCipherService;
 import org.apache.shiro.crypto.cipher.CipherService;
-import org.apache.shiro.ini.IniSecurityManagerFactory;
+import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.mgt.SecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,13 +57,13 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this();
         Ini ini = new Ini();
         ini.loadFromPath(iniResourcePath);
-        securityManager = new IniSecurityManagerFactory(ini).getInstance();
+        securityManager = new BasicIniEnvironment(ini).getSecurityManager();
         SecurityUtils.setSecurityManager(securityManager);
     }
 
     public ShiroSecurityPolicy(Ini ini) {
         this();
-        securityManager = new IniSecurityManagerFactory(ini).getInstance();
+        securityManager = new BasicIniEnvironment(ini).getSecurityManager();
         SecurityUtils.setSecurityManager(securityManager);
     }
 

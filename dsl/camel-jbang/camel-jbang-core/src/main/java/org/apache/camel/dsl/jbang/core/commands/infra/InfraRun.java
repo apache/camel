@@ -39,7 +39,7 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelJBangCommand;
+import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
 
 @CommandLine.Command(name = "run", description = "Run an external service", sortOptions = false, showDefaultValues = true)
 public class InfraRun extends InfraBaseCommand {
@@ -56,6 +56,10 @@ public class InfraRun extends InfraBaseCommand {
 
     @CommandLine.Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     boolean background;
+
+    @CommandLine.Option(names = { "--port" },
+                        description = "Override the default port for the service")
+    Integer port;
 
     public InfraRun(CamelJBangMain main) {
         super(main);
@@ -122,7 +126,7 @@ public class InfraRun extends InfraBaseCommand {
         cmds.remove("--background=true");
         cmds.remove("--background");
 
-        addCamelJBangCommand(cmds);
+        addCamelCLICommand(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
@@ -142,6 +146,13 @@ public class InfraRun extends InfraBaseCommand {
 
         String serviceInterface = testInfraService.service();
         String serviceImpl = testInfraService.implementation();
+
+        // Set the fixed port property BEFORE instantiating the service so it uses fixed ports
+        System.setProperty("camel.infra.fixedPort", "true");
+        // Set the port property if a specific port was requested
+        if (port != null) {
+            System.setProperty("camel.infra.port", String.valueOf(port));
+        }
 
         Object actualService = cl.loadClass(serviceImpl).newInstance();
 
@@ -167,12 +178,16 @@ public class InfraRun extends InfraBaseCommand {
             }
             printer().println("Starting service " + testService + prefix + " (PID: " + RuntimeUtil.getPid() + ")");
         }
+
         actualService.getClass().getMethod("initialize").invoke(actualService);
 
         Method[] serviceMethods = cl.loadClass(serviceInterface).getDeclaredMethods();
         Map<String, Object> properties = new TreeMap<>();
         for (Method method : serviceMethods) {
-            if (method.getParameterCount() == 0 && !method.getName().contains("registerProperties")) {
+            // Skip methods that return complex objects or have side effects
+            if (method.getParameterCount() == 0
+                    && !method.getName().equals("registerProperties")
+                    && !method.getName().equals("getContainer")) {
                 Object value = null;
                 try {
                     value = method.invoke(actualService);
@@ -277,6 +292,8 @@ public class InfraRun extends InfraBaseCommand {
             } catch (Exception e) {
                 // ignore
             }
+            System.clearProperty("camel.infra.port");
+            System.clearProperty("camel.infra.fixedPort");
         }
     }
 

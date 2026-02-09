@@ -21,6 +21,7 @@ import java.util.Map;
 /**
  * Batch Change part.
  */
+@Deprecated(since = "4.18")
 public class Olingo2BatchChangeRequest extends Olingo2BatchRequest {
 
     protected String contentId;

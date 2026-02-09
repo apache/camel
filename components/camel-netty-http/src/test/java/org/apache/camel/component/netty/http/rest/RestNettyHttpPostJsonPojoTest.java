@@ -18,14 +18,14 @@ package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.netty.http.BaseNettyTest;
+import org.apache.camel.component.netty.http.BaseNettyTestSupport;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class RestNettyHttpPostJsonPojoTest extends BaseNettyTest {
+public class RestNettyHttpPostJsonPojoTest extends BaseNettyTestSupport {
 
     @Test
     public void testPostPojo() throws Exception {

@@ -476,8 +476,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         } catch (IOException e) {
             // close the http connection to avoid
             // leaking gaps in case of an exception
-            if (urlConnectionToClose instanceof HttpURLConnection) {
-                ((HttpURLConnection) urlConnectionToClose).disconnect();
+            if (urlConnectionToClose instanceof HttpURLConnection httpURLConnection) {
+                httpURLConnection.disconnect();
             }
             throw e;
         }
@@ -515,9 +515,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     }
 
     private static void closeURLConnection(URLConnection con) {
-        if (con instanceof HttpURLConnection) {
+        if (con instanceof HttpURLConnection httpURLConnection) {
             try {
-                ((HttpURLConnection) con).disconnect();
+                httpURLConnection.disconnect();
             } catch (Exception e) {
                 // ignore
             }

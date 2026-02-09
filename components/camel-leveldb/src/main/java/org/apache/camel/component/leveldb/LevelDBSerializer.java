@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
+@Deprecated
 public interface LevelDBSerializer {
 
     byte[] serializeKey(String key) throws IOException;
@@ -31,4 +32,22 @@ public interface LevelDBSerializer {
             throws IOException;
 
     Exchange deserializeExchange(CamelContext camelContext, byte[] buffer) throws IOException;
+
+    /**
+     * Deserializes an exchange from a byte buffer with a deserialization filter for security.
+     *
+     * @param  camelContext           the CamelContext
+     * @param  buffer                 the byte buffer containing serialized exchange data
+     * @param  deserializationFilter  the deserialization filter pattern to apply (e.g.,
+     *                                "java.**;org.apache.camel.**;!*")
+     * @return                        the deserialized Exchange
+     * @throws IOException            if an I/O error occurs
+     * @throws ClassNotFoundException if a class cannot be found during deserialization
+     */
+    default Exchange deserializeExchange(CamelContext camelContext, byte[] buffer, String deserializationFilter)
+            throws IOException, ClassNotFoundException {
+        // Default implementation for backward compatibility - delegates to the original method
+        // Subclasses should override this to apply the filter
+        return deserializeExchange(camelContext, buffer);
+    }
 }

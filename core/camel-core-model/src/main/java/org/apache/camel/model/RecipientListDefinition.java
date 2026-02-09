@@ -442,16 +442,29 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     /**
      * Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able
      * to send and process all replies within the given timeframe, then the timeout triggers and the Recipient List
-     * breaks out and continues. Notice if you provide a TimeoutAwareAggregationStrategy then the timeout method is
-     * invoked before breaking out. If the timeout is reached with running tasks still remaining, certain tasks for
-     * which it is difficult for Camel to shut down in a graceful manner may continue to run. So use this option with a
-     * bit of care.
+     * breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with
+     * running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful
+     * manner may continue to run. So use this option with a bit of care.
      *
      * @param  timeout timeout in millis
      * @return         the builder
      */
     public RecipientListDefinition<Type> timeout(long timeout) {
-        setTimeout(Long.toString(timeout));
+        return timeout(Long.toString(timeout));
+    }
+
+    /**
+     * Sets a total timeout specified in millis, when using parallel processing. If the Recipient List hasn't been able
+     * to send and process all replies within the given timeframe, then the timeout triggers and the Recipient List
+     * breaks out and continues. The timeout method is invoked before breaking out. If the timeout is reached with
+     * running tasks still remaining, certain tasks for which it is difficult for Camel to shut down in a graceful
+     * manner may continue to run. So use this option with a bit of care.
+     *
+     * @param  timeout timeout in millis
+     * @return         the builder
+     */
+    public RecipientListDefinition<Type> timeout(String timeout) {
+        setTimeout(timeout);
         return this;
     }
 

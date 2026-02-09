@@ -32,6 +32,7 @@ import org.apache.olingo.commons.api.edm.Edm;
  * Holder class for {@link org.apache.camel.component.olingo4.api.Olingo4App} and its lazily read
  * {@link org.apache.olingo.commons.api.edm.Edm}.
  */
+@Deprecated(since = "4.18")
 public class Olingo4AppWrapper {
 
     private final Lock lock = new ReentrantLock();

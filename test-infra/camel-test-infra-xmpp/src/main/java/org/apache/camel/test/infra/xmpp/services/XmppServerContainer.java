@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URL;
 
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.xmpp.common.XmppProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +46,15 @@ public class XmppServerContainer extends GenericContainer<XmppServerContainer> {
     }
 
     public XmppServerContainer(boolean fixedPort) {
-        this();
-        if (fixedPort) {
-            addFixedExposedPort(XmppProperties.PORT_DEFAULT, XmppProperties.PORT_DEFAULT);
-            addFixedExposedPort(8088, PORT_REST);
-        }
+        super(LocalPropertyResolver.getProperty(XmppServerContainer.class, XmppProperties.XMPP_CONTAINER));
+        setWaitStrategy(Wait.forListeningPort());
+        withNetworkAliases(CONTAINER_NAME)
+                .withLogConsumer(new Slf4jLogConsumer(LOGGER))
+                .waitingFor(Wait.forLogMessage(".*Started Application in.*", 1));
+
+        ContainerEnvironmentUtil.configurePorts(this, fixedPort,
+                ContainerEnvironmentUtil.PortConfig.primary(XmppProperties.PORT_DEFAULT),
+                ContainerEnvironmentUtil.PortConfig.secondary(PORT_REST));
     }
 
     public String getUrl() {

@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
     private static final Logger LOG = LoggerFactory.getLogger(ThriftProducerSyncTest.class);
@@ -84,13 +84,10 @@ public class ThriftProducerSyncTest extends ThriftProducerBaseTest {
         requestBody.add(1);
         requestBody.add(new Work(THRIFT_TEST_NUM1, 0, Operation.DIVIDE));
 
-        try {
-            template.requestBody("direct:thrift-calculate", requestBody);
-            fail("Expect the exception here");
-        } catch (Exception ex) {
-            assertTrue(ex instanceof CamelExecutionException, "Expect CamelExecutionException");
-            assertTrue(ex.getCause() instanceof InvalidOperation, "Get an InvalidOperation exception");
-        }
+        Exception ex = assertThrows(Exception.class,
+                () -> template.requestBody("direct:thrift-calculate", requestBody));
+        assertTrue(ex instanceof CamelExecutionException, "Expect CamelExecutionException");
+        assertTrue(ex.getCause() instanceof InvalidOperation, "Get an InvalidOperation exception");
     }
 
     @Test

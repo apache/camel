@@ -48,12 +48,13 @@ public class EndpointDevConsole extends AbstractDevConsole {
         }
         EndpointRegistry reg = getCamelContext().getEndpointRegistry();
         sb.append(
-                String.format("    Endpoints: %s (static: %s dynamic: %s)\n", reg.size(), reg.staticSize(), reg.dynamicSize()));
-        sb.append(String.format("    Maximum Cache Size: %s\n", reg.getMaximumCacheSize()));
+                String.format("    Endpoints: %s (static: %s dynamic: %s)%n", reg.size(), reg.staticSize(), reg.dynamicSize()));
+        sb.append(String.format("    Maximum Cache Size: %s%n", reg.getMaximumCacheSize()));
         Collection<Endpoint> col = reg.getReadOnlyValues();
         if (!col.isEmpty()) {
             for (Endpoint e : col) {
-                boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
+                // NOTE: StubComponent is not available at compilation time.
+                boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent"); // NOSONAR
                 boolean remote = e.isRemote();
                 String uri = e.toString();
                 if (!uri.startsWith("stub:") && stub) {
@@ -63,10 +64,10 @@ public class EndpointDevConsole extends AbstractDevConsole {
                 var stat = findStats(stats, e.getEndpointUri());
                 if (stat.isPresent()) {
                     var st = stat.get();
-                    sb.append(String.format("\n    %s (remote: %s direction: %s, usage: %s)", uri, remote, st.getDirection(),
+                    sb.append(String.format("%n    %s (remote: %s direction: %s, usage: %s)", uri, remote, st.getDirection(),
                             st.getHits()));
                 } else {
-                    sb.append(String.format("\n    %s (remote: %s)", uri, remote));
+                    sb.append(String.format("%n    %s (remote: %s)", uri, remote));
                 }
             }
         }
@@ -76,7 +77,6 @@ public class EndpointDevConsole extends AbstractDevConsole {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
@@ -99,7 +99,8 @@ public class EndpointDevConsole extends AbstractDevConsole {
             JsonObject jo = new JsonObject();
             jo.put("uri", e.getEndpointUri());
             jo.put("remote", e.isRemote());
-            boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent");
+            // NOTE: StubComponent is not available at compilation time.
+            boolean stub = e.getComponent().getClass().getSimpleName().equals("StubComponent"); // NOSONAR
             jo.put("stub", stub);
             var stat = findStats(stats, e.getEndpointUri());
             if (stat.isPresent()) {

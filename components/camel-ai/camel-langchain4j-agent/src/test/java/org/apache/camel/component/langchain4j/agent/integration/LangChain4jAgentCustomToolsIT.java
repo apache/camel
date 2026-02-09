@@ -51,14 +51,12 @@ public class LangChain4jAgentCustomToolsIT extends CamelTestSupport {
     protected ChatModel chatModel;
 
     @RegisterExtension
-    static OllamaService OLLAMA = ModelHelper.hasEnvironmentConfiguration()
-            ? null
-            : OllamaServiceFactory.createSingletonService();
+    static OllamaService OLLAMA = OllamaServiceFactory.createSingletonService();
 
     @Override
     protected void setupResources() throws Exception {
         super.setupResources();
-        chatModel = OLLAMA != null ? ModelHelper.loadChatModel(OLLAMA) : ModelHelper.loadFromEnv();
+        chatModel = ModelHelper.loadChatModel(OLLAMA);
     }
 
     @Test

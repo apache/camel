@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.LineNumberAware;
 import org.apache.camel.model.AdviceWithDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.EndpointRequiredDefinition;
@@ -223,14 +224,14 @@ public final class AdviceWithTasks {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
+                                ProcessorDefinition existing = outputs.remove(index);
                                 // flattern as replace uses a pipeline as temporary holder
-                                ProcessorDefinition<?> flattern = flatternOutput(replace);
-                                outputs.add(index + 1, flattern);
-                                Object old = outputs.remove(index);
+                                ProcessorDefinition<?> flattern = flatternOutput(replace, existing);
+                                outputs.add(index, flattern);
                                 // must set parent on the node we added in the route
                                 ProcessorDefinition<?> parent = output.getParent() != null ? output.getParent() : route;
                                 flattern.setParent(parent);
-                                LOG.info("AdviceWith ({}) : [{}] --> replace [{}]", matchBy.getId(), old, flattern);
+                                LOG.info("AdviceWith ({}) : [{}] --> replace [{}]", matchBy.getId(), existing, flattern);
                             }
                         }
                     }
@@ -355,9 +356,9 @@ public final class AdviceWithTasks {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
+                                ProcessorDefinition existing = outputs.get(index);
                                 // flattern as before uses a pipeline as temporary holder
-                                ProcessorDefinition<?> flattern = flatternOutput(before);
-                                Object existing = outputs.get(index);
+                                ProcessorDefinition<?> flattern = flatternOutput(before, existing);
                                 outputs.add(index, flattern);
                                 // must set parent on the node we added in the route
                                 ProcessorDefinition<?> parent = output.getParent() != null ? output.getParent() : route;
@@ -425,9 +426,9 @@ public final class AdviceWithTasks {
                             int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
+                                ProcessorDefinition existing = outputs.get(index);
                                 // flattern as after uses a pipeline as temporary holder
-                                ProcessorDefinition<?> flattern = flatternOutput(after);
-                                Object existing = outputs.get(index);
+                                ProcessorDefinition<?> flattern = flatternOutput(after, existing);
                                 outputs.add(index + 1, flattern);
                                 // must set parent on the node we added in the route
                                 ProcessorDefinition<?> parent = output.getParent() != null ? output.getParent() : route;
@@ -635,17 +636,21 @@ public final class AdviceWithTasks {
         };
     }
 
-    private static ProcessorDefinition<?> flatternOutput(ProcessorDefinition<?> output) {
+    private static ProcessorDefinition<?> flatternOutput(ProcessorDefinition<?> output, LineNumberAware source) {
         if (output instanceof AdviceWithDefinition advice) {
+            // copy over location from source so the advised nodes also have same location
+            advice.getOutputs().forEach(o -> LineNumberAware.trySetLineNumberAware(o, source));
             if (advice.getOutputs().size() == 1) {
-                return advice.getOutputs().get(0);
+                output = advice.getOutputs().get(0);
             } else {
                 // it should be a pipeline
                 PipelineDefinition pipe = new PipelineDefinition();
                 pipe.setOutputs(advice.getOutputs());
-                return pipe;
+                output = pipe;
             }
         }
+        // copy over location from source so the advised nodes also have same location
+        LineNumberAware.trySetLineNumberAware(output, source);
         return output;
     }
 

@@ -16,15 +16,23 @@
  */
 package org.apache.camel.language.csimple;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +46,7 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
@@ -47,12 +56,15 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.LanguageHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.xml.pretty.XmlPrettyPrinter;
 
@@ -207,6 +219,14 @@ public final class CSimpleHelper {
 
     public static int variablesSize(Exchange exchange) {
         return exchange.getVariables().size();
+    }
+
+    public static Class<?> bodyType(Exchange exchange) {
+        Object body = exchange.getIn().getBody(Object.class);
+        if (body == null) {
+            return null;
+        }
+        return body.getClass();
     }
 
     public static String bodyOneLine(Exchange exchange) {
@@ -390,6 +410,8 @@ public final class CSimpleHelper {
             date = LanguageHelper.dateFromExchangeCreated(exchange);
         } else if (command.startsWith("header.")) {
             date = LanguageHelper.dateFromHeader(exchange, command, (e, o) -> failDueToMissingObjectAtCommand(command));
+        } else if (command.startsWith("variable.")) {
+            date = LanguageHelper.dateFromVariable(exchange, command, (e, o) -> failDueToMissingObjectAtCommand(command));
         } else if (command.startsWith("exchangeProperty.")) {
             date = LanguageHelper.dateFromExchangeProperty(exchange, command,
                     (e, o) -> failDueToMissingObjectAtCommand(command));
@@ -495,15 +517,17 @@ public final class CSimpleHelper {
         }
     }
 
-    public static Object empty(Exchange exchange, String type) {
+    public static Object newEmpty(Exchange exchange, String type) {
         if ("map".equalsIgnoreCase(type)) {
             return new LinkedHashMap<>();
         } else if ("string".equalsIgnoreCase(type)) {
             return "";
         } else if ("list".equalsIgnoreCase(type)) {
             return new ArrayList<>();
+        } else if ("set".equalsIgnoreCase(type)) {
+            return new LinkedHashSet<>();
         }
-        throw new IllegalArgumentException("function empty(%s) has unknown type".formatted(type));
+        throw new IllegalArgumentException("function newEmpty(%s) has unknown type".formatted(type));
     }
 
     public static List<Object> list(Exchange exchange, Object... args) {
@@ -511,6 +535,118 @@ public final class CSimpleHelper {
         for (int i = 0; args != null && i < args.length; i++) {
             answer.add(args[i]);
         }
+        return answer;
+    }
+
+    public static Long sum(Exchange exchange, Object... args) {
+        Long answer = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = 0L;
+                    }
+                    answer += val;
+                }
+            }
+        }
+        return answer;
+    }
+
+    public static Long max(Exchange exchange, Object... args) {
+        Long answer = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = val;
+                    }
+                    answer = Math.max(answer, val);
+                }
+            }
+        }
+        return answer;
+    }
+
+    public static Long min(Exchange exchange, Object... args) {
+        Long answer = null;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = val;
+                    }
+                    answer = Math.min(answer, val);
+                }
+            }
+        }
+        return answer;
+    }
+
+    public static Long average(Exchange exchange, Object... args) {
+        Long answer = null;
+        int counter = 0;
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                Long val = tryConvertTo(exchange, Long.class, i);
+                if (val != null) {
+                    if (answer == null) {
+                        answer = 0L;
+                    }
+                    answer += val;
+                    counter++;
+                }
+            }
+        }
+        return answer != null ? answer / counter : null;
+    }
+
+    public static Set<Object> distinct(Exchange exchange, Object... args) {
+        Set<Object> answer = new LinkedHashSet<>();
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                answer.add(i);
+            }
+        }
+        return answer;
+    }
+
+    public static List<Object> reverse(Exchange exchange, Object... args) {
+        List<Object> answer = new ArrayList<>();
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                answer.add(i);
+            }
+        }
+        Collections.reverse(answer);
+        return answer;
+    }
+
+    public static List<Object> shuffle(Exchange exchange, Object... args) {
+        List<Object> answer = new ArrayList<>();
+        for (Object o : args) {
+            // this may be an object that we can iterate
+            Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(o);
+            for (Object i : it) {
+                answer.add(i);
+            }
+        }
+        Collections.shuffle(answer);
         return answer;
     }
 
@@ -542,11 +678,52 @@ public final class CSimpleHelper {
         return between(text, head, tail);
     }
 
+    public static String substringBefore(Exchange exchange, Object value, Object text) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        String before = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, text);
+        return StringHelper.before(body, before);
+    }
+
+    public static String substringAfter(Exchange exchange, Object value, Object text) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        String after = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, text);
+        return StringHelper.after(body, after);
+    }
+
+    public static String substringBetween(Exchange exchange, Object value, Object after, Object before) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        String strAfter = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, after);
+        String strBefore = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, before);
+        return StringHelper.between(body, strAfter, strBefore);
+    }
+
     public static int random(Exchange exchange, Object min, Object max) {
         int num1 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, min);
         int num2 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, max);
         Random random = new Random(); // NOSONAR
         return random.nextInt(num2 - num1) + num1;
+    }
+
+    public static List<Integer> rangeList(Exchange exchange, Object min, Object max) {
+        int num1 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, min);
+        int num2 = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, max);
+        if (num1 >= 0 && num1 <= num2 && num1 != num2) {
+            List<Integer> answer = new ArrayList<>();
+            for (int i = num1; i < num2; i++) {
+                answer.add(i);
+            }
+            return answer;
+        }
+        return null;
     }
 
     public static SkipIterator skip(Exchange exchange, Object skip) {
@@ -564,6 +741,24 @@ public final class CSimpleHelper {
     public static String messageHistory(Exchange exchange, boolean detailed) {
         ExchangeFormatter formatter = getOrCreateExchangeFormatter(exchange.getContext());
         return MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, detailed);
+    }
+
+    public static String pad(Exchange exchange, Object value, Object length, String separator) {
+        String answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        int width = exchange.getContext().getTypeConverter().tryConvertTo(int.class, exchange, length);
+        if (separator == null || separator.isEmpty()) {
+            separator = " ";
+        }
+
+        int max = Math.abs(width);
+        while (max > answer.length()) {
+            if (width > 0) {
+                answer = answer + separator;
+            } else {
+                answer = separator + answer;
+            }
+        }
+        return answer;
     }
 
     public static String sys(String name) {
@@ -773,4 +968,422 @@ public final class CSimpleHelper {
     public static UuidGenerator customUuidGenerator(Exchange exchange, String generator) {
         return CamelContextHelper.mandatoryLookup(exchange.getContext(), generator, UuidGenerator.class);
     }
+
+    public static Long abs(Exchange exchange, Object value) {
+        Long body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(Long.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(Long.class);
+        }
+        if (body != null) {
+            body = Math.abs(body);
+        }
+        return body;
+    }
+
+    public static Integer floor(Exchange exchange, Object value) {
+        Double body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(Double.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(Double.class);
+        }
+        if (body != null) {
+            double d = Math.floor(body);
+            return (int) d;
+        }
+        return null;
+    }
+
+    public static Integer ceil(Exchange exchange, Object value) {
+        Double body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(Double.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(Double.class);
+        }
+        if (body != null) {
+            double d = Math.ceil(body);
+            return (int) d;
+        }
+        return null;
+    }
+
+    public static boolean isAlpha(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isLetter(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isAlphaNumeric(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isLetterOrDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNumeric(Exchange exchange, Object value) {
+        String body = convertTo(exchange, String.class, value);
+        if (body == null || body.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < body.length(); i++) {
+            char ch = body.charAt(i);
+            if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isEmpty(Exchange exchange, Object value) {
+        // this may be an object that we can iterate
+        Iterable<?> it = org.apache.camel.support.ObjectHelper.createIterable(value);
+        for (Object o : it) {
+            if (o != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static String quote(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null && !StringHelper.isDoubleQuoted(body)) {
+            body = StringHelper.removeLeadingAndEndingQuotes(body);
+            body = StringQuoteHelper.doubleQuote(body);
+        }
+        return body;
+    }
+
+    public static Object safeQuote(Exchange exchange, Object value) {
+        if (value == null) {
+            return null;
+        }
+        String type = kindOfType(exchange, value);
+        if ("string".equals(type) || "array".equals(type) || "object".equals(type)) {
+            String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+            body = StringHelper.removeLeadingAndEndingQuotes(body);
+            value = StringQuoteHelper.doubleQuote(body);
+        }
+        return value;
+    }
+
+    public static String unquote(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = StringHelper.removeLeadingAndEndingQuotes(body);
+        }
+        return body;
+    }
+
+    public static String trim(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = body.trim();
+        }
+        return body;
+    }
+
+    public static String capitalize(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = StringHelper.capitalizeAll(body);
+        }
+        return body;
+    }
+
+    public static String concat(Exchange exchange, Object left, Object right, Object separator) {
+        String val1 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, left);
+        String val2 = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, right);
+        String sep = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, separator);
+
+        if (val1 != null && val2 != null) {
+            return val1 + (sep != null ? sep : "") + val2;
+        } else {
+            return val1 != null ? val1 : val2;
+        }
+    }
+
+    public static String uppercase(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = body.toUpperCase(Locale.ENGLISH);
+        }
+        return body;
+    }
+
+    public static String lowercase(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = body.toLowerCase(Locale.ENGLISH);
+        }
+        return body;
+    }
+
+    public static String[] stringSplit(Exchange exchange, Object value, String separator) {
+        String body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (body == null) {
+            return null;
+        }
+        return body.split(separator);
+    }
+
+    public static int length(Exchange exchange, Object value) {
+        try {
+            if (value instanceof byte[] arr) {
+                return arr.length;
+            } else if (value instanceof char[] arr) {
+                return arr.length;
+            } else if (value instanceof int[] arr) {
+                return arr.length;
+            } else if (value instanceof long[] arr) {
+                return arr.length;
+            } else if (value instanceof double[] arr) {
+                return arr.length;
+            } else if (value instanceof StreamCache sc) {
+                return (int) sc.length();
+            } else {
+                // first read as stream
+                InputStream is = null;
+                try {
+                    is = exchange.getContext().getTypeConverter().tryConvertTo(InputStream.class, exchange, value);
+                    int len = 0;
+                    while (is.read() != -1) {
+                        len++;
+                    }
+                    return len;
+                } catch (Exception e) {
+                    // ignore
+                } finally {
+                    IOHelper.close(is);
+                }
+                // fallback to use string based
+                String data = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+                if (data != null) {
+                    return data.length();
+                }
+            }
+        } finally {
+            if (value instanceof StreamCache streamCache) {
+                streamCache.reset();
+            }
+        }
+        return 0;
+    }
+
+    public static int size(Exchange exchange, Object value) {
+        if (value != null) {
+            if (value instanceof byte[] arr) {
+                return arr.length;
+            } else if (value instanceof char[] arr) {
+                return arr.length;
+            } else if (value instanceof int[] arr) {
+                return arr.length;
+            } else if (value instanceof long[] arr) {
+                return arr.length;
+            } else if (value instanceof double[] arr) {
+                return arr.length;
+            } else if (value instanceof String[] arr) {
+                return arr.length;
+            } else if (value instanceof Collection<?> c) {
+                return c.size();
+            } else if (value instanceof Map<?, ?> m) {
+                return m.size();
+            } else {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    public static Object elvis(Exchange exchange, Object left, Object right) {
+        if (left == null || Boolean.FALSE == left || ObjectHelper.isEmpty(left) || ObjectHelper.equal(0, left)) {
+            return right;
+        } else {
+            return left;
+        }
+    }
+
+    public static Object ternary(Exchange exchange, Object condition, Object trueValue, Object falseValue) {
+        boolean result;
+        if (condition instanceof Boolean b) {
+            result = b;
+        } else {
+            // Try to convert to boolean - treat null, empty, and "false" as false
+            result = condition != null && !ObjectHelper.isEmpty(condition)
+                    && !Boolean.FALSE.equals(condition) && !"false".equalsIgnoreCase(String.valueOf(condition));
+        }
+        return result ? trueValue : falseValue;
+    }
+
+    public static Object setHeader(Exchange exchange, String name, Class<?> type, Object value) {
+        if (type != null && value != null) {
+            value = convertTo(exchange, type, value);
+        }
+        if (value != null) {
+            exchange.getMessage().setHeader(name, value);
+        } else {
+            exchange.getMessage().removeHeader(name);
+        }
+        return null;
+    }
+
+    public static Object setVariable(Exchange exchange, String name, Class<?> type, Object value) {
+        if (type != null && value != null) {
+            value = convertTo(exchange, type, value);
+        }
+        if (value != null) {
+            exchange.setVariable(name, value);
+        } else {
+            exchange.removeVariable(name);
+        }
+        return null;
+    }
+
+    public static boolean isNot(Exchange exchange, Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String s) {
+            if (s.isEmpty()) {
+                return true;
+            }
+            if ("false".equalsIgnoreCase(s)) {
+                return true;
+            } else if ("true".equalsIgnoreCase(s)) {
+                return false;
+            } else {
+                return false;
+            }
+        }
+        Boolean b = convertTo(exchange, Boolean.class, value);
+        if (b == null) {
+            return true;
+        } else {
+            return !b;
+        }
+    }
+
+    public static Object throwException(Exchange exchange, String message, Class<?> clazz) {
+        try {
+            // create a new exception to that type, and provide the message as
+            Constructor<?> constructor = clazz.getConstructor(String.class);
+            Exception cause = (Exception) constructor.newInstance(message);
+            if (cause instanceof RuntimeException re) {
+                throw re;
+            } else {
+                RuntimeException re = new RuntimeCamelException(cause);
+                throw re;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String normalizeWhitespace(Exchange exchange, Object value) {
+        String body;
+        if (value != null) {
+            body = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            body = exchange.getMessage().getBody(String.class);
+        }
+        if (body != null) {
+            body = StringHelper.normalizeWhitespace(body);
+        }
+        return body;
+    }
+
+    public static String kindOfType(Exchange exchange, Object value) {
+        if (value != null) {
+            Class<?> type = value.getClass();
+            if (ObjectHelper.isNumericType(type)) {
+                return "number";
+            } else if (boolean.class == type || Boolean.class == type) {
+                return "boolean";
+            } else if (value instanceof CharSequence) {
+                return "string";
+            } else if (ObjectHelper.isPrimitiveArrayType(type) || value instanceof Collection || value instanceof Map<?, ?>) {
+                return "array";
+            } else {
+                return "object";
+            }
+        }
+        return "null";
+    }
+
+    public static String load(Exchange exchange, Object value) throws IOException {
+        String name;
+        if (value != null) {
+            name = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        } else {
+            name = exchange.getMessage().getBody(String.class);
+        }
+        name = name.trim();
+        String part = StringHelper.after(name, ":", name);
+        boolean optional = part.endsWith("?optional=true");
+        if (optional) {
+            part = part.substring(part.length() - 14);
+        }
+        if (part.endsWith("?optional=false")) {
+            part = part.substring(0, part.length() - 15);
+        }
+        InputStream is;
+        if (!optional) {
+            is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), part);
+        } else {
+            is = ResourceHelper.resolveResourceAsInputStream(exchange.getContext(), part);
+        }
+        if (is == null) {
+            return null;
+        }
+        return IOHelper.loadText(is, false);
+    }
+
 }

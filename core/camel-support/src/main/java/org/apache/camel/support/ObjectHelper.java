@@ -258,7 +258,7 @@ public final class ObjectHelper {
      * and right values. This allows you test for ordering for example with a String and Integer type as Camel will be
      * able to coerce the types.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
         // optimize for common combinations of comparing numbers
@@ -292,13 +292,13 @@ public final class ObjectHelper {
                 Long rightNum = Long.valueOf((String) rightValue);
                 return leftNum.compareTo(rightNum);
             }
-        } else if (rightValue instanceof Double rightNum && leftValue instanceof String
-                && isFloatingNumber((String) leftValue)) {
-            Double leftNum = Double.valueOf((String) leftValue);
+        } else if (rightValue instanceof Double rightNum && leftValue instanceof String leftStr
+                && isFloatingNumber(leftStr)) {
+            Double leftNum = Double.valueOf(leftStr);
             return leftNum.compareTo(rightNum);
-        } else if (rightValue instanceof Float rightNum && leftValue instanceof String
-                && isFloatingNumber((String) leftValue)) {
-            Float leftNum = Float.valueOf((String) leftValue);
+        } else if (rightValue instanceof Float rightNum && leftValue instanceof String leftStr
+                && isFloatingNumber(leftStr)) {
+            Float leftNum = Float.valueOf(leftStr);
             return leftNum.compareTo(rightNum);
         } else if (rightValue instanceof Boolean rightBool && leftValue instanceof String) {
             Boolean leftBool = Boolean.valueOf((String) leftValue);
@@ -567,7 +567,7 @@ public final class ObjectHelper {
      * @param b          the second object
      * @param ignoreCase ignore case for string comparison
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings("unchecked")
     public static int compare(Object a, Object b, boolean ignoreCase) {
         if (a == b) {
             return 0;

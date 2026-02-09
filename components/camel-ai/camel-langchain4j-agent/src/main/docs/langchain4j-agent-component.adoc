@@ -28,6 +28,7 @@ The LangChain4j Agent component offers the following key features:
 * **RAG Support**: Integration with retrieval systems for naive and advanced RAG
 * **Guardrails**: Input and output validation and transformation
 * **Configuration Flexibility**: Centralized agent configuration using `AgentConfiguration`
+* **Multimodal Content**: Support for images, PDFs, audio, video, and text files from file-based Camel components
 
 == Component Options
 
@@ -554,11 +555,15 @@ String response = template.requestBody("direct:chat", request, String.class);
 
 === Input and Output Guardrails
 
-Guardrails are configured in the `AgentConfiguration` using the fluent API methods. Create classes defining InputGuardrails and OutputGuardrails as defined in the https://docs.langchain4j.dev/tutorials/guardrails[LangChain4j Guardrails documentation] page.
+Guardrails validate and filter AI interactions to ensure security and quality. The LangChain4j Agent component provides both custom guardrail support and a set of production-ready built-in guardrails.
+
+==== Using Custom Guardrails
+
+Create classes defining InputGuardrails and OutputGuardrails as defined in the https://docs.langchain4j.dev/tutorials/guardrails[LangChain4j Guardrails documentation] page.
 
 [source,java]
 ----
-// Create agent configuration with guardrails
+// Create agent configuration with custom guardrails
 AgentConfiguration configuration = new AgentConfiguration()
     .withChatModel(chatModel)
     .withInputGuardrailClassesList("com.example.MyInputGuardrail")
@@ -576,3 +581,689 @@ from("direct:agent-with-guardrails")
 ====
 The current version of the component returns a String as response. If the outputGuardrails extends JsonExtractorOutputGuardrail class, make sure to return a Json in String format.
 ====
+
+==== Built-in Guardrails
+
+The `camel-langchain4j-agent-api` module provides production-ready guardrails in the `org.apache.camel.component.langchain4j.agent.api.guardrails` package.
+
+===== Available Input Guardrails
+
+[cols="1,2"]
+|===
+|Guardrail Class |Description
+
+|`InputLengthGuardrail`
+|Validates message length (min/max characters). Prevents excessively long inputs.
+
+|`PiiDetectorGuardrail`
+|Detects Personally Identifiable Information (email, phone, SSN, credit cards, IP addresses).
+
+|`PromptInjectionGuardrail`
+|Detects prompt injection attacks (role manipulation, jailbreaks, delimiter injection).
+
+|`KeywordFilterGuardrail`
+|Blocks messages containing specific keywords or patterns.
+
+|`LanguageGuardrail`
+|Validates the language/script of user messages. Can allow or block specific languages (English, Cyrillic, Chinese, Japanese, Korean, Arabic, Hebrew, Greek, Thai, Devanagari).
+
+|`CodeInjectionGuardrail`
+|Detects potential code injection attempts including shell commands, SQL injection, JavaScript, HTML/XSS, path traversal, command chaining, and template injection.
+
+|`RegexPatternGuardrail`
+|Flexible guardrail using custom regex patterns. Can define deny patterns (block if matched) and require patterns (must be present).
+|===
+
+===== Available Output Guardrails
+
+[cols="1,2"]
+|===
+|Guardrail Class |Description
+
+|`OutputLengthGuardrail`
+|Validates response length with optional truncation support.
+
+|`SensitiveDataOutputGuardrail`
+|Detects and optionally redacts sensitive data (API keys, passwords, JWT tokens, AWS keys).
+
+|`JsonFormatGuardrail`
+|Validates JSON format, extracts JSON from text, and checks for required fields.
+
+|`KeywordOutputFilterGuardrail`
+|Blocks or redacts specific content in AI responses.
+
+|`NotEmptyGuardrail`
+|Ensures AI responses are not empty or contain only whitespace. Can optionally detect refusal patterns (e.g., "I cannot", "I'm unable to").
+
+|`WordCountGuardrail`
+|Validates the word count of AI responses. Can enforce minimum, maximum, or range constraints.
+|===
+
+==== Quick Start with Default Guardrails
+
+The `Guardrails` helper class provides convenient factory methods:
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.Guardrails;
+
+// Create agent with default security guardrails
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
+    .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
+
+Agent secureAgent = new AgentWithoutMemory(configuration);
+context.getRegistry().bind("secureAgent", secureAgent);
+
+from("direct:secure-chat")
+    .to("langchain4j-agent:chat?agent=#secureAgent");
+----
+
+The default guardrails include:
+
+* **Input**: `InputLengthGuardrail`, `PiiDetectorGuardrail`, `PromptInjectionGuardrail`
+* **Output**: `OutputLengthGuardrail`, `SensitiveDataOutputGuardrail`
+
+==== Using the Fluent Builder
+
+The `Guardrails.configure()` method provides a fluent API for building configurations:
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.Guardrails;
+
+AgentConfiguration configuration = Guardrails.configure()
+    .withPiiDetection()
+    .withPromptInjectionDetection()
+    .withInputLengthValidation()
+    .withSensitiveDataDetection()
+    .withJsonFormatValidation()
+    .build();
+
+configuration.withChatModel(chatModel);
+
+Agent agent = new AgentWithoutMemory(configuration);
+----
+
+==== Using Specific Guardrail Classes
+
+You can specify exactly which guardrails to use:
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.*;
+
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel)
+    .withInputGuardrailClasses(List.of(
+        InputLengthGuardrail.class,
+        PiiDetectorGuardrail.class,
+        PromptInjectionGuardrail.class
+    ))
+    .withOutputGuardrailClasses(List.of(
+        SensitiveDataOutputGuardrail.class,
+        JsonFormatGuardrail.class
+    ));
+----
+
+==== Guardrail Presets
+
+The `Guardrails` class provides preset configurations for different security levels:
+
+[source,java]
+----
+// Minimal protection (just length validation)
+configuration.withInputGuardrailClasses(Guardrails.minimalInputGuardrails());
+
+// Standard protection (length, PII, prompt injection)
+configuration.withInputGuardrailClasses(Guardrails.defaultInputGuardrails());
+
+// Strict protection (all input guardrails)
+configuration.withInputGuardrailClasses(Guardrails.strictInputGuardrails());
+----
+
+==== Factory Methods for Individual Guardrails
+
+The `Guardrails` class provides static factory methods to create guardrail instances:
+
+[source,java]
+----
+// Input guardrails
+InputLengthGuardrail lengthGuard = Guardrails.inputLength(5000);  // Max 5000 chars
+PiiDetectorGuardrail piiGuard = Guardrails.piiDetector();
+PromptInjectionGuardrail injectionGuard = Guardrails.promptInjectionStrict();
+KeywordFilterGuardrail keywordGuard = Guardrails.keywordFilter("banned", "blocked");
+
+// Output guardrails
+OutputLengthGuardrail outputLength = Guardrails.outputLengthTruncating(10000);
+SensitiveDataOutputGuardrail sensitiveData = Guardrails.sensitiveDataRedacting();
+JsonFormatGuardrail jsonGuard = Guardrails.jsonFormatWithFields("name", "email");
+----
+
+==== Advanced Guardrail Configuration with Builders
+
+Each guardrail provides a builder for custom configuration:
+
+===== PII Detection Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.PiiDetectorGuardrail;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.PiiDetectorGuardrail.PiiType;
+
+// Detect only specific PII types
+PiiDetectorGuardrail guardrail = PiiDetectorGuardrail.builder()
+    .detectTypes(PiiType.EMAIL, PiiType.PHONE, PiiType.SSN)
+    .blockOnDetection(true)
+    .build();
+----
+
+===== Prompt Injection Detection Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.PromptInjectionGuardrail;
+
+// Strict mode: fail on any single pattern match
+PromptInjectionGuardrail strictGuardrail = PromptInjectionGuardrail.strict();
+
+// Custom patterns
+PromptInjectionGuardrail customGuardrail = PromptInjectionGuardrail.builder()
+    .strict(true)
+    .addPattern(
+        PromptInjectionGuardrail.InjectionCategory.JAILBREAK,
+        Pattern.compile("(?i)custom\\s+attack\\s+pattern"))
+    .build();
+----
+
+===== Sensitive Data Output Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.SensitiveDataOutputGuardrail;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.SensitiveDataOutputGuardrail.*;
+
+// Redact sensitive data instead of blocking
+SensitiveDataOutputGuardrail guardrail = SensitiveDataOutputGuardrail.builder()
+    .detectTypes(SensitiveDataType.API_KEY, SensitiveDataType.SECRET, SensitiveDataType.JWT)
+    .action(Action.REDACT)
+    .redactionText("***REDACTED***")
+    .build();
+----
+
+===== JSON Format Validation Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.JsonFormatGuardrail;
+
+// Validate JSON with required fields
+JsonFormatGuardrail guardrail = JsonFormatGuardrail.builder()
+    .requireFields("id", "name", "email")
+    .extractJson(true)      // Extract JSON from surrounding text
+    .allowArray(false)      // Only allow objects, not arrays
+    .build();
+----
+
+===== Keyword Filtering Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.KeywordFilterGuardrail;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.KeywordOutputFilterGuardrail;
+
+// Input keyword filter
+KeywordFilterGuardrail inputFilter = KeywordFilterGuardrail.builder()
+    .blockedWords("spam", "inappropriate", "banned")
+    .blockedPattern("\\b(hack|exploit)\\b")
+    .caseSensitive(false)
+    .wholeWordMatch(true)
+    .build();
+
+// Output keyword filter with redaction
+KeywordOutputFilterGuardrail outputFilter = KeywordOutputFilterGuardrail.builder()
+    .blockedWords("confidential", "internal-only")
+    .action(KeywordOutputFilterGuardrail.Action.REDACT)
+    .redactionText("[REMOVED]")
+    .build();
+----
+
+===== Language Validation Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.LanguageGuardrail;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.LanguageGuardrail.Language;
+
+// Allow only English input
+LanguageGuardrail englishOnly = LanguageGuardrail.allowOnly(Language.ENGLISH);
+
+// Allow English and Latin script languages (Spanish, French, German, etc.)
+LanguageGuardrail latinLanguages = LanguageGuardrail.allowOnly(
+    Language.ENGLISH, Language.LATIN_SCRIPT);
+
+// Block specific languages
+LanguageGuardrail blockCyrillic = LanguageGuardrail.block(Language.CYRILLIC);
+
+// Custom configuration with mixed content control
+LanguageGuardrail customLanguage = LanguageGuardrail.builder()
+    .allowedLanguages(Language.ENGLISH, Language.LATIN_SCRIPT)
+    .blockedLanguages(Language.CYRILLIC)
+    .allowMixed(false)  // Don't allow mixed language content
+    .build();
+----
+
+===== Code Injection Detection Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.CodeInjectionGuardrail;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.CodeInjectionGuardrail.InjectionType;
+
+// Default: detect all code injection types
+CodeInjectionGuardrail defaultGuard = new CodeInjectionGuardrail();
+
+// Strict mode: fail on any single pattern match
+CodeInjectionGuardrail strictGuard = CodeInjectionGuardrail.strict();
+
+// Detect only specific injection types
+CodeInjectionGuardrail sqlAndShellOnly = CodeInjectionGuardrail.forTypes(
+    InjectionType.SQL_INJECTION, InjectionType.SHELL_COMMAND);
+
+// Custom configuration
+CodeInjectionGuardrail customGuard = CodeInjectionGuardrail.builder()
+    .detectTypes(InjectionType.SQL_INJECTION, InjectionType.JAVASCRIPT, InjectionType.PATH_TRAVERSAL)
+    .strict(true)
+    .build();
+----
+
+===== Regex Pattern Guardrail Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.RegexPatternGuardrail;
+
+// Block messages containing URLs
+RegexPatternGuardrail noUrls = RegexPatternGuardrail.blocking(
+    "https?://[^\\s]+", "URLs are not allowed in messages");
+
+// Require messages to contain a ticket number
+RegexPatternGuardrail requireTicket = RegexPatternGuardrail.requiring(
+    "TICKET-\\d+", "Please include a ticket number (e.g., TICKET-123)");
+
+// Complex configuration with multiple patterns
+RegexPatternGuardrail customPatterns = RegexPatternGuardrail.builder()
+    .denyPattern("https?://[^\\s]+", "URLs are not allowed")
+    .denyPattern("\\b(password|secret)\\b", "Sensitive keywords are not allowed")
+    .requirePattern("[A-Z]{2,4}-\\d+", "Please include a valid issue ID")
+    .failOnFirstMatch(true)  // Stop checking after first failure
+    .build();
+----
+
+===== Not Empty Guardrail Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.NotEmptyGuardrail;
+
+// Default: just ensure response is not empty
+NotEmptyGuardrail notEmpty = new NotEmptyGuardrail();
+
+// Also detect refusal patterns like "I cannot", "I'm unable to"
+NotEmptyGuardrail withRefusalDetection = NotEmptyGuardrail.withRefusalDetection();
+
+// Require minimum meaningful length
+NotEmptyGuardrail minLength = NotEmptyGuardrail.withMinLength(50);
+
+// Custom configuration
+NotEmptyGuardrail customNotEmpty = new NotEmptyGuardrail(
+    true,   // detectRefusals
+    100     // minMeaningfulLength
+);
+----
+
+===== Word Count Guardrail Configuration
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.guardrails.WordCountGuardrail;
+
+// Require at least 10 words
+WordCountGuardrail atLeast10 = WordCountGuardrail.atLeast(10);
+
+// Limit to maximum 500 words
+WordCountGuardrail atMost500 = WordCountGuardrail.atMost(500);
+
+// Require between 50 and 200 words
+WordCountGuardrail between = WordCountGuardrail.between(50, 200);
+
+// Custom configuration
+WordCountGuardrail custom = WordCountGuardrail.builder()
+    .minWords(20)
+    .maxWords(1000)
+    .build();
+----
+
+==== Complete Example with Memory and Guardrails
+
+[source,java]
+----
+import org.apache.camel.component.langchain4j.agent.api.*;
+import org.apache.camel.component.langchain4j.agent.api.guardrails.*;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+
+public class SecureAgentRoute extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        // Create chat model
+        ChatModel chatModel = OpenAiChatModel.builder()
+            .apiKey("{{openai.api.key}}")
+            .modelName("gpt-4o")
+            .build();
+
+        // Create memory provider
+        ChatMemoryProvider memoryProvider = memoryId ->
+            MessageWindowChatMemory.withMaxMessages(20);
+
+        // Create secure agent configuration
+        AgentConfiguration configuration = new AgentConfiguration()
+            .withChatModel(chatModel)
+            .withChatMemoryProvider(memoryProvider)
+            .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
+            .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
+
+        Agent secureAgent = new AgentWithMemory(configuration);
+        getContext().getRegistry().bind("secureAgent", secureAgent);
+
+        // Secure chat route with error handling
+        from("direct:chat")
+            .setHeader("CamelLangChain4jMemoryId", simple("${header.userId}"))
+            .doTry()
+                .to("langchain4j-agent:chat?agent=#secureAgent")
+            .doCatch(dev.langchain4j.service.guardrail.GuardrailException.class)
+                .log("Guardrail blocked request: ${exception.message}")
+                .setBody(constant("Your message was blocked due to security policies."))
+            .end();
+    }
+}
+----
+
+==== Spring Boot Configuration Example
+
+===== Using LangChain4j Spring Boot Starters (Recommended)
+
+When using Camel with Spring Boot, leverage LangChain4j's Spring Boot starters for automatic configuration of the ChatModel.
+
+Add the dependency for LangChain4j OpenAI Spring Boot starter:
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+    <version>1.10.0</version>
+    <!-- use the same version as your LangChain4j version -->
+</dependency>
+----
+
+Configure the OpenAI Chat Model in `application.properties`:
+
+.application.properties
+[source,properties]
+----
+langchain4j.open-ai.chat-model.api-key=${OPENAI_API_KEY}
+langchain4j.open-ai.chat-model.model-name=gpt-4o
+langchain4j.open-ai.chat-model.temperature=0.7
+----
+
+Create the Agent bean using the auto-configured ChatLanguageModel:
+
+[source,java]
+----
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import org.apache.camel.component.langchain4j.agent.api.Agent;
+import org.apache.camel.component.langchain4j.agent.api.AgentConfiguration;
+import org.apache.camel.component.langchain4j.agent.api.AgentWithoutMemory;
+import org.apache.camel.component.langchain4j.agent.api.Guardrails;
+
+@Configuration
+public class AgentConfig {
+
+    @Bean("secureAgent")
+    public Agent secureAgent(ChatLanguageModel chatLanguageModel) {
+        AgentConfiguration config = new AgentConfiguration()
+            .withChatModel(chatLanguageModel)
+            .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
+            .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
+
+        return new AgentWithoutMemory(config);
+    }
+}
+----
+
+[NOTE]
+====
+The `ChatLanguageModel` bean is automatically configured by the LangChain4j Spring Boot starter and injected into your configuration. You can also use other auto-configured beans such as:
+
+* `StreamingChatLanguageModel` - For streaming responses
+* `EmbeddingModel` - For generating embeddings
+* `ImageModel` - For image generation
+* `ModerationModel` - For content moderation
+
+Refer to the https://docs.langchain4j.dev/tutorials/spring-boot-integration[LangChain4j Spring Boot Integration documentation] for complete configuration options.
+====
+
+===== Manual Configuration (Alternative)
+
+Alternatively, you can manually configure the ChatModel bean:
+
+[source,java]
+----
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AgentConfig {
+
+    @Bean
+    public ChatModel chatModel() {
+        return OpenAiChatModel.builder()
+            .apiKey(System.getenv("OPENAI_API_KEY"))
+            .modelName("gpt-4o")
+            .build();
+    }
+
+    @Bean("secureAgent")
+    public Agent secureAgent(ChatModel chatModel) {
+        AgentConfiguration config = new AgentConfiguration()
+            .withChatModel(chatModel)
+            .withInputGuardrailClasses(Guardrails.defaultInputGuardrails())
+            .withOutputGuardrailClasses(Guardrails.defaultOutputGuardrails());
+
+        return new AgentWithoutMemory(config);
+    }
+}
+----
+
+==== Guardrail Behavior Summary
+
+[cols="1,1,2"]
+|===
+|Guardrail |When Triggered |Result
+
+|`InputLengthGuardrail`
+|Input too short/long
+|Blocks the request
+
+|`PiiDetectorGuardrail`
+|PII detected
+|Blocks the request
+
+|`PromptInjectionGuardrail`
+|Injection attempt detected
+|Blocks the request
+
+|`KeywordFilterGuardrail`
+|Blocked keyword found
+|Blocks the request
+
+|`LanguageGuardrail`
+|Disallowed language/script detected
+|Blocks the request
+
+|`CodeInjectionGuardrail`
+|Code injection pattern detected
+|Blocks the request
+
+|`RegexPatternGuardrail`
+|Deny pattern matched or require pattern missing
+|Blocks the request
+
+|`OutputLengthGuardrail`
+|Response too short/long
+|Retries LLM or truncates
+
+|`SensitiveDataOutputGuardrail`
+|Secrets in response
+|Blocks or redacts
+
+|`JsonFormatGuardrail`
+|Invalid JSON format
+|Retries LLM call
+
+|`KeywordOutputFilterGuardrail`
+|Blocked content in response
+|Blocks or redacts
+
+|`NotEmptyGuardrail`
+|Empty response or refusal detected
+|Retries LLM call
+
+|`WordCountGuardrail`
+|Word count outside allowed range
+|Retries LLM call
+|===
+
+=== Multimodal Content Support
+
+The LangChain4j Agent component supports multimodal content, allowing you to send images, PDFs, audio, video, and text files to AI models that support vision and document understanding capabilities.
+
+==== Sending Multimodal Content via AiAgentBody
+
+You can explicitly create an `AiAgentBody` with multimodal content:
+
+[source,java]
+----
+// Load an image and create ImageContent
+byte[] imageBytes = Files.readAllBytes(Path.of("image.png"));
+String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+Image image = Image.builder()
+    .base64Data(base64Image)
+    .mimeType("image/png")
+    .build();
+ImageContent imageContent = ImageContent.from(image);
+
+// Create request body with image content
+AiAgentBody<ImageContent> body = new AiAgentBody<ImageContent>()
+    .withUserMessage("What do you see in this image?")
+    .withContent(imageContent);
+
+String response = template.requestBody("direct:chat", body, String.class);
+----
+
+==== Automatic File Conversion from Camel Components
+
+The agent component automatically converts files from various Camel components to multimodal content. This enables seamless integration with file-based sources.
+
+===== Supported Input Types
+
+[cols="1,2,2"]
+|===
+|Input Type |Source Components |MIME Type Detection
+
+|`WrappedFile`
+|`file:`, `ftp:`, `sftp:`, `smb:`
+|From file extension or headers
+
+|`byte[]`
+|`aws2-s3:`, `azure-storage-blob:`, `google-storage:`
+|From content type headers (required)
+
+|`InputStream`
+|Various streaming components
+|From content type headers (required)
+|===
+
+===== Example: Processing Images from File Component
+
+[source,java]
+----
+from("file:inbox/images?noop=true&include=.*\\.png")
+    .setHeader("CamelLangChain4jAgentUserMessage", constant("Describe this image"))
+    .to("langchain4j-agent:vision?agent=#visionAgent")
+    .to("log:response");
+----
+
+===== Example: Processing Files from AWS S3
+
+[source,java]
+----
+from("aws2-s3://my-bucket?prefix=images/&includeBody=true")
+    .setHeader("CamelLangChain4jAgentUserMessage", constant("What do you see in this image?"))
+    .to("langchain4j-agent:vision?agent=#visionAgent")
+    .to("log:response");
+----
+
+[NOTE]
+====
+When using `byte[]` or `InputStream` inputs, a MIME type header is required since the type cannot be auto-detected from the content. The component checks for MIME type in this priority order:
+
+1. `CamelLangChain4jAgentMediaType` header (highest priority - explicit override)
+2. `CamelAwsS3ContentType` header (from AWS S3)
+3. `Content-Type` header
+4. `CamelFileContentType` header (from file components)
+====
+
+===== Example: Overriding MIME Type
+
+[source,java]
+----
+from("direct:process-file")
+    .setHeader("CamelLangChain4jAgentUserMessage", constant("Analyze this document"))
+    .setHeader("CamelLangChain4jAgentMediaType", constant("application/pdf"))
+    .to("langchain4j-agent:analyzer?agent=#analyzerAgent");
+----
+
+==== Complete Multimodal Route Example
+
+Here's a complete example showing how to process images from a file system and send them to an AI agent for analysis:
+
+[source,java]
+----
+// Create a vision-capable chat model
+ChatModel chatModel = OpenAiChatModel.builder()
+    .apiKey(apiKey)
+    .modelName("gpt-4o")  // Vision-capable model
+    .build();
+
+// Create agent configuration
+AgentConfiguration configuration = new AgentConfiguration()
+    .withChatModel(chatModel);
+
+Agent visionAgent = new AgentWithoutMemory(configuration);
+context.getRegistry().bind("visionAgent", visionAgent);
+
+// Route to process images
+from("file:inbox/images?noop=true&include=.*\\.(png|jpg|jpeg)")
+    .setHeader("CamelLangChain4jAgentUserMessage",
+        constant("Describe what you see in this image. Be detailed but concise."))
+    .to("langchain4j-agent:vision?agent=#visionAgent")
+    .log("AI Response: ${body}")
+    .to("file:outbox/descriptions");
+----

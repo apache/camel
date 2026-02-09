@@ -53,13 +53,9 @@ public class MainIoCBeanPostProcessorDisabledTest {
         main.configure().addRoutesBuilder(new MyRouteBuilder());
         main.configure().withBeanPostProcessorEnabled(false);
 
-        try {
-            main.start();
-            fail("Should throw exception");
-        } catch (FailedToCreateRouteException e) {
-            NoSuchBeanException nsbe = (NoSuchBeanException) e.getCause();
-            assertEquals("tiger", nsbe.getName());
-        }
+        FailedToCreateRouteException e = assertThrows(FailedToCreateRouteException.class, () -> main.start());
+        NoSuchBeanException nsbe = (NoSuchBeanException) e.getCause();
+        assertEquals("tiger", nsbe.getName());
     }
 
     public static class MyRouteBuilder extends RouteBuilder {

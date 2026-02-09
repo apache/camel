@@ -66,6 +66,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": target.getConfiguration().setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, long.class, value)); return true;
+        case "tracingpolicy":
+        case "tracingPolicy": target.getConfiguration().setTracingPolicy(property(camelContext, io.vertx.core.tracing.TracingPolicy.class, value)); return true;
         case "transferexception":
         case "transferException": target.getConfiguration().setTransferException(property(camelContext, boolean.class, value)); return true;
         case "usecompression":
@@ -124,6 +126,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return boolean.class;
         case "timeout": return long.class;
+        case "tracingpolicy":
+        case "tracingPolicy": return io.vertx.core.tracing.TracingPolicy.class;
         case "transferexception":
         case "transferException": return boolean.class;
         case "usecompression":
@@ -183,6 +187,8 @@ public class VertxHttpEndpointConfigurer extends PropertyConfigurerSupport imple
         case "throwexceptiononfailure":
         case "throwExceptionOnFailure": return target.getConfiguration().isThrowExceptionOnFailure();
         case "timeout": return target.getConfiguration().getTimeout();
+        case "tracingpolicy":
+        case "tracingPolicy": return target.getConfiguration().getTracingPolicy();
         case "transferexception":
         case "transferException": return target.getConfiguration().isTransferException();
         case "usecompression":

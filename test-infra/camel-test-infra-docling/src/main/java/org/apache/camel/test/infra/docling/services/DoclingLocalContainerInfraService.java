@@ -65,13 +65,10 @@ public class DoclingLocalContainerInfraService implements DoclingInfraService, C
             public TestInfraDoclingContainer(boolean fixedPort) {
                 super(DockerImageName.parse(doclingImage));
 
-                withExposedPorts(DOCLING_PORT)
-                        .waitingFor(Wait.forListeningPorts(DOCLING_PORT))
+                waitingFor(Wait.forListeningPorts(DOCLING_PORT))
                         .withStartupTimeout(Duration.ofMinutes(3L));
 
-                if (fixedPort) {
-                    addFixedExposedPort(DOCLING_PORT, DOCLING_PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, DOCLING_PORT);
             }
         }
 

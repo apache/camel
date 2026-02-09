@@ -43,7 +43,7 @@ public class GarbageCollectorDevConsole extends AbstractDevConsole {
         List<GarbageCollectorMXBean> gcs = ManagementFactory.getGarbageCollectorMXBeans();
         if (gcs != null && !gcs.isEmpty()) {
             for (GarbageCollectorMXBean gc : gcs) {
-                sb.append(String.format("\n    %s: %s (%s ms)", gc.getName(), gc.getCollectionCount(), gc.getCollectionTime()));
+                sb.append(String.format("%n    %s: %s (%s ms)", gc.getName(), gc.getCollectionCount(), gc.getCollectionTime()));
             }
         }
 

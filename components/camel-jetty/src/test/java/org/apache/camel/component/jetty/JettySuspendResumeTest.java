@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JettySuspendResumeTest extends BaseJettyTest {
 
@@ -44,13 +44,10 @@ public class JettySuspendResumeTest extends BaseJettyTest {
         // suspend
         consumer.suspend();
 
-        try {
-            template.requestBody(serverUri, "Moon", String.class);
-            fail("Should throw exception");
-        } catch (Exception e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(503, cause.getStatusCode());
-        }
+        Exception e = assertThrows(Exception.class, () -> template.requestBody(serverUri, "Moon", String.class),
+                "Should throw exception");
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(503, cause.getStatusCode());
 
         // resume
         consumer.resume();

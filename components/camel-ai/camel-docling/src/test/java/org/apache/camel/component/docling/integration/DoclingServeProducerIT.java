@@ -20,23 +20,17 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docling.ConversionStatus;
-import org.apache.camel.component.docling.DoclingComponent;
-import org.apache.camel.component.docling.DoclingConfiguration;
+import org.apache.camel.component.docling.ConversionStatus.Status;
 import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DoclingOperations;
-import org.apache.camel.test.infra.docling.services.DoclingService;
-import org.apache.camel.test.infra.docling.services.DoclingServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.io.TempDir;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -48,89 +42,66 @@ import static org.junit.jupiter.api.Assertions.fail;
  * container for testing without manual setup.
  */
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Too much resources on GitHub Actions")
-public class DoclingServeProducerIT extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DoclingServeProducerIT.class);
-
-    @RegisterExtension
-    static DoclingService doclingService = DoclingServiceFactory.createService();
+class DoclingServeProducerIT extends DoclingITestSupport {
 
     @TempDir
     Path outputDir;
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        DoclingComponent docling = context.getComponent("docling", DoclingComponent.class);
-        DoclingConfiguration conf = new DoclingConfiguration();
-        conf.setUseDoclingServe(true);
-        conf.setDoclingServeUrl(doclingService.doclingServerUrl());
-        docling.setConfiguration(conf);
-
-        LOG.info("Testing Docling-Serve at: {}", doclingService.doclingServerUrl());
-
-        return context;
-    }
-
     @Test
-    public void testMarkdownConversionWithDoclingServe() throws Exception {
+    void testMarkdownConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-markdown-serve",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).containsIgnoringCase("Test Document");
 
         LOG.info("Successfully converted document to Markdown");
     }
 
     @Test
-    public void testHtmlConversionWithDoclingServe() throws Exception {
+    void testHtmlConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-html-serve",
                 testFile.toString(),
                 DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).containsIgnoringCase("<h1>Test Document</h1>");
 
         LOG.info("Successfully converted document to HTML");
     }
 
     @Test
-    public void testUrlConversionWithDoclingServe() throws Exception {
+    void testUrlConversionWithDoclingServe() throws Exception {
         // Test converting a document from a URL
         String url = "https://arxiv.org/pdf/2501.17887";
 
         String result = template.requestBody("direct:convert-url-serve", url, String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
+        assertThat(result).containsIgnoringCase("An Efficient Open-Source Toolkit");
 
         LOG.info("Successfully converted document from URL");
     }
 
     @Test
-    public void testJsonConversionWithDoclingServe() throws Exception {
+    void testJsonConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-json-serve",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result);
-        assertTrue(result.length() > 0);
-        // JSON response should contain some structure
-        assertTrue(result.contains("{") || result.contains("["));
+        assertThatJson(result).node("schema_name").asString().isEqualTo("DoclingDocument");
+        assertThatJson(result).inPath("texts[*].text").isArray().contains("Test Document",
+                "This is a test document for Docling-Serve processing.");
 
         LOG.info("Successfully converted document to JSON");
     }
 
     @Test
-    public void testConvertAndWriteToFile() throws Exception {
+    void testConvertAndWriteToFile() throws Exception {
         Path testFile = createTestFile();
 
         // Send the file path to the route that converts and writes to file
@@ -138,91 +109,82 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString());
 
-        // Verify the output file was created
         File outputFile = new File(outputDir.toFile(), "converted-output.md");
-        assertTrue(outputFile.exists(), "Output file should exist");
-        assertTrue(outputFile.length() > 0, "Output file should not be empty");
-
-        // Read and verify content
-        String content = Files.readString(outputFile.toPath());
-        assertNotNull(content);
-        assertTrue(content.length() > 0);
+        assertThat(outputFile.toPath())
+                .exists()
+                .content().containsIgnoringCase("Test Document");
 
         LOG.info("Successfully converted document and wrote to file: {}", outputFile.getAbsolutePath());
         LOG.info("Output file size: {} bytes", outputFile.length());
     }
 
     @Test
-    public void testAsyncMarkdownConversion() throws Exception {
+    void testAsyncMarkdownConversion() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-async-markdown",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result, "Async conversion result should not be null");
-        assertTrue(result.length() > 0, "Async conversion result should not be empty");
+        assertThat(result).containsIgnoringCase("Test Document");
 
         LOG.info("Successfully converted document to Markdown using async mode");
     }
 
     @Test
-    public void testAsyncHtmlConversion() throws Exception {
+    void testAsyncHtmlConversion() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-async-html",
                 testFile.toString(),
                 DoclingHeaders.OPERATION, DoclingOperations.CONVERT_TO_HTML, String.class);
 
-        assertNotNull(result, "Async HTML conversion result should not be null");
-        assertTrue(result.length() > 0, "Async HTML conversion result should not be empty");
+        assertThat(result).containsIgnoringCase("<h1>Test Document</h1>");
 
         LOG.info("Successfully converted document to HTML using async mode");
     }
 
     @Test
-    public void testAsyncJsonConversion() throws Exception {
+    void testAsyncJsonConversion() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-async-json",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result, "Async JSON conversion result should not be null");
-        assertTrue(result.length() > 0, "Async JSON conversion result should not be empty");
-        assertTrue(result.contains("{") || result.contains("["), "JSON result should contain JSON structure");
+        assertThatJson(result).node("schema_name").asString().isEqualTo("DoclingDocument");
+        assertThatJson(result).inPath("texts[*].text").isArray().contains("Test Document",
+                "This is a test document for Docling-Serve processing.");
 
         LOG.info("Successfully converted document to JSON using async mode");
     }
 
     @Test
-    public void testAsyncUrlConversion() throws Exception {
+    void testAsyncUrlConversion() throws Exception {
         String url = "https://arxiv.org/pdf/2501.17887";
 
         String result = template.requestBody("direct:convert-async-url", url, String.class);
 
-        assertNotNull(result, "Async URL conversion result should not be null");
-        assertTrue(result.length() > 0, "Async URL conversion result should not be empty");
+        assertThat(result).containsIgnoringCase("An Efficient Open-Source Toolkit");
 
         LOG.info("Successfully converted document from URL using async mode");
     }
 
     @Test
-    public void testAsyncConversionWithCustomTimeout() throws Exception {
+    void testAsyncConversionWithCustomTimeout() throws Exception {
         Path testFile = createTestFile();
 
         String result = template.requestBodyAndHeader("direct:convert-async-custom-timeout",
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result, "Async conversion with custom timeout should not be null");
-        assertTrue(result.length() > 0, "Async conversion with custom timeout should not be empty");
+        assertThat(result).contains("This is a test document for Docling-Serve processing.");
 
         LOG.info("Successfully converted document using async mode with custom timeout");
     }
 
     @Test
-    public void testAsyncConversionWithHeaderOverride() throws Exception {
+    void testAsyncConversionWithHeaderOverride() throws Exception {
         Path testFile = createTestFile();
 
         // Use sync endpoint but override with async header
@@ -237,14 +199,13 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                     }
                 }, String.class);
 
-        assertNotNull(result, "Async conversion via header override should not be null");
-        assertTrue(result.length() > 0, "Async conversion via header override should not be empty");
+        assertThat(result).contains("This is a test document for Docling-Serve processing.");
 
         LOG.info("Successfully converted document using async mode via header override");
     }
 
     @Test
-    public void testSubmitAsyncConversion() throws Exception {
+    void testSubmitAsyncConversion() throws Exception {
         Path testFile = createTestFile();
 
         // Submit async conversion and get task ID
@@ -252,14 +213,13 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(taskId, "Task ID should not be null");
-        assertTrue(taskId.length() > 0, "Task ID should not be empty");
+        assertThat(taskId).startsWith("task-");
 
         LOG.info("Successfully submitted async conversion with task ID: {}", taskId);
     }
 
     @Test
-    public void testCheckConversionStatus() throws Exception {
+    void testCheckConversionStatus() throws Exception {
         Path testFile = createTestFile();
 
         // First, submit async conversion
@@ -277,13 +237,13 @@ public class DoclingServeProducerIT extends CamelTestSupport {
 
         assertNotNull(status, "Status should not be null");
         assertNotNull(status.getTaskId(), "Status task ID should not be null");
-        assertNotNull(status.getStatus(), "Status state should not be null");
+        assertThat(status.getStatus()).isEqualTo(Status.COMPLETED);
 
         LOG.info("Successfully checked status for task {}: {}", taskId, status.getStatus());
     }
 
     @Test
-    public void testCustomAsyncWorkflow() throws Exception {
+    void testCustomAsyncWorkflow() throws Exception {
         Path testFile = createTestFile();
 
         // Custom workflow: submit, poll until complete, get result
@@ -321,13 +281,14 @@ public class DoclingServeProducerIT extends CamelTestSupport {
         }
 
         if (status.getResult() != null) {
+            // TODO: this check can never happen as there is an if condition before. The status.getResult() is actually null, is it expected or a bug?
             assertTrue(status.getResult().length() > 0, "Result should not be empty");
             LOG.info("Successfully retrieved result: {} characters", status.getResult().length());
         }
     }
 
     @Test
-    public void testCustomPollingWorkflowWithRoute() throws Exception {
+    void testCustomPollingWorkflowWithRoute() throws Exception {
         Path testFile = createTestFile();
 
         // This test demonstrates using the built-in async mode with a route
@@ -336,8 +297,7 @@ public class DoclingServeProducerIT extends CamelTestSupport {
                 testFile.toString(),
                 DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
 
-        assertNotNull(result, "Result should not be null");
-        assertTrue(result.length() > 0, "Result should not be empty");
+        assertThat(result).contains("This is a test document for Docling-Serve processing.");
 
         LOG.info("Custom polling workflow (using built-in async mode) completed successfully with {} characters",
                 result.length());
@@ -345,9 +305,19 @@ public class DoclingServeProducerIT extends CamelTestSupport {
 
     private Path createTestFile() throws Exception {
         Path tempFile = Files.createTempFile("docling-serve-test", ".md");
-        Files.write(tempFile,
-                "# Test Document\n\nThis is a test document for Docling-Serve processing.\n\n## Section 1\n\nSome content here.\n\n- List item 1\n- List item 2\n"
-                        .getBytes());
+        Files.writeString(tempFile,
+                """
+                        # Test Document
+
+                        This is a test document for Docling-Serve processing.
+
+                        ## Section 1
+
+                        Some content here.
+
+                        - List item 1
+                        - List item 2
+                        """);
         return tempFile;
     }
 

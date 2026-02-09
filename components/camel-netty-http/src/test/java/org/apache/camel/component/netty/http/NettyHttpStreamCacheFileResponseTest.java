@@ -30,7 +30,7 @@ import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
+public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTestSupport {
 
     private final String body = "12345678901234567890123456789012345678901234567890";
     private final String body2 = "Bye " + body;

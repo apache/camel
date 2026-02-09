@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GuavaEventBusConsumerConfigurationTest extends CamelTestSupport {
 
@@ -49,13 +49,11 @@ public class GuavaEventBusConsumerConfigurationTest extends CamelTestSupport {
             }
         });
 
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             context.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
-            IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertEquals("You cannot set both 'eventClass' and 'listenerInterface' parameters.", ise.getMessage());
-        }
+        });
+        IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
+        assertEquals("You cannot set both 'eventClass' and 'listenerInterface' parameters.", ise.getMessage());
     }
 
 }

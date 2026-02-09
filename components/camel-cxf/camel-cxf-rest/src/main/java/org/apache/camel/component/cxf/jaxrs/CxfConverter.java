@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -126,16 +127,37 @@ public final class CxfConverter {
 
     @Converter(allowNull = true)
     public static StreamCache toStreamCache(Response response, Exchange exchange) {
-        InputStream is = toInputStream(response, exchange);
+        if (response == null) {
+            return null;
+        }
 
+        // retrieve the HTTP status from the Response object
+        // and set it explicitly on the Exchange's IN message headers.
+        // This ensures the status code is saved before the conversion loses the Response object context.
+        int status = response.getStatus();
+        if (status > 0) {
+            exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, status);
+        }
+
+        // Convert the body (entity) to an InputStream
+        InputStream is = toInputStream(response, exchange);
+        //If there is no entity body, provide an empty stream
+        // to ensure we return a valid StreamCache instead of null (which would be wrapped as Void.class).
+        if (is == null) {
+            is = new ByteArrayInputStream(new byte[0]);
+        }
+
+        // Find the appropriate TypeConverter for StreamCache
         TypeConverterRegistry registry = exchange.getContext().getTypeConverterRegistry();
         TypeConverter tc = registry.lookup(StreamCache.class, is.getClass());
 
         if (tc != null) {
+            // Convert the InputStream payload into a StreamCache
             return tc.convertTo(StreamCache.class, exchange, is);
         }
 
         return null;
+
     }
 
     /**

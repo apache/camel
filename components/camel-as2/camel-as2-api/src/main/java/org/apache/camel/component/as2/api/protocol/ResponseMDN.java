@@ -73,14 +73,16 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String DISPOSITION_MODIFIER = "Disposition-Modifier";
 
-    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n"
-                                                               + " Message ID: $requestHeaders[\"Message-Id\"]\n"
-                                                               + "  Subject: $requestHeaders[\"Subject\"]\n"
-                                                               + "  Date: $requestHeaders[\"Date\"]\n"
-                                                               + "  From: $requestHeaders[\"AS2-From\"]\n"
-                                                               + "  To: $requestHeaders[\"AS2-To\"]\n"
-                                                               + "  Received on: $responseHeaders[\"Date\"]\n"
-                                                               + " Status: $dispositionType \n";
+    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = """
+            MDN for -
+             Message ID: $requestHeaders["Message-Id"]
+              Subject: $requestHeaders["Subject"]
+              Date: $requestHeaders["Date"]
+              From: $requestHeaders["AS2-From"]
+              To: $requestHeaders["AS2-To"]
+              Received on: $responseHeaders["Date"]
+             Status: $dispositionType
+            """;
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
 

@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.camel.tests.bundles</groupId>
         <artifactId>bundles-pom</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.tests</groupId>
     <artifactId>camel-validator-test-resources</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Integration Tests :: Camel Validator Test Resources</name>
+    <name>Camel :: Integration Tests :: Validator Resources</name>
     <description>This bundle is just test source.jar.</description>
 
     <profiles>

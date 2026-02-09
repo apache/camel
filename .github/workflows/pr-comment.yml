@@ -20,7 +20,7 @@ name: PR Comment Build
 on:
   issue_comment:
     types: [created]
-permissions:  
+permissions:
   contents: read
 
 jobs:
@@ -60,7 +60,7 @@ jobs:
         with:
           ref: ${{ env.pr_sha }}
           submodules: recursive
-      - uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+      - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
@@ -68,17 +68,19 @@ jobs:
       - id: install-packages
         uses: ./.github/actions/install-packages
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5.1.0
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - id: test
+        env:
+          comment_body: ${{ github.event.comment.body }}
         name: Component test execution
         uses: ./.github/actions/component-test
         with:
           run-id: ${{ github.run_id }}
           pr-id: ${{ github.event.issue.number }}
           comment-id: ${{ github.event.comment.id }}
-          comment-body: ${{ github.event.comment.body }}
+          comment-body: ${{ env.comment_body }}
           artifact-upload-suffix: java-${{ matrix.java }}

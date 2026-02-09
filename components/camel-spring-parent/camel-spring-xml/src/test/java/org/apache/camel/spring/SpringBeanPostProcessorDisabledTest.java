@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringBeanPostProcessorDisabledTest extends SpringTestSupport {
 
@@ -38,13 +39,11 @@ public class SpringBeanPostProcessorDisabledTest extends SpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:start", "World");
-            fail("Should throw exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException iae = (IllegalArgumentException) e.getCause();
-            assertEquals("bar is not injected", iae.getMessage());
-        }
+        });
+        IllegalArgumentException iae = (IllegalArgumentException) e.getCause();
+        assertEquals("bar is not injected", iae.getMessage());
 
         assertMockEndpointsSatisfied();
     }

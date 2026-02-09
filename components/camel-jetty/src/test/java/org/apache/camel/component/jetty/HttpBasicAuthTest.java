@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class HttpBasicAuthTest extends BaseJettyTest {
 
@@ -79,14 +79,14 @@ public class HttpBasicAuthTest extends BaseJettyTest {
 
     @Test
     public void testHttpBasicAuthInvalidPassword() {
-        try {
-            template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=sorry",
-                    "Hello World", String.class);
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(401, cause.getStatusCode());
-        }
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> template.requestBody(
+                        "http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=sorry",
+                        "Hello World", String.class),
+                "Should have thrown exception");
+
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+        assertEquals(401, cause.getStatusCode());
     }
 
     @Override

@@ -48,10 +48,24 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is ignore token
+     */
+    public boolean isIgnore() {
+        return type == TokenType.ignore;
+    }
+
+    /**
      * Whether the type is whitespace
      */
     public boolean isWhitespace() {
         return type == TokenType.whiteSpace;
+    }
+
+    /**
+     * Whether the type is a new-line character
+     */
+    public boolean isNewLine() {
+        return isWhitespace() && "\n".equals(value);
     }
 
     /**
@@ -104,6 +118,13 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is other operator
+     */
+    public boolean isOther() {
+        return type == TokenType.otherOperator;
+    }
+
+    /**
      * Whether the type is unary operator
      */
     public boolean isUnary() {
@@ -115,6 +136,20 @@ public final class SimpleTokenType {
      */
     public boolean isLogical() {
         return type == TokenType.logicalOperator;
+    }
+
+    /**
+     * Whether the type is init operator
+     */
+    public boolean isInit() {
+        return type == TokenType.initOperator;
+    }
+
+    /**
+     * Whether the type is init variable
+     */
+    public boolean isInitVariable() {
+        return type == TokenType.initVariable;
     }
 
     /**
@@ -143,6 +178,34 @@ public final class SimpleTokenType {
      */
     public boolean isNumericValue() {
         return type == TokenType.numericValue;
+    }
+
+    /**
+     * Whether the type is ternary operator
+     */
+    public boolean isTernary() {
+        return type == TokenType.ternaryOperator;
+    }
+
+    /**
+     * Whether the type is ternary start operator (?)
+     */
+    public boolean isTernaryStart() {
+        return type == TokenType.ternaryOperator && "?".equals(value);
+    }
+
+    /**
+     * Whether the type is ternary start operator (:)
+     */
+    public boolean isTernaryEnd() {
+        return type == TokenType.ternaryOperator && ":".equals(value);
+    }
+
+    /**
+     * Whether the type is chain operator
+     */
+    public boolean isChain() {
+        return type == TokenType.chainOperator;
     }
 
     @Override

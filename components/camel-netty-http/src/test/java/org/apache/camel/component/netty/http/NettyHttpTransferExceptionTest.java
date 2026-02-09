@@ -23,22 +23,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class NettyHttpTransferExceptionTest extends BaseNettyTest {
+public class NettyHttpTransferExceptionTest extends BaseNettyTestSupport {
 
     @Test
     public void testHttpTransferException() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
 
-        try {
-            template.requestBody("netty-http:http://localhost:{{port}}/foo?transferException=true", "Hello World",
-                    String.class);
-            fail("Should have failed");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Camel cannot do this", cause.getMessage());
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("netty-http:http://localhost:{{port}}/foo?transferException=true", "Hello World",
+                        String.class),
+                "Should have failed");
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("Camel cannot do this", cause.getMessage());
 
         MockEndpoint.assertIsSatisfied(context);
     }

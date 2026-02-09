@@ -25,7 +25,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestSupport {
 
@@ -38,16 +38,14 @@ public class SpringDeadLetterChannelInvalidDeadLetterUriTest extends SpringTestS
     @Override
     @BeforeEach
     public void setUp() throws Exception {
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             super.setUp();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
-            NoSuchEndpointException cause = assertIsInstanceOf(NoSuchEndpointException.class, ftcre.getCause());
-            assertEquals(
-                    "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
-                    cause.getMessage());
-        }
+        });
+        FailedToCreateRouteException ftcre = assertIsInstanceOf(FailedToCreateRouteException.class, e);
+        NoSuchEndpointException cause = assertIsInstanceOf(NoSuchEndpointException.class, ftcre.getCause());
+        assertEquals(
+                "No endpoint could be found for: xxx, please check your classpath contains the needed Camel component jar.",
+                cause.getMessage());
     }
 
     @Test

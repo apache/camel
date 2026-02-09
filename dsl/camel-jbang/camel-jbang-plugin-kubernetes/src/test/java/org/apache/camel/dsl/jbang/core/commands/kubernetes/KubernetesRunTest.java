@@ -49,7 +49,7 @@ import picocli.CommandLine;
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Requires too much network resources")
 @EnabledIf("isDockerAvailable")
-class KubernetesRunTest extends KubernetesBaseTest {
+class KubernetesRunTest extends KubernetesBaseTestSupport {
 
     private StringPrinter printer;
 
@@ -133,6 +133,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
         Assertions.assertEquals("IfNotPresent", containers.get(0).getImagePullPolicy());
+        Assertions.assertEquals("route", labels.get("camel.apache.org/app"));
 
         // verify the container health probes path to /observe accordingly to the camel-observability-services
         if (RuntimeType.quarkus == RuntimeType.fromValue(rt.runtime())) {
@@ -232,6 +233,7 @@ class KubernetesRunTest extends KubernetesBaseTest {
         Assertions.assertEquals("route", labels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("route", matchLabels.get(BaseTrait.KUBERNETES_LABEL_NAME));
         Assertions.assertEquals("quay.io/camel-test/route:1.0-SNAPSHOT", containers.get(0).getImage());
+        Assertions.assertEquals("route", labels.get("camel.apache.org/app"));
     }
 
     private KubernetesRun createCommand(List<String> files, String... args) {

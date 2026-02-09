@@ -1,0 +1,13 @@
+# Salesforce CLI generated files (within sfdx-project)
+sfdx-project/.sfdx/
+sfdx-project/.sf/
+
+# Salesforce org auth files
+*.json.bak
+.sfdx-url
+
+# Generated connected app (created from .template file by setup script)
+sfdx-project/salesforce-source/main/default/connectedApps/CamelSalesforceIntegrationTests.connectedApp-meta.xml
+
+# User-specific local files (created by setup script)
+sfdx-project/.local/

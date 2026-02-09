@@ -56,11 +56,7 @@ public class NatsLocalContainerInfraService implements NatsInfraService, Contain
                 withNetworkAliases(containerName)
                         .waitingFor(Wait.forLogMessage(".*Listening.*for.*route.*connections.*", 1));
 
-                if (fixedPort) {
-                    addFixedExposedPort(PORT, PORT);
-                } else {
-                    withExposedPorts(PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, PORT);
             }
         }
 

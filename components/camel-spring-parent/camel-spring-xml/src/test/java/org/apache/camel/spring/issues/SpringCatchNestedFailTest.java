@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SpringCatchNestedFailTest extends ContextTestSupport {
 
@@ -69,13 +69,11 @@ public class SpringCatchNestedFailTest extends ContextTestSupport {
         getMockEndpoint("mock:catchEnd").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBody("direct:start", "Donkey Kong");
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertEquals("Damn Kong", e.getCause().getMessage());
-        }
+        });
+        assertIsInstanceOf(IllegalStateException.class, e.getCause());
+        assertEquals("Damn Kong", e.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
     }

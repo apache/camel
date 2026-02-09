@@ -141,8 +141,8 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
      * @param definition the parent definition that is the route
      */
     public void removeAllOnCompletionDefinition(ProcessorDefinition<?> definition) {
-        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition &&
-                !((OnCompletionDefinition) out).isRouteScoped());
+        definition.getOutputs().removeIf(out -> out instanceof OnCompletionDefinition oncompletiondefinition &&
+                !oncompletiondefinition.isRouteScoped());
     }
 
     @Override

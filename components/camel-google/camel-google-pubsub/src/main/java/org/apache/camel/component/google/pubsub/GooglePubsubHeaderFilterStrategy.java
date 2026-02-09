@@ -27,7 +27,9 @@ public class GooglePubsubHeaderFilterStrategy extends DefaultHeaderFilterStrateg
     public GooglePubsubHeaderFilterStrategy(boolean includeAllGoogleProperties) {
         setOutFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
         setInFilterStartsWith(DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH);
+        // Filter authorization on both directions for security
         getOutFilter().add("authorization");
+        getInFilter().add("authorization");
         if (!includeAllGoogleProperties) {
             ignoreGoogProperties();
         }
@@ -42,7 +44,9 @@ public class GooglePubsubHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         filterStartWith[DefaultHeaderFilterStrategy.CAMEL_FILTER_STARTS_WITH.length + 2] = "goog";
         setOutFilterStartsWith(filterStartWith);
         setInFilterStartsWith(filterStartWith);
+        // Filter grpc-timeout on both directions
         getOutFilter().add("grpc-timeout");
+        getInFilter().add("grpc-timeout");
     }
 
 }

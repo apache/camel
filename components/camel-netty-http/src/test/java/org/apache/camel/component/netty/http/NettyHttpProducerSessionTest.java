@@ -28,7 +28,7 @@ import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.http.common.HttpMessage;
 import org.junit.jupiter.api.Test;
 
-public class NettyHttpProducerSessionTest extends BaseNettyTest {
+public class NettyHttpProducerSessionTest extends BaseNettyTestSupport {
 
     @BindToRegistry("instanceCookieHandler")
     private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();

@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/response",
+  "title": "Response",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Response",
+  "additionalProperties": true,
+  "properties": {
+    "error": {
+      "type": "string",
+      "title": "Error Code"
+    },
+    "code": {
+      "type": "integer",
+      "title": "Response Code"
+    },
+    "data": {
+      "type": [
+        "object",
+        "string",
+        "integer",
+        "number",
+        "boolean",
+        "array",
+        "null"
+      ],
+      "title": "Data"
+    },
+    "flags": {
+      "type": "array",
+      "title": "Flags",
+      "items": {
+        "type": "string"
+      }
+    },
+    "message": {
+      "type": "string",
+      "title": "Message"
+    },
+    "containers": {
+      "type": "array",
+      "title": "Containers",
+      "items": {
+        "$ref": "Container.json"
+      }
+    },
+    "error_message": {
+      "type": "string",
+      "title": "Error Message"
+    }
+  },
+  "description": "The Response Elements object."
+}

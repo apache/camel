@@ -38,7 +38,6 @@ public class MemoryLogHandler extends ConsoleHandler {
 
     @Override
     public void publish(LogRecord record) {
-        super.publish(record);
         logs.add(record);
     }
 }

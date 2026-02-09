@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/certificate",
+  "title": "Certificate",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Certificate",
+  "additionalProperties": true,
+  "properties": {
+    "version": {
+      "type": "string",
+      "title": "Version"
+    },
+    "uid": {
+      "type": "string",
+      "title": "Unique ID"
+    },
+    "is_self_signed": {
+      "type": "boolean",
+      "title": "Certificate Self-Signed"
+    },
+    "subject": {
+      "type": "string",
+      "title": "Subject Distinguished Name"
+    },
+    "issuer": {
+      "type": "string",
+      "title": "Issuer Distinguished Name"
+    },
+    "fingerprints": {
+      "type": "array",
+      "title": "Fingerprints",
+      "items": {
+        "$ref": "Fingerprint.json"
+      }
+    },
+    "created_time": {
+      "type": "integer",
+      "title": "Created Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "expiration_time": {
+      "type": "integer",
+      "title": "Expiration Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "sans": {
+      "type": "array",
+      "title": "Subject Alternative Names",
+      "items": {
+        "$ref": "San.json"
+      }
+    },
+    "serial_number": {
+      "type": "string",
+      "title": "Certificate Serial Number"
+    }
+  },
+  "description": "The Digital Certificate object."
+}

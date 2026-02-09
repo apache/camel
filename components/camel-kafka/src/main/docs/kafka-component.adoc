@@ -359,6 +359,68 @@ static {
 
 Kafka supports several ways to authenticate the clients to the server, including plain text, PKI (certificates) over TLS, you can refer to the https://kafka.apache.org/documentation/#security_sasl[Kafka documentation] for a detailed view of the supported mechanisms. The kafka authentication and authorization is based on JAAS, so you must use a JAAS Login Module implementation on the client side.
 
+==== Simplified Authentication Configuration
+
+Instead of manually constructing JAAS configuration strings, you can use the `saslAuthType` option along with dedicated credential properties. This approach automatically derives the correct `securityProtocol`, `saslMechanism`, and `saslJaasConfig` values based on the selected authentication type.
+
+The following authentication types are supported:
+
+[width="100%",cols="2m,5",options="header"]
+|===
+| saslAuthType | Description
+| NONE | No authentication (insecure, for development only)
+| PLAIN | SASL/PLAIN with username and password
+| SCRAM_SHA_256 | SASL/SCRAM-SHA-256 authentication
+| SCRAM_SHA_512 | SASL/SCRAM-SHA-512 authentication
+| SSL | SSL/TLS with client certificates (mTLS)
+| OAUTH | OAuth 2.0 / OIDC authentication
+| AWS_MSK_IAM | AWS MSK IAM authentication
+| KERBEROS | Kerberos/GSSAPI authentication
+|===
+
+*SCRAM Authentication Example*
+
+[source,java]
+----
+from("kafka:my-topic?brokers=localhost:9092&saslAuthType=SCRAM_SHA_512&saslUsername=myuser&saslPassword=mypassword")
+    .to("log:received");
+----
+
+Or using Spring Boot configuration:
+
+[source,properties]
+----
+camel.component.kafka.sasl-auth-type=SCRAM_SHA_512
+camel.component.kafka.sasl-username=myuser
+camel.component.kafka.sasl-password=mypassword
+----
+
+*OAuth Authentication Example*
+
+[source,java]
+----
+from("kafka:my-topic?brokers=localhost:9092" +
+     "&saslAuthType=OAUTH" +
+     "&oauthClientId=my-client" +
+     "&oauthClientSecret=my-secret" +
+     "&oauthTokenEndpointUri=https://auth.example.com/oauth/token")
+    .to("log:received");
+----
+
+*AWS MSK IAM Authentication*
+
+When using AWS MSK with IAM authentication, ensure the `aws-msk-iam-auth` library is on the classpath:
+
+[source,java]
+----
+from("kafka:my-topic?brokers=b-1.mycluster.kafka.us-east-1.amazonaws.com:9098&saslAuthType=AWS_MSK_IAM")
+    .to("log:received");
+----
+
+The simplified configuration is optional. If you need more control or are using a custom JAAS login module, you can still use the traditional approach with explicit `securityProtocol`, `saslMechanism`, and `saslJaasConfig` properties as shown below.
+
+==== Traditional JAAS Configuration
+
 This section will outline the main points for the authentication using https://github.com/strimzi/strimzi-kafka-oauth/blob/main/README.md[Strimzi JAAS Login Module] and plain text. The Strimzi OAuth contains several properties to fine tune, the authentication mechanism, so you can set them into the `OAuthBearerLoginModule` section.
 
 The most basic way to authenticate is using the plain text login module with username and password. Beware that this is unsafe and and we suggest the OAuth over TLS for a fully secure mechanism.

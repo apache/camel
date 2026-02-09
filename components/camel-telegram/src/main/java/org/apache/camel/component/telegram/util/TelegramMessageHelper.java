@@ -52,6 +52,12 @@ public final class TelegramMessageHelper {
             exchange.getMessage().setBody(update.getCallbackQuery());
         } else if (update.getIncomingInlineQuery() != null) {
             exchange.getMessage().setBody(update.getIncomingInlineQuery());
+        } else if (update.getPreCheckoutQuery() != null) {
+            exchange.getMessage().setBody(update.getPreCheckoutQuery());
+        } else if (update.getShippingQuery() != null) {
+            exchange.getMessage().setBody(update.getShippingQuery());
+        } else if (update.getPurchasedPaidMedia() != null) {
+            exchange.getMessage().setBody(update.getPurchasedPaidMedia());
         }
 
     }

@@ -16,22 +16,59 @@
  */
 package org.apache.camel.component.file.cluster;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.Configurer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
+@Metadata(label = "bean",
+          description = "A file based cluster locking (read documentation to understand limitations)",
+          annotations = { "interfaceName=org.apache.camel.cluster.CamelClusterService" })
+@Configurer(metadataOnly = true)
 public class FileLockClusterService extends AbstractCamelClusterService<FileLockClusterView> {
-    private String root;
-    private long acquireLockDelay;
-    private TimeUnit acquireLockDelayUnit;
-    private long acquireLockInterval;
-    private TimeUnit acquireLockIntervalUnit;
+
     private ScheduledExecutorService executor;
+    private ExecutorService clusterDataTaskExecutor;
+
+    @Metadata(description = "The root file path", required = true)
+    private String root;
+    @Metadata(description = "The time to wait before starting to try to acquire the cluster lock. Note that if FileLockClusterService"
+                            + " determines no cluster members are running or cannot reliably determine the cluster state, the initial delay is"
+                            + " computed from the acquireLockInterval.",
+              defaultValue = "1")
+    private long acquireLockDelay;
+    @Metadata(description = "The time unit for the acquireLockDelay", defaultValue = "SECONDS")
+    private TimeUnit acquireLockDelayUnit;
+    @Metadata(description = "The time to wait between attempts to try to acquire the cluster lock evaluated using wall-clock time."
+                            + " All cluster members must use the same value so leadership checks and leader liveness detection remain consistent.",
+              defaultValue = "10")
+    private long acquireLockInterval;
+    @Metadata(description = "The time unit for the acquireLockInterval", defaultValue = "SECONDS")
+    private TimeUnit acquireLockIntervalUnit;
+    @Metadata(description = "Multiplier applied to the cluster leader acquireLockInterval to determine how long followers should wait"
+                            + " before considering the leader stale. For example, if the leader updates its heartbeat every 2 seconds"
+                            + " and the heartbeatTimeoutMultiplier is 3, followers will tolerate up to 2s * 3 = 6s of"
+                            + " silence before declaring the leader unavailable.",
+              defaultValue = "5")
     private int heartbeatTimeoutMultiplier;
+    @Metadata(description = "Sets how many times a cluster data task will run, counting both the first execution and subsequent retries in"
+                            + " case of failure or timeout. The default is 5 attempts. This can be useful when the cluster data root is"
+                            + " on network based file storage, where I/O operations may occasionally block for long or unpredictable periods.",
+              defaultValue = "5")
+    private int clusterDataTaskMaxAttempts;
+    @Metadata(description = "Sets the timeout for a cluster data task (reading or writing cluster data). The default is 10 seconds."
+                            + " Timeouts are useful when the cluster data root is on network storage, where I/O operations may occasionally block"
+                            + " for long or unpredictable periods.",
+              defaultValue = "10")
+    private long clusterDataTaskTimeout;
+    @Metadata(description = "The time unit for the clusterDataTaskTimeoutUnit", defaultValue = "SECONDS")
+    private TimeUnit clusterDataTaskTimeoutUnit;
 
     public FileLockClusterService() {
         this.acquireLockDelay = 1;
@@ -39,6 +76,9 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
         this.acquireLockInterval = 10;
         this.acquireLockIntervalUnit = TimeUnit.SECONDS;
         this.heartbeatTimeoutMultiplier = 5;
+        this.clusterDataTaskMaxAttempts = 5;
+        this.clusterDataTaskTimeout = 10;
+        this.clusterDataTaskTimeoutUnit = TimeUnit.SECONDS;
     }
 
     @Override
@@ -62,9 +102,14 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     }
 
     /**
-     * The time to wait before starting to try to acquire lock, default 1.
+     * The time to wait before starting to try to acquire the cluster lock. Note that if FileLockClusterService
+     * determines no cluster members are running or cannot reliably determine the cluster state, the initial delay is
+     * computed from the acquireLockInterval, default 1.
      */
     public void setAcquireLockDelay(long acquireLockDelay) {
+        if (acquireLockDelay <= 0) {
+            throw new IllegalArgumentException("acquireLockDelay must be greater than 0");
+        }
         this.acquireLockDelay = acquireLockDelay;
     }
 
@@ -89,9 +134,13 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
     }
 
     /**
-     * The time to wait between attempts to try to acquire lock, default 10.
+     * The time to wait between attempts to try to acquire the cluster lock evaluated using wall-clock time. All cluster
+     * members must use the same value so leadership checks and leader liveness detection remain consistent, default 10.
      */
     public void setAcquireLockInterval(long acquireLockInterval) {
+        if (acquireLockInterval <= 0) {
+            throw new IllegalArgumentException("acquireLockInterval must be greater than 0");
+        }
         this.acquireLockInterval = acquireLockInterval;
     }
 
@@ -120,11 +169,72 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
      * <p>
      */
     public void setHeartbeatTimeoutMultiplier(int heartbeatTimeoutMultiplier) {
+        if (heartbeatTimeoutMultiplier <= 0) {
+            throw new IllegalArgumentException("HeartbeatTimeoutMultiplier must be greater than 0");
+        }
         this.heartbeatTimeoutMultiplier = heartbeatTimeoutMultiplier;
     }
 
     public int getHeartbeatTimeoutMultiplier() {
         return heartbeatTimeoutMultiplier;
+    }
+
+    /**
+     * Sets how many times a cluster data task will run, counting both the first execution and subsequent retries in
+     * case of failure or timeout. The default is 5 attempts.
+     * <p>
+     * This can be useful when the cluster data root is on network based file storage, where I/O operations may
+     * occasionally block for long or unpredictable periods.
+     */
+    public void setClusterDataTaskMaxAttempts(int clusterDataTaskMaxAttempts) {
+        if (clusterDataTaskMaxAttempts <= 0) {
+            throw new IllegalArgumentException("clusterDataTaskMaxRetries must be greater than 0");
+        }
+        this.clusterDataTaskMaxAttempts = clusterDataTaskMaxAttempts;
+    }
+
+    public int getClusterDataTaskMaxAttempts() {
+        return clusterDataTaskMaxAttempts;
+    }
+
+    /**
+     * Sets the timeout for a cluster data task (reading or writing cluster data). The default is 10 seconds.
+     * <p>
+     * Timeouts are useful when the cluster data root is on network storage, where I/O operations may occasionally block
+     * for long or unpredictable periods.
+     */
+    public void setClusterDataTaskTimeout(long clusterDataTaskTimeout) {
+        if (clusterDataTaskTimeout <= 0) {
+            throw new IllegalArgumentException("clusterDataTaskMaxRetries must be greater than 0");
+        }
+        this.clusterDataTaskTimeout = clusterDataTaskTimeout;
+    }
+
+    public long getClusterDataTaskTimeout() {
+        return clusterDataTaskTimeout;
+    }
+
+    /**
+     * The time unit for the clusterDataTaskTimeoutUnit, default to TimeUnit.SECONDS.
+     */
+    public void setClusterDataTaskTimeoutUnit(TimeUnit clusterDataTaskTimeoutUnit) {
+        this.clusterDataTaskTimeoutUnit = clusterDataTaskTimeoutUnit;
+    }
+
+    public TimeUnit getClusterDataTaskTimeoutUnit() {
+        return clusterDataTaskTimeoutUnit;
+    }
+
+    /**
+     * Sets the timeout for a cluster data task (reading or writing cluster data). The default is 10 seconds.
+     * <p>
+     * Timeouts are useful when the cluster data root is on network storage, where I/O operations may occasionally block
+     * for long or unpredictable periods.
+     * <p>
+     */
+    public void setClusterDataTaskTimeout(long clusterDataTaskTimeout, TimeUnit clusterDataTaskTimeoutUnit) {
+        setClusterDataTaskTimeout(clusterDataTaskTimeout);
+        setClusterDataTaskTimeoutUnit(clusterDataTaskTimeoutUnit);
     }
 
     @Override
@@ -142,6 +252,14 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
 
             executor = null;
         }
+
+        if (clusterDataTaskExecutor != null) {
+            if (context != null) {
+                context.getExecutorServiceManager().shutdown(clusterDataTaskExecutor);
+            } else {
+                clusterDataTaskExecutor.shutdown();
+            }
+        }
     }
 
     ScheduledExecutorService getExecutor() {
@@ -157,6 +275,21 @@ public class FileLockClusterService extends AbstractCamelClusterService<FileLock
             }
 
             return executor;
+        } finally {
+            internalLock.unlock();
+        }
+    }
+
+    ExecutorService getClusterDataTaskExecutor() {
+        Lock internalLock = getInternalLock();
+        internalLock.lock();
+        try {
+            if (clusterDataTaskExecutor == null) {
+                final CamelContext context = ObjectHelper.notNull(getCamelContext(), "CamelContext");
+                clusterDataTaskExecutor = context.getExecutorServiceManager().newFixedThreadPool(this,
+                        "FileLockClusterDataTask-" + getId(), 5);
+            }
+            return clusterDataTaskExecutor;
         } finally {
             internalLock.unlock();
         }

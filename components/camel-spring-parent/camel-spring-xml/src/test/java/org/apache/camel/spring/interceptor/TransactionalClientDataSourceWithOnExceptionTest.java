@@ -24,8 +24,8 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -38,15 +38,13 @@ public class TransactionalClientDataSourceWithOnExceptionTest extends Transactio
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        try {
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> {
             template.sendBody("direct:fail", "Hello World");
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            // expected as we fail
-            assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
-            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
-        }
+        });
+        // expected as we fail
+        assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
+        assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
+        assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
 
         assertMockEndpointsSatisfied();
 

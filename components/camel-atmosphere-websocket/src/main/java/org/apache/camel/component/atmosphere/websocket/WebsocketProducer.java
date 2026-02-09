@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -37,10 +36,26 @@ import org.slf4j.LoggerFactory;
 public class WebsocketProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(WebsocketProducer.class);
 
-    private static ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ExecutorService executor;
 
     public WebsocketProducer(WebsocketEndpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        executor = getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newSingleThreadExecutor(this, "WebsocketProducer");
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (executor != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
+            executor = null;
+        }
+        super.doStop();
     }
 
     @Override

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class QueueProducerQoSTest extends CamelTestSupport {
 
@@ -82,14 +82,12 @@ public class QueueProducerQoSTest extends CamelTestSupport {
         String endpoint = String.format("sjms:queue:%s?timeToLive=1000&exchangePattern=InOut&requestTimeout=500",
                 TEST_INOUT_DESTINATION_NAME);
 
-        try {
+        // we are expecting an exception here because there are no consumers on this queue,
+        // so we will not be able to do a real InOut/request-response, but that's okay
+        // we're just interested in the message becoming expired
+        assertThrows(Exception.class, () -> {
             template.requestBody(endpoint, "test message");
-            fail("we aren't expecting any consumers, so should not succeed");
-        } catch (Exception e) {
-            // we are expecting an exception here because there are no consumers on this queue,
-            // so we will not be able to do a real InOut/request-response, but that's okay
-            // we're just interested in the message becoming expired
-        }
+        });
 
         MockEndpoint.assertIsSatisfied(context);
 

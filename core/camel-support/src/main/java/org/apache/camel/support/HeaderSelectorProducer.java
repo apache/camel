@@ -111,8 +111,10 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
 
         Class<?> sclazz = this.getClass().getSuperclass();
-        if (sclazz != null && !sclazz.getName().equals("java.lang.Object")
-                && !sclazz.getName().equals(HeaderSelectorProducer.class.getName())) {
+        // NOTE: check specific classes only, not possible subclasses
+        if (sclazz != null
+                && sclazz != Object.class
+                && sclazz != HeaderSelectorProducer.class) {
             // some components may have a common base class they extend from (such as camel-infinispan)
             // so try to discover that (optional so return null if not present)
             String key2 = this.getClass().getSuperclass().getName();

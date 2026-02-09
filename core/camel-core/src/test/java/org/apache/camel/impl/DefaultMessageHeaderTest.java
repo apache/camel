@@ -36,6 +36,16 @@ public class DefaultMessageHeaderTest {
     }
 
     @Test
+    public void testHasHeaders() {
+        Message msg = new DefaultMessage(camelContext);
+        assertFalse(msg.hasHeaders());
+
+        msg.setHeader("foo", "cheese");
+        assertTrue(msg.hasHeaders());
+        assertEquals("cheese", msg.getHeader("foo"));
+    }
+
+    @Test
     public void testLookupCaseAgnostic() {
         Message msg = new DefaultMessage(camelContext);
         assertNull(msg.getHeader("foo"));

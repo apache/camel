@@ -23,12 +23,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.ast.ChainExpression;
+import org.apache.camel.language.simple.ast.InitBlockExpression;
 import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
+import org.apache.camel.language.simple.ast.OtherExpression;
 import org.apache.camel.language.simple.ast.SimpleFunctionEnd;
 import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
+import org.apache.camel.language.simple.ast.TernaryExpression;
 import org.apache.camel.language.simple.ast.UnaryExpression;
+import org.apache.camel.language.simple.types.ChainOperatorType;
+import org.apache.camel.language.simple.types.OtherOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
@@ -60,10 +66,50 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         this.skipFileFunctions = skipFileFunctions;
     }
 
+    public SimpleExpressionParser(CamelContext camelContext, String expression,
+                                  boolean allowEscape, boolean skipFileFunctions,
+                                  Map<String, Expression> cacheExpression, SimpleTokenizer tokenizer) {
+        super(camelContext, expression, allowEscape, tokenizer);
+        this.cacheExpression = cacheExpression;
+        this.skipFileFunctions = skipFileFunctions;
+    }
+
     public Expression parseExpression() {
         try {
+            Expression init = null;
+            // are there init block then parse this part only, and change the expression to clip out the init block afterwards
+            if (SimpleInitBlockTokenizer.hasInitBlock(expression)) {
+                SimpleInitBlockParser initParser
+                        = new SimpleInitBlockParser(camelContext, expression, allowEscape, skipFileFunctions, cacheExpression);
+                // the init block should be parsed in predicate mode as that is needed to fully parse with all the operators and functions
+                init = initParser.parseExpression();
+                String part = StringHelper.after(expression, SimpleInitBlockTokenizer.INIT_END);
+                if (part.startsWith("\n")) {
+                    // skip newline after ending init block
+                    part = part.substring(1);
+                }
+                this.expression = part;
+                // use $$key as local variable in the expression afterwards
+                for (String key : initParser.getInitKeys()) {
+                    this.expression = this.expression.replace("$" + key, "${variable." + key + "}");
+                }
+                // use $$key() as local function in the expression afterwards
+                for (String key : initParser.getInitFunctions()) {
+                    // no-arg functions
+                    this.expression = this.expression.replace("$" + key + "()", "${function(" + key + ")}");
+                    // arg functions
+                    this.expression = this.expression.replace("${" + key + "(", "${function(" + key + ",");
+                }
+            }
+
+            // parse simple expression
             parseTokens();
-            return doParseExpression();
+            Expression exp = doParseExpression();
+            // include init block in expression
+            if (init != null) {
+                exp = ExpressionBuilder.concatExpression(List.of(init, exp));
+            }
+            return exp;
         } catch (SimpleParserException e) {
             // catch parser exception and turn that into a syntax exceptions
             throw new SimpleIllegalSyntaxException(expression, e.getIndex(), e.getMessage(), e);
@@ -97,10 +143,13 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         // parse the expression using the following grammar
         nextToken();
         while (!token.getType().isEol()) {
-            // an expression supports just template (eg text), functions, or unary operator
+            // an expression supports just template (eg text), functions, unary, ternary, or other operator
             templateText();
             functionText();
             unaryOperator();
+            ternaryOperator();
+            chainOperator();
+            otherOperator();
             nextToken();
         }
 
@@ -108,12 +157,20 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         // into an ast, and then from the ast, to Camel expression(s).
         // hence why there are a number of tasks going on below to accomplish this
 
+        // remove any ignorable white space tokens
+        removeIgnorableWhiteSpaceTokens();
         // turn the tokens into the ast model
         parseAndCreateAstModel();
         // compact and stack blocks (eg function start/end)
         prepareBlocks();
         // compact and stack unary operators
         prepareUnaryExpressions();
+        // compact and stack ternary expressions
+        prepareTernaryExpressions();
+        // compact and stack chain expressions
+        prepareChainExpression();
+        // compact and stack other expressions
+        prepareOtherExpressions();
 
         return nodes;
     }
@@ -135,11 +192,63 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
     }
 
+    /**
+     * Second step parsing into an expression
+     */
+    protected Expression doParseInitExpression() {
+        // create and return as a Camel expression
+        List<Expression> expressions = createExpressions();
+        if (expressions.isEmpty()) {
+            return null;
+        } else if (expressions.size() == 1) {
+            return expressions.get(0);
+        } else {
+            return ExpressionBuilder.eval(expressions);
+        }
+    }
+
+    /**
+     * Removes any ignorable whitespace tokens before and after other operators.
+     * <p/>
+     * During the initial parsing (input -> tokens), then there may be excessive whitespace tokens, which can safely be
+     * removed, which makes the succeeding parsing easier.
+     */
+    protected void removeIgnorableWhiteSpaceTokens() {
+        // remove all ignored
+        tokens.removeIf(t -> t.getType().isIgnore());
+
+        // white space should be removed before and after the chain/other operator
+        List<SimpleToken> toRemove = new ArrayList<>();
+        for (int i = 1; i < tokens.size() - 1; i++) {
+            SimpleToken prev = tokens.get(i - 1);
+            SimpleToken cur = tokens.get(i);
+            SimpleToken next = tokens.get(i + 1);
+            if (cur.getType().isOther() || cur.getType().isChain() || cur.getType().isInit()) {
+                if (prev.getType().isWhitespace()) {
+                    toRemove.add(prev);
+                }
+                if (next.getType().isWhitespace()) {
+                    toRemove.add(next);
+                }
+            }
+            if (cur.getType().isInitVariable()) {
+                if (prev.getType().isWhitespace()) {
+                    toRemove.add(prev);
+                }
+            }
+        }
+
+        if (!toRemove.isEmpty()) {
+            tokens.removeAll(toRemove);
+        }
+    }
+
     protected void parseAndCreateAstModel() {
         // we loop the tokens and create a sequence of ast nodes
 
         // counter to keep track of number of functions in the tokens
         AtomicInteger functions = new AtomicInteger();
+        AtomicInteger ternary = new AtomicInteger();
 
         LiteralNode imageToken = null;
         for (SimpleToken token : tokens) {
@@ -149,7 +258,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             }
 
             // create a node from the token
-            SimpleNode node = createNode(token, functions);
+            SimpleNode node = createNode(token, functions, ternary);
             if (node != null) {
                 // a new token was created so the current image token need to be added first
                 if (imageToken != null) {
@@ -176,21 +285,35 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
     }
 
-    private SimpleNode createNode(SimpleToken token, AtomicInteger functions) {
-        // expression only support functions and unary operators
+    private SimpleNode createNode(SimpleToken token, AtomicInteger functions, AtomicInteger ternary) {
+        // expression only support functions, unary operators, ternary operators, and other operators
         if (token.getType().isFunctionStart()) {
             // starting a new function
             functions.incrementAndGet();
             return new SimpleFunctionStart(token, cacheExpression, skipFileFunctions);
         } else if (functions.get() > 0 && token.getType().isFunctionEnd()) {
-            // there must be a start function already, to let this be a end function
+            // there must be a start function already, to let this be an end function
             functions.decrementAndGet();
             return new SimpleFunctionEnd(token);
         } else if (token.getType().isUnary()) {
-            // there must be a end function as previous, to let this be a unary function
+            // there must be an end function as previous, to let this be a unary function
             if (!nodes.isEmpty() && nodes.get(nodes.size() - 1) instanceof SimpleFunctionEnd) {
                 return new UnaryExpression(token);
             }
+        } else if (token.getType().isTernaryStart()) {
+            // starting a new ternary
+            ternary.incrementAndGet();
+            return new TernaryExpression(token);
+        } else if (ternary.get() > 0 && token.getType().isTernaryEnd()) {
+            // there must be a start ternary already, to let this be an end ternary
+            ternary.decrementAndGet();
+            return new TernaryExpression(token);
+        } else if (token.getType().isChain()) {
+            return new ChainExpression(token);
+        } else if (token.getType().isOther()) {
+            return new OtherExpression(token);
+        } else if (token.getType().isInit()) {
+            return new InitBlockExpression(token);
         }
 
         // by returning null, we will let the parser determine what to do
@@ -268,10 +391,12 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     // - template = literal texts with can contain embedded functions
     // - function = simple functions such as ${body} etc.
     // - unary operator = operator attached to the left-hand side node
+    // - other operator = operator attached to both the left and right hand side nodes
 
     protected void templateText() {
-        // for template, we accept anything but functions
-        while (!token.getType().isFunctionStart() && !token.getType().isFunctionEnd() && !token.getType().isEol()) {
+        // for template, we accept anything but functions / ternary operator / other operator
+        while (!token.getType().isFunctionStart() && !token.getType().isFunctionEnd() && !token.getType().isEol()
+                && !token.getType().isTernary() && !token.getType().isOther() && !token.getType().isChain()) {
             nextToken();
         }
     }
@@ -296,6 +421,93 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         return false;
     }
 
+    protected boolean otherOperator() {
+        if (accept(TokenType.otherOperator)) {
+            // remember the other operator
+            OtherOperatorType operatorType = OtherOperatorType.asOperator(token.getText());
+
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expect(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Other operator " + operatorType + " does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean chainOperator() {
+        if (accept(TokenType.chainOperator)) {
+            // remember the chain operator
+            ChainOperatorType operatorType = ChainOperatorType.asOperator(token.getText());
+
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expectAndAcceptMore(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Chain operator " + operatorType + " does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean ternaryOperator() {
+        if (accept(TokenType.ternaryOperator)) {
+            nextToken();
+            // there should be at least one whitespace after the operator
+            expectAndAcceptMore(TokenType.whiteSpace);
+
+            // then we expect either some quoted text, another function, or a numeric, boolean or null value
+            if (singleQuotedLiteralWithFunctionsText()
+                    || doubleQuotedLiteralWithFunctionsText()
+                    || functionText()
+                    || numericValue()
+                    || booleanValue()
+                    || nullValue()) {
+                // then after the right hand side value, there should be a whitespace if there is more tokens
+                nextToken();
+                if (!token.getType().isEol()) {
+                    expect(TokenType.whiteSpace);
+                }
+            } else {
+                throw new SimpleParserException(
+                        "Ternary operator does not support token " + token, token.getIndex());
+            }
+            return true;
+        }
+        return false;
+    }
+
     protected boolean unaryOperator() {
         if (accept(TokenType.unaryOperator)) {
             nextToken();
@@ -305,4 +517,46 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
         return false;
     }
+
+    protected boolean singleQuotedLiteralWithFunctionsText() {
+        if (accept(TokenType.singleQuote)) {
+            nextToken(TokenType.singleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
+            while (!token.getType().isSingleQuote() && !token.getType().isEol()) {
+                // we need to loop until we find the ending single quote, or the eol
+                nextToken(TokenType.singleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
+            }
+            expect(TokenType.singleQuote);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean doubleQuotedLiteralWithFunctionsText() {
+        if (accept(TokenType.doubleQuote)) {
+            nextToken(TokenType.doubleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
+            while (!token.getType().isDoubleQuote() && !token.getType().isEol()) {
+                // we need to loop until we find the ending double quote, or the eol
+                nextToken(TokenType.doubleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
+            }
+            expect(TokenType.doubleQuote);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean numericValue() {
+        return accept(TokenType.numericValue);
+        // no other tokens to check so do not use nextToken
+    }
+
+    protected boolean booleanValue() {
+        return accept(TokenType.booleanValue);
+        // no other tokens to check so do not use nextToken
+    }
+
+    protected boolean nullValue() {
+        return accept(TokenType.nullValue);
+        // no other tokens to check so do not use nextToken
+    }
+
 }

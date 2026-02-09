@@ -29,10 +29,16 @@ public class CamelToolSpecification {
 
     private ToolSpecification toolSpecification;
     private LangChain4jToolsConsumer consumer;
+    private boolean exposed;
 
     public CamelToolSpecification(ToolSpecification toolSpecification, LangChain4jToolsConsumer consumer) {
+        this(toolSpecification, consumer, true);
+    }
+
+    public CamelToolSpecification(ToolSpecification toolSpecification, LangChain4jToolsConsumer consumer, boolean exposed) {
         this.toolSpecification = toolSpecification;
         this.consumer = consumer;
+        this.exposed = exposed;
     }
 
     public ToolSpecification getToolSpecification() {
@@ -51,6 +57,14 @@ public class CamelToolSpecification {
         this.consumer = consumer;
     }
 
+    public boolean isExposed() {
+        return exposed;
+    }
+
+    public void setExposed(boolean exposed) {
+        this.exposed = exposed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -60,13 +74,13 @@ public class CamelToolSpecification {
             return false;
         }
         CamelToolSpecification that = (CamelToolSpecification) o;
-        return Objects.equals(toolSpecification, that.toolSpecification) && Objects.equals(consumer,
-                that.consumer);
+        return exposed == that.exposed && Objects.equals(toolSpecification, that.toolSpecification)
+                && Objects.equals(consumer, that.consumer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(toolSpecification, consumer);
+        return Objects.hash(toolSpecification, consumer, exposed);
     }
 
     @Override
@@ -74,6 +88,7 @@ public class CamelToolSpecification {
         return "CamelToolSpecification{" +
                "toolSpecification=" + toolSpecification +
                ", consumer=" + consumer +
+               ", exposed=" + exposed +
                '}';
     }
 }

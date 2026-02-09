@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FailoverMaximumFailoverAttemptsTest extends ContextTestSupport {
 
@@ -32,12 +32,8 @@ public class FailoverMaximumFailoverAttemptsTest extends ContextTestSupport {
         getMockEndpoint("mock:bad3").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:good").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should throw exception");
-        } catch (Exception e) {
-            assertEquals("Damn Again Again", e.getCause().getMessage());
-        }
+        Exception exception = assertThrows(Exception.class, () -> template.sendBody("direct:start", "Hello World"));
+        assertEquals("Damn Again Again", exception.getCause().getMessage());
 
         assertMockEndpointsSatisfied();
 

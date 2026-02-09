@@ -21,6 +21,7 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.CookieStore;
 import java.net.URI;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,8 @@ import org.apache.camel.component.salesforce.StreamingApiConsumer;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.bayeux.client.ClientSessionChannel.MessageListener;
@@ -65,7 +68,7 @@ import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 public class SubscriptionHelper extends ServiceSupport {
 
-    static final ReplayExtension REPLAY_EXTENSION = new ReplayExtension();
+    private final ReplayExtension replayExtension = new ReplayExtension();
 
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
@@ -215,14 +218,21 @@ public class SubscriptionHelper extends ServiceSupport {
             } else {
                 abort = false;
 
-                try {
-                    LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
-                    Thread.sleep(backoff);
-                    for (var consumer : consumers) {
-                        subscribe(consumer);
-                    }
-                } catch (InterruptedException e) {
-                    LOG.warn("Aborting subscribe on interrupt!", e);
+                LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
+                // Use Camel's task API for backoff delay instead of Thread.sleep()
+                // We use initialDelay for the actual delay, and maxIterations(1) to run once
+                Tasks.foregroundTask()
+                        .withBudget(Budgets.iterationBudget()
+                                .withMaxIterations(1)
+                                .withInitialDelay(Duration.ofMillis(backoff))
+                                .withInterval(Duration.ZERO)
+                                .build())
+                        .withName("SalesforceSubscribeRetryDelay")
+                        .build()
+                        .run(component.getCamelContext(), () -> true);
+
+                for (var consumer : consumers) {
+                    subscribe(consumer);
                 }
             }
         } else if (error.matches(INVALID_REPLAY_ID_PATTERN)) {
@@ -231,7 +241,7 @@ public class SubscriptionHelper extends ServiceSupport {
                     = firstConsumer.getEndpoint().getConfiguration().getFallBackReplayId();
             LOG.warn(error);
             LOG.warn("Falling back to replayId {} for channel {}", fallBackReplayId, channelName);
-            REPLAY_EXTENSION.setReplayId(channelName, fallBackReplayId);
+            replayExtension.setReplayId(channelName, fallBackReplayId);
             for (var consumer : consumers) {
                 subscribe(consumer);
             }
@@ -408,7 +418,7 @@ public class SubscriptionHelper extends ServiceSupport {
         BayeuxClient client = new BayeuxClient(getEndpointUrl(component), transport);
 
         // added eagerly to check for support during handshake
-        client.addExtension(REPLAY_EXTENSION);
+        client.addExtension(component.getSubscriptionHelper().getReplayExtension());
 
         return client;
     }
@@ -439,6 +449,10 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
+    ReplayExtension getReplayExtension() {
+        return replayExtension;
+    }
+
     private static boolean isTemporaryError(Message message) {
         String failureReason = getFailureReason(message);
         return failureReason != null && failureReason.startsWith(SERVER_TOO_BUSY_ERROR);
@@ -465,7 +479,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
             final Long replayIdValue = replayId.get();
 
-            REPLAY_EXTENSION.setReplayIdIfAbsent(channelName, replayIdValue);
+            replayExtension.setReplayIdIfAbsent(channelName, replayIdValue);
         }
     }
 

@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ThrowExceptionUninstantiatableClassTest extends ContextTestSupport {
 
@@ -30,12 +30,9 @@ public class ThrowExceptionUninstantiatableClassTest extends ContextTestSupport 
         getMockEndpoint("mock:start").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(NoSuchMethodException.class, e.getCause().getCause());
-        }
+        CamelExecutionException exception = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody("direct:start", "Hello World"));
+        assertIsInstanceOf(NoSuchMethodException.class, exception.getCause().getCause());
 
         assertMockEndpointsSatisfied();
     }

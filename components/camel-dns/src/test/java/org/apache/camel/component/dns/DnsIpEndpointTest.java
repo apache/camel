@@ -25,8 +25,8 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * A series of tests to check the IP lookup operation.
@@ -52,24 +52,20 @@ public class DnsIpEndpointTest extends CamelTestSupport {
     @Test
     void testNullIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("hello", "dns.domain", null);
-            fail("Should have thrown exception");
-        } catch (Exception t) {
-            assertTrue(t.getCause() instanceof IllegalArgumentException);
-        }
+        });
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
         resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     void testEmptyIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(0);
-        try {
+        Exception e = assertThrows(Exception.class, () -> {
             template.sendBodyAndHeader("hello", "dns.domain", "");
-            fail("Should have thrown exception");
-        } catch (Exception t) {
-            assertTrue(t.getCause() instanceof IllegalArgumentException);
-        }
+        });
+        assertTrue(e.getCause() instanceof IllegalArgumentException);
         resultEndpoint.assertIsSatisfied();
     }
 

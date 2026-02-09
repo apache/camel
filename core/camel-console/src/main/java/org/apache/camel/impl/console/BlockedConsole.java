@@ -39,10 +39,10 @@ public class BlockedConsole extends AbstractDevConsole {
         StringBuilder sb = new StringBuilder();
 
         AsyncProcessorAwaitManager am = PluginHelper.getAsyncProcessorAwaitManager(getCamelContext());
-        sb.append(String.format("\n    Blocked: %s", am.size()));
+        sb.append(String.format("%n    Blocked: %s", am.size()));
         for (AsyncProcessorAwaitManager.AwaitThread at : am.browse()) {
             String age = TimeUtils.printDuration(at.getWaitDuration(), true);
-            sb.append(String.format("\n    %s (at: %s/%s age: %s)",
+            sb.append(String.format("%n    %s (at: %s/%s age: %s)",
                     at.getExchange().getExchangeId(), at.getRouteId(), at.getNodeId(), age));
         }
 

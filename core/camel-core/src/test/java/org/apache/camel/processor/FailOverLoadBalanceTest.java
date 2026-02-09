@@ -26,8 +26,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FailOverLoadBalanceTest extends ContextTestSupport {
 
@@ -101,14 +101,11 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
     public void testMyException() throws Exception {
         String body = "<two/>";
         expectsMessageCount(0, x, y, z);
-        try {
-            sendMessage("direct:customerException", "bar", body);
-            fail("There should get the MyAnotherException");
-        } catch (RuntimeCamelException ex) {
-            // expect the exception here
-            boolean b = ex.getCause() instanceof MyAnotherException;
-            assertTrue(b, "The cause should be MyAnotherException");
-        }
+        RuntimeCamelException exception = assertThrows(RuntimeCamelException.class,
+                () -> sendMessage("direct:customerException", "bar", body));
+        // expect the exception here
+        boolean b = exception.getCause() instanceof MyAnotherException;
+        assertTrue(b, "The cause should be MyAnotherException");
         assertMockEndpointsSatisfied();
     }
 

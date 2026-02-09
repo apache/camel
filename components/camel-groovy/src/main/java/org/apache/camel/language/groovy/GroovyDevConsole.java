@@ -38,21 +38,21 @@ public class GroovyDevConsole extends AbstractDevConsole {
         DefaultGroovyScriptCompiler compiler = getCamelContext().hasService(DefaultGroovyScriptCompiler.class);
         if (compiler != null) {
             sb.append(String.format("    Script Pattern: %s", compiler.getScriptPattern()));
-            sb.append(String.format("\n    Pre-loaded Counter: %s", compiler.getPreloadedCounter()));
-            sb.append(String.format("\n    Compile Counter: %s", compiler.getCompileCounter()));
-            sb.append(String.format("\n    Compile Time: %s (ms)", compiler.getCompileTime()));
+            sb.append(String.format("%n    Pre-loaded Counter: %s", compiler.getPreloadedCounter()));
+            sb.append(String.format("%n    Compile Counter: %s", compiler.getCompileCounter()));
+            sb.append(String.format("%n    Compile Time: %s (ms)", compiler.getCompileTime()));
             long last = compiler.getLastCompilationTimestamp();
             if (last != 0) {
-                sb.append(String.format("\n    Compile Ago: %s",
+                sb.append(String.format("%n    Compile Ago: %s",
                         TimeUtils.printSince(compiler.getLastCompilationTimestamp())));
             }
-            sb.append(String.format("\n    Re-compile Enabled: %b", compiler.isRecompileEnabled()));
+            sb.append(String.format("%n    Re-compile Enabled: %b", compiler.isRecompileEnabled()));
             if (compiler.getWorkDir() != null) {
-                sb.append(String.format("\n    Work Directory: %s", compiler.getWorkDir()));
+                sb.append(String.format("%n    Work Directory: %s", compiler.getWorkDir()));
             }
-            sb.append(String.format("\n    Classes: (%d)", compiler.getClassesSize()));
+            sb.append(String.format("%n    Classes: (%d)", compiler.getClassesSize()));
             for (String name : compiler.compiledClassNames()) {
-                sb.append(String.format("\n        %s", name));
+                sb.append(String.format("%n        %s", name));
             }
         }
 

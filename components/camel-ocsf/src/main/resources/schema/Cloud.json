@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/objects/cloud",
+  "title": "Cloud",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.Cloud",
+  "additionalProperties": true,
+  "properties": {
+    "org": {
+      "$ref": "Organization.json"
+    },
+    "account": {
+      "$ref": "Account.json"
+    },
+    "cloud_partition": {
+      "type": "string",
+      "title": "Cloud Partition"
+    },
+    "project_uid": {
+      "type": "string",
+      "title": "Project ID"
+    },
+    "provider": {
+      "type": "string",
+      "title": "Provider"
+    },
+    "region": {
+      "type": "string",
+      "title": "Region"
+    },
+    "zone": {
+      "type": "string",
+      "title": "Cloud Availability Zone"
+    }
+  },
+  "description": "The Cloud object."
+}

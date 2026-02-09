@@ -20,6 +20,7 @@ public class OllamaProperties {
 
     public static final String CONTAINER = "ollama.container";
     public static final String MODEL = "ollama.model";
+    public static final String EMBEDDING_MODEL = "ollama.embedding.model";
     public static final String API_KEY = "ollama.api.key";
 
     public static final String ENDPOINT = "ollama.endpoint";
@@ -36,6 +37,12 @@ public class OllamaProperties {
     public static final String CPU_COUNT = "ollama.container.cpu.count";
     public static final String MEMORY_LIMIT = "ollama.container.memory.limit";
     public static final String ENABLE_GPU = "ollama.container.enable.gpu";
+
+    // OpenAI-specific properties (used when ollama.instance.type=openai)
+    public static final String OPENAI_API_KEY = "openai.api.key";
+    public static final String OPENAI_ENDPOINT = "openai.endpoint";
+    public static final String OPENAI_MODEL = "openai.model";
+    public static final String OPENAI_EMBEDDING_MODEL = "openai.embedding.model";
 
     private OllamaProperties() {
 

@@ -51,19 +51,16 @@ public class CouchbaseLocalContainerInfraService implements CouchbaseInfraServic
             super(DockerImageName.parse(imageName).asCompatibleSubstituteFor("couchbase/server"));
 
             final int kvPort = 11210;
-            addFixedExposedPort(kvPort, kvPort);
-
             final int managementPort = 8091;
-            addFixedExposedPort(managementPort, managementPort);
-
             final int viewPort = 8092;
-            addFixedExposedPort(viewPort, viewPort);
-
             final int queryPort = 8093;
-            addFixedExposedPort(queryPort, queryPort);
-
             final int searchPort = 8094;
-            addFixedExposedPort(searchPort, searchPort);
+            ContainerEnvironmentUtil.configurePorts(this, true,
+                    ContainerEnvironmentUtil.PortConfig.primary(kvPort),
+                    ContainerEnvironmentUtil.PortConfig.secondary(managementPort),
+                    ContainerEnvironmentUtil.PortConfig.secondary(viewPort),
+                    ContainerEnvironmentUtil.PortConfig.secondary(queryPort),
+                    ContainerEnvironmentUtil.PortConfig.secondary(searchPort));
         }
     }
 

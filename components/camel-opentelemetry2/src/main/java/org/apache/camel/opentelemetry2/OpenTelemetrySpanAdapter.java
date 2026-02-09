@@ -29,14 +29,18 @@ import org.apache.camel.telemetry.TagConstants;
 public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span {
 
     private static final String DEFAULT_EVENT_NAME = "log";
+    static final String BAGGAGE_CAMEL_FLAG = "camelScope";
 
     private final Span otelSpan;
     private final Baggage baggage;
     private Scope scope;
+    private Scope baggageScope;
 
     protected OpenTelemetrySpanAdapter(Span otelSpan, Baggage baggage) {
         this.otelSpan = otelSpan;
-        this.baggage = baggage;
+        // We store an important flag in the baggage in order to verify if the
+        // root span was generated internally or from a third party dependency.
+        this.baggage = baggage.toBuilder().put(BAGGAGE_CAMEL_FLAG, "true").build();
     }
 
     protected Span getSpan() {
@@ -45,6 +49,7 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
 
     protected void makeCurrent() {
         this.scope = this.otelSpan.makeCurrent();
+        this.baggageScope = this.baggage.makeCurrent();
     }
 
     protected void end() {
@@ -52,6 +57,9 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
     }
 
     protected void close() {
+        if (baggageScope != null) {
+            this.baggageScope.close();
+        }
         if (scope != null) {
             this.scope.close();
         }
@@ -107,8 +115,8 @@ public class OpenTelemetrySpanAdapter implements org.apache.camel.telemetry.Span
                 attributesBuilder.put(key, ((Number) value).longValue());
             } else if (value instanceof Float || value instanceof Double) {
                 attributesBuilder.put(key, ((Number) value).doubleValue());
-            } else if (value instanceof Boolean) {
-                attributesBuilder.put(key, (Boolean) value);
+            } else if (value instanceof Boolean b) {
+                attributesBuilder.put(key, b);
             } else {
                 attributesBuilder.put(key, value.toString());
             }

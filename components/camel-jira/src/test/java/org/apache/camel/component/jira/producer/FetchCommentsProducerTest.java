@@ -42,7 +42,7 @@ import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FAC
 import static org.apache.camel.component.jira.JiraTestConstants.JIRA_CREDENTIALS;
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
@@ -117,13 +117,10 @@ public class FetchCommentsProducerTest extends CamelTestSupport {
 
     @Test
     public void testFetchCommentsMissingIssueKey() throws InterruptedException {
-        try {
-            template.sendBody(null);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertStringContains(cause.getMessage(), ISSUE_KEY);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBody(null));
+        IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertStringContains(cause.getMessage(), ISSUE_KEY);
 
         mockResult.expectedMessageCount(0);
         mockResult.assertIsSatisfied();

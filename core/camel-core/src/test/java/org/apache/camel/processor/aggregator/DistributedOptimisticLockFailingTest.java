@@ -37,7 +37,7 @@ import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DistributedOptimisticLockFailingTest extends AbstractDistributedTest {
 
@@ -75,23 +75,19 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         MockEndpoint mock2 = getMockEndpoint2("mock:result");
         mock2.expectedMessageCount(0);
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.sendBodyAndHeader("direct:fails", "hello world", "id", 1);
-            fail("Should throw CamelExecutionException");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
-                    e.getCause().getCause());
-        }
+        });
+        assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+        assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
+                e.getCause().getCause());
 
-        try {
+        CamelExecutionException e2 = assertThrows(CamelExecutionException.class, () -> {
             template2.sendBodyAndHeader("direct:fails", "hello world", "id", 1);
-            fail("Should throw CamelExecutionException");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
-                    e.getCause().getCause());
-        }
+        });
+        assertIsInstanceOf(CamelExchangeException.class, e2.getCause());
+        assertIsInstanceOf(OptimisticLockingAggregationRepository.OptimisticLockingException.class,
+                e2.getCause().getCause());
 
         mock.assertIsSatisfied();
         mock2.assertIsSatisfied();

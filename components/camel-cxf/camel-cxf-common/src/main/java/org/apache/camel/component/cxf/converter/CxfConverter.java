@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.Holder;
 
 import javax.xml.namespace.QName;
 
@@ -123,7 +124,6 @@ public final class CxfConverter {
      * @param  registry type converter registry
      * @return          the converted value of the desired type or null if no suitable converter found
      */
-    @SuppressWarnings("unchecked")
     @Converter(fallback = true)
     public static <T> T convertTo(
             Class<T> type, Exchange exchange, Object value,
@@ -138,7 +138,7 @@ public final class CxfConverter {
                 //If not, use the general way to convert from List.class to String.class
                 boolean foundHolder = false;
                 for (Object embedded : list) {
-                    if (embedded != null && embedded.getClass().getName().equals("javax.xml.ws.Holder")) {
+                    if (embedded != null && embedded instanceof Holder) {
                         foundHolder = true;
                         break;
                     }

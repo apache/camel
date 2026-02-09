@@ -63,15 +63,15 @@ public class STS2Endpoint extends DefaultEndpoint implements EndpointServiceLoca
     public void doStart() throws Exception {
         super.doStart();
 
-        stsClient = configuration.getStsClient() != null
+        stsClient = ObjectHelper.isNotEmpty(configuration.getStsClient())
                 ? configuration.getStsClient()
-                : STS2ClientFactory.getStsClient(configuration).getStsClient();
+                : STS2ClientFactory.getStsClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getStsClient())) {
-            if (stsClient != null) {
+            if (ObjectHelper.isNotEmpty(stsClient)) {
                 stsClient.close();
             }
         }

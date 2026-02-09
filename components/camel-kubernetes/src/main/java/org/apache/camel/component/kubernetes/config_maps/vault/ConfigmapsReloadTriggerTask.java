@@ -89,8 +89,8 @@ public class ConfigmapsReloadTriggerTask extends ServiceSupport implements Camel
         // auto-detect secrets in-use
         PropertiesComponent pc = camelContext.getPropertiesComponent();
         PropertiesFunction pf = pc.getPropertiesFunction("configmap");
-        if (pf instanceof ConfigMapPropertiesFunction) {
-            propertiesFunction = (ConfigMapPropertiesFunction) pf;
+        if (pf instanceof ConfigMapPropertiesFunction configmappropertiesfunction) {
+            propertiesFunction = configmappropertiesfunction;
             LOG.info("Auto-detecting configmaps from properties-function: {}", pf.getName());
         }
         // specific secrets

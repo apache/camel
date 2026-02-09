@@ -27,7 +27,6 @@ import java.util.Collections;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.Producer;
-import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.DefaultExchange;
@@ -41,7 +40,7 @@ import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.Cont
 import static org.apache.camel.component.http.HttpMethods.POST;
 import static org.apache.hc.core5.http.HttpHeaders.HOST;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class HeaderFilteringTest {
 
@@ -69,11 +68,7 @@ public class HeaderFilteringTest {
         exchange.setIn(in);
 
         producer.start();
-        try {
-            producer.process(exchange);
-        } catch (final HttpOperationFailedException e) {
-            fail(e.getMessage() + "\n%s", e.getResponseBody());
-        }
+        assertDoesNotThrow(() -> producer.process(exchange), "Should not haven thrown exception");
         producer.stop();
         context.stop();
     }

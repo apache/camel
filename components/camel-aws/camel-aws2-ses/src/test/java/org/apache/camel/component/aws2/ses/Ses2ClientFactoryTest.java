@@ -17,44 +17,43 @@
 package org.apache.camel.component.aws2.ses;
 
 import org.apache.camel.component.aws2.ses.client.Ses2ClientFactory;
-import org.apache.camel.component.aws2.ses.client.Ses2InternalClient;
-import org.apache.camel.component.aws2.ses.client.impl.Ses2ClientOptimizedImpl;
-import org.apache.camel.component.aws2.ses.client.impl.Ses2ClientSessionTokenImpl;
-import org.apache.camel.component.aws2.ses.client.impl.Ses2ClientStandardImpl;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.ses.SesClient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class Ses2ClientFactoryTest {
 
     @Test
-    public void getStandardSESClientDefault() {
-        Ses2Configuration ses2Configuration = new Ses2Configuration();
-        Ses2InternalClient sesClient = Ses2ClientFactory.getSesClient(ses2Configuration);
-        assertTrue(sesClient instanceof Ses2ClientStandardImpl);
+    public void getSesClientWithDefaultCredentials() {
+        Ses2Configuration configuration = new Ses2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        SesClient sesClient = Ses2ClientFactory.getSesClient(configuration);
+        assertNotNull(sesClient);
+        sesClient.close();
     }
 
     @Test
-    public void getStandardSESClient() {
-        Ses2Configuration ses2Configuration = new Ses2Configuration();
-        ses2Configuration.setUseDefaultCredentialsProvider(false);
-        Ses2InternalClient sesClient = Ses2ClientFactory.getSesClient(ses2Configuration);
-        assertTrue(sesClient instanceof Ses2ClientStandardImpl);
+    public void getSesClientWithStaticCredentials() {
+        Ses2Configuration configuration = new Ses2Configuration();
+        configuration.setAccessKey("testAccessKey");
+        configuration.setSecretKey("testSecretKey");
+        configuration.setRegion("eu-west-1");
+        SesClient sesClient = Ses2ClientFactory.getSesClient(configuration);
+        assertNotNull(sesClient);
+        sesClient.close();
     }
 
     @Test
-    public void getSESOptimizedIAMClient() {
-        Ses2Configuration ses2Configuration = new Ses2Configuration();
-        ses2Configuration.setUseDefaultCredentialsProvider(true);
-        Ses2InternalClient sesClient = Ses2ClientFactory.getSesClient(ses2Configuration);
-        assertTrue(sesClient instanceof Ses2ClientOptimizedImpl);
-    }
-
-    @Test
-    public void getSESSessionTokenImplClient() {
-        Ses2Configuration ses2Configuration = new Ses2Configuration();
-        ses2Configuration.setUseSessionCredentials(true);
-        Ses2InternalClient sesClient = Ses2ClientFactory.getSesClient(ses2Configuration);
-        assertTrue(sesClient instanceof Ses2ClientSessionTokenImpl);
+    public void getSesClientWithEndpointOverride() {
+        Ses2Configuration configuration = new Ses2Configuration();
+        configuration.setUseDefaultCredentialsProvider(true);
+        configuration.setRegion("eu-west-1");
+        configuration.setOverrideEndpoint(true);
+        configuration.setUriEndpointOverride("http://localhost:4566");
+        SesClient sesClient = Ses2ClientFactory.getSesClient(configuration);
+        assertNotNull(sesClient);
+        sesClient.close();
     }
 }

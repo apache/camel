@@ -65,15 +65,15 @@ public class MQ2Endpoint extends ScheduledPollEndpoint implements EndpointServic
     public void doStart() throws Exception {
         super.doStart();
 
-        mqClient = configuration.getAmazonMqClient() != null
+        mqClient = ObjectHelper.isNotEmpty(configuration.getAmazonMqClient())
                 ? configuration.getAmazonMqClient()
-                : MQ2ClientFactory.getMqClient(configuration).getMqClient();
+                : MQ2ClientFactory.getMqClient(configuration);
     }
 
     @Override
     public void doStop() throws Exception {
         if (ObjectHelper.isEmpty(configuration.getAmazonMqClient())) {
-            if (mqClient != null) {
+            if (ObjectHelper.isNotEmpty(mqClient)) {
                 mqClient.close();
             }
         }

@@ -38,6 +38,7 @@ import static org.apache.camel.component.olingo4.api.impl.Olingo4Helper.getConte
  * Helper implementation of {@link org.apache.http.concurrent.FutureCallback} for
  * {@link org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl}
  */
+@Deprecated(since = "4.18")
 public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpResponse> {
 
     public static final Pattern ODATA_MIME_TYPE_PATTERN = Pattern.compile("application/((atom)|(json)|(xml)).*");

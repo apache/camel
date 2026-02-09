@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.twilio.TwilioConfiguration;
 import org.apache.camel.component.twilio.AccountEndpointConfiguration;
@@ -72,6 +73,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for Twilio
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class TwilioApiCollection extends ApiCollection<TwilioApiName, TwilioConfiguration> {
 
     private TwilioApiCollection() {

@@ -43,6 +43,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
@@ -122,7 +123,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
         Queue<Exchange> answer = new LinkedList<>();
         for (software.amazon.awssdk.services.sqs.model.Message message : messages) {
-            if (message != null) {
+            if (ObjectHelper.isNotEmpty(message)) {
                 Exchange exchange = createExchange(message);
                 answer.add(exchange);
             }
@@ -227,7 +228,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
      */
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
-        if (cause != null) {
+        if (ObjectHelper.isNotEmpty(cause)) {
             getExceptionHandler().handleException(
                     "Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
         }
@@ -320,7 +321,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
 
-            if (visibilityTimeout != null && visibilityTimeout > 0) {
+            if (ObjectHelper.isNotEmpty(visibilityTimeout) && visibilityTimeout > 0) {
                 int delay = Math.max(1, visibilityTimeout / 2);
                 this.timeoutExtender = new TimeoutExtender(visibilityTimeout, delay);
 
@@ -339,21 +340,21 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (timeoutExtender != null) {
+        if (ObjectHelper.isNotEmpty(timeoutExtender)) {
             timeoutExtender.cancel();
             timeoutExtender = null;
         }
 
-        if (scheduledFuture != null) {
+        if (ObjectHelper.isNotEmpty(scheduledFuture)) {
             scheduledFuture.cancel(true);
             scheduledFuture = null;
         }
 
-        if (scheduledExecutor != null) {
+        if (ObjectHelper.isNotEmpty(scheduledExecutor)) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
         }
-        if (pollingTask != null) {
+        if (ObjectHelper.isNotEmpty(pollingTask)) {
             pollingTask.close();
             pollingTask = null;
         }
@@ -547,7 +548,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         private final IOConsumer<SqsClient> createQueueOperation;
 
         private final String queueName;
-        private final String queueUrl;
+        private final Supplier<String> getQueueUrlOperation;
         private final int maxMessagesPerPoll;
         private final Integer visibilityTimeout;
         private final Integer waitTimeSeconds;
@@ -565,7 +566,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
             createQueueOperation = endpoint::createQueue;
 
             queueName = endpoint.getConfiguration().getQueueName();
-            queueUrl = endpoint.getQueueUrl();
+            getQueueUrlOperation = endpoint::getQueueUrl;
             visibilityTimeout = endpoint.getConfiguration().getVisibilityTimeout();
             waitTimeSeconds = endpoint.getConfiguration().getWaitTimeSeconds();
             messageAttributeNames = splitCommaSeparatedValues(endpoint.getConfiguration().getMessageAttributeNames());
@@ -670,6 +671,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         }
 
         private ReceiveMessageRequest createReceiveRequest(int maxNumberOfMessages) {
+            String queueUrl = getQueueUrlOperation.get();
             ReceiveMessageRequest.Builder requestBuilder
                     = ReceiveMessageRequest.builder().queueUrl(queueUrl).maxNumberOfMessages(maxNumberOfMessages)
                             .visibilityTimeout(visibilityTimeout).waitTimeSeconds(waitTimeSeconds);

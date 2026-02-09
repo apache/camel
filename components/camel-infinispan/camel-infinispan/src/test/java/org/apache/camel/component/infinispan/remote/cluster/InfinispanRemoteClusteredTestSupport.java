@@ -30,37 +30,27 @@ public final class InfinispanRemoteClusteredTestSupport {
     }
 
     public static Configuration createConfiguration(InfinispanService service) {
+        Properties properties = new Properties();
+        properties.put("infinispan.client.hotrod.socket_timeout", 15000);
+        properties.put("infinispan.client.hotrod.connection_timeout", 15000);
+
         if (SystemUtils.IS_OS_MAC) {
-            Properties properties = new Properties();
             properties.put("infinispan.client.hotrod.client_intelligence", "BASIC");
-            return new ConfigurationBuilder()
-                    .withProperties(properties)
-                    .addServer()
-                    .host(service.host())
-                    .port(service.port())
-                    .security()
-                    .authentication()
-                    .username(service.username())
-                    .password(service.password())
-                    .serverName("infinispan")
-                    .saslMechanism("DIGEST-MD5")
-                    .realm("default")
-                    .build();
-        } else {
-            return new ConfigurationBuilder()
-                    .addServer()
-                    .host(service.host())
-                    .port(service.port())
-                    .security()
-                    .authentication()
-                    .username(service.username())
-                    .password(service.password())
-                    .serverName("infinispan")
-                    .saslMechanism("DIGEST-MD5")
-                    .realm("default")
-                    .build();
         }
 
+        return new ConfigurationBuilder()
+                .withProperties(properties)
+                .addServer()
+                .host(service.host())
+                .port(service.port())
+                .security()
+                .authentication()
+                .username(service.username())
+                .password(service.password())
+                .serverName("infinispan")
+                .saslMechanism("SCRAM-SHA-512")
+                .realm("default")
+                .build();
     }
 
     public static void createCache(RemoteCacheManager cacheContainer, String cacheName) {

@@ -39,19 +39,43 @@ public final class KeycloakSecurityHelper {
         // Utility class
     }
 
-    public static AccessToken parseAccessToken(String tokenString) throws VerificationException {
-        return parseAccessToken(tokenString, null);
-    }
-
-    public static AccessToken parseAccessToken(String tokenString, PublicKey publicKey) throws VerificationException {
-        if (publicKey != null) {
-            return TokenVerifier.create(tokenString, AccessToken.class)
-                    .publicKey(publicKey)
-                    .verify()
-                    .getToken();
-        } else {
-            return TokenVerifier.create(tokenString, AccessToken.class).getToken();
+    /**
+     * Parses and fully verifies an access token including signature and issuer validation. This is the recommended
+     * method for secure token validation.
+     *
+     * @param  tokenString           the JWT token string
+     * @param  publicKey             the public key for signature verification
+     * @param  expectedIssuer        the expected issuer URL (e.g., "http://localhost:8080/realms/myrealm")
+     * @return                       the verified access token
+     * @throws VerificationException if verification fails (invalid signature, wrong issuer, expired, etc.)
+     */
+    public static AccessToken parseAndVerifyAccessToken(String tokenString, PublicKey publicKey, String expectedIssuer)
+            throws VerificationException {
+        if (publicKey == null) {
+            throw new VerificationException("Public key is required for secure token verification");
         }
+        if (expectedIssuer == null || expectedIssuer.isEmpty()) {
+            throw new VerificationException("Expected issuer is required for secure token verification");
+        }
+
+        TokenVerifier<AccessToken> verifier = TokenVerifier.create(tokenString, AccessToken.class)
+                .publicKey(publicKey)
+                .withChecks(
+                        TokenVerifier.SUBJECT_EXISTS_CHECK,
+                        new TokenVerifier.RealmUrlCheck(expectedIssuer));
+
+        AccessToken token = verifier.verify().getToken();
+
+        // Additional explicit issuer check for defense in depth
+        String actualIssuer = token.getIssuer();
+        if (!expectedIssuer.equals(actualIssuer)) {
+            LOG.error("SECURITY: Token issuer mismatch - expected '{}' but got '{}'", expectedIssuer, actualIssuer);
+            throw new VerificationException(
+                    String.format("Token issuer mismatch: expected '%s' but got '%s'", expectedIssuer, actualIssuer));
+        }
+
+        LOG.debug("Token successfully verified for issuer: {}", expectedIssuer);
+        return token;
     }
 
     public static Set<String> extractRoles(AccessToken token, String realm, String clientId) {

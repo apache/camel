@@ -76,9 +76,11 @@ public final class FileConstants {
                                                 + " evaluated.",
               javaType = "Object")
     public static final String OVERRULE_FILE_NAME = Exchange.OVERRULE_FILE_NAME;
-
     @Metadata(label = "consumer", description = "A `long` value containing the initial offset.", javaType = "long")
     public static final String INITIAL_OFFSET = "CamelFileInitialOffset";
+    @Metadata(label = "producer", description = "The checksum of the file written, when checksumAlgorithm is in use",
+              javaType = "String")
+    public static final String FILE_CHECKSUM = "CamelFileChecksum";
 
     /**
      * Sub folder used by camel-file as default sub-folder for moving processing file when they are done.

@@ -509,6 +509,26 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Regular expression identifying configuration keys whose values should
+         * be masked. When set, this custom pattern replaces Debeziums default
+         * password masking pattern.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * Group: mysql
+         * 
+         * @param customSanitizePattern the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder customSanitizePattern(java.lang.String customSanitizePattern) {
+            doSetProperty("customSanitizePattern", customSanitizePattern);
+            return this;
+        }
+    
         /**
          * A comma-separated list of regular expressions that match database
          * names to be excluded from monitoring.
@@ -1713,7 +1733,9 @@ public interface DebeziumMysqlComponentBuilderFactory {
     
         /**
          * The name of the data collection that is used to send signals/commands
-         * to Debezium. Signaling is disabled when not set.
+         * to Debezium. For multi-partition mode connectors, multiple signal
+         * data collections can be specified as a comma-separated list.
+         * Signaling is disabled when not set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2386,6 +2408,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "connectTimeoutMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConnectTimeoutMs((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMySqlComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumMySqlComponent) component).setCustomMetricTags((java.lang.String) value); return true;
+            case "customSanitizePattern": getOrCreateConfiguration((DebeziumMySqlComponent) component).setCustomSanitizePattern((java.lang.String) value); return true;
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMySqlComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;

@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.ocsf.io/1.7.0/classes/dns_activity",
+  "title": "DnsActivity",
+  "type": "object",
+  "javaType": "org.apache.camel.dataformat.ocsf.model.DnsActivity",
+  "additionalProperties": true,
+  "description": "DnsActivity event class.",
+  "allOf": [
+    {
+      "$ref": "OcsfEvent.json"
+    }
+  ],
+  "properties": {
+    "cumulative_traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "connection_info": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "raw_data_size": {
+      "type": "integer",
+      "title": "Raw Data Size"
+    },
+    "enrichments": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "$ref": "Enrichment.json"
+      }
+    },
+    "traffic": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "rcode_id": {
+      "type": "integer",
+      "title": "Response Code ID"
+    },
+    "answers": {
+      "type": "array",
+      "title": "DNS Answer",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "src_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "app_name": {
+      "type": "string",
+      "title": "Application Name"
+    },
+    "query": {
+      "$ref": "DnsQuery.json"
+    },
+    "dst_endpoint": {
+      "$ref": "NetworkEndpoint.json"
+    },
+    "response_time": {
+      "type": "integer",
+      "title": "Response Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "rcode": {
+      "type": "string",
+      "title": "Response Code"
+    },
+    "raw_data_hash": {
+      "$ref": "Fingerprint.json"
+    },
+    "ja4_fingerprint_list": {
+      "type": "array",
+      "title": "JA4+ Fingerprints",
+      "items": {
+        "$ref": "Ja4Fingerprint.json"
+      }
+    },
+    "observation_point_id": {
+      "type": "integer",
+      "title": "Observation Point ID"
+    },
+    "query_time": {
+      "type": "integer",
+      "title": "Query Time",
+      "existingJavaType": "java.lang.Long"
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "observation_point": {
+      "type": "string",
+      "title": "Observation Point"
+    },
+    "tls": {
+      "$ref": "Tls.json"
+    }
+  }
+}

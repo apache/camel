@@ -22,13 +22,14 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends ContextTestSupport {
 
     @Test
     public void testInvalidUri() {
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -38,16 +39,13 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
                 }
             });
             context.start();
-
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
-        }
+        });
+        assertInstanceOf(NoSuchEndpointException.class, exception.getCause());
     }
 
     @Test
     public void testInvalidOption() {
-        try {
+        Exception exception = assertThrows(Exception.class, () -> {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -57,11 +55,8 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
                 }
             });
             context.start();
-
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-        }
+        });
+        assertInstanceOf(ResolveEndpointFailedException.class, exception.getCause());
     }
 
     @Override

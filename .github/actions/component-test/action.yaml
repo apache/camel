@@ -69,7 +69,7 @@ runs:
         path: tests.log
     - name: Success comment
       if: success() 
-      uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+      uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
       with:
         comment-id: ${{ inputs.comment-id }}
         edit-mode: replace
@@ -79,7 +79,7 @@ runs:
           **Result** :white_check_mark: The tests passed successfully
     - name: Failure comment
       if: failure() 
-      uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+      uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
       with:
         comment-id: ${{ inputs.comment-id }}
         edit-mode: replace

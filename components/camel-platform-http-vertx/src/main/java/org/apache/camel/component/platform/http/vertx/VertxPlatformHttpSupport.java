@@ -162,10 +162,10 @@ public final class VertxPlatformHttpSupport {
     }
 
     static Integer determineContentLength(Object body) {
-        if (body instanceof byte[]) {
-            return ((byte[]) body).length;
-        } else if (body instanceof ByteBuffer) {
-            return ((ByteBuffer) body).remaining();
+        if (body instanceof byte[] byteArray) {
+            return byteArray.length;
+        } else if (body instanceof ByteBuffer bytebuffer) {
+            return bytebuffer.remaining();
         }
         return null;
     }
@@ -186,13 +186,13 @@ public final class VertxPlatformHttpSupport {
                 LOGGER.trace("No payload to send as reply for exchange: {}", camelExchange);
                 ctx.end();
                 promise.complete();
-            } else if (body instanceof String) {
-                ctx.end((String) body);
+            } else if (body instanceof String string) {
+                ctx.end(string);
                 promise.complete();
-            } else if (body instanceof InputStream) {
-                writeResponseAs(promise, ctx, (InputStream) body);
-            } else if (body instanceof Buffer) {
-                ctx.end((Buffer) body);
+            } else if (body instanceof InputStream inputstream) {
+                writeResponseAs(promise, ctx, inputstream);
+            } else if (body instanceof Buffer buffer) {
+                ctx.end(buffer);
                 promise.complete();
             } else if (body instanceof ByteBuffer bb) {
                 writeResponseAs(promise, ctx, bb);

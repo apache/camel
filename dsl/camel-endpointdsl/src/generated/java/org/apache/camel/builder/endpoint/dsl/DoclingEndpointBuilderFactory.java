@@ -404,36 +404,6 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Extract all available metadata fields including custom/raw fields.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: metadata
-         * 
-         * @param extractAllMetadata the value to set
-         * @return the dsl builder
-         */
-        default DoclingEndpointBuilder extractAllMetadata(boolean extractAllMetadata) {
-            doSetProperty("extractAllMetadata", extractAllMetadata);
-            return this;
-        }
-        /**
-         * Extract all available metadata fields including custom/raw fields.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: metadata
-         * 
-         * @param extractAllMetadata the value to set
-         * @return the dsl builder
-         */
-        default DoclingEndpointBuilder extractAllMetadata(String extractAllMetadata) {
-            doSetProperty("extractAllMetadata", extractAllMetadata);
-            return this;
-        }
-        /**
          * Include metadata in message headers when extracting metadata.
          * 
          * The option is a: <code>boolean</code> type.
@@ -645,36 +615,6 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * API request timeout in milliseconds.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 60000
-         * Group: advanced
-         * 
-         * @param apiTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder apiTimeout(long apiTimeout) {
-            doSetProperty("apiTimeout", apiTimeout);
-            return this;
-        }
-        /**
-         * API request timeout in milliseconds.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 60000
-         * Group: advanced
-         * 
-         * @param apiTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder apiTimeout(String apiTimeout) {
-            doSetProperty("apiTimeout", apiTimeout);
-            return this;
-        }
-        /**
          * Polling interval for async conversion status in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -735,113 +675,6 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Connection request timeout in milliseconds (timeout when requesting
-         * connection from pool).
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         * 
-         * @param connectionRequestTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder connectionRequestTimeout(int connectionRequestTimeout) {
-            doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
-            return this;
-        }
-        /**
-         * Connection request timeout in milliseconds (timeout when requesting
-         * connection from pool).
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         * 
-         * @param connectionRequestTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder connectionRequestTimeout(String connectionRequestTimeout) {
-            doSetProperty("connectionRequestTimeout", connectionRequestTimeout);
-            return this;
-        }
-        /**
-         * Connection timeout in milliseconds.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         * 
-         * @param connectionTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder connectionTimeout(int connectionTimeout) {
-            doSetProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Connection timeout in milliseconds.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 30000
-         * Group: advanced
-         * 
-         * @param connectionTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder connectionTimeout(String connectionTimeout) {
-            doSetProperty("connectionTimeout", connectionTimeout);
-            return this;
-        }
-        /**
-         * Time to live for connections in milliseconds (-1 for infinite).
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         * 
-         * @param connectionTimeToLive the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder connectionTimeToLive(long connectionTimeToLive) {
-            doSetProperty("connectionTimeToLive", connectionTimeToLive);
-            return this;
-        }
-        /**
-         * Time to live for connections in milliseconds (-1 for infinite).
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: -1
-         * Group: advanced
-         * 
-         * @param connectionTimeToLive the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder connectionTimeToLive(String connectionTimeToLive) {
-            doSetProperty("connectionTimeToLive", connectionTimeToLive);
-            return this;
-        }
-        /**
-         * Docling-serve API convert endpoint path.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Default: /v1/convert/source
-         * Group: advanced
-         * 
-         * @param convertEndpoint the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder convertEndpoint(String convertEndpoint) {
-            doSetProperty("convertEndpoint", convertEndpoint);
-            return this;
-        }
-        /**
          * Path to Docling Python executable or command.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -853,126 +686,6 @@ public interface DoclingEndpointBuilderFactory {
          */
         default AdvancedDoclingEndpointBuilder doclingCommand(String doclingCommand) {
             doSetProperty("doclingCommand", doclingCommand);
-            return this;
-        }
-        /**
-         * Enable eviction of idle connections from the pool.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param evictIdleConnections the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder evictIdleConnections(boolean evictIdleConnections) {
-            doSetProperty("evictIdleConnections", evictIdleConnections);
-            return this;
-        }
-        /**
-         * Enable eviction of idle connections from the pool.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param evictIdleConnections the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder evictIdleConnections(String evictIdleConnections) {
-            doSetProperty("evictIdleConnections", evictIdleConnections);
-            return this;
-        }
-        /**
-         * Maximum connections per route in the connection pool.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 10
-         * Group: advanced
-         * 
-         * @param maxConnectionsPerRoute the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder maxConnectionsPerRoute(int maxConnectionsPerRoute) {
-            doSetProperty("maxConnectionsPerRoute", maxConnectionsPerRoute);
-            return this;
-        }
-        /**
-         * Maximum connections per route in the connection pool.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 10
-         * Group: advanced
-         * 
-         * @param maxConnectionsPerRoute the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder maxConnectionsPerRoute(String maxConnectionsPerRoute) {
-            doSetProperty("maxConnectionsPerRoute", maxConnectionsPerRoute);
-            return this;
-        }
-        /**
-         * Maximum idle time for connections in milliseconds before eviction.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Default: 60000
-         * Group: advanced
-         * 
-         * @param maxIdleTime the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder maxIdleTime(long maxIdleTime) {
-            doSetProperty("maxIdleTime", maxIdleTime);
-            return this;
-        }
-        /**
-         * Maximum idle time for connections in milliseconds before eviction.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Default: 60000
-         * Group: advanced
-         * 
-         * @param maxIdleTime the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder maxIdleTime(String maxIdleTime) {
-            doSetProperty("maxIdleTime", maxIdleTime);
-            return this;
-        }
-        /**
-         * Maximum total connections in the connection pool.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         * 
-         * @param maxTotalConnections the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder maxTotalConnections(int maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
-            return this;
-        }
-        /**
-         * Maximum total connections in the connection pool.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 20
-         * Group: advanced
-         * 
-         * @param maxTotalConnections the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder maxTotalConnections(String maxTotalConnections) {
-            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -1006,36 +719,6 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
-         * Socket timeout in milliseconds.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 60000
-         * Group: advanced
-         * 
-         * @param socketTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder socketTimeout(int socketTimeout) {
-            doSetProperty("socketTimeout", socketTimeout);
-            return this;
-        }
-        /**
-         * Socket timeout in milliseconds.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 60000
-         * Group: advanced
-         * 
-         * @param socketTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder socketTimeout(String socketTimeout) {
-            doSetProperty("socketTimeout", socketTimeout);
-            return this;
-        }
-        /**
          * Use asynchronous conversion mode (docling-serve API only).
          * 
          * The option is a: <code>boolean</code> type.
@@ -1063,36 +746,6 @@ public interface DoclingEndpointBuilderFactory {
          */
         default AdvancedDoclingEndpointBuilder useAsyncMode(String useAsyncMode) {
             doSetProperty("useAsyncMode", useAsyncMode);
-            return this;
-        }
-        /**
-         * Validate connections after inactivity in milliseconds.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Default: 2000
-         * Group: advanced
-         * 
-         * @param validateAfterInactivity the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder validateAfterInactivity(int validateAfterInactivity) {
-            doSetProperty("validateAfterInactivity", validateAfterInactivity);
-            return this;
-        }
-        /**
-         * Validate connections after inactivity in milliseconds.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Default: 2000
-         * Group: advanced
-         * 
-         * @param validateAfterInactivity the value to set
-         * @return the dsl builder
-         */
-        default AdvancedDoclingEndpointBuilder validateAfterInactivity(String validateAfterInactivity) {
-            doSetProperty("validateAfterInactivity", validateAfterInactivity);
             return this;
         }
         /**
@@ -1431,103 +1084,6 @@ public interface DoclingEndpointBuilderFactory {
             return "CamelDoclingBatchSplitResults";
         }
         /**
-         * Document title extracted from metadata.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataTitle}.
-         */
-        public String doclingMetadataTitle() {
-            return "CamelDoclingMetadataTitle";
-        }
-        /**
-         * Document author extracted from metadata.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataAuthor}.
-         */
-        public String doclingMetadataAuthor() {
-            return "CamelDoclingMetadataAuthor";
-        }
-        /**
-         * Document creator application.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataCreator}.
-         */
-        public String doclingMetadataCreator() {
-            return "CamelDoclingMetadataCreator";
-        }
-        /**
-         * Document producer application.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataProducer}.
-         */
-        public String doclingMetadataProducer() {
-            return "CamelDoclingMetadataProducer";
-        }
-        /**
-         * Document subject.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataSubject}.
-         */
-        public String doclingMetadataSubject() {
-            return "CamelDoclingMetadataSubject";
-        }
-        /**
-         * Document keywords.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataKeywords}.
-         */
-        public String doclingMetadataKeywords() {
-            return "CamelDoclingMetadataKeywords";
-        }
-        /**
-         * Document creation date.
-         * 
-         * The option is a: {@code java.time.Instant} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataCreationDate}.
-         */
-        public String doclingMetadataCreationDate() {
-            return "CamelDoclingMetadataCreationDate";
-        }
-        /**
-         * Document modification date.
-         * 
-         * The option is a: {@code java.time.Instant} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code
-         * DoclingMetadataModificationDate}.
-         */
-        public String doclingMetadataModificationDate() {
-            return "CamelDoclingMetadataModificationDate";
-        }
-        /**
          * Number of pages in the document.
          * 
          * The option is a: {@code Integer} type.
@@ -1598,18 +1154,6 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingMetadataFileName() {
             return "CamelDoclingMetadataFileName";
-        }
-        /**
-         * Custom metadata fields as a Map.
-         * 
-         * The option is a: {@code Map<String, Object>} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code DoclingMetadataCustom}.
-         */
-        public String doclingMetadataCustom() {
-            return "CamelDoclingMetadataCustom";
         }
         /**
          * Raw metadata fields as a Map.

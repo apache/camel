@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>4.17.0-SNAPSHOT</version>
+        <version>4.18.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jms</artifactId>
@@ -39,10 +39,11 @@
         <camel.surefire.parallel>true</camel.surefire.parallel>
         <camel.surefire.parallel.factor>0.5</camel.surefire.parallel.factor>
         <!-- Make use of native access during test execution only -->
-        <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED -Xmx1G</camel.surefire.fork.additional-vmargs>
+        <camel.surefire.fork.additional-vmargs>--enable-native-access=ALL-UNNAMED -XX:+ExitOnOutOfMemoryError -Xmx2G</camel.surefire.fork.additional-vmargs>
 
         <camel.failsafe.parallel>true</camel.failsafe.parallel>
         <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
+        <camel.failsafe.fork.additional-vmargs>-XX:+ExitOnOutOfMemoryError -Xmx3G</camel.failsafe.fork.additional-vmargs>
     </properties>
 
     <dependencies>
@@ -189,9 +190,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx2G</argLine>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>default-test</id>
@@ -229,9 +227,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <argLine>-XX:+ExitOnOutOfMemoryError -Xmx3G</argLine>
-                        </configuration>
                         <executions>
                             <execution>
                                 <id>integration-test</id>

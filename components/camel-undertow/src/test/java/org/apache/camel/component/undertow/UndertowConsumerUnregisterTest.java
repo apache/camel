@@ -26,8 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
 
@@ -42,13 +42,10 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
         component.unregisterEndpoint(consumerBar, consumerBar.getEndpoint().getHttpHandlerRegistrationInfo(),
                 consumerBar.getEndpoint().getSslContext());
 
-        try {
-            template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class);
-            fail("Expected exception when connecting to undertow endpoint");
-        } catch (CamelExecutionException e) {
-            // Expected because unregistering all consumers should shut down the Undertow server
-            assertTrue(e.getExchange().getException() instanceof ConnectException);
-        }
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("undertow:http://localhost:{{port}}/foo", null, String.class));
+        // Expected because unregistering all consumers should shut down the Undertow server
+        assertTrue(e.getExchange().getException() instanceof ConnectException);
     }
 
     @Test

@@ -33,9 +33,11 @@ public class WickedHeaderWithCommaCsvTest extends CamelTestSupport {
         final MockEndpoint unmarshalMock = getMockEndpoint("mock:receiveUnmarshal");
         unmarshalMock.expectedMessageCount(1);
 
-        String csv = ("\"Foo (one, or more, foos)\",\"Bar (one, or more, bars)\"" + "\r\n")
-                     + "\"1,000.00\",\"1,500.00\"" + "\r\n"
-                     + "\"2,000.00\",\"2,700.00\"" + "\r\n";
+        String csv = """
+                "Foo (one, or more, foos)","Bar (one, or more, bars)"\r
+                "1,000.00","1,500.00"\r
+                "2,000.00","2,700.00"\r
+                """;
 
         template.sendBody("direct:startUnmarshal", csv);
 

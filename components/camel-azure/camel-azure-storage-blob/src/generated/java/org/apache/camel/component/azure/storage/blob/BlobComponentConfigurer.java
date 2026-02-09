@@ -50,6 +50,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": getOrCreateConfiguration(target).setBlobType(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobType.class, value)); return true;
         case "blocklisttype":
         case "blockListType": getOrCreateConfiguration(target).setBlockListType(property(camelContext, com.azure.storage.blob.models.BlockListType.class, value)); return true;
+        case "blocksize":
+        case "blockSize": getOrCreateConfiguration(target).setBlockSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "changefeedcontext":
@@ -74,6 +76,14 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "credentials": getOrCreateConfiguration(target).setCredentials(property(camelContext, com.azure.storage.common.StorageSharedKeyCredential.class, value)); return true;
         case "datacount":
         case "dataCount": getOrCreateConfiguration(target).setDataCount(property(camelContext, java.lang.Long.class, value)); return true;
+        case "deleteafterread":
+        case "deleteAfterRead": getOrCreateConfiguration(target).setDeleteAfterRead(property(camelContext, boolean.class, value)); return true;
+        case "destinationblobprefix":
+        case "destinationBlobPrefix": getOrCreateConfiguration(target).setDestinationBlobPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationblobsuffix":
+        case "destinationBlobSuffix": getOrCreateConfiguration(target).setDestinationBlobSuffix(property(camelContext, java.lang.String.class, value)); return true;
+        case "destinationcontainer":
+        case "destinationContainer": getOrCreateConfiguration(target).setDestinationContainer(property(camelContext, java.lang.String.class, value)); return true;
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": getOrCreateConfiguration(target).setDownloadLinkExpiration(property(camelContext, java.lang.Long.class, value)); return true;
         case "filedir":
@@ -88,15 +98,23 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "leaseBlob": getOrCreateConfiguration(target).setLeaseBlob(property(camelContext, boolean.class, value)); return true;
         case "leasedurationinseconds":
         case "leaseDurationInSeconds": getOrCreateConfiguration(target).setLeaseDurationInSeconds(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "maxconcurrency":
+        case "maxConcurrency": getOrCreateConfiguration(target).setMaxConcurrency(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxresultsperpage":
         case "maxResultsPerPage": getOrCreateConfiguration(target).setMaxResultsPerPage(property(camelContext, java.lang.Integer.class, value)); return true;
         case "maxretryrequests":
         case "maxRetryRequests": getOrCreateConfiguration(target).setMaxRetryRequests(property(camelContext, int.class, value)); return true;
+        case "maxsingleuploadsize":
+        case "maxSingleUploadSize": getOrCreateConfiguration(target).setMaxSingleUploadSize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "moveafterread":
+        case "moveAfterRead": getOrCreateConfiguration(target).setMoveAfterRead(property(camelContext, boolean.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class, value)); return true;
         case "pageblobsize":
         case "pageBlobSize": getOrCreateConfiguration(target).setPageBlobSize(property(camelContext, java.lang.Long.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "regex": getOrCreateConfiguration(target).setRegex(property(camelContext, java.lang.String.class, value)); return true;
+        case "removeprefixonmove":
+        case "removePrefixOnMove": getOrCreateConfiguration(target).setRemovePrefixOnMove(property(camelContext, boolean.class, value)); return true;
         case "sastoken":
         case "sasToken": getOrCreateConfiguration(target).setSasToken(property(camelContext, java.lang.String.class, value)); return true;
         case "serviceclient":
@@ -136,6 +154,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": return org.apache.camel.component.azure.storage.blob.BlobType.class;
         case "blocklisttype":
         case "blockListType": return com.azure.storage.blob.models.BlockListType.class;
+        case "blocksize":
+        case "blockSize": return java.lang.Long.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "changefeedcontext":
@@ -160,6 +180,14 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "credentials": return com.azure.storage.common.StorageSharedKeyCredential.class;
         case "datacount":
         case "dataCount": return java.lang.Long.class;
+        case "deleteafterread":
+        case "deleteAfterRead": return boolean.class;
+        case "destinationblobprefix":
+        case "destinationBlobPrefix": return java.lang.String.class;
+        case "destinationblobsuffix":
+        case "destinationBlobSuffix": return java.lang.String.class;
+        case "destinationcontainer":
+        case "destinationContainer": return java.lang.String.class;
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": return java.lang.Long.class;
         case "filedir":
@@ -174,15 +202,23 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "leaseBlob": return boolean.class;
         case "leasedurationinseconds":
         case "leaseDurationInSeconds": return java.lang.Integer.class;
+        case "maxconcurrency":
+        case "maxConcurrency": return java.lang.Integer.class;
         case "maxresultsperpage":
         case "maxResultsPerPage": return java.lang.Integer.class;
         case "maxretryrequests":
         case "maxRetryRequests": return int.class;
+        case "maxsingleuploadsize":
+        case "maxSingleUploadSize": return java.lang.Long.class;
+        case "moveafterread":
+        case "moveAfterRead": return boolean.class;
         case "operation": return org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition.class;
         case "pageblobsize":
         case "pageBlobSize": return java.lang.Long.class;
         case "prefix": return java.lang.String.class;
         case "regex": return java.lang.String.class;
+        case "removeprefixonmove":
+        case "removePrefixOnMove": return boolean.class;
         case "sastoken":
         case "sasToken": return java.lang.String.class;
         case "serviceclient":
@@ -218,6 +254,8 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "blobType": return getOrCreateConfiguration(target).getBlobType();
         case "blocklisttype":
         case "blockListType": return getOrCreateConfiguration(target).getBlockListType();
+        case "blocksize":
+        case "blockSize": return getOrCreateConfiguration(target).getBlockSize();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "changefeedcontext":
@@ -242,6 +280,14 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "credentials": return getOrCreateConfiguration(target).getCredentials();
         case "datacount":
         case "dataCount": return getOrCreateConfiguration(target).getDataCount();
+        case "deleteafterread":
+        case "deleteAfterRead": return getOrCreateConfiguration(target).isDeleteAfterRead();
+        case "destinationblobprefix":
+        case "destinationBlobPrefix": return getOrCreateConfiguration(target).getDestinationBlobPrefix();
+        case "destinationblobsuffix":
+        case "destinationBlobSuffix": return getOrCreateConfiguration(target).getDestinationBlobSuffix();
+        case "destinationcontainer":
+        case "destinationContainer": return getOrCreateConfiguration(target).getDestinationContainer();
         case "downloadlinkexpiration":
         case "downloadLinkExpiration": return getOrCreateConfiguration(target).getDownloadLinkExpiration();
         case "filedir":
@@ -256,15 +302,23 @@ public class BlobComponentConfigurer extends PropertyConfigurerSupport implement
         case "leaseBlob": return getOrCreateConfiguration(target).isLeaseBlob();
         case "leasedurationinseconds":
         case "leaseDurationInSeconds": return getOrCreateConfiguration(target).getLeaseDurationInSeconds();
+        case "maxconcurrency":
+        case "maxConcurrency": return getOrCreateConfiguration(target).getMaxConcurrency();
         case "maxresultsperpage":
         case "maxResultsPerPage": return getOrCreateConfiguration(target).getMaxResultsPerPage();
         case "maxretryrequests":
         case "maxRetryRequests": return getOrCreateConfiguration(target).getMaxRetryRequests();
+        case "maxsingleuploadsize":
+        case "maxSingleUploadSize": return getOrCreateConfiguration(target).getMaxSingleUploadSize();
+        case "moveafterread":
+        case "moveAfterRead": return getOrCreateConfiguration(target).isMoveAfterRead();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "pageblobsize":
         case "pageBlobSize": return getOrCreateConfiguration(target).getPageBlobSize();
         case "prefix": return getOrCreateConfiguration(target).getPrefix();
         case "regex": return getOrCreateConfiguration(target).getRegex();
+        case "removeprefixonmove":
+        case "removePrefixOnMove": return getOrCreateConfiguration(target).isRemovePrefixOnMove();
         case "sastoken":
         case "sasToken": return getOrCreateConfiguration(target).getSasToken();
         case "serviceclient":

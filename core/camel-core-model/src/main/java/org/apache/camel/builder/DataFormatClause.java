@@ -49,6 +49,7 @@ import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
+import org.apache.camel.model.dataformat.OcsfDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ParquetAvroDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
@@ -496,6 +497,24 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         mm.setHeadersInline(Boolean.toString(headersInline));
         mm.setBinaryContent(Boolean.toString(binaryContent));
         return dataFormat(mm);
+    }
+
+    /**
+     * Uses the OCSF (Open Cybersecurity Schema Framework) data format
+     */
+    public T ocsf() {
+        return dataFormat(new OcsfDataFormat());
+    }
+
+    /**
+     * Uses the OCSF (Open Cybersecurity Schema Framework) data format
+     *
+     * @param unmarshalType unmarshal type for OCSF event class
+     */
+    public T ocsf(Class<?> unmarshalType) {
+        OcsfDataFormat ocsfDataFormat = new OcsfDataFormat();
+        ocsfDataFormat.setUnmarshalType(unmarshalType);
+        return dataFormat(ocsfDataFormat);
     }
 
     /**

@@ -39,7 +39,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.condition.OS.AIX;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -90,22 +90,20 @@ class BeanValidatorRouteTest extends CamelTestSupport {
 
         final String url = "bean-validator://x";
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody(url, cars);
-            fail("should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(BeanValidationException.class, e.getCause());
+        });
+        assertIsInstanceOf(BeanValidationException.class, e.getCause());
 
-            BeanValidationException exception = (BeanValidationException) e.getCause();
-            Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
+        BeanValidationException exception = (BeanValidationException) e.getCause();
+        Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
 
-            assertEquals(numberOfViolations, constraintViolations.size());
-            constraintViolations.forEach(cv -> {
-                assertEquals("licensePlate", cv.getPropertyPath().toString());
-                assertNull(cv.getInvalidValue());
-                assertEquals("must not be null", cv.getMessage());
-            });
-        }
+        assertEquals(numberOfViolations, constraintViolations.size());
+        constraintViolations.forEach(cv -> {
+            assertEquals("licensePlate", cv.getPropertyPath().toString());
+            assertNull(cv.getInvalidValue());
+            assertEquals("must not be null", cv.getMessage());
+        });
 
         setLicensePlates(cars, "D-A");
 
@@ -124,22 +122,20 @@ class BeanValidatorRouteTest extends CamelTestSupport {
 
         final String url = "bean-validator://x?group=jakarta.validation.groups.Default";
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody(url, cars);
-            fail("should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(BeanValidationException.class, e.getCause());
+        });
+        assertIsInstanceOf(BeanValidationException.class, e.getCause());
 
-            BeanValidationException exception = (BeanValidationException) e.getCause();
-            Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
+        BeanValidationException exception = (BeanValidationException) e.getCause();
+        Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
 
-            assertEquals(numberOfViolations, constraintViolations.size());
-            constraintViolations.forEach(cv -> {
-                assertEquals("licensePlate", cv.getPropertyPath().toString());
-                assertNull(cv.getInvalidValue());
-                assertEquals("must not be null", cv.getMessage());
-            });
-        }
+        assertEquals(numberOfViolations, constraintViolations.size());
+        constraintViolations.forEach(cv -> {
+            assertEquals("licensePlate", cv.getPropertyPath().toString());
+            assertNull(cv.getInvalidValue());
+            assertEquals("must not be null", cv.getMessage());
+        });
 
         setLicensePlates(cars, "D-A");
 
@@ -158,22 +154,20 @@ class BeanValidatorRouteTest extends CamelTestSupport {
 
         final String url = "bean-validator://x?group=org.apache.camel.component.bean.validator.OptionalChecks";
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody(url, cars);
-            fail("should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(BeanValidationException.class, e.getCause());
+        });
+        assertIsInstanceOf(BeanValidationException.class, e.getCause());
 
-            BeanValidationException exception = (BeanValidationException) e.getCause();
-            Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
+        BeanValidationException exception = (BeanValidationException) e.getCause();
+        Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
 
-            assertEquals(numberOfViolations, constraintViolations.size());
-            constraintViolations.forEach(cv -> {
-                assertEquals("licensePlate", cv.getPropertyPath().toString());
-                assertEquals("D-A", cv.getInvalidValue());
-                assertEquals("size must be between 5 and 14", cv.getMessage());
-            });
-        }
+        assertEquals(numberOfViolations, constraintViolations.size());
+        constraintViolations.forEach(cv -> {
+            assertEquals("licensePlate", cv.getPropertyPath().toString());
+            assertEquals("D-A", cv.getInvalidValue());
+            assertEquals("size must be between 5 and 14", cv.getMessage());
+        });
 
         setLicensePlates(cars, "DD-AB-123");
 
@@ -192,41 +186,37 @@ class BeanValidatorRouteTest extends CamelTestSupport {
 
         final String url = "bean-validator://x?group=org.apache.camel.component.bean.validator.OrderedChecks";
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody(url, cars);
-            fail("should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(BeanValidationException.class, e.getCause());
+        });
+        assertIsInstanceOf(BeanValidationException.class, e.getCause());
 
-            BeanValidationException exception = (BeanValidationException) e.getCause();
-            Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
+        BeanValidationException exception = (BeanValidationException) e.getCause();
+        Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
 
-            assertEquals(numberOfViolations, constraintViolations.size());
-            constraintViolations.forEach(cv -> {
-                assertEquals("manufacturer", cv.getPropertyPath().toString());
-                assertNull(cv.getInvalidValue());
-                assertEquals("must not be null", cv.getMessage());
-            });
-        }
+        assertEquals(numberOfViolations, constraintViolations.size());
+        constraintViolations.forEach(cv -> {
+            assertEquals("manufacturer", cv.getPropertyPath().toString());
+            assertNull(cv.getInvalidValue());
+            assertEquals("must not be null", cv.getMessage());
+        });
 
         setManufacturer(cars, "BMW");
 
-        try {
+        CamelExecutionException e2 = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody(url, cars);
-            fail("should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(BeanValidationException.class, e.getCause());
+        });
+        assertIsInstanceOf(BeanValidationException.class, e2.getCause());
 
-            BeanValidationException exception = (BeanValidationException) e.getCause();
-            Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
+        BeanValidationException exception2 = (BeanValidationException) e2.getCause();
+        Set<ConstraintViolation<Object>> constraintViolations2 = exception2.getConstraintViolations();
 
-            assertEquals(numberOfViolations, constraintViolations.size());
-            constraintViolations.forEach(cv -> {
-                assertEquals("licensePlate", cv.getPropertyPath().toString());
-                assertEquals("D-A", cv.getInvalidValue());
-                assertEquals("size must be between 5 and 14", cv.getMessage());
-            });
-        }
+        assertEquals(numberOfViolations, constraintViolations2.size());
+        constraintViolations2.forEach(cv -> {
+            assertEquals("licensePlate", cv.getPropertyPath().toString());
+            assertEquals("D-A", cv.getInvalidValue());
+            assertEquals("size must be between 5 and 14", cv.getMessage());
+        });
 
         setLicensePlates(cars, "DD-AB-123");
 
@@ -260,22 +250,20 @@ class BeanValidatorRouteTest extends CamelTestSupport {
 
         final String url = "bean-validator://x";
 
-        try {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
             template.requestBody(url, cars);
-            fail("should throw exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(BeanValidationException.class, e.getCause());
+        });
+        assertIsInstanceOf(BeanValidationException.class, e.getCause());
 
-            BeanValidationException exception = (BeanValidationException) e.getCause();
-            Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
+        BeanValidationException exception = (BeanValidationException) e.getCause();
+        Set<ConstraintViolation<Object>> constraintViolations = exception.getConstraintViolations();
 
-            assertEquals(numberOfViolations, constraintViolations.size());
-            constraintViolations.forEach(cv -> {
-                assertEquals("licensePlate", cv.getPropertyPath().toString());
-                assertEquals("D-A", cv.getInvalidValue());
-                assertEquals("size must be between 5 and 14", cv.getMessage());
-            });
-        }
+        assertEquals(numberOfViolations, constraintViolations.size());
+        constraintViolations.forEach(cv -> {
+            assertEquals("licensePlate", cv.getPropertyPath().toString());
+            assertEquals("D-A", cv.getInvalidValue());
+            assertEquals("size must be between 5 and 14", cv.getMessage());
+        });
     }
 
     Car createCar(String manufacturer, String licencePlate) {

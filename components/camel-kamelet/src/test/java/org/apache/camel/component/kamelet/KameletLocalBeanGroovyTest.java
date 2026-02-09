@@ -46,9 +46,10 @@ public class KameletLocalBeanGroovyTest extends CamelTestSupport {
             public void configure() {
                 routeTemplate("whereTo")
                         .templateBean("myBar", "groovy",
-                                "def bean = new org.apache.camel.component.kamelet.MyInjectBar()\n"
-                                                         + "bean.bar = 'Gr8t'\n"
-                                                         + "return bean")
+                                """
+                                        def bean = new org.apache.camel.component.kamelet.MyInjectBar()
+                                        bean.bar = 'Gr8t'
+                                        return bean""")
                         .from("kamelet:source")
                         // must use {{myBar}} to refer to the local bean
                         .to("bean:{{myBar}}");

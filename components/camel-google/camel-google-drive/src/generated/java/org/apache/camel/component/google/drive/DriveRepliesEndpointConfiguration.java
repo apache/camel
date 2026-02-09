@@ -3,6 +3,8 @@
  */
 package org.apache.camel.component.google.drive;
 
+import javax.annotation.processing.Generated;
+
 import org.apache.camel.spi.ApiMethod;
 import org.apache.camel.spi.ApiParam;
 import org.apache.camel.spi.ApiParams;
@@ -18,6 +20,7 @@ import org.apache.camel.spi.UriParams;
            apiMethods = {@ApiMethod(methodName = "create", description="Creates a reply to a comment", signatures={"com.google.api.services.drive.Drive$Replies$Create create(String fileId, String commentId, com.google.api.services.drive.model.Reply content)"}), @ApiMethod(methodName = "delete", description="Deletes a reply", signatures={"com.google.api.services.drive.Drive$Replies$Delete delete(String fileId, String commentId, String replyId)"}), @ApiMethod(methodName = "get", description="Gets a reply by ID", signatures={"com.google.api.services.drive.Drive$Replies$Get get(String fileId, String commentId, String replyId)"}), @ApiMethod(methodName = "list", description="Lists a comment's replies", signatures={"com.google.api.services.drive.Drive$Replies$List list(String fileId, String commentId)"}), @ApiMethod(methodName = "update", description="Updates a reply with patch semantics", signatures={"com.google.api.services.drive.Drive$Replies$Update update(String fileId, String commentId, String replyId, com.google.api.services.drive.model.Reply content)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class DriveRepliesEndpointConfiguration extends GoogleDriveConfiguration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The ID of the comment"), @ApiMethod(methodName = "delete", description="The ID of the comment"), @ApiMethod(methodName = "get", description="The ID of the comment"), @ApiMethod(methodName = "list", description="The ID of the comment"), @ApiMethod(methodName = "update", description="The ID of the comment")})

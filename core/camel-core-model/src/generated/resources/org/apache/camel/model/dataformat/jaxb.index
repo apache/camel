@@ -30,6 +30,7 @@ JsonDataFormat
 JsonLibrary
 LZFDataFormat
 MimeMultipartDataFormat
+OcsfDataFormat
 PGPDataFormat
 PQCDataFormat
 ParquetAvroDataFormat

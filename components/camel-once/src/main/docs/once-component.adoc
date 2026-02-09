@@ -1,0 +1,155 @@
+= Once Component
+:doctitle: Once
+:shortname: once
+:artifactid: camel-once
+:description: Trigger a single message only once at startup (useful for development and testing purposes).
+:since: 4.17
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Only consumer is supported
+:core:
+//Manually maintained attributes
+:camel-spring-boot-name: once
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Once component is used to generate a message only once. For example to trigger a message after Camel has been started,
+or for development and testing purposes.
+
+This component is designed to be very basic and only a few options.
+
+You can find more features when using the xref:timer-component.adoc[Timer] component,
+which also can be configured to only trigger once with `repeatCount=1`.
+
+== URI format
+
+----
+once:name[?options]
+----
+
+Where `name` is a logical name.
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+== Example
+
+To set up a route that generates an event every 60 seconds:
+
+[source,java]
+----
+from("once:foo?body=file:data.json").to("bean:myBean?method=someMethodName");
+----
+
+The above route will trigger once and load the `data.json` from file system and use as message body.
+And then route to call the bean.
+
+And the route in XML DSL:
+
+[source,xml]
+-----
+<route>
+  <from uri="once:foo?body=file:data.json"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+-----
+
+=== Using headers and variables
+
+You can also specify headers and variables using _multivalue_, where each header is prefixed with `header.<key>`.
+In the sample below we set 2 headers as follows: `foo=abc` and `bar=123`.
+
+[source,java]
+----
+from("once:tick?body=world&header.foo=abc&header.bar=123")
+  .to("bean:myBean");
+----
+
+You can do the same for variables with `variable.<key>`.
+
+And in YAML DSL you can use YAML map's directly as shown below:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: once
+      parameters:
+        name: hello
+        body: Hello World
+        headers:
+          foo: foolish
+          bar: 456
+      steps:
+        - to: mock:result
+----
+
+IMPORTANT: This requires that the `uri` does not have any configuration so it must be `uri: once` and not `uri: once:hello`.
+
+=== Using custom languages
+
+You can use the Camel languages such as simple, or groovy when specifying body, headers, exchange properties, and variables.
+
+The once component will set the data in the following order:
+
+- variables
+- exchangeProperties
+- headers
+- body
+
+This makes it possible to use groovy or simple language for setting the message body, based
+on data from the variables and headers.
+
+For example:
+
+[source,java]
+----
+from("once:tick?body=language:groovy:file:src/test/resources/calc.groovy&variable.amount=123")
+        .to("mock:result");
+----
+
+You must use `language:groovy:` as prefix when using languages. And you can combine this with loading from file.
+The `calc.groovy` file is as follows:
+
+[source,groovy]
+----
+variable.amount * 3
+----
+
+As you can see this just tells groovy to multiply the amount variable with 3.
+
+=== Automatic type conversion
+
+The body, header, and variables will automatically be converted to the best suitable type for boolean and integers:
+
+- boolean
+- int
+- long
+
+And for any other its `String` or the output from executing a language.
+
+=== Firing as soon as possible
+
+By default, the component is fired after 1 seconds when Camel has been fully started.
+If you want to fire messages in a Camel route as soon as possible, you can use a negative delay:
+
+[source,xml]
+----
+<route>
+  <from uri="once:foo?body=file.data.json&amp;delay=-1"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
+
+In this way, the timer will fire messages immediately.
+
+
+include::spring-boot:partial$starter.adoc[]

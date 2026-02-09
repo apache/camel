@@ -27,7 +27,12 @@ public interface RedisInfraService extends InfrastructureService {
 
     int port();
 
+    @Deprecated
     default String getServiceAddress() {
         return String.format("%s:%d", host(), port());
+    }
+
+    default String endpointUri() {
+        return String.format("spring-redis:%s:%d", host(), port());
     }
 }

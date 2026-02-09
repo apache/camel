@@ -274,7 +274,7 @@ public final class IOHelper {
      *
      * @param  input       the input stream buffer
      * @param  output      the output stream buffer
-     * @throws IOException
+     * @throws IOException for I/O errors
      */
     public static void copyAndCloseInput(InputStream input, OutputStream output) throws IOException {
         copy(input, output);
@@ -289,7 +289,7 @@ public final class IOHelper {
      * @param  input       the input stream buffer
      * @param  output      the output stream buffer
      * @param  bufferSize  the size of the buffer used for the copies
-     * @throws IOException
+     * @throws IOException for I/O errors
      */
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
         copy(input, output, bufferSize);
@@ -518,6 +518,15 @@ public final class IOHelper {
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
+        return loadText(in, true);
+    }
+
+    /**
+     * Loads the entire stream into memory as a String and returns it.
+     * <p/>
+     * Warning, don't use for crazy big streams :)
+     */
+    public static String loadText(InputStream in, boolean newLine) throws IOException {
         StringBuilder builder = new StringBuilder(2048);
         InputStreamReader isr = new InputStreamReader(in);
         try {
@@ -525,9 +534,14 @@ public final class IOHelper {
             while (true) {
                 String line = reader.readLine();
                 if (line != null) {
+                    if (!builder.isEmpty()) {
+                        builder.append("\n");
+                    }
                     builder.append(line);
-                    builder.append("\n");
                 } else {
+                    if (!builder.isEmpty() && newLine) {
+                        builder.append("\n");
+                    }
                     break;
                 }
             }

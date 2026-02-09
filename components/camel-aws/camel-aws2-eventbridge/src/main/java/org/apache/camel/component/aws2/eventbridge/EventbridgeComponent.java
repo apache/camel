@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon Eventbridge SDK v2.
@@ -47,7 +48,7 @@ public class EventbridgeComponent extends HealthCheckComponent {
             throw new IllegalArgumentException("Event bus name must be specified.");
         }
         EventbridgeConfiguration configuration
-                = this.configuration != null ? this.configuration.copy() : new EventbridgeConfiguration();
+                = ObjectHelper.isNotEmpty(this.configuration) ? this.configuration.copy() : new EventbridgeConfiguration();
         configuration.setEventbusName(remaining);
         EventbridgeEndpoint endpoint = new EventbridgeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);

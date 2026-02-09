@@ -20,8 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RouteStartupOrderClashTest extends ContextTestSupport {
 
@@ -44,13 +44,8 @@ public class RouteStartupOrderClashTest extends ContextTestSupport {
             }
         });
 
-        try {
-            context.start();
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            // expected
-            assertTrue(e.getMessage().contains("startupOrder 2"));
-        }
+        Exception exception = assertThrows(Exception.class, () -> context.start());
+        assertTrue(exception.getMessage().contains("startupOrder 2"));
     }
 
 }

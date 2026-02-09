@@ -282,7 +282,7 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
             return "CamelWeaviateAction";
         }
         /**
-         * Text Field Name for Insert/Upsert operation.
+         * Text Field Name for Create/Update/Query operation.
          * 
          * The option is a: {@code String} type.
          * 
@@ -294,7 +294,7 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
             return "CamelWeaviateTextFieldName";
         }
         /**
-         * Vector Field Name for Insert/Upsert operation.
+         * Vector Field Name for Create/Update/Query operation.
          * 
          * The option is a: {@code String} type.
          * 
@@ -306,7 +306,7 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
             return "CamelweaviateVectorFieldName";
         }
         /**
-         * Collection Name for Insert/Upsert operation.
+         * Collection Name for all operations.
          * 
          * The option is a: {@code String} type.
          * 
@@ -316,67 +316,6 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
          */
         public String weaviateCollectionName() {
             return "CamelWeaviateCollectionName";
-        }
-        /**
-         * Collection Similarity Metric.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code
-         * WeaviateCollectionSimilarityMetric}.
-         */
-        public String weaviateCollectionSimilarityMetric() {
-            return "CamelWeaviateCollectionSimilarityMetric";
-        }
-        /**
-         * Collection Dimension.
-         * 
-         * The option is a: {@code int} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code WeaviateCollectionDimension}.
-         */
-        public String weaviateCollectionDimension() {
-            return "CamelWeaviateCollectionDimension";
-        }
-        /**
-         * Collection Cloud Vendor.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code WeaviateCollectionCloud}.
-         */
-        public String weaviateCollectionCloud() {
-            return "CamelWeaviateCollectionCloud";
-        }
-        /**
-         * Collection Cloud Vendor Region.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code WeaviateCollectionCloudRegion}.
-         */
-        public String weaviateCollectionCloudRegion() {
-            return "CamelWeaviateCollectionCloudRegion";
-        }
-        /**
-         * Index Name.
-         * 
-         * The option is a: {@code String} type.
-         * 
-         * Group: producer
-         * 
-         * @return the name of the header {@code WeaviateIndexName}.
-         */
-        public String weaviateIndexName() {
-            return "CamelWeaviateIndexName";
         }
         /**
          * Weaviate Object fields.
@@ -440,7 +379,7 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
             return "CamelWeaviateUpdateWithMerge";
         }
         /**
-         * Key Name for Insert/Upsert operation.
+         * Key Name for Create/Update/Query operation.
          * 
          * The option is a: {@code String} type.
          * 
@@ -452,7 +391,7 @@ public interface WeaviateVectorDbEndpointBuilderFactory {
             return "CamelWeaviateKeyName";
         }
         /**
-         * Key Value for Insert/Upsert operation.
+         * Key Value for Create/Update/Query operation.
          * 
          * The option is a: {@code String} type.
          * 

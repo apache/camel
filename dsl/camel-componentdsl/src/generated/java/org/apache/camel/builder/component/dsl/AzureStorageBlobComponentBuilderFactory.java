@@ -391,6 +391,121 @@ public interface AzureStorageBlobComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Delete blobs from Azure after they have been retrieved. The delete is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the blob is not deleted. If this option is false, then the same blobs
+         * will be retrieved over and over again in the polls. Therefore, you
+         * need to use the Idempotent Consumer EIP in the route to filter out
+         * duplicates. You can filter using the BlobConstants#BLOB_NAME header,
+         * or only the blob name.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder deleteAfterRead(boolean deleteAfterRead) {
+            doSetProperty("deleteAfterRead", deleteAfterRead);
+            return this;
+        }
+    
+        /**
+         * Define the destination blob prefix to use when a blob must be moved,
+         * and moveAfterRead is set to true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param destinationBlobPrefix the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder destinationBlobPrefix(java.lang.String destinationBlobPrefix) {
+            doSetProperty("destinationBlobPrefix", destinationBlobPrefix);
+            return this;
+        }
+    
+        /**
+         * Define the destination blob suffix to use when a blob must be moved,
+         * and moveAfterRead is set to true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param destinationBlobSuffix the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder destinationBlobSuffix(java.lang.String destinationBlobSuffix) {
+            doSetProperty("destinationBlobSuffix", destinationBlobSuffix);
+            return this;
+        }
+    
+        /**
+         * Define the destination container where a blob must be moved when
+         * moveAfterRead is set to true.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param destinationContainer the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder destinationContainer(java.lang.String destinationContainer) {
+            doSetProperty("destinationContainer", destinationContainer);
+            return this;
+        }
+    
+        
+        /**
+         * Move blobs from the container to a different container after they
+         * have been retrieved. To accomplish the operation, the
+         * destinationContainer option must be set. The copy blob operation is
+         * only performed if the Exchange is committed. If a rollback occurs,
+         * the blob is not moved.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder moveAfterRead(boolean moveAfterRead) {
+            doSetProperty("moveAfterRead", moveAfterRead);
+            return this;
+        }
+    
+        
+        /**
+         * Remove the contents of the prefix configuration string from the new
+         * blob name before moving. For example, if prefix is set to 'notify/'
+         * and the destinationBlobPrefix is set to 'archive/', a blob with a
+         * name of 'notify/example.txt' will be moved to 'archive/example.txt',
+         * rather than the default behavior where the new name is
+         * 'archive/notify/example.txt'. Only applicable when moveAfterRead is
+         * true.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param removePrefixOnMove the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder removePrefixOnMove(boolean removePrefixOnMove) {
+            doSetProperty("removePrefixOnMove", removePrefixOnMove);
+            return this;
+        }
+    
         /**
          * A user-controlled value that you can use to track requests. The value
          * of the sequence number must be between 0 and 263 - 1.The default
@@ -424,6 +539,23 @@ public interface AzureStorageBlobComponentBuilderFactory {
          */
         default AzureStorageBlobComponentBuilder blockListType(com.azure.storage.blob.models.BlockListType blockListType) {
             doSetProperty("blockListType", blockListType);
+            return this;
+        }
+    
+        /**
+         * The block size in bytes to use for chunked uploads with
+         * uploadBlockBlobChunked operation. Default is 4MB (4194304). Maximum
+         * is 4000MB. Must be greater than 0.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param blockSize the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder blockSize(java.lang.Long blockSize) {
+            doSetProperty("blockSize", blockSize);
             return this;
         }
     
@@ -593,6 +725,41 @@ public interface AzureStorageBlobComponentBuilderFactory {
          */
         default AzureStorageBlobComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+    
+        /**
+         * The maximum number of parallel requests to use during upload with
+         * uploadBlockBlobChunked operation. Default is determined by the Azure
+         * SDK based on available processors.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param maxConcurrency the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder maxConcurrency(java.lang.Integer maxConcurrency) {
+            doSetProperty("maxConcurrency", maxConcurrency);
+            return this;
+        }
+    
+        /**
+         * The maximum size in bytes for a single upload request with
+         * uploadBlockBlobChunked operation. Files smaller than this will be
+         * uploaded in a single request. Files larger will use chunked upload
+         * with blocks of size blockSize. Default is 256MB.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param maxSingleUploadSize the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageBlobComponentBuilder maxSingleUploadSize(java.lang.Long maxSingleUploadSize) {
+            doSetProperty("maxSingleUploadSize", maxSingleUploadSize);
             return this;
         }
     
@@ -810,8 +977,15 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "serviceClient": getOrCreateConfiguration((BlobComponent) component).setServiceClient((com.azure.storage.blob.BlobServiceClient) value); return true;
             case "timeout": getOrCreateConfiguration((BlobComponent) component).setTimeout((java.time.Duration) value); return true;
             case "bridgeErrorHandler": ((BlobComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "deleteAfterRead": getOrCreateConfiguration((BlobComponent) component).setDeleteAfterRead((boolean) value); return true;
+            case "destinationBlobPrefix": getOrCreateConfiguration((BlobComponent) component).setDestinationBlobPrefix((java.lang.String) value); return true;
+            case "destinationBlobSuffix": getOrCreateConfiguration((BlobComponent) component).setDestinationBlobSuffix((java.lang.String) value); return true;
+            case "destinationContainer": getOrCreateConfiguration((BlobComponent) component).setDestinationContainer((java.lang.String) value); return true;
+            case "moveAfterRead": getOrCreateConfiguration((BlobComponent) component).setMoveAfterRead((boolean) value); return true;
+            case "removePrefixOnMove": getOrCreateConfiguration((BlobComponent) component).setRemovePrefixOnMove((boolean) value); return true;
             case "blobSequenceNumber": getOrCreateConfiguration((BlobComponent) component).setBlobSequenceNumber((java.lang.Long) value); return true;
             case "blockListType": getOrCreateConfiguration((BlobComponent) component).setBlockListType((com.azure.storage.blob.models.BlockListType) value); return true;
+            case "blockSize": getOrCreateConfiguration((BlobComponent) component).setBlockSize((java.lang.Long) value); return true;
             case "changeFeedContext": getOrCreateConfiguration((BlobComponent) component).setChangeFeedContext((com.azure.core.util.Context) value); return true;
             case "changeFeedEndTime": getOrCreateConfiguration((BlobComponent) component).setChangeFeedEndTime((java.time.OffsetDateTime) value); return true;
             case "changeFeedStartTime": getOrCreateConfiguration((BlobComponent) component).setChangeFeedStartTime((java.time.OffsetDateTime) value); return true;
@@ -821,6 +995,8 @@ public interface AzureStorageBlobComponentBuilderFactory {
             case "createPageBlob": getOrCreateConfiguration((BlobComponent) component).setCreatePageBlob((boolean) value); return true;
             case "downloadLinkExpiration": getOrCreateConfiguration((BlobComponent) component).setDownloadLinkExpiration((java.lang.Long) value); return true;
             case "lazyStartProducer": ((BlobComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "maxConcurrency": getOrCreateConfiguration((BlobComponent) component).setMaxConcurrency((java.lang.Integer) value); return true;
+            case "maxSingleUploadSize": getOrCreateConfiguration((BlobComponent) component).setMaxSingleUploadSize((java.lang.Long) value); return true;
             case "operation": getOrCreateConfiguration((BlobComponent) component).setOperation((org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition) value); return true;
             case "pageBlobSize": getOrCreateConfiguration((BlobComponent) component).setPageBlobSize((java.lang.Long) value); return true;
             case "autowiredEnabled": ((BlobComponent) component).setAutowiredEnabled((boolean) value); return true;

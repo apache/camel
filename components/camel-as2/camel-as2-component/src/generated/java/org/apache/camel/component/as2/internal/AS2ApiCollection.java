@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration;
@@ -21,6 +22,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for AS2
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configuration> {
 
     private AS2ApiCollection() {

@@ -434,6 +434,26 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Regular expression identifying configuration keys whose values should
+         * be masked. When set, this custom pattern replaces Debeziums default
+         * password masking pattern.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default:
+         * .*secret$|.*password$|.*sasl\.jaas\.config$|.*basic\.auth\.user\.info|.*registry\.auth\.client-secret
+         * Group: mongodb
+         * 
+         * @param customSanitizePattern the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder customSanitizePattern(java.lang.String customSanitizePattern) {
+            doSetProperty("customSanitizePattern", customSanitizePattern);
+            return this;
+        }
+    
         /**
          * A comma-separated list of regular expressions or literals that match
          * the database names for which changes are to be excluded.
@@ -1184,7 +1204,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         /**
          * The name of the data collection that is used to send signals/commands
-         * to Debezium. Signaling is disabled when not set.
+         * to Debezium. For multi-partition mode connectors, multiple signal
+         * data collections can be specified as a comma-separated list.
+         * Signaling is disabled when not set.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1633,6 +1655,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "converters": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConverters((java.lang.String) value); return true;
             case "cursorMaxAwaitTimeMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCursorMaxAwaitTimeMs((int) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCustomMetricTags((java.lang.String) value); return true;
+            case "customSanitizePattern": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCustomSanitizePattern((java.lang.String) value); return true;
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumMongodbComponent) component).setErrorsMaxRetries((int) value); return true;

@@ -105,8 +105,8 @@ public final class ZooKeeperUtils {
 
     public static WatchedEvent getWatchedEvent(ZooKeeperOperation<?> zooKeeperOperation) {
         WatchedEvent watchedEvent = null;
-        if (zooKeeperOperation instanceof WatchedEventProvider) {
-            watchedEvent = ((WatchedEventProvider) zooKeeperOperation).getWatchedEvent();
+        if (zooKeeperOperation instanceof WatchedEventProvider watchedEventProvider) {
+            watchedEvent = watchedEventProvider.getWatchedEvent();
         }
         return watchedEvent;
     }

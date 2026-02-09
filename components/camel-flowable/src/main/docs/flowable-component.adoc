@@ -4,7 +4,7 @@
 :artifactid: camel-flowable
 :description: Send and receive messages from the Flowable BPMN and CMMN engines.
 :since: 4.9
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes

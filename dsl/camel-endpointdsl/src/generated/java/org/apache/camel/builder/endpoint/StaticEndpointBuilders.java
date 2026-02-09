@@ -697,6 +697,46 @@ public class StaticEndpointBuilders {
         return SecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Security Hub (camel-aws-security-hub)
+     * Manage and interact with AWS Security Hub for security findings.
+     * 
+     * Category: cloud,security
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws-security-hub
+     * 
+     * Syntax: <code>aws-security-hub:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static SecurityHubEndpointBuilderFactory.SecurityHubEndpointBuilder awsSecurityHub(String path) {
+        return awsSecurityHub("aws-security-hub", path);
+    }
+    /**
+     * AWS Security Hub (camel-aws-security-hub)
+     * Manage and interact with AWS Security Hub for security findings.
+     * 
+     * Category: cloud,security
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws-security-hub
+     * 
+     * Syntax: <code>aws-security-hub:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static SecurityHubEndpointBuilderFactory.SecurityHubEndpointBuilder awsSecurityHub(String componentName, String path) {
+        return SecurityHubEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
      * 
@@ -735,6 +775,48 @@ public class StaticEndpointBuilders {
      */
     public static Athena2EndpointBuilderFactory.Athena2EndpointBuilder aws2Athena(String componentName, String path) {
         return Athena2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * AWS Comprehend (camel-aws2-comprehend)
+     * Perform natural language processing using AWS Comprehend and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-comprehend
+     * 
+     * Syntax: <code>aws2-comprehend:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Comprehend2EndpointBuilderFactory.Comprehend2EndpointBuilder aws2Comprehend(String path) {
+        return aws2Comprehend("aws2-comprehend", path);
+    }
+    /**
+     * AWS Comprehend (camel-aws2-comprehend)
+     * Perform natural language processing using AWS Comprehend and AWS SDK
+     * version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-comprehend
+     * 
+     * Syntax: <code>aws2-comprehend:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Comprehend2EndpointBuilderFactory.Comprehend2EndpointBuilder aws2Comprehend(String componentName, String path) {
+        return Comprehend2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AWS CloudWatch (camel-aws2-cw)
@@ -1297,6 +1379,46 @@ public class StaticEndpointBuilders {
         return MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Polly (camel-aws2-polly)
+     * Synthesize speech using AWS Polly and AWS SDK version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-polly
+     * 
+     * Syntax: <code>aws2-polly:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Polly2EndpointBuilderFactory.Polly2EndpointBuilder aws2Polly(String path) {
+        return aws2Polly("aws2-polly", path);
+    }
+    /**
+     * AWS Polly (camel-aws2-polly)
+     * Synthesize speech using AWS Polly and AWS SDK version 2.x.
+     * 
+     * Category: cloud,ai
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-aws2-polly
+     * 
+     * Syntax: <code>aws2-polly:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Polly2EndpointBuilderFactory.Polly2EndpointBuilder aws2Polly(String componentName, String path) {
+        return Polly2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
      * 
@@ -1337,6 +1459,46 @@ public class StaticEndpointBuilders {
         return RedshiftData2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AWS Rekognition (camel-aws2-rekognition)
+     * Manage and invoke AWS Rekognition.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-rekognition
+     * 
+     * Syntax: <code>aws2-rekognition:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Rekognition2EndpointBuilderFactory.Rekognition2EndpointBuilder aws2Rekognition(String path) {
+        return aws2Rekognition("aws2-rekognition", path);
+    }
+    /**
+     * AWS Rekognition (camel-aws2-rekognition)
+     * Manage and invoke AWS Rekognition.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-rekognition
+     * 
+     * Syntax: <code>aws2-rekognition:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static Rekognition2EndpointBuilderFactory.Rekognition2EndpointBuilder aws2Rekognition(String componentName, String path) {
+        return Rekognition2EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
      * 
@@ -1375,6 +1537,48 @@ public class StaticEndpointBuilders {
      */
     public static AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(String componentName, String path) {
         return AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * AWS S3 Vectors (camel-aws2-s3-vectors)
+     * Store and query vector embeddings using AWS S3 Vectors with similarity
+     * search.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
+     * 
+     * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
+     * 
+     * Path parameter: vectorBucketName (required)
+     * Vector bucket name or ARN
+     * 
+     * @param path vectorBucketName
+     * @return the dsl builder
+     */
+    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String path) {
+        return aws2S3Vectors("aws2-s3-vectors", path);
+    }
+    /**
+     * AWS S3 Vectors (camel-aws2-s3-vectors)
+     * Store and query vector embeddings using AWS S3 Vectors with similarity
+     * search.
+     * 
+     * Category: cloud,ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-aws2-s3-vectors
+     * 
+     * Syntax: <code>aws2-s3-vectors://vectorBucketName</code>
+     * 
+     * Path parameter: vectorBucketName (required)
+     * Vector bucket name or ARN
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path vectorBucketName
+     * @return the dsl builder
+     */
+    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String componentName, String path) {
+        return AWS2S3VectorsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
@@ -2310,7 +2514,7 @@ public class StaticEndpointBuilders {
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
      * 
-     * Category: saas
+     * Category: saas,finance
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      * 
@@ -2344,7 +2548,7 @@ public class StaticEndpointBuilders {
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
      * 
-     * Category: saas
+     * Category: saas,finance
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      * 
@@ -5241,6 +5445,7 @@ public class StaticEndpointBuilders {
      * @param path type/branchName
      * @return the dsl builder
      */
+    @Deprecated
     public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String path) {
         return github("github", path);
     }
@@ -5268,8 +5473,61 @@ public class StaticEndpointBuilders {
      * @param path type/branchName
      * @return the dsl builder
      */
+    @Deprecated
     public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String componentName, String path) {
         return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * GitHub2 (camel-github2)
+     * Interact with the GitHub API.
+     * 
+     * Category: file,cloud,api
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-github2
+     * 
+     * Syntax: <code>github2:type/branchName</code>
+     * 
+     * Path parameter: type (required)
+     * What git operation to execute
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
+     * 
+     * Path parameter: branchName
+     * Name of branch
+     * 
+     * @param path type/branchName
+     * @return the dsl builder
+     */
+    public static GitHub2EndpointBuilderFactory.GitHub2EndpointBuilder github2(String path) {
+        return github2("github2", path);
+    }
+    /**
+     * GitHub2 (camel-github2)
+     * Interact with the GitHub API.
+     * 
+     * Category: file,cloud,api
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-github2
+     * 
+     * Syntax: <code>github2:type/branchName</code>
+     * 
+     * Path parameter: type (required)
+     * What git operation to execute
+     * There are 10 enums and the value can be one of: CLOSEPULLREQUEST,
+     * PULLREQUESTCOMMENT, COMMIT, PULLREQUEST, TAG, PULLREQUESTSTATE,
+     * PULLREQUESTFILES, GETCOMMITFILE, CREATEISSUE, EVENT
+     * 
+     * Path parameter: branchName
+     * Name of branch
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path type/branchName
+     * @return the dsl builder
+     */
+    public static GitHub2EndpointBuilderFactory.GitHub2EndpointBuilder github2(String componentName, String path) {
+        return GitHub2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Google BigQuery (camel-google-bigquery)
@@ -5946,6 +6204,58 @@ public class StaticEndpointBuilders {
      */
     public static GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(String componentName, String path) {
         return GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Google Vertex AI (camel-google-vertexai)
+     * Interact with Google Cloud Vertex AI generative models.
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-google-vertexai
+     * 
+     * Syntax: <code>google-vertexai:projectId:location:modelId</code>
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project ID
+     * 
+     * Path parameter: location (required)
+     * Google Cloud location/region (e.g., us-central1)
+     * 
+     * Path parameter: modelId (required)
+     * Model ID to use for predictions
+     * 
+     * @param path projectId:location:modelId
+     * @return the dsl builder
+     */
+    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String path) {
+        return googleVertexai("google-vertexai", path);
+    }
+    /**
+     * Google Vertex AI (camel-google-vertexai)
+     * Interact with Google Cloud Vertex AI generative models.
+     * 
+     * Category: ai,cloud
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-google-vertexai
+     * 
+     * Syntax: <code>google-vertexai:projectId:location:modelId</code>
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project ID
+     * 
+     * Path parameter: location (required)
+     * Google Cloud location/region (e.g., us-central1)
+     * 
+     * Path parameter: modelId (required)
+     * Model ID to use for predictions
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path projectId:location:modelId
+     * @return the dsl builder
+     */
+    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String componentName, String path) {
+        return GoogleVertexAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Grape (camel-grape)
@@ -7209,6 +7519,48 @@ public class StaticEndpointBuilders {
         return WatsonTextToSpeechEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * IBM watsonx.ai (camel-ibm-watsonx-ai)
+     * Interact with IBM watsonx.ai foundation models for text generation, chat,
+     * embeddings, and more.
+     * 
+     * Category: ai,cloud
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
+     * 
+     * Syntax: <code>ibm-watsonx-ai:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String path) {
+        return ibmWatsonxAi("ibm-watsonx-ai", path);
+    }
+    /**
+     * IBM watsonx.ai (camel-ibm-watsonx-ai)
+     * Interact with IBM watsonx.ai foundation models for text generation, chat,
+     * embeddings, and more.
+     * 
+     * Category: ai,cloud
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-ibm-watsonx-ai
+     * 
+     * Syntax: <code>ibm-watsonx-ai:label</code>
+     * 
+     * Path parameter: label (required)
+     * Logical name for the endpoint
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path label
+     * @return the dsl builder
+     */
+    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String componentName, String path) {
+        return WatsonxAiEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
      * NeoSCADA implementation.
@@ -7291,6 +7643,46 @@ public class StaticEndpointBuilders {
      */
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
         return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Send and receive message to Apache Iggy streaming platform.
+     * 
+     * Category: messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * Syntax: <code>iggy:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Name of the topic
+     * 
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String path) {
+        return iggy("iggy", path);
+    }
+    /**
+     * Iggy (camel-iggy)
+     * Send and receive message to Apache Iggy streaming platform.
+     * 
+     * Category: messaging
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-iggy
+     * 
+     * Syntax: <code>iggy:topicName</code>
+     * 
+     * Path parameter: topicName (required)
+     * Name of the topic
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topicName
+     * @return the dsl builder
+     */
+    public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String componentName, String path) {
+        return IggyEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Ignite Cache (camel-ignite)
@@ -10921,6 +11313,58 @@ public class StaticEndpointBuilders {
         return MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * MINA SFTP (camel-mina-sftp)
+     * Upload and download files to/from SFTP servers using Apache MINA SSHD.
+     * 
+     * Category: file
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-mina-sftp
+     * 
+     * Syntax: <code>mina-sftp:host:port/directoryName</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param path host:port/directoryName
+     * @return the dsl builder
+     */
+    public static MinaSftpEndpointBuilderFactory.MinaSftpEndpointBuilder minaSftp(String path) {
+        return minaSftp("mina-sftp", path);
+    }
+    /**
+     * MINA SFTP (camel-mina-sftp)
+     * Upload and download files to/from SFTP servers using Apache MINA SSHD.
+     * 
+     * Category: file
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-mina-sftp
+     * 
+     * Syntax: <code>mina-sftp:host:port/directoryName</code>
+     * 
+     * Path parameter: host (required)
+     * Hostname of the FTP server
+     * 
+     * Path parameter: port
+     * Port of the FTP server
+     * 
+     * Path parameter: directoryName
+     * The starting directory
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path host:port/directoryName
+     * @return the dsl builder
+     */
+    public static MinaSftpEndpointBuilderFactory.MinaSftpEndpointBuilder minaSftp(String componentName, String path) {
+        return MinaSftpEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
      * 
@@ -11630,6 +12074,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(String path) {
         return olingo2("olingo2", path);
     }
@@ -11655,6 +12100,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(String componentName, String path) {
         return Olingo2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -11678,6 +12124,7 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(String path) {
         return olingo4("olingo4", path);
     }
@@ -11703,8 +12150,91 @@ public class StaticEndpointBuilders {
      * @param path apiName/methodName
      * @return the dsl builder
      */
+    @Deprecated
     public static Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(String componentName, String path) {
         return Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Once (camel-once)
+     * Trigger a single message only once at startup (useful for development and
+     * testing purposes).
+     * 
+     * Category: core,scheduling
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-once
+     * 
+     * Syntax: <code>once:name</code>
+     * 
+     * Path parameter: name (required)
+     * The logical name
+     * 
+     * @param path name
+     * @return the dsl builder
+     */
+    public static OnceEndpointBuilderFactory.OnceEndpointBuilder once(String path) {
+        return once("once", path);
+    }
+    /**
+     * Once (camel-once)
+     * Trigger a single message only once at startup (useful for development and
+     * testing purposes).
+     * 
+     * Category: core,scheduling
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-once
+     * 
+     * Syntax: <code>once:name</code>
+     * 
+     * Path parameter: name (required)
+     * The logical name
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path name
+     * @return the dsl builder
+     */
+    public static OnceEndpointBuilderFactory.OnceEndpointBuilder once(String componentName, String path) {
+        return OnceEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * OpenAI (camel-openai)
+     * OpenAI endpoint for chat completion and embeddings.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>openai:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform: 'chat-completion' or 'embeddings'
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String path) {
+        return openai("openai", path);
+    }
+    /**
+     * OpenAI (camel-openai)
+     * OpenAI endpoint for chat completion and embeddings.
+     * 
+     * Category: ai
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-openai
+     * 
+     * Syntax: <code>openai:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The operation to perform: 'chat-completion' or 'embeddings'
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String componentName, String path) {
+        return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * OpenSearch (camel-opensearch)
@@ -13703,6 +14233,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String path) {
         return service("service", path);
     }
@@ -13725,6 +14256,7 @@ public class StaticEndpointBuilders {
      * @param path delegateUri
      * @return the dsl builder
      */
+    @Deprecated
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String componentName, String path) {
         return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -15292,6 +15824,52 @@ public class StaticEndpointBuilders {
      */
     public static StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(String componentName, String path) {
         return StringTemplateEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Stripe (camel-stripe)
+     * Interact with the Stripe payment platform.
+     * 
+     * Category: saas,finance
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-stripe
+     * 
+     * Syntax: <code>stripe:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Stripe operation to perform
+     * There are 10 enums and the value can be one of: charges, customers,
+     * paymentIntents, paymentMethods, refunds, subscriptions, invoices,
+     * products, prices, balanceTransactions
+     * 
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static StripeEndpointBuilderFactory.StripeEndpointBuilder stripe(String path) {
+        return stripe("stripe", path);
+    }
+    /**
+     * Stripe (camel-stripe)
+     * Interact with the Stripe payment platform.
+     * 
+     * Category: saas,finance
+     * Since: 4.17
+     * Maven coordinates: org.apache.camel:camel-stripe
+     * 
+     * Syntax: <code>stripe:operation</code>
+     * 
+     * Path parameter: operation (required)
+     * The Stripe operation to perform
+     * There are 10 enums and the value can be one of: charges, customers,
+     * paymentIntents, paymentMethods, refunds, subscriptions, invoices,
+     * products, prices, balanceTransactions
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operation
+     * @return the dsl builder
+     */
+    public static StripeEndpointBuilderFactory.StripeEndpointBuilder stripe(String componentName, String path) {
+        return StripeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Stub (camel-stub)
@@ -17031,7 +17609,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 378 enums and the value can be one of:
+     * There are 380 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -17117,6 +17695,7 @@ public class StaticEndpointBuilders {
      * GET_TICKET_AUDITS, GET_TICKET_AUDITS_1, GET_TICKET_COLLABORATORS,
      * GET_TICKET_COMMENTS, GET_TICKET_COMMENTS_1, GET_TICKET_FIELD,
      * GET_TICKET_FIELDS, GET_TICKET_FORM, GET_TICKET_FORMS,
+     * GET_TICKET_FROM_SEARCH_WITH_EXPORT, GET_TICKET_FROM_SEARCH_WITH_EXPORT_1,
      * GET_TICKET_INCIDENTS, GET_TICKET_METRIC, GET_TICKET_METRIC_BY_TICKET,
      * GET_TICKET_METRICS, GET_TICKETS, GET_TICKETS_1,
      * GET_TICKETS_BY_EXTERNAL_ID, GET_TICKETS_BY_EXTERNAL_ID_1,
@@ -17185,7 +17764,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What operation to use
-     * There are 378 enums and the value can be one of:
+     * There are 380 enums and the value can be one of:
      * ADD_TAG_TO_ORGANISATIONS, ADD_TAG_TO_TICKET, ADD_TAG_TO_TOPICS,
      * ASSOCIATE_ATTACHMENTS_TO_ARTICLE, CHANGE_USER_PASSWORD, CREATE_ARTICLE,
      * CREATE_ARTICLE_1, CREATE_ARTICLE_TRANSLATION, CREATE_AUTOMATION,
@@ -17271,6 +17850,7 @@ public class StaticEndpointBuilders {
      * GET_TICKET_AUDITS, GET_TICKET_AUDITS_1, GET_TICKET_COLLABORATORS,
      * GET_TICKET_COMMENTS, GET_TICKET_COMMENTS_1, GET_TICKET_FIELD,
      * GET_TICKET_FIELDS, GET_TICKET_FORM, GET_TICKET_FORMS,
+     * GET_TICKET_FROM_SEARCH_WITH_EXPORT, GET_TICKET_FROM_SEARCH_WITH_EXPORT_1,
      * GET_TICKET_INCIDENTS, GET_TICKET_METRIC, GET_TICKET_METRIC_BY_TICKET,
      * GET_TICKET_METRICS, GET_TICKETS, GET_TICKETS_1,
      * GET_TICKETS_BY_EXTERNAL_ID, GET_TICKETS_BY_EXTERNAL_ID_1,

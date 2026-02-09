@@ -67,11 +67,7 @@ public class GooglePubSubLocalContainerInfraService
             public TestInfraPubSubEmulatorContainer(boolean fixedPort) {
                 super(DockerImageName.parse(imageName));
 
-                if (fixedPort) {
-                    addFixedExposedPort(PORT, PORT);
-                } else {
-                    addExposedPort(PORT);
-                }
+                ContainerEnvironmentUtil.configurePort(this, fixedPort, PORT);
             }
         }
         return new TestInfraPubSubEmulatorContainer(ContainerEnvironmentUtil.isFixedPort(this.getClass()));

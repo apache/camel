@@ -25,8 +25,11 @@ import org.apache.camel.support.HealthCheckComponent;
 
 /**
  * Represents the component that manages {@link GitHubEndpoint}.
+ *
+ * @deprecated since 4.18, use {@link org.apache.camel.component.github2.GitHub2Component} (camel-github2) instead
  */
 @Component("github")
+@Deprecated(since = "4.18")
 public class GitHubComponent extends HealthCheckComponent {
 
     @Metadata(label = "security", secret = true)

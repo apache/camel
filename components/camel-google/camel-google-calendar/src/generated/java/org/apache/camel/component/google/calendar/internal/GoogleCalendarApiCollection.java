@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.component.google.calendar.GoogleCalendarConfiguration;
 import org.apache.camel.component.google.calendar.CalendarAclEndpointConfiguration;
@@ -26,6 +27,7 @@ import org.apache.camel.support.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for GoogleCalendar
  */
+@Generated("org.apache.camel.maven.ApiComponentGeneratorMojo")
 public final class GoogleCalendarApiCollection extends ApiCollection<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 
     private GoogleCalendarApiCollection() {
