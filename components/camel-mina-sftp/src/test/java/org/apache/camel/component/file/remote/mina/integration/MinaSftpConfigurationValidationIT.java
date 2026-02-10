@@ -16,12 +16,19 @@
  */
 package org.apache.camel.component.file.remote.mina.integration;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.sshd.common.util.io.PathUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -34,13 +41,71 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration tests for MINA SFTP configuration validation and error messages.
+ * <p>
+ * <b>Why this test requires isolation:</b> This test class modifies the global
+ * {@code PathUtils.setUserHomeFolderResolver()} to test username resolution fallback behavior. MINA SSHD's
+ * {@code PathUtils} lazily caches the home folder path on first access via {@code DefaultConfigFileHostEntryResolver},
+ * and this cache cannot be reset once populated. Running this test in a shared JVM with other tests would cause
+ * interference.
+ * <p>
+ * <b>How isolation is achieved:</b> The {@code @Tag("isolated")} annotation marks this class for separate execution.
+ * The Maven Failsafe plugin is configured in pom.xml with two executions:
+ * <ul>
+ * <li>{@code standard-integration-tests} - runs all tests EXCEPT those tagged "isolated"</li>
+ * <li>{@code isolated-integration-tests} - runs ONLY tests tagged "isolated" with {@code reuseForks=false} to ensure a
+ * fresh JVM</li>
+ * </ul>
+ * <p>
+ * <b>Username resolution fallback:</b> When no username is specified in the URI, MINA SSHD (like JSch/camel-sftp) uses
+ * this priority order:
+ * <ol>
+ * <li>URI parameter ({@code username=...})</li>
+ * <li>{@code ~/.ssh/config} User directive</li>
+ * <li>{@code System.getProperty("user.name")}</li>
+ * </ol>
+ *
+ * @see <a href=
+ *      "https://github.com/apache/mina-sshd/blob/master/sshd-common/src/main/java/org/apache/sshd/client/config/hosts/HostConfigEntry.java">MINA
+ *      SSHD HostConfigEntry</a>
  */
+@Tag("isolated")
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class MinaSftpConfigurationValidationIT extends MinaSftpServerTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(MinaSftpConfigurationValidationIT.class);
+    private static final String SSH_CONFIG_USERNAME = "sshconfiguser";
+    private static Path testHomeDir;
+
+    // Static initializer to set up test home BEFORE any MINA SSHD code runs.
+    // This must happen at class load time because PathUtils caches the home folder
+    // lazily on first access. If we wait until @BeforeAll, parent class initialization
+    // may have already triggered the cache.
+    static {
+        try {
+            testHomeDir = Paths.get("target/test-home-" + System.currentTimeMillis());
+            Path sshDir = testHomeDir.resolve(".ssh");
+            Files.createDirectories(sshDir);
+
+            // Create SSH config with a known username for testing
+            // Priority order: 1) URI username, 2) ~/.ssh/config, 3) System.getProperty("user.name")
+            Files.writeString(sshDir.resolve("config"),
+                    "Host *\n  User " + SSH_CONFIG_USERNAME + "\n");
+
+            // Override MINA SSHD's home folder resolution BEFORE anything else runs
+            PathUtils.setUserHomeFolderResolver(() -> testHomeDir);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to set up test home directory", e);
+        }
+    }
 
     private String ftpRootDir;
+
+    @AfterAll
+    static void teardownTestHome() {
+        // Reset to default home folder resolution
+        PathUtils.setUserHomeFolderResolver(null);
+        log.info("Reset home directory resolution to default");
+    }
 
     @BeforeEach
     public void doPostSetup() {
@@ -195,19 +260,60 @@ public class MinaSftpConfigurationValidationIT extends MinaSftpServerTestSupport
 
     @Test
     @Timeout(30)
-    public void testMissingCredentials() {
-        // No username or password - should fail with IllegalStateException (username required)
+    public void testMissingUsernameUsesSshConfigFallback() {
+        // No username in URI - should fall back to ~/.ssh/config (which we control via PathUtils)
+        // This matches JSch/camel-sftp behavior where username resolution order is:
+        // 1) URI parameter, 2) ~/.ssh/config, 3) System.getProperty("user.name")
+        // See: https://github.com/apache/mina-sshd/blob/master/sshd-common/src/main/java/org/apache/sshd/client/config/hosts/HostConfigEntry.java
         String uri = "mina-sftp://localhost:" + service.getPort() + "/" + ftpRootDir
-                     + "?strictHostKeyChecking=no&useUserKnownHostsFile=false";
+                     + "?password=admin&strictHostKeyChecking=no&useUserKnownHostsFile=false";
 
-        CamelExecutionException exception = assertThrows(
-                CamelExecutionException.class,
-                () -> template.sendBodyAndHeader(uri, "Content", Exchange.FILE_NAME, "no-creds.txt"));
+        // Should succeed - the username is resolved from our test SSH config
+        // The embedded server accepts any username
+        template.sendBodyAndHeader(uri, "Content", Exchange.FILE_NAME, "ssh-config-user.txt");
 
-        Throwable cause = exception.getCause();
-        // When no username is provided at all, the component throws IllegalStateException
-        assertTrue(cause instanceof IllegalStateException || cause instanceof GenericFileOperationFailedException,
-                "Should be IllegalStateException or GenericFileOperationFailedException but was: " + cause.getClass());
+        assertTrue(ftpFile("ssh-config-user.txt").toFile().exists(),
+                "File should be uploaded using username from SSH config ('" + SSH_CONFIG_USERNAME + "')");
+    }
+
+    @Test
+    @Timeout(30)
+    public void testMissingUsernameUsesOsUserFallback() throws IOException {
+        // Test the third fallback: when no username in URI AND ~/.ssh/config exists
+        // but has no User directive, it should fall back to System.getProperty("user.name")
+        // Priority: 1) URI, 2) ~/.ssh/config User directive, 3) System.getProperty("user.name")
+        //
+        // Note: The OS username fallback only happens when the SSH config FILE EXISTS
+        // but doesn't contain a User directive. If the file doesn't exist at all,
+        // MINA SSHD returns HostConfigEntryResolver.EMPTY and no fallback occurs.
+        // See: https://github.com/apache/mina-sshd/blob/master/sshd-common/src/main/java/org/apache/sshd/client/config/hosts/ConfigFileHostEntryResolver.java
+
+        // Create a temporary home directory with an SSH config that has NO User directive
+        Path osUserTestHome = Paths.get("target/test-home-osuser-" + System.currentTimeMillis());
+        Path sshDir = osUserTestHome.resolve(".ssh");
+        Files.createDirectories(sshDir);
+
+        // Create SSH config without User directive - this triggers OS username fallback
+        Files.writeString(sshDir.resolve("config"),
+                "# SSH config without User directive\nHost *\n  StrictHostKeyChecking no\n");
+
+        try {
+            // Temporarily override home to use our test config
+            PathUtils.setUserHomeFolderResolver(() -> osUserTestHome);
+
+            String uri = "mina-sftp://localhost:" + service.getPort() + "/" + ftpRootDir
+                         + "?password=admin&strictHostKeyChecking=no&useUserKnownHostsFile=false";
+
+            // Should succeed - username falls back to System.getProperty("user.name")
+            // The embedded server accepts any username
+            template.sendBodyAndHeader(uri, "Content", Exchange.FILE_NAME, "os-user-fallback.txt");
+
+            assertTrue(ftpFile("os-user-fallback.txt").toFile().exists(),
+                    "File should be uploaded using OS username ('" + System.getProperty("user.name") + "')");
+        } finally {
+            // Restore the original test home with SSH config
+            PathUtils.setUserHomeFolderResolver(() -> testHomeDir);
+        }
     }
 
     @Test
