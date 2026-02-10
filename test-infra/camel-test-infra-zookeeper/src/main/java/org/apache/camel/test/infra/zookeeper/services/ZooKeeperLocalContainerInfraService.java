@@ -51,7 +51,7 @@ public class ZooKeeperLocalContainerInfraService implements ZooKeeperInfraServic
 
     protected ZooKeeperContainer initContainer(String imageName) {
         int clientPort = ContainerEnvironmentUtil.isFixedPort(this.getClass())
-                ? ZooKeeperContainer.CLIENT_PORT
+                ? ContainerEnvironmentUtil.getConfiguredPort(ZooKeeperContainer.CLIENT_PORT)
                 : -1;
         if (imageName == null) {
             return new ZooKeeperContainer(ZooKeeperContainer.CONTAINER_NAME, clientPort);
