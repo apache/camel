@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.infra.zookeeper.services;
 
-import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -55,7 +54,11 @@ public class ZooKeeperContainer extends GenericContainer<ZooKeeperContainer> {
         withNetworkAliases(name)
                 .withLogConsumer(new Slf4jLogConsumer(LOGGER));
 
-        ContainerEnvironmentUtil.configurePort(this, clientPort > 0, CLIENT_PORT);
+        if (clientPort > 0) {
+            addFixedExposedPort(clientPort, CLIENT_PORT);
+        } else {
+            withExposedPorts(CLIENT_PORT);
+        }
     }
 
     public String getConnectionString() {
