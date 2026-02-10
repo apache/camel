@@ -68,7 +68,6 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RestRegistryFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
@@ -122,7 +121,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile PropertiesComponent propertiesComponent;
     private volatile RestRegistryFactory restRegistryFactory;
     private volatile RestConfiguration restConfiguration;
-    private volatile RestRegistry restRegistry;
     private volatile ClassResolver classResolver;
     private volatile MessageHistoryFactory messageHistoryFactory;
     private volatile StreamCachingStrategy streamCachingStrategy;
@@ -729,24 +727,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
         this.restRegistryFactory = camelContext.getInternalServiceManager().addService(camelContext, restRegistryFactory);
-    }
-
-    RestRegistry getRestRegistry() {
-        if (restRegistry == null) {
-            lock.lock();
-            try {
-                if (restRegistry == null) {
-                    setRestRegistry(camelContext.createRestRegistry());
-                }
-            } finally {
-                lock.unlock();
-            }
-        }
-        return restRegistry;
-    }
-
-    void setRestRegistry(RestRegistry restRegistry) {
-        this.restRegistry = camelContext.getInternalServiceManager().addService(camelContext, restRegistry);
     }
 
     RestConfiguration getRestConfiguration() {

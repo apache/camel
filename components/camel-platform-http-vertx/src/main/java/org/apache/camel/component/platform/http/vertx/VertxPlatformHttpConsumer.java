@@ -54,7 +54,9 @@ import org.apache.camel.component.platform.http.cookie.CookieHandler;
 import org.apache.camel.component.platform.http.spi.Method;
 import org.apache.camel.component.platform.http.spi.PlatformHttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.MimeTypeHelper;
 import org.slf4j.Logger;
@@ -82,6 +84,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     private final boolean muteExceptions;
     private final boolean handleWriteResponseError;
     private final List<Route> routes = new ArrayList<>();
+    private RestRegistry restRegistry;
     private Set<Method> methods;
     private String path;
     private VertxPlatformHttpRouter router;
@@ -111,6 +114,12 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     @Override
     protected void doInit() throws Exception {
         super.doInit();
+
+        // camel-rest is optional
+        if (getEndpoint().getCamelContext().getCamelContextExtension().isContextPluginInUse(RestRegistry.class)) {
+            restRegistry = PluginHelper.getRestRegistry(getEndpoint().getCamelContext());
+        }
+
         methods = Method.parseList(getEndpoint().getHttpMethodRestrict());
         path = configureEndpointPath(getEndpoint());  // in vertx-web we should replace path parameters from {xxx} to :xxx syntax
         router = VertxPlatformHttpRouter.lookup(getEndpoint().getCamelContext(), routerName);
@@ -137,7 +146,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (startRestServicesContractFirst()) {
+        if (restRegistry != null && startRestServicesContractFirst()) {
             // rest-dsl contract first using multiple routers per api endpoint
             return;
         }
@@ -191,7 +200,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
      */
     protected boolean startRestServicesContractFirst() throws Exception {
         boolean matched = false;
-        for (var r : getEndpoint().getCamelContext().getRestRegistry().listAllRestServices()) {
+        for (var r : restRegistry.listAllRestServices()) {
             // rest-dsl contract-first we need to create a new unique router per API endpoint
             String target = path;
             if (target.endsWith("*")) {
@@ -227,7 +236,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer
                 this.routes.add(sr);
             }
         }
-        for (var r : getEndpoint().getCamelContext().getRestRegistry().listAllRestSpecifications()) {
+        for (var r : restRegistry.listAllRestSpecifications()) {
             // rest-dsl contract-first we need to see if there is an api spec
             // that should be exposed via a vertx http router
             String target = path;

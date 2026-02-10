@@ -1094,8 +1094,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof CreateBucketRequest) {
-                CreateBucketResponse result = s3Client.createBucket((CreateBucketRequest) payload);
+            if (payload instanceof CreateBucketRequest req) {
+                CreateBucketResponse result = s3Client.createBucket(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -1124,8 +1124,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetBucketTaggingRequest) {
-                GetBucketTaggingResponse result = s3Client.getBucketTagging((GetBucketTaggingRequest) payload);
+            if (payload instanceof GetBucketTaggingRequest req) {
+                GetBucketTaggingResponse result = s3Client.getBucketTagging(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.tagSet());
             }
@@ -1147,8 +1147,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutBucketTaggingRequest) {
-                PutBucketTaggingResponse result = s3Client.putBucketTagging((PutBucketTaggingRequest) payload);
+            if (payload instanceof PutBucketTaggingRequest req) {
+                PutBucketTaggingResponse result = s3Client.putBucketTagging(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -1182,8 +1182,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteBucketTaggingRequest) {
-                DeleteBucketTaggingResponse result = s3Client.deleteBucketTagging((DeleteBucketTaggingRequest) payload);
+            if (payload instanceof DeleteBucketTaggingRequest req) {
+                DeleteBucketTaggingResponse result = s3Client.deleteBucketTagging(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -1205,8 +1205,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetBucketVersioningRequest) {
-                GetBucketVersioningResponse result = s3Client.getBucketVersioning((GetBucketVersioningRequest) payload);
+            if (payload instanceof GetBucketVersioningRequest req) {
+                GetBucketVersioningResponse result = s3Client.getBucketVersioning(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -1228,8 +1228,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutBucketVersioningRequest) {
-                PutBucketVersioningResponse result = s3Client.putBucketVersioning((PutBucketVersioningRequest) payload);
+            if (payload instanceof PutBucketVersioningRequest req) {
+                PutBucketVersioningResponse result = s3Client.putBucketVersioning(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -1265,8 +1265,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GetBucketPolicyRequest) {
-                GetBucketPolicyResponse result = s3Client.getBucketPolicy((GetBucketPolicyRequest) payload);
+            if (payload instanceof GetBucketPolicyRequest req) {
+                GetBucketPolicyResponse result = s3Client.getBucketPolicy(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result.policy());
             }
@@ -1288,8 +1288,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof PutBucketPolicyRequest) {
-                PutBucketPolicyResponse result = s3Client.putBucketPolicy((PutBucketPolicyRequest) payload);
+            if (payload instanceof PutBucketPolicyRequest req) {
+                PutBucketPolicyResponse result = s3Client.putBucketPolicy(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }
@@ -1317,8 +1317,8 @@ public class AWS2S3Producer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof DeleteBucketPolicyRequest) {
-                DeleteBucketPolicyResponse result = s3Client.deleteBucketPolicy((DeleteBucketPolicyRequest) payload);
+            if (payload instanceof DeleteBucketPolicyRequest req) {
+                DeleteBucketPolicyResponse result = s3Client.deleteBucketPolicy(req);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
             }

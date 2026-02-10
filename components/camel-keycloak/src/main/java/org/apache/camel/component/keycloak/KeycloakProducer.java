@@ -367,8 +367,8 @@ public class KeycloakProducer extends DefaultProducer {
     private void createRealm(Keycloak keycloakClient, Exchange exchange) throws InvalidPayloadException {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RealmRepresentation) {
-                keycloakClient.realms().create((RealmRepresentation) payload);
+            if (payload instanceof RealmRepresentation rr) {
+                keycloakClient.realms().create(rr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Realm created successfully");
             }
@@ -417,8 +417,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RealmRepresentation) {
-                keycloakClient.realm(realmName).update((RealmRepresentation) payload);
+            if (payload instanceof RealmRepresentation rr) {
+                keycloakClient.realm(realmName).update(rr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Realm updated successfully");
             }
@@ -435,8 +435,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UserRepresentation) {
-                Response response = keycloakClient.realm(realmName).users().create((UserRepresentation) payload);
+            if (payload instanceof UserRepresentation ur) {
+                Response response = keycloakClient.realm(realmName).users().create(ur);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -510,8 +510,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof UserRepresentation) {
-                keycloakClient.realm(realmName).users().get(userId).update((UserRepresentation) payload);
+            if (payload instanceof UserRepresentation ur) {
+                keycloakClient.realm(realmName).users().get(userId).update(ur);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("User updated successfully");
             }
@@ -539,8 +539,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation) {
-                keycloakClient.realm(realmName).roles().create((RoleRepresentation) payload);
+            if (payload instanceof RoleRepresentation rr) {
+                keycloakClient.realm(realmName).roles().create(rr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Role created successfully");
             }
@@ -607,8 +607,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation) {
-                keycloakClient.realm(realmName).roles().get(roleName).update((RoleRepresentation) payload);
+            if (payload instanceof RoleRepresentation rr) {
+                keycloakClient.realm(realmName).roles().get(roleName).update(rr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Role updated successfully");
             }
@@ -680,8 +680,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GroupRepresentation) {
-                Response response = keycloakClient.realm(realmName).groups().add((GroupRepresentation) payload);
+            if (payload instanceof GroupRepresentation gr) {
+                Response response = keycloakClient.realm(realmName).groups().add(gr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -744,8 +744,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof GroupRepresentation) {
-                keycloakClient.realm(realmName).groups().group(groupId).update((GroupRepresentation) payload);
+            if (payload instanceof GroupRepresentation gr) {
+                keycloakClient.realm(realmName).groups().group(groupId).update(gr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Group updated successfully");
             }
@@ -831,8 +831,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientRepresentation) {
-                Response response = keycloakClient.realm(realmName).clients().create((ClientRepresentation) payload);
+            if (payload instanceof ClientRepresentation cr) {
+                Response response = keycloakClient.realm(realmName).clients().create(cr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -896,8 +896,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientRepresentation) {
-                keycloakClient.realm(realmName).clients().get(clientUuid).update((ClientRepresentation) payload);
+            if (payload instanceof ClientRepresentation cr) {
+                keycloakClient.realm(realmName).clients().get(clientUuid).update(cr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Client updated successfully");
             }
@@ -975,8 +975,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation) {
-                keycloakClient.realm(realmName).clients().get(clientUuid).roles().create((RoleRepresentation) payload);
+            if (payload instanceof RoleRepresentation rr) {
+                keycloakClient.realm(realmName).clients().get(clientUuid).roles().create(rr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Client role created successfully");
             }
@@ -1059,9 +1059,9 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof RoleRepresentation) {
+            if (payload instanceof RoleRepresentation rr) {
                 keycloakClient.realm(realmName).clients().get(clientUuid).roles().get(roleName)
-                        .update((RoleRepresentation) payload);
+                        .update(rr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Client role updated successfully");
             }
@@ -1212,8 +1212,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientScopeRepresentation) {
-                Response response = keycloakClient.realm(realmName).clientScopes().create((ClientScopeRepresentation) payload);
+            if (payload instanceof ClientScopeRepresentation csr) {
+                Response response = keycloakClient.realm(realmName).clientScopes().create(csr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody(response);
             }
@@ -1277,8 +1277,8 @@ public class KeycloakProducer extends DefaultProducer {
 
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
-            if (payload instanceof ClientScopeRepresentation) {
-                keycloakClient.realm(realmName).clientScopes().get(clientScopeId).update((ClientScopeRepresentation) payload);
+            if (payload instanceof ClientScopeRepresentation csr) {
+                keycloakClient.realm(realmName).clientScopes().get(clientScopeId).update(csr);
                 Message message = getMessageForResponse(exchange);
                 message.setBody("Client scope updated successfully");
             }

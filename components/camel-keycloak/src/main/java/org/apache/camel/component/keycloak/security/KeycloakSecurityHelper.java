@@ -161,8 +161,7 @@ public final class KeycloakSecurityHelper {
 
         // Also check for scope-based permissions
         Object scopesClaim = token.getOtherClaims().get("scope");
-        if (scopesClaim instanceof String) {
-            String scopesString = (String) scopesClaim;
+        if (scopesClaim instanceof String scopesString) {
             if (!scopesString.isEmpty()) {
                 permissions.addAll(java.util.Arrays.asList(scopesString.split(" ")));
             }

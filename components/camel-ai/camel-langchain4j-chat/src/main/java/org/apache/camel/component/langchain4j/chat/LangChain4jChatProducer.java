@@ -84,7 +84,7 @@ public class LangChain4jChatProducer extends DefaultProducer {
         final var message = exchange.getIn().getMandatoryBody();
 
         // Use pattern matching with instanceof to streamline type checks and assignments
-        ChatMessage userMessage = (message instanceof String) ? new UserMessage((String) message) : (ChatMessage) message;
+        ChatMessage userMessage = (message instanceof String str) ? new UserMessage(str) : (ChatMessage) message;
 
         populateResponse(sendChatMessage(userMessage, exchange), exchange);
 

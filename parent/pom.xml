@@ -78,7 +78,7 @@
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
         <awaitility-version>4.3.0</awaitility-version>
-        <aws-java-sdk2-version>2.41.23</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.41.25</aws-java-sdk2-version>
         <aws-xray-version>2.20.0</aws-xray-version>
         <azure-sdk-bom-version>1.3.3</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.34</azure-storage-blob-changefeed-version>
@@ -105,9 +105,9 @@
         <checker-framework-version>3.53.1</checker-framework-version>
         <chicory-version>1.6.1</chicory-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
-        <citrus-version>4.9.1</citrus-version>
+        <citrus-version>4.9.2</citrus-version>
         <classgraph-version>4.8.184</classgraph-version>
-        <cloudant-version>0.10.14</cloudant-version>
+        <cloudant-version>0.10.15</cloudant-version>
         <com-ibm-mq-jakarta-client-version>9.4.5.0</com-ibm-mq-jakarta-client-version>
         <cometd-java-client-version>9.0.0</cometd-java-client-version>
         <cometd-java-server-version>9.0.0</cometd-java-server-version>
@@ -167,7 +167,7 @@
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
         <exec-maven-plugin-version>3.6.3</exec-maven-plugin-version>
-        <fastjson-version>2.0.60</fastjson-version>
+        <fastjson-version>2.0.61</fastjson-version>
         <findbugs-maven-plugin-version>3.0.5</findbugs-maven-plugin-version>
         <google-maps-services-version>2.2.0</google-maps-services-version>
         <flatpack-version>4.0.18</flatpack-version>
@@ -177,7 +177,7 @@
         <formatter-maven-plugin-version>2.29.0</formatter-maven-plugin-version>
         <ftpserver-version>1.2.1</ftpserver-version>
         <freemarker-version>2.3.34</freemarker-version>
-        <fory-version>0.14.1</fory-version>
+        <fory-version>0.15.0</fory-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
@@ -236,7 +236,7 @@
         <hamcrest-version>3.0</hamcrest-version>
         <hapi-version>2.6.0</hapi-version>
         <hapi-base-version>2.6.0</hapi-base-version>
-        <hapi-fhir-version>8.6.4</hapi-fhir-version>
+        <hapi-fhir-version>8.6.5</hapi-fhir-version>
         <hawtio-version>4.6.2</hawtio-version>
         <hazelcast-version>5.4.0</hazelcast-version>
         <hdrhistrogram-version>2.2.2</hdrhistrogram-version>
@@ -366,7 +366,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.25.3</log4j2-version>
-        <logback-version>1.5.27</logback-version>
+        <logback-version>1.5.29</logback-version>
         <lucene-version>9.12.3</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <littleproxy-version>2.6.0</littleproxy-version>
@@ -386,7 +386,7 @@
         <maven-owasp-plugin-version>12.2.0</maven-owasp-plugin-version>
         <maven-plugin-plugin-version>3.15.2</maven-plugin-plugin-version>
         <maven-plugin-annotations-version>3.15.2</maven-plugin-annotations-version>
-        <maven-plugin-testing-harness-version>3.5.0</maven-plugin-testing-harness-version>
+        <maven-plugin-testing-harness-version>3.5.1</maven-plugin-testing-harness-version>
         <maven-project-version>2.2.1</maven-project-version>
         <maven-resources-plugin-version>3.4.0</maven-resources-plugin-version>
         <maven-reporting-api-version>3.1.1</maven-reporting-api-version>
@@ -401,7 +401,7 @@
         <micrometer-version>1.15.6</micrometer-version>
         <micrometer-tracing-version>1.5.5</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
-        <milo-version>1.1.0</milo-version>
+        <milo-version>1.1.1</milo-version>
         <milvus-client-version>2.6.13</milvus-client-version>
         <mina-version>2.2.5</mina-version>
         <minidns-version>0.3.4</minidns-version>
@@ -412,7 +412,7 @@
         <mojo-executor-version>2.4.1</mojo-executor-version>
         <mongo-java-driver-version>5.6.3</mongo-java-driver-version>
         <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
-        <msal4j-version>1.23.1</msal4j-version>
+        <msal4j-version>1.24.0</msal4j-version>
         <mustache-java-version>0.9.14</mustache-java-version>
         <mvel-version>2.5.2.Final</mvel-version>
         <mybatis-version>3.5.19</mybatis-version>
@@ -434,7 +434,7 @@
         <opensearch-java-client-version>3.5.0</opensearch-java-client-version>
         <opensearch-testcontainers-version>2.1.3</opensearch-testcontainers-version>
         <openstack4j-version>3.12</openstack4j-version>
-        <opentelemetry-version>1.58.0</opentelemetry-version>
+        <opentelemetry-version>1.59.0</opentelemetry-version>
         <opentelemetry-alpha-version>1.58.0-alpha</opentelemetry-alpha-version>
         <opentelemetry-log4j2-version>2.24.0-alpha</opentelemetry-log4j2-version>
         <opentelemetry-incubator-version>1.43.0-alpha</opentelemetry-incubator-version>
@@ -468,7 +468,7 @@
         <qpid-broker-version>10.0.1</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.10.0</qpid-jms-client-version>
-        <quarkus-mcp-server-version>1.9.0</quarkus-mcp-server-version>
+        <quarkus-mcp-server-version>1.9.1</quarkus-mcp-server-version>
         <quarkus-version>3.31.2</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>2.3.2</quickfixj-version>
@@ -486,8 +486,8 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>12.9</saxon-version>
         <scala-datasonnet-version>2.13.18</scala-datasonnet-version>
-        <shiro-version>2.0.6</shiro-version>
-        <sisu-maven-plugin-version>0.9.0.M4</sisu-maven-plugin-version>
+        <shiro-version>2.1.0</shiro-version>
+        <sisu-maven-plugin-version>1.0.0</sisu-maven-plugin-version>
         <slack-api-model-version>1.47.0</slack-api-model-version>
         <slf4j-api-version>2.0.17</slf4j-api-version>
         <slf4j-version>2.0.17</slf4j-version>
@@ -539,7 +539,7 @@
         <undertow-version>2.3.23.Final</undertow-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
-        <vavr-version>0.11.0</vavr-version>
+        <vavr-version>1.0.0</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
         <vertx-version>4.5.24</vertx-version>
