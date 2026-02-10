@@ -332,9 +332,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
         ProcessorDefinition<?> definition = (ProcessorDefinition<?>) node;
 
-        if (definition instanceof RecipientListDefinition) {
+        if (definition instanceof RecipientListDefinition && processor instanceof Pipeline pipeline) {
             // special for RecipientListDefinition, as the processor is wrapped in a pipeline as last
-            Pipeline pipeline = (Pipeline) processor;
             for (Processor value : pipeline.next()) {
                 processor = value;
             }
@@ -349,117 +348,112 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 return false;
             }
 
-            if (target instanceof ConvertBodyProcessor) {
-                answer = new ManagedConvertBody(context, (ConvertBodyProcessor) target, definition);
-            } else if (target instanceof ConvertHeaderProcessor) {
-                answer = new ManagedConvertHeader(context, (ConvertHeaderProcessor) target, definition);
-            } else if (target instanceof ConvertVariableProcessor) {
-                answer = new ManagedConvertVariable(context, (ConvertVariableProcessor) target, definition);
-            } else if (target instanceof ChoiceProcessor) {
-                answer = new ManagedChoice(context, (ChoiceProcessor) target, definition);
-            } else if (target instanceof ClaimCheckProcessor) {
-                answer = new ManagedClaimCheck(context, (ClaimCheckProcessor) target, definition);
-            } else if (target instanceof Delayer) {
-                answer = new ManagedDelayer(context, (Delayer) target, definition);
-            } else if (target instanceof DisabledProcessor) {
-                answer = new ManagedDisabled(context, (DisabledProcessor) target, definition);
+            if (target instanceof ConvertBodyProcessor cbp) {
+                answer = new ManagedConvertBody(context, cbp, definition);
+            } else if (target instanceof ConvertHeaderProcessor chp) {
+                answer = new ManagedConvertHeader(context, chp, definition);
+            } else if (target instanceof ConvertVariableProcessor cvp) {
+                answer = new ManagedConvertVariable(context, cvp, definition);
+            } else if (target instanceof ChoiceProcessor cp) {
+                answer = new ManagedChoice(context, cp, definition);
+            } else if (target instanceof ClaimCheckProcessor ccp) {
+                answer = new ManagedClaimCheck(context, ccp, definition);
+            } else if (target instanceof Delayer d) {
+                answer = new ManagedDelayer(context, d, definition);
+            } else if (target instanceof DisabledProcessor dp) {
+                answer = new ManagedDisabled(context, dp, definition);
             } else if (target instanceof TryProcessor tryProc) {
                 answer = new ManagedDoTry(context, tryProc, cast(definition));
-            } else if (target instanceof CatchProcessor) {
-                answer = new ManagedDoCatch(context, (CatchProcessor) target, cast(definition));
-            } else if (target instanceof FinallyProcessor) {
-                answer = new ManagedDoFinally(context, (FinallyProcessor) target, cast(definition));
-            } else if (target instanceof Throttler) {
-                answer = new ManagedThrottler(context, (Throttler) target, definition);
-            } else if (target instanceof DynamicRouter) {
-                answer = new ManagedDynamicRouter(context, (DynamicRouter) target, cast(definition));
-            } else if (target instanceof RoutingSlip) {
-                answer = new ManagedRoutingSlip(context, (RoutingSlip) target, cast(definition));
-            } else if (target instanceof FilterProcessor) {
-                answer = new ManagedFilter(context, (FilterProcessor) target, (ExpressionNode) definition);
-            } else if (target instanceof LogProcessor) {
-                answer = new ManagedLog(context, (LogProcessor) target, definition);
-            } else if (target instanceof LoopProcessor) {
-                answer = new ManagedLoop(context, (LoopProcessor) target, cast(definition));
-            } else if (target instanceof MarshalProcessor) {
-                answer = new ManagedMarshal(context, (MarshalProcessor) target, cast(definition));
-            } else if (target instanceof UnmarshalProcessor) {
-                answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, cast(definition));
-            } else if (target instanceof FailOverLoadBalancer) {
-                answer = new ManagedFailoverLoadBalancer(
-                        context, (FailOverLoadBalancer) target, cast(definition));
-            } else if (target instanceof RandomLoadBalancer) {
-                answer = new ManagedRandomLoadBalancer(
-                        context, (RandomLoadBalancer) target, cast(definition));
-            } else if (target instanceof RoundRobinLoadBalancer) {
-                answer = new ManagedRoundRobinLoadBalancer(
-                        context, (RoundRobinLoadBalancer) target, cast(definition));
-            } else if (target instanceof StickyLoadBalancer) {
-                answer = new ManagedStickyLoadBalancer(
-                        context, (StickyLoadBalancer) target, cast(definition));
-            } else if (target instanceof TopicLoadBalancer) {
-                answer = new ManagedTopicLoadBalancer(context, (TopicLoadBalancer) target, cast(definition));
-            } else if (target instanceof WeightedLoadBalancer) {
-                answer = new ManagedWeightedLoadBalancer(
-                        context, (WeightedLoadBalancer) target, cast(definition));
-            } else if (target instanceof RecipientList) {
-                answer = new ManagedRecipientList(context, (RecipientList) target, cast(definition));
-            } else if (target instanceof Splitter) {
-                answer = new ManagedSplitter(context, (Splitter) target, cast(definition));
-            } else if (target instanceof MulticastProcessor) {
-                answer = new ManagedMulticast(context, (MulticastProcessor) target, definition);
-            } else if (target instanceof SamplingThrottler) {
-                answer = new ManagedSamplingThrottler(context, (SamplingThrottler) target, definition);
-            } else if (target instanceof Resequencer) {
-                answer = new ManagedResequencer(context, (Resequencer) target, definition);
-            } else if (target instanceof RollbackProcessor) {
-                answer = new ManagedRollback(context, (RollbackProcessor) target, definition);
-            } else if (target instanceof StreamResequencer) {
-                answer = new ManagedResequencer(context, (StreamResequencer) target, definition);
-            } else if (target instanceof SetBodyProcessor) {
-                answer = new ManagedSetBody(context, (SetBodyProcessor) target, cast(definition));
-            } else if (target instanceof RemoveHeaderProcessor) {
-                answer = new ManagedRemoveHeader(context, (RemoveHeaderProcessor) target, definition);
-            } else if (target instanceof RemoveHeadersProcessor) {
-                answer = new ManagedRemoveHeaders(context, (RemoveHeadersProcessor) target, definition);
-            } else if (target instanceof SetHeaderProcessor) {
-                answer = new ManagedSetHeader(context, (SetHeaderProcessor) target, cast(definition));
-            } else if (target instanceof SetHeadersProcessor) {
-                answer = new ManagedSetHeaders(context, (SetHeadersProcessor) target, cast(definition));
-            } else if (target instanceof SetVariableProcessor) {
-                answer = new ManagedSetVariable(context, (SetVariableProcessor) target, cast(definition));
-            } else if (target instanceof SetVariablesProcessor) {
-                answer = new ManagedSetVariables(context, (SetVariablesProcessor) target, cast(definition));
-            } else if (target instanceof RemovePropertyProcessor) {
-                answer = new ManagedRemoveProperty(context, (RemovePropertyProcessor) target, definition);
-            } else if (target instanceof RemovePropertiesProcessor) {
-                answer = new ManagedRemoveProperties(context, (RemovePropertiesProcessor) target, definition);
-            } else if (target instanceof RemoveVariableProcessor) {
-                answer = new ManagedRemoveVariable(context, (RemoveVariableProcessor) target, definition);
-            } else if (target instanceof SetPropertyProcessor) {
-                answer = new ManagedSetProperty(context, (SetPropertyProcessor) target, cast(definition));
-            } else if (target instanceof ExchangePatternProcessor) {
-                answer = new ManagedSetExchangePattern(context, (ExchangePatternProcessor) target, definition);
-            } else if (target instanceof ScriptProcessor) {
-                answer = new ManagedScript(context, (ScriptProcessor) target, cast(definition));
-            } else if (target instanceof StepProcessor) {
-                answer = new ManagedStep(context, (StepProcessor) target, definition);
-            } else if (target instanceof StopProcessor) {
-                answer = new ManagedStop(context, (StopProcessor) target, definition);
-            } else if (target instanceof ThreadsProcessor) {
-                answer = new ManagedThreads(context, (ThreadsProcessor) target, definition);
-            } else if (target instanceof ThrowExceptionProcessor) {
-                answer = new ManagedThrowException(context, (ThrowExceptionProcessor) target, definition);
+            } else if (target instanceof CatchProcessor catchProc) {
+                answer = new ManagedDoCatch(context, catchProc, cast(definition));
+            } else if (target instanceof FinallyProcessor fp) {
+                answer = new ManagedDoFinally(context, fp, cast(definition));
+            } else if (target instanceof Throttler t) {
+                answer = new ManagedThrottler(context, t, definition);
+            } else if (target instanceof DynamicRouter dr) {
+                answer = new ManagedDynamicRouter(context, dr, cast(definition));
+            } else if (target instanceof RoutingSlip rs) {
+                answer = new ManagedRoutingSlip(context, rs, cast(definition));
+            } else if (target instanceof FilterProcessor fp) {
+                answer = new ManagedFilter(context, fp, (ExpressionNode) definition);
+            } else if (target instanceof LogProcessor lp) {
+                answer = new ManagedLog(context, lp, definition);
+            } else if (target instanceof LoopProcessor loopProc) {
+                answer = new ManagedLoop(context, loopProc, cast(definition));
+            } else if (target instanceof MarshalProcessor mp) {
+                answer = new ManagedMarshal(context, mp, cast(definition));
+            } else if (target instanceof UnmarshalProcessor up) {
+                answer = new ManagedUnmarshal(context, up, cast(definition));
+            } else if (target instanceof FailOverLoadBalancer folb) {
+                answer = new ManagedFailoverLoadBalancer(context, folb, cast(definition));
+            } else if (target instanceof RandomLoadBalancer rlb) {
+                answer = new ManagedRandomLoadBalancer(context, rlb, cast(definition));
+            } else if (target instanceof RoundRobinLoadBalancer rrlb) {
+                answer = new ManagedRoundRobinLoadBalancer(context, rrlb, cast(definition));
+            } else if (target instanceof StickyLoadBalancer slb) {
+                answer = new ManagedStickyLoadBalancer(context, slb, cast(definition));
+            } else if (target instanceof TopicLoadBalancer tlb) {
+                answer = new ManagedTopicLoadBalancer(context, tlb, cast(definition));
+            } else if (target instanceof WeightedLoadBalancer wlb) {
+                answer = new ManagedWeightedLoadBalancer(context, wlb, cast(definition));
+            } else if (target instanceof RecipientList rl) {
+                answer = new ManagedRecipientList(context, rl, cast(definition));
+            } else if (target instanceof Splitter s) {
+                answer = new ManagedSplitter(context, s, cast(definition));
+            } else if (target instanceof MulticastProcessor mcp) {
+                answer = new ManagedMulticast(context, mcp, definition);
+            } else if (target instanceof SamplingThrottler st) {
+                answer = new ManagedSamplingThrottler(context, st, definition);
+            } else if (target instanceof Resequencer r) {
+                answer = new ManagedResequencer(context, r, definition);
+            } else if (target instanceof RollbackProcessor rp) {
+                answer = new ManagedRollback(context, rp, definition);
+            } else if (target instanceof StreamResequencer sr) {
+                answer = new ManagedResequencer(context, sr, definition);
+            } else if (target instanceof SetBodyProcessor sbp) {
+                answer = new ManagedSetBody(context, sbp, cast(definition));
+            } else if (target instanceof RemoveHeaderProcessor rhp) {
+                answer = new ManagedRemoveHeader(context, rhp, definition);
+            } else if (target instanceof RemoveHeadersProcessor rhsp) {
+                answer = new ManagedRemoveHeaders(context, rhsp, definition);
+            } else if (target instanceof SetHeaderProcessor shp) {
+                answer = new ManagedSetHeader(context, shp, cast(definition));
+            } else if (target instanceof SetHeadersProcessor shsp) {
+                answer = new ManagedSetHeaders(context, shsp, cast(definition));
+            } else if (target instanceof SetVariableProcessor svp) {
+                answer = new ManagedSetVariable(context, svp, cast(definition));
+            } else if (target instanceof SetVariablesProcessor svsp) {
+                answer = new ManagedSetVariables(context, svsp, cast(definition));
+            } else if (target instanceof RemovePropertyProcessor rpp) {
+                answer = new ManagedRemoveProperty(context, rpp, definition);
+            } else if (target instanceof RemovePropertiesProcessor rpsp) {
+                answer = new ManagedRemoveProperties(context, rpsp, definition);
+            } else if (target instanceof RemoveVariableProcessor rvp) {
+                answer = new ManagedRemoveVariable(context, rvp, definition);
+            } else if (target instanceof SetPropertyProcessor spp) {
+                answer = new ManagedSetProperty(context, spp, cast(definition));
+            } else if (target instanceof ExchangePatternProcessor epp) {
+                answer = new ManagedSetExchangePattern(context, epp, definition);
+            } else if (target instanceof ScriptProcessor scrp) {
+                answer = new ManagedScript(context, scrp, cast(definition));
+            } else if (target instanceof StepProcessor stepp) {
+                answer = new ManagedStep(context, stepp, definition);
+            } else if (target instanceof StopProcessor stopp) {
+                answer = new ManagedStop(context, stopp, definition);
+            } else if (target instanceof ThreadsProcessor tp) {
+                answer = new ManagedThreads(context, tp, definition);
+            } else if (target instanceof ThrowExceptionProcessor tep) {
+                answer = new ManagedThrowException(context, tep, definition);
             } else if (target instanceof TransformProcessor) {
                 answer = new ManagedTransformer(context, target, cast(definition));
             } else if (target instanceof DataTypeProcessor) {
                 answer = new ManagedDataTypeTransformer(context, target, cast(definition));
-            } else if (target instanceof PredicateValidatingProcessor) {
-                answer = new ManagedValidate(context, (PredicateValidatingProcessor) target, cast(definition));
-            } else if (target instanceof WireTapProcessor) {
-                answer = new ManagedWireTapProcessor(context, (WireTapProcessor) target, definition);
-            } else if (target instanceof SendDynamicProcessor) {
-                answer = new ManagedSendDynamicProcessor(context, (SendDynamicProcessor) target, definition);
+            } else if (target instanceof PredicateValidatingProcessor pvp) {
+                answer = new ManagedValidate(context, pvp, cast(definition));
+            } else if (target instanceof WireTapProcessor wtp) {
+                answer = new ManagedWireTapProcessor(context, wtp, definition);
+            } else if (target instanceof SendDynamicProcessor sdp) {
+                answer = new ManagedSendDynamicProcessor(context, sdp, definition);
             } else if (target instanceof SendProcessor sp) {
                 // special for sending to throughput logger
                 if (sp.getDestination() instanceof LogEndpoint le && le.getLogger() instanceof ThroughputLogger tl) {
@@ -467,27 +461,27 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 }
                 // regular send processor
                 if (answer == null) {
-                    answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
+                    answer = new ManagedSendProcessor(context, sp, definition);
                 }
-            } else if (target instanceof BeanProcessor) {
-                answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
-            } else if (target instanceof IdempotentConsumer) {
-                answer = new ManagedIdempotentConsumer(
-                        context, (IdempotentConsumer) target, cast(definition));
-            } else if (target instanceof AggregateProcessor) {
-                answer = new ManagedAggregateProcessor(context, (AggregateProcessor) target, cast(definition));
-            } else if (target instanceof Enricher) {
-                answer = new ManagedEnricher(context, (Enricher) target, cast(definition));
+            } else if (target instanceof BeanProcessor bp) {
+                answer = new ManagedBeanProcessor(context, bp, definition);
+            } else if (target instanceof IdempotentConsumer ic) {
+                answer = new ManagedIdempotentConsumer(context, ic, cast(definition));
+            } else if (target instanceof AggregateProcessor ap) {
+                answer = new ManagedAggregateProcessor(context, ap, cast(definition));
+            } else if (target instanceof Enricher e) {
+                answer = new ManagedEnricher(context, e, cast(definition));
             } else if (target instanceof PollProcessor pp) {
                 answer = new ManagedPoll(context, pp, cast(definition));
-            } else if (target instanceof PollEnricher) {
-                answer = new ManagedPollEnricher(context, (PollEnricher) target, cast(definition));
+            } else if (target instanceof PollEnricher pe) {
+                answer = new ManagedPollEnricher(context, pe, cast(definition));
             }
 
             // special for custom load balancer
             if (definition instanceof LoadBalanceDefinition lb) {
-                if (lb.getLoadBalancerType() instanceof CustomLoadBalancerDefinition) {
-                    answer = new ManagedCustomLoadBalancer(context, (LoadBalancer) target, (LoadBalanceDefinition) definition);
+                if (lb.getLoadBalancerType() instanceof CustomLoadBalancerDefinition
+                        && target instanceof LoadBalancer loadBalancer) {
+                    answer = new ManagedCustomLoadBalancer(context, loadBalancer, lb);
                 }
             }
 
@@ -497,16 +491,16 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             }
 
             // no answer yet, so unwrap any delegates and try again
-            if (target instanceof DelegateProcessor) {
-                target = ((DelegateProcessor) target).getProcessor();
+            if (target instanceof DelegateProcessor delegateProcessor) {
+                target = delegateProcessor.getProcessor();
             } else {
                 // no delegate so we dont have any target to try next
                 break;
             }
         }
 
-        if (answer == null && definition instanceof ProcessDefinition) {
-            answer = new ManagedProcess(context, target, (ProcessDefinition) definition);
+        if (answer == null && definition instanceof ProcessDefinition pd) {
+            answer = new ManagedProcess(context, target, pd);
         } else if (answer == null) {
             // fallback to a generic processor
             answer = new ManagedProcessor(context, target, definition);
