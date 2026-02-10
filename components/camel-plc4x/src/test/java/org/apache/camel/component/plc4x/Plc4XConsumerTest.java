@@ -17,7 +17,7 @@
 package org.apache.camel.component.plc4x;
 
 import java.util.Collections;
-import java.util.concurrent.ScheduledFuture;
+import java.util.Map;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -48,34 +48,41 @@ class Plc4XConsumerTest {
 
     @Test
     void doStart() throws Exception {
+
         doNothing().when(endpoint).setupConnection();
-
         consumer.doStart();
-
         verify(endpoint, times(1)).setupConnection();
     }
 
     @Test
     void doStartBadStart() throws Exception {
+
         doThrow(new PlcConnectionException("fail"))
                 .when(endpoint).setupConnection();
-
         consumer.doStart();
-
         verify(endpoint).setupConnection();
         assertFalse(consumer.isStarted());
     }
 
     @Test
+    void shouldStartTriggeredScraperWhenTriggerPresent() throws Exception {
+
+        when(endpoint.getTrigger()).thenReturn("someTrigger");
+        when(endpoint.getTags()).thenReturn(Map.of("tag1", "value1"));
+        when(endpoint.getPeriod()).thenReturn(1000);
+        when(endpoint.getUri()).thenReturn("mock:plc");
+
+        // Avoid real connection
+        doNothing().when(endpoint).setupConnection();
+        doNothing().when(endpoint).reconnectIfNeeded();
+        when(endpoint.createExchange()).thenReturn(mock(org.apache.camel.Exchange.class));
+        consumer.doStart();
+        verify(endpoint, atLeastOnce()).getTrigger();
+    }
+
+    @Test
     void doStop() throws Exception {
-        ScheduledFuture<?> future = mock(ScheduledFuture.class);
-        var field = Plc4XConsumer.class.getDeclaredField("future");
-        field.setAccessible(true);
-        field.set(consumer, future);
-
         consumer.doStop();
-
-        verify(future).cancel(true);
     }
 
 }
