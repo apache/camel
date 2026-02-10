@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.remote.mina.sftp;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public class BaseServerTestSupport extends CamelTestSupport {
     protected static final String LS = System.lineSeparator();
