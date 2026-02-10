@@ -10,6 +10,7 @@
 *** xref:camel-jbang-launcher.adoc[Camel JBang Launcher]
 *** xref:camel-jbang-kubernetes.adoc[Camel JBang Kubernetes plugin]
 *** xref:camel-jbang-test.adoc[Camel JBang Testing plugin]
+*** xref:camel-jbang-mcp.adoc[Camel MCP Server]
 ** xref:camel-maven-plugin.adoc[Camel Maven Plugin]
 ** xref:camel-component-maven-plugin.adoc[Camel Component Maven Plugin]
 ** xref:camel-report-maven-plugin.adoc[Camel Maven Report Plugin]
