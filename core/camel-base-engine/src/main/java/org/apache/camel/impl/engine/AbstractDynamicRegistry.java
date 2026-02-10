@@ -49,6 +49,9 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
     protected final Map<K, V> staticMap;
 
     public AbstractDynamicRegistry(CamelContext context, int maxCacheSize) {
+        if (maxCacheSize <= 0) {
+            throw new IllegalArgumentException("maxCacheSize must be greater than 0");
+        }
         this.context = context;
         this.routeController = context.getRouteController();
         this.maxCacheSize = maxCacheSize;

@@ -1240,7 +1240,7 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * This option allows you to configure the maximum size of the cache.
          * The implementation caches CXF clients or ClientFactoryBean in
-         * CxfProvider and CxfRsProvider.
+         * CxfProvider and CxfRsProvider. The value must be greater than 0.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1257,7 +1257,7 @@ public interface CxfRsEndpointBuilderFactory {
         /**
          * This option allows you to configure the maximum size of the cache.
          * The implementation caches CXF clients or ClientFactoryBean in
-         * CxfProvider and CxfRsProvider.
+         * CxfProvider and CxfRsProvider. The value must be greater than 0.
          * 
          * The option will be converted to a <code>int</code> type.
          * 

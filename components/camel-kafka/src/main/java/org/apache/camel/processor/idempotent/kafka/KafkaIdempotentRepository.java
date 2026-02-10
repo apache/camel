@@ -106,7 +106,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @Metadata(description = "A string that uniquely identifies the group of consumer processes to which this consumer belongs. By setting the"
                             + " same group id, multiple processes can indicate that they are all part of the same consumer group.")
     private String groupId;
-    @Metadata(description = "Sets the maximum size of the local key cache.", defaultValue = "" + DEFAULT_MAXIMUM_CACHE_SIZE)
+    @Metadata(description = "Sets the maximum size of the local key cache. The value must be greater than 0.",
+              defaultValue = "" + DEFAULT_MAXIMUM_CACHE_SIZE)
     private int maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;
     @Metadata(description = "Sets the poll duration of the Kafka consumer. The local caches are updated immediately; this value will affect"
                             + " how far behind other peers in the cluster are, which are updating their caches from the topic, relative to the"
@@ -273,6 +274,9 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
      * @param maxCacheSize The maximum key cache size.
      */
     public void setMaxCacheSize(int maxCacheSize) {
+        if (maxCacheSize <= 0) {
+            throw new IllegalArgumentException("maxCacheSize must be greater than 0, was: " + maxCacheSize);
+        }
         this.maxCacheSize = maxCacheSize;
     }
 

@@ -106,6 +106,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param cacheSize the cache size
      */
     public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize) {
+        if (cacheSize <= 0) {
+            throw new IllegalArgumentException("cacheSize must be greater than 0, was: " + cacheSize);
+        }
         return fileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
     }
 
@@ -117,6 +120,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param maxFileStoreSize the max size in bytes for the filestore file
      */
     public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
+        if (cacheSize <= 0) {
+            throw new IllegalArgumentException("cacheSize must be greater than 0, was: " + cacheSize);
+        }
         FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
         repository.setMaxFileStoreSize(maxFileStoreSize);
         return repository;

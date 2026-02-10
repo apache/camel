@@ -30,6 +30,9 @@ public class DefaultEndpointUtilizationStatistics implements EndpointUtilization
     private final Lock lock = new ReentrantLock();
 
     public DefaultEndpointUtilizationStatistics(int maxCapacity) {
+        if (maxCapacity <= 0) {
+            throw new IllegalArgumentException("maxCapacity must be greater than 0");
+        }
         this.map = LRUCacheFactory.newLRUCache(16, maxCapacity, false);
         this.maxCapacity = maxCapacity;
     }
