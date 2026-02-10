@@ -18,6 +18,7 @@ package org.apache.camel.component.zookeepermaster.group;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.SelinuxContext;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -157,10 +159,11 @@ public class GroupIT {
                 group.update(new NodeState("foo" + i));
                 i++;
 
-                // wait for registration
-                while (group.getId() == null) {
-                    TimeUnit.MILLISECONDS.sleep(100);
-                }
+                await("Await for registration, the group must have an id")
+                        .atMost(Duration.ofSeconds(60))
+                        .pollDelay(Duration.ofMillis(100))
+                        .until(() -> group.getId() != null);
+
             }
 
             boolean firsStartedIsMaster = members.get(0).isMaster();
