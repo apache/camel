@@ -88,8 +88,8 @@ public final class CML extends Library {
     }
 
     private Val header(Val key, DataFormatService dataformats) {
-        if (key instanceof Val.Str) {
-            return valFrom(exchange.get().getMessage().getHeader(((Val.Str) key).value()), dataformats);
+        if (key instanceof Val.Str str) {
+            return valFrom(exchange.get().getMessage().getHeader(str.value()), dataformats);
         }
         throw new IllegalArgumentException("Expected String got: " + key.prettyName());
     }
@@ -102,16 +102,16 @@ public final class CML extends Library {
     }
 
     private Val exchangeProperty(Val key, DataFormatService dataformats) {
-        if (key instanceof Val.Str) {
-            return valFrom(exchange.get().getProperty(((Val.Str) key).value()), dataformats);
+        if (key instanceof Val.Str str) {
+            return valFrom(exchange.get().getProperty(str.value()), dataformats);
         }
         throw new IllegalArgumentException("Expected String got: " + key.prettyName());
     }
 
     private Val valFrom(Object obj, DataFormatService dataformats) {
         Document doc;
-        if (obj instanceof Document) {
-            doc = (Document) obj;
+        if (obj instanceof Document document) {
+            doc = document;
         } else {
             doc = new DefaultDocument(obj, MediaTypes.APPLICATION_JAVA);
         }
