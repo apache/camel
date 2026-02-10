@@ -49,6 +49,7 @@ import static org.assertj.core.api.Assertions.catchException;
 import static org.mockito.Mockito.doReturn;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.ALL;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.MESSAGE_GROUP_ID;
+import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SENDER_ID;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SENT_TIMESTAMP;
 import static software.amazon.awssdk.services.sqs.model.MessageSystemAttributeName.SEQUENCE_NUMBER;
 
@@ -385,6 +386,7 @@ class Sqs2ConsumerTest extends CamelTestSupport {
     void shouldRequest66MessagesWithSevenReceiveRequestSortedBySenderId() throws Exception {
         // given
         generateSequenceNumber = false;
+        configuration.setSortAttributeName("SenderId");
         var expectedMessages = IntStream.range(0, 66)
                 .mapToObj(i -> Message.builder()
                         .body(Integer.toString(i))
@@ -401,14 +403,16 @@ class Sqs2ConsumerTest extends CamelTestSupport {
             // then
             assertThat(polledMessagesCount).isEqualTo(66);
             assertThat(receiveMessageBodies()).containsExactly(expectedMessages.stream().map(Message::body).toArray());
+            var expectedRequest = expectedReceiveRequestBuilder()
+                    .messageSystemAttributeNames(List.of(SENT_TIMESTAMP, MESSAGE_GROUP_ID, SENDER_ID));
             assertThat(sqsClientMock.getReceiveRequests()).containsExactlyInAnyOrder(
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(10),
-                    expectedReceiveRequest(6));
+                    expectedRequest.maxNumberOfMessages(10).build(),
+                    expectedRequest.maxNumberOfMessages(10).build(),
+                    expectedRequest.maxNumberOfMessages(10).build(),
+                    expectedRequest.maxNumberOfMessages(10).build(),
+                    expectedRequest.maxNumberOfMessages(10).build(),
+                    expectedRequest.maxNumberOfMessages(10).build(),
+                    expectedRequest.maxNumberOfMessages(6).build());
             assertThat(sqsClientMock.getQueues()).isEmpty();
         }
     }
