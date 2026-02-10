@@ -153,10 +153,12 @@ public final class KeycloakSecurityHelper {
 
         // Extract permissions from custom claims (primary approach for simple setups)
         Object permissionsClaim = token.getOtherClaims().get("permissions");
-        if (permissionsClaim instanceof java.util.Collection<?>) {
-            @SuppressWarnings("unchecked")
-            java.util.Collection<String> permissionsCollection = (java.util.Collection<String>) permissionsClaim;
-            permissions.addAll(permissionsCollection);
+        if (permissionsClaim instanceof java.util.Collection<?> permissionsCollection) {
+            for (Object perm : permissionsCollection) {
+                if (perm instanceof String s) {
+                    permissions.add(s);
+                }
+            }
         }
 
         // Also check for scope-based permissions
@@ -199,31 +201,29 @@ public final class KeycloakSecurityHelper {
 
         // Extract roles from realm_access claim
         Object realmAccess = introspectionResult.getClaim("realm_access");
-        if (realmAccess instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> realmAccessMap = (Map<String, Object>) realmAccess;
+        if (realmAccess instanceof Map<?, ?> realmAccessMap) {
             Object realmRoles = realmAccessMap.get("roles");
-            if (realmRoles instanceof Collection) {
-                @SuppressWarnings("unchecked")
-                Collection<String> realmRolesCollection = (Collection<String>) realmRoles;
-                roles.addAll(realmRolesCollection);
+            if (realmRoles instanceof Collection<?> realmRolesCollection) {
+                for (Object role : realmRolesCollection) {
+                    if (role instanceof String s) {
+                        roles.add(s);
+                    }
+                }
             }
         }
 
         // Extract client roles from resource_access claim
         Object resourceAccess = introspectionResult.getClaim("resource_access");
-        if (resourceAccess instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> resourceAccessMap = (Map<String, Object>) resourceAccess;
+        if (resourceAccess instanceof Map<?, ?> resourceAccessMap) {
             Object clientAccess = resourceAccessMap.get(clientId);
-            if (clientAccess instanceof Map) {
-                @SuppressWarnings("unchecked")
-                Map<String, Object> clientAccessMap = (Map<String, Object>) clientAccess;
+            if (clientAccess instanceof Map<?, ?> clientAccessMap) {
                 Object clientRoles = clientAccessMap.get("roles");
-                if (clientRoles instanceof Collection) {
-                    @SuppressWarnings("unchecked")
-                    Collection<String> clientRolesCollection = (Collection<String>) clientRoles;
-                    roles.addAll(clientRolesCollection);
+                if (clientRoles instanceof Collection<?> clientRolesCollection) {
+                    for (Object role : clientRolesCollection) {
+                        if (role instanceof String s) {
+                            roles.add(s);
+                        }
+                    }
                 }
             }
         }
@@ -243,10 +243,12 @@ public final class KeycloakSecurityHelper {
 
         // Extract permissions from custom claims
         Object permissionsClaim = introspectionResult.getClaim("permissions");
-        if (permissionsClaim instanceof Collection) {
-            @SuppressWarnings("unchecked")
-            Collection<String> permissionsCollection = (Collection<String>) permissionsClaim;
-            permissions.addAll(permissionsCollection);
+        if (permissionsClaim instanceof Collection<?> permissionsCollection) {
+            for (Object perm : permissionsCollection) {
+                if (perm instanceof String s) {
+                    permissions.add(s);
+                }
+            }
         }
 
         // Also check for scope-based permissions
