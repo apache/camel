@@ -217,19 +217,21 @@ public final class ObjectHelper {
     }
 
     private static boolean typeCoerceIntLong(Object leftValue, String rightValue) {
-        if (leftValue instanceof Integer) {
-            return integerPairComparison((Integer) leftValue, Integer.valueOf(rightValue));
-        } else {
-            return longPairComparison((Long) leftValue, Long.valueOf(rightValue));
+        if (leftValue instanceof Integer intValue) {
+            return integerPairComparison(intValue, Integer.valueOf(rightValue));
+        } else if (leftValue instanceof Long longValue) {
+            return longPairComparison(longValue, Long.valueOf(rightValue));
         }
+        return false;
     }
 
     private static boolean typeCoerceILString(String leftValue, Object rightValue) {
-        if (rightValue instanceof Integer) {
-            return integerPairComparison(Integer.valueOf(leftValue), (Integer) rightValue);
-        } else {
-            return longPairComparison(Long.valueOf(leftValue), (Long) rightValue);
+        if (rightValue instanceof Integer intValue) {
+            return integerPairComparison(Integer.valueOf(leftValue), intValue);
+        } else if (rightValue instanceof Long longValue) {
+            return longPairComparison(Long.valueOf(leftValue), longValue);
         }
+        return false;
     }
 
     private static boolean typeCoerceStringPair(String leftNum, String rightNum, boolean ignoreCase) {
@@ -282,14 +284,13 @@ public final class ObjectHelper {
                 Long rightNum = (Long) rightValue;
                 return leftNum.compareTo(rightNum);
             }
-        } else if (rightValue instanceof String &&
-                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber((String) rightValue)) {
+        } else if (rightValue instanceof String rightStr &&
+                (leftValue instanceof Integer || leftValue instanceof Long) && isNumber(rightStr)) {
             if (leftValue instanceof Integer leftNum) {
-                Integer rightNum = Integer.valueOf((String) rightValue);
+                Integer rightNum = Integer.valueOf(rightStr);
                 return leftNum.compareTo(rightNum);
-            } else {
-                Long leftNum = (Long) leftValue;
-                Long rightNum = Long.valueOf((String) rightValue);
+            } else if (leftValue instanceof Long leftNum) {
+                Long rightNum = Long.valueOf(rightStr);
                 return leftNum.compareTo(rightNum);
             }
         } else if (rightValue instanceof Double rightNum && leftValue instanceof String leftStr
@@ -300,11 +301,11 @@ public final class ObjectHelper {
                 && isFloatingNumber(leftStr)) {
             Float leftNum = Float.valueOf(leftStr);
             return leftNum.compareTo(rightNum);
-        } else if (rightValue instanceof Boolean rightBool && leftValue instanceof String) {
-            Boolean leftBool = Boolean.valueOf((String) leftValue);
+        } else if (rightValue instanceof Boolean rightBool && leftValue instanceof String leftStr) {
+            Boolean leftBool = Boolean.valueOf(leftStr);
             return leftBool.compareTo(rightBool);
-        } else if (rightValue instanceof String && leftValue instanceof Boolean leftBool) {
-            Boolean rightBool = Boolean.valueOf((String) rightValue);
+        } else if (rightValue instanceof String rightStr && leftValue instanceof Boolean leftBool) {
+            Boolean rightBool = Boolean.valueOf(rightStr);
             return leftBool.compareTo(rightBool);
         }
 
@@ -845,17 +846,14 @@ public final class ObjectHelper {
 
     @SuppressWarnings("unchecked")
     private static Iterable<?> trySlowIterables(Object value) {
-        if (value instanceof Iterator) {
-            final Iterator<Object> iterator = (Iterator<Object>) value;
-            return (Iterable<Object>) () -> iterator;
-        } else if (value instanceof Iterable) {
-            return (Iterable<Object>) value;
-        } else if (value instanceof Map) {
-            Map<?, ?> map = (Map<?, ?>) value;
+        if (value instanceof Iterator<?> iterator) {
+            return (Iterable<Object>) () -> (Iterator<Object>) iterator;
+        } else if (value instanceof Iterable<?> iterable) {
+            return (Iterable<Object>) iterable;
+        } else if (value instanceof Map<?, ?> map) {
             return map.entrySet();
-        } else if (value instanceof NodeList) {
+        } else if (value instanceof NodeList nodeList) {
             // lets iterate through DOM results after performing XPaths
-            final NodeList nodeList = (NodeList) value;
             return (Iterable<Node>) () -> createNodeListIterator(nodeList);
         } else {
             return Collections.singletonList(value);
@@ -1030,8 +1028,7 @@ public final class ObjectHelper {
         if (collectionOrArray instanceof byte[] arr) {
             collectionOrArray = new String(arr);
         }
-        if (collectionOrArray instanceof Collection) {
-            Collection<?> collection = (Collection<?>) collectionOrArray;
+        if (collectionOrArray instanceof Collection<?> collection) {
             if (ignoreCase) {
                 String lower = value.toString().toLowerCase(Locale.ENGLISH);
                 return collection.stream().anyMatch(c -> c.toString().toLowerCase(Locale.ENGLISH).contains(lower));
