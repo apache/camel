@@ -133,11 +133,32 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>integration-test</id>
+                                <id>standard-integration-tests</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
                                 </goals>
+                                <configuration>
+                                    <excludedGroups>isolated</excludedGroups>
+    <!--                                <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks> -->
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>default</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>isolated-integration-tests</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>isolated</groups>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>false</reuseForks>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -145,5 +166,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>

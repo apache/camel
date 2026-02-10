@@ -38,6 +38,80 @@ include::partial$component-endpoint-headers.adoc[]
 // endpoint options: START
 // endpoint options: END
 
+== Username Resolution
+
+When no username is specified in the URI, the mina-sftp component follows the same username resolution order as the JSch-based camel-sftp component, matching standard SSH client behavior.
+
+=== Resolution Priority Order
+
+[cols="1,2,3"]
+|===
+| Priority | Source | Description
+
+| 1 (highest)
+| URI parameter
+| Username specified directly in URI: `mina-sftp://myuser@host/path`
+
+| 2
+| SSH config file
+| `User` directive in `~/.ssh/config` for the target host
+
+| 3 (lowest)
+| OS username
+| `System.getProperty("user.name")` - current operating system user
+|===
+
+=== SSH Config Resolution
+
+The component reads the user's `~/.ssh/config` file (if it exists) and applies matching `Host` entries. For example:
+
+[source]
+----
+# ~/.ssh/config
+Host myserver.example.com
+    User deployuser
+
+Host *.internal.example.com
+    User admin
+
+Host *
+    User defaultuser
+----
+
+With this configuration:
+* `mina-sftp://myserver.example.com/path` uses username `deployuser`
+* `mina-sftp://app.internal.example.com/path` uses username `admin`
+* `mina-sftp://other.example.com/path` uses username `defaultuser`
+
+=== OS Username Fallback
+
+If the SSH config file exists but does not contain a `User` directive for the target host, the component falls back to the operating system username (`System.getProperty("user.name")`).
+
+IMPORTANT: The OS username fallback only occurs when the SSH config file exists. If no `~/.ssh/config` file exists at all, the connection will fail with "No username specified when the session was created".
+
+=== Explicit Username Recommended
+
+For production deployments, always specify the username explicitly in the URI to ensure predictable behavior across different environments:
+
+[source,java]
+----
+// Recommended: explicit username
+from("mina-sftp://deployuser@host/path?password=secret")
+    .to("file:local");
+
+// Not recommended: relies on SSH config or OS username
+from("mina-sftp://host/path?password=secret")
+    .to("file:local");
+----
+
+=== Compatibility with camel-sftp
+
+This username resolution behavior is identical to the JSch-based camel-sftp component, ensuring seamless migration. Both components:
+
+* Check the URI for an explicit username first
+* Fall back to `~/.ssh/config` if no username in URI
+* Fall back to OS username if SSH config exists but has no `User` directive
+
 == Authentication
 
 The MINA SFTP component supports multiple authentication methods:
