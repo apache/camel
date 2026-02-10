@@ -24,7 +24,7 @@ By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-en
 
 == Available Tools
 
-The server exposes 13 tools organized into six functional areas.
+The server exposes 15 tools organized into six functional areas.
 
 === Catalog Exploration
 
@@ -43,8 +43,16 @@ The server exposes 13 tools organized into six functional areas.
 | `camel_catalog_dataformats`
 | List available data formats (JSON, XML, CSV, Avro, Protobuf, and others).
 
+| `camel_catalog_dataformat_doc`
+| Get detailed documentation for a specific data format including all configuration options, Maven coordinates,
+  and model information.
+
 | `camel_catalog_languages`
 | List expression languages (Simple, JsonPath, XPath, JQ, Groovy, and others).
+
+| `camel_catalog_language_doc`
+| Get detailed documentation for a specific expression language including all configuration options and
+  Maven coordinates.
 
 | `camel_catalog_eips`
 | List Enterprise Integration Patterns with filtering by category.
