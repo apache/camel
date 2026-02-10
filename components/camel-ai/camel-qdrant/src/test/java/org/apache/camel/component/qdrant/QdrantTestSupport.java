@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QdrantTestSupport extends CamelTestSupport {
     @RegisterExtension
-    static QdrantService QDRANT = QdrantServiceFactory.createSingletonService();
+    static final QdrantService QDRANT = QdrantServiceFactory.createSingletonService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
