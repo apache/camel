@@ -221,6 +221,9 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             inputs.put(routeId, uris);
             // use a LRUCache for outputs as we could potential have unlimited uris if dynamic routing is in use
             // and therefore need to have the limit in use
+            if (limit <= 0) {
+                throw new IllegalArgumentException("limit must be greater than 0");
+            }
             outputs.put(routeId, LRUCacheFactory.newLRUCache(limit));
         } else if (event instanceof RouteRemovedEvent rse) {
             String routeId = rse.getRoute().getId();

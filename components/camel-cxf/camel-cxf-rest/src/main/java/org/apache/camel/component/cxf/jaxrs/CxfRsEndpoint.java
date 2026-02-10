@@ -120,7 +120,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean ignoreDeleteMethodMessageBody;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(label = "producer,advanced", defaultValue = "10")
+    @UriParam(label = "producer,advanced", defaultValue = "10",
+              description = "This option allows you to configure the maximum size of the cache."
+                            + " The implementation caches CXF clients or ClientFactoryBean in CxfProvider and CxfRsProvider."
+                            + " The value must be greater than 0.")
     private int maxClientCacheSize = 10;
     @UriParam(label = "producer")
     private SSLContextParameters sslContextParameters;
@@ -573,6 +576,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      * ClientFactoryBean in CxfProvider and CxfRsProvider.
      */
     public void setMaxClientCacheSize(int maxClientCacheSize) {
+        if (maxClientCacheSize <= 0) {
+            throw new IllegalArgumentException("maxClientCacheSize must be greater than 0, was: " + maxClientCacheSize);
+        }
         this.maxClientCacheSize = maxClientCacheSize;
     }
 
