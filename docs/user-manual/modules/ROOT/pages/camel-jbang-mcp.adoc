@@ -1,0 +1,296 @@
+= Camel MCP Server
+
+The Camel MCP Server exposes the Apache Camel Catalog and a set of specialized tools through the
+https://modelcontextprotocol.io/[Model Context Protocol (MCP)], the open standard that allows AI coding assistants
+to call external tools. This enables AI tools such as Claude Code, OpenAI Codex, GitHub Copilot, and JetBrains AI
+to query live Camel catalog data, validate endpoint URIs, analyze routes for security concerns, browse Kamelets, and more.
+
+The server is built on https://quarkus.io/[Quarkus] using the
+https://docs.quarkiverse.io/quarkus-mcp-server/dev/index.html[quarkus-mcp-server] extension and ships as a single
+uber-JAR that can be launched via https://www.jbang.dev/[JBang].
+
+NOTE: This module is in *Preview* status as of Camel 4.18.
+
+== Transport
+
+The server supports two transports:
+
+* **STDIO** -- The default transport for CLI-based AI tools. The server communicates over stdin/stdout using the MCP
+  protocol. All logging goes to stderr to keep stdout clean for protocol messages.
+* **HTTP/SSE** -- An optional transport for web-based clients and remote access scenarios. Useful when running the
+  MCP server as a shared service for a team or in a container.
+
+By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-enabled=true`.
+
+== Available Tools
+
+The server exposes 13 tools organized into six functional areas.
+
+=== Catalog Exploration
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_catalog_components`
+| List available Camel components with filtering by name, label (e.g., `messaging`, `cloud`, `database`), and
+  runtime type (`main`, `spring-boot`, `quarkus`). Supports querying specific Camel versions.
+
+| `camel_catalog_component_doc`
+| Get detailed documentation for a specific component including all endpoint options, component-level options,
+  Maven coordinates, and URI syntax.
+
+| `camel_catalog_dataformats`
+| List available data formats (JSON, XML, CSV, Avro, Protobuf, and others).
+
+| `camel_catalog_languages`
+| List expression languages (Simple, JsonPath, XPath, JQ, Groovy, and others).
+
+| `camel_catalog_eips`
+| List Enterprise Integration Patterns with filtering by category.
+
+| `camel_catalog_eip_doc`
+| Get detailed documentation for a specific EIP including all its options.
+|===
+
+=== Kamelet Catalog
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_catalog_kamelets`
+| List available Kamelets from the Kamelet Catalog with filtering by name, description, and type (`source`, `sink`,
+  `action`). Supports querying specific Kamelets catalog versions.
+
+| `camel_catalog_kamelet_doc`
+| Get detailed documentation for a specific Kamelet including all properties/options, their types, defaults,
+  examples, and the Kamelet's Maven dependencies.
+|===
+
+=== Route Understanding
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_route_context`
+| Given a Camel route (YAML, XML, or Java DSL), extracts all components and EIPs used, looks up their documentation
+  from the catalog, and returns structured context.
+|===
+
+=== Security Analysis
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_route_harden_context`
+| Analyzes a route for security concerns. Identifies security-sensitive components, assigns risk levels, detects
+  issues like hardcoded credentials or plain-text protocols, and returns structured security findings alongside
+  best practices.
+|===
+
+=== Validation and Transformation
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_validate_route`
+| Validates Camel endpoint URIs against the catalog schema. Catches unknown options, missing required parameters,
+  invalid enum values, and type mismatches. Also provides suggestions for misspelled option names.
+
+| `camel_transform_route`
+| Assists with route DSL format transformation between YAML and XML.
+|===
+
+=== Version Management
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_version_list`
+| Lists available Camel versions for a given runtime, including release dates, JDK requirements, and LTS status.
+|===
+
+== Setup
+
+The MCP server requires https://www.jbang.dev/[JBang] to be installed and available on your PATH.
+
+=== Claude Code
+
+Add the following to your project's `.mcp.json` (or `~/.claude/mcp.json` for global configuration):
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "camel": {
+      "command": "jbang",
+      "args": [
+        "-Dquarkus.log.level=WARN",
+        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+      ]
+    }
+  }
+}
+----
+
+=== OpenAI Codex
+
+Add the server to your MCP configuration:
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "camel": {
+      "command": "jbang",
+      "args": [
+        "-Dquarkus.log.level=WARN",
+        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+      ]
+    }
+  }
+}
+----
+
+=== VS Code with Copilot
+
+Configure MCP servers in your `.vscode/mcp.json` or in the user settings:
+
+[source,json]
+----
+{
+  "servers": {
+    "camel": {
+      "command": "jbang",
+      "args": [
+        "-Dquarkus.log.level=WARN",
+        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+      ]
+    }
+  }
+}
+----
+
+=== JetBrains IDEs
+
+JetBrains IDEs support MCP servers starting from 2025.1. Configure them in
+Settings > Tools > AI Assistant > MCP Servers, or create an `.junie/mcp.json` file in your project root:
+
+[source,json]
+----
+{
+  "mcpServers": {
+    "camel": {
+      "command": "jbang",
+      "args": [
+        "-Dquarkus.log.level=WARN",
+        "org.apache.camel:camel-jbang-mcp:4.18.0:runner"
+      ]
+    }
+  }
+}
+----
+
+=== Generic STDIO Client
+
+Any MCP client that supports the STDIO transport can launch the server directly:
+
+[source,bash]
+----
+jbang org.apache.camel:camel-jbang-mcp:4.18.0:runner
+----
+
+=== HTTP/SSE Transport
+
+To start the server with the HTTP/SSE transport enabled:
+
+[source,bash]
+----
+jbang -Dquarkus.http.host-enabled=true -Dquarkus.http.port=8080 org.apache.camel:camel-jbang-mcp:4.18.0:runner
+----
+
+MCP clients that support HTTP/SSE can then connect to the server at `http://localhost:8080/mcp/sse`.
+
+== Examples
+
+=== Listing Components
+
+Prompt your AI assistant with:
+
+----
+List all Camel components in the messaging category
+----
+
+The assistant calls `camel_catalog_components` with `label=messaging` and receives structured results with name,
+title, description, label, deprecation status, and support level for each matching component.
+
+=== Getting Component Documentation
+
+----
+Show me the documentation for the Kafka component, including all endpoint options
+----
+
+The assistant calls `camel_catalog_component_doc` with `component=kafka` and receives the full component model
+including the URI syntax, Maven coordinates, and every endpoint option with types, defaults, and descriptions.
+
+=== Browsing Kamelets
+
+----
+Show me all available source kamelets related to AWS
+----
+
+The assistant calls `camel_catalog_kamelets` with `type=source` and `filter=aws` and returns matching Kamelets
+with their name, type, support level, and description.
+
+To drill into a specific Kamelet:
+
+----
+What options does the aws-s3-source kamelet accept?
+----
+
+The assistant calls `camel_catalog_kamelet_doc` with `kamelet=aws-s3-source` and returns the complete property
+list including required fields, types, defaults, and Maven dependencies.
+
+=== Validating an Endpoint URI
+
+----
+Validate this Kafka endpoint: kafka:myTopic?brkers=localhost:9092&groupId=myGroup
+----
+
+The assistant calls `camel_validate_route` and detects the typo (`brkers`), reports the URI as invalid, and
+suggests the correct option name (`brokers`).
+
+=== Understanding a Route
+
+Paste a route and ask:
+
+----
+Explain what this route does
+----
+
+The assistant calls `camel_route_context` which extracts all components and EIPs used in the route, looks up
+their documentation from the catalog, and returns enriched context so the AI can provide an accurate explanation.
+
+=== Security Hardening
+
+----
+Analyze this route for security concerns and suggest hardening measures
+----
+
+The assistant calls `camel_route_harden_context` which analyzes the route for security-sensitive components,
+detects issues (hardcoded credentials, HTTP instead of HTTPS, plain FTP, etc.), assigns risk levels, and
+returns structured findings with remediation recommendations.
+
+=== Checking Camel Versions
+
+----
+What are the latest LTS versions of Camel for Spring Boot?
+----
+
+The assistant calls `camel_version_list` with `runtime=spring-boot` and `lts=true` and returns version
+information including release dates, end-of-life dates, and JDK requirements.

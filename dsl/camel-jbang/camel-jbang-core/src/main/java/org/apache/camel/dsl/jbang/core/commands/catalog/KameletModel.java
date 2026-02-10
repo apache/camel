@@ -21,11 +21,11 @@ import java.util.Map;
 
 public class KameletModel {
 
-    String name;
-    String type;
-    String supportLevel;
-    String description;
-    Map<String, KameletOptionModel> properties;
-    List<String> dependencies;
+    public String name;
+    public String type;
+    public String supportLevel;
+    public String description;
+    public Map<String, KameletOptionModel> properties;
+    public List<String> dependencies;
 
 }

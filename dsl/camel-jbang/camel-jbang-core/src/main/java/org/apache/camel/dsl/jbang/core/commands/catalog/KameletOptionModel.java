@@ -20,12 +20,12 @@ import java.util.List;
 
 public class KameletOptionModel {
 
-    String name;
-    boolean required;
-    String description;
-    String type;
-    String defaultValue;
-    String example;
-    List<String> enumValues;
+    public String name;
+    public boolean required;
+    public String description;
+    public String type;
+    public String defaultValue;
+    public String example;
+    public List<String> enumValues;
 
 }
