@@ -156,8 +156,8 @@ public class MinioProducer extends DefaultProducer {
                 if (object == null) {
                     throw new IllegalArgumentException("Message body is null");
                 }
-                if (object instanceof File) {
-                    filePayload = (File) object;
+                if (object instanceof File file) {
+                    filePayload = file;
                     inputStream = new FileInputStream(filePayload);
                     if (contentLength <= 0) {
                         contentLength = filePayload.length();
