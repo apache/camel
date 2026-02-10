@@ -157,6 +157,46 @@ public class CatalogTools {
     }
 
     /**
+     * Tool to get detailed documentation for a specific data format.
+     */
+    @Tool(description = "Get detailed documentation for a Camel data format including all options, "
+                        + "Maven coordinates, and configuration parameters.")
+    public DataFormatDetailResult camel_catalog_dataformat_doc(
+            @ToolArg(description = "Data format name (e.g., json-jackson, avro, csv, protobuf, jaxb)") String dataformat) {
+
+        if (dataformat == null || dataformat.isBlank()) {
+            throw new ToolCallException("Data format name is required", null);
+        }
+
+        DataFormatModel model = catalog.dataFormatModel(dataformat);
+        if (model == null) {
+            throw new ToolCallException("Data format not found: " + dataformat, null);
+        }
+
+        return toDataFormatDetailResult(model);
+    }
+
+    /**
+     * Tool to get detailed documentation for a specific expression language.
+     */
+    @Tool(description = "Get detailed documentation for a Camel expression language including all options, "
+                        + "Maven coordinates, and configuration parameters.")
+    public LanguageDetailResult camel_catalog_language_doc(
+            @ToolArg(description = "Language name (e.g., simple, jsonpath, xpath, jq, groovy)") String language) {
+
+        if (language == null || language.isBlank()) {
+            throw new ToolCallException("Language name is required", null);
+        }
+
+        LanguageModel model = catalog.languageModel(language);
+        if (model == null) {
+            throw new ToolCallException("Language not found: " + language, null);
+        }
+
+        return toLanguageDetailResult(model);
+    }
+
+    /**
      * Tool to list EIPs (Enterprise Integration Patterns).
      */
     @Tool(description = "List Camel Enterprise Integration Patterns (EIPs) like split, aggregate, " +
@@ -361,6 +401,58 @@ public class CatalogTools {
                 options);
     }
 
+    private DataFormatDetailResult toDataFormatDetailResult(DataFormatModel model) {
+        List<OptionInfo> options = new ArrayList<>();
+        if (model.getOptions() != null) {
+            model.getOptions().forEach(opt -> options.add(new OptionInfo(
+                    opt.getName(),
+                    opt.getDescription(),
+                    opt.getType(),
+                    opt.isRequired(),
+                    opt.getDefaultValue() != null ? opt.getDefaultValue().toString() : null,
+                    opt.getGroup())));
+        }
+
+        return new DataFormatDetailResult(
+                model.getName(),
+                model.getTitle(),
+                model.getDescription(),
+                model.getLabel(),
+                model.isDeprecated(),
+                model.getSupportLevel() != null ? model.getSupportLevel().name() : null,
+                model.getGroupId(),
+                model.getArtifactId(),
+                model.getVersion(),
+                model.getModelName(),
+                options);
+    }
+
+    private LanguageDetailResult toLanguageDetailResult(LanguageModel model) {
+        List<OptionInfo> options = new ArrayList<>();
+        if (model.getOptions() != null) {
+            model.getOptions().forEach(opt -> options.add(new OptionInfo(
+                    opt.getName(),
+                    opt.getDescription(),
+                    opt.getType(),
+                    opt.isRequired(),
+                    opt.getDefaultValue() != null ? opt.getDefaultValue().toString() : null,
+                    opt.getGroup())));
+        }
+
+        return new LanguageDetailResult(
+                model.getName(),
+                model.getTitle(),
+                model.getDescription(),
+                model.getLabel(),
+                model.isDeprecated(),
+                model.getSupportLevel() != null ? model.getSupportLevel().name() : null,
+                model.getGroupId(),
+                model.getArtifactId(),
+                model.getVersion(),
+                model.getModelName(),
+                options);
+    }
+
     // Result record classes for Jackson serialization
 
     public record ComponentListResult(int count, String camelVersion, List<ComponentInfo> components) {
@@ -400,5 +492,15 @@ public class CatalogTools {
 
     public record EipDetailResult(String name, String title, String description, String label,
             List<OptionInfo> options) {
+    }
+
+    public record DataFormatDetailResult(String name, String title, String description, String label,
+            boolean deprecated, String supportLevel, String groupId, String artifactId,
+            String version, String modelName, List<OptionInfo> options) {
+    }
+
+    public record LanguageDetailResult(String name, String title, String description, String label,
+            boolean deprecated, String supportLevel, String groupId, String artifactId,
+            String version, String modelName, List<OptionInfo> options) {
     }
 }
