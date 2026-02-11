@@ -150,7 +150,7 @@ public final class CamelJBangConstants {
     public static final String JIB_MAVEN_PLUGIN_VERSION = "camel.jbang.jib-maven-plugin-version";
 
     @Metadata(description = "Version to use for jkube-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options)",
-              javaType = "String", defaultValue = "1.18.1", label = "kubernetes")
+              javaType = "String", defaultValue = "1.19.0", label = "kubernetes")
     public static final String JKUBE_MAVEN_PLUGIN_VERSION = "camel.jbang.jkube-maven-plugin-version";
 
     @Metadata(description = "Stubs all the matching endpoint with the given component name or pattern. Multiple names can be separated by comma. (all = everything).",
