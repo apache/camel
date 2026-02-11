@@ -1,0 +1,119 @@
+= Camel YAML DSL Validator Maven Plugin
+
+The Camel YAML DSL Validator Maven Plugin supports the following goals
+
+ - camel-yaml-dsl-validator:validate - To validate YAML routes are correct according to spec
+
+== camel-yaml-dsl-validator:validate
+
+For validating the YAML routes for syntax errors according to the spec.
+
+Then you can run the `validate` goal from the command line or from within your Java editor such as IDEA or Eclipse.
+
+[source,bash]
+----
+mvn camel-yaml-dsl-validator:validate
+----
+
+You can also enable the plugin to run automatically as part of the build to catch these errors.
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-yaml-dsl-validate-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <phase>process-classes</phase>
+      <goals>
+        <goal>validate</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+The phase determines when the plugin runs. In the sample above the phase is `process-classes` which runs after
+the compilation of the main source code.
+
+The maven plugin can also be configured to validate the test source code, which means that the phase should be
+changed accordingly to `process-test-classes` as shown below:
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-yaml-dsl-validate-maven-plugin</artifactId>
+  <executions>
+    <execution>
+      <configuration>
+        <includeTest>true</includeTest>
+      </configuration>
+      <phase>process-test-classes</phase>
+      <goals>
+        <goal>validate</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+
+=== Running the goal on any Maven project
+
+You can also run the validate goal on any Maven project without having to add the plugin to the `pom.xml` file.
+Doing so requires to specify the plugin using its fully qualified name. For example to run the goal on
+the `main-yaml` from Apache Camel you can run
+
+[source,bash]
+----
+$cd main-yaml
+$mvn org.apache.camel:camel-yaml-dsl-validator-maven-plugin:4.18.0:validate
+----
+
+Which for example outputs (with a forced error)
+[source,text]
+----
+[INFO] --- camel-yaml-dsl-validator:4.18.0:validate (default-cli) @ camel-example-main-yaml ---
+[INFO] Found [/Users/davsclaus/workspace/camel-examples/main-yaml/src/main/resources/routes/my-route.camel.yaml] YAML files ...
+[INFO] Validating 1 YAML files ...
+[WARNING]
+
+Validation error detected in 1 files
+
+	File: my-route.camel.yaml
+		/0/route/from: property 'step' is not defined in the schema and the schema does not allow additional properties
+		/0/route/from: required property 'steps' not found
+----
+
+=== Options
+
+The maven plugin *validate* goal supports the following options which can be configured from the command line (use `-D` syntax), or defined in the `pom.xml` file in the `<configuration>` tag.
+
+|===
+| Parameter | Default Value | Description
+| skip | false | Skip the validation execution.
+| failOnError | false | Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level.
+| includeTest | false | Whether to include test source code.
+| includes | | To filter the names of YAML files to only include files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
+| excludes | | To filter the names of YAML files to exclude files matching any of the given list of patterns (wildcard and regular expression). Multiple values can be separated by comma.
+| onlyCamelYamlExt | false | Whether to only accept files with xxx.camel.yaml as file name. By default, all .yaml files are accepted.
+|===
+
+For example to excludes a specific file:
+
+[source,bash]
+----
+$mvn camel-yaml-dsl-validator:validate -Dcamel.excludes=cheese.yaml
+----
+
+Notice that you must prefix the `-D` command argument with `camel.`, eg `camel.excludes` as the option name.
+
+=== Validating include test
+
+If you have a Maven project then you can run the plugin to validate the endpoints in the unit test source code as well.
+You can pass in the options using `-D` style as shown:
+
+----
+$cd myproject
+$mvn org.apache.camel:camel-yaml-dsl-validator:4.18.0:validate -Dcamel.includeTest=true
+----

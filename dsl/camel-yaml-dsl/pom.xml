@@ -37,6 +37,8 @@
         <module>camel-yaml-dsl-common</module>
         <module>camel-yaml-dsl-deserializers</module>
         <module>camel-yaml-dsl</module>
+        <module>camel-yaml-dsl-validator</module>
+        <module>camel-yaml-dsl-validator-maven-plugin</module>
     </modules>
 
 </project>
