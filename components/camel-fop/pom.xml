@@ -83,4 +83,22 @@
         </dependency>
 
     </dependencies>
+
+    <profiles>
+        <!-- Workaround for FOP-3275: JDK 25+ has a re-entrant XML parsing bug that breaks Apache FOP -->
+        <profile>
+            <id>jdk25-fop-workaround</id>
+            <activation>
+                <jdk>[25,)</jdk>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>net.sf.saxon</groupId>
+                    <artifactId>Saxon-HE</artifactId>
+                    <version>${saxon-version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

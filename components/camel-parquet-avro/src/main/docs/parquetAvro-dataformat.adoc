@@ -15,6 +15,10 @@ The ParquetAvro Data Format is a Camel Framework's data format implementation ba
 Messages can be unmarshalled to Avro's GenericRecords or plain Java objects (POJOs).
 With the help of Camel's routing engine and data transformations, you can then play with them and apply customised formatting and call other Camel Components to convert and send messages to upstream systems.
 
+NOTE: This component does not support JDK 22 or later due to a Hadoop incompatibility (https://issues.apache.org/jira/browse/HADOOP-19486[HADOOP-19486]).
+Hadoop relies on the deprecated `javax.security.auth.Subject.getSubject()` method, which was removed in JDK 22 (JEP 411).
+This limitation will be resolved once an updated Hadoop version with a fix is available.
+
 == Parquet Data Format Options
 
 // dataformat options: START

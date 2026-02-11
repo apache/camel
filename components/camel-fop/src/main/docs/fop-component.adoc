@@ -17,6 +17,9 @@
 The FOP component allows you to render a message into different output
 formats using http://xmlgraphics.apache.org/fop/index.html[Apache FOP].
 
+NOTE: When running on JDK 25 or later, Apache FOP encounters a re-entrant XML parsing error due to an internal JDK change (https://issues.apache.org/jira/browse/FOP-3275[FOP-3275]).
+To work around this, add `net.sf.saxon:Saxon-HE` to your classpath, which provides an alternative XSLT processor that is not affected by this issue.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
