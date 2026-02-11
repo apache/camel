@@ -43,6 +43,7 @@
         <module>camel-jbang-plugin-kubernetes</module>
         <module>camel-jbang-plugin-route-parser</module>
         <module>camel-jbang-plugin-test</module>
+        <module>camel-jbang-plugin-validate</module>
         <module>camel-jbang-it</module>
         <module>camel-launcher</module>
     </modules>

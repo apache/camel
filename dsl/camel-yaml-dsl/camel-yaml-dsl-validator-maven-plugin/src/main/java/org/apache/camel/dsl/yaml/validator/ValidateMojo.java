@@ -150,21 +150,22 @@ public class ValidateMojo extends AbstractMojo {
     private void validateResults(Map<File, List<ValidationMessage>> reports) throws MojoExecutionException {
         int count = errorCounts(reports);
         if (count == 0) {
-            getLog().info("Validation success");
+            getLog().info("Validation success (files:" + reports.size() + ")");
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Validation error detected in ").append(count).append(" files\n\n");
+        sb.append("Validation error detected (errors:").append(count).append(")\n\n");
 
         for (var e : reports.entrySet()) {
             String name = e.getKey().getName();
             var report = e.getValue();
-
-            sb.append("\tFile: ").append(name).append("\n");
-            for (var r : report) {
-                sb.append("\t\t").append(r.toString()).append("\n");
+            if (!report.isEmpty()) {
+                sb.append("\tFile: ").append(name).append("\n");
+                for (var r : report) {
+                    sb.append("\t\t").append(r.toString()).append("\n");
+                }
+                sb.append("\n");
             }
-            sb.append("\n");
         }
         getLog().warn("\n\n" + sb + "\n\n");
 

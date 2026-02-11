@@ -28,13 +28,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>camel-jbang-plugin-route-parser</artifactId>
+    <artifactId>camel-jbang-plugin-validate</artifactId>
 
-    <name>Camel :: JBang :: Plugin :: Route Parser</name>
-    <description>Camel JBang Route Parser</description>
+    <name>Camel :: JBang :: Plugin :: Validate</name>
+    <description>Camel JBang Route Validator</description>
 
     <properties>
-        <firstVersion>4.17.0</firstVersion>
+        <firstVersion>4.18.0</firstVersion>
         <label>jbang</label>
         <supportLevel>Preview</supportLevel>
         <camel-prepare-component>false</camel-prepare-component>
@@ -47,12 +47,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-route-parser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.roaster</groupId>
-            <artifactId>roaster-jdt</artifactId>
-            <version>${roaster-version}</version>
+            <artifactId>camel-yaml-dsl-validator</artifactId>
         </dependency>
     </dependencies>
 </project>

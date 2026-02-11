@@ -4348,6 +4348,43 @@ are downloaded to your local Maven repository `~/.m2`.
 So if you find problems with running Camel JBang using what is seems like an outdated JAR, then you can
 try to delete these directories or parts of it.
 
+== Validate Plugin
+
+*Available as of Camel 4.18*
+
+You can add the *validate* plugin to camel-jbang which makes it easy to quickly validate your Camel source code, such as YAML DSL
+files if they can be parsed and are valid according to the YAML DSL spec.
+
+First install the validate plugin
+
+[source,bash]
+----
+$ camel plugin add validate
+----
+
+Then you can use this plugin to validate source files such as:
+
+[source,bash]
+----
+$ camel validate yaml cheese.yaml bad.yaml
+Validation error detected (errors:1)
+
+	File: bad.yaml
+		/0/from: required property 'steps' not found
+----
+
+Here you can see we validated 2 files (cheese.yaml and bad.yaml) and there was a validation error in bad.yaml as show above.
+
+If all files are valid then the command report success:
+
+
+[source,bash]
+----
+$ camel validate yaml cheese.yaml bad.yaml
+Validation success (files:2)
+----
+
+
 == Infrastructure
 
 Camel JBang `infra` command can be used to `list`, `run` and `stop` external services that can be used for fast prototyping and testing.

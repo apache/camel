@@ -17,13 +17,10 @@
 package org.apache.camel.dsl.yaml.validator;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.JsonMetaSchema;
@@ -34,45 +31,36 @@ import com.networknt.schema.SchemaValidatorsConfig;
 import com.networknt.schema.SpecVersionDetector;
 import com.networknt.schema.ValidationMessage;
 
+/**
+ * YAML DSL validator that tooling can use to validate Camel source files if they can be parsed and are valid according
+ * to the Camel YAML DSL spec.
+ */
 public class YamlValidator {
 
     private static final String DRAFT = "http://json-schema.org/draft-04/schema#";
+    private static final String LOCATION = "/schema/camelYamlDsl.json";
 
-    // TODO: yaml-dsl-parser to see if its validate camel
-
-    private ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    private JsonNode model;
-    private JsonSchemaFactory factory;
-    private SchemaValidatorsConfig config;
+    private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     private JsonSchema schema;
-
-    private String jsonSchema = "/schema/camelYamlDsl.json";
-
-    public String getJsonSchema() {
-        return jsonSchema;
-    }
-
-    /**
-     * The schema to use for validating
-     */
-    public void setJsonSchema(String jsonSchema) {
-        this.jsonSchema = jsonSchema;
-    }
 
     public List<ValidationMessage> validate(File file) throws Exception {
         if (schema == null) {
             init();
         }
-        try (InputStream is = new FileInputStream(file)) {
-            var target = mapper.readTree(is);
+        try {
+            var target = mapper.readTree(file);
             return new ArrayList<>(schema.validate(target));
+        } catch (Exception e) {
+            ValidationMessage vm = ValidationMessage.builder().type("parser")
+                    .messageSupplier(() -> e.getClass().getName() + ": " + e.getMessage()).build();
+            return List.of(vm);
         }
     }
 
     public void init() throws Exception {
-        model = mapper.readTree(YamlValidator.class.getResourceAsStream(jsonSchema));
-        factory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(model));
-        config = SchemaValidatorsConfig.builder().locale(Locale.ENGLISH).build();
+        var model = mapper.readTree(YamlValidator.class.getResourceAsStream(LOCATION));
+        var factory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(model));
+        var config = SchemaValidatorsConfig.builder().locale(Locale.ENGLISH).build();
         // include deprecated as an unknown keyword so the validator does not WARN log about this
         JsonMetaSchema jms = factory.getMetaSchema(DRAFT, null);
         jms.getKeywords().put("deprecated", new NonValidationKeyword("deprecated"));
