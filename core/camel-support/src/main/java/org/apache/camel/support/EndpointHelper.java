@@ -405,6 +405,9 @@ public final class EndpointHelper {
             parameters = StringHelper.after(className, "(");
             parameters = parameters.substring(0, parameters.length() - 1); // clip last )
             className = StringHelper.before(className, "(");
+            if (parameters.isBlank()) {
+                parameters = null;
+            }
         }
         if (className != null && className.indexOf('#') != -1) {
             factoryMethod = StringHelper.after(className, "#");
