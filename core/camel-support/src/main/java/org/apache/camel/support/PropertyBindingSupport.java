@@ -48,6 +48,7 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.StringHelper.removeLeadingAndEndingQuotes;
 import static org.apache.camel.util.StringHelper.startsWithIgnoreCase;
 
 /**
@@ -334,7 +335,7 @@ public final class PropertyBindingSupport {
         boolean quoted = StringHelper.isQuoted(name);
         if (quoted) {
             // remove quotes around the key
-            name = StringHelper.removeLeadingAndEndingQuotes(name);
+            name = removeLeadingAndEndingQuotes(name);
             newName = name;
             parts = new String[] { name };
         } else if (isDotKey(name)) {
@@ -612,7 +613,7 @@ public final class PropertyBindingSupport {
 
         int pos = name.indexOf('[');
         String lookupKey = name.substring(pos + 1, name.length() - 1);
-        lookupKey = StringHelper.removeLeadingAndEndingQuotes(lookupKey);
+        lookupKey = removeLeadingAndEndingQuotes(lookupKey);
         String key = name.substring(0, pos);
 
         Object obj = null;
@@ -703,7 +704,7 @@ public final class PropertyBindingSupport {
 
         int pos = name.indexOf('[');
         String lookupKey = name.substring(pos + 1, name.length() - 1);
-        lookupKey = StringHelper.removeLeadingAndEndingQuotes(lookupKey);
+        lookupKey = removeLeadingAndEndingQuotes(lookupKey);
         String key = name.substring(0, pos);
         String undashKey = undashKey(key);
 
@@ -1254,6 +1255,14 @@ public final class PropertyBindingSupport {
         // keep quotes as we need to understand the parameter type if its boolean,numbers or string (quoted)
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', true, true);
         Constructor<?> found = findMatchingConstructor(camelContext, type.getConstructors(), params);
+        if (found == null) {
+            // fallback with unquoted parameters as some may have been using property placeholders to inject their values
+            String[] params2 = new String[params.length];
+            for (int i = 0; i < params.length; i++) {
+                params2[i] = StringHelper.removeLeadingAndEndingQuotes(params[i]);
+            }
+            found = findMatchingConstructor(camelContext, type.getConstructors(), params2);
+        }
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
             for (int i = 0; i < found.getParameterCount(); i++) {
@@ -1274,7 +1283,7 @@ public final class PropertyBindingSupport {
                 }
                 // unquote text
                 if (val instanceof String strVal) {
-                    val = StringHelper.removeLeadingAndEndingQuotes(strVal);
+                    val = removeLeadingAndEndingQuotes(strVal);
                 }
                 if (val != null) {
                     val = camelContext.getTypeConverter().tryConvertTo(paramType, val);
@@ -1358,6 +1367,14 @@ public final class PropertyBindingSupport {
         // keep quotes as we need to understand the parameter type if its boolean,numbers or string (quoted)
         String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', true, true);
         Method found = findMatchingFactoryMethod(camelContext, type.getMethods(), factoryMethod, params);
+        if (found == null) {
+            // fallback with unquoted parameters as some may have been using property placeholders to inject their values
+            String[] params2 = new String[params.length];
+            for (int i = 0; i < params.length; i++) {
+                params2[i] = StringHelper.removeLeadingAndEndingQuotes(params[i]);
+            }
+            found = findMatchingFactoryMethod(camelContext, type.getMethods(), factoryMethod, params2);
+        }
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
             for (int i = 0; i < found.getParameterCount(); i++) {
@@ -1366,7 +1383,7 @@ public final class PropertyBindingSupport {
                 Object val = null;
                 // special as we may refer to other #bean or #type in the parameter
                 if (param instanceof String str) {
-                    String ref = StringHelper.removeLeadingAndEndingQuotes(str);
+                    String ref = removeLeadingAndEndingQuotes(str);
                     if (ref.startsWith("#")) {
                         Object bean = resolveBean(camelContext, ref);
                         if (bean != null) {
@@ -1378,7 +1395,7 @@ public final class PropertyBindingSupport {
                 }
                 // unquote text
                 if (val instanceof String strVal) {
-                    val = StringHelper.removeLeadingAndEndingQuotes(strVal);
+                    val = removeLeadingAndEndingQuotes(strVal);
                 }
                 if (val != null) {
                     val = camelContext.getTypeConverter().tryConvertTo(paramType, val);
@@ -1579,6 +1596,9 @@ public final class PropertyBindingSupport {
                 parameters = StringHelper.after(className, "(");
                 parameters = parameters.substring(0, parameters.length() - 1); // clip last )
                 className = StringHelper.before(className, "(");
+                if (parameters.isBlank()) {
+                    parameters = null;
+                }
             }
             if (className != null && className.indexOf('#') != -1) {
                 factoryMethod = StringHelper.after(className, "#");
