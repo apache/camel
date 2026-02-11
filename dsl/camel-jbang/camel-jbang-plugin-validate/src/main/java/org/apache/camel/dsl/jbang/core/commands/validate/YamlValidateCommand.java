@@ -44,10 +44,6 @@ public class YamlValidateCommand extends CamelCommand {
     Path[] filePaths;
     List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "To dump validation report in JSon format")
-    boolean json;
-
     public YamlValidateCommand(CamelJBangMain main) {
         super(main);
     }
