@@ -1251,8 +1251,7 @@ public final class PropertyBindingSupport {
      */
     public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
-        // keep quotes as we need to understand the parameter type if its boolean,numbers or string (quoted)
-        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', true, true);
+        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
         Constructor<?> found = findMatchingConstructor(camelContext, type.getConstructors(), params);
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
@@ -1262,14 +1261,11 @@ public final class PropertyBindingSupport {
                 Object val = null;
                 // special as we may refer to other #bean or #type in the parameter
                 if (param instanceof String str) {
-                    String ref = StringHelper.removeLeadingAndEndingQuotes(str);
-                    if (ref.startsWith("#")) {
-                        Object bean = resolveBean(camelContext, ref);
+                    if (str.startsWith("#")) {
+                        Object bean = resolveBean(camelContext, param);
                         if (bean != null) {
                             val = bean;
                         }
-                    } else {
-                        val = str;
                     }
                 }
                 // unquote text
@@ -1355,8 +1351,7 @@ public final class PropertyBindingSupport {
     public static Object newInstanceFactoryParameters(
             CamelContext camelContext, Class<?> type, String factoryMethod, String parameters)
             throws Exception {
-        // keep quotes as we need to understand the parameter type if its boolean,numbers or string (quoted)
-        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', true, true);
+        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
         Method found = findMatchingFactoryMethod(camelContext, type.getMethods(), factoryMethod, params);
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
@@ -1366,14 +1361,11 @@ public final class PropertyBindingSupport {
                 Object val = null;
                 // special as we may refer to other #bean or #type in the parameter
                 if (param instanceof String str) {
-                    String ref = StringHelper.removeLeadingAndEndingQuotes(str);
-                    if (ref.startsWith("#")) {
-                        Object bean = resolveBean(camelContext, ref);
+                    if (str.startsWith("#")) {
+                        Object bean = resolveBean(camelContext, param);
                         if (bean != null) {
                             val = bean;
                         }
-                    } else {
-                        val = str;
                     }
                 }
                 // unquote text
