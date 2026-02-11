@@ -27,7 +27,6 @@ import ai.docling.core.DoclingDocument;
 import ai.docling.core.DoclingDocument.PictureItem;
 import ai.docling.core.DoclingDocument.TableData;
 import ai.docling.core.DoclingDocument.TableItem;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docling.DoclingHeaders;
 import org.apache.camel.component.docling.DoclingOperations;
@@ -43,11 +42,9 @@ class ExtractStructuredDataIT extends DoclingITestSupport {
     void extractTableFromMarkdown() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:extract-structured-data",
+        DoclingDocument doclingDocument = template.requestBodyAndHeader("direct:extract-structured-data",
                 testFile.toString(),
-                DoclingHeaders.OPERATION, DoclingOperations.EXTRACT_STRUCTURED_DATA, String.class);
-        ObjectMapper mapper = new ObjectMapper();
-        DoclingDocument doclingDocument = mapper.readValue(result, DoclingDocument.class);
+                DoclingHeaders.OPERATION, DoclingOperations.EXTRACT_STRUCTURED_DATA, DoclingDocument.class);
 
         List<TableItem> tables = doclingDocument.getTables();
         assertThat(tables).hasSize(1);
@@ -61,14 +58,28 @@ class ExtractStructuredDataIT extends DoclingITestSupport {
     void extractImageFromPDF() throws Exception {
         Path testFile = createTestPdfFile();
 
-        String result = template.requestBodyAndHeader("direct:extract-structured-data",
+        DoclingDocument doclingDocument = template.requestBodyAndHeader("direct:extract-structured-data",
                 testFile.toString(),
-                DoclingHeaders.OPERATION, DoclingOperations.EXTRACT_STRUCTURED_DATA, String.class);
-        ObjectMapper mapper = new ObjectMapper();
-        DoclingDocument doclingDocument = mapper.readValue(result, DoclingDocument.class);
+                DoclingHeaders.OPERATION, DoclingOperations.EXTRACT_STRUCTURED_DATA, DoclingDocument.class);
 
         List<PictureItem> pictures = doclingDocument.getPictures();
         assertThat(pictures).hasSize(2);
+    }
+
+    @Test
+    void extractStructuredDataFromInvoice() throws Exception {
+        Path testFile = createInvoicePdfFile();
+
+        DoclingDocument doclingDocument = template.requestBodyAndHeader("direct:extract-structured-data",
+                testFile.toString(),
+                DoclingHeaders.OPERATION, DoclingOperations.EXTRACT_STRUCTURED_DATA, DoclingDocument.class);
+
+        assertThat(doclingDocument).isNotNull();
+        assertThat(doclingDocument.getSchemaName()).isEqualTo("DoclingDocument");
+
+        // Invoice should contain at least one table (line items)
+        List<TableItem> tables = doclingDocument.getTables();
+        assertThat(tables).isNotEmpty();
     }
 
     private Path createTestFile() throws Exception {
@@ -99,7 +110,15 @@ class ExtractStructuredDataIT extends DoclingITestSupport {
 
     private Path createTestPdfFile() throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("picture_classification.pdf")) {
-            java.nio.file.Path tempFile = Files.createTempFile("docling-test-picture_classification", ".pdf");
+            Path tempFile = Files.createTempFile("docling-test-picture_classification", ".pdf");
+            Files.copy(is, tempFile.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
+            return tempFile;
+        }
+    }
+
+    private Path createInvoicePdfFile() throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("sample_invoice.pdf")) {
+            Path tempFile = Files.createTempFile("docling-test-invoice", ".pdf");
             Files.copy(is, tempFile.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
             return tempFile;
         }

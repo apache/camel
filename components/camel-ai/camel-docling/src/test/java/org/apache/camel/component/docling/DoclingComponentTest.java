@@ -55,4 +55,64 @@ public class DoclingComponentTest extends CamelTestSupport {
         assertNotNull(endpoint.createProducer());
     }
 
+    @Test
+    public void testNewConfigPropertiesDefaultToNull() throws Exception {
+        DoclingEndpoint endpoint = (DoclingEndpoint) context.getEndpoint("docling:convert");
+        DoclingConfiguration config = endpoint.getConfiguration();
+
+        assertNull(config.getDoOcr());
+        assertNull(config.getForceOcr());
+        assertNull(config.getOcrEngine());
+        assertNull(config.getPdfBackend());
+        assertNull(config.getTableMode());
+        assertNull(config.getTableCellMatching());
+        assertNull(config.getDoTableStructure());
+        assertNull(config.getPipeline());
+        assertNull(config.getDoCodeEnrichment());
+        assertNull(config.getDoFormulaEnrichment());
+        assertNull(config.getDoPictureClassification());
+        assertNull(config.getDoPictureDescription());
+        assertNull(config.getIncludeImages());
+        assertNull(config.getImageExportMode());
+        assertNull(config.getAbortOnError());
+        assertNull(config.getDocumentTimeout());
+        assertNull(config.getImagesScale());
+        assertNull(config.getMdPageBreakPlaceholder());
+    }
+
+    @Test
+    public void testNewConfigPropertiesParsedFromUri() throws Exception {
+        Endpoint endpoint = context.getEndpoint(
+                "docling:convert?doOcr=true&forceOcr=false&ocrEngine=TESSERACT"
+                                                + "&pdfBackend=DLPARSE_V4&tableMode=ACCURATE&tableCellMatching=true"
+                                                + "&doTableStructure=true&pipeline=STANDARD"
+                                                + "&doCodeEnrichment=true&doFormulaEnrichment=true"
+                                                + "&doPictureClassification=false&doPictureDescription=false"
+                                                + "&includeImages=true&imageExportMode=EMBEDDED"
+                                                + "&abortOnError=true&documentTimeout=120&imagesScale=2.0"
+                                                + "&mdPageBreakPlaceholder=---");
+        assertNotNull(endpoint);
+        assertTrue(endpoint instanceof DoclingEndpoint);
+
+        DoclingConfiguration config = ((DoclingEndpoint) endpoint).getConfiguration();
+        assertEquals(Boolean.TRUE, config.getDoOcr());
+        assertEquals(Boolean.FALSE, config.getForceOcr());
+        assertEquals("TESSERACT", config.getOcrEngine());
+        assertEquals("DLPARSE_V4", config.getPdfBackend());
+        assertEquals("ACCURATE", config.getTableMode());
+        assertEquals(Boolean.TRUE, config.getTableCellMatching());
+        assertEquals(Boolean.TRUE, config.getDoTableStructure());
+        assertEquals("STANDARD", config.getPipeline());
+        assertEquals(Boolean.TRUE, config.getDoCodeEnrichment());
+        assertEquals(Boolean.TRUE, config.getDoFormulaEnrichment());
+        assertEquals(Boolean.FALSE, config.getDoPictureClassification());
+        assertEquals(Boolean.FALSE, config.getDoPictureDescription());
+        assertEquals(Boolean.TRUE, config.getIncludeImages());
+        assertEquals("EMBEDDED", config.getImageExportMode());
+        assertEquals(Boolean.TRUE, config.getAbortOnError());
+        assertEquals(Long.valueOf(120), config.getDocumentTimeout());
+        assertEquals(Double.valueOf(2.0), config.getImagesScale());
+        assertEquals("---", config.getMdPageBreakPlaceholder());
+    }
+
 }

@@ -34,6 +34,42 @@ The option `extractAllMetadata` has been removed. Using `includeRawMetadata` wil
 
 It corresponds to the removal of functionality no more working since 4.17. Given that this functionality was never available in a LTS version,that the next LST version is the next one and the fix requires important change in upstream dependency; it is not going through a deprecation phase and removed directly.
 
+==== DoclingDocument return type
+
+The `CONVERT_TO_JSON` and `EXTRACT_STRUCTURED_DATA` operations now return a `DoclingDocument` object (`ai.docling.core.DoclingDocument`) in the exchange body instead of a raw JSON string. This applies to both docling-serve API mode and CLI mode (where the JSON output is parsed into `DoclingDocument` via Jackson).
+
+Code that previously received a `String` and manually deserialized it should be updated:
+
+[source,java]
+----
+// Before (4.17)
+String result = template.requestBody("direct:convert", filePath, String.class);
+DoclingDocument doc = mapper.readValue(result, DoclingDocument.class);
+
+// After (4.18)
+DoclingDocument doc = template.requestBody("direct:convert", filePath, DoclingDocument.class);
+----
+
+The `EXTRACT_METADATA` operation also now uses `DoclingDocument` internally instead of re-parsing a JSON string, though the exchange body type (`DocumentMetadata`) is unchanged.
+
+==== EXTRACT_STRUCTURED_DATA differentiation
+
+The `EXTRACT_STRUCTURED_DATA` operation is now differentiated from `CONVERT_TO_JSON` when using the docling-serve API. It uses a dedicated request builder that enables table structure recognition (`doTableStructure=true`) by default. Additional enrichment features (code enrichment, formula enrichment, picture classification) can be enabled via the new configuration properties. Previously, both operations produced identical requests to the server.
+
+The `BATCH_EXTRACT_STRUCTURED_DATA` operation now has its own dedicated implementation (`processBatchStructuredData`) that sends structured data requests with table structure recognition enabled, matching its single-document counterpart. Previously, it was handled as a plain batch JSON conversion.
+
+==== processTimeout and HTTP read timeout
+
+The `processTimeout` configuration property (default: 30000ms) now also controls the HTTP read timeout when using docling-serve API mode. Previously, the HTTP read timeout was not configurable and used the docling-java client library default. For complex PDF documents that require OCR or enrichment processing, increase `processTimeout` (e.g., to 120000 for 2 minutes).
+
+==== OCR bridging to API mode
+
+The `enableOCR` configuration property is now bridged to the docling-serve API mode when explicitly set to `false`: it sends `doOcr(false)` to the server to disable OCR. When left at its default value (`true`), the server uses its own defaults to preserve backward compatibility. For explicit API-mode OCR control, use the new `doOcr` property instead.
+
+==== New advanced configuration properties
+
+18 new configuration properties have been added to expose the full `ConvertDocumentOptions` from the docling-serve SDK: `doOcr`, `forceOcr`, `ocrEngine`, `pdfBackend`, `tableMode`, `tableCellMatching`, `doTableStructure`, `pipeline`, `doCodeEnrichment`, `doFormulaEnrichment`, `doPictureClassification`, `doPictureDescription`, `includeImages`, `imageExportMode`, `abortOnError`, `documentTimeout`, `imagesScale`, and `mdPageBreakPlaceholder`. All default to `null` and only take effect when explicitly set. These options are applied to every docling-serve API request via the `applyConfigurationToOptions` method.
+
 === camel-qdrant
 
 The class `org.apache.camel.component.qdrant.Qdrant.Headers` has been removed. It was deprecated since 4.15. It is replaced by `org.apache.camel.component.qdrant.QdrantHeaders`.

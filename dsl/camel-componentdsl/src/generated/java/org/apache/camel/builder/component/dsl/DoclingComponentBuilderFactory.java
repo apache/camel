@@ -231,6 +231,23 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Abort processing on error.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param abortOnError the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder abortOnError(java.lang.Boolean abortOnError) {
+            doSetProperty("abortOnError", abortOnError);
+            return this;
+        }
+    
+        
+        /**
          * Polling interval for async conversion status in milliseconds.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -302,6 +319,249 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
+         * Enable code enrichment in document processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doCodeEnrichment the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doCodeEnrichment(java.lang.Boolean doCodeEnrichment) {
+            doSetProperty("doCodeEnrichment", doCodeEnrichment);
+            return this;
+        }
+    
+        /**
+         * Document processing timeout in seconds.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param documentTimeout the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder documentTimeout(java.lang.Long documentTimeout) {
+            doSetProperty("documentTimeout", documentTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Enable formula enrichment in document processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doFormulaEnrichment the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doFormulaEnrichment(java.lang.Boolean doFormulaEnrichment) {
+            doSetProperty("doFormulaEnrichment", doFormulaEnrichment);
+            return this;
+        }
+    
+        
+        /**
+         * Enable OCR processing in docling-serve API mode. When not set, the
+         * server uses its own defaults. Set enableOCR to false to explicitly
+         * disable OCR.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doOcr the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doOcr(java.lang.Boolean doOcr) {
+            doSetProperty("doOcr", doOcr);
+            return this;
+        }
+    
+        
+        /**
+         * Enable picture classification in document processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureClassification the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doPictureClassification(java.lang.Boolean doPictureClassification) {
+            doSetProperty("doPictureClassification", doPictureClassification);
+            return this;
+        }
+    
+        
+        /**
+         * Enable picture description generation in document processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureDescription the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doPictureDescription(java.lang.Boolean doPictureDescription) {
+            doSetProperty("doPictureDescription", doPictureDescription);
+            return this;
+        }
+    
+        
+        /**
+         * Enable table structure recognition.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doTableStructure the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder doTableStructure(java.lang.Boolean doTableStructure) {
+            doSetProperty("doTableStructure", doTableStructure);
+            return this;
+        }
+    
+        
+        /**
+         * Force OCR processing even for digital documents.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param forceOcr the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder forceOcr(java.lang.Boolean forceOcr) {
+            doSetProperty("forceOcr", forceOcr);
+            return this;
+        }
+    
+        /**
+         * Image export mode for referenced images.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param imageExportMode the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder imageExportMode(java.lang.String imageExportMode) {
+            doSetProperty("imageExportMode", imageExportMode);
+            return this;
+        }
+    
+        /**
+         * Scale factor for exported images.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param imagesScale the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder imagesScale(java.lang.Double imagesScale) {
+            doSetProperty("imagesScale", imagesScale);
+            return this;
+        }
+    
+        
+        /**
+         * Include images in the conversion output.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeImages the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder includeImages(java.lang.Boolean includeImages) {
+            doSetProperty("includeImages", includeImages);
+            return this;
+        }
+    
+        /**
+         * Placeholder string for page breaks in markdown output.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param mdPageBreakPlaceholder the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder mdPageBreakPlaceholder(java.lang.String mdPageBreakPlaceholder) {
+            doSetProperty("mdPageBreakPlaceholder", mdPageBreakPlaceholder);
+            return this;
+        }
+    
+        /**
+         * OCR engine to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param ocrEngine the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder ocrEngine(java.lang.String ocrEngine) {
+            doSetProperty("ocrEngine", ocrEngine);
+            return this;
+        }
+    
+        /**
+         * PDF parsing backend.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param pdfBackend the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder pdfBackend(java.lang.String pdfBackend) {
+            doSetProperty("pdfBackend", pdfBackend);
+            return this;
+        }
+    
+        /**
+         * Processing pipeline to use.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param pipeline the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder pipeline(java.lang.String pipeline) {
+            doSetProperty("pipeline", pipeline);
+            return this;
+        }
+    
+        
+        /**
          * Timeout for Docling process execution in milliseconds.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -314,6 +574,38 @@ public interface DoclingComponentBuilderFactory {
          */
         default DoclingComponentBuilder processTimeout(long processTimeout) {
             doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+    
+        
+        /**
+         * Enable table cell matching post-processing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tableCellMatching the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder tableCellMatching(java.lang.Boolean tableCellMatching) {
+            doSetProperty("tableCellMatching", tableCellMatching);
+            return this;
+        }
+    
+        /**
+         * Table structure recognition mode.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param tableMode the value to set
+         * @return the dsl builder
+         */
+        default DoclingComponentBuilder tableMode(java.lang.String tableMode) {
+            doSetProperty("tableMode", tableMode);
             return this;
         }
     
@@ -568,11 +860,29 @@ public interface DoclingComponentBuilderFactory {
             case "operation": getOrCreateConfiguration((DoclingComponent) component).setOperation((org.apache.camel.component.docling.DoclingOperations) value); return true;
             case "outputFormat": getOrCreateConfiguration((DoclingComponent) component).setOutputFormat((java.lang.String) value); return true;
             case "useDoclingServe": getOrCreateConfiguration((DoclingComponent) component).setUseDoclingServe((boolean) value); return true;
+            case "abortOnError": getOrCreateConfiguration((DoclingComponent) component).setAbortOnError((java.lang.Boolean) value); return true;
             case "asyncPollInterval": getOrCreateConfiguration((DoclingComponent) component).setAsyncPollInterval((long) value); return true;
             case "asyncTimeout": getOrCreateConfiguration((DoclingComponent) component).setAsyncTimeout((long) value); return true;
             case "autowiredEnabled": ((DoclingComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "doclingCommand": getOrCreateConfiguration((DoclingComponent) component).setDoclingCommand((java.lang.String) value); return true;
+            case "doCodeEnrichment": getOrCreateConfiguration((DoclingComponent) component).setDoCodeEnrichment((java.lang.Boolean) value); return true;
+            case "documentTimeout": getOrCreateConfiguration((DoclingComponent) component).setDocumentTimeout((java.lang.Long) value); return true;
+            case "doFormulaEnrichment": getOrCreateConfiguration((DoclingComponent) component).setDoFormulaEnrichment((java.lang.Boolean) value); return true;
+            case "doOcr": getOrCreateConfiguration((DoclingComponent) component).setDoOcr((java.lang.Boolean) value); return true;
+            case "doPictureClassification": getOrCreateConfiguration((DoclingComponent) component).setDoPictureClassification((java.lang.Boolean) value); return true;
+            case "doPictureDescription": getOrCreateConfiguration((DoclingComponent) component).setDoPictureDescription((java.lang.Boolean) value); return true;
+            case "doTableStructure": getOrCreateConfiguration((DoclingComponent) component).setDoTableStructure((java.lang.Boolean) value); return true;
+            case "forceOcr": getOrCreateConfiguration((DoclingComponent) component).setForceOcr((java.lang.Boolean) value); return true;
+            case "imageExportMode": getOrCreateConfiguration((DoclingComponent) component).setImageExportMode((java.lang.String) value); return true;
+            case "imagesScale": getOrCreateConfiguration((DoclingComponent) component).setImagesScale((java.lang.Double) value); return true;
+            case "includeImages": getOrCreateConfiguration((DoclingComponent) component).setIncludeImages((java.lang.Boolean) value); return true;
+            case "mdPageBreakPlaceholder": getOrCreateConfiguration((DoclingComponent) component).setMdPageBreakPlaceholder((java.lang.String) value); return true;
+            case "ocrEngine": getOrCreateConfiguration((DoclingComponent) component).setOcrEngine((java.lang.String) value); return true;
+            case "pdfBackend": getOrCreateConfiguration((DoclingComponent) component).setPdfBackend((java.lang.String) value); return true;
+            case "pipeline": getOrCreateConfiguration((DoclingComponent) component).setPipeline((java.lang.String) value); return true;
             case "processTimeout": getOrCreateConfiguration((DoclingComponent) component).setProcessTimeout((long) value); return true;
+            case "tableCellMatching": getOrCreateConfiguration((DoclingComponent) component).setTableCellMatching((java.lang.Boolean) value); return true;
+            case "tableMode": getOrCreateConfiguration((DoclingComponent) component).setTableMode((java.lang.String) value); return true;
             case "useAsyncMode": getOrCreateConfiguration((DoclingComponent) component).setUseAsyncMode((boolean) value); return true;
             case "workingDirectory": getOrCreateConfiguration((DoclingComponent) component).setWorkingDirectory((java.lang.String) value); return true;
             case "batchFailOnFirstError": getOrCreateConfiguration((DoclingComponent) component).setBatchFailOnFirstError((boolean) value); return true;

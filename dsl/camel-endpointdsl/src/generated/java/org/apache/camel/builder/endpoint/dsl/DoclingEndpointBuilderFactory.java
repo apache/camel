@@ -615,6 +615,37 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Abort processing on error.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param abortOnError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder abortOnError(Boolean abortOnError) {
+            doSetProperty("abortOnError", abortOnError);
+            return this;
+        }
+        /**
+         * Abort processing on error.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param abortOnError the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder abortOnError(String abortOnError) {
+            doSetProperty("abortOnError", abortOnError);
+            return this;
+        }
+        /**
          * Polling interval for async conversion status in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -689,6 +720,384 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Enable code enrichment in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doCodeEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doCodeEnrichment(Boolean doCodeEnrichment) {
+            doSetProperty("doCodeEnrichment", doCodeEnrichment);
+            return this;
+        }
+        /**
+         * Enable code enrichment in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doCodeEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doCodeEnrichment(String doCodeEnrichment) {
+            doSetProperty("doCodeEnrichment", doCodeEnrichment);
+            return this;
+        }
+        /**
+         * Document processing timeout in seconds.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param documentTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder documentTimeout(Long documentTimeout) {
+            doSetProperty("documentTimeout", documentTimeout);
+            return this;
+        }
+        /**
+         * Document processing timeout in seconds.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param documentTimeout the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder documentTimeout(String documentTimeout) {
+            doSetProperty("documentTimeout", documentTimeout);
+            return this;
+        }
+        /**
+         * Enable formula enrichment in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doFormulaEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doFormulaEnrichment(Boolean doFormulaEnrichment) {
+            doSetProperty("doFormulaEnrichment", doFormulaEnrichment);
+            return this;
+        }
+        /**
+         * Enable formula enrichment in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doFormulaEnrichment the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doFormulaEnrichment(String doFormulaEnrichment) {
+            doSetProperty("doFormulaEnrichment", doFormulaEnrichment);
+            return this;
+        }
+        /**
+         * Enable OCR processing in docling-serve API mode. When not set, the
+         * server uses its own defaults. Set enableOCR to false to explicitly
+         * disable OCR.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doOcr(Boolean doOcr) {
+            doSetProperty("doOcr", doOcr);
+            return this;
+        }
+        /**
+         * Enable OCR processing in docling-serve API mode. When not set, the
+         * server uses its own defaults. Set enableOCR to false to explicitly
+         * disable OCR.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doOcr(String doOcr) {
+            doSetProperty("doOcr", doOcr);
+            return this;
+        }
+        /**
+         * Enable picture classification in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureClassification the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doPictureClassification(Boolean doPictureClassification) {
+            doSetProperty("doPictureClassification", doPictureClassification);
+            return this;
+        }
+        /**
+         * Enable picture classification in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureClassification the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doPictureClassification(String doPictureClassification) {
+            doSetProperty("doPictureClassification", doPictureClassification);
+            return this;
+        }
+        /**
+         * Enable picture description generation in document processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureDescription the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doPictureDescription(Boolean doPictureDescription) {
+            doSetProperty("doPictureDescription", doPictureDescription);
+            return this;
+        }
+        /**
+         * Enable picture description generation in document processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doPictureDescription the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doPictureDescription(String doPictureDescription) {
+            doSetProperty("doPictureDescription", doPictureDescription);
+            return this;
+        }
+        /**
+         * Enable table structure recognition.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doTableStructure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doTableStructure(Boolean doTableStructure) {
+            doSetProperty("doTableStructure", doTableStructure);
+            return this;
+        }
+        /**
+         * Enable table structure recognition.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param doTableStructure the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder doTableStructure(String doTableStructure) {
+            doSetProperty("doTableStructure", doTableStructure);
+            return this;
+        }
+        /**
+         * Force OCR processing even for digital documents.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param forceOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder forceOcr(Boolean forceOcr) {
+            doSetProperty("forceOcr", forceOcr);
+            return this;
+        }
+        /**
+         * Force OCR processing even for digital documents.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param forceOcr the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder forceOcr(String forceOcr) {
+            doSetProperty("forceOcr", forceOcr);
+            return this;
+        }
+        /**
+         * Image export mode for referenced images.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imageExportMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder imageExportMode(String imageExportMode) {
+            doSetProperty("imageExportMode", imageExportMode);
+            return this;
+        }
+        /**
+         * Scale factor for exported images.
+         * 
+         * The option is a: <code>java.lang.Double</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imagesScale the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder imagesScale(Double imagesScale) {
+            doSetProperty("imagesScale", imagesScale);
+            return this;
+        }
+        /**
+         * Scale factor for exported images.
+         * 
+         * The option will be converted to a <code>java.lang.Double</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param imagesScale the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder imagesScale(String imagesScale) {
+            doSetProperty("imagesScale", imagesScale);
+            return this;
+        }
+        /**
+         * Include images in the conversion output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeImages the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder includeImages(Boolean includeImages) {
+            doSetProperty("includeImages", includeImages);
+            return this;
+        }
+        /**
+         * Include images in the conversion output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param includeImages the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder includeImages(String includeImages) {
+            doSetProperty("includeImages", includeImages);
+            return this;
+        }
+        /**
+         * Placeholder string for page breaks in markdown output.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param mdPageBreakPlaceholder the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder mdPageBreakPlaceholder(String mdPageBreakPlaceholder) {
+            doSetProperty("mdPageBreakPlaceholder", mdPageBreakPlaceholder);
+            return this;
+        }
+        /**
+         * OCR engine to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param ocrEngine the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder ocrEngine(String ocrEngine) {
+            doSetProperty("ocrEngine", ocrEngine);
+            return this;
+        }
+        /**
+         * PDF parsing backend.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param pdfBackend the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder pdfBackend(String pdfBackend) {
+            doSetProperty("pdfBackend", pdfBackend);
+            return this;
+        }
+        /**
+         * Processing pipeline to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param pipeline the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder pipeline(String pipeline) {
+            doSetProperty("pipeline", pipeline);
+            return this;
+        }
+        /**
          * Timeout for Docling process execution in milliseconds.
          * 
          * The option is a: <code>long</code> type.
@@ -716,6 +1125,51 @@ public interface DoclingEndpointBuilderFactory {
          */
         default AdvancedDoclingEndpointBuilder processTimeout(String processTimeout) {
             doSetProperty("processTimeout", processTimeout);
+            return this;
+        }
+        /**
+         * Enable table cell matching post-processing.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tableCellMatching the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder tableCellMatching(Boolean tableCellMatching) {
+            doSetProperty("tableCellMatching", tableCellMatching);
+            return this;
+        }
+        /**
+         * Enable table cell matching post-processing.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param tableCellMatching the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder tableCellMatching(String tableCellMatching) {
+            doSetProperty("tableCellMatching", tableCellMatching);
+            return this;
+        }
+        /**
+         * Table structure recognition mode.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param tableMode the value to set
+         * @return the dsl builder
+         */
+        default AdvancedDoclingEndpointBuilder tableMode(String tableMode) {
+            doSetProperty("tableMode", tableMode);
             return this;
         }
         /**

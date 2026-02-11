@@ -137,6 +137,78 @@ public class DoclingConfiguration implements Cloneable {
     @Metadata(description = "Include raw metadata as returned by the parser", defaultValue = "false")
     private boolean includeRawMetadata = false;
 
+    @UriParam(label = "advanced")
+    @Metadata(description = "Enable OCR processing in docling-serve API mode. When not set, the server uses its own defaults. Set enableOCR to false to explicitly disable OCR.")
+    private Boolean doOcr;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Force OCR processing even for digital documents")
+    private Boolean forceOcr;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "OCR engine to use", enums = "AUTO,EASYOCR,OCRMAC,RAPIDOCR,TESSEROCR,TESSERACT")
+    private String ocrEngine;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "PDF parsing backend", enums = "DLPARSE_V1,DLPARSE_V2,DLPARSE_V4,PYPDFIUM2")
+    private String pdfBackend;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Table structure recognition mode", enums = "ACCURATE,FAST")
+    private String tableMode;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Enable table cell matching post-processing")
+    private Boolean tableCellMatching;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Enable table structure recognition")
+    private Boolean doTableStructure;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Processing pipeline to use", enums = "ASR,STANDARD,VLM")
+    private String pipeline;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Enable code enrichment in document processing")
+    private Boolean doCodeEnrichment;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Enable formula enrichment in document processing")
+    private Boolean doFormulaEnrichment;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Enable picture classification in document processing")
+    private Boolean doPictureClassification;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Enable picture description generation in document processing")
+    private Boolean doPictureDescription;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Include images in the conversion output")
+    private Boolean includeImages;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Image export mode for referenced images", enums = "EMBEDDED,PLACEHOLDER,REFERENCED")
+    private String imageExportMode;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Abort processing on error")
+    private Boolean abortOnError;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Document processing timeout in seconds")
+    private Long documentTimeout;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Scale factor for exported images")
+    private Double imagesScale;
+
+    @UriParam(label = "advanced")
+    @Metadata(description = "Placeholder string for page breaks in markdown output")
+    private String mdPageBreakPlaceholder;
+
     public DoclingOperations getOperation() {
         return operation;
     }
@@ -335,6 +407,150 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setIncludeRawMetadata(boolean includeRawMetadata) {
         this.includeRawMetadata = includeRawMetadata;
+    }
+
+    public Boolean getDoOcr() {
+        return doOcr;
+    }
+
+    public void setDoOcr(Boolean doOcr) {
+        this.doOcr = doOcr;
+    }
+
+    public Boolean getForceOcr() {
+        return forceOcr;
+    }
+
+    public void setForceOcr(Boolean forceOcr) {
+        this.forceOcr = forceOcr;
+    }
+
+    public String getOcrEngine() {
+        return ocrEngine;
+    }
+
+    public void setOcrEngine(String ocrEngine) {
+        this.ocrEngine = ocrEngine;
+    }
+
+    public String getPdfBackend() {
+        return pdfBackend;
+    }
+
+    public void setPdfBackend(String pdfBackend) {
+        this.pdfBackend = pdfBackend;
+    }
+
+    public String getTableMode() {
+        return tableMode;
+    }
+
+    public void setTableMode(String tableMode) {
+        this.tableMode = tableMode;
+    }
+
+    public Boolean getTableCellMatching() {
+        return tableCellMatching;
+    }
+
+    public void setTableCellMatching(Boolean tableCellMatching) {
+        this.tableCellMatching = tableCellMatching;
+    }
+
+    public Boolean getDoTableStructure() {
+        return doTableStructure;
+    }
+
+    public void setDoTableStructure(Boolean doTableStructure) {
+        this.doTableStructure = doTableStructure;
+    }
+
+    public String getPipeline() {
+        return pipeline;
+    }
+
+    public void setPipeline(String pipeline) {
+        this.pipeline = pipeline;
+    }
+
+    public Boolean getDoCodeEnrichment() {
+        return doCodeEnrichment;
+    }
+
+    public void setDoCodeEnrichment(Boolean doCodeEnrichment) {
+        this.doCodeEnrichment = doCodeEnrichment;
+    }
+
+    public Boolean getDoFormulaEnrichment() {
+        return doFormulaEnrichment;
+    }
+
+    public void setDoFormulaEnrichment(Boolean doFormulaEnrichment) {
+        this.doFormulaEnrichment = doFormulaEnrichment;
+    }
+
+    public Boolean getDoPictureClassification() {
+        return doPictureClassification;
+    }
+
+    public void setDoPictureClassification(Boolean doPictureClassification) {
+        this.doPictureClassification = doPictureClassification;
+    }
+
+    public Boolean getDoPictureDescription() {
+        return doPictureDescription;
+    }
+
+    public void setDoPictureDescription(Boolean doPictureDescription) {
+        this.doPictureDescription = doPictureDescription;
+    }
+
+    public Boolean getIncludeImages() {
+        return includeImages;
+    }
+
+    public void setIncludeImages(Boolean includeImages) {
+        this.includeImages = includeImages;
+    }
+
+    public String getImageExportMode() {
+        return imageExportMode;
+    }
+
+    public void setImageExportMode(String imageExportMode) {
+        this.imageExportMode = imageExportMode;
+    }
+
+    public Boolean getAbortOnError() {
+        return abortOnError;
+    }
+
+    public void setAbortOnError(Boolean abortOnError) {
+        this.abortOnError = abortOnError;
+    }
+
+    public Long getDocumentTimeout() {
+        return documentTimeout;
+    }
+
+    public void setDocumentTimeout(Long documentTimeout) {
+        this.documentTimeout = documentTimeout;
+    }
+
+    public Double getImagesScale() {
+        return imagesScale;
+    }
+
+    public void setImagesScale(Double imagesScale) {
+        this.imagesScale = imagesScale;
+    }
+
+    public String getMdPageBreakPlaceholder() {
+        return mdPageBreakPlaceholder;
+    }
+
+    public void setMdPageBreakPlaceholder(String mdPageBreakPlaceholder) {
+        this.mdPageBreakPlaceholder = mdPageBreakPlaceholder;
     }
 
     public DoclingConfiguration copy() {
