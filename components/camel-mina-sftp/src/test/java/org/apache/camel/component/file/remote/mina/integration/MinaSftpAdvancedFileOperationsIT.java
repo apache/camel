@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.mina.integration;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -25,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -51,12 +53,21 @@ public class MinaSftpAdvancedFileOperationsIT extends MinaSftpServerTestSupport 
     private String ftpRootDir;
     private String testId;
 
+    private Path brokenSymlink;
+
     @BeforeEach
     public void doPostSetup() {
         service.getFtpRootDir().toFile().mkdirs();
         ftpRootDir = service.getFtpRootDir().toString();
         // Generate unique ID for each test run to avoid file conflicts between retries
         testId = String.valueOf(System.currentTimeMillis() % 100000);
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        if (brokenSymlink != null) {
+            Files.delete(brokenSymlink);
+        }
     }
 
     private String baseUri() {
@@ -450,7 +461,7 @@ public class MinaSftpAdvancedFileOperationsIT extends MinaSftpServerTestSupport 
 
         // Create symbolic link to non-existent target
         try {
-            Files.createSymbolicLink(linkPath, nonExistentTarget);
+            brokenSymlink = Files.createSymbolicLink(linkPath, nonExistentTarget);
         } catch (Exception e) {
             log.warn("Could not create broken symlink: {}", e.getMessage());
             return;
