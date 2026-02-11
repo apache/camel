@@ -84,7 +84,7 @@ public class CamelFTPParserFactory extends DefaultFTPFileEntryParserFactory {
         if (JAVA_QUALIFIED_NAME_PATTERN.matcher(key).matches()) {
             Class<?> parserClass = ocr.resolveClass(key);
             try {
-                parser = (FTPFileEntryParser) parserClass.newInstance();
+                parser = (FTPFileEntryParser) parserClass.getDeclaredConstructor().newInstance();
             } catch (ClassCastException e) {
                 throw new ParserInitializationException(
                         parserClass.getName() + " does not implement the interface "

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -207,7 +208,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
 
         if (dataTimeout > 0) {
-            client.setDataTimeout(dataTimeout);
+            client.setDataTimeout(Duration.ofMillis(dataTimeout));
         }
 
         if (LOG.isDebugEnabled()) {
