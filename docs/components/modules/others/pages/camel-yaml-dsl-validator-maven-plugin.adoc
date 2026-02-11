@@ -1,0 +1,1 @@
+../../../../../dsl/camel-yaml-dsl/camel-yaml-dsl-validator-maven-plugin/src/main/docs/camel-yaml-dsl-validator-maven-plugin.adoc
