@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.common.http.WebsocketTestClient;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +40,6 @@ public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithIn
 
     @Test
     void testWebsocketSingleClientBroadcastMultipleClientsGuaranteeDelivery() throws Exception {
-        final int awaitTime = 2;
         connectionKeyUserMap.clear();
 
         WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/guarantee", 2);
@@ -46,27 +47,30 @@ public class WebsocketRoute3WithInitParamTest extends WebsocketCamelRouterWithIn
         WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/guarantee", 2);
 
         wsclient1.connect();
-        wsclient1.await(awaitTime);
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, connectionKeyUserMap.size()));
 
         wsclient2.connect();
-        wsclient2.await(awaitTime);
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(2, connectionKeyUserMap.size()));
 
         wsclient3.connect();
-        wsclient3.await(awaitTime);
-
         //all connections were registered in external store
-        assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size()));
 
         wsclient2.close();
-        wsclient2.await(awaitTime);
+        // brief wait for the close event to be processed server-side
+        Thread.sleep(500);
 
         broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
 
         wsclient1.sendTextMessage("Gambas");
-        wsclient1.await(awaitTime);
+
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, wsclient1.getReceived(String.class).size()));
 
         List<String> received1 = wsclient1.getReceived(String.class);
-        assertEquals(1, received1.size());
 
         for (String element : broadcastMessageTo) {
             assertTrue(received1.get(0).contains(element));

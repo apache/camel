@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
+import java.lang.Runtime.Version;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -72,24 +74,30 @@ public class WebsocketRoute2Test extends WebsocketCamelRouterTestSupport {
                 // route for a broadcast line
                 from("atmosphere-websocket:///broadcast").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) {
-                        createResponse(exchange);
+                        // JDK 25+ delivers websocket messages in streaming mode (Reader/InputStream)
+                        // even without useStreaming=true, due to a change in the JSR 356 implementation
+                        boolean streaming = Runtime.version().compareTo(Version.parse("25")) >= 0;
+                        createResponse(exchange, streaming);
                     }
                 }).to("atmosphere-websocket:///broadcast?sendToAll=true");
             }
         };
     }
 
-    private static void createResponse(Exchange exchange) {
+    private static void createResponse(Exchange exchange, boolean streaming) {
         Object msg = exchange.getIn().getBody();
-        assertTrue(msg instanceof String || msg instanceof byte[] || msg instanceof Reader || msg instanceof InputStream,
-                "Expects String, byte[], Reader or InputStream");
+        if (streaming) {
+            assertTrue(msg instanceof Reader || msg instanceof InputStream, "Expects Reader or InputStream");
+        } else {
+            assertTrue(msg instanceof String || msg instanceof byte[], "Expects String or byte[]");
+        }
 
         if (msg instanceof String) {
             exchange.getIn().setBody(RESPONSE_GREETING + msg);
         } else if (msg instanceof byte[]) {
             exchange.getIn().setBody(createByteResponse((byte[]) msg));
         } else if (msg instanceof Reader) {
-            exchange.getIn().setBody(RESPONSE_GREETING + readAll((Reader) msg));
+            exchange.getIn().setBody(new StringReader(RESPONSE_GREETING + readAll((Reader) msg)));
         } else if (msg instanceof InputStream) {
             exchange.getIn().setBody(createByteResponse(readAll((InputStream) msg)));
         }

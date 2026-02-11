@@ -21,6 +21,10 @@ connections from external clients). This component uses
 the https://github.com/Atmosphere/atmosphere[Atmosphere] library to
 support the Websocket transport in various Servlet containers.
 
+NOTE: On JDK 25 or later, websocket messages are delivered in streaming mode (`Reader`/`InputStream`) even when the `useStreaming` option is not enabled.
+This is due to a change in the JDK's internal JSR 356 WebSocket implementation.
+The component handles both modes transparently, but if your route processors check the body type, they should account for this difference.
+
 Maven users will need to add the following dependency to
 their `pom.xml` for this component:
 
