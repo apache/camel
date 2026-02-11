@@ -174,7 +174,7 @@ public class DefaultRegistry extends ServiceSupport implements Registry, LocalBe
      * Adds a custom {@link BeanRepository}.
      */
     public void addBeanRepository(BeanRepository repository) {
-        if (repository == null) {
+        if (repositories == null) {
             repositories = new ArrayList<>();
         }
         repositories.add(repository);
