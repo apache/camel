@@ -333,7 +333,7 @@
         <jsmpp-version>3.0.1</jsmpp-version>
         <jsch-version>2.27.7</jsch-version>
         <javax-json-api-version>1.1.4</javax-json-api-version>
-        <jsonschema-generator-version>4.38.0</jsonschema-generator-version>
+        <jsonschema-generator-version>5.0.0</jsonschema-generator-version>
         <jsonassert-version>1.5.3</jsonassert-version>
         <json-path-version>2.10.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
