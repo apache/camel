@@ -23,6 +23,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.docling.DoclingConfiguration target = (org.apache.camel.component.docling.DoclingConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "abortonerror":
+        case "abortOnError": target.setAbortOnError(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "apikeyheader":
         case "apiKeyHeader": target.setApiKeyHeader(property(camelContext, java.lang.String.class, value)); return true;
         case "asyncpollinterval":
@@ -43,12 +45,34 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "batchTimeout": target.setBatchTimeout(property(camelContext, long.class, value)); return true;
         case "contentinbody":
         case "contentInBody": target.setContentInBody(property(camelContext, boolean.class, value)); return true;
+        case "docodeenrichment":
+        case "doCodeEnrichment": target.setDoCodeEnrichment(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "doformulaenrichment":
+        case "doFormulaEnrichment": target.setDoFormulaEnrichment(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "doocr":
+        case "doOcr": target.setDoOcr(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "dopictureclassification":
+        case "doPictureClassification": target.setDoPictureClassification(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "dopicturedescription":
+        case "doPictureDescription": target.setDoPictureDescription(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "dotablestructure":
+        case "doTableStructure": target.setDoTableStructure(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "doclingcommand":
         case "doclingCommand": target.setDoclingCommand(property(camelContext, java.lang.String.class, value)); return true;
         case "doclingserveurl":
         case "doclingServeUrl": target.setDoclingServeUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "documenttimeout":
+        case "documentTimeout": target.setDocumentTimeout(property(camelContext, java.lang.Long.class, value)); return true;
         case "enableocr":
         case "enableOCR": target.setEnableOCR(property(camelContext, boolean.class, value)); return true;
+        case "forceocr":
+        case "forceOcr": target.setForceOcr(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "imageexportmode":
+        case "imageExportMode": target.setImageExportMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "imagesscale":
+        case "imagesScale": target.setImagesScale(property(camelContext, java.lang.Double.class, value)); return true;
+        case "includeimages":
+        case "includeImages": target.setIncludeImages(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "includelayoutinfo":
         case "includeLayoutInfo": target.setIncludeLayoutInfo(property(camelContext, boolean.class, value)); return true;
         case "includemetadatainheaders":
@@ -57,15 +81,26 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "includeRawMetadata": target.setIncludeRawMetadata(property(camelContext, boolean.class, value)); return true;
         case "maxfilesize":
         case "maxFileSize": target.setMaxFileSize(property(camelContext, long.class, value)); return true;
+        case "mdpagebreakplaceholder":
+        case "mdPageBreakPlaceholder": target.setMdPageBreakPlaceholder(property(camelContext, java.lang.String.class, value)); return true;
+        case "ocrengine":
+        case "ocrEngine": target.setOcrEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "ocrlanguage":
         case "ocrLanguage": target.setOcrLanguage(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.docling.DoclingOperations.class, value)); return true;
         case "outputformat":
         case "outputFormat": target.setOutputFormat(property(camelContext, java.lang.String.class, value)); return true;
+        case "pdfbackend":
+        case "pdfBackend": target.setPdfBackend(property(camelContext, java.lang.String.class, value)); return true;
+        case "pipeline": target.setPipeline(property(camelContext, java.lang.String.class, value)); return true;
         case "processtimeout":
         case "processTimeout": target.setProcessTimeout(property(camelContext, long.class, value)); return true;
         case "splitbatchresults":
         case "splitBatchResults": target.setSplitBatchResults(property(camelContext, boolean.class, value)); return true;
+        case "tablecellmatching":
+        case "tableCellMatching": target.setTableCellMatching(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "tablemode":
+        case "tableMode": target.setTableMode(property(camelContext, java.lang.String.class, value)); return true;
         case "useasyncmode":
         case "useAsyncMode": target.setUseAsyncMode(property(camelContext, boolean.class, value)); return true;
         case "usedoclingserve":
@@ -79,6 +114,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "abortonerror":
+        case "abortOnError": return java.lang.Boolean.class;
         case "apikeyheader":
         case "apiKeyHeader": return java.lang.String.class;
         case "asyncpollinterval":
@@ -99,12 +136,34 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "batchTimeout": return long.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
+        case "docodeenrichment":
+        case "doCodeEnrichment": return java.lang.Boolean.class;
+        case "doformulaenrichment":
+        case "doFormulaEnrichment": return java.lang.Boolean.class;
+        case "doocr":
+        case "doOcr": return java.lang.Boolean.class;
+        case "dopictureclassification":
+        case "doPictureClassification": return java.lang.Boolean.class;
+        case "dopicturedescription":
+        case "doPictureDescription": return java.lang.Boolean.class;
+        case "dotablestructure":
+        case "doTableStructure": return java.lang.Boolean.class;
         case "doclingcommand":
         case "doclingCommand": return java.lang.String.class;
         case "doclingserveurl":
         case "doclingServeUrl": return java.lang.String.class;
+        case "documenttimeout":
+        case "documentTimeout": return java.lang.Long.class;
         case "enableocr":
         case "enableOCR": return boolean.class;
+        case "forceocr":
+        case "forceOcr": return java.lang.Boolean.class;
+        case "imageexportmode":
+        case "imageExportMode": return java.lang.String.class;
+        case "imagesscale":
+        case "imagesScale": return java.lang.Double.class;
+        case "includeimages":
+        case "includeImages": return java.lang.Boolean.class;
         case "includelayoutinfo":
         case "includeLayoutInfo": return boolean.class;
         case "includemetadatainheaders":
@@ -113,15 +172,26 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "includeRawMetadata": return boolean.class;
         case "maxfilesize":
         case "maxFileSize": return long.class;
+        case "mdpagebreakplaceholder":
+        case "mdPageBreakPlaceholder": return java.lang.String.class;
+        case "ocrengine":
+        case "ocrEngine": return java.lang.String.class;
         case "ocrlanguage":
         case "ocrLanguage": return java.lang.String.class;
         case "operation": return org.apache.camel.component.docling.DoclingOperations.class;
         case "outputformat":
         case "outputFormat": return java.lang.String.class;
+        case "pdfbackend":
+        case "pdfBackend": return java.lang.String.class;
+        case "pipeline": return java.lang.String.class;
         case "processtimeout":
         case "processTimeout": return long.class;
         case "splitbatchresults":
         case "splitBatchResults": return boolean.class;
+        case "tablecellmatching":
+        case "tableCellMatching": return java.lang.Boolean.class;
+        case "tablemode":
+        case "tableMode": return java.lang.String.class;
         case "useasyncmode":
         case "useAsyncMode": return boolean.class;
         case "usedoclingserve":
@@ -136,6 +206,8 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.docling.DoclingConfiguration target = (org.apache.camel.component.docling.DoclingConfiguration) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "abortonerror":
+        case "abortOnError": return target.getAbortOnError();
         case "apikeyheader":
         case "apiKeyHeader": return target.getApiKeyHeader();
         case "asyncpollinterval":
@@ -156,12 +228,34 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "batchTimeout": return target.getBatchTimeout();
         case "contentinbody":
         case "contentInBody": return target.isContentInBody();
+        case "docodeenrichment":
+        case "doCodeEnrichment": return target.getDoCodeEnrichment();
+        case "doformulaenrichment":
+        case "doFormulaEnrichment": return target.getDoFormulaEnrichment();
+        case "doocr":
+        case "doOcr": return target.getDoOcr();
+        case "dopictureclassification":
+        case "doPictureClassification": return target.getDoPictureClassification();
+        case "dopicturedescription":
+        case "doPictureDescription": return target.getDoPictureDescription();
+        case "dotablestructure":
+        case "doTableStructure": return target.getDoTableStructure();
         case "doclingcommand":
         case "doclingCommand": return target.getDoclingCommand();
         case "doclingserveurl":
         case "doclingServeUrl": return target.getDoclingServeUrl();
+        case "documenttimeout":
+        case "documentTimeout": return target.getDocumentTimeout();
         case "enableocr":
         case "enableOCR": return target.isEnableOCR();
+        case "forceocr":
+        case "forceOcr": return target.getForceOcr();
+        case "imageexportmode":
+        case "imageExportMode": return target.getImageExportMode();
+        case "imagesscale":
+        case "imagesScale": return target.getImagesScale();
+        case "includeimages":
+        case "includeImages": return target.getIncludeImages();
         case "includelayoutinfo":
         case "includeLayoutInfo": return target.isIncludeLayoutInfo();
         case "includemetadatainheaders":
@@ -170,15 +264,26 @@ public class DoclingConfigurationConfigurer extends org.apache.camel.support.com
         case "includeRawMetadata": return target.isIncludeRawMetadata();
         case "maxfilesize":
         case "maxFileSize": return target.getMaxFileSize();
+        case "mdpagebreakplaceholder":
+        case "mdPageBreakPlaceholder": return target.getMdPageBreakPlaceholder();
+        case "ocrengine":
+        case "ocrEngine": return target.getOcrEngine();
         case "ocrlanguage":
         case "ocrLanguage": return target.getOcrLanguage();
         case "operation": return target.getOperation();
         case "outputformat":
         case "outputFormat": return target.getOutputFormat();
+        case "pdfbackend":
+        case "pdfBackend": return target.getPdfBackend();
+        case "pipeline": return target.getPipeline();
         case "processtimeout":
         case "processTimeout": return target.getProcessTimeout();
         case "splitbatchresults":
         case "splitBatchResults": return target.isSplitBatchResults();
+        case "tablecellmatching":
+        case "tableCellMatching": return target.getTableCellMatching();
+        case "tablemode":
+        case "tableMode": return target.getTableMode();
         case "useasyncmode":
         case "useAsyncMode": return target.isUseAsyncMode();
         case "usedoclingserve":

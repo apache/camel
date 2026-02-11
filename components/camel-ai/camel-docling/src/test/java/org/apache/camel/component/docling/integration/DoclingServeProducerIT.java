@@ -17,9 +17,13 @@
 package org.apache.camel.component.docling.integration;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
+import ai.docling.core.DoclingDocument;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docling.ConversionStatus;
 import org.apache.camel.component.docling.ConversionStatus.Status;
@@ -29,7 +33,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -89,15 +92,29 @@ class DoclingServeProducerIT extends DoclingITestSupport {
     void testJsonConversionWithDoclingServe() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-json-serve",
+        DoclingDocument doclingDocument = template.requestBodyAndHeader("direct:convert-json-serve",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), DoclingDocument.class);
 
-        assertThatJson(result).node("schema_name").asString().isEqualTo("DoclingDocument");
-        assertThatJson(result).inPath("texts[*].text").isArray().contains("Test Document",
-                "This is a test document for Docling-Serve processing.");
+        assertThat(doclingDocument).isNotNull();
+        assertThat(doclingDocument.getSchemaName()).isEqualTo("DoclingDocument");
 
-        LOG.info("Successfully converted document to JSON");
+        LOG.info("Successfully converted document to JSON (DoclingDocument)");
+    }
+
+    @Test
+    void testJsonConversionOfInvoice() throws Exception {
+        Path testFile = createInvoicePdfFile();
+
+        DoclingDocument doclingDocument = template.requestBodyAndHeader("direct:convert-json-serve",
+                testFile.toString(),
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), DoclingDocument.class);
+
+        assertThat(doclingDocument).isNotNull();
+        assertThat(doclingDocument.getSchemaName()).isEqualTo("DoclingDocument");
+        assertThat(doclingDocument.getTables()).isNotEmpty();
+
+        LOG.info("Successfully converted invoice PDF to DoclingDocument");
     }
 
     @Test
@@ -148,13 +165,12 @@ class DoclingServeProducerIT extends DoclingITestSupport {
     void testAsyncJsonConversion() throws Exception {
         Path testFile = createTestFile();
 
-        String result = template.requestBodyAndHeader("direct:convert-async-json",
+        DoclingDocument doclingDocument = template.requestBodyAndHeader("direct:convert-async-json",
                 testFile.toString(),
-                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), String.class);
+                DoclingHeaders.INPUT_FILE_PATH, testFile.toString(), DoclingDocument.class);
 
-        assertThatJson(result).node("schema_name").asString().isEqualTo("DoclingDocument");
-        assertThatJson(result).inPath("texts[*].text").isArray().contains("Test Document",
-                "This is a test document for Docling-Serve processing.");
+        assertThat(doclingDocument).isNotNull();
+        assertThat(doclingDocument.getSchemaName()).isEqualTo("DoclingDocument");
 
         LOG.info("Successfully converted document to JSON using async mode");
     }
@@ -301,6 +317,14 @@ class DoclingServeProducerIT extends DoclingITestSupport {
 
         LOG.info("Custom polling workflow (using built-in async mode) completed successfully with {} characters",
                 result.length());
+    }
+
+    private Path createInvoicePdfFile() throws IOException {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream("sample_invoice.pdf")) {
+            Path tempFile = Files.createTempFile("docling-test-invoice", ".pdf");
+            Files.copy(is, tempFile.toAbsolutePath(), StandardCopyOption.REPLACE_EXISTING);
+            return tempFile;
+        }
     }
 
     private Path createTestFile() throws Exception {

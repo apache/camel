@@ -82,13 +82,13 @@ The component supports the following operations:
 | Convert document to HTML format
 
 | `CONVERT_TO_JSON`
-| Convert document to JSON format with structure information
+| Convert document to JSON format. Returns a `DoclingDocument` object (`ai.docling.core.DoclingDocument`) in both API and CLI modes.
 
 | `EXTRACT_TEXT`
 | Extract plain text content from document
 
 | `EXTRACT_STRUCTURED_DATA`
-| Extract structured data including tables and layout information
+| Extract structured data with table structure recognition enabled by default. Returns a `DoclingDocument` object in both API and CLI modes. Additional enrichment features (code, formula, picture classification) can be enabled via configuration.
 
 | `EXTRACT_METADATA`
 | Extract document metadata (title, author, page count, creation date, etc.)
@@ -194,6 +194,8 @@ YAML::
 
 === Extract structured data from documents
 
+When using docling-serve API mode, `EXTRACT_STRUCTURED_DATA` returns a `DoclingDocument` object with table structure recognition enabled by default. In CLI mode, the JSON output is parsed into a `DoclingDocument`.
+
 [tabs]
 ====
 Java::
@@ -201,10 +203,16 @@ Java::
 [source,java]
 ----
 from("file:///data/documents?include=.*\\.pdf")
-    .to("docling:EXTRACT_STRUCTURED_DATA?outputFormat=json&contentInBody=true")
+    .to("docling:EXTRACT_STRUCTURED_DATA?useDoclingServe=true&contentInBody=true")
     .process(exchange -> {
-        String jsonData = exchange.getIn().getBody(String.class);
-        // Process the structured JSON data
+        DoclingDocument doc = exchange.getIn().getBody(DoclingDocument.class);
+
+        // Access tables extracted from the document
+        List<DoclingDocument.TableItem> tables = doc.getTables();
+        for (DoclingDocument.TableItem table : tables) {
+            DoclingDocument.TableData data = table.getData();
+            log.info("Table: {}x{}", data.getNumRows(), data.getNumCols());
+        }
     });
 ----
 
@@ -221,14 +229,16 @@ YAML::
       - to:
           uri: "docling:EXTRACT_STRUCTURED_DATA"
           parameters:
-            outputFormat: "json"
+            useDoclingServe: true
             contentInBody: true
       - process:
-          ref: "jsonDataProcessor"
+          ref: "structuredDataProcessor"
 ----
 ====
 
 === Convert with OCR disabled
+
+In CLI mode, use `enableOCR=false`. In API mode, setting `enableOCR=false` sends `doOcr(false)` to the server. You can also use the `doOcr` property directly for API mode control.
 
 [tabs]
 ====
@@ -236,8 +246,14 @@ Java::
 +
 [source,java]
 ----
+// CLI mode
 from("file:///data/documents?include=.*\\.pdf")
     .to("docling:CONVERT_TO_MARKDOWN?enableOCR=false")
+    .to("file:///data/output");
+
+// API mode
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_MARKDOWN?useDoclingServe=true&doOcr=false&contentInBody=true")
     .to("file:///data/output");
 ----
 
@@ -245,6 +261,7 @@ YAML::
 +
 [source,yaml]
 ----
+# CLI mode
 - route:
     from:
       uri: "file:///data/documents"
@@ -255,6 +272,22 @@ YAML::
           uri: "docling:CONVERT_TO_MARKDOWN"
           parameters:
             enableOCR: false
+      - to:
+          uri: "file:///data/output"
+
+# API mode
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_MARKDOWN"
+          parameters:
+            useDoclingServe: true
+            doOcr: false
+            contentInBody: true
       - to:
           uri: "file:///data/output"
 ----
@@ -598,13 +631,14 @@ public class HtmlProcessor implements Processor {
     }
 }
 
-@Component("jsonDataProcessor")
-public class JsonDataProcessor implements Processor {
+@Component("structuredDataProcessor")
+public class StructuredDataProcessor implements Processor {
+    private static final Logger log = LoggerFactory.getLogger(StructuredDataProcessor.class);
+
     @Override
     public void process(Exchange exchange) throws Exception {
-        String jsonData = exchange.getIn().getBody(String.class);
-        // Process the structured JSON data
-        log.info("Processing JSON data: {}", jsonData);
+        DoclingDocument doc = exchange.getIn().getBody(DoclingDocument.class);
+        log.info("Document schema: {}, tables: {}", doc.getSchemaName(), doc.getTables().size());
     }
 }
 
@@ -667,7 +701,7 @@ The following batch operations are available (all require `useDoclingServe=true`
 | Extract text from multiple documents in parallel
 
 | `BATCH_EXTRACT_STRUCTURED_DATA`
-| Extract structured data from multiple documents in parallel
+| Extract structured data from multiple documents in parallel with table structure recognition enabled by default
 
 |===
 
@@ -1962,6 +1996,223 @@ docling.serve.url=http://localhost:5001
 docling.serve.token=your-bearer-token-here
 ----
 
+== Advanced Processing Options (API Mode)
+
+When using docling-serve API mode (`useDoclingServe=true`), the component exposes advanced processing options that control how the server processes documents. These options are passed directly to the docling-serve API and provide fine-grained control over OCR, table recognition, enrichment features, and output formatting.
+
+=== OCR Options
+
+[width="100%",cols="2,1,4",options="header"]
+|===
+| Parameter | Default | Description
+
+| `doOcr`
+| _not set_
+| Enable OCR processing in docling-serve API mode. When not set, the server uses its own defaults. Set `enableOCR` to `false` to explicitly disable OCR.
+
+| `forceOcr`
+| _not set_
+| Force OCR processing even for digital documents (documents with selectable text).
+
+| `ocrEngine`
+| _not set_
+| OCR engine to use. Supported values: `AUTO`, `EASYOCR`, `OCRMAC`, `RAPIDOCR`, `TESSEROCR`, `TESSERACT`.
+
+|===
+
+NOTE: The `enableOCR` and `ocrLanguage` settings are primarily for CLI mode. In API mode, use `doOcr` to explicitly control OCR behavior. When `doOcr` is not set, the server uses its own defaults. Setting `enableOCR=false` will send `doOcr(false)` to the server to disable OCR.
+
+=== Table and Structure Options
+
+[width="100%",cols="2,1,4",options="header"]
+|===
+| Parameter | Default | Description
+
+| `doTableStructure`
+| _not set_
+| Enable table structure recognition. Automatically enabled for `EXTRACT_STRUCTURED_DATA` operations.
+
+| `tableMode`
+| _not set_
+| Table structure recognition mode. Supported values: `ACCURATE`, `FAST`.
+
+| `tableCellMatching`
+| _not set_
+| Enable table cell matching post-processing for better cell boundary detection.
+
+|===
+
+=== Enrichment Options
+
+[width="100%",cols="2,1,4",options="header"]
+|===
+| Parameter | Default | Description
+
+| `doCodeEnrichment`
+| _not set_
+| Enable code enrichment in document processing. Identifies and annotates code blocks.
+
+| `doFormulaEnrichment`
+| _not set_
+| Enable formula enrichment in document processing. Detects and processes mathematical formulas.
+
+| `doPictureClassification`
+| _not set_
+| Enable picture classification (e.g., chart, photo, diagram). May require additional ML models on the server.
+
+| `doPictureDescription`
+| _not set_
+| Enable picture description generation. May require a Vision Language Model (VLM) on the server.
+
+|===
+
+=== Pipeline and Output Options
+
+[width="100%",cols="2,1,4",options="header"]
+|===
+| Parameter | Default | Description
+
+| `pipeline`
+| _not set_
+| Processing pipeline to use. Supported values: `ASR`, `STANDARD`, `VLM`.
+
+| `pdfBackend`
+| _not set_
+| PDF parsing backend. Supported values: `DLPARSE_V1`, `DLPARSE_V2`, `DLPARSE_V4`, `PYPDFIUM2`.
+
+| `includeImages`
+| _not set_
+| Include images in the conversion output.
+
+| `imageExportMode`
+| _not set_
+| Image export mode for referenced images. Supported values: `EMBEDDED`, `PLACEHOLDER`, `REFERENCED`.
+
+| `imagesScale`
+| _not set_
+| Scale factor for exported images (e.g., `2.0` for double resolution).
+
+| `mdPageBreakPlaceholder`
+| _not set_
+| Placeholder string for page breaks in markdown output.
+
+| `abortOnError`
+| _not set_
+| Abort processing on error instead of continuing with partial results.
+
+| `documentTimeout`
+| _not set_
+| Document processing timeout in seconds (server-side timeout).
+
+|===
+
+=== Example: Advanced Processing Configuration
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:EXTRACT_STRUCTURED_DATA?" +
+        "useDoclingServe=true&" +
+        "doOcr=true&" +
+        "ocrEngine=TESSERACT&" +
+        "doTableStructure=true&" +
+        "tableMode=ACCURATE&" +
+        "doCodeEnrichment=true&" +
+        "pdfBackend=DLPARSE_V4&" +
+        "processTimeout=120000&" +     // 2 minutes for complex PDFs
+        "contentInBody=true")
+    .process(exchange -> {
+        DoclingDocument doc = exchange.getIn().getBody(DoclingDocument.class);
+        // Process the structured document
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:EXTRACT_STRUCTURED_DATA"
+          parameters:
+            useDoclingServe: true
+            doOcr: true
+            ocrEngine: "TESSERACT"
+            doTableStructure: true
+            tableMode: "ACCURATE"
+            doCodeEnrichment: true
+            pdfBackend: "DLPARSE_V4"
+            processTimeout: 120000
+            contentInBody: true
+      - process:
+          ref: "structuredDataProcessor"
+----
+====
+
+== DoclingDocument Return Type
+
+When using docling-serve API mode, the `CONVERT_TO_JSON` and `EXTRACT_STRUCTURED_DATA` operations return a `DoclingDocument` object (from the `ai.docling.core` package) instead of a raw JSON string. This object provides type-safe access to the document structure.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .to("docling:CONVERT_TO_JSON?" +
+        "useDoclingServe=true&" +
+        "contentInBody=true")
+    .process(exchange -> {
+        DoclingDocument doc = exchange.getIn().getBody(DoclingDocument.class);
+
+        // Access document structure
+        String schemaName = doc.getSchemaName();
+
+        // Access tables
+        List<DoclingDocument.TableItem> tables = doc.getTables();
+        for (DoclingDocument.TableItem table : tables) {
+            DoclingDocument.TableData data = table.getData();
+            int rows = data.getNumRows();
+            int cols = data.getNumCols();
+            log.info("Table: {}x{}", rows, cols);
+        }
+
+        // Access pictures
+        List<DoclingDocument.PictureItem> pictures = doc.getPictures();
+        log.info("Found {} pictures", pictures.size());
+    });
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - to:
+          uri: "docling:CONVERT_TO_JSON"
+          parameters:
+            useDoclingServe: true
+            contentInBody: true
+      - process:
+          ref: "doclingDocumentProcessor"
+----
+====
+
 == Error Handling
 
 The component handles various error scenarios:
@@ -1975,36 +2226,41 @@ The component handles various error scenarios:
 
 == Performance Considerations
 
-- Large documents may require increased `processTimeout` values (CLI mode)
-- OCR processing significantly increases processing time for scanned documents
-- Consider using `contentInBody=true` when using docling-serve API mode to get results directly in the body
-- The `maxFileSize` setting helps prevent resource exhaustion
-- **API Mode vs CLI Mode**: The docling-serve API mode typically offers better performance and resource utilization for high-volume document processing, as it maintains a persistent server instance
-- **Async Mode**: For large documents or high-volume processing, enable `useAsyncMode=true` to prevent blocking the Camel thread pool. The component will poll the docling-serve API for completion status while freeing up processing threads
-- **Async Configuration**: Adjust `asyncPollInterval` (default 2000ms) and `asyncTimeout` (default 300000ms/5 minutes) based on your document size and processing requirements
-- **Batch Processing**: When processing multiple documents, async mode allows better parallelization as the docling-serve instance can process multiple documents concurrently while Camel polls for results
+- **Process Timeout**: The `processTimeout` setting (default: 30000ms / 30 seconds) controls both the CLI subprocess timeout and the HTTP read timeout for docling-serve API mode. For complex PDF documents that require OCR or enrichment processing, increase this value (e.g., `processTimeout=120000` for 2 minutes).
+- OCR processing significantly increases processing time for scanned documents.
+- Consider using `contentInBody=true` when using docling-serve API mode to get results directly in the body.
+- The `maxFileSize` setting helps prevent resource exhaustion.
+- **API Mode vs CLI Mode**: The docling-serve API mode typically offers better performance and resource utilization for high-volume document processing, as it maintains a persistent server instance.
+- **Async Mode**: For large documents or high-volume processing, enable `useAsyncMode=true` to prevent blocking the Camel thread pool. The component will poll the docling-serve API for completion status while freeing up processing threads.
+- **Async Configuration**: Adjust `asyncPollInterval` (default 2000ms) and `asyncTimeout` (default 300000ms/5 minutes) based on your document size and processing requirements.
+- **Batch Processing**: When processing multiple documents, async mode allows better parallelization as the docling-serve instance can process multiple documents concurrently while Camel polls for results.
+- **Enrichment Features**: Enabling advanced options like `doPictureClassification` or `doPictureDescription` may require additional ML models on the server and can increase processing time.
 
 == HTTP Client Configuration
 
 When using docling-serve API mode, the component uses the https://github.com/docling-project/docling-java[docling-java] library which internally uses Java's built-in `HttpClient`. The HTTP client is configured with sensible defaults and connection management is handled automatically by the library.
 
-=== Async Configuration Parameters
-
-The most important configuration parameters for API mode relate to async processing:
+=== Timeout Configuration
 
 [width="100%",cols="2,1,4",options="header"]
 |===
 | Parameter | Default | Description
 
+| `processTimeout`
+| 30000
+| HTTP read timeout in milliseconds for synchronous API calls. Also used as the CLI subprocess timeout. Increase this for large or complex documents (e.g., 120000 for 2 minutes).
+
 | `asyncPollInterval`
 | 2000
-| Poll interval in milliseconds when checking async task status
+| Poll interval in milliseconds when checking async task status.
 
 | `asyncTimeout`
 | 300000
-| Maximum time to wait for async conversion completion in milliseconds (5 minutes)
+| Maximum time to wait for async conversion completion in milliseconds (5 minutes).
 
 |===
+
+IMPORTANT: The default `processTimeout` of 30 seconds may not be sufficient for complex PDF documents, especially when OCR or enrichment options are enabled. For production use with PDF files, consider increasing `processTimeout` to at least 120000 (2 minutes).
 
 === Configuration Examples
 

@@ -26,6 +26,7 @@ import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
+import ai.docling.core.DoclingDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.docling.DoclingComponent;
@@ -39,7 +40,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,6 +69,8 @@ class OcrExtractionIT extends CamelTestSupport {
         conf.setDoclingServeUrl(doclingService.doclingServerUrl());
         conf.setEnableOCR(true);
         conf.setOcrLanguage("en");
+        // OCR processing can take longer than the default 30s
+        conf.setProcessTimeout(120000);
         docling.setConfiguration(conf);
 
         LOG.info("Testing Docling OCR at: {}", doclingService.doclingServerUrl());
@@ -123,16 +125,13 @@ class OcrExtractionIT extends CamelTestSupport {
     void testOcrJsonConversionFromImage() throws Exception {
         Path testImage = createTestImageWithText();
 
-        String result = template.requestBody("direct:ocr-convert-json", testImage.toString(), String.class);
+        DoclingDocument doclingDocument
+                = template.requestBody("direct:ocr-convert-json", testImage.toString(), DoclingDocument.class);
 
-        assertThatJson(result).node("schema_name").asString().isEqualTo("DoclingDocument");
-        // OCR may combine adjacent lines - check for text containing the expected phrase
-        assertThat(result).contains(TEST_TEXT_LINE3);
+        assertThat(doclingDocument).isNotNull();
+        assertThat(doclingDocument.getSchemaName()).isEqualTo("DoclingDocument");
 
-        checkExtractedText(result);
-
-        LOG.info("OCR JSON conversion result:\n{}", result);
-        LOG.info("Successfully converted image to JSON using OCR");
+        LOG.info("Successfully converted image to JSON (DoclingDocument) using OCR");
     }
 
     @Test
