@@ -73,7 +73,7 @@
         <assertj-version>3.27.7</assertj-version>
         <asterisk-java-version>3.41.0</asterisk-java-version>
         <atlassian-fugue-version>6.1.2</atlassian-fugue-version>
-        <atmosphere-version>3.0.15</atmosphere-version>
+        <atmosphere-version>3.1.0</atmosphere-version>
         <avro-version>1.12.1</avro-version>
         <avro-ipc-jetty-version>1.12.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.12.1</avro-ipc-netty-version>
