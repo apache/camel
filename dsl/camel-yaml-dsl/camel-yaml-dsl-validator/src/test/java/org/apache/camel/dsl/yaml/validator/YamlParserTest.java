@@ -22,26 +22,27 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class YamlValidatorTest {
+public class YamlParserTest {
 
-    private static YamlValidator validator;
+    private static YamlParser parser;
 
     @BeforeAll
     public static void setup() throws Exception {
-        validator = new YamlValidator();
-        validator.init();
+        parser = new YamlParser();
     }
 
     @Test
-    public void testValidateOk() throws Exception {
-        Assertions.assertTrue(validator.validate(new File("src/test/resources/foo.yaml")).isEmpty());
+    public void testParseOk() throws Exception {
+        Assertions.assertTrue(parser.parse(new File("src/test/resources/foo.yaml")).isEmpty());
+        Assertions.assertTrue(parser.parse(new File("src/test/resources/bad.yaml")).isEmpty());
     }
 
     @Test
-    public void testValidateBad() throws Exception {
-        var report = validator.validate(new File("src/test/resources/bad.yaml"));
+    public void testParseBad() throws Exception {
+        var report = parser.parse(new File("src/test/resources/parse-bad.yaml"));
         Assertions.assertFalse(report.isEmpty());
         Assertions.assertEquals(1, report.size());
-        Assertions.assertTrue(report.get(0).getMessage().contains("setCheese"));
+        Assertions.assertTrue(report.get(0).getMessage().contains("while parsing a block mapping"));
+        Assertions.assertTrue(report.get(0).getMessage().contains("- setBody:"));
     }
 }
