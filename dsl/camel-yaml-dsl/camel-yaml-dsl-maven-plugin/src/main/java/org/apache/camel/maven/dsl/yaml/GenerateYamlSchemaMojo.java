@@ -66,6 +66,9 @@ import org.jboss.jandex.DotName;
       threadSafe = true,
       requiresProject = false)
 public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
+
+    private static final String DRAFT = "http://json-schema.org/draft-04/schema#";
+
     @Parameter(required = true)
     private File outputFile;
     @Parameter(defaultValue = "true")
@@ -84,7 +87,7 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
 
         final ObjectNode root = mapper.createObjectNode();
 
-        root.put("$schema", "http://json-schema.org/draft-04/schema#");
+        root.put("$schema", DRAFT);
         root.put("type", "array");
 
         items = root.putObject("items");

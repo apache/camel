@@ -123,6 +123,9 @@
                                         <resource>
                                             <directory>../catalog/camel-report-maven-plugin/src/main/docs</directory>
                                         </resource>
+                                        <resource>
+                                            <directory>../dsl/camel-yaml-dsl/camel-yaml-dsl-validator-maven-plugin/src/main/docs</directory>
+                                        </resource>
                                     </resources>
                                 </configuration>
                             </execution>

@@ -5,6 +5,7 @@
 ** xref:attachments.adoc[Attachments]
 *** xref:aws-xray.adoc[AWS XRay]
 *** xref:azure-schema-registry.adoc[Azure Schema Registry]
+** xref:camel-yaml-dsl-validator-maven-plugin.adoc[Camel YAML DSL Validator Maven Plugin]
 ** xref:cli-connector.adoc[CLI Connector]
 ** xref:cli-debug.adoc[CLI Debug]
 ** xref:cloudevents.adoc[Cloudevents]
