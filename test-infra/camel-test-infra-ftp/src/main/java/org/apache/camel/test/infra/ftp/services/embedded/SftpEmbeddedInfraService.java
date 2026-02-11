@@ -120,8 +120,15 @@ public class SftpEmbeddedInfraService extends AbstractService implements FtpInfr
         signatureFactories.clear();
         // use only one, quite strong signature algorithms for 3 kinds of keys - RSA, EC, EDDSA
         signatureFactories.add(BuiltinSignatures.rsaSHA512);
+        signatureFactories.add(BuiltinSignatures.nistp256);
         signatureFactories.add(BuiltinSignatures.nistp521);
         signatureFactories.add(BuiltinSignatures.ed25519);
+        // include both certificate and non-certificate variants so that OpenSSH certificate
+        // authentication works (the server needs cert-specific verifiers for cert key types)
+        signatureFactories.add(BuiltinSignatures.rsaSHA512_cert);
+        signatureFactories.add(BuiltinSignatures.nistp256_cert);
+        signatureFactories.add(BuiltinSignatures.nistp521_cert);
+        signatureFactories.add(BuiltinSignatures.ed25519_cert);
         sshd.setSignatureFactories(signatureFactories);
         sshd.start();
 
