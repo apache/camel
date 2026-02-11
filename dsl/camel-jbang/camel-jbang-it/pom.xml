@@ -232,7 +232,9 @@
                 <maven.test.skip>false</maven.test.skip>
                 <shared.data.folder>target/data</shared.data.folder>
                 <shared.maven.local.repo>${settings.localRepository}</shared.maven.local.repo>
+                <failsafe.forkCount>1C</failsafe.forkCount>
                 <x11.display>:0</x11.display>
+                <failsafe.excludedGroups/>
             </properties>
             <build>
                 <plugins>
@@ -267,8 +269,9 @@
                         </executions>
                         <configuration>
                             <argLine>-DforkNumber=${surefire.forkNumber}</argLine>
-                            <forkCount>1C</forkCount>
+                            <forkCount>${failsafe.forkCount}</forkCount>
                             <groups>${export.runtime}</groups>
+                            <excludedGroups>${failsafe.excludedGroups}</excludedGroups>
                             <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
                             <systemPropertyVariables>
                                 <cli.service.data.folder>${shared.data.folder}</cli.service.data.folder>
@@ -286,6 +289,19 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>local-camel-cli-process</id>
+            <activation>
+                <property>
+                    <name>camel-cli.instance.type</name>
+                    <value>local-camel-cli-process</value>
+                </property>
+            </activation>
+            <properties>
+                <failsafe.forkCount>1</failsafe.forkCount>
+                <failsafe.excludedGroups>container-only</failsafe.excludedGroups>
+            </properties>
         </profile>
     </profiles>
 

@@ -28,7 +28,8 @@ public class CustomJarsITCase extends JBangTestSupport {
     public void testCustomJars() throws IOException {
         copyResourceInDataFolder(TestResources.CIRCUIT_BREAKER);
         Assertions
-                .assertThatCode(() -> execute(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer", mountPoint())))
+                .assertThatCode(() -> execute(
+                        String.format("run %s/CircuitBreakerRoute.java --max-seconds=30", mountPoint())))
                 .as("the application without dependency will cause error")
                 .hasStackTraceContaining("Failed to create route: circuitBreaker")
                 .hasStackTraceContaining(

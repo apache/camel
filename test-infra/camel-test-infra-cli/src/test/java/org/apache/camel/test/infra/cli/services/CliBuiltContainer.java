@@ -66,7 +66,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
             UID = (Integer) Files.getAttribute(target, "unix:uid");
             GID = (Integer) Files.getAttribute(target, "unix:gid");
             LOGGER.info("building container using user {} and group {}", UID, GID);
-        } catch (IOException e) {
+        } catch (IOException | UnsupportedOperationException e) {
             LOGGER.warn("unable to retrieve user id and group: {}", e.getMessage());
         }
     }

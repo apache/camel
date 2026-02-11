@@ -35,7 +35,6 @@ import org.testcontainers.containers.Container;
 
 public class CliLocalContainerService implements CliService, ContainerService<CliBuiltContainer> {
     public static final String CONTAINER_NAME = "camel-cli";
-    public static final String MAIN_COMMAND = System.getProperty("cli.service.command", "camel");
     private static final Logger LOG = LoggerFactory.getLogger(CliLocalContainerService.class);
     private final CliBuiltContainer container;
     private String version;
@@ -114,7 +113,7 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
 
     @Override
     public String execute(String command) {
-        return executeGenericCommand(MAIN_COMMAND + " " + command);
+        return executeGenericCommand(getMainCommand() + " " + command);
     }
 
     @Override
@@ -214,11 +213,6 @@ public class CliLocalContainerService implements CliService, ContainerService<Cl
     @Override
     public String getSshPassword() {
         return container.getSshPassword();
-    }
-
-    @Override
-    public String getMainCommand() {
-        return MAIN_COMMAND;
     }
 
     private static Map<String, String> getHostsMap() {

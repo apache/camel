@@ -122,6 +122,7 @@
                                 <configuration>
                                     <target>
                                         <mkdir dir="target/tmp-repo"/>
+                                        <mkdir dir="target/data"/>
                                     </target>
                                 </configuration>
                                 <goals>
@@ -133,15 +134,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration-test</id>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                         <configuration>
                             <rerunFailingTestsCount>${surefire.rerunFailingTestsCount}</rerunFailingTestsCount>
                             <systemPropertyVariables>

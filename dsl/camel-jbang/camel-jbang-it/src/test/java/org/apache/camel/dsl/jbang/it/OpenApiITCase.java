@@ -30,9 +30,11 @@ import java.util.Random;
 import org.apache.camel.dsl.jbang.it.support.InVersion;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
+@Tag("container-only")
 public class OpenApiITCase extends JBangTestSupport {
 
     final HttpClient httpClient = HttpClient.newHttpClient();

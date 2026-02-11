@@ -24,9 +24,11 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoLocalContainerService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 
+@Tag("container-only")
 public class RunCommandOnMqttITCase extends JBangTestSupport {
 
     private static int mqttPort = AvailablePortFinder.getNextAvailable();
@@ -54,7 +56,7 @@ public class RunCommandOnMqttITCase extends JBangTestSupport {
         checkLogContains("Started route1 (kamelet:mqtt5-source)");
         final String payloadFile = "payload.json";
         newFileInDataFolder(payloadFile, "{\"value\": 21}");
-        sendCmd(String.format("%s/%s", mountPoint(), payloadFile), getPID(process));
+        sendCmd(String.format("%s/%s", mountPoint(), payloadFile), process);
         checkLogContains("The temperature is 21");
     }
 
@@ -63,7 +65,7 @@ public class RunCommandOnMqttITCase extends JBangTestSupport {
         copyResourceInDataFolder(TestResources.STUB_ROUTE);
         final String process = executeBackground(String.format("run %s/%s --stub=jms",
                 mountPoint(), TestResources.STUB_ROUTE.getName()));
-        checkCommandOutputs("cmd send --body='Hello camel from stubbed jms' " + getPID(process), "Sent (success)");
+        checkCommandOutputs("cmd send --body='Hello camel from stubbed jms' " + process, "Sent (success)");
         checkCommandOutputs("cmd stub --browse", "Hello camel from stubbed jms", ASSERTION_WAIT_SECONDS);
     }
 

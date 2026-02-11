@@ -21,9 +21,15 @@ import java.time.Duration;
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
+
+@Tag("container-only")
+@DisabledOnOs(WINDOWS)
 public class InfrastructureITCase extends JBangTestSupport {
     private static final String SERVICE = "ftp";
     private static final String IMPL_SERVICE = "artemis";

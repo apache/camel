@@ -75,5 +75,7 @@ public interface CliService extends BeforeEachCallback, AfterEachCallback, TestS
 
     String getSshPassword();
 
-    String getMainCommand();
+    default String getMainCommand() {
+        return System.getProperty("cli.service.command", "camel");
+    }
 }

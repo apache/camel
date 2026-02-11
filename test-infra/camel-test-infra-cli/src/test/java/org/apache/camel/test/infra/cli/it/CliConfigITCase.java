@@ -22,6 +22,8 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junitpioneer.jupiter.ReadsSystemProperty;
 import org.junitpioneer.jupiter.RestoreSystemProperties;
@@ -32,6 +34,7 @@ public class CliConfigITCase extends AbstractTestSupport {
 
     @Test
     @SetSystemProperty(key = "cli.service.version", value = "4.16.0")
+    @DisabledIf("isLocalProcessWithSkipInstall")
     public void setJBangVersionTest() {
         execute(cliService -> {
             String version = cliService.version();
@@ -50,6 +53,7 @@ public class CliConfigITCase extends AbstractTestSupport {
 
     @Test
     @SetSystemProperty(key = "cli.service.branch", value = "camel-4.4.x")
+    @DisabledIf("isLocalProcessWithSkipInstall")
     public void setBranchTest() {
         execute(cliService -> {
             String version = cliService.version();
@@ -60,6 +64,7 @@ public class CliConfigITCase extends AbstractTestSupport {
     @Test
     @SetSystemProperty(key = "cli.service.repo", value = "mcarlett/apache-camel")
     @SetSystemProperty(key = "cli.service.branch", value = "camel-cli-test")
+    @DisabledIf("isLocalProcessWithSkipInstall")
     public void setRepoTest() {
         execute(cliService -> {
             String version = cliService.version();
@@ -71,6 +76,7 @@ public class CliConfigITCase extends AbstractTestSupport {
     @ReadsSystemProperty
     @EnabledIfSystemProperty(named = "currentProjectVersion", matches = "^(?!\\s*$).+",
                              disabledReason = "currentProjectVersion system property must be set")
+    @DisabledIf("isLocalProcessWithSkipInstall")
     public void setCurrentProjectVersionTest() {
         String currentCamelVersion = System.getProperty("currentProjectVersion");
         System.setProperty("cli.service.version", currentCamelVersion);
@@ -83,10 +89,13 @@ public class CliConfigITCase extends AbstractTestSupport {
 
     @Test
     @SetSystemProperty(key = "cli.service.mvn.local", value = "target/tmp-repo")
+    @DisabledIfSystemProperty(named = "camel-cli.instance.type", matches = "local-camel-cli-process",
+                              disabledReason = "Test not supported with local process service")
     public void setLocalMavenRepoTest() {
         final Path dir = Path.of("target/tmp-repo");
         execute(cliService -> {
-            cliService.version();
+            cliService.execute("init foo.yaml");
+            cliService.execute("run foo.yaml --max-seconds=5");
             Assertions.assertTrue(dir.toFile().exists(), "Check the local maven repository is created");
             try {
                 Assertions.assertTrue(Files.list(dir).findFirst().isPresent(),

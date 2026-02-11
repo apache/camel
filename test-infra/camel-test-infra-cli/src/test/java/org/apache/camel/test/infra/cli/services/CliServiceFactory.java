@@ -30,6 +30,7 @@ public final class CliServiceFactory {
     public static CliService createService() {
         return builder()
                 .addLocalMapping(CliLocalContainerService::new)
+                .addMapping("local-camel-cli-process", CliLocalProcessService::new)
                 .build();
     }
 }

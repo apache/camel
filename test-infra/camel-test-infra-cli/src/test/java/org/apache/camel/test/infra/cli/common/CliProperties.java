@@ -41,6 +41,8 @@ public final class CliProperties {
 
     public static final String TRUSTED_CERT_PATHS = "cli.service.trusted.paths";
 
+    public static final String SKIP_INSTALL = "cli.service.skip.install";
+
     private CliProperties() {
     }
 }

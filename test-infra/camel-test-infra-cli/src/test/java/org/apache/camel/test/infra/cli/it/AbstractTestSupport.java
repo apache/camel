@@ -23,6 +23,11 @@ import org.apache.camel.test.infra.cli.services.CliServiceFactory;
 
 public abstract class AbstractTestSupport {
 
+    static boolean isLocalProcessWithSkipInstall() {
+        return "true".equals(System.getProperty("cli.service.skip.install"))
+                && "local-camel-cli-process".equals(System.getProperty("camel-cli.instance.type"));
+    }
+
     protected void execute(Consumer<CliService> consumer) {
         try (CliService containerService = CliServiceFactory.createService()) {
             containerService.beforeAll(null);

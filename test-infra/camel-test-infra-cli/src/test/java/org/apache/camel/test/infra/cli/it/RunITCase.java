@@ -20,6 +20,7 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.test.infra.cli.services.CliService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junitpioneer.jupiter.ReadsSystemProperty;
 import org.junitpioneer.jupiter.RestoreSystemProperties;
@@ -32,6 +33,7 @@ public class RunITCase extends AbstractTestSupport {
     @ReadsSystemProperty
     @EnabledIfSystemProperty(named = "currentProjectVersion", matches = "^(?!\\s*$).+",
                              disabledReason = "currentProjectVersion system property must be set")
+    @DisabledIf("isLocalProcessWithSkipInstall")
     public void readPidFromBackgroundExecutionInCurrentVersionTest() {
         String currentCamelVersion = System.getProperty("currentProjectVersion");
         System.setProperty("cli.service.version", currentCamelVersion);
@@ -41,6 +43,7 @@ public class RunITCase extends AbstractTestSupport {
 
     @Test
     @SetSystemProperty(key = "cli.service.version", value = "4.14.2")
+    @DisabledIf("isLocalProcessWithSkipInstall")
     public void readPidFromBackgroundExecutionInPreviousVersionTest() {
         execute(this::checkPidFromBackgroundExec);
     }

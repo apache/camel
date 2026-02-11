@@ -18,7 +18,11 @@ package org.apache.camel.dsl.jbang.it;
 
 import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
+
+@DisabledOnOs(WINDOWS)
 public class CamelCatalogITCase extends JBangTestSupport {
 
     private static final String COMPONENT_REGEX
