@@ -42,7 +42,7 @@ jobs:
           java-version: '17'
           cache: 'maven'
       - name: OWASP Dependency Check
-        run: ./mvnw -B -Pdependencycheck validate -DskipTests -DnvdApiKey=${{ secrets.NVD_API_KEY }} -l owasp-check.log
+        run: ./mvnw -B -Pdependencycheck validate -DskipTests -DnvdApiKey=${{ secrets.NVD_API_KEY }} -DnvdApiDelay=5000 -l owasp-check.log
       - name: Upload OWASP Report
         uses: actions/upload-artifact@v4
         if: always()
