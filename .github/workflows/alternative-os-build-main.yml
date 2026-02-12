@@ -32,23 +32,24 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, windows-2019]
+        java: ['17', '21']
       fail-fast: false
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
-      - name: Set up JDK ${{ matrix.os }}
+      - name: Set up JDK ${{ matrix.java }} on ${{ matrix.os }}
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: mvn build ${{ matrix.os }}
+      - name: mvn build ${{ matrix.os }} jdk-${{ matrix.java }}
         run: ./mvnw -B -V -D'http.keepAlive=false' -l build.log -D'maven.wagon.http.pool=false' -D'maven.wagon.httpconnectionManager.ttlSeconds=120' --no-transfer-progress -Dquickly install
-      - name: Archive logs ${{ matrix.os }}
+      - name: Archive logs ${{ matrix.os }} jdk-${{ matrix.java }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
-          name: build-${{ matrix.os }}
+          name: build-${{ matrix.os }}-jdk-${{ matrix.java }}
           path: build.log
           retention-days: 2
