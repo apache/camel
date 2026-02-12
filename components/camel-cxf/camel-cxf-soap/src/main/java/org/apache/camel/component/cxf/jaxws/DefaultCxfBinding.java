@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -94,6 +95,9 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.apache.wss4j.dom.handler.WSHandlerConstants;
+import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -368,14 +372,114 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
         if (securityContext instanceof LoginSecurityContext
                 && ((LoginSecurityContext) securityContext).getSubject() != null) {
+            Subject subject = ((LoginSecurityContext) securityContext).getSubject();
+            // attach certs to the subject instance
+            addInboundX509CertificatesToSubject(cxfMessage, subject);
             camelExchange.getIn().getHeaders().put(CxfConstants.AUTHENTICATION,
-                    ((LoginSecurityContext) securityContext).getSubject());
+                    subject);
         } else if (securityContext != null) {
             Principal user = securityContext.getUserPrincipal();
             if (user != null) {
                 Subject subject = new Subject();
                 subject.getPrincipals().add(user);
+                // attach certs to the subject instance
+                addInboundX509CertificatesToSubject(cxfMessage, subject);
                 camelExchange.getIn().getHeaders().put(CxfConstants.AUTHENTICATION, subject);
+            }
+        }
+    }
+
+    private static void addInboundX509CertificatesToSubject(Message cxfMessage, Subject subject) {
+        if (cxfMessage == null || subject == null) {
+            return;
+        }
+        // If it’s read-only, don’t break the route; just skip.
+        if (subject.isReadOnly()) {
+            return;
+        }
+
+        final Object recv = cxfMessage.get(WSHandlerConstants.RECV_RESULTS);
+        if (recv == null) {
+            return;
+        }
+
+        // We only need the cert objects.
+        Collection<X509Certificate> certs = null;
+
+        if (recv instanceof Map) {
+            Object v = ((Map<?, ?>) recv).get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
+            if (v instanceof Collection) {
+                certs = new ArrayList<>();
+                for (Object o : (Collection<?>) v) {
+                    if (o instanceof X509Certificate) {
+                        certs.add((X509Certificate) o);
+                    } else if (o instanceof X509Certificate[]) {
+                        for (X509Certificate c : (X509Certificate[]) o) {
+                            if (c != null) {
+                                certs.add(c);
+                            }
+                        }
+                    }
+                }
+            } else if (v instanceof X509Certificate[]) {
+                certs = new ArrayList<>();
+                for (X509Certificate c : (X509Certificate[]) v) {
+                    if (c != null) {
+                        certs.add(c);
+                    }
+                }
+            }
+        } else if (recv instanceof List) {
+            // Typical CXF case: List<WSHandlerResult>
+            List<?> list = (List<?>) recv;
+            if (!list.isEmpty() && list.get(0) instanceof WSHandlerResult) {
+                certs = new ArrayList<>();
+                for (Object hrObj : list) {
+                    WSHandlerResult hr = (WSHandlerResult) hrObj;
+                    // WSHandlerResult contains List<WSSecurityEngineResult>
+                    for (WSSecurityEngineResult r : hr.getResults()) {
+                        Object v = r.get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
+                        if (v instanceof X509Certificate[]) {
+                            for (X509Certificate c : (X509Certificate[]) v) {
+                                if (c != null) {
+                                    certs.add(c);
+                                }
+                            }
+                        } else if (v instanceof X509Certificate) {
+                            certs.add((X509Certificate) v);
+                        } else {
+                            Object leaf = r.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+                            if (leaf instanceof X509Certificate) {
+                                certs.add((X509Certificate) leaf);
+                            }
+                        }
+                    }
+                }
+                if (certs.isEmpty()) {
+                    certs = null;
+                }
+            }
+        }
+        if (certs == null || certs.isEmpty()) {
+            return;
+        }
+
+        Set<Object> pub = (Set<Object>) subject.getPublicCredentials();
+        for (Object o : certs) {
+            if (o instanceof X509Certificate) {
+                pub.add(o);
+            } else if (o instanceof X509Certificate[]) {
+                for (X509Certificate c : (X509Certificate[]) o) {
+                    if (c != null) {
+                        pub.add(c);
+                    }
+                }
+            } else if (o instanceof Collection) {
+                for (Object nested : (Collection<?>) o) {
+                    if (nested instanceof X509Certificate) {
+                        pub.add(nested);
+                    }
+                }
             }
         }
     }
