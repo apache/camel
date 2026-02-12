@@ -144,6 +144,28 @@ public class PropertyBindingSupportConstructorTest {
         context.stop();
     }
 
+    @Test
+    public void testConstructorQuotedInteger() {
+        CamelContext context = new DefaultCamelContext();
+
+        context.start();
+
+        MyAppWithInteger target = new MyAppWithInteger();
+
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(target)
+                .withProperty("name", "Donald")
+                .withProperty("age",
+                        "#class:" + MyInteger.class.getName() + "('42')")
+                .withRemoveParameters(false).bind();
+
+        assertEquals("Donald", target.getName());
+        assertEquals(42, target.getAge().getAge());
+
+        context.stop();
+    }
+
     public static class MyApp {
 
         private String name;
@@ -188,9 +210,35 @@ public class PropertyBindingSupportConstructorTest {
         }
     }
 
+    public static class MyAppWithInteger {
+
+        private String name;
+        private MyInteger age;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public MyInteger getAge() {
+            return age;
+        }
+
+        public void setAge(MyInteger age) {
+            this.age = age;
+        }
+    }
+
     public static class MyConfig {
 
         private final boolean enabled;
+
+        public MyConfig(String enabled) {
+            throw new UnsupportedOperationException("Should not be called");
+        }
 
         public MyConfig(boolean enabled) {
             this.enabled = enabled;
@@ -198,6 +246,23 @@ public class PropertyBindingSupportConstructorTest {
 
         public boolean isEnabled() {
             return enabled;
+        }
+    }
+
+    public static class MyInteger {
+
+        private final int age;
+
+        public MyInteger(String age) {
+            this.age = -1;
+        }
+
+        public MyInteger(int age) {
+            this.age = age;
+        }
+
+        public int getAge() {
+            return age;
         }
     }
 
