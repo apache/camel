@@ -111,6 +111,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring" id="camel">
         <route errorHandlerRef="noErrorHandler">
             <from uri="cxf:bean:signatureRoute"/>
+            <process ref="assertSubjectHasX509Certs"/>
             <to uri="cxf:bean:signatureService"/>
         </route>
         <route errorHandlerRef="noErrorHandler">
@@ -128,6 +129,7 @@
     </camelContext>
     
     <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
+    <bean id="assertSubjectHasX509Certs" class="org.apache.camel.component.cxf.wssecurity.camel.AssertSubjectHasX509CertsProcessor"/>
     
     <bean id="wss4jInInterceptor-signature" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
         <constructor-arg>
