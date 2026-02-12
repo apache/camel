@@ -23,13 +23,6 @@ The *simple* language has deprecated binary operators that uses space in the nam
 - `starts with` use `startsWith` instead
 - `ends with` use `endsWith` instead
 
-=== camel-jbang
-
-JKube has been upgraded from 1.8.1 to 1.9.0 which has changed the default path for
-Spring Boot health checks from `/observe/health/liveness` & `/observe/health/readiness` to a combined path `/observe/health`.
-
-This can affect users that are using `camel kubernetes export` to export to Spring Boot applications.
-
 === camel-file
 
 The `org.apache.camel.component.file.GenericFileOperations` has added method `storeFileDirectly`.

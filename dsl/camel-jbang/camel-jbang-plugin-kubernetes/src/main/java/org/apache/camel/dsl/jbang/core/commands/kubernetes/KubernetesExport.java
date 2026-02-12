@@ -533,14 +533,12 @@ public class KubernetesExport extends Export {
             buildProperties.add("quarkus.smallrye-health.root-path=/observe/health");
             addToApplicationProperties("quarkus.management.port=" + probePort);
         } else if (RuntimeType.springBoot == runtime) {
-            // addDependencies("org.springframework.boot:spring-boot-starter-actuator");
             // jkube reads spring-boot properties to set the kubernetes container health probes path
             // in this case, jkube reads from the application.properties and not from the build properties in pom.xml
             addToApplicationProperties("management.endpoints.web.base-path=/observe",
                     "management.server.port=" + probePort,
-                    // jkube uses the old property to enable the readiness/liveness probes
-                    // TODO: rename this property once https://github.com/eclipse-jkube/jkube/issues/3690 is fixed
-                    "management.health.probes.enabled=true");
+                    // jkube inspects this property to enable the readiness/liveness probes
+                    "management.endpoint.health.probes.enabled=true");
         } else if (RuntimeType.main == runtime) {
             addToApplicationProperties("camel.management.port=" + probePort);
         }

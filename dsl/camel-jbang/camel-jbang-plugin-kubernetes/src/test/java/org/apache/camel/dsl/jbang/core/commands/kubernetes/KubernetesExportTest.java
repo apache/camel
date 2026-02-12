@@ -90,7 +90,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertEquals("9876", applicationProperties.get("management.server.port"));
             Assertions.assertEquals("/observe", applicationProperties.get("management.endpoints.web.base-path"));
-            Assertions.assertEquals("true", applicationProperties.get("management.health.probes.enabled"));
+            Assertions.assertEquals("true", applicationProperties.get("management.endpoint.health.probes.enabled"));
         } else if (RuntimeType.main == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertEquals("9876", applicationProperties.get("camel.management.port"));
         }
@@ -274,7 +274,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
         } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertNull(applicationProperties.get("management.server.port"));
             Assertions.assertNull(applicationProperties.get("management.endpoints.web.base-path"));
-            Assertions.assertNull(applicationProperties.get("management.health.probes.enabled"));
+            Assertions.assertNull(applicationProperties.get("management.endpoint.health.probes.enabled"));
         } else if (RuntimeType.main == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertNull(applicationProperties.get("camel.management.port"));
         }
@@ -320,7 +320,7 @@ class KubernetesExportTest extends KubernetesExportBaseTestSupport {
 
         if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
             Assertions.assertEquals("/observe", applicationProperties.get("management.endpoints.web.base-path"));
-            Assertions.assertEquals("true", applicationProperties.get("management.health.probes.enabled"));
+            Assertions.assertEquals("true", applicationProperties.get("management.endpoint.health.probes.enabled"));
         }
     }
 
