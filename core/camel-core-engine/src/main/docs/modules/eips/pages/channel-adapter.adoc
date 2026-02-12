@@ -23,11 +23,43 @@ xref:ROOT:kafka-component.adoc[Kafka] component.
 
 One solution is to use a Camel route which consumes from the Kafka topic which calls a bean with the data.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
-from("kafka:cheese?brokers={{kafka.host}}:{{kafka.port}}"
-    .to("bean:cheeseBean");
+from("kafka:cheese?brokers={{kafka.host}}:{{kafka.port}}")
+  .to("bean:cheeseBean");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="kafka:cheese?brokers={{kafka.host}}:{{kafka.port}}"/>
+    <to uri="bean:cheeseBean"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: kafka
+      parameters:
+        topic: cheese
+        brokers: "{{kafka.host}}:{{kafka.port}}"
+      steps:
+        - to:
+            uri: bean
+            parameters:
+              beanName: cheeseBean
+----
+====
 
 And the bean has a method which accepts the message payload as a byte array.
 

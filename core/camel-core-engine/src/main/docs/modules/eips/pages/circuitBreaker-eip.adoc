@@ -73,6 +73,33 @@ XML::
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - circuitBreaker:
+            onFallback:
+              steps:
+                - transform:
+                    constant:
+                      expression: Fallback message
+            steps:
+              - to:
+                  uri: http
+                  parameters:
+                    httpUri: fooservice.com/slow
+        - to:
+            uri: mock
+            parameters:
+              name: result
+----
 ====
 
 == Circuit Breaker components
