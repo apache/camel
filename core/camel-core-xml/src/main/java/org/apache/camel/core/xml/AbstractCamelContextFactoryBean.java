@@ -597,8 +597,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.debug("Setting up routes");
 
             // mark that we are setting up routes
-            getContext().getCamelContextExtension().setupRoutes(false);
+            getContext().getCamelContextExtension().setupRoutes(this::doSetupRoutes);
+        }
+    }
 
+    /**
+     * Internal method to do the actual route setup within the setupRoutes context.
+     */
+    private void doSetupRoutes() {
+        try {
             // add route configurations
             initRouteConfigurationRefs();
             getContext().addRouteConfigurations(getRouteConfigurations());
@@ -663,9 +670,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             findRouteBuilders();
             installRoutes();
-
-            // and we are now finished setting up the routes
-            getContext().getCamelContextExtension().setupRoutes(true);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
