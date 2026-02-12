@@ -27,6 +27,7 @@ import org.apache.camel.component.as2.api.*;
 import org.apache.camel.component.as2.api.entity.ApplicationEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
 
+    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
     // Basic Auth takes precedence when auth token also provided
     private static final String USER_NAME = "camel";
     private static final String PASSWORD = "rider";
@@ -189,10 +191,15 @@ public class AS2BasicAuthHeaderTest extends AbstractAS2ITSupport {
         };
     }
 
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setTargetPortNumber(TARGET_PORT);
+    }
+
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", 8889, AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null, null, null, null);
         requestHandler = new AS2ClientManagerIT.RequestHandler();

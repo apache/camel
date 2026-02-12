@@ -25,6 +25,7 @@ import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.HttpRequest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
 
+    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
     private static final String ACCESS_TOKEN = "MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3";
     private static final String EDI_MESSAGE = """
             UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'
@@ -135,10 +137,15 @@ public class AS2TokenAuthHeaderTest extends AbstractAS2ITSupport {
         };
     }
 
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setTargetPortNumber(TARGET_PORT);
+    }
+
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", 8889, AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null, null, null, null);
         requestHandler = new AS2ClientManagerIT.RequestHandler();

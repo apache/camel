@@ -150,7 +150,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private static final String SIGNED_RECEIPT_MIC_ALGORITHMS = "sha1,md5";
     private static final String DISPOSITION_NOTIFICATION_OPTIONS
             = "signed-receipt-protocol=optional,pkcs7-signature; signed-receipt-micalg=optional,sha1";
-    private static final int PARTNER_TARGET_PORT = 8889;
+    private static final int PARTNER_TARGET_PORT = AvailablePortFinder.getNextAvailable();
     private static final int MDN_TARGET_PORT = AvailablePortFinder.getNextAvailable();
     private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + MDN_TARGET_PORT + "/handle-receipts";
     private static final String REPORTING_UA = "Server Responding with MDN";
@@ -164,6 +164,11 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
     private static KeyPair clientKeyPair;
     private static X509Certificate clientCert;
+
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setTargetPortNumber(PARTNER_TARGET_PORT);
+    }
 
     @Test
     public void plainMessageSendTest() throws Exception {

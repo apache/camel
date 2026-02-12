@@ -53,6 +53,7 @@ import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.http.HttpVersion;
@@ -82,7 +83,7 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
 
     protected static final String METHOD = "POST";
     protected static final String TARGET_HOST = "localhost";
-    protected static final int TARGET_PORT = 8889;
+    protected static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
     protected static final Duration HTTP_SOCKET_TIMEOUT = Duration.ofSeconds(5);
     protected static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     protected static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
@@ -137,6 +138,11 @@ public class AS2ServerManagerITBase extends AbstractAS2ITSupport {
     @BeforeAll
     public static void setup() throws Exception {
         setupSigningGenerator();
+    }
+
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setServerPortNumber(TARGET_PORT);
     }
 
     @Override

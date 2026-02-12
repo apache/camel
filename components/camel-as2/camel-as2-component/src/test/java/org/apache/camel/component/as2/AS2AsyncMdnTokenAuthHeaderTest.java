@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class AS2AsyncMdnTokenAuthHeaderTest extends AbstractAS2ITSupport {
 
     private static final String MDN_ACCESS_TOKEN = "MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3";
+    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
     private static final int RECEIPT_SERVER_PORT = AvailablePortFinder.getNextAvailable();
     private static final String EDI_MESSAGE = """
             UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'
@@ -133,11 +134,16 @@ public class AS2AsyncMdnTokenAuthHeaderTest extends AbstractAS2ITSupport {
         };
     }
 
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setTargetPortNumber(TARGET_PORT);
+    }
+
     // AS2 server adds Authorization header to MDN returned asynchronously
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 "1.1", "AS2ClientManagerIntegrationTest Server",
-                "server.example.com", 8889, AS2SignatureAlgorithm.SHA256WITHRSA,
+                "server.example.com", TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 null, null, null,
                 "TBD", null, null,
                 // server authorization config

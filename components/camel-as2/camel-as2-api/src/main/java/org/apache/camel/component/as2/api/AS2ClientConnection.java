@@ -64,7 +64,6 @@ import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
 import org.apache.hc.core5.http.protocol.RequestConnControl;
 import org.apache.hc.core5.http.protocol.RequestContent;
 import org.apache.hc.core5.http.protocol.RequestDate;
-import org.apache.hc.core5.http.protocol.RequestExpectContinue;
 import org.apache.hc.core5.http.protocol.RequestTargetHost;
 import org.apache.hc.core5.http.protocol.RequestUserAgent;
 import org.apache.hc.core5.net.URIAuthority;
@@ -109,8 +108,7 @@ public class AS2ClientConnection {
                 .add(new RequestUserAgent(this.userAgent))
                 .add(new RequestDate())
                 .add(new RequestContent(true))
-                .add(new RequestConnControl())
-                .add(new RequestExpectContinue()).build();
+                .add(new RequestConnControl()).build();
 
         final Http1Config h1Config = Http1Config.custom().setBufferSize(8 * 1024).build();
 

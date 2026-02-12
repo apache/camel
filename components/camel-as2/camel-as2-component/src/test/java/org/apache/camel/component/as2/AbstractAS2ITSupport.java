@@ -48,6 +48,7 @@ public class AbstractAS2ITSupport extends CamelTestSupport {
 
         final AS2Configuration configuration = new AS2Configuration();
         PropertyBindingSupport.bindProperties(context, configuration, options);
+        customizeConfiguration(configuration);
 
         // add AS2Component to Camel context
         final AS2Component component = new AS2Component(context);
@@ -55,6 +56,10 @@ public class AbstractAS2ITSupport extends CamelTestSupport {
         context.addComponent("as2", component);
 
         return context;
+    }
+
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        // subclasses can override to customize the AS2 component configuration
     }
 
     @SuppressWarnings("unchecked")

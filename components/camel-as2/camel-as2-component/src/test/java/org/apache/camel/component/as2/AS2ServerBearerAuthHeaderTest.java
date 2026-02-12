@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class AS2ServerBearerAuthHeaderTest extends AbstractAS2ITSupport {
 
     private static final String MDN_ACCESS_TOKEN = "MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3";
+    private static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
     private static final int JETTY_PORT = AvailablePortFinder.getNextAvailable();
     private static final String EDI_MESSAGE = """
             UNB+UNOA:1+005435656:1+006415160:1+060515:1434+00000000000778'
@@ -114,7 +115,12 @@ public class AS2ServerBearerAuthHeaderTest extends AbstractAS2ITSupport {
 
     private AS2ClientConnection getAs2ClientConnection() throws IOException {
         return new AS2ClientConnection(
-                "1.1", "Camel AS2 Endpoint", "example.org", "localhost", 8889, Duration.ofSeconds(5),
+                "1.1", "Camel AS2 Endpoint", "example.org", "localhost", TARGET_PORT, Duration.ofSeconds(5),
                 Duration.ofSeconds(5), 5, Duration.ofMinutes(15), null, null);
+    }
+
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setServerPortNumber(TARGET_PORT);
     }
 }
