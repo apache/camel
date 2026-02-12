@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,7 +46,7 @@ public class TransformRoute extends CamelCommand {
 
     @CommandLine.Option(names = {
             "--output" },
-                        description = "File or directory to store transformed files. If none provide then output is printed to console.")
+                        description = "File or directory to store transformed files. If none provide then output is printed to console. Use clipboard as name to copy content into clipboard.")
     private String output;
 
     @CommandLine.Option(names = { "--format" },
@@ -79,7 +82,7 @@ public class TransformRoute extends CamelCommand {
 
         String dump = output;
         // if no output then we want to print to console, so we need to write to a hidden file, and dump that file afterwards
-        if (output == null) {
+        if (output == null || "clipboard".equals(output)) {
             dump = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/transform-output." + format;
         }
         final String target = dump;
@@ -108,10 +111,15 @@ public class TransformRoute extends CamelCommand {
             return exit;
         }
 
-        if (output == null) {
+        if (output == null || "clipboard".equals(output)) {
             // load target file and print to console
             dump = waitForDumpFile(Path.of(target));
             if (dump != null) {
+                if ("clipboard".equals(output)) {
+                    Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    StringSelection data = new StringSelection(dump);
+                    c.setContents(data, data);
+                }
                 printer().println(dump);
             }
         }
