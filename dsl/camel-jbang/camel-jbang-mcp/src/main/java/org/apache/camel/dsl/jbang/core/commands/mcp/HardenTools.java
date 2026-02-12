@@ -308,7 +308,8 @@ public class HardenTools {
         String lowerRoute = route.toLowerCase();
         return lowerRoute.contains("hashicorp-vault") || lowerRoute.contains("aws-secrets-manager")
                 || lowerRoute.contains("aws2-secrets-manager")
-                || lowerRoute.contains("azure-key-vault") || lowerRoute.contains("google-secret-manager") || lowerRoute.contains("cyberark-vault");
+                || lowerRoute.contains("azure-key-vault") || lowerRoute.contains("google-secret-manager")
+                || lowerRoute.contains("cyberark-vault");
     }
 
     private boolean usesTLS(String route) {
