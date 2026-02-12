@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +25,14 @@ import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
+import com.networknt.schema.ValidationMessage;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolCallException;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.dsl.yaml.validator.YamlValidator;
 
 /**
  * MCP Tools for validating and transforming Camel routes using Quarkus MCP Server.
@@ -37,6 +41,7 @@ import org.apache.camel.catalog.EndpointValidationResult;
 public class TransformTools {
 
     private final CamelCatalog catalog;
+    private YamlValidator yamlValidator;
 
     public TransformTools() {
         this.catalog = new DefaultCamelCatalog(true);
@@ -151,6 +156,49 @@ public class TransformTools {
     }
 
     /**
+     * Tool to validate a YAML DSL route definition against the Camel YAML DSL JSON schema.
+     */
+    @Tool(description = "Validate a YAML DSL route definition against the Camel YAML DSL JSON schema. "
+                        + "Checks for valid DSL elements, correct route structure, and returns detailed schema validation errors.")
+    public YamlDslValidationResult camel_validate_yaml_dsl(
+            @ToolArg(description = "YAML DSL route definition to validate") String route) {
+
+        if (route == null || route.isBlank()) {
+            throw new ToolCallException("'route' parameter is required", null);
+        }
+
+        try {
+            if (yamlValidator == null) {
+                yamlValidator = new YamlValidator();
+                yamlValidator.init();
+            }
+
+            File tempFile = File.createTempFile("camel-validate-", ".yaml");
+            try {
+                Files.writeString(tempFile.toPath(), route);
+                List<ValidationMessage> messages = yamlValidator.validate(tempFile);
+
+                List<YamlDslError> errors = null;
+                if (!messages.isEmpty()) {
+                    errors = messages.stream()
+                            .map(m -> new YamlDslError(
+                                    m.getMessage(),
+                                    m.getInstanceLocation() != null ? m.getInstanceLocation().toString() : null,
+                                    m.getType(),
+                                    m.getSchemaLocation() != null ? m.getSchemaLocation().toString() : null))
+                            .toList();
+                }
+
+                return new YamlDslValidationResult(messages.isEmpty(), messages.size(), errors);
+            } finally {
+                tempFile.delete();
+            }
+        } catch (Exception e) {
+            throw new ToolCallException("Failed to validate YAML DSL: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Extract endpoint URIs from a YAML route definition.
      */
     private List<String> extractUrisFromRoute(String route) {
@@ -212,5 +260,11 @@ public class TransformTools {
         public String note;
         public boolean supported;
         public String recommendation;
+    }
+
+    public record YamlDslValidationResult(boolean valid, int numberOfErrors, List<YamlDslError> errors) {
+    }
+
+    public record YamlDslError(String error, String instancePath, String type, String schemaPath) {
     }
 }

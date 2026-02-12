@@ -24,7 +24,7 @@ By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-en
 
 == Available Tools
 
-The server exposes 15 tools organized into six functional areas.
+The server exposes 16 tools organized into six functional areas.
 
 === Catalog Exploration
 
@@ -108,6 +108,11 @@ The server exposes 15 tools organized into six functional areas.
 | `camel_validate_route`
 | Validates Camel endpoint URIs against the catalog schema. Catches unknown options, missing required parameters,
   invalid enum values, and type mismatches. Also provides suggestions for misspelled option names.
+
+| `camel_validate_yaml_dsl`
+| Validates a YAML DSL route definition against the Camel YAML DSL JSON schema. Checks for valid DSL elements,
+  correct route structure, and returns detailed schema validation errors including instance path, error type,
+  and schema path.
 
 | `camel_transform_route`
 | Assists with route DSL format transformation between YAML and XML.
@@ -272,6 +277,24 @@ Validate this Kafka endpoint: kafka:myTopic?brkers=localhost:9092&groupId=myGrou
 
 The assistant calls `camel_validate_route` and detects the typo (`brkers`), reports the URI as invalid, and
 suggests the correct option name (`brokers`).
+
+=== Validating YAML DSL Structure
+
+----
+Validate this YAML route definition for me:
+
+- route:
+    from:
+      uri: timer:yaml
+      steps:
+        - setCheese:
+            simple: Hello Camel
+        - log: ${body}
+----
+
+The assistant calls `camel_validate_yaml_dsl` which validates the route against the Camel YAML DSL JSON schema
+and reports that `setCheese` is not a valid DSL element, returning the instance path and error type so the AI
+can suggest the correct processor name (e.g., `setBody`).
 
 === Understanding a Route
 
