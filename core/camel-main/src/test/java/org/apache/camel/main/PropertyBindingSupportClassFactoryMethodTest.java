@@ -24,6 +24,8 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for PropertyBindingSupport
@@ -84,6 +86,72 @@ public class PropertyBindingSupportClassFactoryMethodTest {
         context.stop();
     }
 
+    @Test
+    public void testFactoryQuotedBoolean() {
+        CamelContext context = new DefaultCamelContext();
+
+        context.start();
+
+        MyAppWithConfig target = new MyAppWithConfig();
+
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(target)
+                .withProperty("name", "Donald")
+                .withProperty("config",
+                        "#class:" + MyConfig.class.getName() + "#create(\"true\")")
+                .withRemoveParameters(false).bind();
+
+        assertEquals("Donald", target.getName());
+        assertTrue(target.getConfig().isEnabled());
+
+        context.stop();
+    }
+
+    @Test
+    public void testFactoryQuotedBooleanFalse() {
+        CamelContext context = new DefaultCamelContext();
+
+        context.start();
+
+        MyAppWithConfig target = new MyAppWithConfig();
+
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(target)
+                .withProperty("name", "Donald")
+                .withProperty("config",
+                        "#class:" + MyConfig.class.getName() + "#create('false')")
+                .withRemoveParameters(false).bind();
+
+        assertEquals("Donald", target.getName());
+        assertFalse(target.getConfig().isEnabled());
+
+        context.stop();
+    }
+
+    @Test
+    public void testFactoryQuotedBooleanIgnoreCase() {
+        CamelContext context = new DefaultCamelContext();
+
+        context.start();
+
+        MyAppWithConfig target = new MyAppWithConfig();
+
+        PropertyBindingSupport.build()
+                .withCamelContext(context)
+                .withTarget(target)
+                .withProperty("name", "Donald")
+                .withProperty("config",
+                        "#class:" + MyConfig.class.getName() + "#create(\"FALSE\")")
+                .withRemoveParameters(false).bind();
+
+        assertEquals("Donald", target.getName());
+        assertFalse(target.getConfig().isEnabled());
+
+        context.stop();
+    }
+
     public static class MyApp {
 
         private String name;
@@ -130,6 +198,45 @@ public class PropertyBindingSupportClassFactoryMethodTest {
 
         public String getPassword() {
             return password;
+        }
+    }
+
+    public static class MyAppWithConfig {
+
+        private String name;
+        private MyConfig config;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public MyConfig getConfig() {
+            return config;
+        }
+
+        public void setConfig(MyConfig config) {
+            this.config = config;
+        }
+    }
+
+    public static class MyConfig {
+
+        private final boolean enabled;
+
+        private MyConfig(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public static MyConfig create(boolean enabled) {
+            return new MyConfig(enabled);
+        }
+
+        public boolean isEnabled() {
+            return enabled;
         }
     }
 
