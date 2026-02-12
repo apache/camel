@@ -17,10 +17,10 @@
 package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
@@ -40,47 +40,8 @@ import org.apache.camel.util.json.JsonObject;
 @ApplicationScoped
 public class HardenTools {
 
-    // Components with significant security considerations
-    private static final List<String> SECURITY_SENSITIVE_COMPONENTS = Arrays.asList(
-            // Network/API components - need TLS, authentication
-            "http", "https", "netty-http", "vertx-http", "websocket",
-            "rest", "rest-api", "platform-http", "servlet", "undertow", "jetty",
-            // Messaging - need authentication, encryption
-            "kafka", "jms", "activemq", "amqp", "rabbitmq", "pulsar",
-            "aws2-sqs", "aws2-sns", "aws2-kinesis",
-            "azure-servicebus", "azure-eventhubs",
-            "google-pubsub",
-            // File/Storage - need access control, path validation
-            "file", "ftp", "sftp", "ftps",
-            "aws2-s3", "azure-storage-blob", "azure-storage-queue", "azure-files",
-            "google-storage", "minio",
-            // Database - need authentication, SQL injection prevention
-            "sql", "jdbc", "mongodb", "couchdb", "cassandraql",
-            "elasticsearch", "opensearch", "redis",
-            // Email - need authentication, TLS
-            "smtp", "smtps", "imap", "imaps", "pop3", "pop3s",
-            // Remote execution - high risk, need strict validation
-            "exec", "ssh", "docker",
-            // Directory services - need secure binding
-            "ldap", "ldaps",
-            // Secrets management
-            "hashicorp-vault", "aws2-secrets-manager", "azure-key-vault", "google-secret-manager");
-
-    private static final List<String> SECURITY_BEST_PRACTICES = Arrays.asList(
-            "Use TLS/SSL (version 1.2+) for all network communications",
-            "Store secrets in vault services (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, etc.)",
-            "Use property placeholders for sensitive configuration values",
-            "Enable authentication for all endpoints and services",
-            "Validate and sanitize all input data to prevent injection attacks",
-            "Use parameterized queries for database operations",
-            "Implement proper certificate validation - do not disable SSL verification",
-            "Use principle of least privilege for service accounts and IAM roles",
-            "Enable audit logging for sensitive operations",
-            "Implement proper error handling without exposing internal details",
-            "Use HTTPS instead of HTTP for all external communications",
-            "Configure appropriate timeouts to prevent resource exhaustion",
-            "Validate file paths to prevent path traversal attacks",
-            "Use SFTP/FTPS instead of plain FTP");
+    @Inject
+    SecurityData securityData;
 
     private final CamelCatalog catalog;
 
@@ -120,8 +81,8 @@ public class HardenTools {
                 compJson.put("title", model.getTitle());
                 compJson.put("description", model.getDescription());
                 compJson.put("label", model.getLabel());
-                compJson.put("securityConsiderations", getSecurityConsiderations(comp));
-                compJson.put("riskLevel", getRiskLevel(comp));
+                compJson.put("securityConsiderations", securityData.getSecurityConsiderations(comp));
+                compJson.put("riskLevel", securityData.getRiskLevel(comp));
                 securityComponentsJson.add(compJson);
             }
         }
@@ -133,7 +94,7 @@ public class HardenTools {
 
         // Best practices
         JsonArray bestPractices = new JsonArray();
-        for (String practice : SECURITY_BEST_PRACTICES) {
+        for (String practice : securityData.getBestPractices()) {
             bestPractices.add(practice);
         }
         result.put("securityBestPractices", bestPractices);
@@ -161,7 +122,7 @@ public class HardenTools {
         List<String> found = new ArrayList<>();
         String lowerRoute = route.toLowerCase();
 
-        for (String comp : SECURITY_SENSITIVE_COMPONENTS) {
+        for (String comp : securityData.getSecuritySensitiveComponents()) {
             if (containsComponent(lowerRoute, comp)) {
                 found.add(comp);
             }
@@ -318,92 +279,9 @@ public class HardenTools {
         return analysis;
     }
 
-    /**
-     * Get security considerations for a specific component.
-     */
-    private String getSecurityConsiderations(String component) {
-        return switch (component) {
-            case "http" ->
-                "Prefer HTTPS over HTTP. Validate certificates. Configure appropriate timeouts. Set security headers.";
-            case "https" ->
-                "Verify TLS version is 1.2 or higher. Enable certificate validation. Configure secure cipher suites.";
-            case "kafka" ->
-                "Enable SASL authentication (SCRAM-SHA-256/512 or GSSAPI). Use SSL for encryption. Configure ACLs for authorization.";
-            case "sql", "jdbc" ->
-                "Use parameterized queries to prevent SQL injection. Limit database user privileges. Enable connection encryption.";
-            case "file" ->
-                "Validate file paths to prevent traversal attacks. Restrict directory access. Set appropriate file permissions.";
-            case "ftp" ->
-                "INSECURE: Use SFTP or FTPS instead. Plain FTP transmits credentials in cleartext.";
-            case "sftp" ->
-                "Use key-based authentication. Validate host keys. Configure known_hosts file.";
-            case "ftps" ->
-                "Enable explicit FTPS. Verify server certificates. Use strong TLS version.";
-            case "exec" ->
-                "HIGH RISK: Validate and sanitize all inputs to prevent command injection. Consider safer alternatives.";
-            case "ssh" ->
-                "Use key-based authentication. Validate host keys. Disable password authentication if possible.";
-            case "rest", "rest-api", "platform-http" ->
-                "Implement authentication (OAuth2, JWT, API keys). Validate all input. Set CORS policies. Add security headers.";
-            case "ldap" ->
-                "Use LDAPS for encryption. Escape special characters to prevent LDAP injection. Use service account with minimal privileges.";
-            case "ldaps" ->
-                "Verify server certificates. Use strong TLS. Escape special characters in queries.";
-            case "mongodb" ->
-                "Enable authentication. Use TLS for connections. Limit network exposure. Use SCRAM authentication.";
-            case "redis" ->
-                "Enable authentication (requirepass or ACL). Use TLS. Limit network exposure. Disable dangerous commands.";
-            case "jms", "activemq", "amqp", "rabbitmq" ->
-                "Enable authentication. Use SSL/TLS for connections. Configure authorization policies.";
-            case "aws2-s3", "aws2-sqs", "aws2-sns", "aws2-kinesis" ->
-                "Use IAM roles instead of access keys. Enable server-side encryption. Configure bucket/queue policies.";
-            case "aws2-secrets-manager" ->
-                "Use IAM roles for access. Enable automatic rotation. Audit secret access.";
-            case "azure-storage-blob", "azure-storage-queue", "azure-files" ->
-                "Use managed identities. Enable encryption at rest. Configure access policies.";
-            case "azure-key-vault" ->
-                "Use managed identities. Enable soft-delete. Configure access policies and RBAC.";
-            case "google-storage", "google-pubsub" ->
-                "Use service accounts with minimal permissions. Enable encryption. Configure IAM policies.";
-            case "google-secret-manager" ->
-                "Use service accounts. Enable automatic rotation. Audit access.";
-            case "hashicorp-vault" ->
-                "Use AppRole or Kubernetes auth. Configure token TTLs. Enable audit logging.";
-            case "elasticsearch", "opensearch" ->
-                "Enable authentication. Use TLS. Configure role-based access control.";
-            case "smtp", "smtps", "imap", "imaps", "pop3", "pop3s" ->
-                "Use TLS variants (SMTPS, IMAPS, POP3S). Use secure authentication. Store credentials securely.";
-            case "websocket" ->
-                "Use WSS (WebSocket Secure). Implement authentication. Validate origin headers.";
-            case "docker" ->
-                "HIGH RISK: Validate all inputs. Use least privilege. Consider container security policies.";
-            case "netty-http", "vertx-http", "undertow", "jetty", "servlet" ->
-                "Enable TLS. Implement authentication. Set security headers. Validate input.";
-            case "pulsar" ->
-                "Enable TLS encryption. Configure authentication (JWT, Athenz). Set authorization policies.";
-            case "minio" ->
-                "Enable TLS. Use access/secret keys securely. Configure bucket policies.";
-            case "couchdb", "cassandraql" ->
-                "Enable authentication. Use TLS for connections. Configure role-based access.";
-            default -> "Review security configuration for this component";
-        };
-    }
-
-    /**
-     * Get risk level for a component.
-     */
-    private String getRiskLevel(String component) {
-        return switch (component) {
-            case "exec", "docker" -> "critical";
-            case "http", "ftp", "ldap", "sql", "jdbc" -> "high";
-            case "file", "ssh", "rest", "rest-api", "platform-http", "kafka", "mongodb", "redis" -> "medium";
-            default -> "low";
-        };
-    }
-
     private int countComponentsByRisk(List<String> components, String riskLevel) {
         return (int) components.stream()
-                .filter(c -> riskLevel.equals(getRiskLevel(c)))
+                .filter(c -> riskLevel.equals(securityData.getRiskLevel(c)))
                 .count();
     }
 
