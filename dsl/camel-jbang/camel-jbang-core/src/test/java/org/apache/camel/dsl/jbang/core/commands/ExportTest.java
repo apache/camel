@@ -544,6 +544,38 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportCircuitBreaker(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportCircuitBraeker {}", rt);
+        Export command = createCommand(rt, new String[] { "src/test/resources/MyCB.java" },
+                "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet");
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+        Assertions.assertEquals("examples", model.getGroupId());
+        Assertions.assertEquals("route", model.getArtifactId());
+        Assertions.assertEquals("1.0.0", model.getVersion());
+
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-resilience4j", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-resilience4j-starter",
+                            null));
+        } else if (rt == RuntimeType.quarkus) {
+            // quarkus does not have resilience4j but uses mp-fault-tolenrance
+            Assertions.assertFalse(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-resilience4j",
+                            null));
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus",
+                            "camel-quarkus-microprofile-fault-tolerance",
+                            null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportSecretBean(RuntimeType rt) throws Exception {
         LOG.info("shouldExportSecretBean {}", rt);
         Export command = createCommand(rt,

@@ -16,10 +16,12 @@
  */
 package org.apache.camel.main.download;
 
+import org.apache.camel.Processor;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.reifier.ProcessReifier;
 import org.apache.camel.reifier.ProcessorReifier;
+import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.support.PluginHelper;
 
 /**
  * When using circuit breakers then we need to download the runtime implementation
@@ -56,11 +58,26 @@ public final class CircuitBreakerDownloader {
                                     downloader.downloadDependency("org.apache.camel", "camel-microprofile-fault-tolerance",
                                             route.getCamelContext().getVersion());
                                 }
+                            } else {
+                                // use resilience4j as default
+                                downloader.downloadDependency("org.apache.camel", "camel-resilience4j",
+                                        route.getCamelContext().getVersion());
                             }
                         }
+                        // circuit breakers uses a processor factory (which supports using downloaded JARs)
+                        return new ProcessorReifier<>(route, cb) {
+                            @Override
+                            public Processor createProcessor() throws Exception {
+                                final ProcessorFactory processorFactory
+                                        = PluginHelper.getProcessorFactory(getCamelContext());
+                                if (processorFactory != null) {
+                                    return processorFactory.createProcessor(route, cb);
+                                }
+                                return null;
+                            }
+                        };
                     }
-                    // use core reifier now we have downloaded JARs if needed
-                    return ProcessReifier.coreReifier(route, processorDefinition);
+                    return null;
                 });
     }
 
