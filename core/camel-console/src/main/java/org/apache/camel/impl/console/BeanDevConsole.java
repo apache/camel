@@ -71,29 +71,10 @@ public class BeanDevConsole extends AbstractDevConsole {
             Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
             keys.forEach(k -> {
                 Object bean = beans.get(k);
-                if (bean != null) {
-                    boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
-                    if (include) {
-                        sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
-
-                        Map<String, Object> values = new TreeMap<>();
-                        if (properties) {
-                            try {
-                                bi.getProperties(bean, values, null);
-                            } catch (Throwable e) {
-                                // ignore
-                            }
-                            values.forEach((pk, pv) -> {
-                                if (pv == null) {
-                                    if (nulls) {
-                                        sb.append(String.format("        %s = null%n", pk));
-                                    }
-                                } else {
-                                    String t = pv.getClass().getName();
-                                    sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
-                                }
-                            });
-                        }
+                if (shouldIncludeBean(bean, internal)) {
+                    sb.append(String.format("    %s (class: %s)%n", k, bean.getClass().getName()));
+                    if (properties) {
+                        appendBeanPropertiesText(sb, bi, bean, nulls);
                     }
                 }
                 sb.append("\n");
@@ -103,6 +84,27 @@ public class BeanDevConsole extends AbstractDevConsole {
         }
 
         return sb.toString();
+    }
+
+    private void appendBeanPropertiesText(StringBuilder sb, BeanIntrospection bi, Object bean, boolean nulls) {
+        Map<String, Object> values = new TreeMap<>();
+        try {
+            bi.getProperties(bean, values, null);
+        } catch (Throwable e) {
+            // ignore
+        }
+        values.forEach((pk, pv) -> appendPropertyText(sb, pk, pv, nulls));
+    }
+
+    private void appendPropertyText(StringBuilder sb, String pk, Object pv, boolean nulls) {
+        if (pv == null) {
+            if (nulls) {
+                sb.append(String.format("        %s = null%n", pk));
+            }
+        } else {
+            String t = pv.getClass().getName();
+            sb.append(String.format("        %s (%s) = %s%n", pk, t, pv));
+        }
     }
 
     @Override
@@ -122,51 +124,9 @@ public class BeanDevConsole extends AbstractDevConsole {
             Stream<String> keys = beans.keySet().stream().filter(r -> accept(r, filter)).sorted(String::compareToIgnoreCase);
             keys.forEach(k -> {
                 Object bean = beans.get(k);
-                if (bean != null) {
-                    boolean include = internal || !bean.getClass().getName().startsWith("org.apache.camel.");
-                    if (include) {
-                        Map<String, Object> values = new TreeMap<>();
-                        if (properties) {
-                            try {
-                                bi.getProperties(bean, values, null);
-                            } catch (Throwable e) {
-                                // ignore
-                            }
-                        }
-                        JsonObject jb = new JsonObject();
-                        jb.put("name", k);
-                        jb.put("type", bean.getClass().getName());
-                        jo.put(k, jb);
-
-                        if (!values.isEmpty()) {
-                            JsonArray arr = new JsonArray();
-                            values.forEach((pk, pv) -> {
-                                Object value = pv;
-                                String type = pv != null ? pv.getClass().getName() : null;
-                                if (type != null) {
-                                    value = Jsoner.trySerialize(pv);
-                                    if (value == null) {
-                                        // cannot serialize so escape
-                                        value = Jsoner.escape(pv.toString());
-                                    } else {
-                                        // okay so use the value as-s
-                                        value = pv;
-                                    }
-                                }
-                                JsonObject jp = new JsonObject();
-                                jp.put("name", pk);
-                                if (type != null) {
-                                    jp.put("type", type);
-                                }
-                                jp.put("value", value);
-                                boolean accept = value != null || nulls;
-                                if (accept) {
-                                    arr.add(jp);
-                                }
-                            });
-                            jb.put("properties", arr);
-                        }
-                    }
+                if (shouldIncludeBean(bean, internal)) {
+                    JsonObject jb = buildBeanJson(k, bean, bi, properties, nulls);
+                    jo.put(k, jb);
                 }
             });
         } catch (Exception e) {
@@ -174,6 +134,66 @@ public class BeanDevConsole extends AbstractDevConsole {
         }
 
         return root;
+    }
+
+    private JsonObject buildBeanJson(String name, Object bean, BeanIntrospection bi, boolean properties, boolean nulls) {
+        JsonObject jb = new JsonObject();
+        jb.put("name", name);
+        jb.put("type", bean.getClass().getName());
+
+        if (!properties) {
+            return jb;
+        }
+
+        Map<String, Object> values = new TreeMap<>();
+        try {
+            bi.getProperties(bean, values, null);
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        if (!values.isEmpty()) {
+            JsonArray arr = new JsonArray();
+            values.forEach((pk, pv) -> addPropertyToArray(arr, pk, pv, nulls));
+            jb.put("properties", arr);
+        }
+
+        return jb;
+    }
+
+    private void addPropertyToArray(JsonArray arr, String pk, Object pv, boolean nulls) {
+        Object value = resolvePropertyValue(pv);
+        if (value == null && !nulls) {
+            return;
+        }
+
+        JsonObject jp = new JsonObject();
+        jp.put("name", pk);
+        if (pv != null) {
+            jp.put("type", pv.getClass().getName());
+        }
+        jp.put("value", value);
+        arr.add(jp);
+    }
+
+    private Object resolvePropertyValue(Object pv) {
+        if (pv == null) {
+            return null;
+        }
+        Object serialized = Jsoner.trySerialize(pv);
+        if (serialized == null) {
+            // cannot serialize so escape
+            return Jsoner.escape(pv.toString());
+        }
+        // okay so use the value as-is
+        return pv;
+    }
+
+    private static boolean shouldIncludeBean(Object bean, boolean internal) {
+        if (bean == null) {
+            return false;
+        }
+        return internal || !bean.getClass().getName().startsWith("org.apache.camel.");
     }
 
     private static boolean accept(String name, String filter) {
