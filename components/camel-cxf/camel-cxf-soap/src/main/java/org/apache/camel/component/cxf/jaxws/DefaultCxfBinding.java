@@ -393,6 +393,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (cxfMessage == null || subject == null) {
             return;
         }
+
         // If it’s read-only, don’t break the route; just skip.
         if (subject.isReadOnly()) {
             return;
@@ -406,51 +407,54 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // We only need the cert objects.
         Collection<X509Certificate> certs = null;
 
-        if (recv instanceof Map) {
-            Object v = ((Map<?, ?>) recv).get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
-            if (v instanceof Collection) {
+        if (recv instanceof Map<?, ?> map) {
+            Object v = map.get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
+
+            if (v instanceof Collection<?> coll) {
                 certs = new ArrayList<>();
-                for (Object o : (Collection<?>) v) {
-                    if (o instanceof X509Certificate) {
-                        certs.add((X509Certificate) o);
-                    } else if (o instanceof X509Certificate[]) {
-                        for (X509Certificate c : (X509Certificate[]) o) {
+                for (Object o : coll) {
+                    if (o instanceof X509Certificate cert) {
+                        certs.add(cert);
+                    } else if (o instanceof X509Certificate[] arr) {
+                        for (X509Certificate c : arr) {
                             if (c != null) {
                                 certs.add(c);
                             }
                         }
                     }
                 }
-            } else if (v instanceof X509Certificate[]) {
+            } else if (v instanceof X509Certificate[] arr) {
                 certs = new ArrayList<>();
-                for (X509Certificate c : (X509Certificate[]) v) {
+                for (X509Certificate c : arr) {
                     if (c != null) {
                         certs.add(c);
                     }
                 }
             }
-        } else if (recv instanceof List) {
+
+        } else if (recv instanceof List<?> list) {
             // Typical CXF case: List<WSHandlerResult>
-            List<?> list = (List<?>) recv;
             if (!list.isEmpty() && list.get(0) instanceof WSHandlerResult) {
                 certs = new ArrayList<>();
                 for (Object hrObj : list) {
-                    WSHandlerResult hr = (WSHandlerResult) hrObj;
-                    // WSHandlerResult contains List<WSSecurityEngineResult>
+                    if (!(hrObj instanceof WSHandlerResult hr)) {
+                        continue;
+                    }
                     for (WSSecurityEngineResult r : hr.getResults()) {
                         Object v = r.get(WSSecurityEngineResult.TAG_X509_CERTIFICATES);
-                        if (v instanceof X509Certificate[]) {
-                            for (X509Certificate c : (X509Certificate[]) v) {
+
+                        if (v instanceof X509Certificate[] arr) {
+                            for (X509Certificate c : arr) {
                                 if (c != null) {
                                     certs.add(c);
                                 }
                             }
-                        } else if (v instanceof X509Certificate) {
-                            certs.add((X509Certificate) v);
+                        } else if (v instanceof X509Certificate cert) {
+                            certs.add(cert);
                         } else {
                             Object leaf = r.get(WSSecurityEngineResult.TAG_X509_CERTIFICATE);
-                            if (leaf instanceof X509Certificate) {
-                                certs.add((X509Certificate) leaf);
+                            if (leaf instanceof X509Certificate cert) {
+                                certs.add(cert);
                             }
                         }
                     }
@@ -460,27 +464,14 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             }
         }
+
         if (certs == null || certs.isEmpty()) {
             return;
         }
 
         Set<Object> pub = (Set<Object>) subject.getPublicCredentials();
-        for (Object o : certs) {
-            if (o instanceof X509Certificate) {
-                pub.add(o);
-            } else if (o instanceof X509Certificate[]) {
-                for (X509Certificate c : (X509Certificate[]) o) {
-                    if (c != null) {
-                        pub.add(c);
-                    }
-                }
-            } else if (o instanceof Collection) {
-                for (Object nested : (Collection<?>) o) {
-                    if (nested instanceof X509Certificate) {
-                        pub.add(nested);
-                    }
-                }
-            }
+        for (X509Certificate cert : certs) {
+            pub.add(cert);
         }
     }
 
