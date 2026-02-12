@@ -35,7 +35,6 @@
         <firstVersion>4.11.0</firstVersion>
         <label>monitoring,microservice</label>
         <title>Opentelemetry2</title>
-        <supportLevel>Preview</supportLevel>
     </properties>
 
     <dependencyManagement>

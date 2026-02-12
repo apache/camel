@@ -7,7 +7,7 @@
     "deprecated": false,
     "firstVersion": "4.11.0",
     "label": "monitoring,microservice",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-opentelemetry2",
     "version": "4.18.0-SNAPSHOT"
