@@ -39,6 +39,7 @@ import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.util.MicUtils;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
@@ -57,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
 
     protected static final String TARGET_HOST = "localhost";
-    protected static final int TARGET_PORT = 8889;
+    protected static final int TARGET_PORT = AvailablePortFinder.getNextAvailable();
     protected static final Duration HTTP_SOCKET_TIMEOUT = Duration.ofSeconds(5);
     protected static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     protected static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
@@ -107,6 +108,11 @@ public class AS2ServerSecTestBase extends AbstractAS2ITSupport {
     public static void setup() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         setupKeysAndCertificates();
+    }
+
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setServerPortNumber(TARGET_PORT);
     }
 
     @Override

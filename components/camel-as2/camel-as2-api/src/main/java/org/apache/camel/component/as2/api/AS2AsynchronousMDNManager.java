@@ -44,7 +44,6 @@ import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
 import org.apache.hc.core5.http.protocol.RequestConnControl;
 import org.apache.hc.core5.http.protocol.RequestContent;
 import org.apache.hc.core5.http.protocol.RequestDate;
-import org.apache.hc.core5.http.protocol.RequestExpectContinue;
 import org.apache.hc.core5.http.protocol.RequestTargetHost;
 import org.apache.hc.core5.http.protocol.RequestUserAgent;
 
@@ -111,7 +110,7 @@ public class AS2AsynchronousMDNManager {
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create().add(new RequestAsynchronousMDN(as2Version, senderFQDN))
                 .add(new RequestTargetHost()).add(new RequestUserAgent(userAgent)).add(new RequestDate())
-                .add(new RequestContent(true)).add(new RequestConnControl()).add(new RequestExpectContinue())
+                .add(new RequestContent(true)).add(new RequestConnControl())
                 .build();
     }
 

@@ -110,7 +110,7 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
             """;
 
     private static final String EDI_MESSAGE_CONTENT_TRANSFER_ENCODING = "7bit";
-    private static final int PARTNER_TARGET_PORT = 8889;
+    private static final int PARTNER_TARGET_PORT = AvailablePortFinder.getNextAvailable();
 
     private static final int RECEIPT_SERVER_PORT = AvailablePortFinder.getNextAvailable();
     private static final int RECEIPT_SERVER_PORT2 = AvailablePortFinder.getNextAvailable();
@@ -136,6 +136,11 @@ public class AS2AsyncMDNServerManagerIT extends AbstractAS2ITSupport {
         if (serverConnection != null) {
             serverConnection.close();
         }
+    }
+
+    @Override
+    protected void customizeConfiguration(AS2Configuration configuration) {
+        configuration.setTargetPortNumber(PARTNER_TARGET_PORT);
     }
 
     // Verify the MDN is receipt returned asynchronously from the server when the request headers includes the
