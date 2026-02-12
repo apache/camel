@@ -1496,16 +1496,18 @@ public final class PropertyBindingSupport {
 
         // single quoted is valid
         if (value.startsWith("'") && value.endsWith("'")) {
-            return String.class;
+            String unquoted = value.substring(1, value.length() - 1);
+            return isBooleanValue(unquoted) ? Boolean.class : String.class;
         }
 
         // double quoted is valid
         if (value.startsWith("\"") && value.endsWith("\"")) {
-            return String.class;
+            String unquoted = value.substring(1, value.length() - 1);
+            return isBooleanValue(unquoted) ? Boolean.class : String.class;
         }
 
         // true or false is valid (boolean)
-        if (value.equals("true") || value.equals("false")) {
+        if (isBooleanValue(value)) {
             return Boolean.class;
         }
 
@@ -1542,6 +1544,10 @@ public final class PropertyBindingSupport {
 
         // not valid
         return null;
+    }
+
+    private static boolean isBooleanValue(String value) {
+        return "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
     }
 
     private static boolean isParameterMatchingType(Class<?> parameterType, Class<?> expectedType) {
