@@ -145,8 +145,8 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
             Assertions.assertEquals(9876, containers.get(0).getStartupProbe().getHttpGet().getPort().getIntVal());
         } else if (RuntimeType.springBoot == RuntimeType.fromValue(rt.runtime())) {
             // spring-boot doesn't set the startup probe
-            Assertions.assertEquals("/observe/health", containers.get(0).getLivenessProbe().getHttpGet().getPath());
-            Assertions.assertEquals("/observe/health", containers.get(0).getReadinessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/liveness", containers.get(0).getLivenessProbe().getHttpGet().getPath());
+            Assertions.assertEquals("/observe/health/readiness", containers.get(0).getReadinessProbe().getHttpGet().getPath());
             Assertions.assertEquals(9876, containers.get(0).getReadinessProbe().getHttpGet().getPort().getIntVal());
             Assertions.assertEquals(9876, containers.get(0).getLivenessProbe().getHttpGet().getPort().getIntVal());
         }
