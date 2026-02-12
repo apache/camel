@@ -1076,7 +1076,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
                 // ignore
             }
         }
-        return answer != null ? answer : "1.18.1";
+        return answer != null ? answer : "1.19.0";
     }
 
     // This method is kept for backward compatibility with derived classes

@@ -4168,7 +4168,7 @@ The camel.jbang supports 47 options, which are listed below.
 | *camel.jbang.jfr* | Enables Java Flight Recorder saving recording to disk on exit | false | boolean
 | *camel.jbang.jfr-profile* | Java Flight Recorder profile to use (such as default or profile) | default | String
 | *camel.jbang.jib-maven-plugin-version* | Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options) | 3.4.5 | String
-| *camel.jbang.jkube-maven-plugin-version* | Version to use for jkube-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options) | 1.18.1 | String
+| *camel.jbang.jkube-maven-plugin-version* | Version to use for jkube-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options) | 1.19.0 | String
 | *camel.jbang.jkubeFiles* | Resource YAML fragments for Kubernetes using Eclipse JKube tool (Use commas to separate multiple files). |  | String
 | *camel.jbang.kameletsVersion* | Apache Camel Kamelets version. By default the Kamelets are the same version as Camel. |  | String
 | *camel.jbang.lazyBean* | Whether to use lazy bean initialization (can help with complex classloading issues) | false | boolean
