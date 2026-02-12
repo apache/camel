@@ -57,7 +57,7 @@ public class SecurityData {
             // Directory services - need secure binding
             "ldap", "ldaps",
             // Secrets management
-            "hashicorp-vault", "aws2-secrets-manager", "azure-key-vault", "google-secret-manager");
+            "hashicorp-vault", "aws2-secrets-manager", "azure-key-vault", "google-secret-manager", "cyberark-vault");
 
     private static final List<String> SECURITY_BEST_PRACTICES = Arrays.asList(
             "Use TLS/SSL (version 1.2+) for all network communications",
