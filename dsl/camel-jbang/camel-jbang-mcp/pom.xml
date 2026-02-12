@@ -86,6 +86,12 @@
             <artifactId>camel-jbang-core</artifactId>
         </dependency>
 
+        <!-- Camel YAML DSL Validator for schema validation -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-yaml-dsl-validator</artifactId>
+        </dependency>
+
         <!-- test dependencies -->
         <dependency>
             <groupId>io.quarkus</groupId>
