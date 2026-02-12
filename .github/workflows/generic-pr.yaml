@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Label changes scope
         if: |
-          github.event_name == 'pull_request' &&
+          github.event_name == 'pull_request_target' &&
             (github.event.action == 'opened' ||
              github.event.action == 'reopened' ||
              github.event.action == 'synchronize')
