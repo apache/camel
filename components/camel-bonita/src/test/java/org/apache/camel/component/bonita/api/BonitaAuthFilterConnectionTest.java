@@ -35,7 +35,6 @@ import org.mockito.MockitoAnnotations;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -65,7 +64,7 @@ public class BonitaAuthFilterConnectionTest {
     @Test
     public void testConnection() throws Exception {
         String port = wireMockServer.port() + "";
-        stubFor(post(urlEqualTo("/bonita/loginservice"))
+        wireMockServer.stubFor(post(urlEqualTo("/bonita/loginservice"))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something")));
 
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
@@ -77,7 +76,7 @@ public class BonitaAuthFilterConnectionTest {
     @Test
     public void testConnectionSupportCSRF() throws Exception {
         String port = wireMockServer.port() + "";
-        stubFor(post(urlEqualTo("/bonita/loginservice"))
+        wireMockServer.stubFor(post(urlEqualTo("/bonita/loginservice"))
                 .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something", "X-Bonita-API-Token=something")));
 
         BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
