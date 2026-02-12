@@ -4,7 +4,7 @@
 :artifactid: camel-opentelemetry2
 :description: Implementation of Camel Opentelemetry based on the Camel Telemetry spec
 :since: 4.11
-:supportlevel: Preview
+:supportlevel: Stable
 :tabs-sync-option:
 //Manually maintained attributes
 :camel-spring-boot-name: opentelemetry2
