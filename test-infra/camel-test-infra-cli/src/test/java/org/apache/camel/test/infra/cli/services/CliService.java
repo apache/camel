@@ -74,4 +74,6 @@ public interface CliService extends BeforeEachCallback, AfterEachCallback, TestS
     int getSshPort();
 
     String getSshPassword();
+
+    String getMainCommand();
 }

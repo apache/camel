@@ -29,5 +29,4 @@ public class RouteFromDirITCase extends JBangTestSupport {
         executeBackground(String.format("run --source-dir=%s", mountPoint()));
         checkLogContains("Hello world!");
     }
-
 }

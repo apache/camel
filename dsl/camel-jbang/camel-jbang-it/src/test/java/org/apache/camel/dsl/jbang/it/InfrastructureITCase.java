@@ -39,7 +39,7 @@ public class InfrastructureITCase extends JBangTestSupport {
     @Test
     public void runStopServiceTest() {
         String msg = execute("infra run --background " + SERVICE);
-        String PID = getPID(msg);
+        String PID = getServicePID(msg);
         Assertions.assertThat(msg).contains(String.format("Running %s in background", SERVICE));
         Awaitility.await()
                 .atMost(Duration.ofSeconds(30))
@@ -55,7 +55,7 @@ public class InfrastructureITCase extends JBangTestSupport {
     @Test
     public void runServiceWithImplementationTest() {
         String msg = execute(String.format("infra run --background %s %s", IMPL_SERVICE, IMPLEMENTATION));
-        String PID = getPID(msg);
+        String PID = getServicePID(msg);
         Assertions.assertThat(msg).contains(String.format("Running %s in background", IMPL_SERVICE));
         Awaitility.await()
                 .atMost(Duration.ofSeconds(30))
@@ -66,7 +66,7 @@ public class InfrastructureITCase extends JBangTestSupport {
         checkCommandDoesNotOutput("infra ps", PID);
     }
 
-    private String getPID(String message) {
+    private String getServicePID(String message) {
         return message.split(":")[1].replaceAll("[^0-9]", "");
     }
 }

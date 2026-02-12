@@ -227,6 +227,7 @@
                 <cli.jbang.repo>apache/camel</cli.jbang.repo>
                 <cli.jbang.branch>main</cli.jbang.branch>
                 <cli.jbang.docker.file/>
+                <cli.service.command>camel</cli.service.command>
                 <export.runtime/>
                 <maven.test.skip>false</maven.test.skip>
                 <shared.data.folder>target/data</shared.data.folder>
@@ -276,6 +277,7 @@
                                 <cli.service.repo>${cli.jbang.repo}</cli.service.repo>
                                 <cli.service.branch>${cli.jbang.branch}</cli.service.branch>
                                 <cli.service.docker.file>${cli.jbang.docker.file}</cli.service.docker.file>
+                                <cli.service.command>${cli.service.command}</cli.service.command>
                                 <jbang.it.assert.wait.timeout>300</jbang.it.assert.wait.timeout>
                                 <DISPLAY>${x11.display}</DISPLAY>
                             </systemPropertyVariables>

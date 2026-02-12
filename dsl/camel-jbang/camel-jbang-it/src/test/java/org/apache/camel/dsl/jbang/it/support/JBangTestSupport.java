@@ -141,6 +141,10 @@ public abstract class JBangTestSupport {
         return containerService.executeBackground(command);
     }
 
+    protected String execNohup(final String command) {
+        return containerService.executeGenericCommand("nohup " + getMainCommand() + " " + command + " &");
+    }
+
     protected String mountPoint() {
         return String.format("%s/%s", containerService.getMountPoint(), containerService.id());
     }
@@ -178,13 +182,13 @@ public abstract class JBangTestSupport {
 
     protected void checkCommandOutputs(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel " + command + " should output " + contains)
+                .as("command  " + getMainCommand() + " " + command + "should output " + contains)
                 .contains(contains);
     }
 
     protected void checkCommandOutputsPattern(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel " + command + " should output pattern " + contains)
+                .as("command  " + getMainCommand() + " " + command + "should output " + contains)
                 .containsPattern(contains);
     }
 
@@ -196,7 +200,7 @@ public abstract class JBangTestSupport {
 
     protected void checkCommandDoesNotOutput(String command, String contains) {
         Assertions.assertThat(execute(command))
-                .as("command camel " + command + " should not output " + contains)
+                .as("command  " + getMainCommand() + " " + command + "should not output " + contains)
                 .doesNotContain(contains);
     }
 
@@ -289,6 +293,10 @@ public abstract class JBangTestSupport {
         return getLogs(null);
     }
 
+    protected String getPID(String startupMessage) {
+        return startupMessage.split("PID:")[1].split(" ")[1].replaceAll("[^0-9]", "");
+    }
+
     protected String getContainerLogs() {
         return containerService.getContainerLogs();
     }
@@ -332,6 +340,10 @@ public abstract class JBangTestSupport {
 
     protected String getDataFolder() {
         return containerDataFolder;
+    }
+
+    protected String getMainCommand() {
+        return containerService.getMainCommand();
     }
 
     public String version() {

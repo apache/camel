@@ -40,10 +40,10 @@ public class CmdStartStopITCase extends JBangTestSupport {
     public void testCmdStopByPID() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         copyResourceInDataFolder(TestResources.ROUTE2);
-        String PID = executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
+        String process = executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
         executeBackground(String.format("run %s/route2.yaml", mountPoint()));
         checkLogContains("Hello world!");
-        execute("cmd stop-route " + PID);
+        execute("cmd stop-route " + getPID(process));
         checkCommandOutputsPattern("get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Started",
                 ASSERTION_WAIT_SECONDS);
@@ -78,11 +78,11 @@ public class CmdStartStopITCase extends JBangTestSupport {
     public void testCmdStartByPID() throws IOException {
         copyResourceInDataFolder(TestResources.DIR_ROUTE);
         copyResourceInDataFolder(TestResources.ROUTE2);
-        String PID = executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
+        String process = executeBackground(String.format("run %s/FromDirectoryRoute.java", mountPoint()));
         executeBackground(String.format("run %s/route2.yaml", mountPoint()));
         checkLogContains("Hello world!");
         execute("cmd stop-route");
-        execute("cmd start-route " + PID);
+        execute("cmd start-route " + getPID(process));
         checkCommandOutputsPattern("get route",
                 "route1\\s+timer:\\/\\/(yaml|java)\\?period=1000\\s+Started.*\\n.*route2.*timer:\\/\\/(yaml|java)\\?period=1000\\s+Stopped",
                 ASSERTION_WAIT_SECONDS);
@@ -104,14 +104,14 @@ public class CmdStartStopITCase extends JBangTestSupport {
     @Test
     public void testCamelWatch() throws IOException {
         copyResourceInDataFolder(TestResources.ROUTE2);
-        String PID = executeBackground(String.format("run %s/route2.yaml", mountPoint()));
-        newFileInDataFolder("watch-sleep", "nohup camel ps --watch&\n" +
+        String process = executeBackground(String.format("run %s/route2.yaml", mountPoint()));
+        newFileInDataFolder("watch-sleep", "nohup " + getMainCommand() + " ps --watch&\n" +
                                            "sleep 5\n" +
                                            "echo \"q\"\n");
         execInContainer(String.format("chmod +x %s/watch-sleep", mountPoint()));
         Assertions.assertThat(
                 execInContainer(String.format("%s/watch-sleep", mountPoint())))
-                .as("watch command should output PID" + PID)
-                .contains(PID);
+                .as("watch command should output PID" + getPID(process))
+                .contains(getPID(process));
     }
 }
