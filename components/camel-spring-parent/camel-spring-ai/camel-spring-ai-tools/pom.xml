@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-ai-parent</artifactId>
-        <version>4.18.0</version>
+        <version>4.18.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-ai-tools</artifactId>
