@@ -220,6 +220,7 @@ public final class Kamelet {
             if (wrap && parent != null && parent.isKamelet() == null) {
                 // do not wrap if the parent is also a kamelet
                 def.setErrorHandlerFactory(parent.getErrorHandlerFactory().cloneBuilder());
+                def.setRouteConfigurationId(parent.getRouteConfigurationId());
             } else {
                 def.setErrorHandlerFactory(new NoErrorHandlerBuilder());
             }

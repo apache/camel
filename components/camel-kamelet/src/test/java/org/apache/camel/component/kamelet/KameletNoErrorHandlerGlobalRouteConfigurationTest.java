@@ -22,11 +22,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class KameletNoErrorHandlerRouteConfigurationTest extends CamelTestSupport {
+public class KameletNoErrorHandlerGlobalRouteConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testNoErrorHandler() throws Exception {
-        getMockEndpoint("mock:dead").expectedMessageCount(1);
+        getMockEndpoint("mock:deadGlobal").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
 
@@ -50,7 +50,7 @@ public class KameletNoErrorHandlerRouteConfigurationTest extends CamelTestSuppor
 
             @Override
             public void configuration() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead"));
+                errorHandler(deadLetterChannel("mock:deadGlobal"));
             }
         };
     }
