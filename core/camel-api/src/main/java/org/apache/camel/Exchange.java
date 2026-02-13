@@ -16,7 +16,11 @@
  */
 package org.apache.camel;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.apache.camel.clock.Clock;
 import org.apache.camel.spi.Metadata;
@@ -413,6 +417,75 @@ public interface Exchange extends VariableAware {
     <T> T getProperty(String name, Object defaultValue, Class<T> type);
 
     /**
+     * Returns a property associated with this exchange as an Optional type.
+     *
+     * @param  name the exchange property name
+     * @param  type the type of the property
+     * @return      the optional value of the given property.
+     */
+    default <T> Optional<T> getPropertyAsOptional(String name, Class<T> type) {
+        return Optional.ofNullable(getProperty(name, type));
+    }
+
+    /**
+     * Returns a property associated with this exchange as a List. Check by the name and specifying the type required
+     * for the List items.
+     *
+     * @param  name the exchange property name
+     * @param  type the type of the List items
+     * @return      a List with items of the given type or <tt>null</tt> if there is no property for the given name, the
+     *              backed object is not Iterable or any of the items is not of the given type.
+     */
+    default <T> List<T> getPropertyAsList(String name, Class<T> elementType) {
+        Object value = getProperty(name, Object.class);
+        return ExchangeSupport.getObjectAsList(value, elementType);
+    }
+
+    /**
+     * Returns a property associated with this exchange as a Collection. Check by the name and specifying the type
+     * required for the Collection items.
+     *
+     * @param  name the exchange property name
+     * @param  type the type of the Collection items
+     * @return      a Collection with items of the given type or <tt>null</tt> if there is no property for the given
+     *              name, the backed object is not Iterable or any of the items is not of the given type.
+     */
+    default <T> Collection<T> getPropertyAsCollection(String name, Class<T> elementType) {
+        return getPropertyAsList(name, elementType);
+    }
+
+    /**
+     * Returns a property associated with this exchange as a Set. Check by the name and specifying the type required for
+     * the Set items.
+     *
+     * @param  name the exchange property name
+     * @param  type the type of the Set items
+     * @return      a Set with items of the given type or <tt>null</tt> if there is no property for the given name, the
+     *              backed object is not Iterable or any of the items is not of the given type.
+     */
+    default <T> Set<T> getPropertyAsSet(String name, Class<T> elementType) {
+        List<T> list = getPropertyAsList(name, elementType);
+        if (list == null) {
+            return null;
+        }
+        return Set.copyOf(getPropertyAsList(name, elementType));
+    }
+
+    /**
+     * Returns a property associated with this exchange as a Map. Check by the name and specifying the type required for
+     * the Map key anv value items.
+     *
+     * @param  name the exchange property name
+     * @param  type the type of the Map items
+     * @return      a Map with items of the given type or <tt>null</tt> if there is no property for the given name, the
+     *              backed object is not a Map or any of the key/value for each items is not of the given type.
+     */
+    default <K, V> Map<K, V> getPropertyAsMap(String name, Class<K> keyType, Class<V> valueType) {
+        Object value = getProperty(name, Object.class);
+        return ExchangeSupport.getObjectAsMap(value, keyType, valueType);
+    }
+
+    /**
      * Sets a property on the exchange
      *
      * @param name  of the property
@@ -500,6 +573,76 @@ public interface Exchange extends VariableAware {
      *                      given name or <tt>null</tt> if it cannot be converted to the given type
      */
     <T> T getVariable(String name, Object defaultValue, Class<T> type);
+
+    /**
+     * Returns an optional variable by name and specifying the type required
+     *
+     * @param  name the variable name. Can be prefixed with repo-id:name to lookup the variable from a specific
+     *              repository. If no repo-id is provided, then variables will be from the current exchange.
+     * @param  type the type of the variable
+     * @return      the value of the given variable as an Optional type.
+     */
+    default <T> Optional<T> getVariableAsOptional(String name, Class<T> type) {
+        return Optional.ofNullable(getVariable(name, type));
+    }
+
+    /**
+     * Returns a property associated with this variable as a List. Check by the key and specifying the type required for
+     * the List items.
+     *
+     * @param  name the variable name
+     * @param  type the type of the List items
+     * @return      a List with items of the given type or <tt>null</tt> if there is no variable for the given name, the
+     *              backed object is not Iterable or any of the items is not of the given type.
+     */
+    default <T> List<T> getVariableAsList(String name, Class<T> elementType) {
+        Object value = getVariable(name, Object.class);
+        return ExchangeSupport.getObjectAsList(value, elementType);
+    }
+
+    /**
+     * Returns a property associated with this variable as a Collection. Check by the key and specifying the type
+     * required for the Collection items.
+     *
+     * @param  name the variable name
+     * @param  type the type of the Collection items
+     * @return      a Collection with items of the given type or <tt>null</tt> if there is no variable for the given
+     *              name, the backed object is not Iterable or any of the items is not of the given type.
+     */
+    default <T> Collection<T> getVariableAsCollection(String name, Class<T> elementType) {
+        return getVariableAsList(name, elementType);
+    }
+
+    /**
+     * Returns a property associated with this variable as a Set. Check by the key and specifying the type required for
+     * the Set items.
+     *
+     * @param  name the variable name
+     * @param  type the type of the Set items
+     * @return      a Set with items of the given type or <tt>null</tt> if there is no variable for the given name, the
+     *              backed object is not Iterable or any of the items is not of the given type.
+     */
+    default <T> Set<T> getVariableAsSet(String name, Class<T> elementType) {
+        List<T> list = getVariableAsList(name, elementType);
+        if (list == null) {
+            return null;
+        }
+        return Set.copyOf(list);
+    }
+
+    /**
+     * Returns a property associated with this variable as a Map. Check by the key and specifying the type required for
+     * the Map key anv value items.
+     *
+     * @param  name the variable name
+     * @param  type the type of the Map items
+     * @return      a Map with items of the given type or <tt>null</tt> if there is no variable for the given name, the
+     *              backed object is not a Map or any of the key/value for each items is not of the given type.
+     */
+    default <K, V> Map<K, V> getVariableAsMap(String name, Class<K> keyType, Class<V> valueType) {
+        Object value = getVariable(name, Object.class);
+        return ExchangeSupport.getObjectAsMap(value, keyType, valueType);
+    }
 
     /**
      * Sets a variable on the exchange
