@@ -51,6 +51,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "idletimeout":
+        case "idleTimeout": getOrCreateConfiguration(target).setIdleTimeout(property(camelContext, long.class, value)); return true;
         case "kex": getOrCreateConfiguration(target).setKex(property(camelContext, java.lang.String.class, value)); return true;
         case "keypairprovider":
         case "keyPairProvider": getOrCreateConfiguration(target).setKeyPairProvider(property(camelContext, org.apache.sshd.common.keyprovider.KeyPairProvider.class, value)); return true;
@@ -104,6 +106,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "idletimeout":
+        case "idleTimeout": return long.class;
         case "kex": return java.lang.String.class;
         case "keypairprovider":
         case "keyPairProvider": return org.apache.sshd.common.keyprovider.KeyPairProvider.class;
@@ -153,6 +157,8 @@ public class SshComponentConfigurer extends PropertyConfigurerSupport implements
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "idletimeout":
+        case "idleTimeout": return getOrCreateConfiguration(target).getIdleTimeout();
         case "kex": return getOrCreateConfiguration(target).getKex();
         case "keypairprovider":
         case "keyPairProvider": return getOrCreateConfiguration(target).getKeyPairProvider();
