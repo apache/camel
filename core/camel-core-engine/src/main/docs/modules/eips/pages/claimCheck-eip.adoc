@@ -141,6 +141,10 @@ Note you cannot have both include (`+`) and exclude (`-`) `header:pattern` at th
 The claim check keys are static, but you can use the `simple` language syntax to define dynamic keys.
 For example, to use a header from the message named `myKey`:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -155,6 +159,80 @@ from("direct:start")
     .claimCheck(ClaimCheckOperation.Get, "${header.myKey}")
     .to("mock:e");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="mock:a"/>
+    <claimCheck operation="Set" key="${header.myKey}"/>
+    <transform>
+        <constant>Bye World</constant>
+    </transform>
+    <to uri="mock:b"/>
+    <claimCheck operation="Get" key="${header.myKey}"/>
+    <to uri="mock:c"/>
+    <transform>
+        <constant>Hi World</constant>
+    </transform>
+    <to uri="mock:d"/>
+    <claimCheck operation="Get" key="${header.myKey}"/>
+    <to uri="mock:e"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - to:
+            uri: mock
+            parameters:
+              name: a
+        - claimCheck:
+            operation: Set
+            key: "${header.myKey}"
+        - transform:
+            expression:
+              constant:
+                expression: Bye World
+        - to:
+            uri: mock
+            parameters:
+              name: b
+        - claimCheck:
+            operation: Get
+            key: "${header.myKey}"
+        - to:
+            uri: mock
+            parameters:
+              name: c
+        - transform:
+            expression:
+              constant:
+                expression: Hi World
+        - to:
+            uri: mock
+            parameters:
+              name: d
+        - claimCheck:
+            operation: Get
+            key: "${header.myKey}"
+        - to:
+            uri: mock
+            parameters:
+              name: e
+----
+
+====
 
 == Example
 
