@@ -61,7 +61,6 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
         ResumeStrategy strategy = definition.getResumeStrategyBean();
         if (strategy == null) {
             String ref = parseString(definition.getResumeStrategy());
-
             if (ref != null) {
                 strategy = mandatoryLookup(ref, ResumeStrategy.class);
             } else {

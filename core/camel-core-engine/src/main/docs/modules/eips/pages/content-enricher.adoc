@@ -76,6 +76,19 @@ from("direct:start")
 The fluent builder is not available in XML or YAML DSL, instead you can use
 xref:languages:simple-language.adoc[Simple] language:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .setBody(simple("${body} World!"))
+    .to("mock:result");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -86,6 +99,27 @@ xref:languages:simple-language.adoc[Simple] language:
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "${body} World!"
+        - to:
+            uri: mock
+            parameters:
+              name: result
+----
+====
 
 == Content enrichment using a Processor
 
@@ -103,6 +137,66 @@ from("direct:start")
     })
     .to("mock:result");
 ----
+
+In the Java code above we used an inlined `Processor` which is harder to do with XML or YAML DSL.
+A good practice is to use a class for your custom `Processor` which can then be referenced in the DSL:
+
+[source,java]
+----
+@BindToRegistry("myProcessor")
+public class MyProcessor implements Processor {
+
+    @Override
+    public void process(Exchange exchange) {
+        Message msg = exchange.getMessage();
+        msg.setBody(msg.getBody(String.class) + " World!");
+    }
+}
+----
+
+Then you can refer to this processor by its id.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .process("myProcessor")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <process ref="myProcessor"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - process:
+            ref: myProcessor
+        - to:
+            uri: mock
+            parameters:
+              name: result
+----
+====
+
 
 == Content enrichment using a Bean EIP
 

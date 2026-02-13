@@ -64,10 +64,8 @@ public class PausableReifier extends ProcessorReifier<PausableDefinition> {
         Predicate<?> supplier = definition.getUntilCheckBean();
         if (supplier == null) {
             String ref = definition.getUntilCheck();
-
             supplier = mandatoryLookup(ref, Predicate.class);
         }
-
         return supplier;
     }
 }

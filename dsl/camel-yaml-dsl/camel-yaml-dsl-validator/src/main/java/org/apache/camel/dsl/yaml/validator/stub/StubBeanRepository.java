@@ -22,9 +22,17 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.DefaultClaimCheckRepository;
+import org.apache.camel.processor.DisabledProcessor;
+import org.apache.camel.processor.aggregate.AggregateController;
+import org.apache.camel.processor.aggregate.DefaultAggregateController;
 import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
+import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.saga.CamelSagaService;
+import org.apache.camel.saga.InMemorySagaService;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.ClaimCheckRepository;
@@ -82,6 +90,18 @@ public class StubBeanRepository implements BeanRepository {
         }
         if (AggregationStrategy.class.isAssignableFrom(type)) {
             return (T) new GroupedBodyAggregationStrategy();
+        }
+        if (AggregateController.class.isAssignableFrom(type)) {
+            return (T) new DefaultAggregateController();
+        }
+        if (CamelSagaService.class.isAssignableFrom(type)) {
+            return (T) new InMemorySagaService();
+        }
+        if (LoadBalancer.class.isAssignableFrom(type)) {
+            return (T) new RoundRobinLoadBalancer();
+        }
+        if (Processor.class.isAssignableFrom(type)) {
+            return (T) new DisabledProcessor();
         }
         return null;
     }

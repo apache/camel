@@ -34,6 +34,68 @@ from("direct:start")
     .to("mock:result");
 ----
 
+In the Java code above we used an inlined `Processor` which is harder to do with XML or YAML DSL.
+A good practice is to use a class for your custom `Processor` which can then be referenced in the DSL:
+
+[source,java]
+----
+@BindToRegistry("myProcessor")
+public class MyProcessor implements Processor {
+
+    @Override
+    public void process(Exchange exchange) {
+        String body = exchange.getMessage().getBody(String.class);
+        // do something with the body
+        // and replace it back
+        exchange.getMessage().setBody(body);
+    }
+}
+----
+
+Then you can refer to this processor by its id.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .process("myProcessor")
+    .to("mock:result");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <process ref="myProcessor"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - process:
+            ref: myProcessor
+        - to:
+            uri: mock
+            parameters:
+              name: result
+----
+====
+
+
 == Message Content filtering using a Bean EIP
 
 We can use xref:bean-eip.adoc[Bean EIP] to use any Java

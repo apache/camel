@@ -58,7 +58,31 @@ XML::
   </route>
 </camelContext>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - loadBalance:
+            steps:
+              - customLoadBalancer:
+                  ref: myBalancer
+              - to:
+                  uri: seda:x
+              - to:
+                  uri: seda:y
+              - to:
+                  uri: seda:z
+----
 ====
+
+=== Implementing a custom Load Balancer
 
 To implement a custom load balancer, you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
 The former supports the asynchronous routing engine, and the latter does not. Here is an example of a custom load balancer implementation:
