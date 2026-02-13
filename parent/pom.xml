@@ -402,7 +402,7 @@
         <micrometer-tracing-version>1.5.5</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milo-version>1.1.1</milo-version>
-        <milvus-client-version>2.6.13</milvus-client-version>
+        <milvus-client-version>2.6.14</milvus-client-version>
         <mina-version>2.2.5</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
