@@ -92,6 +92,9 @@ public class MulticastReifier extends ProcessorReifier<MulticastDefinition> {
         String ref = parseString(definition.getAggregationStrategy());
         if (strategy == null && ref != null) {
             Object aggStrategy = lookupByName(ref);
+            if (aggStrategy == null) {
+                aggStrategy = lookupByNameAndType(ref, AggregationStrategy.class);
+            }
             if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
                 strategy = aggregationStrategy;
             } else if (aggStrategy instanceof BiFunction biFunction) {

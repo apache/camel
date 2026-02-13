@@ -912,6 +912,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         AggregationStrategy strategy = definition.getAggregationStrategyBean();
         if (strategy == null && definition.getAggregationStrategyRef() != null) {
             Object aggStrategy = lookupByName(definition.getAggregationStrategyRef());
+            if (aggStrategy == null) {
+                aggStrategy = lookupByNameAndType(definition.getAggregationStrategyRef(), AggregationStrategy.class);
+            }
             if (aggStrategy instanceof AggregationStrategy aggregationStrategy) {
                 strategy = aggregationStrategy;
             } else if (aggStrategy instanceof BiFunction biFunction) {

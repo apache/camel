@@ -58,6 +58,11 @@ public final class PatternHelper {
             return true;
         }
 
+        if ("*".equals(pattern)) {
+            // matches everything
+            return true;
+        }
+
         if (matchWildcard(name, pattern)) {
             return true;
         }

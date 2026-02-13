@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.processor.DefaultClaimCheckRepository;
+import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.BeanRepository;
@@ -77,6 +79,9 @@ public class StubBeanRepository implements BeanRepository {
         }
         if (StateRepository.class.isAssignableFrom(type)) {
             return (T) new MemoryStateRepository();
+        }
+        if (AggregationStrategy.class.isAssignableFrom(type)) {
+            return (T) new GroupedBodyAggregationStrategy();
         }
         return null;
     }

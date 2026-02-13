@@ -177,4 +177,4 @@ into the backup folder. This is an important note that the on completion is done
 This ensures the file is not moved before the file is processed successfully. Suppose the `calculateBean` bean
 could not process one of the files. If it was the synchronous thread that should do the on completion strategy,
 then the file would have been moved to early into the backup folder. By handing over this to the asynchronous
- thread, we do it after we have processed the message completely
+thread, we do it after we have processed the message completely

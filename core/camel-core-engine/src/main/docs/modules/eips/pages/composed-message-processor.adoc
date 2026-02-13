@@ -22,17 +22,22 @@ aggregate and return a single combined response.
 
 The route and the code comments below explain how you can use the xref:split-eip.adoc[Split] EIP to
 split each message to sub-message which are processed individually and then combined back into
-a single response message via the custom `AggregationStrategy` (`MyOrderStrategy`), as the output from the Split EIP.
+a single response message via the custom `AggregationStrategy` (`myStrategy`), as the output from the Split EIP.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 // this routes starts from the direct:start endpoint
 // the body is then split based on @ separator
 // the splitter in Camel supports InOut as well, and for that we need
 // to be able to aggregate what response we need to send back, so we provide our
-// own strategy with the class MyOrderStrategy.
+// own strategy with the class MyOrderStrategy which has been registered as a bean
+// with id myStrategy.
 from("direct:start")
-    .split(body().tokenize("@"), new MyOrderStrategy())
+    .split(simple("${split(@)}")).aggregationStrategy("myStrategy")
         // each split message is then send to this bean where we can process it
         .to("bean:MyOrderService?method=handleOrder")
         // this is important to end the splitter route as we do not want to do more routing
@@ -40,9 +45,53 @@ from("direct:start")
     .end()
     // after we have split and handled each message, we want to send a single combined
     // response back to the original caller, so we let this bean build it for us
-    // this bean will receive the result of the aggregate strategy: MyOrderStrategy
+    // this bean will receive the result of the aggregate strategy
     .to("bean:MyOrderService?method=buildCombinedResponse")
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <split aggregationStrategy="myStrategy">
+        <simple>${split(@)}</simple>
+        <to uri="bean:MyOrderService?method=handleOrder"/>
+    </split>
+    <to uri="bean:MyOrderService?method=buildCombinedResponse"/>
+</route>
+----
+
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct
+      parameters:
+        name: start
+      steps:
+        - split:
+            aggregationStrategy: myStrategy
+            expression:
+              simple:
+                expression: "${split(@)}"
+            steps:
+              - to:
+                  uri: bean
+                  parameters:
+                    beanName: MyOrderService
+                    method: handleOrder
+        - to:
+            uri: bean
+            parameters:
+              beanName: MyOrderService
+              method: buildCombinedResponse
+----
+====
 
 == More details
 
