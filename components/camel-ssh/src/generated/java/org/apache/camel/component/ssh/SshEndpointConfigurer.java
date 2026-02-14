@@ -49,6 +49,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": target.getConfiguration().setFailOnUnknownHost(property(camelContext, boolean.class, value)); return true;
         case "greedy": target.setGreedy(property(camelContext, boolean.class, value)); return true;
+        case "idletimeout":
+        case "idleTimeout": target.getConfiguration().setIdleTimeout(property(camelContext, long.class, value)); return true;
         case "initialdelay":
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "kex": target.getConfiguration().setKex(property(camelContext, java.lang.String.class, value)); return true;
@@ -128,6 +130,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": return boolean.class;
         case "greedy": return boolean.class;
+        case "idletimeout":
+        case "idleTimeout": return long.class;
         case "initialdelay":
         case "initialDelay": return long.class;
         case "kex": return java.lang.String.class;
@@ -203,6 +207,8 @@ public class SshEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "failonunknownhost":
         case "failOnUnknownHost": return target.getConfiguration().isFailOnUnknownHost();
         case "greedy": return target.isGreedy();
+        case "idletimeout":
+        case "idleTimeout": return target.getConfiguration().getIdleTimeout();
         case "initialdelay":
         case "initialDelay": return target.getInitialDelay();
         case "kex": return target.getConfiguration().getKex();
