@@ -63,6 +63,25 @@ XML::
     <to uri="direct:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - filter:
+            expression:
+              simple:
+                expression: "${header.foo} == 'bar'"
+            steps:
+              - to:
+                  uri: direct:bar
+        - to:
+            uri: direct:b
+----
 ====
 
 You can use many languages as the predicate, such as xref:languages:xpath-language.adoc[XPath]:
@@ -89,6 +108,23 @@ XML::
         <to uri="mock:result"/>
     </filter>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              xpath:
+                expression: "/person[@name='James']"
+            steps:
+              - to:
+                  uri: mock:result
 ----
 ====
 
@@ -125,11 +161,31 @@ of the bean as shown:
 <route>
     <from uri="direct:start"/>
     <filter>
-        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <method beanType="com.foo.MyBean" method="isGoldCustomer"/>
         <to uri="mock:gold"/>
     </filter>
     <to uri="mock:all"/>
 </route>
+----
+
+And similar in YAML DSL:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              method:
+                method: isGoldCustomer
+                beanType: com.foo.MyBean
+            steps:
+              - to:
+                  uri: mock:gold
+        - to:
+            uri: mock:all
 ----
 
 === Filtering with status property
@@ -157,11 +213,32 @@ XML::
 <route>
     <from uri="direct:start"/>
     <filter statusPropertyName="gold">
-        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <method beanType="com.foo.MyBean" method="isGoldCustomer"/>
         <to uri="mock:gold"/>
     </filter>
     <to uri="mock:all"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            statusPropertyName: gold
+            expression:
+              method:
+                method: isGoldCustomer
+                beanType: com.foo.MyBean
+            steps:
+              - to:
+                  uri: mock:gold
+        - to:
+            uri: mock:all
 ----
 ====
 
@@ -172,36 +249,60 @@ whether it was `true` or `false`.
 
 When using the Message Filter EIP, then it only applies to its children.
 
-For example, in the previous example:
-
-[source,xml]
-----
-<route>
-    <from uri="direct:start"/>
-    <filter>
-        <method type="com.foo.MyBean" method="isGoldCustomer"/>
-        <to uri="mock:gold"/>
-    </filter>
-    <to uri="mock:all"/>
-</route>
-----
-
-Then for a message that is a gold customer will be routed to both `mock:gold` and `mock:all` (predicate is true).
+For example, in the previous example then for a message that is a gold customer will be routed to both `mock:gold` and `mock:all` (predicate is true).
 However, for a non-gold message (predicate is false) then the message will not be routed in the filter block,
 but will be routed to mock:all.
 
 Sometimes you may want to stop routing for messages that were filtered.
 To do this, you can use the xref:stop-eip.adoc[Stop] EIP as shown:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .filter().method(MyBean.class, "isGoldCustomer").statusPropertyName("gold")
+      .to("mock:gold")
+      .stop()
+    .end()
+    .to("mock:all");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
     <from uri="direct:start"/>
     <filter>
-        <method type="com.foo.MyBean" method="isGoldCustomer"/>
+        <method beanType="com.foo.MyBean" method="isGoldCustomer"/>
         <to uri="mock:gold"/>
         <stop/>
     </filter>
     <to uri="mock:all"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - filter:
+            expression:
+              method:
+                method: isGoldCustomer
+                beanType: com.foo.MyBean
+            steps:
+              - to:
+                  uri: mock:gold
+              - stop: {}
+        - to:
+            uri: mock:all
+----
+====

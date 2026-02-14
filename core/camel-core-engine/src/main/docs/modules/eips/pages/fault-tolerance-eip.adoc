@@ -55,6 +55,28 @@ XML::
     <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - circuitBreaker:
+            steps:
+              - onFallback:
+                  steps:
+                    - transform:
+                        expression:
+                          constant:
+                            expression: Fallback message
+              - to:
+                  uri: http://fooservice.com/faulty
+        - to:
+            uri: mock:result
+----
 ====
 
 In case the calling the downstream HTTP service is failing, and an exception is thrown,
@@ -102,6 +124,29 @@ XML::
   <log message="After Fault Tolerance: ${body}"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - circuitBreaker:
+            steps:
+              - faultToleranceConfiguration:
+                  timeoutDuration: 2000
+                  timeoutEnabled: "true"
+              - log:
+                  message: "Fault Tolerance processing start: ${threadName}"
+              - to:
+                  uri: http://fooservice.com/faulty
+              - log:
+                  message: "Fault Tolerance processing end: ${threadName}"
+        - log:
+            message: "After Fault Tolerance: ${body}"
+----
 ====
 
 In this example, if calling the downstream service does not return a response within 2 seconds,
@@ -116,6 +161,11 @@ is not reacting also.
 However, you can enable Camels error handler with circuit breaker by enabling
 the `inheritErrorHandler` option, as shown:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 // Camel's error handler that will attempt to redeliver the message 3 times
@@ -131,6 +181,47 @@ from("direct:start")
     .to("log:result")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="log:start"/>
+    <circuitBreaker inheritErrorHandler="true">
+        <to uri="mock:a"/>
+        <throwException exceptionType="java.lang.IllegalArgumentException" message="Forced"/>
+    </circuitBreaker>
+    <to uri="log:result"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: log:start
+        - circuitBreaker:
+            inheritErrorHandler: "true"
+            steps:
+              - to:
+                  uri: mock:a
+              - throwException:
+                  exceptionType: "java.lang.IllegalArgumentException"
+                  message: "Forced"
+        - to:
+            uri: log:result
+        - to:
+            uri: mock:result
+----
+====
 
 This example is from a test, where you can see the Circuit Breaker EIP block has been hardcoded
 to always fail by throwing an exception. Because the `inheritErrorHandler` has been enabled,
@@ -164,6 +255,6 @@ Maven users will need to add the following dependency to their pom.xml to use th
 
 === Using Fault Tolerance with Spring Boot
 
-This component does not support Spring Boot.
+This component is **not supported** Spring Boot.
 Instead, it is supported in Standalone and with Camel Quarkus.
 
