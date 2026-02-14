@@ -52,4 +52,28 @@ XML::
     </route>
 </routes>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: activemq:topic:foo
+- route:
+    from:
+      uri: activemq:topic:foo?clientId=1&durableSubscriptionName=bar1
+      steps:
+        - to:
+            uri: mock:result1
+- route:
+    from:
+      uri: activemq:topic:foo?clientId=2&durableSubscriptionName=bar2
+      steps:
+        - to:
+            uri: mock:result2
+----
 ====

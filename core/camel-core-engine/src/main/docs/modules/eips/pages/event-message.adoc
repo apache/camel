@@ -61,6 +61,18 @@ XML::
     <to uri="activemq:queue:one-way"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mq:someQueue?exchangePattern=InOnly
+      steps:
+        - to:
+            uri: activemq:queue:one-way
+----
 ====
 
 == Using `setExchangePattern` EIP
@@ -89,6 +101,20 @@ XML::
     <to uri="activemq:queue:one-way"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mq:someQueue
+      steps:
+        - setExchangePattern:
+            pattern: InOnly
+        - to:
+            uri: activemq:queue:one-way
+----
 ====
 
 When using `setExchangePattern` then the xref:manual::exchange-pattern.adoc[Exchange Pattern]
@@ -96,15 +122,54 @@ on the xref:manual::exchange.adoc[Exchange] is changed from this point onwards i
 
 This means you can change the pattern back again at a later point:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mq:someQueue")
   .setExchangePattern(ExchangePattern.InOnly)
-  .to("activemq:queue:one-way");
+  .to("activemq:queue:one-way")
   .setExchangePattern(ExchangePattern.InOut)
   .to("activemq:queue:in-and-out")
-  .log("InOut MEP received ${body}")
+  .log("InOut MEP received ${body}");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="mq:someQueue"/>
+    <setExchangePattern pattern="InOnly"/>
+    <to uri="activemq:queue:one-way"/>
+    <setExchangePattern pattern="InOut"/>
+    <to uri="activemq:queue:in-and-out"/>
+    <log message="InOut MEP received ${body}"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mq:someQueue
+      steps:
+        - setExchangePattern:
+            pattern: InOnly
+        - to:
+            uri: activemq:queue:one-way
+        - setExchangePattern:
+            pattern: InOut
+        - to:
+            uri: activemq:queue:in-and-out
+        - log:
+            message: "InOut MEP received ${body}"
+----
+====
 
 NOTE: Using `setExchangePattern` to change the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 is often only used in special use-cases where you must

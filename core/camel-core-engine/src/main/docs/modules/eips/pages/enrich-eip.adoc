@@ -96,9 +96,6 @@ XML::
 +
 [source,xml]
 ----
-<bean id="myStrategy" class="com.foo.ExampleAggregationStrategy"/>
-
-<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   <route>
     <from uri="direct:start"/>
     <enrich aggregationStrategy="myStrategy">
@@ -106,7 +103,6 @@ XML::
     </enrich>
     <to uri="mock:result"/>
   </route>
-</camelContext>
 ----
 
 YAML::
