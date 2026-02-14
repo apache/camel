@@ -119,7 +119,8 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
      * @return the builder
      */
     public LoadBalanceDefinition failover() {
-        return failover(-1, true, false);
+        setLoadBalancerType(new FailoverLoadBalancerDefinition());
+        return this;
     }
 
     /**
@@ -131,7 +132,10 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
      * @return            the builder
      */
     public LoadBalanceDefinition failover(Class<?>... exceptions) {
-        return failover(-1, true, false, exceptions);
+        FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
+        def.setExceptionTypes(Arrays.asList(exceptions));
+        setLoadBalancerType(def);
+        return this;
     }
 
     /**
@@ -148,7 +152,13 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
      */
     public LoadBalanceDefinition failover(
             int maximumFailoverAttempts, boolean inheritErrorHandler, boolean roundRobin, Class<?>... exceptions) {
-        return failover(maximumFailoverAttempts, inheritErrorHandler, roundRobin, false, exceptions);
+        FailoverLoadBalancerDefinition def = new FailoverLoadBalancerDefinition();
+        def.setExceptionTypes(Arrays.asList(exceptions));
+        def.setMaximumFailoverAttempts(Integer.toString(maximumFailoverAttempts));
+        def.setRoundRobin(Boolean.toString(roundRobin));
+        def.setInheritErrorHandler(inheritErrorHandler);
+        setLoadBalancerType(def);
+        return this;
     }
 
     /**

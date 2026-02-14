@@ -55,6 +55,24 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loadBalance:
+            steps:
+              - failoverLoadBalancer: {}
+              - to:
+                  uri: http:service1
+              - to:
+                  uri: http:service2
+              - to:
+                  uri: http:service3
+----
 ====
 
 In the default mode, the fail-over load balancer will always start with the first processor (i.e., "http:service1").
@@ -67,8 +85,13 @@ You can use the `roundRobin` mode to start again from the beginning, which then 
 trying until one succeed. To prevent endless retries, then it's recommended to
 set a maximum fail-over value.
 
-Setting this in Java DSL is not _pretty_ as there are three parameters:
+[tabs]
+====
 
+Java::
++
+Setting this in Java DSL is not _pretty_ as there are three parameters:
++
 [source,java]
 ----
 from("direct:start")
@@ -78,30 +101,52 @@ from("direct:start")
         .to("http:service3")
     .end();
 ----
++
+Where `10` is the maximum fail-over attempts, And `false` is a special feature
+related to inheriting error handler. The last parameter `true` is to use round-robin mode.
 
-[source,java]
-----
-.failover(10, false, true)
-----
-
-Where `10` is the maximum fail over attempts, And `false` is a special feature
-related to inheriting error handler.
-The last parameter `true` is to use round-robin mode.
-
-In XML, it is straightforward as shown:
-
+XML::
++
+In XML and YAML DSL it is easier.
++
 [source,xml]
 ----
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-        <failoverLoadBalancer roundRobin="true" maximumFailoverAttempts="10"/>
+        <failoverLoadBalancer inheritErrorHandler="false" roundRobin="true" maximumFailoverAttempts="10"/>
         <to uri="http:service1"/>
         <to uri="http:service2"/>
         <to uri="http:service3"/>
     </loadBalance>
 </route>
 ----
+
+YAML::
++
+In XML and YAML DSL it is easier.
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loadBalance:
+            steps:
+              - failoverLoadBalancer:
+                  inheritErrorHandler: "false"
+                  maximumFailoverAttempts: 10
+                  roundRobin: "true"
+              - to:
+                  uri: http:service1
+              - to:
+                  uri: http:service2
+              - to:
+                  uri: http:service3
+----
+====
+
 
 === Using sticky mode
 
@@ -136,12 +181,14 @@ NOTE: The last `true` argument is to enable sticky mode.
 
 XML::
 +
+In XML and YAML DSL it is easier.
++
 [source,xml]
 ----
 <route>
     <from uri="direct:start"/>
     <loadBalance>
-        <failoverLoadBalancer roundRobin="true" maximumFailoverAttempts="10" stickyMode="true"/>
+        <failoverLoadBalancer inheritErrorHandler="false" roundRobin="true" maximumFailoverAttempts="10" stickyMode="true"/>
         <to uri="http:service1"/>
         <to uri="http:service2"/>
         <to uri="http:service3"/>
@@ -149,6 +196,30 @@ XML::
 </route>
 ----
 
+YAML::
++
+In XML and YAML DSL it is easier.
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loadBalance:
+            steps:
+              - failoverLoadBalancer:
+                  inheritErrorHandler: "false"
+                  sticky: "true"
+                  maximumFailoverAttempts: 10
+                  roundRobin: "true"
+              - to:
+                  uri: http:service1
+              - to:
+                  uri: http:service2
+              - to:
+                  uri: http:service3
+----
 ====
 
 === Fail-over on specific exceptions
@@ -156,6 +227,12 @@ XML::
 The fail-over load balancer can be configured to only apply for a specific set of exceptions.
 Suppose you only want to fail-over in case of `java.io.Exception` or `HttpOperationFailedException` then you can do:
 
+
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -166,8 +243,8 @@ from("direct:start")
     .end();
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -183,3 +260,26 @@ And in XML DSL:
     </loadBalance>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loadBalance:
+            steps:
+              - failoverLoadBalancer:
+                  exception:
+                    - java.io.IOException
+                    - org.apache.camel.http.base.HttpOperationFailedException
+              - to:
+                  uri: http:service1
+              - to:
+                  uri: http:service2
+              - to:
+                  uri: http:service3
+----
+====

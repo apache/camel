@@ -43,8 +43,10 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<>();
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String roundRobin;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String sticky;
     @XmlAttribute
     @Metadata(defaultValue = "-1")
