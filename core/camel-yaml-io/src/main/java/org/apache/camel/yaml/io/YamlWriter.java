@@ -360,7 +360,7 @@ public class YamlWriter extends ServiceSupport implements CamelContextAware {
                     node.addExpression(eipNode);
                 } else {
                     node.addProperty(key, v);
-                    if ("expression".equals(key)) {
+                    if ("expression".equals(key) || node.isExpression()) {
                         node.addProperty("language", model.getName());
                     }
                 }

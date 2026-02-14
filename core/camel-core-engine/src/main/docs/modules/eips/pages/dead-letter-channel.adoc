@@ -25,7 +25,7 @@ The Dead Letter Channel is similar to the default error handler, but with the fo
 == Using Dead Letter Error Handler
 
 When using the dead letter channel error handler, you must configure the dead letter queue as an endpoint, so the handler knows where to move the failed messages.
-This is done a bit differently in the Java DSL and XML DSL.
+This is done a bit differently in the Java DSL and Spring XML DSL.
 
 For example, here’s how to log the message at `ERROR` level:
 
@@ -73,7 +73,7 @@ individual routes used another error handler.
 
 NOTE: The DSLs is planned to be improved in the near future to have a unified
 way of configuring error handling across all DSLs with xref:manual::route-configuration.adoc[Route Configuration].
-When fully implemented, then configuring error handler in Java and XML DSL would be much more similar than currently.
+When fully implemented, then configuring error handler in Java and Spring XML DSL would be much more similar than currently.
 
 === Redelivery
 
@@ -154,7 +154,7 @@ errorHandler(deadLetterChannel("jms:queue:dead")
     .maximumRedeliveries(3).redeliveryDelay(5000));
 ----
 
-XML::
+Spring XML::
 +
 [source,xml]
 ----
@@ -212,7 +212,7 @@ errorHandler(deadLetterChannel("jms:queue:dead")
    .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000);
 ----
 
-XML::
+Spring XML::
 +
 And in XML, you set `useOriginalMessage=true` on the `<errorHandler>` as shown:
 +
@@ -259,7 +259,7 @@ errorHandler(deadLetterChannel("jms:queue:dead")
   .onRedeliver(new MyOnRedeliveryProcessor());
 ----
 
-XML::
+Spring XML::
 +
 And in XML DSL, you specify a bean id via `onRedeliveryRef` on the `<errorHandler>` as shown:
 +
@@ -309,7 +309,7 @@ Java::
 errorHandler(deadLetterChannel("jms:dead").onPrepareFailure(new MyPrepareProcessor()));
 ----
 
-XML::
+Spring XML::
 +
 Configuring this from Spring XML is done with the `onPrepareFailureRef` to refer to the processor as a `<bean>` as shown:
 +
@@ -355,7 +355,7 @@ Java::
 errorHandler(deadLetterChannel("jms:dead").onExceptionOccurred(new OnErrorLogger()));
 ----
 
-XML::
+Spring XML::
 +
 Configuring this from Spring XML is done with the `onExceptionOccurredRef` to refer to the processor as a `<bean>` as shown:
 +

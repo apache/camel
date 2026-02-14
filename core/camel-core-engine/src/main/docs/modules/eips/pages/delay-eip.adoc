@@ -125,12 +125,51 @@ YAML::
 You can also call a xref:languages:bean-language.adoc[Bean Method] to compute the
 delayed value from Java code:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:foo")
   .delay().method("someBean", "computeDelay")
   .to("activemq:bar");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="activemq:foo"/>
+    <delay>
+        <method ref="someBean" method="computeDelay"/>
+    </delay>
+    <to uri="activemq:bar"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: activemq
+      parameters:
+        destinationName: foo
+      steps:
+        - delay:
+            expression:
+              method:
+                ref: someBean
+                method: computeDelay
+        - to:
+            uri: activemq
+            parameters:
+              destinationName: bar
+----
+====
 
 Then the bean would look something like this:
 

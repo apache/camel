@@ -28,6 +28,7 @@ import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoader;
 import org.apache.camel.dsl.yaml.validator.stub.StubBeanRepository;
 import org.apache.camel.dsl.yaml.validator.stub.StubDataFormat;
 import org.apache.camel.dsl.yaml.validator.stub.StubLanguage;
+import org.apache.camel.dsl.yaml.validator.stub.StubReifier;
 import org.apache.camel.dsl.yaml.validator.stub.StubTransformer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ComponentResolver;
@@ -63,6 +64,8 @@ public class CamelYamlParser {
             camelContext.getCamelContextExtension().addContextPlugin(TransformerResolver.class,
                     (name, context) -> new StubTransformer());
             camelContext.start();
+
+            StubReifier.registerStubReifiers();
 
             YamlRoutesBuilderLoader loader = new YamlRoutesBuilderLoader();
             loader.setCamelContext(camelContext);
