@@ -17,6 +17,7 @@
 *** xref:java-joor-dsl.adoc[Java DSL (runtime compiled)]
 *** xref:java-xml-jaxb-dsl.adoc[Jaxb XML Dsl]
 *** xref:kamelet-main.adoc[Kamelet Main]
+*** xref:kamelet-main-support.adoc[Kamelet Main Support]
 *** xref:java-xml-io-dsl.adoc[XML Io Dsl]
 *** xref:yaml-dsl.adoc[YAML DSL]
 ** xref:elytron.adoc[Elytron]

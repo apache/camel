@@ -27,8 +27,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 @Metadata(label = "bean",
-        description = "SpringCache based message id repository.",
-        annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+          description = "SpringCache based message id repository.",
+          annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
 @Configurer(metadataOnly = true)
 @ManagedResource(description = "SpringCache based message id repository")
 public class SpringCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
