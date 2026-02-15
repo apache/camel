@@ -78,9 +78,8 @@ import org.apache.camel.main.download.TransactedDownloader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.reload.OpenApiGeneratorReloadStrategy;
-import org.apache.camel.main.stub.BeanStubReifier;
-import org.apache.camel.main.stub.KameletStubReifier;
 import org.apache.camel.main.stub.StubBeanRepository;
+import org.apache.camel.main.stub.StubEipReifier;
 import org.apache.camel.main.util.ClipboardReloadStrategy;
 import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
@@ -492,11 +491,8 @@ public class KameletMain extends MainCommandLineSupport {
             // turn off inlining routes
             configure().rest().withInlineRoutes(false);
             blueprintXmlBeansHandler.setTransform(true);
-            // stub beans
-            BeanStubReifier.registerStubBeanReifiers();
-            // stub kamelet EIP
-            KameletStubReifier.registerStubKameletReifiers(answer);
-            // stub languages
+            // stub EIPs
+            StubEipReifier.registerStubEipReifiers(answer);
         }
         if (silent) {
             // silent should not include http server

@@ -187,11 +187,15 @@ public abstract class AbstractReifier implements BeanRepository {
         }
         name = parseString(name);
 
+        Object answer = null;
         if (EndpointHelper.isReferenceParameter(name)) {
-            return EndpointHelper.resolveReferenceParameter(camelContext, name, Object.class, false);
-        } else {
+            answer = EndpointHelper.resolveReferenceParameter(camelContext, name, Object.class, false);
+        }
+        if (answer == null) {
+            // fallback to use registry which allows tooling to influence reifier that uses beans or classes
             return getRegistry().lookupByName(name);
         }
+        return answer;
     }
 
     public <T> T lookupByNameAndType(String name, Class<T> type) {
@@ -200,11 +204,15 @@ public abstract class AbstractReifier implements BeanRepository {
         }
         name = parseString(name);
 
+        T answer = null;
         if (EndpointHelper.isReferenceParameter(name)) {
-            return EndpointHelper.resolveReferenceParameter(camelContext, name, type, false);
-        } else {
-            return getRegistry().lookupByNameAndType(name, type);
+            answer = EndpointHelper.resolveReferenceParameter(camelContext, name, type, false);
         }
+        if (answer == null) {
+            // fallback to use registry which allows tooling to influence reifier that uses beans or classes
+            answer = getRegistry().lookupByNameAndType(name, type);
+        }
+        return answer;
     }
 
     @Override
