@@ -61,6 +61,7 @@ XML::
 ----
 
 YAML::
++
 [source,yaml]
 ----
 - route:

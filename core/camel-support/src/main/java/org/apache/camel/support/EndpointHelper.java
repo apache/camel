@@ -413,7 +413,7 @@ public final class EndpointHelper {
             factoryMethod = StringHelper.after(className, "#");
             className = StringHelper.before(className, "#");
         }
-        Class<?> clazz = camelContext.getClassResolver().resolveMandatoryClass(className);
+        Class<?> clazz = camelContext.getClassResolver().resolveClass(className);
         Class<?> factoryClass = null;
         if (factoryMethod != null) {
             String typeOrRef = StringHelper.before(factoryMethod, ":");
@@ -425,9 +425,14 @@ public final class EndpointHelper {
                 if (existing != null) {
                     factoryClass = existing.getClass();
                 } else {
-                    factoryClass = camelContext.getClassResolver().resolveMandatoryClass(typeOrRef);
+                    factoryClass = camelContext.getClassResolver().resolveClass(typeOrRef);
                 }
             }
+        }
+
+        if (clazz == null && factoryClass == null) {
+            // cannot create bean from class
+            return null;
         }
 
         if (factoryMethod != null && parameters != null) {

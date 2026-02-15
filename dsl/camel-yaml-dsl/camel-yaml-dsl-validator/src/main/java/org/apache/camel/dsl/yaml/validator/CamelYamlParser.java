@@ -26,10 +26,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.stub.StubComponent;
 import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoader;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.main.stub.BeanStubReifier;
-import org.apache.camel.main.stub.KameletStubReifier;
 import org.apache.camel.main.stub.StubBeanRepository;
 import org.apache.camel.main.stub.StubDataFormat;
+import org.apache.camel.main.stub.StubEipReifier;
 import org.apache.camel.main.stub.StubLanguage;
 import org.apache.camel.main.stub.StubTransformer;
 import org.apache.camel.spi.ComponentResolver;
@@ -64,11 +63,13 @@ public class CamelYamlParser {
                     (name, context) -> new StubLanguage());
             camelContext.getCamelContextExtension().addContextPlugin(TransformerResolver.class,
                     (name, context) -> new StubTransformer());
+            // stub EIPs
+            StubEipReifier.registerStubEipReifiers(camelContext);
+
+            // start camel
             camelContext.start();
 
-            BeanStubReifier.registerStubBeanReifiers();
-            KameletStubReifier.registerStubKameletReifiers(camelContext);
-
+            // load yaml to validate
             try (YamlRoutesBuilderLoader loader = new YamlRoutesBuilderLoader()) {
                 loader.setCamelContext(camelContext);
                 loader.start();
