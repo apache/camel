@@ -41,8 +41,12 @@ import org.apache.camel.spi.StateRepository;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.support.processor.state.MemoryStateRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StubBeanRepository implements BeanRepository {
+
+    private final static Logger LOG = LoggerFactory.getLogger(StubBeanRepository.class);
 
     private final String stubPattern;
 
@@ -113,6 +117,9 @@ public class StubBeanRepository implements BeanRepository {
         }
         if (LoadBalancer.class.isAssignableFrom(type)) {
             return (T) new RoundRobinLoadBalancer();
+        }
+        if (Logger.class.isAssignableFrom(type)) {
+            return (T) LOG;
         }
         if (Processor.class.isAssignableFrom(type)) {
             return (T) new DisabledProcessor();

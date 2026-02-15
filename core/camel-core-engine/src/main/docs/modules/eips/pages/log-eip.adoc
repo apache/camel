@@ -38,6 +38,20 @@ There are many options on the log component to configure what content to log.
 The log component provides fine-grained control over which parts of the exchange are logged or not. 
 However, it's possible to quickly log a formatted exchange using the Log EIP:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("direct:foo")
+  .log("${logExchange}")
+  .to("mock:foo");
+----
+
+XML::
++
 [source,xml]
 ----
 <route id="foo">
@@ -46,6 +60,22 @@ However, it's possible to quickly log a formatted exchange using the Log EIP:
     <to uri="mock:foo"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: foo
+    from:
+      uri: direct:foo
+      steps:
+        - log:
+            message: "${logExchange}"
+        - to:
+            uri: mock:foo
+----
+====
 
 == Example
 
@@ -58,7 +88,6 @@ For example, you can do
 
 Java::
 +
-
 [source,java]
 ----
 from("direct:start")
@@ -77,6 +106,20 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Processing ${id}"
+        - to:
+            uri: bean:foo
+----
+
 ====
 
 This will be evaluated using the xref:languages:simple-language.adoc[Simple]
@@ -86,7 +129,13 @@ to construct the `String` containing the message to be logged.
 
 If the message body is stream based, then logging the message body may cause the message body to be empty afterward. See this xref:manual:faq:why-is-my-message-body-empty.adoc[FAQ]. For streamed messages, you can use Stream caching to allow logging the message body and be able to read the message body afterward again.
 
-The log DSL has overloaded methods to set the logging level and/or name as well.
+[tabs]
+====
+
+Java::
++
+In Java DSL the Log EIP has overloaded methods to set the logging level and/or name as well.
++
 [source,java]
 ----
 from("direct:start")
@@ -94,7 +143,40 @@ from("direct:start")
     .to("bean:foo");
 ----
 
-and to set a logger name
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <log message="Processing ${id}" loggingLevel="DEBUG"/>
+    <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Processing ${id}"
+            loggingLevel: DEBUG
+        - to:
+            uri: bean:foo
+----
+====
+
+And to set a logger name:
+
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -102,7 +184,36 @@ from("direct:start")
     .to("bean:foo");
 ----
 
-The logger instance may be used as well:
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <log logName="com.mycompany.MyCoolRoute" message="Processing ${id}" loggingLevel="DEBUG"/>
+    <to uri="bean:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            logName: com.mycompany.MyCoolRoute
+            message: "Processing ${id}"
+            loggingLevel: DEBUG
+        - to:
+            uri: bean:foo
+----
+====
+
+In Java DSL the logger instance may be used as well:
+
 [source,java]
 ----
 from("direct:start")
@@ -110,38 +221,66 @@ from("direct:start")
     .to("bean:foo");
 ----
 
-For example, you can use this to log the file name being processed if you consume files.
+The Log EIP can also be used to log the file name being processed if you consume files.
+
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("file://target/files")
-    .log(LoggingLevel.DEBUG, "Processing file ${file:name}")
+    .log("Processing file ${file:name}")
     .to("bean:foo");
 ----
 
-In XML DSL, it is also easy to use log DSL as shown below:
+XML::
++
 [source,xml]
 ----
-<route id="foo">
-    <from uri="direct:foo"/>
-    <log message="Got ${body}"/>
-    <to uri="mock:foo"/>
+<route>
+    <from uri="file://target/files"/>
+    <log message="Processing file ${file:name}"/>
+    <to uri="bean:foo"/>
 </route>
 ----
 
-The log tag has attributes to set the message, loggingLevel and logName. For example:
-[source,xml]
+YAML::
++
+[source,yaml]
 ----
-<route id="baz">
-    <from uri="direct:baz"/>
-    <log message="Me Got ${body}" loggingLevel="FATAL" logName="com.mycompany.MyCoolRoute"/>
-    <to uri="mock:baz"/>
-</route>
+- route:
+    from:
+      uri: file://target/files
+      steps:
+        - log:
+            message: "Processing file ${file:name}"
+        - to:
+            uri: bean:foo
 ----
+====
 
 == Using custom logger
 
 It is possible to reference an existing logger instance. For example:
 
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+Logger myLogger = org.slf4j.LoggerFactory.getLogger("com.mycompany.mylogger");
+
+from("direct:moo")
+    .log(myLogger, "Me Got ${body}")
+    .to("bean:foo");
+----
+
+XML::
++
 [source,xml]
 ----
 <bean id="myLogger" class="org.slf4j.LoggerFactory" factory-method="getLogger">
@@ -150,24 +289,40 @@ It is possible to reference an existing logger instance. For example:
 
 <route id="moo">
     <from uri="direct:moo"/>
-    <log message="Me Got ${body}" loggerRef="myLogger"/>
+    <log message="Me Got ${body}" logger="myLogger"/>
     <to uri="mock:baz"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: moo
+    from:
+      uri: direct:moo
+      steps:
+        - log:
+            logger: myLogger
+            message: "Me Got ${body}"
+        - to:
+            uri: mock:baz
+----
+====
 
 === Configuring logging name
 
 The log message will be logged at `INFO` level using the route id as the logger name (or source name:line if source location is enabled, see TIP below).
 So for example, if you have not assigned an id to the route, then Camel will use `route-1`, `route-2` as the logger name.
 
-To use "fooRoute" as the route id, you can do:
+To use `fooRoute` as the route id, you can do:
 
 [tabs]
 ====
 
 Java::
 +
-
 [source,java]
 ----
 from("direct:start").routeId("fooRoute")
@@ -186,10 +341,26 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: fooRoute
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Processing ${id}"
+        - to:
+            uri: bean:foo
+----
+
 ====
 
-TIP: If you enable `sourceLocationEnabled=true` on `CamelContext` then Camel will use source file:line as logger name,
+TIP: If you enable `sourceLocationEnabled=true` on `CamelContext` then Camel will use source _sourceFileName:lineNumber_ as logger name,
 instead of the route id. This is for example what `camel-jbang` do, to make it easy to see where in the source code the log is located.
+
 
 ==== Using custom logger from the Registry
 
@@ -199,6 +370,7 @@ if there is a single instance of `org.slf4j.Logger`.
 
 If such an instance exists, then this logger is used
 if not the behavior defaults to creating a new instance of logger.
+
 
 === Configuring logging name globally
 
@@ -218,7 +390,7 @@ Java::
 camelContext.getGlobalOptions().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
 ----
 
-XML::
+Spring XML::
 +
 [source,xml]
 ----
@@ -229,6 +401,14 @@ XML::
 </camelContext>
 ----
 
+Application Properties::
++
+It is often easier to configure this in the `application.properties` file:
++
+[source,properties]
+----
+camel.main.globalOptions[CamelLogEipName] = com.foo.myapp
+----
 ====
 
 == Masking sensitive information like password
@@ -236,28 +416,36 @@ XML::
 You can enable security masking for logging by setting `logMask` flag to `true`.
 Note that this option also affects the xref:ROOT:log-component.adoc[Log] component.
 
-To enable mask in Java DSL at CamelContext level:
-
 [tabs]
 ====
 
 Java::
 +
-
+To enable mask in Java DSL at CamelContext level:
++
 [source,java]
 ----
 camelContext.setLogMask(true);
 ----
 
-XML::
+Spring XML::
 +
-
-.And in XML you set the option on `<camelContext>`:
+And in XML you set the option on `<camelContext>`:
++
 [source,xml]
 ----
 <camelContext logMask="true">
 
 </camelContext>
+----
+
+Application Properties::
++
+It is often easier to configure this in the `application.properties` file:
++
+[source,properties]
+----
+camel.main.logMask = true
 ----
 ====
 
@@ -268,7 +456,6 @@ You can also turn it on|off at route level. To enable mask in at route level:
 
 Java::
 +
-
 [source,java]
 ----
 from("direct:start").logMask()
@@ -281,11 +468,28 @@ XML::
 [source,xml]
 ----
 <route logMask="true">
-
+    <from uri="direct:start"/>
+    <log message="Processing ${id}"/>
+    <to uri="bean:foo"/>
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    logMask: "true"
+    from:
+      uri: direct:start
+      steps:
+        - log:
+            message: "Processing ${id}"
+        - to:
+            uri: bean:foo
+----
 ====
+
 
 === Using custom masking formatter
 
