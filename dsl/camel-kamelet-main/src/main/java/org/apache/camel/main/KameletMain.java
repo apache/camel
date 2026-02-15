@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-import org.apache.camel.main.stub.StubEipReifier;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -80,6 +79,7 @@ import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.reload.OpenApiGeneratorReloadStrategy;
 import org.apache.camel.main.stub.StubBeanRepository;
+import org.apache.camel.main.stub.StubEipReifier;
 import org.apache.camel.main.util.ClipboardReloadStrategy;
 import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
