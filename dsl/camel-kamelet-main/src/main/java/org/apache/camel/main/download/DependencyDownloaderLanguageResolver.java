@@ -38,15 +38,22 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
             "constant", "exchangeProperty", "header", "ref", "simple", "variable"
     };
 
+    private static final String[] ACCEPTED_TRANSFORM_NAMES = {
+            "constant", "exchangeProperty", "header", "ref", "variable"
+    };
+
     private final CamelCatalog catalog = new DefaultCamelCatalog();
     private final DependencyDownloader downloader;
     private final String stubPattern;
     private final boolean silent;
+    private final boolean transform;
 
-    public DependencyDownloaderLanguageResolver(CamelContext camelContext, String stubPattern, boolean silent) {
+    public DependencyDownloaderLanguageResolver(CamelContext camelContext, String stubPattern, boolean silent,
+                                                boolean transform) {
         this.downloader = camelContext.hasService(DependencyDownloader.class);
         this.stubPattern = stubPattern;
         this.silent = silent;
+        this.transform = transform;
     }
 
     @Override
@@ -87,6 +94,10 @@ public final class DependencyDownloaderLanguageResolver extends DefaultLanguageR
     private boolean accept(String name) {
         if (stubPattern == null) {
             return true;
+        }
+
+        if (transform) {
+            return Arrays.asList(ACCEPTED_TRANSFORM_NAMES).contains(name);
         }
 
         // we are stubbing but need to accept the following

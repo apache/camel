@@ -41,4 +41,15 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: mq:queue:foo
+      steps:
+        - to:
+            uri: jms:queue:foo
+----
 ====

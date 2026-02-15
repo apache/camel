@@ -496,6 +496,7 @@ public class KameletMain extends MainCommandLineSupport {
             BeanStubReifier.registerStubBeanReifiers();
             // stub kamelet EIP
             KameletStubReifier.registerStubKameletReifiers(answer);
+            // stub languages
         }
         if (silent) {
             // silent should not include http server
@@ -666,7 +667,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class,
                     new DependencyDownloaderDataFormatResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
-                    new DependencyDownloaderLanguageResolver(answer, stubPattern, silent));
+                    new DependencyDownloaderLanguageResolver(answer, stubPattern, silent, transform));
             answer.getCamelContextExtension().addContextPlugin(TransformerResolver.class,
                     new DependencyDownloaderTransformerResolver(answer, stubPattern, silent));
             answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,

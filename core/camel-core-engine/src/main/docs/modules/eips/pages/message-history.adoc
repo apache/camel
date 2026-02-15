@@ -32,7 +32,7 @@ Java::
 camelContext.setMessageHistory(true);
 ----
 
-XML::
+Spring XML::
 +
 [source,xml]
 ----
@@ -41,7 +41,16 @@ XML::
 </camelContext>
 ----
 
+Application Properties::
++
+It is often easier to configure this in the `application.properties` file:
++
+[source,properties]
+----
+camel.main.messageHistory = true
+----
 ====
+
 
 Or when using Spring Boot or Quarkus, you can enable this in the configuration file:
 
@@ -57,12 +66,10 @@ camel.quarkus.message-history = true
 
 Spring Boot::
 +
-
 [source,properties]
 ----
-camel.springboot.message-history = true
+camel.main.message-history = true
 ----
-
 ====
 
 === Route level Message History
@@ -114,6 +121,23 @@ XML::
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- route:
+    messageHistory: "true"
+    from:
+      uri: jms:cheese
+      steps:
+        - to:
+            uri: bean:validate
+        - to:
+            uri: bean:transform
+        - to:
+            uri: jms:wine
+----
+
 ====
 
 === Enabling source location information
@@ -128,13 +152,12 @@ To enable source location:
 
 Java::
 +
-
 [source,java]
 ----
 camelContext.setSourceLocationEnabled(true);
 ----
 
-XML::
+Spring XML::
 +
 [source,xml]
 ----
@@ -143,6 +166,14 @@ XML::
 </camelContext>
 ----
 
+Application Properties
++
+It is often easier to configure this in the `application.properties` file:
++
+[source,properties]
+----
+camel.main.source-location-enabled = true
+----
 ====
 
 Or when using Spring Boot or Quarkus, you can enable this in the configuration file:
@@ -159,12 +190,10 @@ camel.quarkus.source-location-enabled = true
 
 Spring Boot::
 +
-
 [source,properties]
 ----
-camel.springboot.source-location-enabled = true
+camel.main.source-location-enabled = true
 ----
-
 ====
 
 
@@ -278,7 +307,7 @@ Java::
 errorHandler(defaultErrorHandler().logExhaustedMessageBody(true));
 ----
 
-XML::
+Spring XML::
 +
 In XML configuring this is a bit different, as you configure this in the `redeliveryPolicy`
 of the `<errorHandler>` as shown:

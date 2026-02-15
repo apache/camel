@@ -50,14 +50,9 @@ YAML::
 ----
 - route:
     from:
-      uri: file
-      parameters:
-        directoryName: foo
+      uri: file:foo
       steps:
         - to:
-            uri: jms
-            parameters:
-              destinationType: queue
-              destinationName: foo
+            uri: jms:queue:foo
 ----
 ====

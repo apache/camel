@@ -35,4 +35,16 @@ XML::
     <to uri="jms:inbox"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: jms:inbox
+----
 ====

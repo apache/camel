@@ -39,4 +39,16 @@ XML::
     <to uri="jms:queue:cheese?timeToLive=5000"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:cheese
+      steps:
+        - to:
+            uri: jms:queue:cheese?timeToLive=5000
+----
 ====

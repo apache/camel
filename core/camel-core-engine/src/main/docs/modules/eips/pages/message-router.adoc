@@ -71,9 +71,7 @@ YAML::
 ----
 - route:
     from:
-      uri: direct
-      parameters:
-        name: a
+      uri: direct:a
       steps:
         - choice:
             when:
@@ -81,21 +79,15 @@ YAML::
                   expression: ${header.foo} == 'bar'
                 steps:
                   - to:
-                      uri: direct
-                      parameters:
-                        name: b
+                      uri: direct:b
               - simple:
                   expression: ${header.foo} == 'cheese'
                 steps:
                   - to:
-                      uri: direct
-                      parameters:
-                        name: c
+                      uri: direct:c
             otherwise:
               steps:
                 - to:
-                    uri: direct
-                    parameters:
-                      name: d
+                    uri: direct:d
 ----
 ====

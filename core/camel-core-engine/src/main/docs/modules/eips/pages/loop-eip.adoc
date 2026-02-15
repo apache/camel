@@ -71,9 +71,27 @@ XML::
   </loop>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:a
+      steps:
+        - loop:
+            expression:
+              constant:
+                expression: 8
+            steps:
+              - to:
+                  uri: mock:result
+----
 ====
 
-Use expression to determine loop count:
+
+You can also use a Camel language such as `header` that provides information how many times to loop:
 
 [tabs]
 ====
@@ -98,16 +116,69 @@ XML::
   </loop>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:b
+      steps:
+        - loop:
+            expression:
+              header:
+                expression: loop
+            steps:
+              - to:
+                  uri: mock:result
+----
 ====
 
-And with the xref:languages:xpath-language.adoc[XPath] language:
+If you work with XML then you can use xref:languages:xpath-language.adoc[XPath] language:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:c")
     .loop(xpath("/hello/@times"))
         .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:c"/>
+    <loop>
+        <xpath>/hello/@times</xpath>
+        <to uri="mock:result"/>
+    </loop>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:c
+      steps:
+        - loop:
+            expression:
+              xpath:
+                expression: /hello/@times
+            steps:
+              - to:
+                  uri: mock:result
+----
+====
+
 
 == Using copy mode
 
@@ -147,9 +218,34 @@ XML::
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loop:
+            copy: "true"
+            expression:
+              constant:
+                expression: 3
+            steps:
+              - transform:
+                  expression:
+                    simple:
+                      expression: "${body}B"
+              - to:
+                  uri: mock:loop
+        - to:
+            uri: mock:result
+----
 ====
 
 However, if we do *not* enable copy mode, then mock:loop will receive `_"AB"_`, `_"ABB"_`, `_"ABBB"_`, etc. messages.
+
 
 == Looping using while
 
@@ -174,6 +270,8 @@ from("direct:start")
 
 XML::
 +
+Notice that the while loop is turned on using the `doWhile` attribute.
++
 [source,xml]
 ----
 <route>
@@ -188,6 +286,28 @@ XML::
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
 +
-Notice that the while loop is turned on using the `doWhile` attribute.
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - loop:
+            doWhile: "true"
+            expression:
+              simple:
+                expression: "${body.length} <= 5"
+            steps:
+              - to:
+                  uri: mock:loop
+              - transform:
+                  expression:
+                    simple:
+                      expression: "A${body}"
+        - to:
+            uri: mock:result
+----
 ====
