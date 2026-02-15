@@ -1,0 +1,14 @@
+= Kamelet Main Support Component
+:doctitle: Kamelet Main Support
+:shortname: kamelet-main-support
+:artifactid: camel-kamelet-main-support
+:description: Support Module for Kamelet Main
+:since: 4.19
+:supportlevel: Preview
+:tabs-sync-option:
+//Manually maintained attributes
+:group: DSL
+
+*Since Camel {since}*
+
+Support module for xref:_kamelet_main_component[Kamelet Main] (aka camel-jbang).

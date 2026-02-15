@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "kamelet-main-support",
+    "title": "Kamelet Main Support",
+    "description": "Support Module for Kamelet Main",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "jbang",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kamelet-main-support",
+    "version": "4.18.0-SNAPSHOT"
+  }
+}
