@@ -18,7 +18,7 @@ package org.apache.camel.component.paho.mqtt5.integration;
 
 import org.apache.camel.test.infra.mosquitto.services.MosquittoService;
 import org.apache.camel.test.infra.mosquitto.services.MosquittoServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class PahoMqtt5ITSupport extends CamelTestSupport {

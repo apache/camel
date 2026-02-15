@@ -28,7 +28,7 @@ import com.google.cloud.functions.v1.CloudFunctionsServiceSettings;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.functions.GoogleCloudFunctionsComponent;
 import org.apache.camel.component.google.functions.mock.MockCloudFunctionsService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 

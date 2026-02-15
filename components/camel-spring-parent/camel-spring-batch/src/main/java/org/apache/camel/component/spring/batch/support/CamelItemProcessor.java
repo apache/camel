@@ -19,7 +19,7 @@ package org.apache.camel.component.spring.batch.support;
 import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.ItemProcessor;
 
 /**
  * Spring Batch {@link ItemProcessor} sending synchronous request to the given Camel endpoint. The actual processing of

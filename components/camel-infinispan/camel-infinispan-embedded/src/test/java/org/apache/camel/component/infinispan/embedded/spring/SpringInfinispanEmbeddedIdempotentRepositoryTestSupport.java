@@ -19,7 +19,7 @@ package org.apache.camel.component.infinispan.embedded.spring;
 import java.util.UUID;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 
 public abstract class SpringInfinispanEmbeddedIdempotentRepositoryTestSupport extends CamelSpringTestSupport {

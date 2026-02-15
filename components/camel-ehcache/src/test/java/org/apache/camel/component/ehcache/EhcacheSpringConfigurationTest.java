@@ -17,7 +17,7 @@
 package org.apache.camel.component.ehcache;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.ResourceType;

@@ -48,6 +48,12 @@
             <version>${bouncycastle-version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
+
         <!-- Spring Vault for HashicorpVaultKeyLifecycleManager (optional) -->
         <dependency>
             <groupId>org.springframework.vault</groupId>
@@ -67,7 +73,7 @@
         <!-- for testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-junit5</artifactId>
+            <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

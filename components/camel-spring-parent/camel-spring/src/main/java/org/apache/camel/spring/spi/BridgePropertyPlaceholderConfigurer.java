@@ -53,7 +53,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         properties.putAll(props);
         // create helper
         helper = new PropertyPlaceholderHelper(
-                placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
+                placeholderPrefix, placeholderSuffix, valueSeparator, escapeCharacter, ignoreUnresolvablePlaceholders);
     }
 
     public int getSystemPropertiesMode() {

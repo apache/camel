@@ -30,7 +30,7 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxws.DefaultCxfBinding;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

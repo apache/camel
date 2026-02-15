@@ -27,7 +27,7 @@ import org.apache.camel.ContextEvents;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.clock.EventClock;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;

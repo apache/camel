@@ -19,7 +19,7 @@ package org.apache.camel.component.weather;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
+import static org.apache.camel.test.junit6.TestSupport.assertStringContains;
 
 @EnabledIfSystemProperty(named = "enable.weather.tests", matches = "true",
                          disabledReason = "Disabled to avoid hitting API limits")

@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.complex.generateheader.Client;
 import org.apache.camel.dataformat.bindy.model.complex.generateheader.Order;
 import org.apache.camel.dataformat.bindy.model.complex.generateheader.Security;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 

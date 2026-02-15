@@ -26,7 +26,7 @@ import com.google.cloud.bigquery.TableResult;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLConfiguration;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLEndpoint;
 import org.apache.camel.component.google.bigquery.sql.GoogleBigQuerySQLProducer;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;

@@ -24,7 +24,7 @@ import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.body;
+import static org.apache.camel.test.junit6.TestSupport.body;
 
 /**
  * Integration test that verifies the ability of SJMS to correctly process asynchronous InOut exchanges from both the

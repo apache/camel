@@ -31,7 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws2.bedrock.BedrockModels;
 import org.apache.camel.component.aws2.bedrock.runtime.BedrockConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;

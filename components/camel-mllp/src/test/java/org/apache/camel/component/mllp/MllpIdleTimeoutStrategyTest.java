@@ -31,7 +31,7 @@ import org.apache.camel.component.mllp.internal.MllpSocketBuffer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;

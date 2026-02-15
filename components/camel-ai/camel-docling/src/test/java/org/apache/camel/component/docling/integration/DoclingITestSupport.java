@@ -21,7 +21,7 @@ import org.apache.camel.component.docling.DoclingComponent;
 import org.apache.camel.component.docling.DoclingConfiguration;
 import org.apache.camel.test.infra.docling.services.DoclingService;
 import org.apache.camel.test.infra.docling.services.DoclingServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -17,7 +17,7 @@
 package org.apache.camel.coap;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.elements.config.Configuration;

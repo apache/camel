@@ -23,7 +23,7 @@ import jakarta.activation.DataHandler;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.CamelFileDataSource;
 import org.apache.camel.attachment.DefaultAttachment;
-import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.apache.camel.test.junit6.LanguageTestSupport;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.junit.jupiter.api.Test;
 

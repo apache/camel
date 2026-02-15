@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.stripe.integration;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
 
 public abstract class StripeIntegrationTestSupport extends CamelTestSupport {

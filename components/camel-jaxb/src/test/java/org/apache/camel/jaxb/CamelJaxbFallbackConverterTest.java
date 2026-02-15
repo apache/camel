@@ -26,7 +26,7 @@ import org.apache.camel.example.Bar;
 import org.apache.camel.example.Foo;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

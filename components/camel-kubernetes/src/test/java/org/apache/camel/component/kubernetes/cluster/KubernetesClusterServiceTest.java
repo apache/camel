@@ -43,7 +43,7 @@ import org.apache.camel.component.kubernetes.cluster.utils.LeaseLockSimulator;
 import org.apache.camel.component.kubernetes.cluster.utils.LockTestServer;
 import org.apache.camel.component.kubernetes.cluster.utils.ResourceLockSimulator;
 import org.apache.camel.support.cluster.RebalancingCamelClusterService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

@@ -24,7 +24,7 @@ import dev.langchain4j.web.search.WebSearchRequest;
 import dev.langchain4j.web.search.tavily.TavilyWebSearchEngine;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 

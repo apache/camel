@@ -17,7 +17,7 @@
 package org.apache.camel.tracing;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit5.ExchangeTestSupport;
+import org.apache.camel.test.junit6.ExchangeTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 

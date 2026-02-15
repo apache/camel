@@ -23,7 +23,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
 import org.apache.camel.component.cm.CMConfiguration;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;

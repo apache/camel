@@ -18,7 +18,7 @@ package org.apache.camel.component.jackson;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
 public class MyModule extends Module {
 
@@ -34,7 +34,7 @@ public class MyModule extends Module {
 
     @Override
     public void setupModule(SetupContext context) {
-        context.setNamingStrategy(new PropertyNamingStrategy.PropertyNamingStrategyBase() {
+        context.setNamingStrategy(new PropertyNamingStrategies.NamingBase() {
             @Override
             public String translate(String propertyName) {
                 return "my-" + propertyName;

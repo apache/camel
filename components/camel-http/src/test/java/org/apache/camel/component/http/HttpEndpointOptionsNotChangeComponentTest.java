@@ -20,10 +20,10 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.http.common.DefaultHttpBinding;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
 
 /**
  * Having custom endpoint options should not override or change any component configured options.

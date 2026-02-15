@@ -18,7 +18,7 @@ package org.apache.camel.component.snmp;
 
 import java.util.stream.Stream;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 public class SnmpTestSupport extends CamelTestSupport {
 

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTest;
+import org.apache.camel.test.spring.junit6.CamelSpringTest;
 import org.apache.camel.util.CastUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

@@ -23,7 +23,7 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.eclipse.angus.mail.imap.SortTerm;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

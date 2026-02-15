@@ -28,7 +28,7 @@ import org.apache.camel.component.zookeeper.cloud.MetaData;
 import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperContainer;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;

@@ -20,7 +20,7 @@ import java.util.Map;
 
 import net.sf.saxon.Configuration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 

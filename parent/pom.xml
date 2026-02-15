@@ -91,7 +91,7 @@
         <c3p0-version>0.11.2</c3p0-version>
         <caffeine-version>3.2.3</caffeine-version>
         <californium-version>3.14.0</californium-version>
-        <californium-scandium-version>3.11.0</californium-scandium-version>
+        <californium-scandium-version>3.14.0</californium-scandium-version>
         <!-- jbang edit command which uses embedded kamelets catalog -->
         <camel-lsp-version>1.34.0</camel-lsp-version>
         <camel-kamelets-catalog-version>4.17.0</camel-kamelets-catalog-version>
@@ -270,7 +270,8 @@
         <ivy-version>2.5.3</ivy-version>
         <jackson-databind-nullable-version>0.2.9</jackson-databind-nullable-version>
         <jackson-jq-version>1.6.0</jackson-jq-version>
-        <jackson2-version>2.19.4</jackson2-version>
+        <jackson2-version>2.20.2</jackson2-version>
+        <jackson2-annotations-version>2.20</jackson2-annotations-version>
         <jackrabbit-version>2.22.3</jackrabbit-version>
         <jasminb-jsonapi-version>0.15</jasminb-jsonapi-version>
         <jandex-version>3.5.3</jandex-version>
@@ -307,7 +308,7 @@
         <jcip-annotations-version>1.0-1</jcip-annotations-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>7.2.1</jedis-client-version>
-        <jetty-version>12.1.6</jetty-version>
+        <jetty-version>12.1.5</jetty-version>
         <jetty-for-solr-version>10.0.20</jetty-for-solr-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -398,8 +399,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.5.1</maven-war-plugin-version>
         <metrics-version>4.2.38</metrics-version>
-        <micrometer-version>1.15.6</micrometer-version>
-        <micrometer-tracing-version>1.5.5</micrometer-tracing-version>
+        <micrometer-version>1.16.2</micrometer-version>
+        <micrometer-tracing-version>1.6.2</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milo-version>1.1.1</milo-version>
         <milvus-client-version>2.6.14</milvus-client-version>
@@ -419,7 +420,7 @@
         <narayana-version>5.13.1.Final</narayana-version>
         <neoscada-version>0.4.0</neoscada-version>
         <neo4j-version>6.0.2</neo4j-version>
-        <netty-version>4.1.130.Final</netty-version>
+        <netty-version>4.2.9.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.9</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.7</nimbus-jose-jwt>
@@ -477,8 +478,8 @@
         <reactor-netty-version>1.3.3</reactor-netty-version>
         <redisson-version>3.52.0</redisson-version>
         <resilience4j-version>2.3.0</resilience4j-version>
-        <rest-assured-version>5.5.6</rest-assured-version>
-        <roaster-version>2.31.0.Final</roaster-version>
+        <rest-assured-version>6.0.0</rest-assured-version>
+        <roaster-version>2.30.3.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>5.3.2</rocketmq-version>
         <rome-version>2.1.0</rome-version>
@@ -505,16 +506,16 @@
         <splunk-version>1.9.5_1</splunk-version>
         <spock-version>2.4-groovy-4.0</spock-version>
         <spring-ai-version>1.1.2</spring-ai-version>
-        <spring-cloud-config-version>4.3.0</spring-cloud-config-version>
-        <spring-batch-version>5.2.4</spring-batch-version>
-        <spring-boot-version>3.5.10</spring-boot-version>
-        <spring-data-redis-version>3.5.5</spring-data-redis-version>
-        <spring-ldap-version>3.3.5</spring-ldap-version>
-        <spring-vault-core-version>3.2.0</spring-vault-core-version>
-        <spring-version>6.2.15</spring-version>
-        <spring-rabbitmq-version>3.2.8</spring-rabbitmq-version>
-        <spring-security-version>6.5.7</spring-security-version>
-        <spring-ws-version>4.1.2</spring-ws-version>
+        <spring-cloud-config-version>5.0.1</spring-cloud-config-version>
+        <spring-batch-version>6.0.2</spring-batch-version>
+        <spring-boot-version>4.0.2</spring-boot-version>
+        <spring-data-redis-version>4.0.2</spring-data-redis-version>
+        <spring-ldap-version>4.0.1</spring-ldap-version>
+        <spring-vault-core-version>4.0.0</spring-vault-core-version>
+        <spring-version>7.0.3</spring-version>
+        <spring-rabbitmq-version>4.0.2</spring-rabbitmq-version>
+        <spring-security-version>7.0.2</spring-security-version>
+        <spring-ws-version>5.0.0</spring-ws-version>
         <sql-maven-plugin-version>3.0.0</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okhttp5-version>5.3.2</squareup-okhttp5-version>
@@ -3238,7 +3239,7 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>${junit-jupiter-version}</version>
+                <version>${junit6-jupiter-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

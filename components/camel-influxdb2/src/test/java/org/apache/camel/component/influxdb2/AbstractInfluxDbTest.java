@@ -18,7 +18,7 @@ package org.apache.camel.component.influxdb2;
 
 import com.influxdb.client.InfluxDBClient;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;

@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 import org.apache.camel.component.springrabbit.test.infra.services.RabbitMQServiceFactory;
 import org.apache.camel.test.infra.rabbitmq.services.RabbitMQService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -21,7 +21,7 @@ import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.support.DefaultContextReloadStrategy;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

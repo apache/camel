@@ -18,7 +18,7 @@ package org.apache.camel.component.metrics.messagehistory;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

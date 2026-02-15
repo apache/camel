@@ -21,7 +21,7 @@ import java.io.File;
 import jakarta.activation.DataHandler;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit5.LanguageTestSupport;
+import org.apache.camel.test.junit6.LanguageTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
