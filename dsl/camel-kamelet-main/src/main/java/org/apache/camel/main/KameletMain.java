@@ -80,6 +80,7 @@ import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.injection.AnnotationDependencyInjection;
 import org.apache.camel.main.reload.OpenApiGeneratorReloadStrategy;
 import org.apache.camel.main.stub.BeanStubReifier;
+import org.apache.camel.main.stub.KameletStubReifier;
 import org.apache.camel.main.util.ClipboardReloadStrategy;
 import org.apache.camel.main.util.ExtraClassesClassLoader;
 import org.apache.camel.main.util.ExtraFilesClassLoader;
@@ -493,6 +494,8 @@ public class KameletMain extends MainCommandLineSupport {
             blueprintXmlBeansHandler.setTransform(true);
             // stub beans
             BeanStubReifier.registerStubBeanReifiers();
+            // stub kamelet EIP
+            KameletStubReifier.registerStubKameletReifiers(answer);
         }
         if (silent) {
             // silent should not include http server
@@ -682,11 +685,8 @@ public class KameletMain extends MainCommandLineSupport {
             }
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stubPattern, silent));
             Object kameletsVersion = getInitialProperties().get(getInstanceType() + ".kameletsVersion");
-            if (kameletsVersion != null) {
-                answer.addService(new DependencyDownloaderKamelet(answer, kameletsVersion.toString()));
-            } else {
-                answer.addService(new DependencyDownloaderKamelet(answer));
-            }
+            answer.addService(new DependencyDownloaderKamelet(
+                    answer, kameletsVersion != null ? kameletsVersion.toString() : null));
             answer.addService(new DependencyDownloaderPropertiesComponent(answer, knownDeps, silent));
 
             // reloader

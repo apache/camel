@@ -37,6 +37,7 @@ your own `org.apache.camel.spi.IdempotentRepository`.
 
 Camel provides the following Idempotent Consumer implementations:
 
+* FileIdempotentRepository from `camel-support` JAR
 * MemoryIdempotentRepository from `camel-support` JAR
 * xref:ROOT:caffeine-cache-component.adoc[CaffeineIdempotentRepository]
 * xref:ROOT:cql-component.adoc[CassandraIdempotentRepository]

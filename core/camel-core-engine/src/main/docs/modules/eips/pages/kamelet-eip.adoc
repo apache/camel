@@ -19,8 +19,8 @@ The Kamelet EIP allows calling Kamelets (i.e., xref:manual::route-template.adoc[
 When a Kamelet is designed for a special use-case such as aggregating messages, and returning
 a response message only when a group of aggregated messages is completed.
 In other words, kamelet does not return a response message for every incoming message.
-In special situations like these,
-then you **must** use this Kamelet EIP instead of using the xref:components::kamelet-component.adoc[kamelet] component.
+
+In special situations like these, then you **must** use this Kamelet EIP instead of using the xref:components::kamelet-component.adoc[kamelet] component.
 
 Given the following Kamelet (as a route template):
 
@@ -43,6 +43,11 @@ has completed a group of messages.
 
 And the following route using the kamelet:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -52,8 +57,43 @@ from("direct:start")
     .to("mock:result");
 ----
 
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="kamelet:my-aggregate?count=5"/>
+    <to uri="log:info"/>
+    <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - to:
+            uri: kamelet:my-aggregate?count=5
+        - to:
+            uri: log:info
+        - to:
+            uri: mock:result
+----
+====
+
+
 Then this does not work, instead you **must** use Kamelet EIP instead:
 
+[tabs]
+====
+
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -61,6 +101,37 @@ from("direct:start")
     .to("log:info")
     .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <kamelet name="my-aggregate?count=5">
+        <to uri="log:info"/>
+        <to uri="mock:result"/>
+    </kamelet>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - kamelet:
+            name: my-aggregate?count=5
+            steps:
+              - to:
+                  uri: log:info
+              - to:
+                  uri: mock:result
+----
+====
 
 When calling a Kamelet, you may refer to the name (template id) of the Kamelet in the EIP as shown below:
 
@@ -82,7 +153,6 @@ include::partial$eip-exchangeProperties.adoc[]
 
 Java::
 +
-
 [source,java]
 ----
 from("direct:start")
@@ -99,6 +169,21 @@ XML::
     <kamelet name="foo"/>
     <to uri="mock:result"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - kamelet:
+            name: foo
+            steps:
+              - to:
+                  uri: mock:result
 ----
 
 ====

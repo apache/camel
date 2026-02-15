@@ -31,7 +31,6 @@ public class SagaDownloader {
     }
 
     public static void registerDownloadReifiers(KameletMain main) {
-
         ProcessorReifier.registerReifier(SagaDefinition.class,
                 (route, processorDefinition) -> {
                     if (processorDefinition instanceof SagaDefinition) {

@@ -41,7 +41,7 @@ public final class DependencyDownloaderComponentResolver extends DefaultComponen
     };
 
     private static final String[] ACCEPTED_TRANSFORM_NAMES = {
-            "stub", "direct", "kamelet", "log", "seda"
+            "stub", "direct", "log", "seda"
     };
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();

@@ -40,7 +40,7 @@ URI pattern matching by exact uri, wildcard and regular expression. See further 
 * The intercepted endpoint uri is stored as exchange property with the key
 `Exchange.INTERCEPTED_ENDPOINT`.
 
-=== Interceptors headers
+=== Interceptors metadata
 
 When using Apache Camel interceptors, the framework automatically populates exchange properties with contextual information about where the interception occurred:
 
@@ -63,16 +63,16 @@ Java::
 +
 
 [source,java]
--------------------------------------------------------------------------
+----
 // global interceptor for all routes
 intercept().to("log:hello");
 
 from("jms:queue:order")
   .to("bean:validateOrder")
   .to("bean:processOrder");
--------------------------------------------------------------------------
+----
 
-XML::
+Spring XML::
 +
 [source,xml]
 ----
@@ -124,7 +124,7 @@ from("jms:queue:order")
   .to("bean:processOrder");
 ----
 
-XML::
+Spring XML::
 +
 
 [source,xml]
@@ -149,7 +149,7 @@ XML::
 
 ====
 
-=== Controlling when to intercept using contextual informations
+=== Controlling when to intercept using contextual information
 
 [tabs]
 ====
@@ -166,14 +166,12 @@ intercept().choice()
         .to("direct:standardHandling");
 ----
 
-XML::
+Spring XML::
 +
 
 [source,xml]
 ----
-<?xml version="1.0" encoding="UTF-8"?>
-<routes xmlns="http://camel.apache.org/schema/spring">
-  <intercept>
+<intercept>
     <choice>
       <when>
         <simple>${header.CamelInterceptedRouteId} == 'criticalRoute'</simple>
@@ -183,27 +181,8 @@ XML::
         <to uri="direct:standardHandling"/>
       </otherwise>
     </choice>
-  </intercept>
-</routes>
+</intercept>
 ----
-
-YAML::
-+
-
-[source,xml]
-----
-- intercept:
-    steps:
-      - choice:
-          when:
-            - simple: "${header.CamelInterceptedRouteId} == 'criticalRoute'"
-              steps:
-                - to: "direct:specialHandling"
-          otherwise:
-            steps:
-              - to: "direct:standardHandling"
-----
-
 ====
 
 === Stop routing after being intercepted
@@ -228,7 +207,7 @@ from("jms:queue:order")
   .to("bean:processOrder");
 ----
 
-XML::
+Spring XML::
 +
 
 [source,xml]
@@ -273,7 +252,6 @@ xref:ROOT:log-component.adoc[Log] component.
 
 Java::
 +
-
 [source,java]
 ----
 interceptFrom()
@@ -284,16 +262,15 @@ from("jms:queue:order")
   .to("bean:processOrder");
 ----
 
-XML::
+Spring XML::
 +
-
 [source,xml]
 ----
 <camelContext>
 
-  <intercept>
+  <interceptFrom>
     <to uri="log:incoming"/>
-  </intercept>
+  </interceptFrom>
 
   <route>
     <from uri="jms:queue:order"/>
@@ -314,7 +291,6 @@ you can do:
 
 Java::
 +
-
 [source,java]
 ----
 interceptFrom("jms*")
@@ -328,9 +304,8 @@ from("file:inbox")
   .to("ftp:someserver/backup")
 ----
 
-XML::
+Spring XML::
 +
-
 [source,xml]
 ----
 <camelContext>
@@ -351,7 +326,6 @@ XML::
 
 </camelContext>
 ----
-
 ====
 
 In this example then only messages from the JMS route are intercepted, because
@@ -385,7 +359,6 @@ message is being sent to xref:ROOT:kafka-component.adoc[kafka]:
 
 Java::
 +
-
 [source,java]
 ----
 interceptSendToEndpoint("kafka*")
@@ -397,9 +370,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-XML::
+Spring XML::
 +
-
 [source,xml]
 ----
 <camelContext>
@@ -417,7 +389,6 @@ XML::
 
 </camelContext>
 ----
-
 ====
 
 When you also want to process the message after it has been sent to the intended destination,
@@ -428,7 +399,6 @@ then the example is slightly _odd_ because you have to use the `afterUri` as sho
 
 Java::
 +
-
 [source,java]
 ----
 interceptSendToEndpoint("kafka*")
@@ -441,9 +411,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-XML::
+Spring XML::
 +
-
 [source,xml]
 ----
 <camelContext>
@@ -476,7 +445,6 @@ xref:ROOT:mock-component.adoc[mock] endpoint, it can be done as follows:
 
 Java::
 +
-
 [source,java]
 ----
 interceptSendToEndpoint("kafka*").skipSendToOriginalEndpoint()
@@ -488,9 +456,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-XML::
+Spring XML::
 +
-
 [source,xml]
 ----
 <camelContext>
@@ -508,7 +475,6 @@ XML::
 
 </camelContext>
 ----
-
 ====
 
 === Conditional skipping sending to endpoint
@@ -522,7 +488,6 @@ want to avoid sending these messages to a downstream kafka system, then this can
 
 Java::
 +
-
 [source,java]
 ----
 interceptSendToEndpoint("kafka*").skipSendToOriginalEndpoint()
@@ -535,9 +500,8 @@ from("jms:queue:order")
   .to("kafka:order");
 ----
 
-XML::
+Spring XML::
 +
-
 [source,xml]
 ----
 <camelContext>
@@ -556,7 +520,6 @@ XML::
 
 </camelContext>
 ----
-
 ====
 
 == Intercepting endpoints using pattern matching

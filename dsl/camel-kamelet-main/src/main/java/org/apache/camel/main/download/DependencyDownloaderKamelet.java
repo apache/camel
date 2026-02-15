@@ -54,10 +54,6 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
     private KameletDependencyDownloader downloader;
     private CamelContext camelContext;
 
-    public DependencyDownloaderKamelet(CamelContext camelContext) {
-        this(camelContext, null);
-    }
-
     public DependencyDownloaderKamelet(CamelContext camelContext, String kameletsVersion) {
         this.camelContext = camelContext;
         this.kameletsVersion = kameletsVersion;
@@ -75,8 +71,10 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
 
     @Override
     protected void doBuild() throws Exception {
-        KameletComponent kc = camelContext.getComponent("kamelet", KameletComponent.class);
-        kc.setRouteTemplateLoaderListener(this);
+        var comp = camelContext.getComponent("kamelet");
+        if (comp instanceof KameletComponent kc) {
+            kc.setRouteTemplateLoaderListener(this);
+        }
     }
 
     @Override

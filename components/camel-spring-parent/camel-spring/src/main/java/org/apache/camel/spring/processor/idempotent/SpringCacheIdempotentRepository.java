@@ -19,21 +19,53 @@ package org.apache.camel.spring.processor.idempotent;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
+@Metadata(label = "bean",
+        description = "SpringCache based message id repository.",
+        annotations = { "interfaceName=org.apache.camel.spi.IdempotentRepository" })
+@Configurer(metadataOnly = true)
 @ManagedResource(description = "SpringCache based message id repository")
 public class SpringCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
-    private final CacheManager manager;
-    private final String cacheName;
+
+    @Metadata(required = true, description = "The Spring Cache Manager")
+    private CacheManager manager;
+    @Metadata(required = true, description = "The name of the cache to use")
+    private String cacheName;
     private Cache cache;
 
     public SpringCacheIdempotentRepository(CacheManager manager, String cacheName) {
         this.manager = manager;
         this.cacheName = cacheName;
         this.cache = null;
+    }
+
+    public SpringCacheIdempotentRepository() {
+    }
+
+    public CacheManager getManager() {
+        return manager;
+    }
+
+    public void setManager(CacheManager manager) {
+        this.manager = manager;
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public Cache getCache() {
+        return cache;
+    }
+
+    public void setCache(Cache cache) {
+        this.cache = cache;
     }
 
     @Override

@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "SpringCacheIdempotentRepository",
+    "javaType": "org.apache.camel.spring.processor.idempotent.SpringCacheIdempotentRepository",
+    "interfaceType": "org.apache.camel.spi.IdempotentRepository",
+    "title": "Spring Cache Idempotent Repository",
+    "description": "SpringCache based message id repository.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-spring",
+    "version": "4.18.0-SNAPSHOT",
+    "properties": { "manager": { "index": 0, "kind": "property", "displayName": "Manager", "required": true, "type": "object", "javaType": "org.springframework.cache.CacheManager", "deprecated": false, "autowired": false, "secret": false, "description": "The Spring Cache Manager" }, "cacheName": { "index": 1, "kind": "property", "displayName": "Cache Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the cache to use" } }
+  }
+}
+
