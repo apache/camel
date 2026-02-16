@@ -169,10 +169,12 @@ public class OpenApiUtils {
         String mediaTypeName = mediaType.getKey();
         Schema<?> schema = mediaType.getValue().getSchema();
 
-        if (mediaTypeName.contains("xml") && schema.getXml() != null) {
-            return loadBindingClassForXml(schema);
-        } else if (mediaTypeName.contains("json")) {
-            return loadBindingClassForJson(schema);
+        if (schema != null) {
+            if (mediaTypeName.contains("xml") && schema.getXml() != null) {
+                return loadBindingClassForXml(schema);
+            } else if (mediaTypeName.contains("json")) {
+                return loadBindingClassForJson(schema);
+            }
         }
 
         // class not found
@@ -239,7 +241,7 @@ public class OpenApiUtils {
     }
 
     private String resolveClassName(Schema<?> schema, Class<?> clazz) {
-        if (isArrayType(schema)) {
+        if (schema != null && isArrayType(schema)) {
             return clazz.getName().concat("[]");
         }
         return clazz.getName();
