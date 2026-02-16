@@ -33,6 +33,11 @@
     <name>Camel :: Tooling</name>
     <description>Camel Tooling</description>
 
+    <properties>
+        <!-- Vulnerability scan only enabled in runtime modules -->
+        <dependency-check.skip>true</dependency-check.skip>
+    </properties>
+
     <modules>
         <module>parent</module>
         <module>spi-annotations</module>
@@ -44,7 +49,4 @@
         <module>camel-tooling-maven</module>
         <module>enforcer-rules</module>
     </modules>
-
-    <properties>
-    </properties>
 </project>

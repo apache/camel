@@ -34,8 +34,9 @@
     <properties>
         <skipOnUnsupported>true</skipOnUnsupported>
         <enforcer.phase>none</enforcer.phase><!-- Save some time -->
+        <!-- Vulnerability scan only enabled runtime modules -->
+        <dependency-check.skip>true</dependency-check.skip>
     </properties>
-
 
     <repositories>
         <repository>

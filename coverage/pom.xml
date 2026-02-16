@@ -37,6 +37,8 @@
     <properties>
         <license.skip>true</license.skip>
         <enforcer.skip>true</enforcer.skip>
+        <!-- Vulnerability scan only enabled runtime modules -->
+        <dependency-check.skip>true</dependency-check.skip>
     </properties>
 
     <repositories>

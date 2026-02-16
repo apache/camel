@@ -32,6 +32,8 @@
     <description>Test infrastructure for Camel</description>
 
     <properties>
+        <!-- Vulnerability scan only enabled in non testing modules -->
+        <dependency-check.skip>true</dependency-check.skip>
         <assembly.skipAssembly>true</assembly.skipAssembly>
     </properties>
 

@@ -34,6 +34,8 @@
     <packaging>pom</packaging>
 
     <properties>
+        <!-- Vulnerability scan only enabled runtime modules -->
+        <dependency-check.skip>true</dependency-check.skip>
     </properties>
 
     <modules>
