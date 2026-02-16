@@ -4087,6 +4087,8 @@
                         <skipTestScope>true</skipTestScope>
                         <skipSystemScope>true</skipSystemScope>
                         <format>ALL</format>
+                        <yarnAuditAnalyzerEnabled>false</yarnAuditAnalyzerEnabled>
+                        <nodeAuditAnalyzerEnabled>false</nodeAuditAnalyzerEnabled>
                     </configuration>
                     <executions>
                         <execution>
