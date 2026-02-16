@@ -38,6 +38,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.dsl.jbang.core.model.UpdateListDTO;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
@@ -133,12 +134,12 @@ public class UpdateList extends CamelCommand {
                 // upgrade recipes 4.12.1 was released, but only Camel 4.12.0 is released, in this case,
                 // consider the major.minor only
                 if (runtimeVersion == null) {
-                    String majorMinorVersion = getMajorMinorVersion(l[0]);
+                    String majorMinorVersion = VersionHelper.getMajorMinorVersion(l[0]);
                     runtimeVersion
                             = recipesVersions.sbVersions().stream()
                                     .filter(v -> {
                                         // Handle micro Camel Upgrade Recipes versions like 4.14.0.1
-                                        String actualMajorMinorVersion = getMajorMinorVersion(v[0]);
+                                        String actualMajorMinorVersion = VersionHelper.getMajorMinorVersion(v[0]);
                                         return actualMajorMinorVersion.equals(majorMinorVersion);
                                     })
                                     .findFirst()
@@ -190,12 +191,6 @@ public class UpdateList extends CamelCommand {
         }
 
         return 0;
-    }
-
-    private static String getMajorMinorVersion(String l) {
-        String[] versions = l.split("\\.");
-        String majorMinorVersion = versions[0] + "." + versions[1];
-        return majorMinorVersion;
     }
 
     /**
