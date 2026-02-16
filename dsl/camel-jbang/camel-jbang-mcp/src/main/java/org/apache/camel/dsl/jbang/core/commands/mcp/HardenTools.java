@@ -64,55 +64,62 @@ public class HardenTools {
             throw new ToolCallException("Route content is required", null);
         }
 
-        String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
+        try {
+            String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
-        JsonObject result = new JsonObject();
-        result.put("format", resolvedFormat);
-        result.put("route", route);
+            JsonObject result = new JsonObject();
+            result.put("format", resolvedFormat);
+            result.put("route", route);
 
-        // Analyze security-sensitive components
-        List<String> securityComponents = extractSecurityComponents(route);
-        JsonArray securityComponentsJson = new JsonArray();
-        for (String comp : securityComponents) {
-            ComponentModel model = catalog.componentModel(comp);
-            if (model != null) {
-                JsonObject compJson = new JsonObject();
-                compJson.put("name", comp);
-                compJson.put("title", model.getTitle());
-                compJson.put("description", model.getDescription());
-                compJson.put("label", model.getLabel());
-                compJson.put("securityConsiderations", securityData.getSecurityConsiderations(comp));
-                compJson.put("riskLevel", securityData.getRiskLevel(comp));
-                securityComponentsJson.add(compJson);
+            // Analyze security-sensitive components
+            List<String> securityComponents = extractSecurityComponents(route);
+            JsonArray securityComponentsJson = new JsonArray();
+            for (String comp : securityComponents) {
+                ComponentModel model = catalog.componentModel(comp);
+                if (model != null) {
+                    JsonObject compJson = new JsonObject();
+                    compJson.put("name", comp);
+                    compJson.put("title", model.getTitle());
+                    compJson.put("description", model.getDescription());
+                    compJson.put("label", model.getLabel());
+                    compJson.put("securityConsiderations", securityData.getSecurityConsiderations(comp));
+                    compJson.put("riskLevel", securityData.getRiskLevel(comp));
+                    securityComponentsJson.add(compJson);
+                }
             }
+            result.put("securitySensitiveComponents", securityComponentsJson);
+
+            // Security analysis
+            JsonObject securityAnalysis = analyzeSecurityConcerns(route);
+            result.put("securityAnalysis", securityAnalysis);
+
+            // Best practices
+            JsonArray bestPractices = new JsonArray();
+            for (String practice : securityData.getBestPractices()) {
+                bestPractices.add(practice);
+            }
+            result.put("securityBestPractices", bestPractices);
+
+            // Summary
+            JsonObject summary = new JsonObject();
+            summary.put("securityComponentCount", securityComponentsJson.size());
+            summary.put("criticalRiskComponents", countComponentsByRisk(securityComponents, "critical"));
+            summary.put("highRiskComponents", countComponentsByRisk(securityComponents, "high"));
+            summary.put("concernCount", securityAnalysis.getInteger("concernCount"));
+            summary.put("positiveCount", securityAnalysis.getInteger("positiveCount"));
+            summary.put("hasExternalConnections", hasExternalConnections(route));
+            summary.put("hasSecretsManagement", hasSecretsManagement(route));
+            summary.put("usesTLS", usesTLS(route));
+            summary.put("hasAuthentication", hasAuthentication(route));
+            result.put("summary", summary);
+
+            return result.toJson();
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to analyze route security (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
-        result.put("securitySensitiveComponents", securityComponentsJson);
-
-        // Security analysis
-        JsonObject securityAnalysis = analyzeSecurityConcerns(route);
-        result.put("securityAnalysis", securityAnalysis);
-
-        // Best practices
-        JsonArray bestPractices = new JsonArray();
-        for (String practice : securityData.getBestPractices()) {
-            bestPractices.add(practice);
-        }
-        result.put("securityBestPractices", bestPractices);
-
-        // Summary
-        JsonObject summary = new JsonObject();
-        summary.put("securityComponentCount", securityComponentsJson.size());
-        summary.put("criticalRiskComponents", countComponentsByRisk(securityComponents, "critical"));
-        summary.put("highRiskComponents", countComponentsByRisk(securityComponents, "high"));
-        summary.put("concernCount", securityAnalysis.getInteger("concernCount"));
-        summary.put("positiveCount", securityAnalysis.getInteger("positiveCount"));
-        summary.put("hasExternalConnections", hasExternalConnections(route));
-        summary.put("hasSecretsManagement", hasSecretsManagement(route));
-        summary.put("usesTLS", usesTLS(route));
-        summary.put("hasAuthentication", hasAuthentication(route));
-        result.put("summary", summary);
-
-        return result.toJson();
     }
 
     /**

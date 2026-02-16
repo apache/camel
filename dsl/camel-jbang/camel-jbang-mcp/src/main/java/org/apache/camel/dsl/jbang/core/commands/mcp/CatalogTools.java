@@ -74,8 +74,11 @@ public class CatalogTools {
                     .collect(Collectors.toList());
 
             return new ComponentListResult(components.size(), cat.getCatalogVersion(), components);
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to list components: " + e.getMessage(), e);
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to list components (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
@@ -103,8 +106,9 @@ public class CatalogTools {
             return toComponentDetailResult(model);
         } catch (ToolCallException e) {
             throw e;
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to get component doc: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Component not found: " + component + " (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
@@ -129,8 +133,9 @@ public class CatalogTools {
                     .collect(Collectors.toList());
 
             return new DataFormatListResult(dataFormats.size(), dataFormats);
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to list data formats: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to list data formats (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
@@ -151,8 +156,9 @@ public class CatalogTools {
                     .collect(Collectors.toList());
 
             return new LanguageListResult(languages.size(), languages);
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to list languages: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to list languages (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
@@ -168,12 +174,20 @@ public class CatalogTools {
             throw new ToolCallException("Data format name is required", null);
         }
 
-        DataFormatModel model = catalog.dataFormatModel(dataformat);
-        if (model == null) {
-            throw new ToolCallException("Data format not found: " + dataformat, null);
-        }
+        try {
+            DataFormatModel model = catalog.dataFormatModel(dataformat);
+            if (model == null) {
+                throw new ToolCallException("Data format not found: " + dataformat, null);
+            }
 
-        return toDataFormatDetailResult(model);
+            return toDataFormatDetailResult(model);
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Data format not found: " + dataformat + " (" + e.getClass().getName() + "): " + e.getMessage(),
+                    null);
+        }
     }
 
     /**
@@ -188,12 +202,19 @@ public class CatalogTools {
             throw new ToolCallException("Language name is required", null);
         }
 
-        LanguageModel model = catalog.languageModel(language);
-        if (model == null) {
-            throw new ToolCallException("Language not found: " + language, null);
-        }
+        try {
+            LanguageModel model = catalog.languageModel(language);
+            if (model == null) {
+                throw new ToolCallException("Language not found: " + language, null);
+            }
 
-        return toLanguageDetailResult(model);
+            return toLanguageDetailResult(model);
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Language not found: " + language + " (" + e.getClass().getName() + "): " + e.getMessage(), null);
+        }
     }
 
     /**
@@ -215,8 +236,9 @@ public class CatalogTools {
                     .collect(Collectors.toList());
 
             return new EipListResult(eips.size(), eips);
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to list EIPs: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to list EIPs (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
@@ -231,12 +253,19 @@ public class CatalogTools {
             throw new ToolCallException("EIP name is required", null);
         }
 
-        EipModel model = catalog.eipModel(eip);
-        if (model == null) {
-            throw new ToolCallException("EIP not found: " + eip, null);
-        }
+        try {
+            EipModel model = catalog.eipModel(eip);
+            if (model == null) {
+                throw new ToolCallException("EIP not found: " + eip, null);
+            }
 
-        return toEipDetailResult(model);
+            return toEipDetailResult(model);
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "EIP not found: " + eip + " (" + e.getClass().getName() + "): " + e.getMessage(), null);
+        }
     }
 
     // Catalog loading
@@ -255,11 +284,7 @@ public class CatalogTools {
         }
 
         // No specific version, use runtime-specific catalog or default
-        if (runtime == null || runtime.isBlank() || "main".equalsIgnoreCase(runtime)) {
-            return catalog;
-        }
-
-        RuntimeType runtimeType = RuntimeType.fromValue(runtime);
+        RuntimeType runtimeType = resolveRuntime(runtime);
         if (runtimeType == RuntimeType.springBoot) {
             return CatalogLoader.loadSpringBootCatalog(null, null, true);
         } else if (runtimeType == RuntimeType.quarkus) {
@@ -273,11 +298,19 @@ public class CatalogTools {
         if (runtime == null || runtime.isBlank() || "main".equalsIgnoreCase(runtime)) {
             return RuntimeType.main;
         }
-        return RuntimeType.fromValue(runtime);
+        try {
+            return RuntimeType.fromValue(runtime);
+        } catch (IllegalArgumentException e) {
+            throw new ToolCallException(
+                    "Unsupported runtime: " + runtime + ". Supported values are: main, spring-boot, quarkus", null);
+        }
     }
 
     private static List<String> findComponentNames(CamelCatalog catalog) {
         List<String> answer = catalog.findComponentNames();
+        if (answer == null) {
+            return new ArrayList<>();
+        }
         List<String> copy = new ArrayList<>(answer);
         copy.removeIf(String::isBlank);
         return copy;

@@ -61,54 +61,61 @@ public class ExplainTools {
             throw new ToolCallException("Route content is required", null);
         }
 
-        String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
+        try {
+            String resolvedFormat = format != null && !format.isBlank() ? format.toLowerCase() : "yaml";
 
-        JsonObject result = new JsonObject();
-        result.put("format", resolvedFormat);
-        result.put("route", route);
+            JsonObject result = new JsonObject();
+            result.put("format", resolvedFormat);
+            result.put("route", route);
 
-        // Extract and document components
-        List<String> componentNames = extractComponents(route);
-        JsonArray components = new JsonArray();
-        for (String comp : componentNames) {
-            ComponentModel model = catalog.componentModel(comp);
-            if (model != null) {
-                JsonObject compJson = new JsonObject();
-                compJson.put("name", comp);
-                compJson.put("title", model.getTitle());
-                compJson.put("description", model.getDescription());
-                compJson.put("label", model.getLabel());
-                compJson.put("syntax", model.getSyntax());
-                compJson.put("producerOnly", model.isProducerOnly());
-                compJson.put("consumerOnly", model.isConsumerOnly());
-                components.add(compJson);
+            // Extract and document components
+            List<String> componentNames = extractComponents(route);
+            JsonArray components = new JsonArray();
+            for (String comp : componentNames) {
+                ComponentModel model = catalog.componentModel(comp);
+                if (model != null) {
+                    JsonObject compJson = new JsonObject();
+                    compJson.put("name", comp);
+                    compJson.put("title", model.getTitle());
+                    compJson.put("description", model.getDescription());
+                    compJson.put("label", model.getLabel());
+                    compJson.put("syntax", model.getSyntax());
+                    compJson.put("producerOnly", model.isProducerOnly());
+                    compJson.put("consumerOnly", model.isConsumerOnly());
+                    components.add(compJson);
+                }
             }
-        }
-        result.put("components", components);
+            result.put("components", components);
 
-        // Extract and document EIPs
-        List<String> eipNames = extractEips(route);
-        JsonArray eips = new JsonArray();
-        for (String eip : eipNames) {
-            EipModel model = catalog.eipModel(eip);
-            if (model != null) {
-                JsonObject eipJson = new JsonObject();
-                eipJson.put("name", eip);
-                eipJson.put("title", model.getTitle());
-                eipJson.put("description", model.getDescription());
-                eipJson.put("label", model.getLabel());
-                eips.add(eipJson);
+            // Extract and document EIPs
+            List<String> eipNames = extractEips(route);
+            JsonArray eips = new JsonArray();
+            for (String eip : eipNames) {
+                EipModel model = catalog.eipModel(eip);
+                if (model != null) {
+                    JsonObject eipJson = new JsonObject();
+                    eipJson.put("name", eip);
+                    eipJson.put("title", model.getTitle());
+                    eipJson.put("description", model.getDescription());
+                    eipJson.put("label", model.getLabel());
+                    eips.add(eipJson);
+                }
             }
+            result.put("eips", eips);
+
+            // Add summary counts
+            JsonObject summary = new JsonObject();
+            summary.put("componentCount", components.size());
+            summary.put("eipCount", eips.size());
+            result.put("summary", summary);
+
+            return result.toJson();
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to get route context (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
-        result.put("eips", eips);
-
-        // Add summary counts
-        JsonObject summary = new JsonObject();
-        summary.put("componentCount", components.size());
-        summary.put("eipCount", eips.size());
-        result.put("summary", summary);
-
-        return result.toJson();
     }
 
     /**

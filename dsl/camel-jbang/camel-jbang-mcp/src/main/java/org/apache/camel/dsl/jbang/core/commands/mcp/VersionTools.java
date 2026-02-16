@@ -93,8 +93,9 @@ public class VersionTools {
             return new VersionListResult(versionInfos.size(), versionInfos);
         } catch (ToolCallException e) {
             throw e;
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to list versions: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to list versions (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
@@ -102,7 +103,12 @@ public class VersionTools {
         if (runtime == null || runtime.isBlank() || "main".equalsIgnoreCase(runtime)) {
             return RuntimeType.main;
         }
-        return RuntimeType.fromValue(runtime);
+        try {
+            return RuntimeType.fromValue(runtime);
+        } catch (IllegalArgumentException e) {
+            throw new ToolCallException(
+                    "Unsupported runtime: " + runtime + ". Supported values are: main, spring-boot, quarkus", null);
+        }
     }
 
     // Result classes for Jackson serialization

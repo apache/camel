@@ -70,74 +70,81 @@ public class TransformTools {
             throw new ToolCallException("Either 'uri' or 'route' is required", null);
         }
 
-        ValidationResult result = new ValidationResult();
+        try {
+            ValidationResult result = new ValidationResult();
 
-        if (uri != null) {
-            result.uri = uri;
-            EndpointValidationResult validation = catalog.validateEndpointProperties(uri);
-            result.valid = validation.isSuccess();
+            if (uri != null) {
+                result.uri = uri;
+                EndpointValidationResult validation = catalog.validateEndpointProperties(uri);
+                result.valid = validation.isSuccess();
 
-            if (!validation.isSuccess()) {
-                ValidationErrors errors = new ValidationErrors();
-                if (validation.getUnknown() != null && !validation.getUnknown().isEmpty()) {
-                    errors.unknownOptions = String.join(", ", validation.getUnknown());
-                }
-                if (validation.getRequired() != null && !validation.getRequired().isEmpty()) {
-                    errors.missingRequired = String.join(", ", validation.getRequired());
-                }
-                if (validation.getInvalidEnum() != null && !validation.getInvalidEnum().isEmpty()) {
-                    errors.invalidEnumValues = validation.getInvalidEnum().toString();
-                }
-                if (validation.getInvalidInteger() != null && !validation.getInvalidInteger().isEmpty()) {
-                    errors.invalidIntegers = validation.getInvalidInteger().toString();
-                }
-                if (validation.getInvalidBoolean() != null && !validation.getInvalidBoolean().isEmpty()) {
-                    errors.invalidBooleans = validation.getInvalidBoolean().toString();
-                }
-                if (validation.getSyntaxError() != null) {
-                    errors.syntaxError = validation.getSyntaxError();
-                }
-                result.errors = errors;
+                if (!validation.isSuccess()) {
+                    ValidationErrors errors = new ValidationErrors();
+                    if (validation.getUnknown() != null && !validation.getUnknown().isEmpty()) {
+                        errors.unknownOptions = String.join(", ", validation.getUnknown());
+                    }
+                    if (validation.getRequired() != null && !validation.getRequired().isEmpty()) {
+                        errors.missingRequired = String.join(", ", validation.getRequired());
+                    }
+                    if (validation.getInvalidEnum() != null && !validation.getInvalidEnum().isEmpty()) {
+                        errors.invalidEnumValues = validation.getInvalidEnum().toString();
+                    }
+                    if (validation.getInvalidInteger() != null && !validation.getInvalidInteger().isEmpty()) {
+                        errors.invalidIntegers = validation.getInvalidInteger().toString();
+                    }
+                    if (validation.getInvalidBoolean() != null && !validation.getInvalidBoolean().isEmpty()) {
+                        errors.invalidBooleans = validation.getInvalidBoolean().toString();
+                    }
+                    if (validation.getSyntaxError() != null) {
+                        errors.syntaxError = validation.getSyntaxError();
+                    }
+                    result.errors = errors;
 
-                if (validation.getUnknown() != null && validation.getUnknownSuggestions() != null) {
-                    Map<String, String> suggestions = new HashMap<>();
-                    for (String unknown : validation.getUnknown()) {
-                        String[] suggestionArr = validation.getUnknownSuggestions().get(unknown);
-                        if (suggestionArr != null && suggestionArr.length > 0) {
-                            suggestions.put(unknown, String.join(", ", suggestionArr));
+                    if (validation.getUnknown() != null && validation.getUnknownSuggestions() != null) {
+                        Map<String, String> suggestions = new HashMap<>();
+                        for (String unknown : validation.getUnknown()) {
+                            String[] suggestionArr = validation.getUnknownSuggestions().get(unknown);
+                            if (suggestionArr != null && suggestionArr.length > 0) {
+                                suggestions.put(unknown, String.join(", ", suggestionArr));
+                            }
+                        }
+                        if (!suggestions.isEmpty()) {
+                            result.suggestions = suggestions;
                         }
                     }
-                    if (!suggestions.isEmpty()) {
-                        result.suggestions = suggestions;
-                    }
                 }
             }
-        }
 
-        if (route != null) {
-            result.routeProvided = true;
-            result.note = "Full route validation requires loading the route into a CamelContext. " +
-                          "Use 'camel run --validate' for complete validation.";
+            if (route != null) {
+                result.routeProvided = true;
+                result.note = "Full route validation requires loading the route into a CamelContext. " +
+                              "Use 'camel run --validate' for complete validation.";
 
-            List<String> uris = extractUrisFromRoute(route);
-            if (!uris.isEmpty()) {
-                Map<String, Boolean> uriValidations = new HashMap<>();
-                boolean allValid = true;
-                for (String extractedUri : uris) {
-                    EndpointValidationResult validation = catalog.validateEndpointProperties(extractedUri);
-                    uriValidations.put(extractedUri, validation.isSuccess());
-                    if (!validation.isSuccess()) {
-                        allValid = false;
+                List<String> uris = extractUrisFromRoute(route);
+                if (!uris.isEmpty()) {
+                    Map<String, Boolean> uriValidations = new HashMap<>();
+                    boolean allValid = true;
+                    for (String extractedUri : uris) {
+                        EndpointValidationResult validation = catalog.validateEndpointProperties(extractedUri);
+                        uriValidations.put(extractedUri, validation.isSuccess());
+                        if (!validation.isSuccess()) {
+                            allValid = false;
+                        }
                     }
+                    result.uriValidations = uriValidations;
+                    result.valid = allValid;
+                } else {
+                    result.valid = true;
                 }
-                result.uriValidations = uriValidations;
-                result.valid = allValid;
-            } else {
-                result.valid = true;
             }
-        }
 
-        return result;
+            return result;
+        } catch (ToolCallException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to validate route (" + e.getClass().getName() + "): " + e.getMessage(), null);
+        }
     }
 
     /**
@@ -185,8 +192,9 @@ public class TransformTools {
                 result.supported = false;
                 result.note = "Unsupported transformation: " + fromFormat + " to " + toFormat;
             }
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to transform route: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to transform route (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
 
         return result;
@@ -284,8 +292,9 @@ public class TransformTools {
             } finally {
                 tempFile.delete();
             }
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to validate YAML DSL: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to validate YAML DSL (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 

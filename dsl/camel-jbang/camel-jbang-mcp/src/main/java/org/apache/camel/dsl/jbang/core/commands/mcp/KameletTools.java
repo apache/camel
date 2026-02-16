@@ -88,8 +88,9 @@ public class KameletTools {
             result.sort((a, b) -> a.name().compareToIgnoreCase(b.name()));
 
             return new KameletListResult(result.size(), version, result);
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to list kamelets: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Failed to list kamelets (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
@@ -138,8 +139,9 @@ public class KameletTools {
                     km.dependencies);
         } catch (ToolCallException e) {
             throw e;
-        } catch (Exception e) {
-            throw new ToolCallException("Failed to get kamelet doc: " + e.getMessage(), e);
+        } catch (Throwable e) {
+            throw new ToolCallException(
+                    "Kamelet not found: " + kamelet + " (" + e.getClass().getName() + "): " + e.getMessage(), null);
         }
     }
 
