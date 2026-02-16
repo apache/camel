@@ -57,12 +57,27 @@ Version Filtering:
         mysql.container=mysql:8.0.35
         mysql.container.version.exclude=alpine,slim,debian
 
+    Major version freeze:
+        Prevents major version jumps (e.g., 3.x → 4.x):
+        <property>.version.freeze.major=true
+
+        Example:
+            kafka3.container=mirror.gcr.io/apache/kafka:3.9.1
+            kafka3.container.version.freeze.major=true
+
+    Structural pattern matching:
+        Version tags are automatically filtered to match the same format as the
+        current version. For example, if the current version is '17.5-alpine',
+        only tags matching the pattern X.Y-alpine will be considered. This prevents
+        non-version tags (branch names, base image tags) from being proposed.
+
     Notes:
+        - Structural pattern matching is applied first (automatic, no config needed)
         - Filters are case-insensitive
         - Include filter: version must contain at least ONE of the words
         - Exclude filter: version must NOT contain ANY of the words
         - Exclude filters are checked first, then include filters
-        - If no filters specified, all versions are considered
+        - If no filters specified, all versions matching the structural pattern are considered
 
 Usage:
     python3 check-container-versions.py [options]
@@ -96,6 +111,87 @@ import time
 # Initialize colorama for cross-platform colored output
 init(autoreset=True)
 
+
+def extract_numeric_segments(version_str: str) -> List[int]:
+    """Extract all numeric segments from a version string for comparison.
+
+    Examples:
+        '17.5-alpine' → [17, 5]
+        'v2.5.11' → [2, 5, 11]
+        'latest-kafka-3.9.1' → [3, 9, 1]
+        'RELEASE.2025-09-07T16-13-09Z-cpuv1' → [2025, 9, 7, 16, 13, 9, 1]
+    """
+    return [int(n) for n in re.findall(r'\d+', version_str)]
+
+
+def compare_version_tuples(v1: str, v2: str) -> int:
+    """Compare two version strings by their numeric segments.
+
+    Returns positive if v1 > v2, negative if v1 < v2, 0 if equal.
+    This avoids the broken string comparison fallback (e.g., "v1.9.7" > "v1.15.1").
+    """
+    nums1 = extract_numeric_segments(v1)
+    nums2 = extract_numeric_segments(v2)
+
+    if not nums1 or not nums2:
+        return 0  # Can't compare
+
+    # Compare component by component
+    for n1, n2 in zip(nums1, nums2):
+        if n1 != n2:
+            return n1 - n2
+
+    return len(nums1) - len(nums2)
+
+
+def is_same_major_version(v1: str, v2: str) -> bool:
+    """Check if two versions share the same major version (first numeric segment).
+
+    Used with version.freeze.major to prevent major version jumps.
+    """
+    nums1 = extract_numeric_segments(v1)
+    nums2 = extract_numeric_segments(v2)
+
+    if not nums1 or not nums2:
+        return True  # Can't determine, allow
+
+    return nums1[0] == nums2[0]
+
+
+def infer_version_pattern(current_version: str) -> Optional[re.Pattern]:
+    """Infer a structural regex pattern from the current version tag.
+
+    Replaces numeric segments with \\d+ patterns while keeping literal text
+    segments intact. This ensures candidate versions match the same format
+    as the current version.
+
+    Examples:
+        '17.5-alpine'       → '^\\d+\\.\\d+-alpine$'   (matches '18.0-alpine', not 'alpine3.23')
+        'v2.5.11'           → '^v\\d+\\.\\d+\\.\\d+$'  (matches 'v2.6.0', not '2.5.12')
+        'latest-kafka-3.9.1'→ '^latest\\-kafka\\-\\d+\\.\\d+\\.\\d+$'
+        '0.12.0-cpu'        → '^\\d+\\.\\d+\\.\\d+\\-cpu$' (matches '0.13.0-cpu', not 'latest-gpu')
+        '7.0.12-jammy'      → '^\\d+\\.\\d+\\.\\d+\\-jammy$'
+    """
+    if not current_version:
+        return None
+
+    parts = re.split(r'(\d+)', current_version)
+    pattern_parts = []
+    for part in parts:
+        if part == '':
+            continue
+        if re.match(r'^\d+$', part):
+            pattern_parts.append(r'\d+')
+        else:
+            pattern_parts.append(re.escape(part))
+
+    pattern = '^' + ''.join(pattern_parts) + '$'
+    try:
+        return re.compile(pattern)
+    except re.error:
+        return None
+
+
 @dataclass
 class ContainerImage:
     """Represents a container image with its registry, name, and version."""
@@ -107,6 +203,7 @@ class ContainerImage:
     file_path: str
     version_include: List[str] = None  # Whitelist: version must contain one of these words
     version_exclude: List[str] = None  # Blacklist: version must not contain any of these words
+    version_freeze_major: bool = False  # Lock to same major version when True
 
     def __post_init__(self):
         """Initialize default values for optional fields."""
@@ -114,6 +211,8 @@ class ContainerImage:
             self.version_include = []
         if self.version_exclude is None:
             self.version_exclude = []
+        # Infer structural pattern from current version (not a dataclass field, excluded from asdict)
+        self._version_pattern = infer_version_pattern(self.current_version)
 
     @property
     def full_name(self) -> str:
@@ -128,11 +227,23 @@ class ContainerImage:
         """Returns the complete image reference with version."""
         return f"{self.full_name}:{self.current_version}"
 
-    def is_version_allowed(self, version: str) -> bool:
-        """Check if a version matches the whitelist/blacklist criteria."""
-        version_lower = version.lower()
+    def is_version_allowed(self, version_tag: str) -> bool:
+        """Check if a version matches structural pattern and whitelist/blacklist criteria.
 
-        # Check blacklist first (exclusions)
+        Checks are applied in order:
+        1. Structural pattern: version must match the same format as current version
+        2. Blacklist (exclude): version must NOT contain any excluded words
+        3. Whitelist (include): version must contain at least one included word
+        4. Major version freeze: version must share the same first numeric segment
+        """
+        # Check structural pattern first - this prevents non-version tags
+        # like branch names, base image tags, etc.
+        if self._version_pattern and not self._version_pattern.match(version_tag):
+            return False
+
+        version_lower = version_tag.lower()
+
+        # Check blacklist (exclusions)
         if self.version_exclude:
             for exclude_word in self.version_exclude:
                 if exclude_word.lower() in version_lower:
@@ -141,13 +252,17 @@ class ContainerImage:
         # Check whitelist (inclusions)
         if self.version_include:
             # If whitelist is specified, version must contain at least one of the words
-            for include_word in self.version_include:
-                if include_word.lower() in version_lower:
-                    return True
-            # If whitelist exists but no match found, reject
-            return False
+            matched = any(include_word.lower() in version_lower
+                         for include_word in self.version_include)
+            if not matched:
+                return False
 
-        # No whitelist specified or version passed all checks
+        # Check major version freeze
+        if self.version_freeze_major:
+            if not is_same_major_version(self.current_version, version_tag):
+                return False
+
+        # Version passed all checks
         return True
 
 @dataclass
@@ -455,6 +570,9 @@ class MicrosoftRegistryAPI(ContainerRegistryAPI):
 class ContainerVersionChecker:
     """Main class for checking container versions."""
 
+    # Pre-release indicators for version tags
+    PRERELEASE_INDICATORS = ['alpha', 'beta', 'rc', 'dev', 'snapshot', 'preview', 'nightly', 'canary']
+
     def __init__(self,
                  include_prereleases: bool = False,
                  registry_timeout: int = 30,
@@ -476,6 +594,11 @@ class ContainerVersionChecker:
             'mcr.microsoft.com': MicrosoftRegistryAPI(registry_timeout),
             'cr.weaviate.io': DockerV2RegistryAPI(registry_timeout, "Weaviate Container Registry"),
         }
+
+    def _is_prerelease(self, ver: str) -> bool:
+        """Check if a version tag appears to be a pre-release."""
+        lower = ver.lower()
+        return any(indicator in lower for indicator in self.PRERELEASE_INDICATORS)
 
     def parse_container_reference(self, container_ref: str) -> Tuple[str, str, str, str]:
         """Parse container reference into registry, namespace, name, and version."""
@@ -642,8 +765,8 @@ class ContainerVersionChecker:
             processed_keys = set()
 
             for key, value in properties.items():
-                # Skip if already processed or if it's a filter property
-                if key in processed_keys or '.version.include' in key or '.version.exclude' in key:
+                # Skip if already processed or if it's a version filter/config property
+                if key in processed_keys or '.version.include' in key or '.version.exclude' in key or '.version.freeze' in key:
                     continue
 
                 try:
@@ -663,6 +786,12 @@ class ContainerVersionChecker:
                     if exclude_key in properties:
                         version_exclude = [word.strip() for word in properties[exclude_key].split(',') if word.strip()]
 
+                    # Look for .version.freeze.major property
+                    freeze_major_key = f"{key}.version.freeze.major"
+                    version_freeze_major = False
+                    if freeze_major_key in properties:
+                        version_freeze_major = properties[freeze_major_key].lower() in ['true', 'yes', '1']
+
                     image = ContainerImage(
                         registry=registry,
                         namespace=namespace,
@@ -671,7 +800,8 @@ class ContainerVersionChecker:
                         property_name=key,
                         file_path=file_path,
                         version_include=version_include,
-                        version_exclude=version_exclude
+                        version_exclude=version_exclude,
+                        version_freeze_major=version_freeze_major
                     )
                     images.append(image)
                     processed_keys.add(key)
@@ -682,6 +812,8 @@ class ContainerVersionChecker:
                             print(f"    Include filter: {', '.join(version_include)}")
                         if version_exclude:
                             print(f"    Exclude filter: {', '.join(version_exclude)}")
+                        if version_freeze_major:
+                            print(f"    Major version freeze: enabled")
 
                 except ValueError as e:
                     if self.verbose:
@@ -752,32 +884,23 @@ class ContainerVersionChecker:
                 excluded_count = len(available_versions) - len(filtered_versions)
                 print(f"      Filtered out {excluded_count} versions based on include/exclude rules")
 
-            # Sort versions
+            # Sort versions using numeric segment comparison (avoids packaging.version failures)
             def version_sort_key(v):
-                try:
-                    return version.parse(v)
-                except version.InvalidVersion:
-                    # For non-semantic versions, sort lexicographically
-                    return v
+                nums = extract_numeric_segments(v)
+                if nums:
+                    # Pad to 20 segments for consistent tuple comparison
+                    return tuple(nums + [0] * (20 - len(nums)))
+                return (0,) * 20
 
-            try:
-                sorted_versions = sorted(filtered_versions, key=version_sort_key, reverse=True)
-            except:
-                # If sorting fails, use lexicographic sort
-                sorted_versions = sorted(filtered_versions, reverse=True)
+            sorted_versions = sorted(filtered_versions, key=version_sort_key, reverse=True)
 
-            # Find newer versions
+            # Find newer versions using numeric segment comparison
             newer_versions = []
             current_ver = image.current_version
 
             for ver in sorted_versions:
-                try:
-                    if version.parse(ver) > version.parse(current_ver):
-                        if self.include_prereleases or not version.parse(ver).is_prerelease:
-                            newer_versions.append(ver)
-                except version.InvalidVersion:
-                    # For non-semantic versions, do string comparison
-                    if ver > current_ver:
+                if compare_version_tuples(ver, current_ver) > 0:
+                    if self.include_prereleases or not self._is_prerelease(ver):
                         newer_versions.append(ver)
 
             latest_version = sorted_versions[0] if sorted_versions else None
