@@ -217,7 +217,7 @@
         <google-cloud-pubsublite-version>1.16.0</google-cloud-pubsublite-version>
         <google-cloud-secretmanager-version>2.84.0</google-cloud-secretmanager-version>
         <google-cloud-storage-version>2.63.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.85.0</google-cloud-aiplatform-version>
+        <google-cloud-aiplatform-version>3.86.0</google-cloud-aiplatform-version>
         <google-genai-version>1.38.0</google-genai-version>
         <graaljs-version>25.0.2</graaljs-version>
         <graphql-java-version>25.0</graphql-java-version>
