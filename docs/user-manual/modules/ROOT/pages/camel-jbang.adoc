@@ -2429,6 +2429,24 @@ then Camel will attempt to uninstall the Jolokia JVM Agent. However, this may no
 able to do this always, because the JVM is being terminated which can prevent camel-jbang
 from doing JVM process communication to the running Camel integration.
 
+=== Visualizing routes with diagram
+
+The `camel diagram` command uses Hawtio to visualize Camel routes. You can run route files in the background and open Hawtio in a browser:
+
+[source,bash]
+----
+camel diagram routes.yaml
+----
+
+To attach to an existing integration:
+
+[source,bash]
+----
+camel diagram --name my-integration
+----
+
+By default Camel JBang stops the background integration when you exit Hawtio; use `--keep-running` to leave it running. Image export is currently manual via the Hawtio UI.
+
 === Scripting from terminal using pipes
 
 You can also execute a Camel JBang file as a script that can be used for terminal scripting with pipes and filters.
