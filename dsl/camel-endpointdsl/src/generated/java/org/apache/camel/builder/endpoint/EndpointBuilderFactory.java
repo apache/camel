@@ -127,6 +127,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.FtpEndpointBuilderFactory.FtpBuilders,
             org.apache.camel.builder.endpoint.dsl.FtpsEndpointBuilderFactory.FtpsBuilders,
             org.apache.camel.builder.endpoint.dsl.FunctionGraphEndpointBuilderFactory.FunctionGraphBuilders,
+            org.apache.camel.builder.endpoint.dsl.FunctionsEndpointBuilderFactory.FunctionsBuilders,
             org.apache.camel.builder.endpoint.dsl.GeoCoderEndpointBuilderFactory.GeoCoderBuilders,
             org.apache.camel.builder.endpoint.dsl.GitEndpointBuilderFactory.GitBuilders,
             org.apache.camel.builder.endpoint.dsl.GitHub2EndpointBuilderFactory.GitHub2Builders,

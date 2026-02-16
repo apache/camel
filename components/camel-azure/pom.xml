@@ -55,6 +55,7 @@
         <module>camel-azure-key-vault</module>
         <module>camel-azure-files</module>
         <module>camel-azure-schema-registry</module>
+        <module>camel-azure-functions</module>
     </modules>
 
 </project>

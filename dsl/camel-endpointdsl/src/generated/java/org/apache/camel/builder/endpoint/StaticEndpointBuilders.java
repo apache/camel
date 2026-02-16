@@ -2111,6 +2111,52 @@ public class StaticEndpointBuilders {
         return FilesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Azure Functions (camel-azure-functions)
+     * Invoke and manage Azure Functions.
+     * 
+     * Category: cloud,serverless
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-azure-functions
+     * 
+     * Syntax: <code>azure-functions:functionApp/functionName</code>
+     * 
+     * Path parameter: functionApp (required)
+     * The Azure Function App name
+     * 
+     * Path parameter: functionName
+     * The function name within the app (required for invokeFunction operation)
+     * 
+     * @param path functionApp/functionName
+     * @return the dsl builder
+     */
+    public static FunctionsEndpointBuilderFactory.FunctionsEndpointBuilder azureFunctions(String path) {
+        return azureFunctions("azure-functions", path);
+    }
+    /**
+     * Azure Functions (camel-azure-functions)
+     * Invoke and manage Azure Functions.
+     * 
+     * Category: cloud,serverless
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-azure-functions
+     * 
+     * Syntax: <code>azure-functions:functionApp/functionName</code>
+     * 
+     * Path parameter: functionApp (required)
+     * The Azure Function App name
+     * 
+     * Path parameter: functionName
+     * The function name within the app (required for invokeFunction operation)
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path functionApp/functionName
+     * @return the dsl builder
+     */
+    public static FunctionsEndpointBuilderFactory.FunctionsEndpointBuilder azureFunctions(String componentName, String path) {
+        return FunctionsEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
      * 

@@ -328,6 +328,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-azure-functions</artifactId>
+        <version>4.18.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-azure-key-vault</artifactId>
         <version>4.18.0-SNAPSHOT</version>
       </dependency>

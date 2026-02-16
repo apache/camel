@@ -56,6 +56,8 @@ public final class SensitiveUtils {
                     "consumerkey",
                     "consumersecret",
                     "emailaddress",
+                    "functionkey",
+                    "hostkey",
                     "httpproxypassword",
                     "kerberosauthticket",
                     "keypassword",
@@ -100,7 +102,9 @@ public final class SensitiveUtils {
                     "sslkeystorepassword",
                     "sslpassword",
                     "ssltruststorepassword",
+                    "storageaccountconnectionstring",
                     "subscribekey",
+                    "subscriptionid",
                     "systemid",
                     "token",
                     "tokencredential",
@@ -146,6 +150,8 @@ public final class SensitiveUtils {
                                                     + "|\\Qconsumerkey\\E"
                                                     + "|\\Qconsumersecret\\E"
                                                     + "|\\Qemailaddress\\E"
+                                                    + "|\\Qfunctionkey\\E"
+                                                    + "|\\Qhostkey\\E"
                                                     + "|\\Qhttpproxypassword\\E"
                                                     + "|\\Qkerberosauthticket\\E"
                                                     + "|\\Qkeypassword\\E"
@@ -190,7 +196,9 @@ public final class SensitiveUtils {
                                                     + "|\\Qsslkeystorepassword\\E"
                                                     + "|\\Qsslpassword\\E"
                                                     + "|\\Qssltruststorepassword\\E"
+                                                    + "|\\Qstorageaccountconnectionstring\\E"
                                                     + "|\\Qsubscribekey\\E"
+                                                    + "|\\Qsubscriptionid\\E"
                                                     + "|\\Qsystemid\\E"
                                                     + "|\\Qtoken\\E"
                                                     + "|\\Qtokencredential\\E"
@@ -202,7 +210,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {

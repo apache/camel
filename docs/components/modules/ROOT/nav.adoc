@@ -77,6 +77,7 @@
 *** xref:azure-cosmosdb-component.adoc[Azure CosmosDB]
 *** xref:azure-eventhubs-component.adoc[Azure Event Hubs]
 *** xref:azure-files-component.adoc[Azure Files]
+*** xref:azure-functions-component.adoc[Azure Functions]
 *** xref:azure-key-vault-component.adoc[Azure Key Vault]
 *** xref:azure-servicebus-component.adoc[Azure ServiceBus]
 *** xref:azure-storage-blob-component.adoc[Azure Storage Blob Service]

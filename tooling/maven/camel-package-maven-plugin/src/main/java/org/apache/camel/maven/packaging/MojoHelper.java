@@ -75,7 +75,7 @@ public final class MojoHelper {
                         dir.resolve("camel-azure-storage-datalake"), dir.resolve("camel-azure-cosmosdb"),
                         dir.resolve("camel-azure-storage-queue"), dir.resolve("camel-azure-servicebus"),
                         dir.resolve("camel-azure-key-vault"), dir.resolve("camel-azure-files"),
-                        dir.resolve("camel-azure-schema-registry"));
+                        dir.resolve("camel-azure-schema-registry"), dir.resolve("camel-azure-functions"));
             case "camel-google":
                 return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
                         dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),

@@ -690,6 +690,19 @@ public interface ComponentsBuilderFactory {
         return AzureFilesComponentBuilderFactory.azureFiles();
     }
     /**
+     * Azure Functions (camel-azure-functions)
+     * Invoke and manage Azure Functions.
+     * 
+     * Category: cloud,serverless
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-azure-functions
+     * 
+     * @return the dsl builder
+     */
+    static AzureFunctionsComponentBuilderFactory.AzureFunctionsComponentBuilder azureFunctions() {
+        return AzureFunctionsComponentBuilderFactory.azureFunctions();
+    }
+    /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
      * 
