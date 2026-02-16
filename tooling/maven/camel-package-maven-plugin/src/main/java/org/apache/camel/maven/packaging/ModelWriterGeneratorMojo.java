@@ -75,6 +75,8 @@ import org.jboss.jandex.IndexReader;
 
 public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
+    private static final String FALLBACK = "doWriteElement(\"onFallback\"";
+
     public static final String MODEL_PACKAGE = "org.apache.camel.model";
 
     private final Map<Class<?>, List<Property>> properties = new ConcurrentHashMap<>();
@@ -139,6 +141,29 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         ctx.put("model", model);
         ctx.put("mojo", this);
         return velocity("velocity/model-writer.vm", ctx);
+    }
+
+    protected String postGenerateWriter(String writer) {
+        // the velocity templates are ugly to maintain so lets hack here to control the order in circuit-breaker
+        // we want onFallback to be after outputs, but because the writer is hard-coded to not be able to generate code
+        // that respect this order, then we swap the lines after the source code is generated
+        String[] lines = writer.split(System.lineSeparator());
+        int pos = -1;
+        for (int i = 0; i < lines.length; i++) {
+            String s = lines[i].trim();
+            if (s.startsWith(FALLBACK)) {
+                pos = i;
+                break;
+            }
+        }
+        if (pos != -1) {
+            // swap lines
+            String prev = lines[pos];
+            String next = lines[pos + 1];
+            lines[pos] = next;
+            lines[pos + 1] = prev;
+        }
+        return String.join(System.lineSeparator(), lines);
     }
 
     protected Class<?> loadClass(ClassLoader loader, String name) {
@@ -274,14 +299,40 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         XmlType xmlType = clazz.getAnnotation(XmlType.class);
         if (xmlType != null) {
             String[] propOrder = xmlType.propOrder();
-            if (propOrder != null && propOrder.length > 0) {
-                // special for choice where whenClauses should use when in xml-io parser
-                final List<String> list = Arrays.stream(propOrder).map(o -> o.equals("whenClauses") ? "when" : o).toList();
-                properties = properties
-                        .sorted(Comparator.comparing(p -> Arrays.binarySearch(list.toArray(), p.getName())));
+            if (propOrder != null && propOrder.length > 1) {
+                // special for DSL where XML vs YAML have different names, and we must use as-is due to JAXB @XmlType propOrder
+                final Map<String, String> alias = Map.of(
+                        "whenClauses", "when",
+                        "componentScanning", "component-scan",
+                        "beans", "bean",
+                        "dataFormats", "dataFormat",
+                        "restConfigurations", "restConfiguration",
+                        "rests", "rest",
+                        "routeConfigurations", "routeConfiguration",
+                        "routeTemplates", "routeTemplate",
+                        "templatedRoutes", "templatedRoute",
+                        "routes", "route");
+                final List<String> list = Arrays.stream(propOrder).map(o -> alias.getOrDefault(o, o)).toList();
+                boolean outputsLast = list.indexOf("outputs") == list.size() - 1;
+                properties = properties.sorted((o1, o2) -> {
+                    String n1 = alias.getOrDefault(o1.name, o1.name);
+                    String n2 = alias.getOrDefault(o2.name, o2.name);
+                    int idx1 = list.indexOf(n1);
+                    int idx2 = list.indexOf(n2);
+                    if ("outputs".equals(n1) && outputsLast) {
+                        idx1 = Integer.MAX_VALUE;
+                    }
+                    if ("outputs".equals(n2) && outputsLast) {
+                        idx2 = Integer.MAX_VALUE;
+                    }
+                    return Integer.compare(idx1, idx2);
+                });
             }
         }
-        return properties.toList();
+        var l = properties.toList();
+        var l2 = new ArrayList();
+        l2.addAll(l);
+        return l2;
     }
 
     private List<Member> getMembers(Class<?> clazz) {

@@ -927,9 +927,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("inheritErrorHandler", toString(def.getInheritErrorHandler()), "false");
         doWriteAttribute("configuration", def.getConfiguration(), null);
         doWriteElement("resilience4jConfiguration", def.getResilience4jConfiguration(), this::doWriteResilience4jConfigurationDefinition);
-        doWriteElement("onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
         doWriteElement("faultToleranceConfiguration", def.getFaultToleranceConfiguration(), this::doWriteFaultToleranceConfigurationDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
+        doWriteElement("onFallback", def.getOnFallback(), this::doWriteOnFallbackDefinition);
         endElement(name);
     }
     protected void doWriteClaimCheckDefinition(String name, ClaimCheckDefinition def) throws IOException {
@@ -1284,11 +1284,11 @@ public class ModelWriter extends BaseWriter {
     protected void doWriteOnCompletionDefinition(String name, OnCompletionDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
-        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
-        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), null);
         doWriteAttribute("mode", def.getMode(), "AfterConsumer");
         doWriteAttribute("onCompleteOnly", def.getOnCompleteOnly(), null);
         doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("parallelProcessing", def.getParallelProcessing(), null);
+        doWriteAttribute("useOriginalMessage", def.getUseOriginalMessage(), null);
         doWriteAttribute("onFailureOnly", def.getOnFailureOnly(), null);
         doWriteElement("onWhen", def.getOnWhen(), this::doWriteOnWhenDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
@@ -1646,22 +1646,22 @@ public class ModelWriter extends BaseWriter {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("template", toString(def.isTemplate()), null);
         doWriteAttribute("routeConfigurationId", def.getRouteConfigurationId(), null);
+        doWriteAttribute("logMask", def.getLogMask(), null);
         doWriteAttribute("streamCache", def.getStreamCache(), null);
+        doWriteAttribute("autoStartup", def.getAutoStartup(), "true");
         doWriteAttribute("trace", def.getTrace(), null);
+        doWriteAttribute("nodePrefixId", def.getNodePrefixId(), null);
+        doWriteAttribute("delayer", def.getDelayer(), null);
+        doWriteAttribute("messageHistory", def.getMessageHistory(), null);
+        doWriteAttribute("kamelet", toString(def.isKamelet()), null);
+        doWriteAttribute("group", def.getGroup(), null);
         doWriteAttribute("rest", toString(def.isRest()), null);
         doWriteAttribute("routePolicyRef", def.getRoutePolicyRef(), null);
         doWriteAttribute("precondition", def.getPrecondition(), null);
+        doWriteAttribute("errorHandlerRef", def.getErrorHandlerRef(), null);
         doWriteAttribute("shutdownRoute", def.getShutdownRoute(), "Default");
         doWriteAttribute("shutdownRunningTask", def.getShutdownRunningTask(), "CompleteCurrentTaskOnly");
         doWriteAttribute("startupOrder", toString(def.getStartupOrder()), null);
-        doWriteAttribute("logMask", def.getLogMask(), null);
-        doWriteAttribute("nodePrefixId", def.getNodePrefixId(), null);
-        doWriteAttribute("messageHistory", def.getMessageHistory(), null);
-        doWriteAttribute("kamelet", toString(def.isKamelet()), null);
-        doWriteAttribute("autoStartup", def.getAutoStartup(), "true");
-        doWriteAttribute("delayer", def.getDelayer(), null);
-        doWriteAttribute("group", def.getGroup(), null);
-        doWriteAttribute("errorHandlerRef", def.getErrorHandlerRef(), null);
         doWriteList(null, "routeProperty", def.getRouteProperties(), this::doWritePropertyDefinition);
         doWriteElement("errorHandler", def.getErrorHandler(), this::doWriteErrorHandlerDefinition);
         doWriteElement(null, def.getInput(), this::doWriteFromDefinitionRef);
@@ -1679,8 +1679,8 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteList(null, "templateParameter", def.getTemplateParameters(), this::doWriteRouteTemplateParameterDefinition);
-        doWriteElement("route", def.getRoute(), this::doWriteRouteDefinition);
         doWriteList(null, "templateBean", def.getTemplateBeans(), this::doWriteBeanFactoryDefinition);
+        doWriteElement("route", def.getRoute(), this::doWriteRouteDefinition);
         endElement(name);
     }
     protected void doWriteRouteTemplateParameterDefinition(String name, RouteTemplateParameterDefinition def) throws IOException {
@@ -1838,10 +1838,10 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteAttribute("routeId", def.getRouteId(), null);
         doWriteAttribute("routeTemplateRef", def.getRouteTemplateRef(), null);
-        doWriteAttribute("prefixId", def.getPrefixId(), null);
         doWriteAttribute("group", def.getGroup(), null);
-        doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
+        doWriteAttribute("prefixId", def.getPrefixId(), null);
         doWriteList(null, "parameter", def.getParameters(), this::doWriteTemplatedRouteParameterDefinition);
+        doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
         endElement(name);
     }
     protected void doWriteTemplatedRouteParameterDefinition(String name, TemplatedRouteParameterDefinition def) throws IOException {
@@ -1888,10 +1888,10 @@ public class ModelWriter extends BaseWriter {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("mode", def.getMode(), "TotalRequests");
-        doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis(), "1000");
-        doWriteAttribute("rejectExecution", def.getRejectExecution(), null);
         doWriteAttribute("callerRunsWhenRejected", def.getCallerRunsWhenRejected(), "true");
         doWriteAttribute("executorService", def.getExecutorService(), null);
+        doWriteAttribute("timePeriodMillis", def.getTimePeriodMillis(), "1000");
+        doWriteAttribute("rejectExecution", def.getRejectExecution(), null);
         doWriteAttribute("asyncDelayed", def.getAsyncDelayed(), null);
         doWriteExpressionNodeElements(def);
         doWriteElement("correlationExpression", def.getCorrelationExpression(), this::doWriteExpressionSubElementDefinition);
@@ -2090,16 +2090,16 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteBeansDefinitionElements(BeansDefinition def) throws IOException {
-        doWriteList(null, "route", def.getRoutes(), this::doWriteRouteDefinition);
-        domElements(def.getSpringOrBlueprintBeans());
-        doWriteList("dataFormats", "dataFormat", def.getDataFormats(), this::doWriteDataFormatDefinition);
         doWriteList(null, "component-scan", def.getComponentScanning(), this::doWriteComponentScanDefinition);
         doWriteList(null, "bean", def.getBeans(), this::doWriteBeanFactoryDefinition);
+        domElements(def.getSpringOrBlueprintBeans());
+        doWriteList("dataFormats", "dataFormat", def.getDataFormats(), this::doWriteDataFormatDefinition);
         doWriteList(null, "restConfiguration", def.getRestConfigurations(), this::doWriteRestConfigurationDefinition);
         doWriteList(null, "rest", def.getRests(), this::doWriteRestDefinition);
         doWriteList(null, "routeConfiguration", def.getRouteConfigurations(), this::doWriteRouteConfigurationDefinition);
         doWriteList(null, "routeTemplate", def.getRouteTemplates(), this::doWriteRouteTemplateDefinition);
         doWriteList(null, "templatedRoute", def.getTemplatedRoutes(), this::doWriteTemplatedRouteDefinition);
+        doWriteList(null, "route", def.getRoutes(), this::doWriteRouteDefinition);
     }
     protected void doWriteBeansDefinition(String name, BeansDefinition def) throws IOException {
         startElement(name);

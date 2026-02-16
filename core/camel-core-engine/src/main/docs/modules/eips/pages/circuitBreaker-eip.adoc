@@ -80,25 +80,20 @@ YAML::
 ----
 - route:
     from:
-      uri: direct
-      parameters:
-        name: start
+      uri: direct:start
       steps:
         - circuitBreaker:
-            onFallback:
-              steps:
-                - transform:
-                    constant:
-                      expression: Fallback message
             steps:
               - to:
-                  uri: http
-                  parameters:
-                    httpUri: fooservice.com/slow
+                  uri: http://fooservice.com/slow
+              - onFallback:
+                  steps:
+                    - transform:
+                        expression:
+                          constant:
+                            expression: Fallback message
         - to:
-            uri: mock
-            parameters:
-              name: result
+            uri: mock:result
 ----
 ====
 
