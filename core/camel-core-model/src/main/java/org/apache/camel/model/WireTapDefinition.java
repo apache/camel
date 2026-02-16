@@ -24,7 +24,6 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
@@ -33,7 +32,7 @@ import org.apache.camel.spi.Metadata;
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original
  * message.
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing", excludeProperties = "pattern")
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends ToDynamicDefinition
@@ -72,7 +71,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
 
     @Override
     public String getPattern() {
-        return ExchangePattern.InOnly.name();
+        return null; // not in use
     }
 
     @Override

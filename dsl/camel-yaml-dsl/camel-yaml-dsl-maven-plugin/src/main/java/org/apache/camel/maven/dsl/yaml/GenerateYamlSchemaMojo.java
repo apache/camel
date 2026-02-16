@@ -296,6 +296,19 @@ public class GenerateYamlSchemaMojo extends GenerateYamlSupportMojo {
                     }
                 }
             }
+            // we want to skip pattern from wiretap
+            if (propertyName.equals("pattern")) {
+                Optional<AnnotationValue> av = annotationValue(info, YAML_TYPE_ANNOTATION, "nodes");
+                if (av.isPresent()) {
+                    String[] sn = av.get().asStringArray();
+                    for (String n : sn) {
+                        if ("wire-tap".equals(n) || "wireTap".equals(n)) {
+                            skip = true;
+                            break;
+                        }
+                    }
+                }
+            }
             if (skip) {
                 continue;
             }

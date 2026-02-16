@@ -27,6 +27,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -266,12 +267,23 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         Set<EipOptionModel> eipOptions = new TreeSet<>(new EipOptionComparator(eipModel));
         findClassProperties(eipOptions, classElement, classElement, "", name);
 
-        eipOptions.forEach(eipModel::addOption);
+        // the EIP may exclude some options
+        String excludedProperties = "";
+        Metadata componentMetadata = classElement.getAnnotation(Metadata.class);
+        if (componentMetadata != null) {
+            excludedProperties = componentMetadata.excludeProperties();
+        }
+        Set<String> excluded = new HashSet<>();
+        Collections.addAll(excluded, excludedProperties.split(","));
+
         eipOptions.forEach(o -> {
             // compute group based on label for each option
             String group = EndpointHelper.labelAsGroupName(o.getLabel(), false, false);
             o.setGroup(group);
         });
+        eipOptions.stream()
+                .filter(option -> !excluded.contains(option.getName()))
+                .forEach(eipModel::addOption);
 
         // after we have found all the options then figure out if the model
         // accepts input/output

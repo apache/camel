@@ -9274,12 +9274,6 @@
           "parameters" : {
             "type" : "object"
           },
-          "pattern" : {
-            "type" : "string",
-            "title" : "Pattern",
-            "description" : "Sets the optional ExchangePattern used to invoke this endpoint",
-            "enum" : [ "InOnly", "InOut" ]
-          },
           "uri" : {
             "type" : "string",
             "title" : "Uri",

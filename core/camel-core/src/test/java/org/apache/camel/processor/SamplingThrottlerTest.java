@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -166,7 +165,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
 
                 from("direct:sample-configured").sample("1000").to("mock:result");
 
-                from("direct:sample-configured-via-dsl").sample(Duration.of(1, ChronoUnit.SECONDS)).to("mock:result");
+                from("direct:sample-configured-via-dsl").sample(Duration.ofSeconds(1)).to("mock:result");
 
                 from("direct:sample-messageFrequency").sample(10).to("mock:result");
 

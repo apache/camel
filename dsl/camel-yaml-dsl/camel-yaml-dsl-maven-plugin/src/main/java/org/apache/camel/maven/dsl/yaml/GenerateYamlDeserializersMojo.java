@@ -948,6 +948,10 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
             // which should be skipped
             return true;
         }
+        // we want to skip pattern from wiretap
+        if ("pattern".equals(fieldName) && "wireTap".equals(modelName)) {
+            return true;
+        }
 
         //
         // Others

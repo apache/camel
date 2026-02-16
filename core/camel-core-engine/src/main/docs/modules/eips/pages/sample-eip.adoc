@@ -50,6 +50,19 @@ XML::
     <to uri="direct:sampled"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample: {}
+        - to:
+            uri: direct:sampled
+----
 ====
 
 === Sampling using time period
@@ -64,7 +77,7 @@ Java::
 [source,java]
 ----
 from("direct:sample")
-    .sample(Duration.of(5, ChronoUnit.SECONDS))
+    .sample(Duration.ofSeconds(5))
     .to("direct:sampled");
 ----
 
@@ -74,9 +87,23 @@ XML::
 ----
 <route>
     <from uri="direct:sample"/>
-    <sample samplePeriod="5000"/>
+    <sample samplePeriod="5s"/>
     <to uri="direct:sampled"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample:
+            samplePeriod: 5s
+        - to:
+            uri: direct:sampled
 ----
 ====
 
@@ -107,6 +134,20 @@ XML::
     <to uri="direct:sampled"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample:
+            messageFrequency: 10
+        - to:
+            uri: direct:sampled
+----
 ====
 
 === Sampling with wiretap
@@ -125,7 +166,7 @@ Java::
 ----
 from("direct:start")
   .wireTap("direct:sample")
-  .to("direct:regularProcessing")
+  .to("direct:regularProcessing");
 
 from("direct:sample")
   .sample(10)
@@ -147,5 +188,27 @@ XML::
     <sample messageFrequency="10"/>
     <to uri="direct:sampleProcessing"/>
 </route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - wireTap:
+            uri: direct:sample
+        - to:
+            uri: direct:regularProcessing
+- route:
+    from:
+      uri: direct:sample
+      steps:
+        - sample:
+            messageFrequency: 10
+        - to:
+            uri: direct:sampleProcessing
 ----
 ====

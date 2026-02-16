@@ -1,0 +1,19 @@
+= Apache Camel 4.x Upgrade Guide
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example, if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+[NOTE]
+====
+https://github.com/apache/camel-upgrade-recipes/[The Camel Upgrade Recipes project] provides automated assistance for some common migration tasks.
+Note that manual migration is still required.
+See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
+====
+
+== Upgrading Camel 4.18 to 4.19
+
+=== camel-core
+
+The WireTap EIP has removed the `pattern` option from its model (not in use) as wiretap always
+uses `InOnly` pattern.

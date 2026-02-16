@@ -21595,7 +21595,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "note", type = "string", description = "Sets the note of this node", displayName = "Note"),
                     @YamlProperty(name = "onPrepare", type = "string", description = "Uses the Processor when preparing the org.apache.camel.Exchange to be sent. This can be used to deep-clone messages that should be sent, or any custom logic needed before the exchange is sent.", displayName = "On Prepare"),
                     @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", description = "Sets the optional ExchangePattern used to invoke this endpoint", displayName = "Pattern"),
                     @YamlProperty(name = "uri", type = "string", required = true, description = "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.", displayName = "Uri"),
                     @YamlProperty(name = "variableReceive", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current Message , however the headers from the Message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Receive"),
                     @YamlProperty(name = "variableSend", type = "string", description = "To use a variable as the source for the message body to send. This makes it handy to use variables for user data and to easily control what data to use for sending and receiving. Important: When using send variable then the message body is taken from this variable instead of the current message, however the headers from the message will still be used as well. In other words, the variable is used instead of the message body, but everything else is as usual.", displayName = "Variable Send")
@@ -21665,11 +21664,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "onPrepare": {
                     String val = asText(node);
                     target.setOnPrepare(val);
-                    break;
-                }
-                case "pattern": {
-                    String val = asText(node);
-                    target.setPattern(val);
                     break;
                 }
                 case "uri": {

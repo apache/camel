@@ -1829,7 +1829,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public SamplingDefinition sample() {
-        return sample(Duration.ofSeconds(1));
+        SamplingDefinition answer = new SamplingDefinition();
+        addOutput(answer);
+        return answer;
     }
 
     /**
