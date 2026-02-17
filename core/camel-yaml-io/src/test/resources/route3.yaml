@@ -24,13 +24,13 @@
             correlationExpression:
               header:
                 expression: myHeader
+            completionTimeoutExpression:
+              constant:
+                expression: 4000
             completionSizeExpression:
               constant:
                 resultType: int.class
                 expression: 5
-            completionTimeoutExpression:
-              constant:
-                expression: 4000
             steps:
               - to:
                   uri: kafka:line

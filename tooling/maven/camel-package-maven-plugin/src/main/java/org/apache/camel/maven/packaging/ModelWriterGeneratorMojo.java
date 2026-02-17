@@ -28,6 +28,8 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,6 +65,9 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.maven.packaging.generics.JandexStore;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.tooling.model.EipModel;
+import org.apache.camel.tooling.model.JsonMapper;
+import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.tooling.util.srcgen.GenericType;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -81,9 +86,13 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
 
     private final Map<Class<?>, List<Property>> properties = new ConcurrentHashMap<>();
     private final Map<Class<?>, List<Member>> members = new ConcurrentHashMap<>();
+    private final Map<String, EipModel> allModels = new HashMap<>();
 
     @Parameter(defaultValue = "${project.basedir}/src/generated/java")
     protected File sourcesOutputDir;
+
+    @Parameter(defaultValue = "${project.basedir}/../camel-core-model/src/generated/resources")
+    protected File modelDir;
 
     protected ModelWriterGeneratorMojo(MavenProjectHelper projectHelper, BuildContext buildContext) {
         super(projectHelper, buildContext);
@@ -110,6 +119,23 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("DependencyResolutionRequiredException: " + e.getMessage(), e);
         }
+
+        List<Path> jsonFiles;
+        try (Stream<Path> stream = PackageHelper.findJsonFiles(modelDir.toPath())) {
+            jsonFiles = stream.toList();
+        }
+        for (Path p : jsonFiles) {
+            try {
+                String json = Files.readString(p);
+                if (json.contains("\"kind\": \"model\"")) {
+                    var m = JsonMapper.generateEipModel(json);
+                    allModels.put(m.getJavaType(), m);
+                }
+            } catch (Exception e) {
+                throw new MojoExecutionException(e);
+            }
+        }
+        getLog().debug("Loaded " + allModels.size() + " eip models");
 
         Class<?> routesDefinitionClass
                 = loadClass(classLoader, XmlModelWriterGeneratorMojo.MODEL_PACKAGE + ".RoutesDefinition");
@@ -296,43 +322,49 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                     }
                 })
                 .filter(Objects::nonNull);
-        XmlType xmlType = clazz.getAnnotation(XmlType.class);
-        if (xmlType != null) {
-            String[] propOrder = xmlType.propOrder();
-            if (propOrder != null && propOrder.length > 1) {
-                // special for DSL where XML vs YAML have different names, and we must use as-is due to JAXB @XmlType propOrder
-                final Map<String, String> alias = Map.of(
-                        "whenClauses", "when",
-                        "componentScanning", "component-scan",
-                        "beans", "bean",
-                        "dataFormats", "dataFormat",
-                        "restConfigurations", "restConfiguration",
-                        "rests", "rest",
-                        "routeConfigurations", "routeConfiguration",
-                        "routeTemplates", "routeTemplate",
-                        "templatedRoutes", "templatedRoute",
-                        "routes", "route");
-                final List<String> list = Arrays.stream(propOrder).map(o -> alias.getOrDefault(o, o)).toList();
-                boolean outputsLast = list.indexOf("outputs") == list.size() - 1;
-                properties = properties.sorted((o1, o2) -> {
-                    String n1 = alias.getOrDefault(o1.name, o1.name);
-                    String n2 = alias.getOrDefault(o2.name, o2.name);
-                    int idx1 = list.indexOf(n1);
-                    int idx2 = list.indexOf(n2);
-                    if ("outputs".equals(n1) && outputsLast) {
-                        idx1 = Integer.MAX_VALUE;
-                    }
-                    if ("outputs".equals(n2) && outputsLast) {
-                        idx2 = Integer.MAX_VALUE;
-                    }
-                    return Integer.compare(idx1, idx2);
-                });
+
+        EipModel m = allModels.get(clazz.getName());
+        if (m != null) {
+            // special for DSL where XML vs YAML have different names, and we must use as-is due to JAXB @XmlType propOrder
+            final Map<String, String> alias = Map.of(
+                    "whenClauses", "when",
+                    "componentScanning", "component-scan",
+                    "beans", "bean",
+                    "dataFormats", "dataFormat",
+                    "restConfigurations", "restConfiguration",
+                    "rests", "rest",
+                    "routeConfigurations", "routeConfiguration",
+                    "routeTemplates", "routeTemplate",
+                    "templatedRoutes", "templatedRoute",
+                    "routes", "route");
+            // some EIPs have @XmlType propOrder
+            final List<String> propOrderList = new ArrayList<>();
+            XmlType xmlType = clazz.getAnnotation(XmlType.class);
+            if (xmlType != null) {
+                String[] propOrder = xmlType.propOrder();
+                if (propOrder != null && propOrder.length > 1) {
+                    propOrderList.addAll(Arrays.stream(propOrder).map(o -> alias.getOrDefault(o, o)).toList());
+                }
             }
+            // sort according to @XmlType propOrder and EIP model
+            properties = properties.sorted((o1, o2) -> {
+                String n1 = alias.getOrDefault(o1.name, o1.name);
+                String n2 = alias.getOrDefault(o2.name, o2.name);
+                // prioritize prop order
+                int idx1 = propOrderList.indexOf(n1);
+                int idx2 = propOrderList.indexOf(n2);
+                // fallback to sort after model
+                for (var o : m.getOptions()) {
+                    if (idx1 == -1 && o.getName().equals(n1)) {
+                        idx1 = o.getIndex();
+                    } else if (idx2 == -1 && o.getName().equals(n2)) {
+                        idx2 = o.getIndex();
+                    }
+                }
+                return Integer.compare(idx1, idx2);
+            });
         }
-        var l = properties.toList();
-        var l2 = new ArrayList();
-        l2.addAll(l);
-        return l2;
+        return properties.toList();
     }
 
     private List<Member> getMembers(Class<?> clazz) {
