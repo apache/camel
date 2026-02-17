@@ -4367,6 +4367,19 @@ public interface ComponentsBuilderFactory {
         return SftpComponentBuilderFactory.sftp();
     }
     /**
+     * Shell (camel-shell)
+     * Camel Shell component
+     * 
+     * Category: api
+     * Since: 4.21
+     * Maven coordinates: org.apache.camel:camel-shell
+     * 
+     * @return the dsl builder
+     */
+    static ShellComponentBuilderFactory.ShellComponentBuilder shell() {
+        return ShellComponentBuilderFactory.shell();
+    }
+    /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 1.x API.
