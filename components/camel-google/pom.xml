@@ -36,6 +36,7 @@
         <module>camel-google-bigquery</module>
         <module>camel-google-calendar</module>
         <module>camel-google-drive</module>
+        <module>camel-google-firestore</module>
         <module>camel-google-functions</module>
         <module>camel-google-mail</module>
         <module>camel-google-pubsub</module>

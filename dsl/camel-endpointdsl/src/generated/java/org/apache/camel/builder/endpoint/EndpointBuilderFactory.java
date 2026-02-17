@@ -140,6 +140,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleDriveEndpointBuilderFactory.GoogleDriveBuilders,
+            org.apache.camel.builder.endpoint.dsl.GoogleFirestoreEndpointBuilderFactory.GoogleFirestoreBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleMailEndpointBuilderFactory.GoogleMailBuilders,
             org.apache.camel.builder.endpoint.dsl.GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamBuilders,
             org.apache.camel.builder.endpoint.dsl.GooglePubsubEndpointBuilderFactory.GooglePubsubBuilders,

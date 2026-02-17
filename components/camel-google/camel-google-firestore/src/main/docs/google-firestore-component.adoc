@@ -1,0 +1,512 @@
+= Google Firestore Component
+:doctitle: Google Firestore
+:shortname: google-firestore
+:artifactid: camel-google-firestore
+:description: Store and retrieve data from Google Cloud Firestore NoSQL database.
+:since: 4.18
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Google
+:camel-spring-boot-name: google-firestore
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Google Firestore component provides access to https://cloud.google.com/firestore[Google Cloud Firestore] via
+the https://github.com/googleapis/java-firestore[Google Cloud Firestore Java library].
+
+Firestore is a flexible, scalable NoSQL cloud database for mobile, web, and server development.
+It keeps your data in sync across client apps through realtime listeners and offers offline support.
+
+Maven users will need to add the following dependency to their pom.xml for this component:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-firestore</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.x.x</version>
+</dependency>
+------------------------------------------------------
+
+[[GoogleFirestore-AuthenticationConfiguration]]
+
+== Authentication Configuration
+
+Google Firestore component authentication is targeted for use with GCP Service Accounts.
+For more information, please refer to https://cloud.google.com/firestore/docs/quickstart-servers[Google Firestore Quickstart].
+
+When you have the **service account key**, you can provide authentication credentials to your application code.
+Google security credentials can be set through the component endpoint:
+
+[source,java]
+--------------------------------------------------------
+String endpoint = "google-firestore://myCollection?serviceAccountKey=/home/user/Downloads/my-key.json&projectId=my-project";
+--------------------------------------------------------
+
+Or by providing the path to the GCP credentials file location:
+
+Provide authentication credentials to your application code by setting the environment variable `GOOGLE_APPLICATION_CREDENTIALS`:
+
+--------------------------------------------------------
+export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/my-key.json"
+--------------------------------------------------------
+
+
+== URI Format
+
+--------------------------------------------------------
+google-firestore://collectionName?[options]
+--------------------------------------------------------
+
+You can append query options to the URI in the following format: `?options=value&option2=value&...`
+
+For example, to get a document from the `users` collection:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=getDocumentById&serviceAccountKey=/path/to/key.json&projectId=my-project")
+    .to("log:result");
+--------------------------------------------------------------------------------
+
+
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component options: END
+
+
+== Usage
+
+=== Google Firestore Producer Operations
+
+Google Firestore component provides the following operations on the producer side:
+
+- `setDocument` - Create or overwrite a document with a specific ID
+- `createDocument` - Create a new document with an auto-generated ID
+- `getDocumentById` - Retrieve a document by its ID
+- `updateDocument` - Update specific fields of a document
+- `deleteDocument` - Delete a document
+- `queryCollection` - Query documents with filters
+- `listDocuments` - List all documents in a collection
+- `listCollections` - List all collections
+
+If you don't specify an operation explicitly, the producer will perform a `setDocument` operation.
+
+=== Supported Input Formats
+
+For operations that require document data (`setDocument`, `createDocument`, `updateDocument`), the component accepts the following input formats:
+
+* **Map<String, Object>** - Java Map with field names as keys
+* **JSON String** - A valid JSON object string (e.g., `{"name": "John", "age": 30}`)
+* **Any object** - Convertible to Map via Camel's type converter
+
+JSON String Example:
+
+[source,java]
+--------------------------------------------------------------------------------
+// Using JSON string as input
+String json = """
+    {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "age": 30,
+        "active": true
+    }
+    """;
+
+from("direct:start")
+    .setBody(constant(json))
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=setDocument");
+--------------------------------------------------------------------------------
+
+=== Google Firestore Consumer
+
+The consumer can poll documents from a collection or listen for real-time updates.
+
+- **Polling mode** (default): Periodically polls the collection for all documents
+- **Real-time mode**: Listens for document changes using Firestore's real-time listeners
+
+To enable real-time updates:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("google-firestore://myCollection?realtimeUpdates=true")
+    .to("log:changes");
+--------------------------------------------------------------------------------
+
+=== Advanced Component Configuration
+
+If you need more control over the `Firestore` client instance configuration, you can create your own instance and refer to it in your Camel google-firestore component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("google-firestore://myCollection?firestoreClient=#myFirestoreClient")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+== Producer Operation Examples
+
+=== Create Document with Auto-Generated ID
+
+This operation creates a new document with an auto-generated unique ID:
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, Object> document = new HashMap<>();
+document.put("name", "John Doe");
+document.put("email", "john@example.com");
+document.put("age", 30);
+
+from("direct:start")
+    .setBody(constant(document))
+    .to("google-firestore://users?operation=createDocument")
+    .log("Created document with ID: ${header.CamelGoogleFirestoreResponseDocumentId}");
+--------------------------------------------------------------------------------
+
+=== Set Document with Specific ID
+
+This operation creates or overwrites a document with a specific ID:
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, Object> document = new HashMap<>();
+document.put("name", "Jane Doe");
+document.put("email", "jane@example.com");
+
+from("direct:start")
+    .setBody(constant(document))
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=setDocument")
+    .log("Document saved");
+--------------------------------------------------------------------------------
+
+=== Set Document with Merge
+
+To merge data with an existing document instead of overwriting:
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, Object> updates = new HashMap<>();
+updates.put("lastLogin", new Date());
+
+from("direct:start")
+    .setBody(constant(updates))
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .setHeader("CamelGoogleFirestoreMerge", constant(true))
+    .to("google-firestore://users?operation=setDocument")
+    .log("Document merged");
+--------------------------------------------------------------------------------
+
+=== Get Document by ID
+
+This operation retrieves a document by its ID:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=getDocumentById")
+    .log("Document data: ${body}");
+--------------------------------------------------------------------------------
+
+The response body will contain a `Map<String, Object>` with the document data, or `null` if the document doesn't exist.
+
+=== Update Document
+
+This operation updates specific fields without overwriting the entire document:
+
+[source,java]
+--------------------------------------------------------------------------------
+Map<String, Object> updates = new HashMap<>();
+updates.put("status", "active");
+updates.put("updatedAt", new Date());
+
+from("direct:start")
+    .setBody(constant(updates))
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=updateDocument")
+    .log("Document updated");
+--------------------------------------------------------------------------------
+
+=== Delete Document
+
+This operation deletes a document:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=deleteDocument")
+    .log("Document deleted: ${body}");
+--------------------------------------------------------------------------------
+
+=== List Documents
+
+This operation lists all documents in a collection:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .to("google-firestore://users?operation=listDocuments")
+    .log("Found ${body.size()} documents");
+--------------------------------------------------------------------------------
+
+The response body will contain a `List<Map<String, Object>>` with each document's data.
+Each document includes `_id` and `_path` fields with the document ID and path.
+
+=== Query Collection
+
+This operation queries documents with filters:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setHeader("CamelGoogleFirestoreQueryField", constant("age"))
+    .setHeader("CamelGoogleFirestoreQueryOperator", constant(">="))
+    .setHeader("CamelGoogleFirestoreQueryValue", constant(21))
+    .setHeader("CamelGoogleFirestoreQueryLimit", constant(10))
+    .setHeader("CamelGoogleFirestoreQueryOrderBy", constant("age"))
+    .to("google-firestore://users?operation=queryCollection")
+    .log("Found ${body.size()} matching documents");
+--------------------------------------------------------------------------------
+
+Supported query operators:
+
+- `==` or `eq` - Equal to
+- `!=` or `ne` - Not equal to
+- `<` or `lt` - Less than
+- `<=` or `lte` - Less than or equal to
+- `>` or `gt` - Greater than
+- `>=` or `gte` - Greater than or equal to
+- `array-contains` - Array contains value
+- `in` - Value in list
+- `array-contains-any` - Array contains any value in list
+- `not-in` - Value not in list
+
+=== List Collections
+
+This operation lists all collections in the database:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .to("google-firestore://anyCollection?operation=listCollections")
+    .log("Collections: ${body}");
+--------------------------------------------------------------------------------
+
+To list subcollections under a specific document:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:start")
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=listCollections")
+    .log("Subcollections: ${body}");
+--------------------------------------------------------------------------------
+
+== Consumer Examples
+
+=== Poll Documents
+
+Poll all documents from a collection every 30 seconds:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("google-firestore://users?delay=30000")
+    .log("Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}")
+    .log("Document data: ${body}")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+=== Real-time Updates
+
+Listen for document changes in real-time:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("google-firestore://users?realtimeUpdates=true")
+    .log("Change type: ${header.CamelGoogleFirestoreChangeType}")
+    .log("Document ID: ${header.CamelGoogleFirestoreResponseDocumentId}")
+    .log("Document data: ${body}")
+    .to("mock:result");
+--------------------------------------------------------------------------------
+
+The `CamelGoogleFirestoreChangeType` header indicates the type of change: `ADDED`, `MODIFIED`, or `REMOVED`.
+
+== Data Types
+
+=== Input Data Formats
+
+For write operations (`setDocument`, `createDocument`, `updateDocument`), the component accepts the following input formats in the message body:
+
+[width="100%",cols="20%,40%,40%",options="header"]
+|===
+| Format | Description | Example
+| `Map<String, Object>` | Java Map with field names as keys | `Map.of("name", "John", "age", 30)`
+| JSON String | Valid JSON object string | `{"name": "John", "age": 30}`
+| POJO | Any object convertible to Map via Camel's type converter | Custom Java beans
+|===
+
+==== JSON String Input
+
+You can send a JSON string directly as the message body. The component will automatically parse it:
+
+[source,java]
+--------------------------------------------------------------------------------
+// Simple JSON
+from("direct:start")
+    .setBody(constant("{\"name\": \"John\", \"age\": 30}"))
+    .setHeader("CamelGoogleFirestoreDocumentId", constant("user123"))
+    .to("google-firestore://users?operation=setDocument");
+
+// Multi-line JSON with text blocks (Java 15+)
+String json = """
+    {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "age": 30,
+        "active": true,
+        "tags": ["admin", "user"],
+        "address": {
+            "street": "123 Main St",
+            "city": "New York",
+            "zip": "10001"
+        }
+    }
+    """;
+
+from("direct:start")
+    .setBody(constant(json))
+    .to("google-firestore://users?operation=createDocument");
+--------------------------------------------------------------------------------
+
+==== Reading JSON from Files
+
+[source,java]
+--------------------------------------------------------------------------------
+// Read JSON files and store in Firestore
+from("file:data/users?noop=true&include=.*\\.json")
+    .setHeader("CamelGoogleFirestoreDocumentId", simple("${file:name.noext}"))
+    .to("google-firestore://users?operation=setDocument")
+    .log("Imported: ${file:name}");
+--------------------------------------------------------------------------------
+
+==== REST API Integration
+
+[source,java]
+--------------------------------------------------------------------------------
+// Receive JSON from REST endpoint and store in Firestore
+from("rest:post:/api/users")
+    .to("google-firestore://users?operation=createDocument")
+    .setBody(simple("{\"id\": \"${header.CamelGoogleFirestoreResponseDocumentId}\"}"));
+--------------------------------------------------------------------------------
+
+=== Supported Firestore Data Types
+
+The following Java types are automatically converted to Firestore data types:
+
+[width="100%",cols="25%,25%,50%",options="header"]
+|===
+| Java Type | Firestore Type | Notes
+| `String` | String | Text data
+| `Integer`, `Long` | Integer | 64-bit signed integer
+| `Double`, `Float` | Floating-point | 64-bit double precision
+| `Boolean` | Boolean | `true` or `false`
+| `Date`, `java.sql.Timestamp` | Timestamp | Converted to Firestore Timestamp
+| `com.google.cloud.Timestamp` | Timestamp | Native Firestore Timestamp
+| `List<?>` | Array | Ordered list, nested types supported
+| `Map<String, ?>` | Map | Nested document/object
+| `null` | Null | Null value
+| `byte[]` | Bytes | Binary data (max 1MB)
+| `com.google.cloud.firestore.GeoPoint` | GeoPoint | Latitude/longitude coordinates
+| `com.google.cloud.firestore.DocumentReference` | Reference | Reference to another document
+|===
+
+=== Output Data Formats
+
+==== Single Document Operations
+
+For `getDocumentById`, the response body is:
+
+* `Map<String, Object>` - Document data if found
+* `null` - If document does not exist
+
+==== List/Query Operations
+
+For `listDocuments` and `queryCollection`, the response body is:
+
+* `List<Map<String, Object>>` - List of documents
+
+Each document Map includes additional metadata fields:
+
+* `_id` - The document ID
+* `_path` - The full document path (e.g., `users/user123`)
+
+==== Delete Operation
+
+For `deleteDocument`, the response body is:
+
+* `Boolean` - Always `true` (Firestore delete is idempotent)
+
+==== List Collections Operation
+
+For `listCollections`, the response body is:
+
+* `List<String>` - List of collection IDs
+
+=== Error Handling
+
+If the input body cannot be converted to a Map (e.g., invalid JSON), an `InvalidPayloadException` is thrown:
+
+[source,text]
+--------------------------------------------------------------------------------
+org.apache.camel.InvalidPayloadException: No body available of type: java.util.Map
+  ...Caused by: Unexpected character ('x' (code 120)): was expecting...
+--------------------------------------------------------------------------------
+
+== Message Headers
+
+The component uses the following headers:
+
+=== Producer Headers (Input)
+
+[width="100%",cols="25%,10%,65%",options="header"]
+|===
+| Header | Type | Description
+| `CamelGoogleFirestoreOperation` | `GoogleFirestoreOperations` | The operation to perform
+| `CamelGoogleFirestoreCollectionName` | `String` | Override the collection name
+| `CamelGoogleFirestoreDocumentId` | `String` | The document ID for document operations
+| `CamelGoogleFirestoreQueryField` | `String` | Field name for query filtering
+| `CamelGoogleFirestoreQueryOperator` | `String` | Operator for query filtering
+| `CamelGoogleFirestoreQueryValue` | `Object` | Value for query filtering
+| `CamelGoogleFirestoreQueryLimit` | `Integer` | Maximum documents to return
+| `CamelGoogleFirestoreQueryOrderBy` | `String` | Field to order results by
+| `CamelGoogleFirestoreQueryOrderDirection` | `Query.Direction` | Order direction (ASCENDING/DESCENDING)
+| `CamelGoogleFirestoreMerge` | `Boolean` | Merge data with existing document
+| `CamelGoogleFirestoreMergeFields` | `List<String>` | Specific fields to merge
+|===
+
+=== Consumer/Response Headers (Output)
+
+[width="100%",cols="25%,10%,65%",options="header"]
+|===
+| Header | Type | Description
+| `CamelGoogleFirestoreResponseDocumentId` | `String` | The document ID
+| `CamelGoogleFirestoreResponseDocumentPath` | `String` | The full document path
+| `CamelGoogleFirestoreResponseCreateTime` | `Timestamp` | Document creation time
+| `CamelGoogleFirestoreResponseUpdateTime` | `Timestamp` | Document last update time
+| `CamelGoogleFirestoreResponseReadTime` | `Timestamp` | Document read time
+| `CamelGoogleFirestoreChangeType` | `String` | Change type for real-time updates (ADDED, MODIFIED, REMOVED)
+|===
+
+
+include::spring-boot:partial$starter.adoc[]

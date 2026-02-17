@@ -5832,6 +5832,46 @@ public class StaticEndpointBuilders {
         return GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Google Firestore (camel-google-firestore)
+     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * 
+     * Category: cloud,database
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-google-firestore
+     * 
+     * Syntax: <code>google-firestore:collectionName</code>
+     * 
+     * Path parameter: collectionName (required)
+     * The collection name to use
+     * 
+     * @param path collectionName
+     * @return the dsl builder
+     */
+    public static GoogleFirestoreEndpointBuilderFactory.GoogleFirestoreEndpointBuilder googleFirestore(String path) {
+        return googleFirestore("google-firestore", path);
+    }
+    /**
+     * Google Firestore (camel-google-firestore)
+     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * 
+     * Category: cloud,database
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-google-firestore
+     * 
+     * Syntax: <code>google-firestore:collectionName</code>
+     * 
+     * Path parameter: collectionName (required)
+     * The collection name to use
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path collectionName
+     * @return the dsl builder
+     */
+    public static GoogleFirestoreEndpointBuilderFactory.GoogleFirestoreEndpointBuilder googleFirestore(String componentName, String path) {
+        return GoogleFirestoreEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 

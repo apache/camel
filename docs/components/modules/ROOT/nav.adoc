@@ -155,6 +155,7 @@
 *** xref:google-calendar-stream-component.adoc[Google Calendar Stream]
 *** xref:google-functions-component.adoc[Google Cloud Functions]
 *** xref:google-drive-component.adoc[Google Drive]
+*** xref:google-firestore-component.adoc[Google Firestore]
 *** xref:google-mail-component.adoc[Google Mail]
 *** xref:google-mail-stream-component.adoc[Google Mail Stream]
 *** xref:google-pubsub-component.adoc[Google Pubsub]

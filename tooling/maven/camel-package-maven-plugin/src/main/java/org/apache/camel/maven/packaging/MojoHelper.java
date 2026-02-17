@@ -78,7 +78,8 @@ public final class MojoHelper {
                         dir.resolve("camel-azure-schema-registry"), dir.resolve("camel-azure-functions"));
             case "camel-google":
                 return Arrays.asList(dir.resolve("camel-google-bigquery"), dir.resolve("camel-google-calendar"),
-                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
+                        dir.resolve("camel-google-drive"), dir.resolve("camel-google-firestore"),
+                        dir.resolve("camel-google-mail"), dir.resolve("camel-google-pubsub"),
                         dir.resolve("camel-google-pubsub-lite"), dir.resolve("camel-google-sheets"),
                         dir.resolve("camel-google-storage"), dir.resolve("camel-google-functions"),
                         dir.resolve("camel-google-secret-manager"), dir.resolve("camel-google-vertexai"));

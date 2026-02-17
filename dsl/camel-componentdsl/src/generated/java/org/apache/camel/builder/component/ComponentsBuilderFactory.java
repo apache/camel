@@ -1786,6 +1786,19 @@ public interface ComponentsBuilderFactory {
         return GoogleDriveComponentBuilderFactory.googleDrive();
     }
     /**
+     * Google Firestore (camel-google-firestore)
+     * Store and retrieve data from Google Cloud Firestore NoSQL database.
+     * 
+     * Category: cloud,database
+     * Since: 4.18
+     * Maven coordinates: org.apache.camel:camel-google-firestore
+     * 
+     * @return the dsl builder
+     */
+    static GoogleFirestoreComponentBuilderFactory.GoogleFirestoreComponentBuilder googleFirestore() {
+        return GoogleFirestoreComponentBuilderFactory.googleFirestore();
+    }
+    /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
      * 
