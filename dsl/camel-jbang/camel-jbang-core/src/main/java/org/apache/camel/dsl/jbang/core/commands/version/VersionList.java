@@ -46,6 +46,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeType;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
@@ -75,8 +76,6 @@ public class VersionList extends CamelCommand {
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/release-%s.md";
     private static final String GIT_CAMEL_QUARKUS_URL
             = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
-
-    private static final String QUARKUS_PLATFORM_URL = "https://registry.quarkus.io/client/platforms";
 
     private static final String DEFAULT_DATE_FORMAT = "MMMM yyyy";
 
@@ -185,7 +184,8 @@ public class VersionList extends CamelCommand {
 
         // resolve actual Quarkus platform versions from registry
         if (RuntimeType.quarkus == runtime) {
-            resolveQuarkusPlatformVersions(rows);
+            QuarkusHelper.resolveQuarkusPlatformVersions(
+                    rows, r -> r.runtimeVersion, (r, v) -> r.quarkusVersion = v);
         }
 
         filterVendor(vendor, rows);
@@ -619,66 +619,6 @@ public class VersionList extends CamelCommand {
         }
 
         return null;
-    }
-
-    /**
-     * Resolves the actual Quarkus platform version for each row by fetching the Quarkus platform registry and matching
-     * the Camel Quarkus major.minor version against stream IDs.
-     */
-    private void resolveQuarkusPlatformVersions(List<Row> rows) {
-        try {
-            HttpClient hc = HttpClient.newHttpClient();
-            HttpResponse<String> res = hc.send(
-                    HttpRequest.newBuilder(new URI(QUARKUS_PLATFORM_URL))
-                            .timeout(Duration.ofSeconds(2))
-                            .build(),
-                    HttpResponse.BodyHandlers.ofString());
-
-            if (res.statusCode() == 200) {
-                JsonObject json = (JsonObject) Jsoner.deserialize(res.body());
-                JsonArray platforms = json.getCollection("platforms");
-                if (platforms != null && !platforms.isEmpty()) {
-                    JsonObject platform = platforms.getMap(0);
-                    JsonArray streams = platform.getCollection("streams");
-                    if (streams != null) {
-                        // find the latest camel quarkus version per major.minor
-                        java.util.Map<String, Row> latestPerStream = new java.util.LinkedHashMap<>();
-                        for (Row row : rows) {
-                            if (row.runtimeVersion != null) {
-                                String majorMinor = VersionHelper.getMajorMinorVersion(row.runtimeVersion);
-                                Row existing = latestPerStream.get(majorMinor);
-                                if (existing == null
-                                        || VersionHelper.compare(row.runtimeVersion, existing.runtimeVersion) > 0) {
-                                    latestPerStream.put(majorMinor, row);
-                                }
-                            }
-                        }
-                        // only set quarkus version on the latest row per stream
-                        for (var entry : latestPerStream.entrySet()) {
-                            String majorMinor = entry.getKey();
-                            for (int i = 0; i < streams.size(); i++) {
-                                JsonObject stream = streams.getMap(i);
-                                String streamId = stream.getString("id");
-                                if (majorMinor.equals(streamId)) {
-                                    JsonArray releases = stream.getCollection("releases");
-                                    if (releases != null && !releases.isEmpty()) {
-                                        JsonObject release = releases.getMap(0);
-                                        String quarkusCoreVersion
-                                                = release.getString("quarkus-core-version");
-                                        if (quarkusCoreVersion != null) {
-                                            entry.getValue().quarkusVersion = quarkusCoreVersion;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // ignore - if the registry is not reachable within 2 seconds, skip
-        }
     }
 
     private static class Row {
