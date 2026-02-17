@@ -17,3 +17,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 The WireTap EIP has removed the `pattern` option from its model (not in use) as wiretap always
 uses `InOnly` pattern.
+
+=== camel-yaml-io / camel-xml-io
+
+When dumping routes in YAML or XML format via `camel-yaml-io` or `camel-xml-io` then the structure of routes
+and all the EIP options now respect the intended order in the model.
+
+For example `id` is always first, and the following attributes are ordered so the most
+commonly used at in the top. EIPs such as `circuitBreaker` now has `onFallback` last.
+
+This order is also the same order that UI builders like Camel Karavan and Kaoto do as well.
