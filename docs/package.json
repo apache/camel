@@ -11,7 +11,7 @@
     "eslint": "^10.0.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-n": "^17.23.2",
+    "eslint-plugin-n": "^17.24.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^7.2.1",
     "gulp": "^5.0",
