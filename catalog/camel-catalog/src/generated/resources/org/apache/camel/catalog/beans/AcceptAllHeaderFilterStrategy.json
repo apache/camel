@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-support",
-    "version": "4.18.0-SNAPSHOT"
+    "version": "4.19.0-SNAPSHOT"
   }
 }
 

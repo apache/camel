@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-cyberark-vault",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "cyberark-vault",
     "extendsScheme": "",
     "syntax": "cyberark-vault:label",

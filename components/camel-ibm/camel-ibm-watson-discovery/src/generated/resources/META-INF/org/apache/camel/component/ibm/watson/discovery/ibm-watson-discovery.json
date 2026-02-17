@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ibm-watson-discovery",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "ibm-watson-discovery",
     "extendsScheme": "",
     "syntax": "ibm-watson-discovery:label",

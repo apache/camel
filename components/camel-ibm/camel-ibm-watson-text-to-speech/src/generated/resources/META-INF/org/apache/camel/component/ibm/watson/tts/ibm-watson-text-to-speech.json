@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ibm-watson-text-to-speech",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "ibm-watson-text-to-speech",
     "extendsScheme": "",
     "syntax": "ibm-watson-text-to-speech:label",

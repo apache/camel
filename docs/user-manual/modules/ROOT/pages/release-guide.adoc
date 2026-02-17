@@ -187,8 +187,8 @@ Complete the following steps to create a new Camel release:
 * Make sure to check the generated signature files:
 
 
-  $ gpg --verify core/target/core-4.18.0-SNAPSHOT.pom.asc
-  gpg: assuming signed data in 'core/target/core-4.18.0-SNAPSHOT.pom'
+  $ gpg --verify core/target/core-4.19.0-SNAPSHOT.pom.asc
+  gpg: assuming signed data in 'core/target/core-4.19.0-SNAPSHOT.pom'
   gpg: Signature made Thu 08 Jan 2026 10:07:47 AM CET
   gpg:                using EDDSA key D5A8412A12BFEBD9C7362CD8CED552456D5000FB
   gpg: Good signature from "Aurélien Pupier <apupier@apache.org>" [ultimate]

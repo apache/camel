@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring-ai-vector-store",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "spring-ai-vector-store",
     "extendsScheme": "",
     "syntax": "spring-ai-vector-store:storeId",

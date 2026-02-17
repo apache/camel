@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mina-sftp",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "mina-sftp",
     "extendsScheme": "file",
     "syntax": "mina-sftp:host:port\/directoryName",

@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws2-s3-vectors",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "aws2-s3-vectors",
     "extendsScheme": "",
     "syntax": "aws2-s3-vectors:\/\/vectorBucketName",

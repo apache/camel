@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-spring",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "properties": { "manager": { "index": 0, "kind": "property", "displayName": "Manager", "required": true, "type": "object", "javaType": "org.springframework.cache.CacheManager", "deprecated": false, "autowired": false, "secret": false, "description": "The Spring Cache Manager" }, "cacheName": { "index": 1, "kind": "property", "displayName": "Cache Name", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The name of the cache to use" } }
   }
 }

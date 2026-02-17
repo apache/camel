@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-ibm-watsonx-ai",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "ibm-watsonx-ai",
     "extendsScheme": "",
     "syntax": "ibm-watsonx-ai:label",

@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-langchain4j-tools",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "scheme": "langchain4j-tools",
     "extendsScheme": "",
     "syntax": "langchain4j-tools:toolId",

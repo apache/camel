@@ -9,7 +9,7 @@
     "deprecated": false,
     "groupId": "org.apache.camel",
     "artifactId": "camel-jgroups-raft",
-    "version": "4.18.0-SNAPSHOT",
+    "version": "4.19.0-SNAPSHOT",
     "properties": { "id": { "index": 0, "kind": "property", "displayName": "Id", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Unique Raft id" }, "jgroupsConfig": { "index": 1, "kind": "property", "displayName": "Jgroups Config", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "raft.xml", "description": "The path to the JGroups Raft configuration" }, "jgroupsClusterName": { "index": 2, "kind": "property", "displayName": "Jgroups Cluster Name", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "jgroupsraft-master", "description": "The name of the cluster" }, "raftHandle": { "index": 3, "kind": "property", "displayName": "Raft Handle", "label": "advanced", "required": false, "type": "object", "javaType": "org.jgroups.raft.RaftHandle", "deprecated": false, "autowired": false, "secret": false, "description": "To use a custom RaftHandler" } }
   }
 }
