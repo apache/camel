@@ -1334,10 +1334,10 @@ public class ModelWriter extends BaseWriter {
         endElement(name);
     }
     protected void doWriteOptionalIdentifiedDefinitionAttributes(OptionalIdentifiedDefinition<?> def) throws IOException {
+        doWriteAttribute("customId", toString(def.getCustomId()), null);
+        doWriteAttribute("id", def.getId(), null);
         doWriteAttribute("note", def.getNote(), null);
         doWriteAttribute("description", def.getDescription(), null);
-        doWriteAttribute("id", def.getId(), null);
-        doWriteAttribute("customId", toString(def.getCustomId()), null);
     }
     protected void doWriteOptionalIdentifiedDefinition(String name, OptionalIdentifiedDefinition<?> def) throws IOException {
         startElement(name);

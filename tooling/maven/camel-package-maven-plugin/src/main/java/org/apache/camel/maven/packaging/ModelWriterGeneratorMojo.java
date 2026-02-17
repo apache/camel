@@ -323,7 +323,14 @@ public abstract class ModelWriterGeneratorMojo extends AbstractGeneratorMojo {
                 })
                 .filter(Objects::nonNull);
 
-        EipModel m = allModels.get(clazz.getName());
+        // special for base class as it is abstract so lets use another model
+        // as we only need this to know the order of the options for sorting
+        String modelName = clazz.getName();
+        if ("OptionalIdentifiedDefinition".equals(clazz.getSimpleName())) {
+            modelName = "org.apache.camel.model.ProcessDefinition";
+        }
+
+        EipModel m = allModels.get(modelName);
         if (m != null) {
             // special for DSL where XML vs YAML have different names, and we must use as-is due to JAXB @XmlType propOrder
             final Map<String, String> alias = Map.of(
