@@ -542,7 +542,7 @@
         <vavr-version>1.0.0</vavr-version>
         <velocity-tools-version>3.1</velocity-tools-version>
         <velocity-version>2.4.1</velocity-version>
-        <vertx-version>4.5.24</vertx-version>
+        <vertx-version>4.5.25</vertx-version>
         <vysper-version>0.7</vysper-version>
         <weaviate-client-version>5.5.0</weaviate-client-version>
         <web3j-version>5.0.0</web3j-version>
