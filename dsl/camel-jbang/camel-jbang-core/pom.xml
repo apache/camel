@@ -103,6 +103,11 @@
             <artifactId>ascii-table</artifactId>
             <version>${ascii-table-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright-version}</version>
+        </dependency>
 
         <!-- jolokia -->
         <dependency>

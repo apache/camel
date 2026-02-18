@@ -2445,7 +2445,17 @@ To attach to an existing integration:
 camel diagram --name my-integration
 ----
 
-By default Camel JBang stops the background integration when you exit Hawtio; use `--keep-running` to leave it running. Image export is currently manual via the Hawtio UI.
+By default Camel JBang stops the background integration when you exit Hawtio; use `--keep-running` to leave it running.
+
+You can export a PNG snapshot using Playwright (requires a Chromium browser binary and executable path configured):
+
+[source,bash]
+----
+camel diagram routes.yaml --output=routes.png --playwright-browser-path=/path/to/chrome
+----
+
+When using `--output`, Hawtio runs headless and the PNG is captured automatically.
+NOTE: PNG export currently supports Chromium only. Use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` or `--playwright-browser-path`.
 
 === Scripting from terminal using pipes
 
