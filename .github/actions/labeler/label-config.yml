@@ -25,6 +25,7 @@ lts:
       - 'camel-4.8.x'
       - 'camel-4.10.x'
       - 'camel-4.14.x'
+      - 'camel-4.18.x'
 
 ci:
   - changed-files:

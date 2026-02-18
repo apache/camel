@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: PR Comment Build
+name: PR Manual Component testing
 
 on:
   issue_comment:

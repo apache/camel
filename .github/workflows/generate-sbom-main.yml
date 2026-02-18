@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: Generate SBOM (Camel 4)
+name: Generate SBOM
 
 on:
   schedule:
