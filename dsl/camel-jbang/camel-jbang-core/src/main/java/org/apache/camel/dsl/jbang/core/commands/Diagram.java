@@ -157,7 +157,7 @@ public class Diagram extends CamelCommand {
                     args.add("--name=" + runName);
                 }
                 args.addAll(files);
-                RunHelper.addCamelJBangCommand(args);
+                RunHelper.addCamelCLICommand(args);
                 ProcessBuilder pb = new ProcessBuilder();
                 pb.command(args);
                 int rc = run.runBackgroundProcess(pb, "Camel Main");
@@ -258,7 +258,7 @@ public class Diagram extends CamelCommand {
         args.add("hawtio");
         args.add("--port=" + port);
         args.add("--openUrl=false");
-        RunHelper.addCamelJBangCommand(args);
+        RunHelper.addCamelCLICommand(args);
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(args);
         pb.redirectErrorStream(true);
