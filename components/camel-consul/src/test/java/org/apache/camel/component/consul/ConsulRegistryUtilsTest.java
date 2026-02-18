@@ -33,9 +33,10 @@ public class ConsulRegistryUtilsTest {
 
     @Test
     public void encodeDecode() {
+        final String filter = "java.**;org.apache.camel.**;!*";
         final List<String> src = Arrays.asList("one", "\u0434\u0432\u0430", "t\u0159i");
         final byte[] serialized = ConsulRegistryUtils.serialize((Serializable) src);
-        assertEquals(src, ConsulRegistryUtils.deserialize(serialized));
+        assertEquals(src, ConsulRegistryUtils.deserialize(serialized, filter));
         final String encoded = ConsulRegistryUtils.encodeBase64(serialized);
         assertEquals("rO0ABXNyABpqYXZhLnV0aWwuQXJyYXlzJEFycmF5TGlzdNmkPL7NiAbSAgABWwABYXQAE1tMamF2YS9sYW5nL09iamVjdDt4"
                      + "cHVyABNbTGphdmEubGFuZy5TdHJpbmc7rdJW5+kde0cCAAB4cAAAAAN0AANvbmV0AAbQtNCy0LB0AAR0xZlp",
@@ -53,7 +54,7 @@ public class ConsulRegistryUtilsTest {
                         -48, -76, -48, -78, -48, -80, 116, 0,
                         4, 116, -59, -103, 105 },
                 decoded);
-        assertEquals(src, ConsulRegistryUtils.deserialize(decoded));
+        assertEquals(src, ConsulRegistryUtils.deserialize(decoded, filter));
     }
 
 }
