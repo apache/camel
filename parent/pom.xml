@@ -278,7 +278,7 @@
         <jansi-version>2.4.2</jansi-version>
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
-        <java-util-version>4.93.0</java-util-version>
+        <java-util-version>4.94.0</java-util-version>
         <jnats-version>2.25.1</jnats-version>
         <javacc-maven-plugin-version>3.2.0</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
