@@ -32,7 +32,7 @@ public class ActiveMQRouteIT extends ActiveMQITSupport {
     private ProducerTemplate template;
 
     private MockEndpoint resultEndpoint;
-    private String expectedBody = "Hello there!";
+    private String expectedBody = "Hello there! bogus fail";
 
     @BeforeEach
     void setupTemplate() {
