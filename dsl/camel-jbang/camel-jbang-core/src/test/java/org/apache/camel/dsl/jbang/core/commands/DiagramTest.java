@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -46,5 +47,23 @@ class DiagramTest extends CamelCommandBaseTestSupport {
         int exit = command.doCall();
         Assertions.assertEquals(0, exit);
         Assertions.assertTrue(printer.getOutput().isEmpty());
+    }
+
+    @Test
+    void shouldPopulateExportOptions() {
+        Diagram command = new Diagram(new CamelJBangMain().withPrinter(printer));
+        CommandLine.populateCommand(command,
+                "--output=routes.png",
+                "--browser=chromium",
+                "--playwright-browser-path=/bin/chromium",
+                "--playwright-timeout=5000",
+                "--route-id=route1",
+                "--jolokia-port=8889");
+        Assertions.assertEquals(Paths.get("routes.png"), command.output);
+        Assertions.assertEquals("chromium", command.browser);
+        Assertions.assertEquals("/bin/chromium", command.playwrightBrowserPath);
+        Assertions.assertEquals(5000, command.playwrightTimeout);
+        Assertions.assertEquals("route1", command.routeId);
+        Assertions.assertEquals(8889, command.jolokiaPort);
     }
 }
