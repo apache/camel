@@ -275,8 +275,18 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // Validate and locate Maven settings files
         validateMavenSettingsLocations();
 
-        // Create MIMA runtime - automatically selects embedded-maven or standalone-static
-        Runtime mimaRuntime = Runtimes.INSTANCE.getRuntime();
+        // Select MIMA runtime - prefer standalone-static for standalone mode
+        // (embedded-maven shares Maven build's session which can cause issues in tests)
+        Runtime mimaRuntime = null;
+        for (Runtime rt : Runtimes.INSTANCE.getRuntimes()) {
+            if (rt.managedRepositorySystem()) {
+                mimaRuntime = rt;
+                break;
+            }
+        }
+        if (mimaRuntime == null) {
+            mimaRuntime = Runtimes.INSTANCE.getRuntime();
+        }
 
         // Build context overrides for customization
         ContextOverrides.Builder overridesBuilder = ContextOverrides.create();
