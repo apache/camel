@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Invoke and manage Azure Functions.
  */
-@UriEndpoint(firstVersion = "4.18.0",
+@UriEndpoint(firstVersion = "4.19.0",
              scheme = "azure-functions",
              title = "Azure Functions",
              syntax = "azure-functions:functionApp/functionName",

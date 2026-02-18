@@ -3,7 +3,7 @@
 :shortname: google-firestore
 :artifactid: camel-google-firestore
 :description: Store and retrieve data from Google Cloud Firestore NoSQL database.
-:since: 4.18
+:since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Both producer and consumer are supported

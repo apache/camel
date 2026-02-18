@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Google Firestore Endpoint represents a collection within Firestore and contains configuration to customize the
  * behavior of Consumer and Producer.
  */
-@UriEndpoint(firstVersion = "4.18.0", scheme = "google-firestore", title = "Google Firestore",
+@UriEndpoint(firstVersion = "4.19.0", scheme = "google-firestore", title = "Google Firestore",
              syntax = "google-firestore:collectionName",
              category = { Category.CLOUD, Category.DATABASE }, headersClass = GoogleFirestoreConstants.class)
 public class GoogleFirestoreEndpoint extends ScheduledPollEndpoint implements EndpointServiceLocation {

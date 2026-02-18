@@ -3,7 +3,7 @@
 :shortname: azure-functions
 :artifactid: camel-azure-functions
 :description: Invoke and manage Azure Functions.
-:since: 4.18
+:since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
