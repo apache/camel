@@ -19,8 +19,8 @@ name: Label pull request
 
 on:
   workflow_run:
-    # we use this workflow as it's the one that ends first
-    workflows: ["Dependency Review"]
+    # we use this workflow as it's the one containing the PR id number
+    workflows: ["PR id uploader"]
     types:
       - completed
 
@@ -28,29 +28,44 @@ jobs:
   process:
     runs-on: ubuntu-latest
     if: >
-      github.repository == 'apache/camel' && 
-      github.event.workflow_run.event == 'pull_request' 
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
     steps:
-    
-      - name: Identify PR
+      - name: 'Download coverage artifact'
         uses: actions/github-script@v7
-        id: pr
         with:
           script: |
-            const response = await github.request(
-              "GET /repos/{owner}/{repo}/check-suites/{check_suite_id}/pull-requests",
-              {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                check_suite_id: context.payload.workflow_run.check_suite_id
-              }
-            );
-            return data[0]?.number;
-    
+            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr-id"
+            })[0];
+            var download = await github.rest.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            var fs = require('fs');
+            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+      - run: unzip pr-id.zip
+
+      - name: 'Excract PR id'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var fs = require('fs');
+            const issue_number = Number(fs.readFileSync('./id'));
+            core.setOutput('id', issue_number)
+
       - name: Label changes scope
         uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/actions/labeler/label-config.yml
           sync-labels: true
-          pr-number: ${{ steps.pr.outputs.result }}
+          pr-number: ${{ steps.pr.outputs.id }}
