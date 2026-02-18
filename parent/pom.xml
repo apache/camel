@@ -469,7 +469,7 @@
         <qpid-broker-version>10.0.1</qpid-broker-version>
         <qpid-proton-j-version>0.34.1</qpid-proton-j-version>
         <qpid-jms-client-version>2.10.0</qpid-jms-client-version>
-        <quarkus-mcp-server-version>1.10.0</quarkus-mcp-server-version>
+        <quarkus-mcp-server-version>1.10.1</quarkus-mcp-server-version>
         <quarkus-version>3.31.3</quarkus-version>
         <quartz-version>2.5.2</quartz-version>
         <quickfixj-version>2.3.2</quickfixj-version>
