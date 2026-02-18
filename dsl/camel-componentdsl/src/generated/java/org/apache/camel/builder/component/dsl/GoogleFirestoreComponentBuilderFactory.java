@@ -36,7 +36,7 @@ public interface GoogleFirestoreComponentBuilderFactory {
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
      * 
      * Category: cloud,database
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-firestore
      * 
      * @return the dsl builder

@@ -36,7 +36,7 @@ public interface AzureFunctionsComponentBuilderFactory {
      * Invoke and manage Azure Functions.
      * 
      * Category: cloud,serverless
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
      * 
      * @return the dsl builder

@@ -694,7 +694,7 @@ public interface ComponentsBuilderFactory {
      * Invoke and manage Azure Functions.
      * 
      * Category: cloud,serverless
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
      * 
      * @return the dsl builder
@@ -1790,7 +1790,7 @@ public interface ComponentsBuilderFactory {
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
      * 
      * Category: cloud,database
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-firestore
      * 
      * @return the dsl builder

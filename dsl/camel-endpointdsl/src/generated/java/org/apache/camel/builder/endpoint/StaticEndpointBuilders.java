@@ -2115,7 +2115,7 @@ public class StaticEndpointBuilders {
      * Invoke and manage Azure Functions.
      * 
      * Category: cloud,serverless
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
      * 
      * Syntax: <code>azure-functions:functionApp/functionName</code>
@@ -2137,7 +2137,7 @@ public class StaticEndpointBuilders {
      * Invoke and manage Azure Functions.
      * 
      * Category: cloud,serverless
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-azure-functions
      * 
      * Syntax: <code>azure-functions:functionApp/functionName</code>
@@ -5836,7 +5836,7 @@ public class StaticEndpointBuilders {
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
      * 
      * Category: cloud,database
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-firestore
      * 
      * Syntax: <code>google-firestore:collectionName</code>
@@ -5855,7 +5855,7 @@ public class StaticEndpointBuilders {
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
      * 
      * Category: cloud,database
-     * Since: 4.18
+     * Since: 4.19
      * Maven coordinates: org.apache.camel:camel-google-firestore
      * 
      * Syntax: <code>google-firestore:collectionName</code>
