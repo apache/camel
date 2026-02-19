@@ -81,8 +81,7 @@ class ContextValueFactory {
      */
     static <T, R> R where(ContextValue<T> key, T value, Supplier<R> operation) {
         if (key instanceof ScopedValueContextValue<T> svKey) {
-            // In JDK 25+, ScopedValue.where() returns a Carrier that has get() method
-            return ScopedValue.where(svKey.scopedValue, value).get(operation);
+            return ScopedValue.where(svKey.scopedValue, value).call(operation::get);
         } else if (key instanceof ThreadLocalContextValue<T> tlKey) {
             T oldValue = tlKey.get();
             try {

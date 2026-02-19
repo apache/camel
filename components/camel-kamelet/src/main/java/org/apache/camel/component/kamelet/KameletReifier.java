@@ -40,8 +40,14 @@ public class KameletReifier extends ProcessorReifier<KameletDefinition> {
         // wrap in uow
         String outputId = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         final Processor childProcessor = processor;
+        // capture route/processor context now (within createProcessor scope) for later use by KameletProcessor
+        final String parentRouteId = camelContext.getCamelContextExtension().getCreateRoute();
         return camelContext.getCamelContextExtension().createProcessor(outputId, () -> {
-            Processor answer = new KameletProcessor(camelContext, parseString(definition.getName()), childProcessor);
+            final String parentProcessorId = camelContext.getCamelContextExtension().getCreateProcessor();
+            Processor answer
+                    = new KameletProcessor(
+                            camelContext, parseString(definition.getName()), childProcessor,
+                            parentRouteId, parentProcessorId);
             if (answer instanceof DisabledAware da) {
                 da.setDisabled(isDisabled(camelContext, definition));
             }
