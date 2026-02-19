@@ -26,7 +26,7 @@ jobs:
       github.repository == 'apache/camel'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
           submodules: recursive    
