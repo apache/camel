@@ -248,7 +248,7 @@
         <hsqldb-version>2.7.4</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore-version>5.3.6</httpcore-version>
-        <httpclient-version>5.5.1</httpclient-version>
+        <httpclient-version>5.5.2</httpclient-version>
         <httpcore4-version>4.4.16</httpcore4-version>
         <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
@@ -348,7 +348,7 @@
         <jte-version>3.2.3</jte-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-jupiter-version>5.13.4</junit-jupiter-version>
-        <junit6-jupiter-version>6.0.1</junit6-jupiter-version>
+        <junit6-jupiter-version>6.0.3</junit6-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
         <juniversalchardet-version>1.0.3</juniversalchardet-version>
         <jxmpp-version>1.1.0</jxmpp-version>
@@ -401,8 +401,8 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.5.1</maven-war-plugin-version>
         <metrics-version>4.2.38</metrics-version>
-        <micrometer-version>1.16.2</micrometer-version>
-        <micrometer-tracing-version>1.6.2</micrometer-tracing-version>
+        <micrometer-version>1.16.3</micrometer-version>
+        <micrometer-tracing-version>1.6.3</micrometer-tracing-version>
         <microprofile-config-version>3.1</microprofile-config-version>
         <milo-version>1.1.1</milo-version>
         <milvus-client-version>2.6.14</milvus-client-version>
