@@ -871,7 +871,7 @@ public class AggregateProcessor extends BaseProcessorSupport
             if (exchange.isTransacted()) {
                 reactiveExecutor.scheduleQueue(task);
             } else {
-                reactiveExecutor.scheduleSync(task);
+                reactiveExecutor.schedule(task);
             }
         });
     }
