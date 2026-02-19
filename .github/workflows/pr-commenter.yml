@@ -15,7 +15,7 @@
 # limitations under the License.
 # ---------------------------------------------------------------------------
 
-name: Label pull request
+name: Comment pull request
 
 on:
   workflow_run:
@@ -63,10 +63,24 @@ jobs:
             const issue_number = Number(fs.readFileSync('./id'));
             core.setOutput('id', issue_number)
 
-      - name: Label changes scope
-        uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
+      - name: 'Comment on PR'
+        uses: actions/github-script@v7
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          configuration-path: .github/actions/labeler/label-config.yml
-          sync-labels: true
-          pr-number: ${{ steps.pr.outputs.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ steps.pr.outputs.id }},
+              body: `:star2: Thank you for your contribution to the Apache Camel project! :star2:
+                :robot: CI automation will test this PR automatically.
+
+                :camel: Apache Camel Committers, please review the following items:
+
+                * First-time contributors **require MANUAL approval** for the GitHub Actions to run
+                * You can use the command \`/component-test (camel-)component-name1 (camel-)component-name2..\` to request a test from the test bot.
+                * You can label PRs using \`build-all\`, \`build-dependents\`, \`skip-tests\` and \`test-dependents\` to fine-tune the checks executed by this PR.
+                * Build and test logs are available in the Summary page. **Only** [Apache Camel committers](https://camel.apache.org/community/team/#committers) have access to the summary.
+                * :warning: Be careful when sharing logs. Review their contents before sharing them publicly.
+                `
+            })
