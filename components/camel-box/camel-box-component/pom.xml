@@ -99,6 +99,7 @@
                             <goal>fromApis</goal>
                         </goals>
                         <configuration>
+                            <apiSrcDir>../camel-box-api/src/main/java</apiSrcDir>
                             <apis>
                                 <api>
                                     <apiName>collaborations</apiName>
@@ -542,14 +543,7 @@
                     </execution>
                 </executions>
                 <dependencies>
-                    <!-- Component API javadoc in provided scope to read API signatures -->
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-box-api</artifactId>
-                        <version>${project.version}</version>
-                        <classifier>sources</classifier>
-                    </dependency>
-                    <!-- Component API javadoc in provided scope to read API signatures -->
+                    <!-- Box Java SDK sources for reading external API signatures -->
                     <dependency>
                         <groupId>com.box</groupId>
                         <artifactId>box-java-sdk</artifactId>

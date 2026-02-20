@@ -83,6 +83,7 @@
                             <goal>fromApis</goal>
                         </goals>
                         <configuration>
+                            <apiSrcDir>../camel-dhis2-api/src/main/java</apiSrcDir>
                             <apis>
                                 <api>
                                     <apiName>post</apiName>
@@ -139,14 +140,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-dhis2-api</artifactId>
-                        <version>${project.version}</version>
-                        <classifier>sources</classifier>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
 
