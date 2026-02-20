@@ -932,6 +932,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 case "camel-debezium-common":
                 case "camel-fhir":
                 case "camel-google":
+                case "camel-google-common":
                 case "camel-http-base":
                 case "camel-http-common":
                 case "camel-huawei":

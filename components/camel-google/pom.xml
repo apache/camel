@@ -33,6 +33,7 @@
     <description>Camel AWS parent</description>
 
     <modules>
+        <module>camel-google-common</module>
         <module>camel-google-bigquery</module>
         <module>camel-google-calendar</module>
         <module>camel-google-drive</module>

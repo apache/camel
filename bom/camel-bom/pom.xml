@@ -934,6 +934,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-common</artifactId>
+        <version>4.19.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-drive</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>

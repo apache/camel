@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "google-common",
+    "title": "Google Common",
+    "description": "Camel Google Common utilities for credential initialization",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
+    "label": "cloud,google",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-google-common",
+    "version": "4.19.0-SNAPSHOT"
+  }
+}
