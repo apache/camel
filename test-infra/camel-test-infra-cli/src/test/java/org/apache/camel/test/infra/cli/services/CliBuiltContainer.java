@@ -43,6 +43,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
     private static final String CAMEL_REF_ARG = "CAMEL_REF";
     private static final String CAMEL_REPO_ARG = "CAMEL_REPO";
     private static final String CAMEL_JBANG_VERSION_ARG = "CAMEL_JBANG_VERSION";
+    private static final String CAMEL_LAUNCHER_VERSION_ARG = "CAMEL_LAUNCHER_VERSION";
     private static final String KEEP_RUNNING_ARG = "KEEP_RUNNING";
     private static final String MOUNT_POINT = "/deployments/data";
     private static final String SSH_PASSWORD_ARG = "SSH_PASSWORD_ARG";
@@ -90,6 +91,7 @@ public class CliBuiltContainer extends GenericContainer<CliBuiltContainer> {
                 .withBuildArg(SSH_PASSWORD_ARG, params.getSshPassword())
                 .withBuildArg(CAMEL_REPO_ARG, params.getCamelRepo())
                 .withBuildArg(CAMEL_JBANG_VERSION_ARG, params.getCamelJBangVersion())
+                .withBuildArg(CAMEL_LAUNCHER_VERSION_ARG, params.getCamelJBangVersion())
                 .withBuildArg(UID_ARG, String.valueOf(UID))
                 .withBuildArg(GID_ARG, String.valueOf(GID)));
         this.sshPassword = params.getSshPassword();
