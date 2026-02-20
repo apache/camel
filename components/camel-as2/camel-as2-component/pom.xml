@@ -103,6 +103,7 @@
                             <goal>fromApis</goal>
                         </goals>
                         <configuration>
+                            <apiSrcDir>../camel-as2-api/src/main/java</apiSrcDir>
                             <apis>
                                 <api>
                                     <apiName>client</apiName>
@@ -151,15 +152,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <!-- Component API to read API signatures -->
-                    <dependency>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-as2-api</artifactId>
-                        <version>${project.version}</version>
-                        <classifier>sources</classifier>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
