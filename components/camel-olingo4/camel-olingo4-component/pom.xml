@@ -51,6 +51,15 @@
             <artifactId>camel-olingo4-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Component API source to read API signatures -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-olingo4-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.apache.olingo</groupId>
             <artifactId>odata-client-api</artifactId>
