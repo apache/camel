@@ -33,10 +33,12 @@ import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Isolated
 public class QueueProducerQoSTest extends CamelTestSupport {
 
     private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly.QueueProducerQoSTest";
