@@ -2063,6 +2063,20 @@ public interface ComponentsBuilderFactory {
         return HazelcastMultimapComponentBuilderFactory.hazelcastMultimap();
     }
     /**
+     * Hazelcast PN Counter (camel-hazelcast)
+     * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+     * (CRDT counter).
+     * 
+     * Category: cache,clustering
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder
+     */
+    static HazelcastPncounterComponentBuilderFactory.HazelcastPncounterComponentBuilder hazelcastPncounter() {
+        return HazelcastPncounterComponentBuilderFactory.hazelcastPncounter();
+    }
+    /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
      * 

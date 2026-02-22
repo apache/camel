@@ -28,6 +28,7 @@ public final class HazelcastConstants {
     public static final String SCHEME_LIST = "hazelcast-list";
     public static final String SCHEME_MAP = "hazelcast-map";
     public static final String SCHEME_MULTIMAP = "hazelcast-multimap";
+    public static final String SCHEME_PNCOUNTER = "hazelcast-pncounter";
     public static final String SCHEME_QUEUE = "hazelcast-queue";
     public static final String SCHEME_REPLICATED_MAP = "hazelcast-replicatedmap";
     public static final String SCHEME_RING_BUFFER = "hazelcast-ringbuffer";
@@ -43,6 +44,7 @@ public final class HazelcastConstants {
     public static final String REPLICATEDMAP_PREFIX = "replicatedmap:";
     public static final String ATOMICNUMBER_PREFIX = "atomicvalue:";
     public static final String INSTANCE_PREFIX = "instance:";
+    public static final String PNCOUNTER_PREFIX = "pncounter:";
     public static final String QUEUE_PREFIX = "queue:";
     public static final String TOPIC_PREFIX = "topic:";
     public static final String SEDA_PREFIX = "seda:";

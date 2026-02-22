@@ -14,46 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hazelcast.atomicnumber;
-
-import java.util.Map;
+package org.apache.camel.component.hazelcast.pncounter;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.cp.IAtomicLong;
+import com.hazelcast.crdt.pncounter.PNCounter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
 import org.apache.camel.component.hazelcast.HazelcastOperation;
-import org.apache.camel.util.ObjectHelper;
 
-/**
- * @deprecated Since Hazelcast 5.5, IAtomicLong requires the CP Subsystem which is only available in Hazelcast
- *             Enterprise Edition. This component will throw UnsupportedOperationException at runtime when used with
- *             Hazelcast Community Edition 5.5+.
- */
-@Deprecated(since = "4.19.0", forRemoval = true)
-public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
+public class HazelcastPNCounterProducer extends HazelcastDefaultProducer {
 
-    private final IAtomicLong atomicnumber;
+    private final PNCounter pnCounter;
 
-    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
-                                         String cacheName) {
+    public HazelcastPNCounterProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint,
+                                      String cacheName) {
         super(endpoint);
-        this.atomicnumber = hazelcastInstance.getCPSubsystem().getAtomicLong(cacheName);
+        this.pnCounter = hazelcastInstance.getPNCounter(cacheName);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-
-        Map<String, Object> headers = exchange.getIn().getHeaders();
-
-        long expectedValue = 0L;
-
-        if (headers.containsKey(HazelcastConstants.EXPECTED_VALUE)) {
-            expectedValue = (long) headers.get(HazelcastConstants.EXPECTED_VALUE);
-        }
 
         HazelcastOperation operation = lookupOperation(exchange);
 
@@ -67,16 +50,8 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
                 this.decrement(exchange);
                 break;
 
-            case COMPARE_AND_SET:
-                this.compare(expectedValue, exchange);
-                break;
-
             case GET_AND_ADD:
                 this.getAndAdd(exchange);
-                break;
-
-            case SET_VALUE:
-                this.set(exchange);
                 break;
 
             case GET:
@@ -84,12 +59,12 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
                 break;
 
             case DESTROY:
-                this.destroy();
+                this.destroy(exchange);
                 break;
 
             default:
                 throw new IllegalArgumentException(
-                        String.format("The value '%s' is not allowed for parameter '%s' on the ATOMICNUMBER.", operation,
+                        String.format("The value '%s' is not allowed for parameter '%s' on the PNCOUNTER.", operation,
                                 HazelcastConstants.OPERATION));
         }
 
@@ -98,36 +73,24 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Exchange exchange) {
-        exchange.getMessage().setBody(this.atomicnumber.get());
+        exchange.getMessage().setBody(this.pnCounter.get());
     }
 
     private void increment(Exchange exchange) {
-        exchange.getMessage().setBody(this.atomicnumber.incrementAndGet());
+        exchange.getMessage().setBody(this.pnCounter.incrementAndGet());
     }
 
     private void decrement(Exchange exchange) {
-        exchange.getMessage().setBody(this.atomicnumber.decrementAndGet());
-    }
-
-    private void compare(long expected, Exchange exchange) {
-        long update = exchange.getIn().getBody(Long.class);
-        if (ObjectHelper.isEmpty(expected)) {
-            throw new IllegalArgumentException("Expected value must be specified");
-        }
-        exchange.getMessage().setBody(this.atomicnumber.compareAndSet(expected, update));
+        exchange.getMessage().setBody(this.pnCounter.decrementAndGet());
     }
 
     private void getAndAdd(Exchange exchange) {
         long delta = exchange.getIn().getBody(Long.class);
-        exchange.getMessage().setBody(this.atomicnumber.getAndAdd(delta));
+        exchange.getMessage().setBody(this.pnCounter.getAndAdd(delta));
     }
 
-    private void set(Exchange exchange) {
-        this.atomicnumber.set(exchange.getIn().getBody(Long.class));
-    }
-
-    private void destroy() {
-        this.atomicnumber.destroy();
+    private void destroy(Exchange exchange) {
+        this.pnCounter.destroy();
     }
 
 }

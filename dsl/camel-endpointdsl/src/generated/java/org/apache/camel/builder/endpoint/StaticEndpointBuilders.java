@@ -6582,6 +6582,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
+    @Deprecated
     public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String path) {
         return hazelcastAtomicvalue("hazelcast-atomicvalue", path);
     }
@@ -6604,6 +6605,7 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
+    @Deprecated
     public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String componentName, String path) {
         return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -6766,6 +6768,48 @@ public class StaticEndpointBuilders {
      */
     public static HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(String componentName, String path) {
         return HazelcastMultimapEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Hazelcast PN Counter (camel-hazelcast)
+     * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+     * (CRDT counter).
+     * 
+     * Category: cache,clustering
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-pncounter:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
+     * 
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterEndpointBuilder hazelcastPncounter(String path) {
+        return hazelcastPncounter("hazelcast-pncounter", path);
+    }
+    /**
+     * Hazelcast PN Counter (camel-hazelcast)
+     * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+     * (CRDT counter).
+     * 
+     * Category: cache,clustering
+     * Since: 4.19
+     * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * Syntax: <code>hazelcast-pncounter:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterEndpointBuilder hazelcastPncounter(String componentName, String path) {
+        return HazelcastPNCounterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Hazelcast Queue (camel-hazelcast)

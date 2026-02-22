@@ -40,6 +40,21 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
     }
 
     @Test
+    public void testPNCounterConsumer() {
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() throws Exception {
+                from("hazelcast-pncounter:foo").to("seda:out");
+            }
+        };
+        Exception e = assertThrows(Exception.class, () -> {
+            context.addRoutes(builder);
+            context.start();
+        });
+        assertTrue(e.getCause().getMessage()
+                .contains("You cannot send messages to this endpoint: hazelcast-pncounter://foo"));
+    }
+
+    @Test
     public void testInstanceProducer() {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {

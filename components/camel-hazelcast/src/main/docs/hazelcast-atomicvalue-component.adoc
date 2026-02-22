@@ -1,10 +1,11 @@
-= Hazelcast Atomic Number Component
+= Hazelcast Atomic Number Component (deprecated)
 :doctitle: Hazelcast Atomic Number
 :shortname: hazelcast-atomicvalue
 :artifactid: camel-hazelcast
 :description: Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
 :since: 2.7
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -14,6 +15,14 @@
 *Since Camel {since}*
 
 *{component-header}*
+
+[WARNING]
+====
+*Deprecated*: This component is deprecated as of Camel 4.19.0 and will be removed in a future release.
+
+Since Hazelcast 5.5, IAtomicLong requires the CP Subsystem which is only available in Hazelcast Enterprise Edition.
+This component will throw `UnsupportedOperationException` at runtime when used with Hazelcast Community Edition 5.5+.
+====
 
 The http://www.hazelcast.com/[Hazelcast] atomic number component is one of Camel Hazelcast Components which allows you to access Hazelcast atomic number.
 An atomic number is an object that simply provides a grid wide number (long). 

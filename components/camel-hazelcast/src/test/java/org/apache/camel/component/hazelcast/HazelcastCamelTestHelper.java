@@ -23,6 +23,7 @@ import org.apache.camel.component.hazelcast.instance.HazelcastInstanceComponent;
 import org.apache.camel.component.hazelcast.list.HazelcastListComponent;
 import org.apache.camel.component.hazelcast.map.HazelcastMapComponent;
 import org.apache.camel.component.hazelcast.multimap.HazelcastMultimapComponent;
+import org.apache.camel.component.hazelcast.pncounter.HazelcastPNCounterComponent;
 import org.apache.camel.component.hazelcast.queue.HazelcastQueueComponent;
 import org.apache.camel.component.hazelcast.replicatedmap.HazelcastReplicatedmapComponent;
 import org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferComponent;
@@ -51,6 +52,9 @@ public final class HazelcastCamelTestHelper {
         HazelcastMultimapComponent multimap = new HazelcastMultimapComponent(context);
         multimap.setHazelcastInstance(hazelcastInstance);
         context.addComponent("hazelcast-multimap", multimap);
+        HazelcastPNCounterComponent pncounter = new HazelcastPNCounterComponent(context);
+        pncounter.setHazelcastInstance(hazelcastInstance);
+        context.addComponent("hazelcast-pncounter", pncounter);
         HazelcastQueueComponent queue = new HazelcastQueueComponent(context);
         queue.setHazelcastInstance(hazelcastInstance);
         context.addComponent("hazelcast-queue", queue);

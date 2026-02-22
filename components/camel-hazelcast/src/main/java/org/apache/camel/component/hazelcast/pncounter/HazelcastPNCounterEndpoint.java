@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hazelcast.atomicnumber;
+package org.apache.camel.component.hazelcast.pncounter;
 
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Category;
@@ -27,26 +27,21 @@ import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_ATOMIC_VALUE;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_PNCOUNTER;
 
 /**
- * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).
- *
- * @deprecated Since Hazelcast 5.5, IAtomicLong requires the CP Subsystem which is only available in Hazelcast
- *             Enterprise Edition. This component will throw UnsupportedOperationException at runtime when used with
- *             Hazelcast Community Edition 5.5+.
+ * Increment, decrement, get, etc. operations on a Hazelcast PN Counter (CRDT counter).
  */
-@Deprecated(since = "4.19.0", forRemoval = true)
-@UriEndpoint(firstVersion = "2.7.0", scheme = SCHEME_ATOMIC_VALUE, title = "Hazelcast Atomic Number",
-             syntax = "hazelcast-atomicvalue:cacheName", producerOnly = true,
+@UriEndpoint(firstVersion = "4.19.0", scheme = SCHEME_PNCOUNTER, title = "Hazelcast PN Counter",
+             syntax = "hazelcast-pncounter:cacheName", producerOnly = true,
              category = { Category.CACHE, Category.CLUSTERING },
              headersClass = HazelcastConstants.class)
-public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
+public class HazelcastPNCounterEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastAtomicnumberEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component,
-                                         final String cacheName) {
+    public HazelcastPNCounterEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component,
+                                      final String cacheName) {
         super(hazelcastInstance, uri, component, cacheName);
-        setCommand(HazelcastCommand.atomicvalue);
+        setCommand(HazelcastCommand.pncounter);
     }
 
     @Override
@@ -56,7 +51,7 @@ public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new HazelcastAtomicnumberProducer(hazelcastInstance, this, cacheName);
+        return new HazelcastPNCounterProducer(hazelcastInstance, this, cacheName);
     }
 
 }

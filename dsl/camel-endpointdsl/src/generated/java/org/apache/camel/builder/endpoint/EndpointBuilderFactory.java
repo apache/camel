@@ -160,6 +160,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.HazelcastListEndpointBuilderFactory.HazelcastListBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastMapEndpointBuilderFactory.HazelcastMapBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapBuilders,
+            org.apache.camel.builder.endpoint.dsl.HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastQueueEndpointBuilderFactory.HazelcastQueueBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapBuilders,
             org.apache.camel.builder.endpoint.dsl.HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferBuilders,

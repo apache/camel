@@ -1,20 +1,20 @@
 {
   "component": {
     "kind": "component",
-    "name": "hazelcast-atomicvalue",
-    "title": "Hazelcast Atomic Number",
-    "description": "Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).",
-    "deprecated": true,
-    "firstVersion": "2.7.0",
+    "name": "hazelcast-pncounter",
+    "title": "Hazelcast PN Counter",
+    "description": "Increment, decrement, get, etc. operations on a Hazelcast PN Counter (CRDT counter).",
+    "deprecated": false,
+    "firstVersion": "4.19.0",
     "label": "cache,clustering",
-    "javaType": "org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberComponent",
-    "supportLevel": "Stable",
+    "javaType": "org.apache.camel.component.hazelcast.pncounter.HazelcastPNCounterComponent",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hazelcast",
     "version": "4.19.0-SNAPSHOT",
-    "scheme": "hazelcast-atomicvalue",
+    "scheme": "hazelcast-pncounter",
     "extendsScheme": "",
-    "syntax": "hazelcast-atomicvalue:cacheName",
+    "syntax": "hazelcast-pncounter:cacheName",
     "async": false,
     "api": false,
     "consumerOnly": false,
@@ -28,9 +28,6 @@
     "autowiredEnabled": { "index": 1, "kind": "property", "displayName": "Autowired Enabled", "group": "advanced", "label": "advanced", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc." },
     "hazelcastInstance": { "index": 2, "kind": "property", "displayName": "Hazelcast Instance", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "com.hazelcast.core.HazelcastInstance", "deprecated": false, "autowired": false, "secret": false, "description": "The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance." },
     "hazelcastMode": { "index": 3, "kind": "property", "displayName": "Hazelcast Mode", "group": "advanced", "label": "advanced", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "node", "description": "The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default." }
-  },
-  "headers": {
-    "CamelHazelcastOperationType": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.hazelcast.HazelcastConstants#OPERATION" }
   },
   "properties": {
     "cacheName": { "index": 0, "kind": "path", "displayName": "Cache Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The name of the cache" },

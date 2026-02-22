@@ -28,6 +28,7 @@ public enum HazelcastCommand {
     instance,
     list,
     replicatedmap,
-    ringbuffer
+    ringbuffer,
+    pncounter
 
 }

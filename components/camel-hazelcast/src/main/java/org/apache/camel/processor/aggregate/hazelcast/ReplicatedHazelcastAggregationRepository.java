@@ -19,7 +19,6 @@ package org.apache.camel.processor.aggregate.hazelcast;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
@@ -55,6 +54,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
     private static final Logger LOG = LoggerFactory.getLogger(ReplicatedHazelcastAggregationRepository.class.getName());
     protected Map<String, DefaultExchangeHolder> replicatedCache;
     protected Map<String, DefaultExchangeHolder> replicatedPersistedCache;
+    // IMap for distributed locking since ReplicatedMap doesn't support lock operations
+    protected IMap<String, Boolean> lockMap;
 
     public ReplicatedHazelcastAggregationRepository() {
     }
@@ -192,15 +193,16 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-        Lock l = hazelcastInstance.getCPSubsystem().getLock(mapName);
+        // Use IMap-based distributed locking (community edition compatible)
+        // ReplicatedMap doesn't support lock operations, so we use a separate IMap for locking
+        lockMap.lock(key);
         try {
-            l.lock();
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
             DefaultExchangeHolder oldHolder = replicatedCache.put(key, newHolder);
             return unmarshallExchange(camelContext, oldHolder);
         } finally {
             LOG.trace("Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
-            l.unlock();
+            lockMap.unlock(key);
         }
     }
 
@@ -345,6 +347,8 @@ public class ReplicatedHazelcastAggregationRepository extends HazelcastAggregati
             ObjectHelper.notNull(hazelcastInstance, "hazelcastInstance");
         }
         replicatedCache = hazelcastInstance.getReplicatedMap(mapName);
+        // Create IMap for distributed locking (ReplicatedMap doesn't support lock operations)
+        lockMap = hazelcastInstance.getMap(mapName + "-locks");
         if (useRecovery) {
             replicatedPersistedCache = hazelcastInstance.getReplicatedMap(persistenceMapName);
         }

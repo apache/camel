@@ -177,6 +177,7 @@
 *** xref:hazelcast-list-component.adoc[Hazelcast List]
 *** xref:hazelcast-map-component.adoc[Hazelcast Map]
 *** xref:hazelcast-multimap-component.adoc[Hazelcast Multimap]
+*** xref:hazelcast-pncounter-component.adoc[Hazelcast PN Counter]
 *** xref:hazelcast-queue-component.adoc[Hazelcast Queue]
 *** xref:hazelcast-replicatedmap-component.adoc[Hazelcast Replicated Map]
 *** xref:hazelcast-ringbuffer-component.adoc[Hazelcast Ringbuffer]

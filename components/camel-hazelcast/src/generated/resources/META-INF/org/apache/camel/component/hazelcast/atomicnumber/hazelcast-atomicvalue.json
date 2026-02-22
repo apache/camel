@@ -4,7 +4,7 @@
     "name": "hazelcast-atomicvalue",
     "title": "Hazelcast Atomic Number",
     "description": "Increment, decrement, set, etc. Hazelcast atomic number (a grid wide number).",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.7.0",
     "label": "cache,clustering",
     "javaType": "org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberComponent",
