@@ -25,10 +25,10 @@ public class JsonPathSimpleInitBlockTest extends CamelTestSupport {
 
     private final String MAPPING = """
             $init{
-              $id := ${jsonpath($.id)}
-              $type := ${header.type}
-              $price := ${jsonpath($.amount)}
-              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
+              $id := ${jsonpath($.id)};
+              $type := ${header.type};
+              $price := ${jsonpath($.amount)};
+              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)};
             }init$
             {
               "id": "$id",
@@ -40,10 +40,10 @@ public class JsonPathSimpleInitBlockTest extends CamelTestSupport {
 
     private final String MAPPING2 = """
             $init{
-              $id := ${jsonpath($.id)}
-              $type := ${header.type}
-              $price := ${jsonpath($.amount)}
-              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)}
+              $id := ${jsonpath($.id)};
+              $type := ${header.type};
+              $price := ${jsonpath($.amount)};
+              $level := ${iif(${jsonpath($.amount)} > 100,HIGH,LOW)};
             }init$
             {
               "id": "$id",

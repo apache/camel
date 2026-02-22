@@ -153,6 +153,13 @@ public final class SimpleTokenType {
     }
 
     /**
+     * Whether the type is init function end
+     */
+    public boolean isInitFunctionEnd() {
+        return type == TokenType.initFunctionEnd;
+    }
+
+    /**
      * Whether the type is a null value
      */
     public boolean isNullValue() {

@@ -25,11 +25,11 @@ public class JsonPathSimpleInitBlockFunctionTest extends CamelTestSupport {
 
     private final String MAPPING = """
             $init{
-              $id := ${jsonpath($.id)}
-              $type := ${header.type}
-              $price := ${jsonpath($.amount)}
-              $level ~:= ${body > 100 ? 'HIGH' : 'LOW'}
-              $newStatus ~:= ${sum(${body},50)}
+              $id := ${jsonpath($.id)};
+              $type := ${header.type};
+              $price := ${jsonpath($.amount)};
+              $level ~:= ${body > 100 ? 'HIGH' : 'LOW'};
+              $newStatus ~:= ${sum(${body},50)};
             }init$
             {
               "id": "$id",

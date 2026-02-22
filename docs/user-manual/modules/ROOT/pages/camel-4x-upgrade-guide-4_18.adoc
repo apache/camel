@@ -13,9 +13,46 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.0 to 4.18.1
 
+=== camel-yaml-io / camel-xml-io
+
 In the YAML DSL we have renamed `routePolicy` to `routePolicyRef` on the `route` node,
 as that is the correct name.
 
+=== camel-simple
+
+In the simple language then init blocks syntax has changed to require that each variable ends with a semicolon and new line (no trailing comments etc is allowed)
+
+For example
+
+[source,yaml]
+----
+    - setBody:
+        simple:
+          expression: |-
+            $init{
+              // this is a java like comment
+              $sum := ${sum(${header.lines},100)}
+
+              $sku := ${iif(${body} contains 'Camel',123,999)}
+            }init$
+            orderId=$sku,total=$sum
+----
+
+Should be changed to have semicolons as shown below:
+
+[source,yaml]
+----
+    - setBody:
+        simple:
+          expression: |-
+            $init{
+              // this is a java like comment
+              $sum := ${sum(${header.lines},100)};
+
+              $sku := ${iif(${body} contains 'Camel',123,999)};
+            }init$
+            orderId=$sku,total=$sum
+----
 
 == Upgrading Camel 4.17 to 4.18
 

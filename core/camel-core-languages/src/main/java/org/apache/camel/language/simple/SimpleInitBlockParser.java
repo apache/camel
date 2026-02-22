@@ -24,10 +24,13 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.language.simple.ast.CompositeNodes;
 import org.apache.camel.language.simple.ast.InitBlockExpression;
+import org.apache.camel.language.simple.ast.LiteralExpression;
 import org.apache.camel.language.simple.ast.LiteralNode;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.types.InitOperatorType;
+import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
 import org.apache.camel.util.StringHelper;
 
@@ -96,11 +99,6 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
         nextToken();
         while (!token.getType().isEol()) {
             initText();
-            functionText();
-            unaryOperator();
-            otherOperator();
-            chainOperator();
-            nextToken();
         }
 
         // now after parsing, we need a bit of work to do, to make it easier to turn the tokens
@@ -109,20 +107,13 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
 
         // remove any ignore and ignorable white space tokens
         removeIgnorableWhiteSpaceTokens();
-        // prepare for any local variables to use $$ syntax in simple expression
 
         // turn the tokens into the ast model
         parseAndCreateAstModel();
         // compact and stack blocks (eg function start/end)
-        prepareBlocks();
-        // compact and stack chain expressions
-        prepareChainExpression();
-        // compact and stack unary operators
-        prepareUnaryExpressions();
-        // compact and stack other expressions
-        prepareOtherExpressions();
+        prepareBlocks(nodes);
         // compact and stack init blocks
-        prepareInitBlocks();
+        prePrepareInitBlocks(nodes);
 
         return nodes;
     }
@@ -131,20 +122,12 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
     // $$name := <function>
     // $$name2 := <function>
     protected boolean initText() {
-        // has there been a new line since last (which reset and allow to look for new init variable)
-        if (!getTokenizer().hasNewLine()) {
-            return false;
-        }
-
-        // turn on init mode so the parser can find the beginning of the init variable
-        getTokenizer().setAcceptInitTokens(true, index);
+        // skip until we find a new init variable
         while (!token.getType().isInitVariable() && !token.getType().isEol()) {
-            // skip until we find init variable/function (this skips code comments)
-            nextToken(TokenType.functionStart, TokenType.unaryOperator, TokenType.chainOperator, TokenType.otherOperator,
-                    TokenType.initVariable,
-                    TokenType.eol);
+            skipToken();
         }
         if (accept(TokenType.initVariable)) {
+            tokens.add(token);
             while (!token.getType().isWhitespace() && !token.getType().isEol()) {
                 nextToken();
             }
@@ -153,18 +136,99 @@ class SimpleInitBlockParser extends SimpleExpressionParser {
             expect(TokenType.initOperator);
             nextToken();
             expectAndAcceptMore(TokenType.whiteSpace);
-            // turn off init mode so the parser does not detect init variables inside functions or literal text
-            // because they may also use := or $$ symbols
-            getTokenizer().setAcceptInitTokens(false, index);
+            // must either be a function, string literal, a number, or boolean
+            expect(TokenType.functionStart, TokenType.singleQuote, TokenType.doubleQuote, TokenType.numericValue,
+                    TokenType.booleanValue);
+
+            // accept until we find init function end
+            SimpleToken prev = token;
+            while (!token.getType().isEol() && !prev.getType().isInitFunctionEnd()) {
+                // an init variable supports functions, chain, unary and also whitespace as chain uses that between functions
+                nextToken(TokenType.functionStart, TokenType.functionEnd, TokenType.unaryOperator, TokenType.chainOperator,
+                        TokenType.otherOperator, TokenType.whiteSpace,
+                        TokenType.numericValue, TokenType.booleanValue,
+                        TokenType.singleQuote, TokenType.doubleQuote,
+                        TokenType.initFunctionEnd, TokenType.eol);
+                prev = token;
+            }
+            if (prev.getType().isInitFunctionEnd()) {
+                tokens.remove(prev);
+            }
             return true;
         }
 
         return false;
     }
 
+    protected void prePrepareInitBlocks(List<SimpleNode> nodes) {
+        List<SimpleNode> answer = new ArrayList<>();
+
+        for (int i = 1; i < nodes.size() - 1; i++) {
+            SimpleNode token = nodes.get(i);
+            if (token instanceof InitBlockExpression ie) {
+                answer.add(ie);
+
+                SimpleNode prev = nodes.get(i - 1);
+                ie.acceptLeftNode(prev);
+                // remember which init variables we have created
+                if (prev instanceof LiteralNode ln) {
+                    String key = StringHelper.after(ln.getText(), "$");
+                    if (key != null) {
+                        key = key.trim();
+                        if (ie.getOperator().equals(InitOperatorType.CHAIN_ASSIGNMENT)) {
+                            initFunctions.add(key);
+                        } else {
+                            initKeys.add(key);
+                        }
+                    }
+                }
+
+                CompositeNodes cn = new CompositeNodes(ie.getToken());
+                ie.acceptRightNode(cn);
+                int j = i + 1;
+                while (j < nodes.size()) {
+                    SimpleNode next = nodes.get(j);
+                    if (next instanceof InitBlockExpression || next.getToken().getType().isInitVariable()) {
+                        break;
+                    } else if (!next.getToken().getType().isInitFunctionEnd()) {
+                        if (next instanceof LiteralExpression le) {
+                            String text = unquote(le.getText());
+                            le.replaceText(text);
+                        }
+                        cn.addChild(next);
+                    }
+                    j++;
+                }
+
+                // prepare the children
+                prepareChainExpression(cn.getChildren());
+                prepareUnaryExpressions(cn.getChildren());
+                prepareOtherExpressions(cn.getChildren());
+                // if there are only 1 child then flatten and add directly to right hand side
+                if (cn.getChildren().size() == 1) {
+                    ie.acceptRightNode(cn.getChildren().get(0));
+                }
+                i = j;
+            }
+        }
+        nodes.clear();
+        nodes.addAll(answer);
+    }
+
+    private static String unquote(String text) {
+        if (text.startsWith("\"") || text.startsWith("'")) {
+            text = text.substring(1);
+        }
+        if (text.endsWith("\"") || text.endsWith("'")) {
+            text = text.substring(0, text.length() - 1);
+        }
+        return text;
+    }
+
+    @Deprecated
     protected void prepareInitBlocks() {
         List<SimpleNode> answer = new ArrayList<>();
-        for (int i = 1; i < nodes.size() - 2; i++) {
+        for (int i = 1; i < nodes.size() - 1; i++) {
             SimpleNode token = nodes.get(i);
             if (token instanceof InitBlockExpression ie) {
                 SimpleNode prev = nodes.get(i - 1);

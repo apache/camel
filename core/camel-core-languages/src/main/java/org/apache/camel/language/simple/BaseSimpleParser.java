@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
@@ -96,6 +97,19 @@ public abstract class BaseSimpleParser {
         }
     }
 
+    protected void skipToken() {
+        if (index < expression.length()) {
+            SimpleToken next = tokenizer.nextToken(expression, index, allowEscape);
+            token = next;
+            // position index after the token
+            previousIndex = index;
+            index += next.getLength();
+        } else {
+            // end of tokens
+            token = new SimpleToken(new SimpleTokenType(TokenType.eol, null), index);
+        }
+    }
+
     /**
      * Advances the parser position to the next known {@link SimpleToken} in the input.
      *
@@ -138,7 +152,7 @@ public abstract class BaseSimpleParser {
      * {@link org.apache.camel.Expression}s to be used by Camel then the AST graph has a linked and prepared graph of
      * nodes which represent the input expression.
      */
-    protected void prepareBlocks() {
+    protected void prepareBlocks(List<SimpleNode> nodes) {
         List<SimpleNode> answer = new ArrayList<>();
         Deque<Block> stack = new ArrayDeque<>();
 
@@ -191,7 +205,7 @@ public abstract class BaseSimpleParser {
      * {@link org.apache.camel.Expression}s to be used by Camel then the AST graph has a linked and prepared graph of
      * nodes which represent the input expression.
      */
-    protected void prepareUnaryExpressions() {
+    protected void prepareUnaryExpressions(List<SimpleNode> nodes) {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
         for (SimpleNode node : nodes) {
@@ -226,7 +240,7 @@ public abstract class BaseSimpleParser {
      * So when the AST node is later used to create the {@link Predicate}s to be used by Camel then the AST graph has a
      * linked and prepared graph of nodes which represent the input expression.
      */
-    protected void prepareChainExpression() {
+    protected void prepareChainExpression(List<SimpleNode> nodes) {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;
@@ -287,7 +301,7 @@ public abstract class BaseSimpleParser {
         Collections.reverse(nodes);
     }
 
-    protected void prepareOtherExpressions() {
+    protected void prepareOtherExpressions(List<SimpleNode> nodes) {
         Deque<SimpleNode> stack = new ArrayDeque<>();
 
         SimpleNode left = null;
@@ -350,7 +364,7 @@ public abstract class BaseSimpleParser {
      * The ternary operator consists of two tokens: ? and : We need to find the pattern: condition ? trueValue :
      * falseValue
      */
-    protected void prepareTernaryExpressions() {
+    protected void prepareTernaryExpressions(List<SimpleNode> nodes) {
         List<SimpleNode> answer = new ArrayList<>();
 
         for (int i = 0; i < nodes.size(); i++) {
@@ -432,6 +446,26 @@ public abstract class BaseSimpleParser {
      */
     protected boolean accept(TokenType accept) {
         return token == null || token.getType().getType() == accept;
+    }
+
+    /**
+     * Expect any of the given token(s)
+     *
+     * @param  expect                the token(s) to expect
+     * @throws SimpleParserException is thrown if the token is not as expected
+     */
+    protected void expect(TokenType... expect) throws SimpleParserException {
+        if (token == null) {
+            throw new SimpleParserException("expected any symbol " + Arrays.asList(expect) + " but reached eol", previousIndex);
+        }
+        for (TokenType target : expect) {
+            if (token.getType().getType() == target) {
+                return;
+            }
+        }
+        // use the previous index as that is where the problem is
+        throw new SimpleParserException(
+                "expected any symbol " + Arrays.asList(expect) + " but was " + token.getType().getType(), previousIndex);
     }
 
     /**

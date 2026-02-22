@@ -160,13 +160,13 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         // turn the tokens into the ast model
         parseAndCreateAstModel();
         // compact and stack blocks (eg function start/end)
-        prepareBlocks();
+        prepareBlocks(nodes);
         // compact and stack unary operators
-        prepareUnaryExpressions();
+        prepareUnaryExpressions(nodes);
         // compact and stack chain expressions
-        prepareChainExpression();
+        prepareChainExpression(nodes);
         // compact and stack other expressions
-        prepareOtherExpressions();
+        prepareOtherExpressions(nodes);
 
         return nodes;
     }
@@ -228,7 +228,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 }
             }
             if (cur.getType().isInitVariable()) {
-                if (prev.getType().isWhitespace()) {
+                if (prev.getType().isWhitespace() || " ".equals(prev.getText())) {
                     toRemove.add(prev);
                 }
             }
@@ -264,6 +264,14 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 nodes.add(node);
                 // continue to next
                 continue;
+            }
+
+            if (token.getType().isInitVariable()) {
+                // we start a new init variable so the current image token need to be added first
+                if (imageToken != null) {
+                    nodes.add(imageToken);
+                    imageToken = null;
+                }
             }
 
             // if no token was created, then it's a character/whitespace/escaped symbol
