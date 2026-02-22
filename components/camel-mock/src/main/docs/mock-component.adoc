@@ -379,7 +379,7 @@ instead.
 [source,java]
 .*`isMockEndpoints` using camel-test kit*
 ----
-include::{examplesdir}/components/camel-test/camel-test-junit6/src/test/java/org/apache/camel/test/junit5/patterns/IsMockEndpointsJUnit5Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/camel-test-junit6/src/test/java/org/apache/camel/test/junit6/patterns/IsMockEndpointsJUnit6Test.java[tags=e1]
 ----
 
 
@@ -443,7 +443,7 @@ The same example using the Test Kit
 [source,java]
 .*isMockEndpointsAndSkip using camel-test kit*
 ----
-include::{examplesdir}/components/camel-test/camel-test-junit6/src/test/java/org/apache/camel/test/junit5/patterns/IsMockEndpointsAndSkipJUnit5Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/camel-test-junit6/src/test/java/org/apache/camel/test/junit6/patterns/IsMockEndpointsAndSkipJUnit6Test.java[tags=e1]
 ----
 
 === Limiting the number of messages to keep
