@@ -41,7 +41,7 @@
         <camel-prepare-component>false</camel-prepare-component>
 
         <!-- Dependency versions -->
-        <camel-kamelets-version>4.17.0</camel-kamelets-version>
+        <camel-kamelets-version>4.18.0</camel-kamelets-version>
         <maven-version>3.9.12</maven-version>
         <maven-resolver-version>1.9.25</maven-resolver-version>
         <plexus-interpolation-version>1.29</plexus-interpolation-version>
