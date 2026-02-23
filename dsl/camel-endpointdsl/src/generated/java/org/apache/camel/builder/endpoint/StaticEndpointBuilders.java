@@ -52,7 +52,6 @@ public class StaticEndpointBuilders {
     public static ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(String path) {
         return activemq("activemq", path);
     }
-
     /**
      * ActiveMQ 5.x (camel-activemq)
      * Send messages to (or consume from) Apache ActiveMQ 5.x. This component
@@ -74,14 +73,13 @@ public class StaticEndpointBuilders {
      * Name of the queue or topic to use as destination
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          destinationType:destinationName
+     * instead of the default name
+     * @param path destinationType:destinationName
      * @return the dsl builder
      */
     public static ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(String componentName, String path) {
         return ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * ActiveMQ 6.x (camel-activemq6)
      * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
@@ -108,7 +106,6 @@ public class StaticEndpointBuilders {
     public static ActiveMQ6EndpointBuilderFactory.ActiveMQ6EndpointBuilder activemq6(String path) {
         return activemq6("activemq6", path);
     }
-
     /**
      * ActiveMQ 6.x (camel-activemq6)
      * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
@@ -130,15 +127,13 @@ public class StaticEndpointBuilders {
      * Name of the queue or topic to use as destination
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          destinationType:destinationName
+     * instead of the default name
+     * @param path destinationType:destinationName
      * @return the dsl builder
      */
-    public static ActiveMQ6EndpointBuilderFactory.ActiveMQ6EndpointBuilder activemq6(String componentName,
-            String path) {
+    public static ActiveMQ6EndpointBuilderFactory.ActiveMQ6EndpointBuilder activemq6(String componentName, String path) {
         return ActiveMQ6EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
@@ -164,7 +159,6 @@ public class StaticEndpointBuilders {
     public static AMQPEndpointBuilderFactory.AMQPEndpointBuilder amqp(String path) {
         return amqp("amqp", path);
     }
-
     /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
@@ -185,14 +179,13 @@ public class StaticEndpointBuilders {
      * Name of the queue or topic to use as destination
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          destinationType:destinationName
+     * instead of the default name
+     * @param path destinationType:destinationName
      * @return the dsl builder
      */
     public static AMQPEndpointBuilderFactory.AMQPEndpointBuilder amqp(String componentName, String path) {
         return AMQPEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
@@ -213,7 +206,6 @@ public class StaticEndpointBuilders {
     public static ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(String path) {
         return arangodb("arangodb", path);
     }
-
     /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
@@ -229,14 +221,13 @@ public class StaticEndpointBuilders {
      * database name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          database
+     * instead of the default name
+     * @param path database
      * @return the dsl builder
      */
     public static ArangoDbEndpointBuilderFactory.ArangoDbEndpointBuilder arangodb(String componentName, String path) {
         return ArangoDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AS2 (camel-as2)
      * Transfer data securely and reliably using the AS2 protocol (RFC4130).
@@ -260,7 +251,6 @@ public class StaticEndpointBuilders {
     public static AS2EndpointBuilderFactory.AS2EndpointBuilder as2(String path) {
         return as2("as2", path);
     }
-
     /**
      * AS2 (camel-as2)
      * Transfer data securely and reliably using the AS2 protocol (RFC4130).
@@ -279,14 +269,13 @@ public class StaticEndpointBuilders {
      * What sub operation to use for the selected operation
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
     public static AS2EndpointBuilderFactory.AS2EndpointBuilder as2(String componentName, String path) {
         return AS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Asterisk (camel-asterisk)
      * Interact with Asterisk PBX Server (VoIP).
@@ -306,7 +295,6 @@ public class StaticEndpointBuilders {
     public static AsteriskEndpointBuilderFactory.AsteriskEndpointBuilder asterisk(String path) {
         return asterisk("asterisk", path);
     }
-
     /**
      * Asterisk (camel-asterisk)
      * Interact with Asterisk PBX Server (VoIP).
@@ -321,14 +309,13 @@ public class StaticEndpointBuilders {
      * Name of component
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static AsteriskEndpointBuilderFactory.AsteriskEndpointBuilder asterisk(String componentName, String path) {
         return AsteriskEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
@@ -345,11 +332,9 @@ public class StaticEndpointBuilders {
      * @param path servicePath
      * @return the dsl builder
      */
-    public static AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
-            String path) {
+    public static AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String path) {
         return atmosphereWebsocket("atmosphere-websocket", path);
     }
-
     /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
@@ -364,15 +349,13 @@ public class StaticEndpointBuilders {
      * Name of websocket endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          servicePath
+     * instead of the default name
+     * @param path servicePath
      * @return the dsl builder
      */
-    public static AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
-            String componentName, String path) {
+    public static AtmosphereWebsocketEndpointBuilderFactory.AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String componentName, String path) {
         return AtmosphereWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Atom (camel-atom)
      * Poll Atom RSS feeds.
@@ -392,7 +375,6 @@ public class StaticEndpointBuilders {
     public static AtomEndpointBuilderFactory.AtomEndpointBuilder atom(String path) {
         return atom("atom", path);
     }
-
     /**
      * Atom (camel-atom)
      * Poll Atom RSS feeds.
@@ -407,14 +389,13 @@ public class StaticEndpointBuilders {
      * The URI to the feed to poll.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          feedUri
+     * instead of the default name
+     * @param path feedUri
      * @return the dsl builder
      */
     public static AtomEndpointBuilderFactory.AtomEndpointBuilder atom(String componentName, String path) {
         return AtomEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
@@ -444,7 +425,6 @@ public class StaticEndpointBuilders {
     public static AvroEndpointBuilderFactory.AvroEndpointBuilder avro(String path) {
         return avro("avro", path);
     }
-
     /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
@@ -469,14 +449,13 @@ public class StaticEndpointBuilders {
      * The name of the message to send.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          transport:host:port/messageName
+     * instead of the default name
+     * @param path transport:host:port/messageName
      * @return the dsl builder
      */
     public static AvroEndpointBuilderFactory.AvroEndpointBuilder avro(String componentName, String path) {
         return AvroEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Bedrock (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock service.
@@ -496,7 +475,6 @@ public class StaticEndpointBuilders {
     public static BedrockEndpointBuilderFactory.BedrockEndpointBuilder awsBedrock(String path) {
         return awsBedrock("aws-bedrock", path);
     }
-
     /**
      * AWS Bedrock (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock service.
@@ -511,14 +489,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static BedrockEndpointBuilderFactory.BedrockEndpointBuilder awsBedrock(String componentName, String path) {
         return BedrockEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
      * Operate on AWS Bedrock through its Agent.
@@ -538,7 +515,6 @@ public class StaticEndpointBuilders {
     public static BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(String path) {
         return awsBedrockAgent("aws-bedrock-agent", path);
     }
-
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
      * Operate on AWS Bedrock through its Agent.
@@ -553,15 +529,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(String componentName,
-            String path) {
+    public static BedrockAgentEndpointBuilderFactory.BedrockAgentEndpointBuilder awsBedrockAgent(String componentName, String path) {
         return BedrockAgentEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
@@ -578,11 +552,9 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
-    public static BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
-            String path) {
+    public static BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(String path) {
         return awsBedrockAgentRuntime("aws-bedrock-agent-runtime", path);
     }
-
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
@@ -597,15 +569,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(
-            String componentName, String path) {
+    public static BedrockAgentRuntimeEndpointBuilderFactory.BedrockAgentRuntimeEndpointBuilder awsBedrockAgentRuntime(String componentName, String path) {
         return BedrockAgentRuntimeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
@@ -625,7 +595,6 @@ public class StaticEndpointBuilders {
     public static CloudtrailEndpointBuilderFactory.CloudtrailEndpointBuilder awsCloudtrail(String path) {
         return awsCloudtrail("aws-cloudtrail", path);
     }
-
     /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
@@ -640,15 +609,13 @@ public class StaticEndpointBuilders {
      * A label for indexing cloudtrail endpoints
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static CloudtrailEndpointBuilderFactory.CloudtrailEndpointBuilder awsCloudtrail(String componentName,
-            String path) {
+    public static CloudtrailEndpointBuilderFactory.CloudtrailEndpointBuilder awsCloudtrail(String componentName, String path) {
         return CloudtrailEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Config Service (camel-aws-config)
      * Manage AWS Config service.
@@ -668,7 +635,6 @@ public class StaticEndpointBuilders {
     public static AWSConfigEndpointBuilderFactory.AWSConfigEndpointBuilder awsConfig(String path) {
         return awsConfig("aws-config", path);
     }
-
     /**
      * AWS Config Service (camel-aws-config)
      * Manage AWS Config service.
@@ -683,15 +649,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static AWSConfigEndpointBuilderFactory.AWSConfigEndpointBuilder awsConfig(String componentName,
-            String path) {
+    public static AWSConfigEndpointBuilderFactory.AWSConfigEndpointBuilder awsConfig(String componentName, String path) {
         return AWSConfigEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
@@ -711,7 +675,6 @@ public class StaticEndpointBuilders {
     public static SecretsManagerEndpointBuilderFactory.SecretsManagerEndpointBuilder awsSecretsManager(String path) {
         return awsSecretsManager("aws-secrets-manager", path);
     }
-
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
@@ -726,15 +689,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static SecretsManagerEndpointBuilderFactory.SecretsManagerEndpointBuilder awsSecretsManager(
-            String componentName, String path) {
+    public static SecretsManagerEndpointBuilderFactory.SecretsManagerEndpointBuilder awsSecretsManager(String componentName, String path) {
         return SecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Security Hub (camel-aws-security-hub)
      * Manage and interact with AWS Security Hub for security findings.
@@ -754,7 +715,6 @@ public class StaticEndpointBuilders {
     public static SecurityHubEndpointBuilderFactory.SecurityHubEndpointBuilder awsSecurityHub(String path) {
         return awsSecurityHub("aws-security-hub", path);
     }
-
     /**
      * AWS Security Hub (camel-aws-security-hub)
      * Manage and interact with AWS Security Hub for security findings.
@@ -769,15 +729,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static SecurityHubEndpointBuilderFactory.SecurityHubEndpointBuilder awsSecurityHub(String componentName,
-            String path) {
+    public static SecurityHubEndpointBuilderFactory.SecurityHubEndpointBuilder awsSecurityHub(String componentName, String path) {
         return SecurityHubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
@@ -797,7 +755,6 @@ public class StaticEndpointBuilders {
     public static Athena2EndpointBuilderFactory.Athena2EndpointBuilder aws2Athena(String path) {
         return aws2Athena("aws2-athena", path);
     }
-
     /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
@@ -812,14 +769,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static Athena2EndpointBuilderFactory.Athena2EndpointBuilder aws2Athena(String componentName, String path) {
         return Athena2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Comprehend (camel-aws2-comprehend)
      * Perform natural language processing using AWS Comprehend and AWS SDK
@@ -840,7 +796,6 @@ public class StaticEndpointBuilders {
     public static Comprehend2EndpointBuilderFactory.Comprehend2EndpointBuilder aws2Comprehend(String path) {
         return aws2Comprehend("aws2-comprehend", path);
     }
-
     /**
      * AWS Comprehend (camel-aws2-comprehend)
      * Perform natural language processing using AWS Comprehend and AWS SDK
@@ -856,15 +811,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static Comprehend2EndpointBuilderFactory.Comprehend2EndpointBuilder aws2Comprehend(String componentName,
-            String path) {
+    public static Comprehend2EndpointBuilderFactory.Comprehend2EndpointBuilder aws2Comprehend(String componentName, String path) {
         return Comprehend2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
@@ -884,7 +837,6 @@ public class StaticEndpointBuilders {
     public static Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(String path) {
         return aws2Cw("aws2-cw", path);
     }
-
     /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
@@ -899,14 +851,13 @@ public class StaticEndpointBuilders {
      * The metric namespace
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          namespace
+     * instead of the default name
+     * @param path namespace
      * @return the dsl builder
      */
     public static Cw2EndpointBuilderFactory.Cw2EndpointBuilder aws2Cw(String componentName, String path) {
         return Cw2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB.
@@ -926,7 +877,6 @@ public class StaticEndpointBuilders {
     public static Ddb2EndpointBuilderFactory.Ddb2EndpointBuilder aws2Ddb(String path) {
         return aws2Ddb("aws2-ddb", path);
     }
-
     /**
      * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB.
@@ -941,14 +891,13 @@ public class StaticEndpointBuilders {
      * The name of the table currently worked with.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          tableName
+     * instead of the default name
+     * @param path tableName
      * @return the dsl builder
      */
     public static Ddb2EndpointBuilderFactory.Ddb2EndpointBuilder aws2Ddb(String componentName, String path) {
         return Ddb2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream.
@@ -968,7 +917,6 @@ public class StaticEndpointBuilders {
     public static Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(String path) {
         return aws2Ddbstream("aws2-ddbstream", path);
     }
-
     /**
      * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream.
@@ -983,15 +931,13 @@ public class StaticEndpointBuilders {
      * Name of the dynamodb table
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          tableName
+     * instead of the default name
+     * @param path tableName
      * @return the dsl builder
      */
-    public static Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(String componentName,
-            String path) {
+    public static Ddb2StreamEndpointBuilderFactory.Ddb2StreamEndpointBuilder aws2Ddbstream(String componentName, String path) {
         return Ddb2StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances.
@@ -1011,7 +957,6 @@ public class StaticEndpointBuilders {
     public static AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(String path) {
         return aws2Ec2("aws2-ec2", path);
     }
-
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances.
@@ -1026,14 +971,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static AWS2EC2EndpointBuilderFactory.AWS2EC2EndpointBuilder aws2Ec2(String componentName, String path) {
         return AWS2EC2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances.
@@ -1053,7 +997,6 @@ public class StaticEndpointBuilders {
     public static ECS2EndpointBuilderFactory.ECS2EndpointBuilder aws2Ecs(String path) {
         return aws2Ecs("aws2-ecs", path);
     }
-
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances.
@@ -1068,14 +1011,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static ECS2EndpointBuilderFactory.ECS2EndpointBuilder aws2Ecs(String componentName, String path) {
         return ECS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances.
@@ -1095,7 +1037,6 @@ public class StaticEndpointBuilders {
     public static EKS2EndpointBuilderFactory.EKS2EndpointBuilder aws2Eks(String path) {
         return aws2Eks("aws2-eks", path);
     }
-
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances.
@@ -1110,14 +1051,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static EKS2EndpointBuilderFactory.EKS2EndpointBuilder aws2Eks(String componentName, String path) {
         return EKS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Eventbridge (camel-aws2-eventbridge)
      * Send events to AWS Eventbridge cluster instances.
@@ -1137,7 +1077,6 @@ public class StaticEndpointBuilders {
     public static EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(String path) {
         return aws2Eventbridge("aws2-eventbridge", path);
     }
-
     /**
      * AWS Eventbridge (camel-aws2-eventbridge)
      * Send events to AWS Eventbridge cluster instances.
@@ -1152,15 +1091,13 @@ public class StaticEndpointBuilders {
      * Event bus name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          eventbusNameOrArn
+     * instead of the default name
+     * @param path eventbusNameOrArn
      * @return the dsl builder
      */
-    public static EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(String componentName,
-            String path) {
+    public static EventbridgeEndpointBuilderFactory.EventbridgeEndpointBuilder aws2Eventbridge(String componentName, String path) {
         return EventbridgeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances.
@@ -1180,7 +1117,6 @@ public class StaticEndpointBuilders {
     public static IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(String path) {
         return aws2Iam("aws2-iam", path);
     }
-
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances.
@@ -1195,14 +1131,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static IAM2EndpointBuilderFactory.IAM2EndpointBuilder aws2Iam(String componentName, String path) {
         return IAM2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams.
@@ -1222,7 +1157,6 @@ public class StaticEndpointBuilders {
     public static Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(String path) {
         return aws2Kinesis("aws2-kinesis", path);
     }
-
     /**
      * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams.
@@ -1237,15 +1171,13 @@ public class StaticEndpointBuilders {
      * Name of the stream
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          streamName
+     * instead of the default name
+     * @param path streamName
      * @return the dsl builder
      */
-    public static Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(String componentName,
-            String path) {
+    public static Kinesis2EndpointBuilderFactory.Kinesis2EndpointBuilder aws2Kinesis(String componentName, String path) {
         return Kinesis2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams.
@@ -1262,11 +1194,9 @@ public class StaticEndpointBuilders {
      * @param path streamName
      * @return the dsl builder
      */
-    public static KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
-            String path) {
+    public static KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(String path) {
         return aws2KinesisFirehose("aws2-kinesis-firehose", path);
     }
-
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams.
@@ -1281,15 +1211,13 @@ public class StaticEndpointBuilders {
      * Name of the stream
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          streamName
+     * instead of the default name
+     * @param path streamName
      * @return the dsl builder
      */
-    public static KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
-            String componentName, String path) {
+    public static KinesisFirehose2EndpointBuilderFactory.KinesisFirehose2EndpointBuilder aws2KinesisFirehose(String componentName, String path) {
         return KinesisFirehose2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances.
@@ -1309,7 +1237,6 @@ public class StaticEndpointBuilders {
     public static KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(String path) {
         return aws2Kms("aws2-kms", path);
     }
-
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances.
@@ -1324,14 +1251,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static KMS2EndpointBuilderFactory.KMS2EndpointBuilder aws2Kms(String componentName, String path) {
         return KMS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions.
@@ -1351,7 +1277,6 @@ public class StaticEndpointBuilders {
     public static Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(String path) {
         return aws2Lambda("aws2-lambda", path);
     }
-
     /**
      * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions.
@@ -1366,14 +1291,13 @@ public class StaticEndpointBuilders {
      * Name of the Lambda function.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          function
+     * instead of the default name
+     * @param path function
      * @return the dsl builder
      */
     public static Lambda2EndpointBuilderFactory.Lambda2EndpointBuilder aws2Lambda(String componentName, String path) {
         return Lambda2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS MQ (camel-aws2-mq)
      * Send messages to AWS MQ.
@@ -1393,7 +1317,6 @@ public class StaticEndpointBuilders {
     public static MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(String path) {
         return aws2Mq("aws2-mq", path);
     }
-
     /**
      * AWS MQ (camel-aws2-mq)
      * Send messages to AWS MQ.
@@ -1408,14 +1331,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static MQ2EndpointBuilderFactory.MQ2EndpointBuilder aws2Mq(String componentName, String path) {
         return MQ2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances.
@@ -1435,7 +1357,6 @@ public class StaticEndpointBuilders {
     public static MSK2EndpointBuilderFactory.MSK2EndpointBuilder aws2Msk(String path) {
         return aws2Msk("aws2-msk", path);
     }
-
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances.
@@ -1450,14 +1371,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static MSK2EndpointBuilderFactory.MSK2EndpointBuilder aws2Msk(String componentName, String path) {
         return MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Polly (camel-aws2-polly)
      * Synthesize speech using AWS Polly and AWS SDK version 2.x.
@@ -1477,7 +1397,6 @@ public class StaticEndpointBuilders {
     public static Polly2EndpointBuilderFactory.Polly2EndpointBuilder aws2Polly(String path) {
         return aws2Polly("aws2-polly", path);
     }
-
     /**
      * AWS Polly (camel-aws2-polly)
      * Synthesize speech using AWS Polly and AWS SDK version 2.x.
@@ -1492,14 +1411,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static Polly2EndpointBuilderFactory.Polly2EndpointBuilder aws2Polly(String componentName, String path) {
         return Polly2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
@@ -1519,7 +1437,6 @@ public class StaticEndpointBuilders {
     public static RedshiftData2EndpointBuilderFactory.RedshiftData2EndpointBuilder aws2RedshiftData(String path) {
         return aws2RedshiftData("aws2-redshift-data", path);
     }
-
     /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
@@ -1534,15 +1451,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static RedshiftData2EndpointBuilderFactory.RedshiftData2EndpointBuilder aws2RedshiftData(
-            String componentName, String path) {
+    public static RedshiftData2EndpointBuilderFactory.RedshiftData2EndpointBuilder aws2RedshiftData(String componentName, String path) {
         return RedshiftData2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Rekognition (camel-aws2-rekognition)
      * Manage and invoke AWS Rekognition.
@@ -1562,7 +1477,6 @@ public class StaticEndpointBuilders {
     public static Rekognition2EndpointBuilderFactory.Rekognition2EndpointBuilder aws2Rekognition(String path) {
         return aws2Rekognition("aws2-rekognition", path);
     }
-
     /**
      * AWS Rekognition (camel-aws2-rekognition)
      * Manage and invoke AWS Rekognition.
@@ -1577,15 +1491,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static Rekognition2EndpointBuilderFactory.Rekognition2EndpointBuilder aws2Rekognition(String componentName,
-            String path) {
+    public static Rekognition2EndpointBuilderFactory.Rekognition2EndpointBuilder aws2Rekognition(String componentName, String path) {
         return Rekognition2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
@@ -1605,7 +1517,6 @@ public class StaticEndpointBuilders {
     public static AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(String path) {
         return aws2S3("aws2-s3", path);
     }
-
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
@@ -1620,14 +1531,13 @@ public class StaticEndpointBuilders {
      * Bucket name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          bucketNameOrArn
+     * instead of the default name
+     * @param path bucketNameOrArn
      * @return the dsl builder
      */
     public static AWS2S3EndpointBuilderFactory.AWS2S3EndpointBuilder aws2S3(String componentName, String path) {
         return AWS2S3EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS S3 Vectors (camel-aws2-s3-vectors)
      * Store and query vector embeddings using AWS S3 Vectors with similarity
@@ -1648,7 +1558,6 @@ public class StaticEndpointBuilders {
     public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String path) {
         return aws2S3Vectors("aws2-s3-vectors", path);
     }
-
     /**
      * AWS S3 Vectors (camel-aws2-s3-vectors)
      * Store and query vector embeddings using AWS S3 Vectors with similarity
@@ -1664,15 +1573,13 @@ public class StaticEndpointBuilders {
      * Vector bucket name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          vectorBucketName
+     * instead of the default name
+     * @param path vectorBucketName
      * @return the dsl builder
      */
-    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String componentName,
-            String path) {
+    public static AWS2S3VectorsEndpointBuilderFactory.AWS2S3VectorsEndpointBuilder aws2S3Vectors(String componentName, String path) {
         return AWS2S3VectorsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
@@ -1692,7 +1599,6 @@ public class StaticEndpointBuilders {
     public static Ses2EndpointBuilderFactory.Ses2EndpointBuilder aws2Ses(String path) {
         return aws2Ses("aws2-ses", path);
     }
-
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
@@ -1707,14 +1613,13 @@ public class StaticEndpointBuilders {
      * The sender's email address.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          from
+     * instead of the default name
+     * @param path from
      * @return the dsl builder
      */
     public static Ses2EndpointBuilderFactory.Ses2EndpointBuilder aws2Ses(String componentName, String path) {
         return Ses2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to AWS Simple Notification Topic.
@@ -1734,7 +1639,6 @@ public class StaticEndpointBuilders {
     public static Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(String path) {
         return aws2Sns("aws2-sns", path);
     }
-
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to AWS Simple Notification Topic.
@@ -1749,14 +1653,13 @@ public class StaticEndpointBuilders {
      * Topic name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topicNameOrArn
+     * instead of the default name
+     * @param path topicNameOrArn
      * @return the dsl builder
      */
     public static Sns2EndpointBuilderFactory.Sns2EndpointBuilder aws2Sns(String componentName, String path) {
         return Sns2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Send and receive messages to/from AWS SQS.
@@ -1776,7 +1679,6 @@ public class StaticEndpointBuilders {
     public static Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(String path) {
         return aws2Sqs("aws2-sqs", path);
     }
-
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Send and receive messages to/from AWS SQS.
@@ -1791,14 +1693,13 @@ public class StaticEndpointBuilders {
      * Queue name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          queueNameOrArn
+     * instead of the default name
+     * @param path queueNameOrArn
      * @return the dsl builder
      */
     public static Sqs2EndpointBuilderFactory.Sqs2EndpointBuilder aws2Sqs(String componentName, String path) {
         return Sqs2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
      * Manage and invoke AWS Step functions.
@@ -1818,7 +1719,6 @@ public class StaticEndpointBuilders {
     public static StepFunctions2EndpointBuilderFactory.StepFunctions2EndpointBuilder aws2StepFunctions(String path) {
         return aws2StepFunctions("aws2-step-functions", path);
     }
-
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
      * Manage and invoke AWS Step functions.
@@ -1833,15 +1733,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static StepFunctions2EndpointBuilderFactory.StepFunctions2EndpointBuilder aws2StepFunctions(
-            String componentName, String path) {
+    public static StepFunctions2EndpointBuilderFactory.StepFunctions2EndpointBuilder aws2StepFunctions(String componentName, String path) {
         return StepFunctions2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances.
@@ -1861,7 +1759,6 @@ public class StaticEndpointBuilders {
     public static STS2EndpointBuilderFactory.STS2EndpointBuilder aws2Sts(String path) {
         return aws2Sts("aws2-sts", path);
     }
-
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances.
@@ -1876,14 +1773,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static STS2EndpointBuilderFactory.STS2EndpointBuilder aws2Sts(String componentName, String path) {
         return STS2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Textract (camel-aws2-textract)
      * Extract text and data from documents using AWS Textract and AWS SDK
@@ -1904,7 +1800,6 @@ public class StaticEndpointBuilders {
     public static Textract2EndpointBuilderFactory.Textract2EndpointBuilder aws2Textract(String path) {
         return aws2Textract("aws2-textract", path);
     }
-
     /**
      * AWS Textract (camel-aws2-textract)
      * Extract text and data from documents using AWS Textract and AWS SDK
@@ -1920,15 +1815,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static Textract2EndpointBuilderFactory.Textract2EndpointBuilder aws2Textract(String componentName,
-            String path) {
+    public static Textract2EndpointBuilderFactory.Textract2EndpointBuilder aws2Textract(String componentName, String path) {
         return Textract2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
@@ -1952,7 +1845,6 @@ public class StaticEndpointBuilders {
     public static Timestream2EndpointBuilderFactory.Timestream2EndpointBuilder aws2Timestream(String path) {
         return aws2Timestream("aws2-timestream", path);
     }
-
     /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
@@ -1971,15 +1863,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          clientType:label
+     * instead of the default name
+     * @param path clientType:label
      * @return the dsl builder
      */
-    public static Timestream2EndpointBuilderFactory.Timestream2EndpointBuilder aws2Timestream(String componentName,
-            String path) {
+    public static Timestream2EndpointBuilderFactory.Timestream2EndpointBuilder aws2Timestream(String componentName, String path) {
         return Timestream2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Transcribe (camel-aws2-transcribe)
      * Automatically convert speech to text using AWS Transcribe service
@@ -1999,7 +1889,6 @@ public class StaticEndpointBuilders {
     public static Transcribe2EndpointBuilderFactory.Transcribe2EndpointBuilder aws2Transcribe(String path) {
         return aws2Transcribe("aws2-transcribe", path);
     }
-
     /**
      * AWS Transcribe (camel-aws2-transcribe)
      * Automatically convert speech to text using AWS Transcribe service
@@ -2014,15 +1903,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static Transcribe2EndpointBuilderFactory.Transcribe2EndpointBuilder aws2Transcribe(String componentName,
-            String path) {
+    public static Transcribe2EndpointBuilderFactory.Transcribe2EndpointBuilder aws2Transcribe(String componentName, String path) {
         return Transcribe2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
@@ -2042,7 +1929,6 @@ public class StaticEndpointBuilders {
     public static Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(String path) {
         return aws2Translate("aws2-translate", path);
     }
-
     /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
@@ -2057,15 +1943,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(String componentName,
-            String path) {
+    public static Translate2EndpointBuilderFactory.Translate2EndpointBuilder aws2Translate(String componentName, String path) {
         return Translate2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
      * To read and write records to the CosmosDB database on Azure cloud
@@ -2093,7 +1977,6 @@ public class StaticEndpointBuilders {
     public static CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(String path) {
         return azureCosmosdb("azure-cosmosdb", path);
     }
-
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
      * To read and write records to the CosmosDB database on Azure cloud
@@ -2116,15 +1999,13 @@ public class StaticEndpointBuilders {
      * component will automatically auto create a Cosmos container.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          databaseName/containerName
+     * instead of the default name
+     * @param path databaseName/containerName
      * @return the dsl builder
      */
-    public static CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(String componentName,
-            String path) {
+    public static CosmosDbEndpointBuilderFactory.CosmosDbEndpointBuilder azureCosmosdb(String componentName, String path) {
         return CosmosDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
@@ -2147,7 +2028,6 @@ public class StaticEndpointBuilders {
     public static EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(String path) {
         return azureEventhubs("azure-eventhubs", path);
     }
-
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
@@ -2165,15 +2045,13 @@ public class StaticEndpointBuilders {
      * EventHubs name under a specific namespace.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          namespace/eventHubName
+     * instead of the default name
+     * @param path namespace/eventHubName
      * @return the dsl builder
      */
-    public static EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(String componentName,
-            String path) {
+    public static EventHubsEndpointBuilderFactory.EventHubsEndpointBuilder azureEventhubs(String componentName, String path) {
         return EventHubsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure Files (camel-azure-files)
      * Send and receive files to Azure storage file share
@@ -2202,7 +2080,6 @@ public class StaticEndpointBuilders {
     public static FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(String path) {
         return azureFiles("azure-files", path);
     }
-
     /**
      * Azure Files (camel-azure-files)
      * Send and receive files to Azure storage file share
@@ -2226,14 +2103,13 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          account/share
+     * instead of the default name
+     * @param path account/share
      * @return the dsl builder
      */
     public static FilesEndpointBuilderFactory.FilesEndpointBuilder azureFiles(String componentName, String path) {
         return FilesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure Functions (camel-azure-functions)
      * Invoke and manage Azure Functions.
@@ -2256,7 +2132,6 @@ public class StaticEndpointBuilders {
     public static FunctionsEndpointBuilderFactory.FunctionsEndpointBuilder azureFunctions(String path) {
         return azureFunctions("azure-functions", path);
     }
-
     /**
      * Azure Functions (camel-azure-functions)
      * Invoke and manage Azure Functions.
@@ -2274,15 +2149,13 @@ public class StaticEndpointBuilders {
      * The function name within the app (required for invokeFunction operation)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          functionApp/functionName
+     * instead of the default name
+     * @param path functionApp/functionName
      * @return the dsl builder
      */
-    public static FunctionsEndpointBuilderFactory.FunctionsEndpointBuilder azureFunctions(String componentName,
-            String path) {
+    public static FunctionsEndpointBuilderFactory.FunctionsEndpointBuilder azureFunctions(String componentName, String path) {
         return FunctionsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
@@ -2302,7 +2175,6 @@ public class StaticEndpointBuilders {
     public static KeyVaultEndpointBuilderFactory.KeyVaultEndpointBuilder azureKeyVault(String path) {
         return azureKeyVault("azure-key-vault", path);
     }
-
     /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
@@ -2317,15 +2189,13 @@ public class StaticEndpointBuilders {
      * Vault Name to be used
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          vaultName
+     * instead of the default name
+     * @param path vaultName
      * @return the dsl builder
      */
-    public static KeyVaultEndpointBuilderFactory.KeyVaultEndpointBuilder azureKeyVault(String componentName,
-            String path) {
+    public static KeyVaultEndpointBuilderFactory.KeyVaultEndpointBuilder azureKeyVault(String componentName, String path) {
         return KeyVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Service Bus.
@@ -2348,7 +2218,6 @@ public class StaticEndpointBuilders {
     public static ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(String path) {
         return azureServicebus("azure-servicebus", path);
     }
-
     /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Service Bus.
@@ -2366,15 +2235,13 @@ public class StaticEndpointBuilders {
      * topic name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topicOrQueueName
+     * instead of the default name
+     * @param path topicOrQueueName
      * @return the dsl builder
      */
-    public static ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(String componentName,
-            String path) {
+    public static ServiceBusEndpointBuilderFactory.ServiceBusEndpointBuilder azureServicebus(String componentName, String path) {
         return ServiceBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service.
@@ -2397,7 +2264,6 @@ public class StaticEndpointBuilders {
     public static BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(String path) {
         return azureStorageBlob("azure-storage-blob", path);
     }
-
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service.
@@ -2415,14 +2281,13 @@ public class StaticEndpointBuilders {
      * The blob container name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          accountName/containerName
+     * instead of the default name
+     * @param path accountName/containerName
      * @return the dsl builder
      */
     public static BlobEndpointBuilderFactory.BlobEndpointBuilder azureStorageBlob(String componentName, String path) {
         return BlobEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure Storage Data Lake Service (camel-azure-storage-datalake)
      * Sends and receives files to/from Azure Data Lake Storage.
@@ -2445,7 +2310,6 @@ public class StaticEndpointBuilders {
     public static DataLakeEndpointBuilderFactory.DataLakeEndpointBuilder azureStorageDatalake(String path) {
         return azureStorageDatalake("azure-storage-datalake", path);
     }
-
     /**
      * Azure Storage Data Lake Service (camel-azure-storage-datalake)
      * Sends and receives files to/from Azure Data Lake Storage.
@@ -2463,15 +2327,13 @@ public class StaticEndpointBuilders {
      * name of filesystem to be used
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          accountName/fileSystemName
+     * instead of the default name
+     * @param path accountName/fileSystemName
      * @return the dsl builder
      */
-    public static DataLakeEndpointBuilderFactory.DataLakeEndpointBuilder azureStorageDatalake(String componentName,
-            String path) {
+    public static DataLakeEndpointBuilderFactory.DataLakeEndpointBuilder azureStorageDatalake(String componentName, String path) {
         return DataLakeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * Stores and retrieves messages to/from Azure Storage Queue.
@@ -2495,7 +2357,6 @@ public class StaticEndpointBuilders {
     public static QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(String path) {
         return azureStorageQueue("azure-storage-queue", path);
     }
-
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * Stores and retrieves messages to/from Azure Storage Queue.
@@ -2514,15 +2375,13 @@ public class StaticEndpointBuilders {
      * The queue resource name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          accountName/queueName
+     * instead of the default name
+     * @param path accountName/queueName
      * @return the dsl builder
      */
-    public static QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(String componentName,
-            String path) {
+    public static QueueEndpointBuilderFactory.QueueEndpointBuilder azureStorageQueue(String componentName, String path) {
         return QueueEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
@@ -2542,7 +2401,6 @@ public class StaticEndpointBuilders {
     public static BeanEndpointBuilderFactory.BeanEndpointBuilder bean(String path) {
         return bean("bean", path);
     }
-
     /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
@@ -2557,14 +2415,13 @@ public class StaticEndpointBuilders {
      * Sets the name of the bean to invoke
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          beanName
+     * instead of the default name
+     * @param path beanName
      * @return the dsl builder
      */
     public static BeanEndpointBuilderFactory.BeanEndpointBuilder bean(String componentName, String path) {
         return BeanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Bean Validator (camel-bean-validator)
      * Validate the message body using the Java Bean Validation API.
@@ -2584,7 +2441,6 @@ public class StaticEndpointBuilders {
     public static BeanValidatorEndpointBuilderFactory.BeanValidatorEndpointBuilder beanValidator(String path) {
         return beanValidator("bean-validator", path);
     }
-
     /**
      * Bean Validator (camel-bean-validator)
      * Validate the message body using the Java Bean Validation API.
@@ -2599,15 +2455,13 @@ public class StaticEndpointBuilders {
      * Where label is an arbitrary text value describing the endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static BeanValidatorEndpointBuilderFactory.BeanValidatorEndpointBuilder beanValidator(String componentName,
-            String path) {
+    public static BeanValidatorEndpointBuilderFactory.BeanValidatorEndpointBuilder beanValidator(String componentName, String path) {
         return BeanValidatorEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Bonita (camel-bonita)
      * Communicate with a remote Bonita BPM process engine.
@@ -2628,7 +2482,6 @@ public class StaticEndpointBuilders {
     public static BonitaEndpointBuilderFactory.BonitaEndpointBuilder bonita(String path) {
         return bonita("bonita", path);
     }
-
     /**
      * Bonita (camel-bonita)
      * Communicate with a remote Bonita BPM process engine.
@@ -2644,14 +2497,13 @@ public class StaticEndpointBuilders {
      * There are 1 enums and the value can be one of: startCase
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static BonitaEndpointBuilderFactory.BonitaEndpointBuilder bonita(String componentName, String path) {
         return BonitaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
@@ -2677,7 +2529,6 @@ public class StaticEndpointBuilders {
     public static BoxEndpointBuilderFactory.BoxEndpointBuilder box(String path) {
         return box("box", path);
     }
-
     /**
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
@@ -2698,14 +2549,13 @@ public class StaticEndpointBuilders {
      * What sub operation to use for the selected operation
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
     public static BoxEndpointBuilderFactory.BoxEndpointBuilder box(String componentName, String path) {
         return BoxEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
@@ -2740,7 +2590,6 @@ public class StaticEndpointBuilders {
     public static BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(String path) {
         return braintree("braintree", path);
     }
-
     /**
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
@@ -2770,15 +2619,13 @@ public class StaticEndpointBuilders {
      * update, updateDetails, verify, voidTransaction
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
-    public static BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(String componentName,
-            String path) {
+    public static BraintreeEndpointBuilderFactory.BraintreeEndpointBuilder braintree(String componentName, String path) {
         return BraintreeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Browse (camel-browse)
      * Inspect the messages received on endpoints supporting BrowsableEndpoint.
@@ -2798,7 +2645,6 @@ public class StaticEndpointBuilders {
     public static BrowseEndpointBuilderFactory.BrowseEndpointBuilder browse(String path) {
         return browse("browse", path);
     }
-
     /**
      * Browse (camel-browse)
      * Inspect the messages received on endpoints supporting BrowsableEndpoint.
@@ -2813,14 +2659,13 @@ public class StaticEndpointBuilders {
      * A name which can be any string to uniquely identify the endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static BrowseEndpointBuilderFactory.BrowseEndpointBuilder browse(String componentName, String path) {
         return BrowseEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
@@ -2840,7 +2685,6 @@ public class StaticEndpointBuilders {
     public static CaffeineCacheEndpointBuilderFactory.CaffeineCacheEndpointBuilder caffeineCache(String path) {
         return caffeineCache("caffeine-cache", path);
     }
-
     /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
@@ -2855,15 +2699,13 @@ public class StaticEndpointBuilders {
      * Cache name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static CaffeineCacheEndpointBuilderFactory.CaffeineCacheEndpointBuilder caffeineCache(String componentName,
-            String path) {
+    public static CaffeineCacheEndpointBuilderFactory.CaffeineCacheEndpointBuilder caffeineCache(String componentName, String path) {
         return CaffeineCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Caffeine LoadCache (camel-caffeine)
      * Perform caching operations using Caffeine Cache with an attached
@@ -2881,11 +2723,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
-            String path) {
+    public static CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(String path) {
         return caffeineLoadcache("caffeine-loadcache", path);
     }
-
     /**
      * Caffeine LoadCache (camel-caffeine)
      * Perform caching operations using Caffeine Cache with an attached
@@ -2901,15 +2741,13 @@ public class StaticEndpointBuilders {
      * the cache name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(
-            String componentName, String path) {
+    public static CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheEndpointBuilder caffeineLoadcache(String componentName, String path) {
         return CaffeineLoadCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
@@ -2936,7 +2774,6 @@ public class StaticEndpointBuilders {
     public static ChatScriptEndpointBuilderFactory.ChatScriptEndpointBuilder chatscript(String path) {
         return chatscript("chatscript", path);
     }
-
     /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
@@ -2958,15 +2795,13 @@ public class StaticEndpointBuilders {
      * Name of the Bot in CS to converse with
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/botName
+     * instead of the default name
+     * @param path host:port/botName
      * @return the dsl builder
      */
-    public static ChatScriptEndpointBuilderFactory.ChatScriptEndpointBuilder chatscript(String componentName,
-            String path) {
+    public static ChatScriptEndpointBuilderFactory.ChatScriptEndpointBuilder chatscript(String componentName, String path) {
         return ChatScriptEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
@@ -2992,7 +2827,6 @@ public class StaticEndpointBuilders {
     public static ChunkEndpointBuilderFactory.ChunkEndpointBuilder chunk(String path) {
         return chunk("chunk", path);
     }
-
     /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
@@ -3013,14 +2847,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static ChunkEndpointBuilderFactory.ChunkEndpointBuilder chunk(String componentName, String path) {
         return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
@@ -3040,7 +2873,6 @@ public class StaticEndpointBuilders {
     public static ClassEndpointBuilderFactory.ClassEndpointBuilder clas(String path) {
         return clas("class", path);
     }
-
     /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
@@ -3055,14 +2887,13 @@ public class StaticEndpointBuilders {
      * Sets the name of the bean to invoke
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          beanName
+     * instead of the default name
+     * @param path beanName
      * @return the dsl builder
      */
     public static ClassEndpointBuilderFactory.ClassEndpointBuilder clas(String componentName, String path) {
         return ClassEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
@@ -3082,7 +2913,6 @@ public class StaticEndpointBuilders {
     public static ClickUpEndpointBuilderFactory.ClickUpEndpointBuilder clickup(String path) {
         return clickup("clickup", path);
     }
-
     /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
@@ -3097,14 +2927,13 @@ public class StaticEndpointBuilders {
      * The WorkspaceID.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          workspaceId
+     * instead of the default name
+     * @param path workspaceId
      * @return the dsl builder
      */
     public static ClickUpEndpointBuilderFactory.ClickUpEndpointBuilder clickup(String componentName, String path) {
         return ClickUpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CM SMS Gateway (camel-cm-sms)
      * Send SMS messages via CM SMS Gateway.
@@ -3124,7 +2953,6 @@ public class StaticEndpointBuilders {
     public static CMEndpointBuilderFactory.CMEndpointBuilder cmSms(String path) {
         return cmSms("cm-sms", path);
     }
-
     /**
      * CM SMS Gateway (camel-cm-sms)
      * Send SMS messages via CM SMS Gateway.
@@ -3139,14 +2967,13 @@ public class StaticEndpointBuilders {
      * SMS Provider HOST with scheme
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
     public static CMEndpointBuilderFactory.CMEndpointBuilder cmSms(String componentName, String path) {
         return CMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -3167,7 +2994,6 @@ public class StaticEndpointBuilders {
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coap(String path) {
         return coap("coap", path);
     }
-
     /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -3183,14 +3009,13 @@ public class StaticEndpointBuilders {
      * The URI for the CoAP endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          uri
+     * instead of the default name
+     * @param path uri
      * @return the dsl builder
      */
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coap(String componentName, String path) {
         return CoAPEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -3211,7 +3036,6 @@ public class StaticEndpointBuilders {
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapTcp(String path) {
         return coap("coap+tcp", path);
     }
-
     /**
      * CoAP (Secure) (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -3232,7 +3056,6 @@ public class StaticEndpointBuilders {
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coaps(String path) {
         return coap("coaps", path);
     }
-
     /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -3253,7 +3076,6 @@ public class StaticEndpointBuilders {
     public static CoAPEndpointBuilderFactory.CoAPEndpointBuilder coapsTcp(String path) {
         return coap("coaps+tcp", path);
     }
-
     /**
      * CometD (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
@@ -3281,7 +3103,6 @@ public class StaticEndpointBuilders {
     public static CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(String path) {
         return cometd("cometd", path);
     }
-
     /**
      * CometD (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
@@ -3304,14 +3125,13 @@ public class StaticEndpointBuilders {
      * endpoints.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/channelName
+     * instead of the default name
+     * @param path host:port/channelName
      * @return the dsl builder
      */
     public static CometdEndpointBuilderFactory.CometdEndpointBuilder cometd(String componentName, String path) {
         return CometdEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CometD (Secure) (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
@@ -3339,7 +3159,6 @@ public class StaticEndpointBuilders {
     public static CometdEndpointBuilderFactory.CometdEndpointBuilder cometds(String path) {
         return cometd("cometds", path);
     }
-
     /**
      * Consul (camel-consul)
      * Integrate with Consul service discovery and configuration store.
@@ -3359,7 +3178,6 @@ public class StaticEndpointBuilders {
     public static ConsulEndpointBuilderFactory.ConsulEndpointBuilder consul(String path) {
         return consul("consul", path);
     }
-
     /**
      * Consul (camel-consul)
      * Integrate with Consul service discovery and configuration store.
@@ -3374,14 +3192,13 @@ public class StaticEndpointBuilders {
      * The API endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiEndpoint
+     * instead of the default name
+     * @param path apiEndpoint
      * @return the dsl builder
      */
     public static ConsulEndpointBuilderFactory.ConsulEndpointBuilder consul(String componentName, String path) {
         return ConsulEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Control Bus (camel-controlbus)
      * Manage and monitor Camel routes.
@@ -3411,7 +3228,6 @@ public class StaticEndpointBuilders {
     public static ControlBusEndpointBuilderFactory.ControlBusEndpointBuilder controlbus(String path) {
         return controlbus("controlbus", path);
     }
-
     /**
      * Control Bus (camel-controlbus)
      * Manage and monitor Camel routes.
@@ -3436,15 +3252,13 @@ public class StaticEndpointBuilders {
      * xpath, xquery, xtokenize
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          command:language
+     * instead of the default name
+     * @param path command:language
      * @return the dsl builder
      */
-    public static ControlBusEndpointBuilderFactory.ControlBusEndpointBuilder controlbus(String componentName,
-            String path) {
+    public static ControlBusEndpointBuilderFactory.ControlBusEndpointBuilder controlbus(String componentName, String path) {
         return ControlBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Couchbase (camel-couchbase)
      * Query Couchbase Views with a poll strategy and/or perform various
@@ -3472,7 +3286,6 @@ public class StaticEndpointBuilders {
     public static CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(String path) {
         return couchbase("couchbase", path);
     }
-
     /**
      * Couchbase (camel-couchbase)
      * Query Couchbase Views with a poll strategy and/or perform various
@@ -3495,15 +3308,13 @@ public class StaticEndpointBuilders {
      * Default value: 8091
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          protocol://hostname:port
+     * instead of the default name
+     * @param path protocol://hostname:port
      * @return the dsl builder
      */
-    public static CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(String componentName,
-            String path) {
+    public static CouchbaseEndpointBuilderFactory.CouchbaseEndpointBuilder couchbase(String componentName, String path) {
         return CouchbaseEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CouchDB (camel-couchdb)
      * Consume changesets for inserts, updates and deletes in a CouchDB
@@ -3536,7 +3347,6 @@ public class StaticEndpointBuilders {
     public static CouchDbEndpointBuilderFactory.CouchDbEndpointBuilder couchdb(String path) {
         return couchdb("couchdb", path);
     }
-
     /**
      * CouchDB (camel-couchdb)
      * Consume changesets for inserts, updates and deletes in a CouchDB
@@ -3564,14 +3374,13 @@ public class StaticEndpointBuilders {
      * Name of the database to use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          protocol:hostname:port/database
+     * instead of the default name
+     * @param path protocol:hostname:port/database
      * @return the dsl builder
      */
     public static CouchDbEndpointBuilderFactory.CouchDbEndpointBuilder couchdb(String componentName, String path) {
         return CouchDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
@@ -3602,7 +3411,6 @@ public class StaticEndpointBuilders {
     public static CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(String path) {
         return cql("cql", path);
     }
-
     /**
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
@@ -3628,14 +3436,13 @@ public class StaticEndpointBuilders {
      * Keyspace to use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          beanRef:hosts:port/keyspace
+     * instead of the default name
+     * @param path beanRef:hosts:port/keyspace
      * @return the dsl builder
      */
     public static CassandraEndpointBuilderFactory.CassandraEndpointBuilder cql(String componentName, String path) {
         return CassandraEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Cron (camel-cron)
      * A generic interface for triggering events at times specified through the
@@ -3656,7 +3463,6 @@ public class StaticEndpointBuilders {
     public static CronEndpointBuilderFactory.CronEndpointBuilder cron(String path) {
         return cron("cron", path);
     }
-
     /**
      * Cron (camel-cron)
      * A generic interface for triggering events at times specified through the
@@ -3672,14 +3478,13 @@ public class StaticEndpointBuilders {
      * The name of the cron trigger
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static CronEndpointBuilderFactory.CronEndpointBuilder cron(String componentName, String path) {
         return CronEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Crypto (JCE) (camel-crypto)
      * Sign and verify exchanges using the Signature Service of the Java
@@ -3705,7 +3510,6 @@ public class StaticEndpointBuilders {
     public static DigitalSignatureEndpointBuilderFactory.DigitalSignatureEndpointBuilder crypto(String path) {
         return crypto("crypto", path);
     }
-
     /**
      * Crypto (JCE) (camel-crypto)
      * Sign and verify exchanges using the Signature Service of the Java
@@ -3726,15 +3530,13 @@ public class StaticEndpointBuilders {
      * The logical name of this operation.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cryptoOperation:name
+     * instead of the default name
+     * @param path cryptoOperation:name
      * @return the dsl builder
      */
-    public static DigitalSignatureEndpointBuilderFactory.DigitalSignatureEndpointBuilder crypto(String componentName,
-            String path) {
+    public static DigitalSignatureEndpointBuilderFactory.DigitalSignatureEndpointBuilder crypto(String componentName, String path) {
         return DigitalSignatureEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
@@ -3758,7 +3560,6 @@ public class StaticEndpointBuilders {
     public static CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(String path) {
         return cxf("cxf", path);
     }
-
     /**
      * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
@@ -3777,14 +3578,13 @@ public class StaticEndpointBuilders {
      * The service publish address.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          beanId:address
+     * instead of the default name
+     * @param path beanId:address
      * @return the dsl builder
      */
     public static CxfEndpointBuilderFactory.CxfEndpointBuilder cxf(String componentName, String path) {
         return CxfEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CXF-RS (camel-cxf-rest)
      * Expose JAX-RS REST services using Apache CXF or connect to external REST
@@ -3809,7 +3609,6 @@ public class StaticEndpointBuilders {
     public static CxfRsEndpointBuilderFactory.CxfRsEndpointBuilder cxfrs(String path) {
         return cxfrs("cxfrs", path);
     }
-
     /**
      * CXF-RS (camel-cxf-rest)
      * Expose JAX-RS REST services using Apache CXF or connect to external REST
@@ -3829,14 +3628,13 @@ public class StaticEndpointBuilders {
      * The service publish address.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          beanId:address
+     * instead of the default name
+     * @param path beanId:address
      * @return the dsl builder
      */
     public static CxfRsEndpointBuilderFactory.CxfRsEndpointBuilder cxfrs(String componentName, String path) {
         return CxfRsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * CyberArk Vault (camel-cyberark-vault)
      * Retrieve secrets from CyberArk Conjur Vault.
@@ -3856,7 +3654,6 @@ public class StaticEndpointBuilders {
     public static CyberArkVaultEndpointBuilderFactory.CyberArkVaultEndpointBuilder cyberarkVault(String path) {
         return cyberarkVault("cyberark-vault", path);
     }
-
     /**
      * CyberArk Vault (camel-cyberark-vault)
      * Retrieve secrets from CyberArk Conjur Vault.
@@ -3871,15 +3668,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static CyberArkVaultEndpointBuilderFactory.CyberArkVaultEndpointBuilder cyberarkVault(String componentName,
-            String path) {
+    public static CyberArkVaultEndpointBuilderFactory.CyberArkVaultEndpointBuilder cyberarkVault(String componentName, String path) {
         return CyberArkVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Dapr (camel-dapr)
      * Dapr component which interfaces with Dapr Building Blocks.
@@ -3901,7 +3696,6 @@ public class StaticEndpointBuilders {
     public static DaprEndpointBuilderFactory.DaprEndpointBuilder dapr(String path) {
         return dapr("dapr", path);
     }
-
     /**
      * Dapr (camel-dapr)
      * Dapr component which interfaces with Dapr Building Blocks.
@@ -3918,14 +3712,13 @@ public class StaticEndpointBuilders {
      * pubSub, invokeBinding, secret, configuration, lock, workflow
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static DaprEndpointBuilderFactory.DaprEndpointBuilder dapr(String componentName, String path) {
         return DaprEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
@@ -3949,7 +3742,6 @@ public class StaticEndpointBuilders {
     public static DataFormatEndpointBuilderFactory.DataFormatEndpointBuilder dataformat(String path) {
         return dataformat("dataformat", path);
     }
-
     /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
@@ -3968,15 +3760,13 @@ public class StaticEndpointBuilders {
      * There are 2 enums and the value can be one of: marshal, unmarshal
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name:operation
+     * instead of the default name
+     * @param path name:operation
      * @return the dsl builder
      */
-    public static DataFormatEndpointBuilderFactory.DataFormatEndpointBuilder dataformat(String componentName,
-            String path) {
+    public static DataFormatEndpointBuilderFactory.DataFormatEndpointBuilder dataformat(String componentName, String path) {
         return DataFormatEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Dataset (camel-dataset)
      * Provide data for load and soak testing of your Camel application.
@@ -3996,7 +3786,6 @@ public class StaticEndpointBuilders {
     public static DataSetEndpointBuilderFactory.DataSetEndpointBuilder dataset(String path) {
         return dataset("dataset", path);
     }
-
     /**
      * Dataset (camel-dataset)
      * Provide data for load and soak testing of your Camel application.
@@ -4011,14 +3800,13 @@ public class StaticEndpointBuilders {
      * Name of DataSet to lookup in the registry
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static DataSetEndpointBuilderFactory.DataSetEndpointBuilder dataset(String componentName, String path) {
         return DataSetEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * DataSet Test (camel-dataset)
      * Extends the mock component by pulling messages from another endpoint on
@@ -4040,7 +3828,6 @@ public class StaticEndpointBuilders {
     public static DataSetTestEndpointBuilderFactory.DataSetTestEndpointBuilder datasetTest(String path) {
         return datasetTest("dataset-test", path);
     }
-
     /**
      * DataSet Test (camel-dataset)
      * Extends the mock component by pulling messages from another endpoint on
@@ -4057,15 +3844,13 @@ public class StaticEndpointBuilders {
      * used for testing
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DataSetTestEndpointBuilderFactory.DataSetTestEndpointBuilder datasetTest(String componentName,
-            String path) {
+    public static DataSetTestEndpointBuilderFactory.DataSetTestEndpointBuilder datasetTest(String componentName, String path) {
         return DataSetTestEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
      * Capture changes from a DB2 database.
@@ -4086,7 +3871,6 @@ public class StaticEndpointBuilders {
     public static DebeziumDb2EndpointBuilderFactory.DebeziumDb2EndpointBuilder debeziumDb2(String path) {
         return debeziumDb2("debezium-db2", path);
     }
-
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
      * Capture changes from a DB2 database.
@@ -4102,15 +3886,13 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DebeziumDb2EndpointBuilderFactory.DebeziumDb2EndpointBuilder debeziumDb2(String componentName,
-            String path) {
+    public static DebeziumDb2EndpointBuilderFactory.DebeziumDb2EndpointBuilder debeziumDb2(String componentName, String path) {
         return DebeziumDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
@@ -4131,7 +3913,6 @@ public class StaticEndpointBuilders {
     public static DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbEndpointBuilder debeziumMongodb(String path) {
         return debeziumMongodb("debezium-mongodb", path);
     }
-
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
@@ -4147,15 +3928,13 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbEndpointBuilder debeziumMongodb(
-            String componentName, String path) {
+    public static DebeziumMongodbEndpointBuilderFactory.DebeziumMongodbEndpointBuilder debeziumMongodb(String componentName, String path) {
         return DebeziumMongodbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Capture changes from a MySQL database.
@@ -4176,7 +3955,6 @@ public class StaticEndpointBuilders {
     public static DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlEndpointBuilder debeziumMysql(String path) {
         return debeziumMysql("debezium-mysql", path);
     }
-
     /**
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Capture changes from a MySQL database.
@@ -4192,15 +3970,13 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlEndpointBuilder debeziumMysql(String componentName,
-            String path) {
+    public static DebeziumMySqlEndpointBuilderFactory.DebeziumMySqlEndpointBuilder debeziumMysql(String componentName, String path) {
         return DebeziumMySqlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
      * Capture changes from an Oracle database.
@@ -4221,7 +3997,6 @@ public class StaticEndpointBuilders {
     public static DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder debeziumOracle(String path) {
         return debeziumOracle("debezium-oracle", path);
     }
-
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
      * Capture changes from an Oracle database.
@@ -4237,15 +4012,13 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder debeziumOracle(
-            String componentName, String path) {
+    public static DebeziumOracleEndpointBuilderFactory.DebeziumOracleEndpointBuilder debeziumOracle(String componentName, String path) {
         return DebeziumOracleEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgresSQL database.
@@ -4266,7 +4039,6 @@ public class StaticEndpointBuilders {
     public static DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
         return debeziumPostgres("debezium-postgres", path);
     }
-
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgresSQL database.
@@ -4282,15 +4054,13 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresEndpointBuilder debeziumPostgres(
-            String componentName, String path) {
+    public static DebeziumPostgresEndpointBuilderFactory.DebeziumPostgresEndpointBuilder debeziumPostgres(String componentName, String path) {
         return DebeziumPostgresEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
@@ -4308,11 +4078,9 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
-    public static DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(
-            String path) {
+    public static DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
         return debeziumSqlserver("debezium-sqlserver", path);
     }
-
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
@@ -4328,15 +4096,13 @@ public class StaticEndpointBuilders {
      * name will fail.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(
-            String componentName, String path) {
+    public static DebeziumSqlserverEndpointBuilderFactory.DebeziumSqlserverEndpointBuilder debeziumSqlserver(String componentName, String path) {
         return DebeziumSqlserverEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * DFDL (camel-dfdl)
      * Transforms fixed format data such as EDI message from/to XML using a Data
@@ -4357,7 +4123,6 @@ public class StaticEndpointBuilders {
     public static DfdlEndpointBuilderFactory.DfdlEndpointBuilder dfdl(String path) {
         return dfdl("dfdl", path);
     }
-
     /**
      * DFDL (camel-dfdl)
      * Transforms fixed format data such as EDI message from/to XML using a Data
@@ -4373,14 +4138,13 @@ public class StaticEndpointBuilders {
      * The path to the DFDL schema file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          schemaUri
+     * instead of the default name
+     * @param path schemaUri
      * @return the dsl builder
      */
     public static DfdlEndpointBuilderFactory.DfdlEndpointBuilder dfdl(String componentName, String path) {
         return DfdlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * DHIS2 (camel-dhis2)
      * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
@@ -4406,7 +4170,6 @@ public class StaticEndpointBuilders {
     public static Dhis2EndpointBuilderFactory.Dhis2EndpointBuilder dhis2(String path) {
         return dhis2("dhis2", path);
     }
-
     /**
      * DHIS2 (camel-dhis2)
      * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
@@ -4427,14 +4190,13 @@ public class StaticEndpointBuilders {
      * Subject of the API operation (e.g., resource)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
     public static Dhis2EndpointBuilderFactory.Dhis2EndpointBuilder dhis2(String componentName, String path) {
         return Dhis2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * DigitalOcean (camel-digitalocean)
      * Manage Droplets and resources within the DigitalOcean cloud.
@@ -4461,7 +4223,6 @@ public class StaticEndpointBuilders {
     public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String path) {
         return digitalocean("digitalocean", path);
     }
-
     /**
      * DigitalOcean (camel-digitalocean)
      * Manage Droplets and resources within the DigitalOcean cloud.
@@ -4483,15 +4244,13 @@ public class StaticEndpointBuilders {
      * assign, unassign, tag, untag
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
-    public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName,
-            String path) {
+    public static DigitalOceanEndpointBuilderFactory.DigitalOceanEndpointBuilder digitalocean(String componentName, String path) {
         return DigitalOceanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
@@ -4511,7 +4270,6 @@ public class StaticEndpointBuilders {
     public static DirectEndpointBuilderFactory.DirectEndpointBuilder direct(String path) {
         return direct("direct", path);
     }
-
     /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
@@ -4526,14 +4284,13 @@ public class StaticEndpointBuilders {
      * Name of direct endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static DirectEndpointBuilderFactory.DirectEndpointBuilder direct(String componentName, String path) {
         return DirectEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -4553,7 +4310,6 @@ public class StaticEndpointBuilders {
     public static DisruptorEndpointBuilderFactory.DisruptorEndpointBuilder disruptor(String path) {
         return disruptor("disruptor", path);
     }
-
     /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -4568,15 +4324,13 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DisruptorEndpointBuilderFactory.DisruptorEndpointBuilder disruptor(String componentName,
-            String path) {
+    public static DisruptorEndpointBuilderFactory.DisruptorEndpointBuilder disruptor(String componentName, String path) {
         return DisruptorEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Disruptor VM (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -4596,7 +4350,6 @@ public class StaticEndpointBuilders {
     public static DisruptorVmEndpointBuilderFactory.DisruptorVmEndpointBuilder disruptorVm(String path) {
         return disruptorVm("disruptor-vm", path);
     }
-
     /**
      * Disruptor VM (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -4611,15 +4364,13 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static DisruptorVmEndpointBuilderFactory.DisruptorVmEndpointBuilder disruptorVm(String componentName,
-            String path) {
+    public static DisruptorVmEndpointBuilderFactory.DisruptorVmEndpointBuilder disruptorVm(String componentName, String path) {
         return DisruptorVmEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Deep Java Library (camel-djl)
      * Infer Deep Learning models from message exchanges data using Deep Java
@@ -4640,7 +4391,6 @@ public class StaticEndpointBuilders {
     public static DJLEndpointBuilderFactory.DJLEndpointBuilder djl(String path) {
         return djl("djl", path);
     }
-
     /**
      * Deep Java Library (camel-djl)
      * Infer Deep Learning models from message exchanges data using Deep Java
@@ -4656,14 +4406,13 @@ public class StaticEndpointBuilders {
      * Application name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          application
+     * instead of the default name
+     * @param path application
      * @return the dsl builder
      */
     public static DJLEndpointBuilderFactory.DJLEndpointBuilder djl(String componentName, String path) {
         return DJLEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * DNS (camel-dns)
      * Perform DNS queries using DNSJava.
@@ -4684,7 +4433,6 @@ public class StaticEndpointBuilders {
     public static DnsEndpointBuilderFactory.DnsEndpointBuilder dns(String path) {
         return dns("dns", path);
     }
-
     /**
      * DNS (camel-dns)
      * Perform DNS queries using DNSJava.
@@ -4700,14 +4448,13 @@ public class StaticEndpointBuilders {
      * There are 4 enums and the value can be one of: dig, ip, lookup, wikipedia
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          dnsType
+     * instead of the default name
+     * @param path dnsType
      * @return the dsl builder
      */
     public static DnsEndpointBuilderFactory.DnsEndpointBuilder dns(String componentName, String path) {
         return DnsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Docker (camel-docker)
      * Manage Docker containers.
@@ -4736,7 +4483,6 @@ public class StaticEndpointBuilders {
     public static DockerEndpointBuilderFactory.DockerEndpointBuilder docker(String path) {
         return docker("docker", path);
     }
-
     /**
      * Docker (camel-docker)
      * Manage Docker containers.
@@ -4760,14 +4506,13 @@ public class StaticEndpointBuilders {
      * networkremove
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static DockerEndpointBuilderFactory.DockerEndpointBuilder docker(String componentName, String path) {
         return DockerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Docling (camel-docling)
      * Process documents using Docling library for parsing and conversion.
@@ -4787,7 +4532,6 @@ public class StaticEndpointBuilders {
     public static DoclingEndpointBuilderFactory.DoclingEndpointBuilder docling(String path) {
         return docling("docling", path);
     }
-
     /**
      * Docling (camel-docling)
      * Process documents using Docling library for parsing and conversion.
@@ -4802,14 +4546,13 @@ public class StaticEndpointBuilders {
      * The operation identifier
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operationId
+     * instead of the default name
+     * @param path operationId
      * @return the dsl builder
      */
     public static DoclingEndpointBuilderFactory.DoclingEndpointBuilder docling(String componentName, String path) {
         return DoclingEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
@@ -4829,7 +4572,6 @@ public class StaticEndpointBuilders {
     public static DrillEndpointBuilderFactory.DrillEndpointBuilder drill(String path) {
         return drill("drill", path);
     }
-
     /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
@@ -4844,14 +4586,13 @@ public class StaticEndpointBuilders {
      * Host name or IP address
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
     public static DrillEndpointBuilderFactory.DrillEndpointBuilder drill(String componentName, String path) {
         return DrillEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Dropbox (camel-dropbox)
      * Upload, download and manage files, folders, groups, collaborations, etc
@@ -4875,7 +4616,6 @@ public class StaticEndpointBuilders {
     public static DropboxEndpointBuilderFactory.DropboxEndpointBuilder dropbox(String path) {
         return dropbox("dropbox", path);
     }
-
     /**
      * Dropbox (camel-dropbox)
      * Upload, download and manage files, folders, groups, collaborations, etc
@@ -4894,14 +4634,13 @@ public class StaticEndpointBuilders {
      * move
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static DropboxEndpointBuilderFactory.DropboxEndpointBuilder dropbox(String componentName, String path) {
         return DropboxEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Dynamic Router (camel-dynamic-router)
      * The Dynamic Router component routes exchanges to recipients, and the
@@ -4926,7 +4665,6 @@ public class StaticEndpointBuilders {
     public static DynamicRouterEndpointBuilderFactory.DynamicRouterEndpointBuilder dynamicRouter(String path) {
         return dynamicRouter("dynamic-router", path);
     }
-
     /**
      * Dynamic Router (camel-dynamic-router)
      * The Dynamic Router component routes exchanges to recipients, and the
@@ -4946,15 +4684,13 @@ public class StaticEndpointBuilders {
      * This can be seen as analogous to VLANs in networking.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          channel
+     * instead of the default name
+     * @param path channel
      * @return the dsl builder
      */
-    public static DynamicRouterEndpointBuilderFactory.DynamicRouterEndpointBuilder dynamicRouter(String componentName,
-            String path) {
+    public static DynamicRouterEndpointBuilderFactory.DynamicRouterEndpointBuilder dynamicRouter(String componentName, String path) {
         return DynamicRouterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Dynamic Router Control (camel-dynamic-router)
      * The Dynamic Router control endpoint for operations that allow routing
@@ -4975,11 +4711,9 @@ public class StaticEndpointBuilders {
      * @param path controlAction
      * @return the dsl builder
      */
-    public static DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlEndpointBuilder dynamicRouterControl(
-            String path) {
+    public static DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlEndpointBuilder dynamicRouterControl(String path) {
         return dynamicRouterControl("dynamic-router-control", path);
     }
-
     /**
      * Dynamic Router Control (camel-dynamic-router)
      * The Dynamic Router control endpoint for operations that allow routing
@@ -4998,15 +4732,13 @@ public class StaticEndpointBuilders {
      * update, list, statistics
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          controlAction
+     * instead of the default name
+     * @param path controlAction
      * @return the dsl builder
      */
-    public static DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlEndpointBuilder dynamicRouterControl(
-            String componentName, String path) {
+    public static DynamicRouterControlEndpointBuilderFactory.DynamicRouterControlEndpointBuilder dynamicRouterControl(String componentName, String path) {
         return DynamicRouterControlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
@@ -5026,7 +4758,6 @@ public class StaticEndpointBuilders {
     public static EhcacheEndpointBuilderFactory.EhcacheEndpointBuilder ehcache(String path) {
         return ehcache("ehcache", path);
     }
-
     /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
@@ -5041,14 +4772,13 @@ public class StaticEndpointBuilders {
      * the cache name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
     public static EhcacheEndpointBuilderFactory.EhcacheEndpointBuilder ehcache(String componentName, String path) {
         return EhcacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Elasticsearch (camel-elasticsearch)
      * Send requests to ElasticSearch via Java Client API.
@@ -5068,7 +4798,6 @@ public class StaticEndpointBuilders {
     public static ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearch(String path) {
         return elasticsearch("elasticsearch", path);
     }
-
     /**
      * Elasticsearch (camel-elasticsearch)
      * Send requests to ElasticSearch via Java Client API.
@@ -5083,15 +4812,13 @@ public class StaticEndpointBuilders {
      * Name of the cluster
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          clusterName
+     * instead of the default name
+     * @param path clusterName
      * @return the dsl builder
      */
-    public static ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearch(String componentName,
-            String path) {
+    public static ElasticsearchEndpointBuilderFactory.ElasticsearchEndpointBuilder elasticsearch(String componentName, String path) {
         return ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
      * Perform queries and other operations on Elasticsearch or OpenSearch (uses
@@ -5109,11 +4836,9 @@ public class StaticEndpointBuilders {
      * @param path clusterName
      * @return the dsl builder
      */
-    public static ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientEndpointBuilder elasticsearchRestClient(
-            String path) {
+    public static ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientEndpointBuilder elasticsearchRestClient(String path) {
         return elasticsearchRestClient("elasticsearch-rest-client", path);
     }
-
     /**
      * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
      * Perform queries and other operations on Elasticsearch or OpenSearch (uses
@@ -5129,15 +4854,13 @@ public class StaticEndpointBuilders {
      * Cluster Name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          clusterName
+     * instead of the default name
+     * @param path clusterName
      * @return the dsl builder
      */
-    public static ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientEndpointBuilder elasticsearchRestClient(
-            String componentName, String path) {
+    public static ElasticsearchRestClientEndpointBuilderFactory.ElasticsearchRestClientEndpointBuilder elasticsearchRestClient(String componentName, String path) {
         return ElasticsearchRestClientEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
@@ -5158,7 +4881,6 @@ public class StaticEndpointBuilders {
     public static ExecEndpointBuilderFactory.ExecEndpointBuilder exec(String path) {
         return exec("exec", path);
     }
-
     /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
@@ -5174,14 +4896,13 @@ public class StaticEndpointBuilders {
      * null.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          executable
+     * instead of the default name
+     * @param path executable
      * @return the dsl builder
      */
     public static ExecEndpointBuilderFactory.ExecEndpointBuilder exec(String componentName, String path) {
         return ExecEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * FHIR (camel-fhir)
      * Exchange information in the healthcare domain using the FHIR (Fast
@@ -5208,7 +4929,6 @@ public class StaticEndpointBuilders {
     public static FhirEndpointBuilderFactory.FhirEndpointBuilder fhir(String path) {
         return fhir("fhir", path);
     }
-
     /**
      * FHIR (camel-fhir)
      * Exchange information in the healthcare domain using the FHIR (Fast
@@ -5230,14 +4950,13 @@ public class StaticEndpointBuilders {
      * What sub operation to use for the selected operation
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
     public static FhirEndpointBuilderFactory.FhirEndpointBuilder fhir(String componentName, String path) {
         return FhirEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * File (camel-file)
      * Read and write files.
@@ -5257,7 +4976,6 @@ public class StaticEndpointBuilders {
     public static FileEndpointBuilderFactory.FileEndpointBuilder file(String path) {
         return file("file", path);
     }
-
     /**
      * File (camel-file)
      * Read and write files.
@@ -5272,14 +4990,13 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          directoryName
+     * instead of the default name
+     * @param path directoryName
      * @return the dsl builder
      */
     public static FileEndpointBuilderFactory.FileEndpointBuilder file(String componentName, String path) {
         return FileEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * File Watch (camel-file-watch)
      * Get notified about file events in a directory using
@@ -5300,7 +5017,6 @@ public class StaticEndpointBuilders {
     public static FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(String path) {
         return fileWatch("file-watch", path);
     }
-
     /**
      * File Watch (camel-file-watch)
      * Get notified about file events in a directory using
@@ -5316,15 +5032,13 @@ public class StaticEndpointBuilders {
      * Path of directory to consume events from.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          path
+     * instead of the default name
+     * @param path path
      * @return the dsl builder
      */
-    public static FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(String componentName,
-            String path) {
+    public static FileWatchEndpointBuilderFactory.FileWatchEndpointBuilder fileWatch(String componentName, String path) {
         return FileWatchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Flatpack (camel-flatpack)
      * Parse fixed width and delimited files using the FlatPack library.
@@ -5351,7 +5065,6 @@ public class StaticEndpointBuilders {
     public static FlatpackEndpointBuilderFactory.FlatpackEndpointBuilder flatpack(String path) {
         return flatpack("flatpack", path);
     }
-
     /**
      * Flatpack (camel-flatpack)
      * Parse fixed width and delimited files using the FlatPack library.
@@ -5373,14 +5086,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          type:resourceUri
+     * instead of the default name
+     * @param path type:resourceUri
      * @return the dsl builder
      */
     public static FlatpackEndpointBuilderFactory.FlatpackEndpointBuilder flatpack(String componentName, String path) {
         return FlatpackEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Flink (camel-flink)
      * Send DataSet jobs to an Apache Flink cluster.
@@ -5401,7 +5113,6 @@ public class StaticEndpointBuilders {
     public static FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(String path) {
         return flink("flink", path);
     }
-
     /**
      * Flink (camel-flink)
      * Send DataSet jobs to an Apache Flink cluster.
@@ -5417,14 +5128,13 @@ public class StaticEndpointBuilders {
      * There are 2 enums and the value can be one of: dataset, datastream
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          endpointType
+     * instead of the default name
+     * @param path endpointType
      * @return the dsl builder
      */
     public static FlinkEndpointBuilderFactory.FlinkEndpointBuilder flink(String componentName, String path) {
         return FlinkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Flowable (camel-flowable)
      * Send and receive messages from the Flowable BPMN and CMMN engines.
@@ -5444,7 +5154,6 @@ public class StaticEndpointBuilders {
     public static FlowableEndpointBuilderFactory.FlowableEndpointBuilder flowable(String path) {
         return flowable("flowable", path);
     }
-
     /**
      * Flowable (camel-flowable)
      * Send and receive messages from the Flowable BPMN and CMMN engines.
@@ -5459,14 +5168,13 @@ public class StaticEndpointBuilders {
      * The channel key
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          channelKey
+     * instead of the default name
+     * @param path channelKey
      * @return the dsl builder
      */
     public static FlowableEndpointBuilderFactory.FlowableEndpointBuilder flowable(String componentName, String path) {
         return FlowableEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
@@ -5490,7 +5198,6 @@ public class StaticEndpointBuilders {
     public static FopEndpointBuilderFactory.FopEndpointBuilder fop(String path) {
         return fop("fop", path);
     }
-
     /**
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
@@ -5509,14 +5216,13 @@ public class StaticEndpointBuilders {
      * svg, xml, mif, rtf, txt
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          outputType
+     * instead of the default name
+     * @param path outputType
      * @return the dsl builder
      */
     public static FopEndpointBuilderFactory.FopEndpointBuilder fop(String componentName, String path) {
         return FopEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Freemarker (camel-freemarker)
      * Transform messages using FreeMarker templates.
@@ -5542,7 +5248,6 @@ public class StaticEndpointBuilders {
     public static FreemarkerEndpointBuilderFactory.FreemarkerEndpointBuilder freemarker(String path) {
         return freemarker("freemarker", path);
     }
-
     /**
      * Freemarker (camel-freemarker)
      * Transform messages using FreeMarker templates.
@@ -5563,15 +5268,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static FreemarkerEndpointBuilderFactory.FreemarkerEndpointBuilder freemarker(String componentName,
-            String path) {
+    public static FreemarkerEndpointBuilderFactory.FreemarkerEndpointBuilder freemarker(String componentName, String path) {
         return FreemarkerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * FTP (camel-ftp)
      * Upload and download files to/from FTP servers.
@@ -5597,7 +5300,6 @@ public class StaticEndpointBuilders {
     public static FtpEndpointBuilderFactory.FtpEndpointBuilder ftp(String path) {
         return ftp("ftp", path);
     }
-
     /**
      * FTP (camel-ftp)
      * Upload and download files to/from FTP servers.
@@ -5618,14 +5320,13 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/directoryName
+     * instead of the default name
+     * @param path host:port/directoryName
      * @return the dsl builder
      */
     public static FtpEndpointBuilderFactory.FtpEndpointBuilder ftp(String componentName, String path) {
         return FtpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * FTPS (camel-ftp)
      * Upload and download files to/from FTP servers supporting the FTPS
@@ -5652,7 +5353,6 @@ public class StaticEndpointBuilders {
     public static FtpsEndpointBuilderFactory.FtpsEndpointBuilder ftps(String path) {
         return ftps("ftps", path);
     }
-
     /**
      * FTPS (camel-ftp)
      * Upload and download files to/from FTP servers supporting the FTPS
@@ -5674,14 +5374,13 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/directoryName
+     * instead of the default name
+     * @param path host:port/directoryName
      * @return the dsl builder
      */
     public static FtpsEndpointBuilderFactory.FtpsEndpointBuilder ftps(String componentName, String path) {
         return FtpsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
@@ -5705,7 +5404,6 @@ public class StaticEndpointBuilders {
     public static GeoCoderEndpointBuilderFactory.GeoCoderEndpointBuilder geocoder(String path) {
         return geocoder("geocoder", path);
     }
-
     /**
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
@@ -5724,14 +5422,13 @@ public class StaticEndpointBuilders {
      * The geo latitude and longitude which should be prefixed with latlng:
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          address:latlng
+     * instead of the default name
+     * @param path address:latlng
      * @return the dsl builder
      */
     public static GeoCoderEndpointBuilderFactory.GeoCoderEndpointBuilder geocoder(String componentName, String path) {
         return GeoCoderEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Git (camel-git)
      * Perform operations on git repositories.
@@ -5751,7 +5448,6 @@ public class StaticEndpointBuilders {
     public static GitEndpointBuilderFactory.GitEndpointBuilder git(String path) {
         return git("git", path);
     }
-
     /**
      * Git (camel-git)
      * Perform operations on git repositories.
@@ -5766,14 +5462,13 @@ public class StaticEndpointBuilders {
      * Local repository path
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          localPath
+     * instead of the default name
+     * @param path localPath
      * @return the dsl builder
      */
     public static GitEndpointBuilderFactory.GitEndpointBuilder git(String componentName, String path) {
         return GitEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * GitHub (camel-github)
      * Interact with the GitHub API.
@@ -5800,7 +5495,6 @@ public class StaticEndpointBuilders {
     public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String path) {
         return github("github", path);
     }
-
     /**
      * GitHub (camel-github)
      * Interact with the GitHub API.
@@ -5821,15 +5515,14 @@ public class StaticEndpointBuilders {
      * Name of branch
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          type/branchName
+     * instead of the default name
+     * @param path type/branchName
      * @return the dsl builder
      */
     @Deprecated
     public static GitHubEndpointBuilderFactory.GitHubEndpointBuilder github(String componentName, String path) {
         return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
@@ -5855,7 +5548,6 @@ public class StaticEndpointBuilders {
     public static GitHub2EndpointBuilderFactory.GitHub2EndpointBuilder github2(String path) {
         return github2("github2", path);
     }
-
     /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
@@ -5876,14 +5568,13 @@ public class StaticEndpointBuilders {
      * Name of branch
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          type/branchName
+     * instead of the default name
+     * @param path type/branchName
      * @return the dsl builder
      */
     public static GitHub2EndpointBuilderFactory.GitHub2EndpointBuilder github2(String componentName, String path) {
         return GitHub2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
@@ -5909,7 +5600,6 @@ public class StaticEndpointBuilders {
     public static GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryEndpointBuilder googleBigquery(String path) {
         return googleBigquery("google-bigquery", path);
     }
-
     /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
@@ -5930,15 +5620,13 @@ public class StaticEndpointBuilders {
      * BigQuery table id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          projectId:datasetId:tableId
+     * instead of the default name
+     * @param path projectId:datasetId:tableId
      * @return the dsl builder
      */
-    public static GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryEndpointBuilder googleBigquery(
-            String componentName, String path) {
+    public static GoogleBigQueryEndpointBuilderFactory.GoogleBigQueryEndpointBuilder googleBigquery(String componentName, String path) {
         return GoogleBigQueryEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Access Google Cloud BigQuery service using SQL queries.
@@ -5960,11 +5648,9 @@ public class StaticEndpointBuilders {
      * @param path projectId:queryString
      * @return the dsl builder
      */
-    public static GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
-            String path) {
+    public static GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
         return googleBigquerySql("google-bigquery-sql", path);
     }
-
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Access Google Cloud BigQuery service using SQL queries.
@@ -5984,15 +5670,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          projectId:queryString
+     * instead of the default name
+     * @param path projectId:queryString
      * @return the dsl builder
      */
-    public static GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
-            String componentName, String path) {
+    public static GoogleBigQuerySQLEndpointBuilderFactory.GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String componentName, String path) {
         return GoogleBigQuerySQLEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Calendar (camel-google-calendar)
      * Perform various operations on a Google Calendar.
@@ -6020,7 +5704,6 @@ public class StaticEndpointBuilders {
     public static GoogleCalendarEndpointBuilderFactory.GoogleCalendarEndpointBuilder googleCalendar(String path) {
         return googleCalendar("google-calendar", path);
     }
-
     /**
      * Google Calendar (camel-google-calendar)
      * Perform various operations on a Google Calendar.
@@ -6043,15 +5726,13 @@ public class StaticEndpointBuilders {
      * update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
-    public static GoogleCalendarEndpointBuilderFactory.GoogleCalendarEndpointBuilder googleCalendar(
-            String componentName, String path) {
+    public static GoogleCalendarEndpointBuilderFactory.GoogleCalendarEndpointBuilder googleCalendar(String componentName, String path) {
         return GoogleCalendarEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Calendar Stream (camel-google-calendar)
      * Poll for changes in a Google Calendar.
@@ -6068,11 +5749,9 @@ public class StaticEndpointBuilders {
      * @param path index
      * @return the dsl builder
      */
-    public static GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(
-            String path) {
+    public static GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
         return googleCalendarStream("google-calendar-stream", path);
     }
-
     /**
      * Google Calendar Stream (camel-google-calendar)
      * Poll for changes in a Google Calendar.
@@ -6087,15 +5766,13 @@ public class StaticEndpointBuilders {
      * Specifies an index for the endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          index
+     * instead of the default name
+     * @param path index
      * @return the dsl builder
      */
-    public static GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(
-            String componentName, String path) {
+    public static GoogleCalendarStreamEndpointBuilderFactory.GoogleCalendarStreamEndpointBuilder googleCalendarStream(String componentName, String path) {
         return GoogleCalendarStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Drive (camel-google-drive)
      * Manage files in Google Drive.
@@ -6124,7 +5801,6 @@ public class StaticEndpointBuilders {
     public static GoogleDriveEndpointBuilderFactory.GoogleDriveEndpointBuilder googleDrive(String path) {
         return googleDrive("google-drive", path);
     }
-
     /**
      * Google Drive (camel-google-drive)
      * Manage files in Google Drive.
@@ -6148,15 +5824,13 @@ public class StaticEndpointBuilders {
      * watch
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
-    public static GoogleDriveEndpointBuilderFactory.GoogleDriveEndpointBuilder googleDrive(String componentName,
-            String path) {
+    public static GoogleDriveEndpointBuilderFactory.GoogleDriveEndpointBuilder googleDrive(String componentName, String path) {
         return GoogleDriveEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
@@ -6176,7 +5850,6 @@ public class StaticEndpointBuilders {
     public static GoogleFirestoreEndpointBuilderFactory.GoogleFirestoreEndpointBuilder googleFirestore(String path) {
         return googleFirestore("google-firestore", path);
     }
-
     /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
@@ -6191,15 +5864,13 @@ public class StaticEndpointBuilders {
      * The collection name to use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          collectionName
+     * instead of the default name
+     * @param path collectionName
      * @return the dsl builder
      */
-    public static GoogleFirestoreEndpointBuilderFactory.GoogleFirestoreEndpointBuilder googleFirestore(
-            String componentName, String path) {
+    public static GoogleFirestoreEndpointBuilderFactory.GoogleFirestoreEndpointBuilder googleFirestore(String componentName, String path) {
         return GoogleFirestoreEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
@@ -6216,11 +5887,9 @@ public class StaticEndpointBuilders {
      * @param path functionName
      * @return the dsl builder
      */
-    public static GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(
-            String path) {
+    public static GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(String path) {
         return googleFunctions("google-functions", path);
     }
-
     /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
@@ -6235,15 +5904,13 @@ public class StaticEndpointBuilders {
      * The user-defined name of the function
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          functionName
+     * instead of the default name
+     * @param path functionName
      * @return the dsl builder
      */
-    public static GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(
-            String componentName, String path) {
+    public static GoogleCloudFunctionsEndpointBuilderFactory.GoogleCloudFunctionsEndpointBuilder googleFunctions(String componentName, String path) {
         return GoogleCloudFunctionsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
@@ -6271,7 +5938,6 @@ public class StaticEndpointBuilders {
     public static GoogleMailEndpointBuilderFactory.GoogleMailEndpointBuilder googleMail(String path) {
         return googleMail("google-mail", path);
     }
-
     /**
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
@@ -6294,15 +5960,13 @@ public class StaticEndpointBuilders {
      * stop, trash, untrash, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
-    public static GoogleMailEndpointBuilderFactory.GoogleMailEndpointBuilder googleMail(String componentName,
-            String path) {
+    public static GoogleMailEndpointBuilderFactory.GoogleMailEndpointBuilder googleMail(String componentName, String path) {
         return GoogleMailEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
@@ -6322,7 +5986,6 @@ public class StaticEndpointBuilders {
     public static GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamEndpointBuilder googleMailStream(String path) {
         return googleMailStream("google-mail-stream", path);
     }
-
     /**
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
@@ -6337,15 +6000,13 @@ public class StaticEndpointBuilders {
      * Currently not in use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          index
+     * instead of the default name
+     * @param path index
      * @return the dsl builder
      */
-    public static GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamEndpointBuilder googleMailStream(
-            String componentName, String path) {
+    public static GoogleMailStreamEndpointBuilderFactory.GoogleMailStreamEndpointBuilder googleMailStream(String componentName, String path) {
         return GoogleMailStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Pubsub (camel-google-pubsub)
      * Send and receive messages to/from Google Cloud Platform PubSub Service.
@@ -6369,7 +6030,6 @@ public class StaticEndpointBuilders {
     public static GooglePubsubEndpointBuilderFactory.GooglePubsubEndpointBuilder googlePubsub(String path) {
         return googlePubsub("google-pubsub", path);
     }
-
     /**
      * Google Pubsub (camel-google-pubsub)
      * Send and receive messages to/from Google Cloud Platform PubSub Service.
@@ -6388,15 +6048,13 @@ public class StaticEndpointBuilders {
      * name, while for the producer this will be the topic name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          projectId:destinationName
+     * instead of the default name
+     * @param path projectId:destinationName
      * @return the dsl builder
      */
-    public static GooglePubsubEndpointBuilderFactory.GooglePubsubEndpointBuilder googlePubsub(String componentName,
-            String path) {
+    public static GooglePubsubEndpointBuilderFactory.GooglePubsubEndpointBuilder googlePubsub(String componentName, String path) {
         return GooglePubsubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
@@ -6413,11 +6071,9 @@ public class StaticEndpointBuilders {
      * @param path project
      * @return the dsl builder
      */
-    public static GoogleSecretManagerEndpointBuilderFactory.GoogleSecretManagerEndpointBuilder googleSecretManager(
-            String path) {
+    public static GoogleSecretManagerEndpointBuilderFactory.GoogleSecretManagerEndpointBuilder googleSecretManager(String path) {
         return googleSecretManager("google-secret-manager", path);
     }
-
     /**
      * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
@@ -6432,15 +6088,13 @@ public class StaticEndpointBuilders {
      * The Google Cloud Project Id name related to the Secret Manager
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          project
+     * instead of the default name
+     * @param path project
      * @return the dsl builder
      */
-    public static GoogleSecretManagerEndpointBuilderFactory.GoogleSecretManagerEndpointBuilder googleSecretManager(
-            String componentName, String path) {
+    public static GoogleSecretManagerEndpointBuilderFactory.GoogleSecretManagerEndpointBuilder googleSecretManager(String componentName, String path) {
         return GoogleSecretManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
@@ -6466,7 +6120,6 @@ public class StaticEndpointBuilders {
     public static GoogleSheetsEndpointBuilderFactory.GoogleSheetsEndpointBuilder googleSheets(String path) {
         return googleSheets("google-sheets", path);
     }
-
     /**
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
@@ -6487,15 +6140,13 @@ public class StaticEndpointBuilders {
      * append, batchUpdate, clear
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
-    public static GoogleSheetsEndpointBuilderFactory.GoogleSheetsEndpointBuilder googleSheets(String componentName,
-            String path) {
+    public static GoogleSheetsEndpointBuilderFactory.GoogleSheetsEndpointBuilder googleSheets(String componentName, String path) {
         return GoogleSheetsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
@@ -6513,11 +6164,9 @@ public class StaticEndpointBuilders {
      * @param path spreadsheetId
      * @return the dsl builder
      */
-    public static GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(
-            String path) {
+    public static GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
         return googleSheetsStream("google-sheets-stream", path);
     }
-
     /**
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
@@ -6533,15 +6182,13 @@ public class StaticEndpointBuilders {
      * to obtain.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          spreadsheetId
+     * instead of the default name
+     * @param path spreadsheetId
      * @return the dsl builder
      */
-    public static GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(
-            String componentName, String path) {
+    public static GoogleSheetsStreamEndpointBuilderFactory.GoogleSheetsStreamEndpointBuilder googleSheetsStream(String componentName, String path) {
         return GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Storage (camel-google-storage)
      * Store and retrieve objects from Google Cloud Storage Service using the
@@ -6559,11 +6206,9 @@ public class StaticEndpointBuilders {
      * @param path bucketName
      * @return the dsl builder
      */
-    public static GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(
-            String path) {
+    public static GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(String path) {
         return googleStorage("google-storage", path);
     }
-
     /**
      * Google Storage (camel-google-storage)
      * Store and retrieve objects from Google Cloud Storage Service using the
@@ -6579,15 +6224,13 @@ public class StaticEndpointBuilders {
      * Bucket name or ARN
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          bucketName
+     * instead of the default name
+     * @param path bucketName
      * @return the dsl builder
      */
-    public static GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(
-            String componentName, String path) {
+    public static GoogleCloudStorageEndpointBuilderFactory.GoogleCloudStorageEndpointBuilder googleStorage(String componentName, String path) {
         return GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Google Vertex AI (camel-google-vertexai)
      * Interact with Google Cloud Vertex AI generative models.
@@ -6613,7 +6256,6 @@ public class StaticEndpointBuilders {
     public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String path) {
         return googleVertexai("google-vertexai", path);
     }
-
     /**
      * Google Vertex AI (camel-google-vertexai)
      * Interact with Google Cloud Vertex AI generative models.
@@ -6634,15 +6276,13 @@ public class StaticEndpointBuilders {
      * Model ID to use for predictions
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          projectId:location:modelId
+     * instead of the default name
+     * @param path projectId:location:modelId
      * @return the dsl builder
      */
-    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(
-            String componentName, String path) {
+    public static GoogleVertexAIEndpointBuilderFactory.GoogleVertexAIEndpointBuilder googleVertexai(String componentName, String path) {
         return GoogleVertexAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
@@ -6664,7 +6304,6 @@ public class StaticEndpointBuilders {
     public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String path) {
         return grape("grape", path);
     }
-
     /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
@@ -6680,15 +6319,14 @@ public class StaticEndpointBuilders {
      * Maven coordinates to use as default to grab if the message body is empty.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          defaultCoordinates
+     * instead of the default name
+     * @param path defaultCoordinates
      * @return the dsl builder
      */
     @Deprecated
     public static GrapeEndpointBuilderFactory.GrapeEndpointBuilder grape(String componentName, String path) {
         return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
@@ -6708,7 +6346,6 @@ public class StaticEndpointBuilders {
     public static GraphqlEndpointBuilderFactory.GraphqlEndpointBuilder graphql(String path) {
         return graphql("graphql", path);
     }
-
     /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
@@ -6723,14 +6360,13 @@ public class StaticEndpointBuilders {
      * The GraphQL server URI.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          httpUri
+     * instead of the default name
+     * @param path httpUri
      * @return the dsl builder
      */
     public static GraphqlEndpointBuilderFactory.GraphqlEndpointBuilder graphql(String componentName, String path) {
         return GraphqlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * gRPC (camel-grpc)
      * Expose gRPC endpoints and access external gRPC endpoints.
@@ -6758,7 +6394,6 @@ public class StaticEndpointBuilders {
     public static GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(String path) {
         return grpc("grpc", path);
     }
-
     /**
      * gRPC (camel-grpc)
      * Expose gRPC endpoints and access external gRPC endpoints.
@@ -6781,14 +6416,13 @@ public class StaticEndpointBuilders {
      * (package dot service definition name)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/service
+     * instead of the default name
+     * @param path host:port/service
      * @return the dsl builder
      */
     public static GrpcEndpointBuilderFactory.GrpcEndpointBuilder grpc(String componentName, String path) {
         return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Guava EventBus (camel-guava-eventbus)
      * Send and receive messages to/from Guava EventBus.
@@ -6809,7 +6443,6 @@ public class StaticEndpointBuilders {
     public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String path) {
         return guavaEventbus("guava-eventbus", path);
     }
-
     /**
      * Guava EventBus (camel-guava-eventbus)
      * Send and receive messages to/from Guava EventBus.
@@ -6824,16 +6457,14 @@ public class StaticEndpointBuilders {
      * To lookup the Guava EventBus from the registry with the given name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          eventBusRef
+     * instead of the default name
+     * @param path eventBusRef
      * @return the dsl builder
      */
     @Deprecated
-    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName,
-            String path) {
+    public static GuavaEventBusEndpointBuilderFactory.GuavaEventBusEndpointBuilder guavaEventbus(String componentName, String path) {
         return GuavaEventBusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
      * Manage secrets in Hashicorp Vault Service
@@ -6853,7 +6484,6 @@ public class StaticEndpointBuilders {
     public static HashicorpVaultEndpointBuilderFactory.HashicorpVaultEndpointBuilder hashicorpVault(String path) {
         return hashicorpVault("hashicorp-vault", path);
     }
-
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
      * Manage secrets in Hashicorp Vault Service
@@ -6868,15 +6498,13 @@ public class StaticEndpointBuilders {
      * Vault Name to be used
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          secretsEngine
+     * instead of the default name
+     * @param path secretsEngine
      * @return the dsl builder
      */
-    public static HashicorpVaultEndpointBuilderFactory.HashicorpVaultEndpointBuilder hashicorpVault(
-            String componentName, String path) {
+    public static HashicorpVaultEndpointBuilderFactory.HashicorpVaultEndpointBuilder hashicorpVault(String componentName, String path) {
         return HashicorpVaultEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
@@ -6895,11 +6523,9 @@ public class StaticEndpointBuilders {
      * @return the dsl builder
      */
     @Deprecated
-    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
-            String path) {
+    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String path) {
         return hazelcastAtomicvalue("hazelcast-atomicvalue", path);
     }
-
     /**
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
@@ -6915,16 +6541,14 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
     @Deprecated
-    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
-            String componentName, String path) {
+    public static HazelcastAtomicnumberEndpointBuilderFactory.HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(String componentName, String path) {
         return HazelcastAtomicnumberEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
@@ -6941,11 +6565,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(
-            String path) {
+    public static HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(String path) {
         return hazelcastInstance("hazelcast-instance", path);
     }
-
     /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
@@ -6960,15 +6582,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(
-            String componentName, String path) {
+    public static HazelcastInstanceEndpointBuilderFactory.HazelcastInstanceEndpointBuilder hazelcastInstance(String componentName, String path) {
         return HazelcastInstanceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast List (camel-hazelcast)
      * Perform operations on Hazelcast distributed list.
@@ -6988,7 +6608,6 @@ public class StaticEndpointBuilders {
     public static HazelcastListEndpointBuilderFactory.HazelcastListEndpointBuilder hazelcastList(String path) {
         return hazelcastList("hazelcast-list", path);
     }
-
     /**
      * Hazelcast List (camel-hazelcast)
      * Perform operations on Hazelcast distributed list.
@@ -7003,15 +6622,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastListEndpointBuilderFactory.HazelcastListEndpointBuilder hazelcastList(String componentName,
-            String path) {
+    public static HazelcastListEndpointBuilderFactory.HazelcastListEndpointBuilder hazelcastList(String componentName, String path) {
         return HazelcastListEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Map (camel-hazelcast)
      * Perform operations on Hazelcast distributed map.
@@ -7031,7 +6648,6 @@ public class StaticEndpointBuilders {
     public static HazelcastMapEndpointBuilderFactory.HazelcastMapEndpointBuilder hazelcastMap(String path) {
         return hazelcastMap("hazelcast-map", path);
     }
-
     /**
      * Hazelcast Map (camel-hazelcast)
      * Perform operations on Hazelcast distributed map.
@@ -7046,15 +6662,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastMapEndpointBuilderFactory.HazelcastMapEndpointBuilder hazelcastMap(String componentName,
-            String path) {
+    public static HazelcastMapEndpointBuilderFactory.HazelcastMapEndpointBuilder hazelcastMap(String componentName, String path) {
         return HazelcastMapEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Multimap (camel-hazelcast)
      * Perform operations on Hazelcast distributed multimap.
@@ -7071,11 +6685,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(
-            String path) {
+    public static HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
         return hazelcastMultimap("hazelcast-multimap", path);
     }
-
     /**
      * Hazelcast Multimap (camel-hazelcast)
      * Perform operations on Hazelcast distributed multimap.
@@ -7090,15 +6702,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(
-            String componentName, String path) {
+    public static HazelcastMultimapEndpointBuilderFactory.HazelcastMultimapEndpointBuilder hazelcastMultimap(String componentName, String path) {
         return HazelcastMultimapEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast PN Counter (camel-hazelcast)
      * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
@@ -7116,11 +6726,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterEndpointBuilder hazelcastPncounter(
-            String path) {
+    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterEndpointBuilder hazelcastPncounter(String path) {
         return hazelcastPncounter("hazelcast-pncounter", path);
     }
-
     /**
      * Hazelcast PN Counter (camel-hazelcast)
      * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
@@ -7136,15 +6744,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterEndpointBuilder hazelcastPncounter(
-            String componentName, String path) {
+    public static HazelcastPNCounterEndpointBuilderFactory.HazelcastPNCounterEndpointBuilder hazelcastPncounter(String componentName, String path) {
         return HazelcastPNCounterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
@@ -7164,7 +6770,6 @@ public class StaticEndpointBuilders {
     public static HazelcastQueueEndpointBuilderFactory.HazelcastQueueEndpointBuilder hazelcastQueue(String path) {
         return hazelcastQueue("hazelcast-queue", path);
     }
-
     /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
@@ -7179,15 +6784,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastQueueEndpointBuilderFactory.HazelcastQueueEndpointBuilder hazelcastQueue(
-            String componentName, String path) {
+    public static HazelcastQueueEndpointBuilderFactory.HazelcastQueueEndpointBuilder hazelcastQueue(String componentName, String path) {
         return HazelcastQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
      * Perform operations on Hazelcast replicated map.
@@ -7204,11 +6807,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
-            String path) {
+    public static HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(String path) {
         return hazelcastReplicatedmap("hazelcast-replicatedmap", path);
     }
-
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
      * Perform operations on Hazelcast replicated map.
@@ -7223,15 +6824,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
-            String componentName, String path) {
+    public static HazelcastReplicatedmapEndpointBuilderFactory.HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(String componentName, String path) {
         return HazelcastReplicatedmapEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
      * Perform operations on Hazelcast distributed ringbuffer.
@@ -7248,11 +6847,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
-            String path) {
+    public static HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String path) {
         return hazelcastRingbuffer("hazelcast-ringbuffer", path);
     }
-
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
      * Perform operations on Hazelcast distributed ringbuffer.
@@ -7267,15 +6864,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
-            String componentName, String path) {
+    public static HazelcastRingbufferEndpointBuilderFactory.HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String componentName, String path) {
         return HazelcastRingbufferEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast SEDA (camel-hazelcast)
      * Asynchronously send/receive Exchanges between Camel routes running on
@@ -7296,7 +6891,6 @@ public class StaticEndpointBuilders {
     public static HazelcastSedaEndpointBuilderFactory.HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
         return hazelcastSeda("hazelcast-seda", path);
     }
-
     /**
      * Hazelcast SEDA (camel-hazelcast)
      * Asynchronously send/receive Exchanges between Camel routes running on
@@ -7312,15 +6906,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastSedaEndpointBuilderFactory.HazelcastSedaEndpointBuilder hazelcastSeda(String componentName,
-            String path) {
+    public static HazelcastSedaEndpointBuilderFactory.HazelcastSedaEndpointBuilder hazelcastSeda(String componentName, String path) {
         return HazelcastSedaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Set (camel-hazelcast)
      * Perform operations on Hazelcast distributed set.
@@ -7340,7 +6932,6 @@ public class StaticEndpointBuilders {
     public static HazelcastSetEndpointBuilderFactory.HazelcastSetEndpointBuilder hazelcastSet(String path) {
         return hazelcastSet("hazelcast-set", path);
     }
-
     /**
      * Hazelcast Set (camel-hazelcast)
      * Perform operations on Hazelcast distributed set.
@@ -7355,15 +6946,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastSetEndpointBuilderFactory.HazelcastSetEndpointBuilder hazelcastSet(String componentName,
-            String path) {
+    public static HazelcastSetEndpointBuilderFactory.HazelcastSetEndpointBuilder hazelcastSet(String componentName, String path) {
         return HazelcastSetEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Hazelcast Topic (camel-hazelcast)
      * Send and receive messages to/from Hazelcast distributed topic.
@@ -7383,7 +6972,6 @@ public class StaticEndpointBuilders {
     public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(String path) {
         return hazelcastTopic("hazelcast-topic", path);
     }
-
     /**
      * Hazelcast Topic (camel-hazelcast)
      * Send and receive messages to/from Hazelcast distributed topic.
@@ -7398,15 +6986,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(
-            String componentName, String path) {
+    public static HazelcastTopicEndpointBuilderFactory.HazelcastTopicEndpointBuilder hazelcastTopic(String componentName, String path) {
         return HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
@@ -7426,7 +7012,6 @@ public class StaticEndpointBuilders {
     public static HttpEndpointBuilderFactory.HttpEndpointBuilder http(String path) {
         return http("http", path);
     }
-
     /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
@@ -7441,14 +7026,13 @@ public class StaticEndpointBuilders {
      * The url of the HTTP endpoint to call.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          httpUri
+     * instead of the default name
+     * @param path httpUri
      * @return the dsl builder
      */
     public static HttpEndpointBuilderFactory.HttpEndpointBuilder http(String componentName, String path) {
         return HttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * HTTPS (Secure) (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
@@ -7468,7 +7052,6 @@ public class StaticEndpointBuilders {
     public static HttpEndpointBuilderFactory.HttpEndpointBuilder https(String path) {
         return http("https", path);
     }
-
     /**
      * Hugging Face (camel-huggingface)
      * Integration with Hugging Face's Model Hub by using the Deep Java Library
@@ -7493,7 +7076,6 @@ public class StaticEndpointBuilders {
     public static HuggingFaceEndpointBuilderFactory.HuggingFaceEndpointBuilder huggingface(String path) {
         return huggingface("huggingface", path);
     }
-
     /**
      * Hugging Face (camel-huggingface)
      * Integration with Hugging Face's Model Hub by using the Deep Java Library
@@ -7513,15 +7095,13 @@ public class StaticEndpointBuilders {
      * AUTOMATIC_SPEECH_RECOGNITION, TEXT_TO_SPEECH, CHAT
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          task
+     * instead of the default name
+     * @param path task
      * @return the dsl builder
      */
-    public static HuggingFaceEndpointBuilderFactory.HuggingFaceEndpointBuilder huggingface(String componentName,
-            String path) {
+    public static HuggingFaceEndpointBuilderFactory.HuggingFaceEndpointBuilder huggingface(String componentName, String path) {
         return HuggingFaceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
      * To integrate with a fully managed, high-performance message queuing
@@ -7542,7 +7122,6 @@ public class StaticEndpointBuilders {
     public static DMSEndpointBuilderFactory.DMSEndpointBuilder hwcloudDms(String path) {
         return hwcloudDms("hwcloud-dms", path);
     }
-
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
      * To integrate with a fully managed, high-performance message queuing
@@ -7558,14 +7137,13 @@ public class StaticEndpointBuilders {
      * Operation to be performed
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static DMSEndpointBuilderFactory.DMSEndpointBuilder hwcloudDms(String componentName, String path) {
         return DMSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
      * Face Recognition Service (FRS) is an intelligent service that uses
@@ -7588,7 +7166,6 @@ public class StaticEndpointBuilders {
     public static FaceRecognitionEndpointBuilderFactory.FaceRecognitionEndpointBuilder hwcloudFrs(String path) {
         return hwcloudFrs("hwcloud-frs", path);
     }
-
     /**
      * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
      * Face Recognition Service (FRS) is an intelligent service that uses
@@ -7606,15 +7183,13 @@ public class StaticEndpointBuilders {
      * faceVerification and faceLiveDetection
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
-    public static FaceRecognitionEndpointBuilderFactory.FaceRecognitionEndpointBuilder hwcloudFrs(String componentName,
-            String path) {
+    public static FaceRecognitionEndpointBuilderFactory.FaceRecognitionEndpointBuilder hwcloudFrs(String componentName, String path) {
         return FaceRecognitionEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
@@ -7634,7 +7209,6 @@ public class StaticEndpointBuilders {
     public static FunctionGraphEndpointBuilderFactory.FunctionGraphEndpointBuilder hwcloudFunctiongraph(String path) {
         return hwcloudFunctiongraph("hwcloud-functiongraph", path);
     }
-
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
@@ -7649,15 +7223,13 @@ public class StaticEndpointBuilders {
      * Operation to be performed
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
-    public static FunctionGraphEndpointBuilderFactory.FunctionGraphEndpointBuilder hwcloudFunctiongraph(
-            String componentName, String path) {
+    public static FunctionGraphEndpointBuilderFactory.FunctionGraphEndpointBuilder hwcloudFunctiongraph(String componentName, String path) {
         return FunctionGraphEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
@@ -7677,7 +7249,6 @@ public class StaticEndpointBuilders {
     public static IAMEndpointBuilderFactory.IAMEndpointBuilder hwcloudIam(String path) {
         return hwcloudIam("hwcloud-iam", path);
     }
-
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
@@ -7692,14 +7263,13 @@ public class StaticEndpointBuilders {
      * Operation to be performed
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static IAMEndpointBuilderFactory.IAMEndpointBuilder hwcloudIam(String componentName, String path) {
         return IAMEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
      * To identify objects, scenes, and concepts in images on Huawei Cloud
@@ -7717,11 +7287,9 @@ public class StaticEndpointBuilders {
      * @param path operation
      * @return the dsl builder
      */
-    public static ImageRecognitionEndpointBuilderFactory.ImageRecognitionEndpointBuilder hwcloudImagerecognition(
-            String path) {
+    public static ImageRecognitionEndpointBuilderFactory.ImageRecognitionEndpointBuilder hwcloudImagerecognition(String path) {
         return hwcloudImagerecognition("hwcloud-imagerecognition", path);
     }
-
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
      * To identify objects, scenes, and concepts in images on Huawei Cloud
@@ -7737,15 +7305,13 @@ public class StaticEndpointBuilders {
      * celebrityRecognition and tagRecognition
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
-    public static ImageRecognitionEndpointBuilderFactory.ImageRecognitionEndpointBuilder hwcloudImagerecognition(
-            String componentName, String path) {
+    public static ImageRecognitionEndpointBuilderFactory.ImageRecognitionEndpointBuilder hwcloudImagerecognition(String componentName, String path) {
         return ImageRecognitionEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
@@ -7766,7 +7332,6 @@ public class StaticEndpointBuilders {
     public static OBSEndpointBuilderFactory.OBSEndpointBuilder hwcloudObs(String path) {
         return hwcloudObs("hwcloud-obs", path);
     }
-
     /**
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
@@ -7782,14 +7347,13 @@ public class StaticEndpointBuilders {
      * Operation to be performed
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static OBSEndpointBuilderFactory.OBSEndpointBuilder hwcloudObs(String componentName, String path) {
         return OBSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
@@ -7810,7 +7374,6 @@ public class StaticEndpointBuilders {
     public static SimpleNotificationEndpointBuilderFactory.SimpleNotificationEndpointBuilder hwcloudSmn(String path) {
         return hwcloudSmn("hwcloud-smn", path);
     }
-
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
@@ -7826,15 +7389,13 @@ public class StaticEndpointBuilders {
      * Name of SMN service to invoke
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          smnService
+     * instead of the default name
+     * @param path smnService
      * @return the dsl builder
      */
-    public static SimpleNotificationEndpointBuilderFactory.SimpleNotificationEndpointBuilder hwcloudSmn(
-            String componentName, String path) {
+    public static SimpleNotificationEndpointBuilderFactory.SimpleNotificationEndpointBuilder hwcloudSmn(String componentName, String path) {
         return SimpleNotificationEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IBM Cloud Object Storage (camel-ibm-cos)
      * Store and retrieve objects from IBM Cloud Object Storage.
@@ -7854,7 +7415,6 @@ public class StaticEndpointBuilders {
     public static IBMCOSEndpointBuilderFactory.IBMCOSEndpointBuilder ibmCos(String path) {
         return ibmCos("ibm-cos", path);
     }
-
     /**
      * IBM Cloud Object Storage (camel-ibm-cos)
      * Store and retrieve objects from IBM Cloud Object Storage.
@@ -7869,14 +7429,13 @@ public class StaticEndpointBuilders {
      * Bucket name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          bucketName
+     * instead of the default name
+     * @param path bucketName
      * @return the dsl builder
      */
     public static IBMCOSEndpointBuilderFactory.IBMCOSEndpointBuilder ibmCos(String componentName, String path) {
         return IBMCOSEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
@@ -7893,11 +7452,9 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
-    public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerEndpointBuilder ibmSecretsManager(
-            String path) {
+    public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerEndpointBuilder ibmSecretsManager(String path) {
         return ibmSecretsManager("ibm-secrets-manager", path);
     }
-
     /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
@@ -7912,15 +7469,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerEndpointBuilder ibmSecretsManager(
-            String componentName, String path) {
+    public static IBMSecretsManagerEndpointBuilderFactory.IBMSecretsManagerEndpointBuilder ibmSecretsManager(String componentName, String path) {
         return IBMSecretsManagerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IBM Watson Discovery (camel-ibm-watson-discovery)
      * Perform document understanding and search using IBM Watson Discovery
@@ -7940,7 +7495,6 @@ public class StaticEndpointBuilders {
     public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryEndpointBuilder ibmWatsonDiscovery(String path) {
         return ibmWatsonDiscovery("ibm-watson-discovery", path);
     }
-
     /**
      * IBM Watson Discovery (camel-ibm-watson-discovery)
      * Perform document understanding and search using IBM Watson Discovery
@@ -7955,15 +7509,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryEndpointBuilder ibmWatsonDiscovery(
-            String componentName, String path) {
+    public static WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryEndpointBuilder ibmWatsonDiscovery(String componentName, String path) {
         return WatsonDiscoveryEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
@@ -7984,7 +7536,6 @@ public class StaticEndpointBuilders {
     public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String path) {
         return ibmWatsonLanguage("ibm-watson-language", path);
     }
-
     /**
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
@@ -8000,15 +7551,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(
-            String componentName, String path) {
+    public static WatsonLanguageEndpointBuilderFactory.WatsonLanguageEndpointBuilder ibmWatsonLanguage(String componentName, String path) {
         return WatsonLanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
      * Convert speech audio to text using IBM Watson Speech to Text
@@ -8025,11 +7574,9 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
-    public static WatsonSpeechToTextEndpointBuilderFactory.WatsonSpeechToTextEndpointBuilder ibmWatsonSpeechToText(
-            String path) {
+    public static WatsonSpeechToTextEndpointBuilderFactory.WatsonSpeechToTextEndpointBuilder ibmWatsonSpeechToText(String path) {
         return ibmWatsonSpeechToText("ibm-watson-speech-to-text", path);
     }
-
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
      * Convert speech audio to text using IBM Watson Speech to Text
@@ -8044,15 +7591,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static WatsonSpeechToTextEndpointBuilderFactory.WatsonSpeechToTextEndpointBuilder ibmWatsonSpeechToText(
-            String componentName, String path) {
+    public static WatsonSpeechToTextEndpointBuilderFactory.WatsonSpeechToTextEndpointBuilder ibmWatsonSpeechToText(String componentName, String path) {
         return WatsonSpeechToTextEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
@@ -8069,11 +7614,9 @@ public class StaticEndpointBuilders {
      * @param path label
      * @return the dsl builder
      */
-    public static WatsonTextToSpeechEndpointBuilderFactory.WatsonTextToSpeechEndpointBuilder ibmWatsonTextToSpeech(
-            String path) {
+    public static WatsonTextToSpeechEndpointBuilderFactory.WatsonTextToSpeechEndpointBuilder ibmWatsonTextToSpeech(String path) {
         return ibmWatsonTextToSpeech("ibm-watson-text-to-speech", path);
     }
-
     /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
@@ -8088,15 +7631,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static WatsonTextToSpeechEndpointBuilderFactory.WatsonTextToSpeechEndpointBuilder ibmWatsonTextToSpeech(
-            String componentName, String path) {
+    public static WatsonTextToSpeechEndpointBuilderFactory.WatsonTextToSpeechEndpointBuilder ibmWatsonTextToSpeech(String componentName, String path) {
         return WatsonTextToSpeechEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
      * Interact with IBM watsonx.ai foundation models for text generation, chat,
@@ -8117,7 +7658,6 @@ public class StaticEndpointBuilders {
     public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String path) {
         return ibmWatsonxAi("ibm-watsonx-ai", path);
     }
-
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
      * Interact with IBM watsonx.ai foundation models for text generation, chat,
@@ -8133,15 +7673,13 @@ public class StaticEndpointBuilders {
      * Logical name for the endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
-    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String componentName,
-            String path) {
+    public static WatsonxAiEndpointBuilderFactory.WatsonxAiEndpointBuilder ibmWatsonxAi(String componentName, String path) {
         return WatsonxAiEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
@@ -8162,7 +7700,6 @@ public class StaticEndpointBuilders {
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String path) {
         return iec60870Client("iec60870-client", path);
     }
-
     /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
@@ -8178,14 +7715,13 @@ public class StaticEndpointBuilders {
      * The object information address
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          uriPath
+     * instead of the default name
+     * @param path uriPath
      * @return the dsl builder
      */
     public static ClientEndpointBuilderFactory.ClientEndpointBuilder iec60870Client(String componentName, String path) {
         return ClientEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IEC 60870 Server (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) server using
@@ -8206,7 +7742,6 @@ public class StaticEndpointBuilders {
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String path) {
         return iec60870Server("iec60870-server", path);
     }
-
     /**
      * IEC 60870 Server (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) server using
@@ -8222,14 +7757,13 @@ public class StaticEndpointBuilders {
      * The object information address
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          uriPath
+     * instead of the default name
+     * @param path uriPath
      * @return the dsl builder
      */
     public static ServerEndpointBuilderFactory.ServerEndpointBuilder iec60870Server(String componentName, String path) {
         return ServerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
@@ -8249,7 +7783,6 @@ public class StaticEndpointBuilders {
     public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String path) {
         return iggy("iggy", path);
     }
-
     /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
@@ -8264,14 +7797,13 @@ public class StaticEndpointBuilders {
      * Name of the topic
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topicName
+     * instead of the default name
+     * @param path topicName
      * @return the dsl builder
      */
     public static IggyEndpointBuilderFactory.IggyEndpointBuilder iggy(String componentName, String path) {
         return IggyEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
@@ -8292,7 +7824,6 @@ public class StaticEndpointBuilders {
     public static IgniteCacheEndpointBuilderFactory.IgniteCacheEndpointBuilder igniteCache(String path) {
         return igniteCache("ignite-cache", path);
     }
-
     /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
@@ -8308,15 +7839,13 @@ public class StaticEndpointBuilders {
      * The cache name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static IgniteCacheEndpointBuilderFactory.IgniteCacheEndpointBuilder igniteCache(String componentName,
-            String path) {
+    public static IgniteCacheEndpointBuilderFactory.IgniteCacheEndpointBuilder igniteCache(String componentName, String path) {
         return IgniteCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
@@ -8336,7 +7865,6 @@ public class StaticEndpointBuilders {
     public static IgniteComputeEndpointBuilderFactory.IgniteComputeEndpointBuilder igniteCompute(String path) {
         return igniteCompute("ignite-compute", path);
     }
-
     /**
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
@@ -8351,15 +7879,13 @@ public class StaticEndpointBuilders {
      * The endpoint ID (not used).
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          endpointId
+     * instead of the default name
+     * @param path endpointId
      * @return the dsl builder
      */
-    public static IgniteComputeEndpointBuilderFactory.IgniteComputeEndpointBuilder igniteCompute(String componentName,
-            String path) {
+    public static IgniteComputeEndpointBuilderFactory.IgniteComputeEndpointBuilder igniteCompute(String componentName, String path) {
         return IgniteComputeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ignite Events (camel-ignite)
      * Receive events from an Ignite cluster by creating a local event listener.
@@ -8379,7 +7905,6 @@ public class StaticEndpointBuilders {
     public static IgniteEventsEndpointBuilderFactory.IgniteEventsEndpointBuilder igniteEvents(String path) {
         return igniteEvents("ignite-events", path);
     }
-
     /**
      * Ignite Events (camel-ignite)
      * Receive events from an Ignite cluster by creating a local event listener.
@@ -8394,15 +7919,13 @@ public class StaticEndpointBuilders {
      * The endpoint ID (not used).
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          endpointId
+     * instead of the default name
+     * @param path endpointId
      * @return the dsl builder
      */
-    public static IgniteEventsEndpointBuilderFactory.IgniteEventsEndpointBuilder igniteEvents(String componentName,
-            String path) {
+    public static IgniteEventsEndpointBuilderFactory.IgniteEventsEndpointBuilder igniteEvents(String componentName, String path) {
         return IgniteEventsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
@@ -8422,7 +7945,6 @@ public class StaticEndpointBuilders {
     public static IgniteIdGenEndpointBuilderFactory.IgniteIdGenEndpointBuilder igniteIdgen(String path) {
         return igniteIdgen("ignite-idgen", path);
     }
-
     /**
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
@@ -8437,15 +7959,13 @@ public class StaticEndpointBuilders {
      * The sequence name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static IgniteIdGenEndpointBuilderFactory.IgniteIdGenEndpointBuilder igniteIdgen(String componentName,
-            String path) {
+    public static IgniteIdGenEndpointBuilderFactory.IgniteIdGenEndpointBuilder igniteIdgen(String componentName, String path) {
         return IgniteIdGenEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
@@ -8465,7 +7985,6 @@ public class StaticEndpointBuilders {
     public static IgniteMessagingEndpointBuilderFactory.IgniteMessagingEndpointBuilder igniteMessaging(String path) {
         return igniteMessaging("ignite-messaging", path);
     }
-
     /**
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
@@ -8480,15 +7999,13 @@ public class StaticEndpointBuilders {
      * The topic name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topic
+     * instead of the default name
+     * @param path topic
      * @return the dsl builder
      */
-    public static IgniteMessagingEndpointBuilderFactory.IgniteMessagingEndpointBuilder igniteMessaging(
-            String componentName, String path) {
+    public static IgniteMessagingEndpointBuilderFactory.IgniteMessagingEndpointBuilder igniteMessaging(String componentName, String path) {
         return IgniteMessagingEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
@@ -8508,7 +8025,6 @@ public class StaticEndpointBuilders {
     public static IgniteQueueEndpointBuilderFactory.IgniteQueueEndpointBuilder igniteQueue(String path) {
         return igniteQueue("ignite-queue", path);
     }
-
     /**
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
@@ -8523,15 +8039,13 @@ public class StaticEndpointBuilders {
      * The queue name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static IgniteQueueEndpointBuilderFactory.IgniteQueueEndpointBuilder igniteQueue(String componentName,
-            String path) {
+    public static IgniteQueueEndpointBuilderFactory.IgniteQueueEndpointBuilder igniteQueue(String componentName, String path) {
         return IgniteQueueEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
@@ -8551,7 +8065,6 @@ public class StaticEndpointBuilders {
     public static IgniteSetEndpointBuilderFactory.IgniteSetEndpointBuilder igniteSet(String path) {
         return igniteSet("ignite-set", path);
     }
-
     /**
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
@@ -8566,15 +8079,13 @@ public class StaticEndpointBuilders {
      * The set name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static IgniteSetEndpointBuilderFactory.IgniteSetEndpointBuilder igniteSet(String componentName,
-            String path) {
+    public static IgniteSetEndpointBuilderFactory.IgniteSetEndpointBuilder igniteSet(String componentName, String path) {
         return IgniteSetEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IMAP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -8597,7 +8108,6 @@ public class StaticEndpointBuilders {
     public static MailEndpointBuilderFactory.MailEndpointBuilder imap(String path) {
         return imap("imap", path);
     }
-
     /**
      * IMAP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -8615,14 +8125,13 @@ public class StaticEndpointBuilders {
      * The port number of the mail server
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port
+     * instead of the default name
+     * @param path host:port
      * @return the dsl builder
      */
     public static MailEndpointBuilderFactory.MailEndpointBuilder imap(String componentName, String path) {
         return MailEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IMAPS (Secure) (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -8645,7 +8154,6 @@ public class StaticEndpointBuilders {
     public static MailEndpointBuilderFactory.MailEndpointBuilder imaps(String path) {
         return imap("imaps", path);
     }
-
     /**
      * Infinispan (camel-infinispan)
      * Read and write from/to Infinispan distributed key/value store and data
@@ -8668,7 +8176,6 @@ public class StaticEndpointBuilders {
     public static InfinispanRemoteEndpointBuilderFactory.InfinispanRemoteEndpointBuilder infinispan(String path) {
         return infinispan("infinispan", path);
     }
-
     /**
      * Infinispan (camel-infinispan)
      * Read and write from/to Infinispan distributed key/value store and data
@@ -8686,15 +8193,13 @@ public class StaticEndpointBuilders {
      * default cache manager name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static InfinispanRemoteEndpointBuilderFactory.InfinispanRemoteEndpointBuilder infinispan(
-            String componentName, String path) {
+    public static InfinispanRemoteEndpointBuilderFactory.InfinispanRemoteEndpointBuilder infinispan(String componentName, String path) {
         return InfinispanRemoteEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
@@ -8714,11 +8219,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedEndpointBuilder infinispanEmbedded(
-            String path) {
+    public static InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedEndpointBuilder infinispanEmbedded(String path) {
         return infinispanEmbedded("infinispan-embedded", path);
     }
-
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
@@ -8736,15 +8239,13 @@ public class StaticEndpointBuilders {
      * default cache manager name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
-    public static InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedEndpointBuilder infinispanEmbedded(
-            String componentName, String path) {
+    public static InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedEndpointBuilder infinispanEmbedded(String componentName, String path) {
         return InfinispanEmbeddedEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * InfluxDB (camel-influxdb)
      * Interact with InfluxDB v1, a time series database.
@@ -8764,7 +8265,6 @@ public class StaticEndpointBuilders {
     public static InfluxDbEndpointBuilderFactory.InfluxDbEndpointBuilder influxdb(String path) {
         return influxdb("influxdb", path);
     }
-
     /**
      * InfluxDB (camel-influxdb)
      * Interact with InfluxDB v1, a time series database.
@@ -8779,14 +8279,13 @@ public class StaticEndpointBuilders {
      * Connection to the influx database, of class InfluxDB.class
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          connectionBean
+     * instead of the default name
+     * @param path connectionBean
      * @return the dsl builder
      */
     public static InfluxDbEndpointBuilderFactory.InfluxDbEndpointBuilder influxdb(String componentName, String path) {
         return InfluxDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * InfluxDB2 (camel-influxdb2)
      * Interact with InfluxDB v2, a time series database.
@@ -8807,7 +8306,6 @@ public class StaticEndpointBuilders {
     public static InfluxDb2EndpointBuilderFactory.InfluxDb2EndpointBuilder influxdb2(String path) {
         return influxdb2("influxdb2", path);
     }
-
     /**
      * InfluxDB2 (camel-influxdb2)
      * Interact with InfluxDB v2, a time series database.
@@ -8823,15 +8321,13 @@ public class StaticEndpointBuilders {
      * com.influxdb.client.InfluxDBClient.class.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          connectionBean
+     * instead of the default name
+     * @param path connectionBean
      * @return the dsl builder
      */
-    public static InfluxDb2EndpointBuilderFactory.InfluxDb2EndpointBuilder influxdb2(String componentName,
-            String path) {
+    public static InfluxDb2EndpointBuilderFactory.InfluxDb2EndpointBuilder influxdb2(String componentName, String path) {
         return InfluxDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IRC (camel-irc)
      * Send and receive messages to/from and IRC chat.
@@ -8855,7 +8351,6 @@ public class StaticEndpointBuilders {
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String path) {
         return irc("irc", path);
     }
-
     /**
      * IRC (camel-irc)
      * Send and receive messages to/from and IRC chat.
@@ -8874,14 +8369,13 @@ public class StaticEndpointBuilders {
      * default port of either 6667, 6668 or 6669 is used.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          hostname:port
+     * instead of the default name
+     * @param path hostname:port
      * @return the dsl builder
      */
     public static IrcEndpointBuilderFactory.IrcEndpointBuilder irc(String componentName, String path) {
         return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * IronMQ (camel-ironmq)
      * Send and receive messages to/from IronMQ an elastic and durable hosted
@@ -8902,7 +8396,6 @@ public class StaticEndpointBuilders {
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String path) {
         return ironmq("ironmq", path);
     }
-
     /**
      * IronMQ (camel-ironmq)
      * Send and receive messages to/from IronMQ an elastic and durable hosted
@@ -8918,14 +8411,13 @@ public class StaticEndpointBuilders {
      * The name of the IronMQ queue
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          queueName
+     * instead of the default name
+     * @param path queueName
      * @return the dsl builder
      */
     public static IronMQEndpointBuilderFactory.IronMQEndpointBuilder ironmq(String componentName, String path) {
         return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
@@ -8945,7 +8437,6 @@ public class StaticEndpointBuilders {
     public static JCacheEndpointBuilderFactory.JCacheEndpointBuilder jcache(String path) {
         return jcache("jcache", path);
     }
-
     /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
@@ -8960,14 +8451,13 @@ public class StaticEndpointBuilders {
      * The name of the cache
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          cacheName
+     * instead of the default name
+     * @param path cacheName
      * @return the dsl builder
      */
     public static JCacheEndpointBuilderFactory.JCacheEndpointBuilder jcache(String componentName, String path) {
         return JCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
@@ -8991,7 +8481,6 @@ public class StaticEndpointBuilders {
     public static JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(String path) {
         return jcr("jcr", path);
     }
-
     /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
@@ -9010,14 +8499,13 @@ public class StaticEndpointBuilders {
      * Get the base node when accessing the repository
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host/base
+     * instead of the default name
+     * @param path host/base
      * @return the dsl builder
      */
     public static JcrEndpointBuilderFactory.JcrEndpointBuilder jcr(String componentName, String path) {
         return JcrEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
@@ -9040,7 +8528,6 @@ public class StaticEndpointBuilders {
     public static JdbcEndpointBuilderFactory.JdbcEndpointBuilder jdbc(String path) {
         return jdbc("jdbc", path);
     }
-
     /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
@@ -9058,14 +8545,13 @@ public class StaticEndpointBuilders {
      * found, then this DataSource will be used.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          dataSourceName
+     * instead of the default name
+     * @param path dataSourceName
      * @return the dsl builder
      */
     public static JdbcEndpointBuilderFactory.JdbcEndpointBuilder jdbc(String componentName, String path) {
         return JdbcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Jetty (camel-jetty)
      * Expose HTTP endpoints using Jetty 12.
@@ -9085,7 +8571,6 @@ public class StaticEndpointBuilders {
     public static JettyHttp12EndpointBuilderFactory.JettyHttp12EndpointBuilder jetty(String path) {
         return jetty("jetty", path);
     }
-
     /**
      * Jetty (camel-jetty)
      * Expose HTTP endpoints using Jetty 12.
@@ -9100,15 +8585,13 @@ public class StaticEndpointBuilders {
      * The url of the HTTP endpoint to call.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          httpUri
+     * instead of the default name
+     * @param path httpUri
      * @return the dsl builder
      */
-    public static JettyHttp12EndpointBuilderFactory.JettyHttp12EndpointBuilder jetty(String componentName,
-            String path) {
+    public static JettyHttp12EndpointBuilderFactory.JettyHttp12EndpointBuilder jetty(String componentName, String path) {
         return JettyHttp12EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
@@ -9128,7 +8611,6 @@ public class StaticEndpointBuilders {
     public static JGroupsEndpointBuilderFactory.JGroupsEndpointBuilder jgroups(String path) {
         return jgroups("jgroups", path);
     }
-
     /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
@@ -9143,14 +8625,13 @@ public class StaticEndpointBuilders {
      * The name of the JGroups cluster the component should connect to.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          clusterName
+     * instead of the default name
+     * @param path clusterName
      * @return the dsl builder
      */
     public static JGroupsEndpointBuilderFactory.JGroupsEndpointBuilder jgroups(String componentName, String path) {
         return JGroupsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JGroups raft (camel-jgroups-raft)
      * Exchange messages with JGroups-raft clusters.
@@ -9170,7 +8651,6 @@ public class StaticEndpointBuilders {
     public static JGroupsRaftEndpointBuilderFactory.JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
         return jgroupsRaft("jgroups-raft", path);
     }
-
     /**
      * JGroups raft (camel-jgroups-raft)
      * Exchange messages with JGroups-raft clusters.
@@ -9185,15 +8665,13 @@ public class StaticEndpointBuilders {
      * The name of the JGroupsraft cluster the component should connect to.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          clusterName
+     * instead of the default name
+     * @param path clusterName
      * @return the dsl builder
      */
-    public static JGroupsRaftEndpointBuilderFactory.JGroupsRaftEndpointBuilder jgroupsRaft(String componentName,
-            String path) {
+    public static JGroupsRaftEndpointBuilderFactory.JGroupsRaftEndpointBuilder jgroupsRaft(String componentName, String path) {
         return JGroupsRaftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
@@ -9219,7 +8697,6 @@ public class StaticEndpointBuilders {
     public static JiraEndpointBuilderFactory.JiraEndpointBuilder jira(String path) {
         return jira("jira", path);
     }
-
     /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
@@ -9240,14 +8717,13 @@ public class StaticEndpointBuilders {
      * FETCHCOMMENTS
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          type
+     * instead of the default name
+     * @param path type
      * @return the dsl builder
      */
     public static JiraEndpointBuilderFactory.JiraEndpointBuilder jira(String componentName, String path) {
         return JiraEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JMS (camel-jms)
      * Send and receive messages to/from JMS message brokers.
@@ -9273,7 +8749,6 @@ public class StaticEndpointBuilders {
     public static JmsEndpointBuilderFactory.JmsEndpointBuilder jms(String path) {
         return jms("jms", path);
     }
-
     /**
      * JMS (camel-jms)
      * Send and receive messages to/from JMS message brokers.
@@ -9294,14 +8769,13 @@ public class StaticEndpointBuilders {
      * Name of the queue or topic to use as destination
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          destinationType:destinationName
+     * instead of the default name
+     * @param path destinationType:destinationName
      * @return the dsl builder
      */
     public static JmsEndpointBuilderFactory.JmsEndpointBuilder jms(String componentName, String path) {
         return JmsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JMX (camel-jmx)
      * Receive JMX notifications.
@@ -9322,7 +8796,6 @@ public class StaticEndpointBuilders {
     public static JMXEndpointBuilderFactory.JMXEndpointBuilder jmx(String path) {
         return jmx("jmx", path);
     }
-
     /**
      * JMX (camel-jmx)
      * Receive JMX notifications.
@@ -9338,14 +8811,13 @@ public class StaticEndpointBuilders {
      * local JVM.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          serverURL
+     * instead of the default name
+     * @param path serverURL
      * @return the dsl builder
      */
     public static JMXEndpointBuilderFactory.JMXEndpointBuilder jmx(String componentName, String path) {
         return JMXEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JOLT (camel-jolt)
      * JSON to JSON transformation using JOLT.
@@ -9371,7 +8843,6 @@ public class StaticEndpointBuilders {
     public static JoltEndpointBuilderFactory.JoltEndpointBuilder jolt(String path) {
         return jolt("jolt", path);
     }
-
     /**
      * JOLT (camel-jolt)
      * JSON to JSON transformation using JOLT.
@@ -9392,14 +8863,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static JoltEndpointBuilderFactory.JoltEndpointBuilder jolt(String componentName, String path) {
         return JoltEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JOOQ (camel-jooq)
      * Store and retrieve Java objects from an SQL database using JOOQ.
@@ -9419,7 +8889,6 @@ public class StaticEndpointBuilders {
     public static JooqEndpointBuilderFactory.JooqEndpointBuilder jooq(String path) {
         return jooq("jooq", path);
     }
-
     /**
      * JOOQ (camel-jooq)
      * Store and retrieve Java objects from an SQL database using JOOQ.
@@ -9434,14 +8903,13 @@ public class StaticEndpointBuilders {
      * JOOQ entity class
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          entityType
+     * instead of the default name
+     * @param path entityType
      * @return the dsl builder
      */
     public static JooqEndpointBuilderFactory.JooqEndpointBuilder jooq(String componentName, String path) {
         return JooqEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JPA (camel-jpa)
      * Store and retrieve Java objects from databases using Java Persistence API
@@ -9462,7 +8930,6 @@ public class StaticEndpointBuilders {
     public static JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(String path) {
         return jpa("jpa", path);
     }
-
     /**
      * JPA (camel-jpa)
      * Store and retrieve Java objects from databases using Java Persistence API
@@ -9478,14 +8945,13 @@ public class StaticEndpointBuilders {
      * Entity class name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          entityType
+     * instead of the default name
+     * @param path entityType
      * @return the dsl builder
      */
     public static JpaEndpointBuilderFactory.JpaEndpointBuilder jpa(String componentName, String path) {
         return JpaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JSLT (camel-jslt)
      * Query or transform JSON payloads using JSLT.
@@ -9511,7 +8977,6 @@ public class StaticEndpointBuilders {
     public static JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(String path) {
         return jslt("jslt", path);
     }
-
     /**
      * JSLT (camel-jslt)
      * Query or transform JSON payloads using JSLT.
@@ -9532,14 +8997,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static JsltEndpointBuilderFactory.JsltEndpointBuilder jslt(String componentName, String path) {
         return JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JsonPatch (camel-json-patch)
      * Transforms JSON using JSON patch (RFC 6902).
@@ -9565,7 +9029,6 @@ public class StaticEndpointBuilders {
     public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String path) {
         return jsonPatch("json-patch", path);
     }
-
     /**
      * JsonPatch (camel-json-patch)
      * Transforms JSON using JSON patch (RFC 6902).
@@ -9586,15 +9049,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String componentName,
-            String path) {
+    public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String componentName, String path) {
         return JsonPatchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JSON Schema Validator (camel-json-validator)
      * Validate JSON payloads using NetworkNT JSON Schema.
@@ -9620,7 +9081,6 @@ public class StaticEndpointBuilders {
     public static JsonValidatorEndpointBuilderFactory.JsonValidatorEndpointBuilder jsonValidator(String path) {
         return jsonValidator("json-validator", path);
     }
-
     /**
      * JSON Schema Validator (camel-json-validator)
      * Validate JSON payloads using NetworkNT JSON Schema.
@@ -9641,15 +9101,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static JsonValidatorEndpointBuilderFactory.JsonValidatorEndpointBuilder jsonValidator(String componentName,
-            String path) {
+    public static JsonValidatorEndpointBuilderFactory.JsonValidatorEndpointBuilder jsonValidator(String componentName, String path) {
         return JsonValidatorEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JSONata (camel-jsonata)
      * Transforms JSON payload using JSONata transformation.
@@ -9675,7 +9133,6 @@ public class StaticEndpointBuilders {
     public static JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(String path) {
         return jsonata("jsonata", path);
     }
-
     /**
      * JSONata (camel-jsonata)
      * Transforms JSON payload using JSONata transformation.
@@ -9696,14 +9153,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static JsonataEndpointBuilderFactory.JsonataEndpointBuilder jsonata(String componentName, String path) {
         return JsonataEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JT400 (camel-jt400)
      * Exchanges messages with an IBM i system using data queues, message
@@ -9740,7 +9196,6 @@ public class StaticEndpointBuilders {
     public static Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(String path) {
         return jt400("jt400", path);
     }
-
     /**
      * JT400 (camel-jt400)
      * Exchanges messages with an IBM i system using data queues, message
@@ -9772,14 +9227,13 @@ public class StaticEndpointBuilders {
      * There are 4 enums and the value can be one of: DTAQ, PGM, SRVPGM, MSGQ
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          userID:password@systemName/QSYS.LIB/objectPath.type
+     * instead of the default name
+     * @param path userID:password@systemName/QSYS.LIB/objectPath.type
      * @return the dsl builder
      */
     public static Jt400EndpointBuilderFactory.Jt400EndpointBuilder jt400(String componentName, String path) {
         return Jt400EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * JTE (camel-jte)
      * Transform messages using a Java based template engine (JTE).
@@ -9805,7 +9259,6 @@ public class StaticEndpointBuilders {
     public static JteEndpointBuilderFactory.JteEndpointBuilder jte(String path) {
         return jte("jte", path);
     }
-
     /**
      * JTE (camel-jte)
      * Transform messages using a Java based template engine (JTE).
@@ -9826,14 +9279,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static JteEndpointBuilderFactory.JteEndpointBuilder jte(String componentName, String path) {
         return JteEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kafka (camel-kafka)
      * Send and receive messages to/from an Apache Kafka broker.
@@ -9854,7 +9306,6 @@ public class StaticEndpointBuilders {
     public static KafkaEndpointBuilderFactory.KafkaEndpointBuilder kafka(String path) {
         return kafka("kafka", path);
     }
-
     /**
      * Kafka (camel-kafka)
      * Send and receive messages to/from an Apache Kafka broker.
@@ -9870,14 +9321,13 @@ public class StaticEndpointBuilders {
      * multiple topics. A producer can only send a message to a single topic.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topic
+     * instead of the default name
+     * @param path topic
      * @return the dsl builder
      */
     public static KafkaEndpointBuilderFactory.KafkaEndpointBuilder kafka(String componentName, String path) {
         return KafkaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
@@ -9901,7 +9351,6 @@ public class StaticEndpointBuilders {
     public static KameletEndpointBuilderFactory.KameletEndpointBuilder kamelet(String path) {
         return kamelet("kamelet", path);
     }
-
     /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
@@ -9920,14 +9369,13 @@ public class StaticEndpointBuilders {
      * provided
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          templateId/routeId
+     * instead of the default name
+     * @param path templateId/routeId
      * @return the dsl builder
      */
     public static KameletEndpointBuilderFactory.KameletEndpointBuilder kamelet(String componentName, String path) {
         return KameletEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Keycloak (camel-keycloak)
      * Manage Keycloak instances via Admin API.
@@ -9947,7 +9395,6 @@ public class StaticEndpointBuilders {
     public static KeycloakEndpointBuilderFactory.KeycloakEndpointBuilder keycloak(String path) {
         return keycloak("keycloak", path);
     }
-
     /**
      * Keycloak (camel-keycloak)
      * Manage Keycloak instances via Admin API.
@@ -9962,14 +9409,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static KeycloakEndpointBuilderFactory.KeycloakEndpointBuilder keycloak(String componentName, String path) {
         return KeycloakEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Knative (camel-knative)
      * Send and receive events from Knative.
@@ -9993,7 +9439,6 @@ public class StaticEndpointBuilders {
     public static KnativeEndpointBuilderFactory.KnativeEndpointBuilder knative(String path) {
         return knative("knative", path);
     }
-
     /**
      * Knative (camel-knative)
      * Send and receive events from Knative.
@@ -10012,14 +9457,13 @@ public class StaticEndpointBuilders {
      * The identifier of the Knative resource
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          type/typeId
+     * instead of the default name
+     * @param path type/typeId
      * @return the dsl builder
      */
     public static KnativeEndpointBuilderFactory.KnativeEndpointBuilder knative(String componentName, String path) {
         return KnativeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
@@ -10042,7 +9486,6 @@ public class StaticEndpointBuilders {
     public static KServeEndpointBuilderFactory.KServeEndpointBuilder kserve(String path) {
         return kserve("kserve", path);
     }
-
     /**
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
@@ -10060,14 +9503,13 @@ public class StaticEndpointBuilders {
      * model/metadata, server/ready, server/live, server/metadata
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          api
+     * instead of the default name
+     * @param path api
      * @return the dsl builder
      */
     public static KServeEndpointBuilderFactory.KServeEndpointBuilder kserve(String componentName, String path) {
         return KServeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
@@ -10090,11 +9532,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
-            String path) {
+    public static KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(String path) {
         return kubernetesConfigMaps("kubernetes-config-maps", path);
     }
-
     /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
@@ -10115,15 +9555,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
-            String componentName, String path) {
+    public static KubernetesConfigMapsEndpointBuilderFactory.KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(String componentName, String path) {
         return KubernetesConfigMapsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Cronjob (camel-kubernetes)
      * Perform operations on Kubernetes CronJob.
@@ -10145,11 +9583,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobEndpointBuilder kubernetesCronjob(
-            String path) {
+    public static KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobEndpointBuilder kubernetesCronjob(String path) {
         return kubernetesCronjob("kubernetes-cronjob", path);
     }
-
     /**
      * Kubernetes Cronjob (camel-kubernetes)
      * Perform operations on Kubernetes CronJob.
@@ -10169,15 +9605,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobEndpointBuilder kubernetesCronjob(
-            String componentName, String path) {
+    public static KubernetesCronJobEndpointBuilderFactory.KubernetesCronJobEndpointBuilder kubernetesCronjob(String componentName, String path) {
         return KubernetesCronJobEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Custom Resources (camel-kubernetes)
      * Perform operations on Kubernetes Custom Resources and get notified on
@@ -10200,11 +9634,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
-            String path) {
+    public static KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(String path) {
         return kubernetesCustomResources("kubernetes-custom-resources", path);
     }
-
     /**
      * Kubernetes Custom Resources (camel-kubernetes)
      * Perform operations on Kubernetes Custom Resources and get notified on
@@ -10225,15 +9657,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
-            String componentName, String path) {
+    public static KubernetesCustomResourcesEndpointBuilderFactory.KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(String componentName, String path) {
         return KubernetesCustomResourcesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
@@ -10256,11 +9686,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
-            String path) {
+    public static KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(String path) {
         return kubernetesDeployments("kubernetes-deployments", path);
     }
-
     /**
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
@@ -10281,15 +9709,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
-            String componentName, String path) {
+    public static KubernetesDeploymentsEndpointBuilderFactory.KubernetesDeploymentsEndpointBuilder kubernetesDeployments(String componentName, String path) {
         return KubernetesDeploymentsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Event (camel-kubernetes)
      * Perform operations on Kubernetes Events and get notified on Events
@@ -10315,7 +9741,6 @@ public class StaticEndpointBuilders {
     public static KubernetesEventsEndpointBuilderFactory.KubernetesEventsEndpointBuilder kubernetesEvents(String path) {
         return kubernetesEvents("kubernetes-events", path);
     }
-
     /**
      * Kubernetes Event (camel-kubernetes)
      * Perform operations on Kubernetes Events and get notified on Events
@@ -10336,15 +9761,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesEventsEndpointBuilderFactory.KubernetesEventsEndpointBuilder kubernetesEvents(
-            String componentName, String path) {
+    public static KubernetesEventsEndpointBuilderFactory.KubernetesEventsEndpointBuilder kubernetesEvents(String componentName, String path) {
         return KubernetesEventsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
@@ -10370,7 +9793,6 @@ public class StaticEndpointBuilders {
     public static KubernetesHPAEndpointBuilderFactory.KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
         return kubernetesHpa("kubernetes-hpa", path);
     }
-
     /**
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
@@ -10391,15 +9813,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesHPAEndpointBuilderFactory.KubernetesHPAEndpointBuilder kubernetesHpa(String componentName,
-            String path) {
+    public static KubernetesHPAEndpointBuilderFactory.KubernetesHPAEndpointBuilder kubernetesHpa(String componentName, String path) {
         return KubernetesHPAEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Job (camel-kubernetes)
      * Perform operations on Kubernetes Jobs.
@@ -10424,7 +9844,6 @@ public class StaticEndpointBuilders {
     public static KubernetesJobEndpointBuilderFactory.KubernetesJobEndpointBuilder kubernetesJob(String path) {
         return kubernetesJob("kubernetes-job", path);
     }
-
     /**
      * Kubernetes Job (camel-kubernetes)
      * Perform operations on Kubernetes Jobs.
@@ -10444,15 +9863,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesJobEndpointBuilderFactory.KubernetesJobEndpointBuilder kubernetesJob(String componentName,
-            String path) {
+    public static KubernetesJobEndpointBuilderFactory.KubernetesJobEndpointBuilder kubernetesJob(String componentName, String path) {
         return KubernetesJobEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Namespaces (camel-kubernetes)
      * Perform operations on Kubernetes Namespaces and get notified on Namespace
@@ -10475,11 +9892,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
-            String path) {
+    public static KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
         return kubernetesNamespaces("kubernetes-namespaces", path);
     }
-
     /**
      * Kubernetes Namespaces (camel-kubernetes)
      * Perform operations on Kubernetes Namespaces and get notified on Namespace
@@ -10500,15 +9915,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
-            String componentName, String path) {
+    public static KubernetesNamespacesEndpointBuilderFactory.KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String componentName, String path) {
         return KubernetesNamespacesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Nodes (camel-kubernetes)
      * Perform operations on Kubernetes Nodes and get notified on Node changes.
@@ -10533,7 +9946,6 @@ public class StaticEndpointBuilders {
     public static KubernetesNodesEndpointBuilderFactory.KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
         return kubernetesNodes("kubernetes-nodes", path);
     }
-
     /**
      * Kubernetes Nodes (camel-kubernetes)
      * Perform operations on Kubernetes Nodes and get notified on Node changes.
@@ -10553,15 +9965,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesNodesEndpointBuilderFactory.KubernetesNodesEndpointBuilder kubernetesNodes(
-            String componentName, String path) {
+    public static KubernetesNodesEndpointBuilderFactory.KubernetesNodesEndpointBuilder kubernetesNodes(String componentName, String path) {
         return KubernetesNodesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Persistent Volume (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes and get notified on
@@ -10584,11 +9994,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
-            String path) {
+    public static KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(String path) {
         return kubernetesPersistentVolumes("kubernetes-persistent-volumes", path);
     }
-
     /**
      * Kubernetes Persistent Volume (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes and get notified on
@@ -10609,15 +10017,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
-            String componentName, String path) {
+    public static KubernetesPersistentVolumesEndpointBuilderFactory.KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(String componentName, String path) {
         return KubernetesPersistentVolumesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Persistent Volume Claim (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes Claims and get
@@ -10640,11 +10046,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
-            String path) {
+    public static KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(String path) {
         return kubernetesPersistentVolumesClaims("kubernetes-persistent-volumes-claims", path);
     }
-
     /**
      * Kubernetes Persistent Volume Claim (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes Claims and get
@@ -10665,15 +10069,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(
-            String componentName, String path) {
+    public static KubernetesPersistentVolumesClaimsEndpointBuilderFactory.KubernetesPersistentVolumesClaimsEndpointBuilder kubernetesPersistentVolumesClaims(String componentName, String path) {
         return KubernetesPersistentVolumesClaimsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Pods (camel-kubernetes)
      * Perform operations on Kubernetes Pods and get notified on Pod changes.
@@ -10698,7 +10100,6 @@ public class StaticEndpointBuilders {
     public static KubernetesPodsEndpointBuilderFactory.KubernetesPodsEndpointBuilder kubernetesPods(String path) {
         return kubernetesPods("kubernetes-pods", path);
     }
-
     /**
      * Kubernetes Pods (camel-kubernetes)
      * Perform operations on Kubernetes Pods and get notified on Pod changes.
@@ -10718,15 +10119,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesPodsEndpointBuilderFactory.KubernetesPodsEndpointBuilder kubernetesPods(
-            String componentName, String path) {
+    public static KubernetesPodsEndpointBuilderFactory.KubernetesPodsEndpointBuilder kubernetesPods(String componentName, String path) {
         return KubernetesPodsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Replication Controller (camel-kubernetes)
      * Perform operations on Kubernetes Replication Controllers and get notified
@@ -10749,11 +10148,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
-            String path) {
+    public static KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(String path) {
         return kubernetesReplicationControllers("kubernetes-replication-controllers", path);
     }
-
     /**
      * Kubernetes Replication Controller (camel-kubernetes)
      * Perform operations on Kubernetes Replication Controllers and get notified
@@ -10774,15 +10171,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
-            String componentName, String path) {
+    public static KubernetesReplicationControllersEndpointBuilderFactory.KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(String componentName, String path) {
         return KubernetesReplicationControllersEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Resources Quota (camel-kubernetes)
      * Perform operations on Kubernetes Resources Quotas.
@@ -10804,11 +10199,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
-            String path) {
+    public static KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(String path) {
         return kubernetesResourcesQuota("kubernetes-resources-quota", path);
     }
-
     /**
      * Kubernetes Resources Quota (camel-kubernetes)
      * Perform operations on Kubernetes Resources Quotas.
@@ -10828,15 +10221,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
-            String componentName, String path) {
+    public static KubernetesResourcesQuotaEndpointBuilderFactory.KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(String componentName, String path) {
         return KubernetesResourcesQuotaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Secrets (camel-kubernetes)
      * Perform operations on Kubernetes Secrets.
@@ -10858,11 +10249,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(
-            String path) {
+    public static KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
         return kubernetesSecrets("kubernetes-secrets", path);
     }
-
     /**
      * Kubernetes Secrets (camel-kubernetes)
      * Perform operations on Kubernetes Secrets.
@@ -10882,15 +10271,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(
-            String componentName, String path) {
+    public static KubernetesSecretsEndpointBuilderFactory.KubernetesSecretsEndpointBuilder kubernetesSecrets(String componentName, String path) {
         return KubernetesSecretsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Service Account (camel-kubernetes)
      * Perform operations on Kubernetes Service Accounts.
@@ -10912,11 +10299,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
-            String path) {
+    public static KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(String path) {
         return kubernetesServiceAccounts("kubernetes-service-accounts", path);
     }
-
     /**
      * Kubernetes Service Account (camel-kubernetes)
      * Perform operations on Kubernetes Service Accounts.
@@ -10936,15 +10321,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
-            String componentName, String path) {
+    public static KubernetesServiceAccountsEndpointBuilderFactory.KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(String componentName, String path) {
         return KubernetesServiceAccountsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kubernetes Services (camel-kubernetes)
      * Perform operations on Kubernetes Services and get notified on Service
@@ -10967,11 +10350,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(
-            String path) {
+    public static KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(String path) {
         return kubernetesServices("kubernetes-services", path);
     }
-
     /**
      * Kubernetes Services (camel-kubernetes)
      * Perform operations on Kubernetes Services and get notified on Service
@@ -10992,15 +10373,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(
-            String componentName, String path) {
+    public static KubernetesServicesEndpointBuilderFactory.KubernetesServicesEndpointBuilder kubernetesServices(String componentName, String path) {
         return KubernetesServicesEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Kudu (camel-kudu)
      * Interact with Apache Kudu, a free and open source column-oriented data
@@ -11027,7 +10406,6 @@ public class StaticEndpointBuilders {
     public static KuduEndpointBuilderFactory.KuduEndpointBuilder kudu(String path) {
         return kudu("kudu", path);
     }
-
     /**
      * Kudu (camel-kudu)
      * Interact with Apache Kudu, a free and open source column-oriented data
@@ -11049,14 +10427,13 @@ public class StaticEndpointBuilders {
      * Table to connect to
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/tableName
+     * instead of the default name
+     * @param path host:port/tableName
      * @return the dsl builder
      */
     public static KuduEndpointBuilderFactory.KuduEndpointBuilder kudu(String componentName, String path) {
         return KuduEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
      * LangChain4j Agent component
@@ -11076,7 +10453,6 @@ public class StaticEndpointBuilders {
     public static LangChain4jAgentEndpointBuilderFactory.LangChain4jAgentEndpointBuilder langchain4jAgent(String path) {
         return langchain4jAgent("langchain4j-agent", path);
     }
-
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
      * LangChain4j Agent component
@@ -11091,15 +10467,13 @@ public class StaticEndpointBuilders {
      * The Agent id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          agentId
+     * instead of the default name
+     * @param path agentId
      * @return the dsl builder
      */
-    public static LangChain4jAgentEndpointBuilderFactory.LangChain4jAgentEndpointBuilder langchain4jAgent(
-            String componentName, String path) {
+    public static LangChain4jAgentEndpointBuilderFactory.LangChain4jAgentEndpointBuilder langchain4jAgent(String componentName, String path) {
         return LangChain4jAgentEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
@@ -11119,7 +10493,6 @@ public class StaticEndpointBuilders {
     public static LangChain4jChatEndpointBuilderFactory.LangChain4jChatEndpointBuilder langchain4jChat(String path) {
         return langchain4jChat("langchain4j-chat", path);
     }
-
     /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
@@ -11134,15 +10507,13 @@ public class StaticEndpointBuilders {
      * The id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          chatId
+     * instead of the default name
+     * @param path chatId
      * @return the dsl builder
      */
-    public static LangChain4jChatEndpointBuilderFactory.LangChain4jChatEndpointBuilder langchain4jChat(
-            String componentName, String path) {
+    public static LangChain4jChatEndpointBuilderFactory.LangChain4jChatEndpointBuilder langchain4jChat(String componentName, String path) {
         return LangChain4jChatEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
@@ -11159,11 +10530,9 @@ public class StaticEndpointBuilders {
      * @param path embeddingId
      * @return the dsl builder
      */
-    public static LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsEndpointBuilder langchain4jEmbeddings(
-            String path) {
+    public static LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsEndpointBuilder langchain4jEmbeddings(String path) {
         return langchain4jEmbeddings("langchain4j-embeddings", path);
     }
-
     /**
      * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
@@ -11178,15 +10547,13 @@ public class StaticEndpointBuilders {
      * The id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          embeddingId
+     * instead of the default name
+     * @param path embeddingId
      * @return the dsl builder
      */
-    public static LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsEndpointBuilder langchain4jEmbeddings(
-            String componentName, String path) {
+    public static LangChain4jEmbeddingsEndpointBuilderFactory.LangChain4jEmbeddingsEndpointBuilder langchain4jEmbeddings(String componentName, String path) {
         return LangChain4jEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
      * Perform operations on the Langchain4jEmbeddingStores.
@@ -11203,11 +10570,9 @@ public class StaticEndpointBuilders {
      * @param path embeddingStoreId
      * @return the dsl builder
      */
-    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(
-            String path) {
+    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(String path) {
         return langchain4jEmbeddingstore("langchain4j-embeddingstore", path);
     }
-
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
      * Perform operations on the Langchain4jEmbeddingStores.
@@ -11222,15 +10587,13 @@ public class StaticEndpointBuilders {
      * The id of the embedding store
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          embeddingStoreId
+     * instead of the default name
+     * @param path embeddingStoreId
      * @return the dsl builder
      */
-    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(
-            String componentName, String path) {
+    public static LangChain4jEmbeddingStoreEndpointBuilderFactory.LangChain4jEmbeddingStoreEndpointBuilder langchain4jEmbeddingstore(String componentName, String path) {
         return LangChain4jEmbeddingStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LangChain4j Tools (camel-langchain4j-tools)
      * LangChain4j Tools and Function Calling Features
@@ -11250,7 +10613,6 @@ public class StaticEndpointBuilders {
     public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String path) {
         return langchain4jTools("langchain4j-tools", path);
     }
-
     /**
      * LangChain4j Tools (camel-langchain4j-tools)
      * LangChain4j Tools and Function Calling Features
@@ -11265,15 +10627,13 @@ public class StaticEndpointBuilders {
      * The tool id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          toolId
+     * instead of the default name
+     * @param path toolId
      * @return the dsl builder
      */
-    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(
-            String componentName, String path) {
+    public static LangChain4jToolsEndpointBuilderFactory.LangChain4jToolsEndpointBuilder langchain4jTools(String componentName, String path) {
         return LangChain4jToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
@@ -11290,11 +10650,9 @@ public class StaticEndpointBuilders {
      * @param path searchId
      * @return the dsl builder
      */
-    public static LangChain4jWebSearchEndpointBuilderFactory.LangChain4jWebSearchEndpointBuilder langchain4jWebSearch(
-            String path) {
+    public static LangChain4jWebSearchEndpointBuilderFactory.LangChain4jWebSearchEndpointBuilder langchain4jWebSearch(String path) {
         return langchain4jWebSearch("langchain4j-web-search", path);
     }
-
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
@@ -11309,15 +10667,13 @@ public class StaticEndpointBuilders {
      * The id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          searchId
+     * instead of the default name
+     * @param path searchId
      * @return the dsl builder
      */
-    public static LangChain4jWebSearchEndpointBuilderFactory.LangChain4jWebSearchEndpointBuilder langchain4jWebSearch(
-            String componentName, String path) {
+    public static LangChain4jWebSearchEndpointBuilderFactory.LangChain4jWebSearchEndpointBuilder langchain4jWebSearch(String componentName, String path) {
         return LangChain4jWebSearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
@@ -11347,7 +10703,6 @@ public class StaticEndpointBuilders {
     public static LanguageEndpointBuilderFactory.LanguageEndpointBuilder language(String path) {
         return language("language", path);
     }
-
     /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
@@ -11372,14 +10727,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          languageName:resourceUri
+     * instead of the default name
+     * @param path languageName:resourceUri
      * @return the dsl builder
      */
     public static LanguageEndpointBuilderFactory.LanguageEndpointBuilder language(String componentName, String path) {
         return LanguageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LDAP (camel-ldap)
      * Perform searches on LDAP servers.
@@ -11406,7 +10760,6 @@ public class StaticEndpointBuilders {
     public static LdapEndpointBuilderFactory.LdapEndpointBuilder ldap(String path) {
         return ldap("ldap", path);
     }
-
     /**
      * LDAP (camel-ldap)
      * Perform searches on LDAP servers.
@@ -11428,14 +10781,13 @@ public class StaticEndpointBuilders {
      * situations it can be better to use java.util.Hashtable or Map instead.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          dirContextName
+     * instead of the default name
+     * @param path dirContextName
      * @return the dsl builder
      */
     public static LdapEndpointBuilderFactory.LdapEndpointBuilder ldap(String componentName, String path) {
         return LdapEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * LDIF (camel-ldif)
      * Perform updates on an LDAP server from an LDIF body content.
@@ -11457,7 +10809,6 @@ public class StaticEndpointBuilders {
     public static LdifEndpointBuilderFactory.LdifEndpointBuilder ldif(String path) {
         return ldif("ldif", path);
     }
-
     /**
      * LDIF (camel-ldif)
      * Perform updates on an LDAP server from an LDIF body content.
@@ -11474,14 +10825,13 @@ public class StaticEndpointBuilders {
      * using a connection that has timed out.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          ldapConnectionName
+     * instead of the default name
+     * @param path ldapConnectionName
      * @return the dsl builder
      */
     public static LdifEndpointBuilderFactory.LdifEndpointBuilder ldif(String componentName, String path) {
         return LdifEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Log Data (camel-log)
      * Prints data form the routed message (such as body and headers) to the
@@ -11502,7 +10852,6 @@ public class StaticEndpointBuilders {
     public static LogEndpointBuilderFactory.LogEndpointBuilder log(String path) {
         return log("log", path);
     }
-
     /**
      * Log Data (camel-log)
      * Prints data form the routed message (such as body and headers) to the
@@ -11518,14 +10867,13 @@ public class StaticEndpointBuilders {
      * Name of the logging category to use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          loggerName
+     * instead of the default name
+     * @param path loggerName
      * @return the dsl builder
      */
     public static LogEndpointBuilderFactory.LogEndpointBuilder log(String componentName, String path) {
         return LogEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Printer (camel-printer)
      * Send print jobs to printers.
@@ -11551,7 +10899,6 @@ public class StaticEndpointBuilders {
     public static PrinterEndpointBuilderFactory.PrinterEndpointBuilder lpr(String path) {
         return lpr("lpr", path);
     }
-
     /**
      * Printer (camel-printer)
      * Send print jobs to printers.
@@ -11572,14 +10919,13 @@ public class StaticEndpointBuilders {
      * Name of the printer
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          hostname:port/printername
+     * instead of the default name
+     * @param path hostname:port/printername
      * @return the dsl builder
      */
     public static PrinterEndpointBuilderFactory.PrinterEndpointBuilder lpr(String componentName, String path) {
         return PrinterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Lucene (camel-lucene)
      * Perform inserts or queries against Apache Lucene databases.
@@ -11603,7 +10949,6 @@ public class StaticEndpointBuilders {
     public static LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(String path) {
         return lucene("lucene", path);
     }
-
     /**
      * Lucene (camel-lucene)
      * Perform inserts or queries against Apache Lucene databases.
@@ -11622,14 +10967,13 @@ public class StaticEndpointBuilders {
      * There are 2 enums and the value can be one of: insert, query
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:operation
+     * instead of the default name
+     * @param path host:operation
      * @return the dsl builder
      */
     public static LuceneEndpointBuilderFactory.LuceneEndpointBuilder lucene(String componentName, String path) {
         return LuceneEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Lumberjack (camel-lumberjack)
      * Receive logs messages using the Lumberjack protocol.
@@ -11653,7 +10997,6 @@ public class StaticEndpointBuilders {
     public static LumberjackEndpointBuilderFactory.LumberjackEndpointBuilder lumberjack(String path) {
         return lumberjack("lumberjack", path);
     }
-
     /**
      * Lumberjack (camel-lumberjack)
      * Receive logs messages using the Lumberjack protocol.
@@ -11672,15 +11015,13 @@ public class StaticEndpointBuilders {
      * Default value: 5044
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port
+     * instead of the default name
+     * @param path host:port
      * @return the dsl builder
      */
-    public static LumberjackEndpointBuilderFactory.LumberjackEndpointBuilder lumberjack(String componentName,
-            String path) {
+    public static LumberjackEndpointBuilderFactory.LumberjackEndpointBuilder lumberjack(String componentName, String path) {
         return LumberjackEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MapStruct (camel-mapstruct)
      * Type Conversion using Mapstruct
@@ -11701,7 +11042,6 @@ public class StaticEndpointBuilders {
     public static MapstructEndpointBuilderFactory.MapstructEndpointBuilder mapstruct(String path) {
         return mapstruct("mapstruct", path);
     }
-
     /**
      * MapStruct (camel-mapstruct)
      * Type Conversion using Mapstruct
@@ -11717,15 +11057,13 @@ public class StaticEndpointBuilders {
      * to (target)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          className
+     * instead of the default name
+     * @param path className
      * @return the dsl builder
      */
-    public static MapstructEndpointBuilderFactory.MapstructEndpointBuilder mapstruct(String componentName,
-            String path) {
+    public static MapstructEndpointBuilderFactory.MapstructEndpointBuilder mapstruct(String componentName, String path) {
         return MapstructEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Master (camel-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
@@ -11749,7 +11087,6 @@ public class StaticEndpointBuilders {
     public static MasterEndpointBuilderFactory.MasterEndpointBuilder master(String path) {
         return master("master", path);
     }
-
     /**
      * Master (camel-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
@@ -11768,14 +11105,13 @@ public class StaticEndpointBuilders {
      * The endpoint uri to use in master/slave mode
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          namespace:delegateUri
+     * instead of the default name
+     * @param path namespace:delegateUri
      * @return the dsl builder
      */
     public static MasterEndpointBuilderFactory.MasterEndpointBuilder master(String componentName, String path) {
         return MasterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Metrics (camel-metrics)
      * Collect various metrics directly from Camel routes using the DropWizard
@@ -11801,7 +11137,6 @@ public class StaticEndpointBuilders {
     public static MetricsEndpointBuilderFactory.MetricsEndpointBuilder metrics(String path) {
         return metrics("metrics", path);
     }
-
     /**
      * Metrics (camel-metrics)
      * Collect various metrics directly from Camel routes using the DropWizard
@@ -11822,14 +11157,13 @@ public class StaticEndpointBuilders {
      * Name of metrics
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          metricsType:metricsName
+     * instead of the default name
+     * @param path metricsType:metricsName
      * @return the dsl builder
      */
     public static MetricsEndpointBuilderFactory.MetricsEndpointBuilder metrics(String componentName, String path) {
         return MetricsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Micrometer (camel-micrometer)
      * Collect various metrics directly from Camel routes using the Micrometer
@@ -11854,7 +11188,6 @@ public class StaticEndpointBuilders {
     public static MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(String path) {
         return micrometer("micrometer", path);
     }
-
     /**
      * Micrometer (camel-micrometer)
      * Collect various metrics directly from Camel routes using the Micrometer
@@ -11874,15 +11207,13 @@ public class StaticEndpointBuilders {
      * Name of metrics
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          metricsType:metricsName
+     * instead of the default name
+     * @param path metricsType:metricsName
      * @return the dsl builder
      */
-    public static MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(String componentName,
-            String path) {
+    public static MicrometerEndpointBuilderFactory.MicrometerEndpointBuilder micrometer(String componentName, String path) {
         return MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
@@ -11903,7 +11234,6 @@ public class StaticEndpointBuilders {
     public static MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(String path) {
         return miloBrowse("milo-browse", path);
     }
-
     /**
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
@@ -11919,15 +11249,13 @@ public class StaticEndpointBuilders {
      * The OPC UA server endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          endpointUri
+     * instead of the default name
+     * @param path endpointUri
      * @return the dsl builder
      */
-    public static MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(String componentName,
-            String path) {
+    public static MiloBrowseEndpointBuilderFactory.MiloBrowseEndpointBuilder miloBrowse(String componentName, String path) {
         return MiloBrowseEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OPC UA Client (camel-milo)
      * Connect to OPC UA servers using the binary protocol for acquiring
@@ -11948,7 +11276,6 @@ public class StaticEndpointBuilders {
     public static MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(String path) {
         return miloClient("milo-client", path);
     }
-
     /**
      * OPC UA Client (camel-milo)
      * Connect to OPC UA servers using the binary protocol for acquiring
@@ -11964,15 +11291,13 @@ public class StaticEndpointBuilders {
      * The OPC UA server endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          endpointUri
+     * instead of the default name
+     * @param path endpointUri
      * @return the dsl builder
      */
-    public static MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(String componentName,
-            String path) {
+    public static MiloClientEndpointBuilderFactory.MiloClientEndpointBuilder miloClient(String componentName, String path) {
         return MiloClientEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OPC UA Server (camel-milo)
      * Make telemetry data available as an OPC UA server.
@@ -11992,7 +11317,6 @@ public class StaticEndpointBuilders {
     public static MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(String path) {
         return miloServer("milo-server", path);
     }
-
     /**
      * OPC UA Server (camel-milo)
      * Make telemetry data available as an OPC UA server.
@@ -12007,15 +11331,13 @@ public class StaticEndpointBuilders {
      * ID of the item
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          itemId
+     * instead of the default name
+     * @param path itemId
      * @return the dsl builder
      */
-    public static MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(String componentName,
-            String path) {
+    public static MiloServerEndpointBuilderFactory.MiloServerEndpointBuilder miloServer(String componentName, String path) {
         return MiloServerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
@@ -12035,7 +11357,6 @@ public class StaticEndpointBuilders {
     public static MilvusEndpointBuilderFactory.MilvusEndpointBuilder milvus(String path) {
         return milvus("milvus", path);
     }
-
     /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
@@ -12050,14 +11371,13 @@ public class StaticEndpointBuilders {
      * The collection Name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          collection
+     * instead of the default name
+     * @param path collection
      * @return the dsl builder
      */
     public static MilvusEndpointBuilderFactory.MilvusEndpointBuilder milvus(String componentName, String path) {
         return MilvusEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
@@ -12084,7 +11404,6 @@ public class StaticEndpointBuilders {
     public static MinaEndpointBuilderFactory.MinaEndpointBuilder mina(String path) {
         return mina("mina", path);
     }
-
     /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
@@ -12106,14 +11425,13 @@ public class StaticEndpointBuilders {
      * Port number
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          protocol:host:port
+     * instead of the default name
+     * @param path protocol:host:port
      * @return the dsl builder
      */
     public static MinaEndpointBuilderFactory.MinaEndpointBuilder mina(String componentName, String path) {
         return MinaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MINA SFTP (camel-mina-sftp)
      * Upload and download files to/from SFTP servers using Apache MINA SSHD.
@@ -12139,7 +11457,6 @@ public class StaticEndpointBuilders {
     public static MinaSftpEndpointBuilderFactory.MinaSftpEndpointBuilder minaSftp(String path) {
         return minaSftp("mina-sftp", path);
     }
-
     /**
      * MINA SFTP (camel-mina-sftp)
      * Upload and download files to/from SFTP servers using Apache MINA SSHD.
@@ -12160,14 +11477,13 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/directoryName
+     * instead of the default name
+     * @param path host:port/directoryName
      * @return the dsl builder
      */
     public static MinaSftpEndpointBuilderFactory.MinaSftpEndpointBuilder minaSftp(String componentName, String path) {
         return MinaSftpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
@@ -12187,7 +11503,6 @@ public class StaticEndpointBuilders {
     public static MinioEndpointBuilderFactory.MinioEndpointBuilder minio(String path) {
         return minio("minio", path);
     }
-
     /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
@@ -12202,14 +11517,13 @@ public class StaticEndpointBuilders {
      * Bucket name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          bucketName
+     * instead of the default name
+     * @param path bucketName
      * @return the dsl builder
      */
     public static MinioEndpointBuilderFactory.MinioEndpointBuilder minio(String componentName, String path) {
         return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
@@ -12233,7 +11547,6 @@ public class StaticEndpointBuilders {
     public static MllpEndpointBuilderFactory.MllpEndpointBuilder mllp(String path) {
         return mllp("mllp", path);
     }
-
     /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
@@ -12252,14 +11565,13 @@ public class StaticEndpointBuilders {
      * Port number for the TCP connection
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          hostname:port
+     * instead of the default name
+     * @param path hostname:port
      * @return the dsl builder
      */
     public static MllpEndpointBuilderFactory.MllpEndpointBuilder mllp(String componentName, String path) {
         return MllpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Mock (camel-mock)
      * Test routes and mediation rules using mocks.
@@ -12279,7 +11591,6 @@ public class StaticEndpointBuilders {
     public static MockEndpointBuilderFactory.MockEndpointBuilder mock(String path) {
         return mock("mock", path);
     }
-
     /**
      * Mock (camel-mock)
      * Test routes and mediation rules using mocks.
@@ -12294,14 +11605,13 @@ public class StaticEndpointBuilders {
      * Name of mock endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static MockEndpointBuilderFactory.MockEndpointBuilder mock(String componentName, String path) {
         return MockEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MongoDB (camel-mongodb)
      * Perform operations on MongoDB documents and collections.
@@ -12322,7 +11632,6 @@ public class StaticEndpointBuilders {
     public static MongoDbEndpointBuilderFactory.MongoDbEndpointBuilder mongodb(String path) {
         return mongodb("mongodb", path);
     }
-
     /**
      * MongoDB (camel-mongodb)
      * Perform operations on MongoDB documents and collections.
@@ -12338,14 +11647,13 @@ public class StaticEndpointBuilders {
      * to a database if no hosts parameter is present.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          connectionBean
+     * instead of the default name
+     * @param path connectionBean
      * @return the dsl builder
      */
     public static MongoDbEndpointBuilderFactory.MongoDbEndpointBuilder mongodb(String componentName, String path) {
         return MongoDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
      * Interact with MongoDB GridFS.
@@ -12365,7 +11673,6 @@ public class StaticEndpointBuilders {
     public static GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(String path) {
         return mongodbGridfs("mongodb-gridfs", path);
     }
-
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
      * Interact with MongoDB GridFS.
@@ -12380,14 +11687,13 @@ public class StaticEndpointBuilders {
      * Name of com.mongodb.client.MongoClient to use.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          connectionBean
+     * instead of the default name
+     * @param path connectionBean
      * @return the dsl builder
      */
     public static GridFsEndpointBuilderFactory.GridFsEndpointBuilder mongodbGridfs(String componentName, String path) {
         return GridFsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
@@ -12413,7 +11719,6 @@ public class StaticEndpointBuilders {
     public static MustacheEndpointBuilderFactory.MustacheEndpointBuilder mustache(String path) {
         return mustache("mustache", path);
     }
-
     /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
@@ -12434,14 +11739,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static MustacheEndpointBuilderFactory.MustacheEndpointBuilder mustache(String componentName, String path) {
         return MustacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MVEL (camel-mvel)
      * Transform messages using an MVEL template.
@@ -12467,7 +11771,6 @@ public class StaticEndpointBuilders {
     public static MvelEndpointBuilderFactory.MvelEndpointBuilder mvel(String path) {
         return mvel("mvel", path);
     }
-
     /**
      * MVEL (camel-mvel)
      * Transform messages using an MVEL template.
@@ -12488,14 +11791,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static MvelEndpointBuilderFactory.MvelEndpointBuilder mvel(String componentName, String path) {
         return MvelEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
@@ -12517,7 +11819,6 @@ public class StaticEndpointBuilders {
     public static MyBatisEndpointBuilderFactory.MyBatisEndpointBuilder mybatis(String path) {
         return mybatis("mybatis", path);
     }
-
     /**
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
@@ -12534,14 +11835,13 @@ public class StaticEndpointBuilders {
      * query, insert, update or delete operation you wish to evaluate.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          statement
+     * instead of the default name
+     * @param path statement
      * @return the dsl builder
      */
     public static MyBatisEndpointBuilderFactory.MyBatisEndpointBuilder mybatis(String componentName, String path) {
         return MyBatisEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * MyBatis Bean (camel-mybatis)
      * Perform queries, inserts, updates or deletes in a relational database
@@ -12566,7 +11866,6 @@ public class StaticEndpointBuilders {
     public static MyBatisBeanEndpointBuilderFactory.MyBatisBeanEndpointBuilder mybatisBean(String path) {
         return mybatisBean("mybatis-bean", path);
     }
-
     /**
      * MyBatis Bean (camel-mybatis)
      * Perform queries, inserts, updates or deletes in a relational database
@@ -12586,15 +11885,13 @@ public class StaticEndpointBuilders {
      * Name of the method on the bean that has the SQL query to be executed.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          beanName:methodName
+     * instead of the default name
+     * @param path beanName:methodName
      * @return the dsl builder
      */
-    public static MyBatisBeanEndpointBuilderFactory.MyBatisBeanEndpointBuilder mybatisBean(String componentName,
-            String path) {
+    public static MyBatisBeanEndpointBuilderFactory.MyBatisBeanEndpointBuilder mybatisBean(String componentName, String path) {
         return MyBatisBeanEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
@@ -12614,7 +11911,6 @@ public class StaticEndpointBuilders {
     public static NatsEndpointBuilderFactory.NatsEndpointBuilder nats(String path) {
         return nats("nats", path);
     }
-
     /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
@@ -12629,14 +11925,13 @@ public class StaticEndpointBuilders {
      * The name of topic we want to use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topic
+     * instead of the default name
+     * @param path topic
      * @return the dsl builder
      */
     public static NatsEndpointBuilderFactory.NatsEndpointBuilder nats(String componentName, String path) {
         return NatsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Neo4j (camel-neo4j)
      * Perform operations on the Neo4j Graph Database
@@ -12656,7 +11951,6 @@ public class StaticEndpointBuilders {
     public static Neo4jEndpointBuilderFactory.Neo4jEndpointBuilder neo4j(String path) {
         return neo4j("neo4j", path);
     }
-
     /**
      * Neo4j (camel-neo4j)
      * Perform operations on the Neo4j Graph Database
@@ -12671,14 +11965,13 @@ public class StaticEndpointBuilders {
      * The database name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static Neo4jEndpointBuilderFactory.Neo4jEndpointBuilder neo4j(String componentName, String path) {
         return Neo4jEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
@@ -12706,7 +11999,6 @@ public class StaticEndpointBuilders {
     public static NettyEndpointBuilderFactory.NettyEndpointBuilder netty(String path) {
         return netty("netty", path);
     }
-
     /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
@@ -12729,14 +12021,13 @@ public class StaticEndpointBuilders {
      * The host port number
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          protocol://host:port
+     * instead of the default name
+     * @param path protocol://host:port
      * @return the dsl builder
      */
     public static NettyEndpointBuilderFactory.NettyEndpointBuilder netty(String componentName, String path) {
         return NettyEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
@@ -12767,7 +12058,6 @@ public class StaticEndpointBuilders {
     public static NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(String path) {
         return nettyHttp("netty-http", path);
     }
-
     /**
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
@@ -12793,15 +12083,13 @@ public class StaticEndpointBuilders {
      * Resource path
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          protocol://host:port/path
+     * instead of the default name
+     * @param path protocol://host:port/path
      * @return the dsl builder
      */
-    public static NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(String componentName,
-            String path) {
+    public static NettyHttpEndpointBuilderFactory.NettyHttpEndpointBuilder nettyHttp(String componentName, String path) {
         return NettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Nitrite (camel-nitrite)
      * Access Nitrite databases.
@@ -12822,7 +12110,6 @@ public class StaticEndpointBuilders {
     public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String path) {
         return nitrite("nitrite", path);
     }
-
     /**
      * Nitrite (camel-nitrite)
      * Access Nitrite databases.
@@ -12837,15 +12124,14 @@ public class StaticEndpointBuilders {
      * Path to database file. Will be created if not exists.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          database
+     * instead of the default name
+     * @param path database
      * @return the dsl builder
      */
     @Deprecated
     public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String componentName, String path) {
         return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
@@ -12866,7 +12152,6 @@ public class StaticEndpointBuilders {
     public static OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(String path) {
         return oaipmh("oaipmh", path);
     }
-
     /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
@@ -12882,14 +12167,13 @@ public class StaticEndpointBuilders {
      * OAI-PMH protocol
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          baseUrl
+     * instead of the default name
+     * @param path baseUrl
      * @return the dsl builder
      */
     public static OAIPMHEndpointBuilderFactory.OAIPMHEndpointBuilder oaipmh(String componentName, String path) {
         return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
@@ -12914,7 +12198,6 @@ public class StaticEndpointBuilders {
     public static Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(String path) {
         return olingo2("olingo2", path);
     }
-
     /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
@@ -12933,15 +12216,14 @@ public class StaticEndpointBuilders {
      * What sub operation to use for the selected operation
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
     @Deprecated
     public static Olingo2EndpointBuilderFactory.Olingo2EndpointBuilder olingo2(String componentName, String path) {
         return Olingo2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Olingo4 (camel-olingo4)
      * Communicate with OData 4.0 services using Apache Olingo OData API.
@@ -12966,7 +12248,6 @@ public class StaticEndpointBuilders {
     public static Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(String path) {
         return olingo4("olingo4", path);
     }
-
     /**
      * Olingo4 (camel-olingo4)
      * Communicate with OData 4.0 services using Apache Olingo OData API.
@@ -12985,15 +12266,14 @@ public class StaticEndpointBuilders {
      * What sub operation to use for the selected operation
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
     @Deprecated
     public static Olingo4EndpointBuilderFactory.Olingo4EndpointBuilder olingo4(String componentName, String path) {
         return Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Once (camel-once)
      * Trigger a single message only once at startup (useful for development and
@@ -13014,7 +12294,6 @@ public class StaticEndpointBuilders {
     public static OnceEndpointBuilderFactory.OnceEndpointBuilder once(String path) {
         return once("once", path);
     }
-
     /**
      * Once (camel-once)
      * Trigger a single message only once at startup (useful for development and
@@ -13030,14 +12309,13 @@ public class StaticEndpointBuilders {
      * The logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static OnceEndpointBuilderFactory.OnceEndpointBuilder once(String componentName, String path) {
         return OnceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion and embeddings.
@@ -13057,7 +12335,6 @@ public class StaticEndpointBuilders {
     public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String path) {
         return openai("openai", path);
     }
-
     /**
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion and embeddings.
@@ -13072,14 +12349,13 @@ public class StaticEndpointBuilders {
      * The operation to perform: 'chat-completion' or 'embeddings'
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static OpenAIEndpointBuilderFactory.OpenAIEndpointBuilder openai(String componentName, String path) {
         return OpenAIEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
@@ -13099,7 +12375,6 @@ public class StaticEndpointBuilders {
     public static OpensearchEndpointBuilderFactory.OpensearchEndpointBuilder opensearch(String path) {
         return opensearch("opensearch", path);
     }
-
     /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
@@ -13114,15 +12389,13 @@ public class StaticEndpointBuilders {
      * Name of the cluster
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          clusterName
+     * instead of the default name
+     * @param path clusterName
      * @return the dsl builder
      */
-    public static OpensearchEndpointBuilderFactory.OpensearchEndpointBuilder opensearch(String componentName,
-            String path) {
+    public static OpensearchEndpointBuilderFactory.OpensearchEndpointBuilder opensearch(String componentName, String path) {
         return OpensearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
@@ -13144,11 +12417,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
-            String path) {
+    public static OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(String path) {
         return openshiftBuildConfigs("openshift-build-configs", path);
     }
-
     /**
      * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
@@ -13168,15 +12439,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
-            String componentName, String path) {
+    public static OpenshiftBuildConfigsEndpointBuilderFactory.OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(String componentName, String path) {
         return OpenshiftBuildConfigsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
@@ -13201,7 +12470,6 @@ public class StaticEndpointBuilders {
     public static OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsEndpointBuilder openshiftBuilds(String path) {
         return openshiftBuilds("openshift-builds", path);
     }
-
     /**
      * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
@@ -13221,15 +12489,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsEndpointBuilder openshiftBuilds(
-            String componentName, String path) {
+    public static OpenshiftBuildsEndpointBuilderFactory.OpenshiftBuildsEndpointBuilder openshiftBuilds(String componentName, String path) {
         return OpenshiftBuildsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenShift Deployment Configs (camel-kubernetes)
      * Perform operations on OpenShift Deployment Configs and get notified on
@@ -13252,11 +12518,9 @@ public class StaticEndpointBuilders {
      * @param path masterUrl
      * @return the dsl builder
      */
-    public static OpenshiftDeploymentConfigsEndpointBuilderFactory.OpenshiftDeploymentConfigsEndpointBuilder openshiftDeploymentconfigs(
-            String path) {
+    public static OpenshiftDeploymentConfigsEndpointBuilderFactory.OpenshiftDeploymentConfigsEndpointBuilder openshiftDeploymentconfigs(String path) {
         return openshiftDeploymentconfigs("openshift-deploymentconfigs", path);
     }
-
     /**
      * OpenShift Deployment Configs (camel-kubernetes)
      * Perform operations on OpenShift Deployment Configs and get notified on
@@ -13277,15 +12541,13 @@ public class StaticEndpointBuilders {
      * options for secured connection with certificates, etc.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          masterUrl
+     * instead of the default name
+     * @param path masterUrl
      * @return the dsl builder
      */
-    public static OpenshiftDeploymentConfigsEndpointBuilderFactory.OpenshiftDeploymentConfigsEndpointBuilder openshiftDeploymentconfigs(
-            String componentName, String path) {
+    public static OpenshiftDeploymentConfigsEndpointBuilderFactory.OpenshiftDeploymentConfigsEndpointBuilder openshiftDeploymentconfigs(String componentName, String path) {
         return OpenshiftDeploymentConfigsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
@@ -13305,7 +12567,6 @@ public class StaticEndpointBuilders {
     public static CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(String path) {
         return openstackCinder("openstack-cinder", path);
     }
-
     /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
@@ -13320,15 +12581,13 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
-    public static CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(String componentName,
-            String path) {
+    public static CinderEndpointBuilderFactory.CinderEndpointBuilder openstackCinder(String componentName, String path) {
         return CinderEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenStack Glance (camel-openstack)
      * Manage VM images and metadata definitions in OpenStack Glance.
@@ -13348,7 +12607,6 @@ public class StaticEndpointBuilders {
     public static GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(String path) {
         return openstackGlance("openstack-glance", path);
     }
-
     /**
      * OpenStack Glance (camel-openstack)
      * Manage VM images and metadata definitions in OpenStack Glance.
@@ -13363,15 +12621,13 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
-    public static GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(String componentName,
-            String path) {
+    public static GlanceEndpointBuilderFactory.GlanceEndpointBuilder openstackGlance(String componentName, String path) {
         return GlanceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenStack Keystone (camel-openstack)
      * Access OpenStack Keystone for API client authentication, service
@@ -13392,7 +12648,6 @@ public class StaticEndpointBuilders {
     public static KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(String path) {
         return openstackKeystone("openstack-keystone", path);
     }
-
     /**
      * OpenStack Keystone (camel-openstack)
      * Access OpenStack Keystone for API client authentication, service
@@ -13408,15 +12663,13 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
-    public static KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(String componentName,
-            String path) {
+    public static KeystoneEndpointBuilderFactory.KeystoneEndpointBuilder openstackKeystone(String componentName, String path) {
         return KeystoneEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenStack Neutron (camel-openstack)
      * Access OpenStack Neutron for network services.
@@ -13436,7 +12689,6 @@ public class StaticEndpointBuilders {
     public static NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(String path) {
         return openstackNeutron("openstack-neutron", path);
     }
-
     /**
      * OpenStack Neutron (camel-openstack)
      * Access OpenStack Neutron for network services.
@@ -13451,15 +12703,13 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
-    public static NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(String componentName,
-            String path) {
+    public static NeutronEndpointBuilderFactory.NeutronEndpointBuilder openstackNeutron(String componentName, String path) {
         return NeutronEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenStack Nova (camel-openstack)
      * Access OpenStack to manage compute resources.
@@ -13479,7 +12729,6 @@ public class StaticEndpointBuilders {
     public static NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(String path) {
         return openstackNova("openstack-nova", path);
     }
-
     /**
      * OpenStack Nova (camel-openstack)
      * Access OpenStack to manage compute resources.
@@ -13494,14 +12743,13 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
     public static NovaEndpointBuilderFactory.NovaEndpointBuilder openstackNova(String componentName, String path) {
         return NovaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenStack Swift (camel-openstack)
      * Access OpenStack Swift object/blob store.
@@ -13521,7 +12769,6 @@ public class StaticEndpointBuilders {
     public static SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(String path) {
         return openstackSwift("openstack-swift", path);
     }
-
     /**
      * OpenStack Swift (camel-openstack)
      * Access OpenStack Swift object/blob store.
@@ -13536,14 +12783,13 @@ public class StaticEndpointBuilders {
      * OpenStack host url
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host
+     * instead of the default name
+     * @param path host
      * @return the dsl builder
      */
     public static SwiftEndpointBuilderFactory.SwiftEndpointBuilder openstackSwift(String componentName, String path) {
         return SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OpenTelemetry Metrics (camel-opentelemetry-metrics)
      * Camel metrics based on the Camel Telemetry spec
@@ -13567,7 +12813,6 @@ public class StaticEndpointBuilders {
     public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryEndpointBuilder opentelemetryMetrics(String path) {
         return opentelemetryMetrics("opentelemetry-metrics", path);
     }
-
     /**
      * OpenTelemetry Metrics (camel-opentelemetry-metrics)
      * Camel metrics based on the Camel Telemetry spec
@@ -13586,15 +12831,13 @@ public class StaticEndpointBuilders {
      * Name of metric
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          metricType:metricName
+     * instead of the default name
+     * @param path metricType:metricName
      * @return the dsl builder
      */
-    public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryEndpointBuilder opentelemetryMetrics(
-            String componentName, String path) {
+    public static OpenTelemetryEndpointBuilderFactory.OpenTelemetryEndpointBuilder opentelemetryMetrics(String componentName, String path) {
         return OpenTelemetryEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
@@ -13614,7 +12857,6 @@ public class StaticEndpointBuilders {
     public static OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(String path) {
         return optaplanner("optaplanner", path);
     }
-
     /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
@@ -13629,15 +12871,13 @@ public class StaticEndpointBuilders {
      * Problem name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          problemName
+     * instead of the default name
+     * @param path problemName
      * @return the dsl builder
      */
-    public static OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(String componentName,
-            String path) {
+    public static OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(String componentName, String path) {
         return OptaPlannerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
@@ -13657,7 +12897,6 @@ public class StaticEndpointBuilders {
     public static PahoEndpointBuilderFactory.PahoEndpointBuilder paho(String path) {
         return paho("paho", path);
     }
-
     /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
@@ -13672,14 +12911,13 @@ public class StaticEndpointBuilders {
      * Name of the topic
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topic
+     * instead of the default name
+     * @param path topic
      * @return the dsl builder
      */
     public static PahoEndpointBuilderFactory.PahoEndpointBuilder paho(String componentName, String path) {
         return PahoEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Paho MQTT 5 (camel-paho-mqtt5)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
@@ -13699,7 +12937,6 @@ public class StaticEndpointBuilders {
     public static PahoMqtt5EndpointBuilderFactory.PahoMqtt5EndpointBuilder pahoMqtt5(String path) {
         return pahoMqtt5("paho-mqtt5", path);
     }
-
     /**
      * Paho MQTT 5 (camel-paho-mqtt5)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
@@ -13714,15 +12951,13 @@ public class StaticEndpointBuilders {
      * Name of the topic
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topic
+     * instead of the default name
+     * @param path topic
      * @return the dsl builder
      */
-    public static PahoMqtt5EndpointBuilderFactory.PahoMqtt5EndpointBuilder pahoMqtt5(String componentName,
-            String path) {
+    public static PahoMqtt5EndpointBuilderFactory.PahoMqtt5EndpointBuilder pahoMqtt5(String componentName, String path) {
         return PahoMqtt5EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
@@ -13744,7 +12979,6 @@ public class StaticEndpointBuilders {
     public static PdfEndpointBuilderFactory.PdfEndpointBuilder pdf(String path) {
         return pdf("pdf", path);
     }
-
     /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
@@ -13761,14 +12995,13 @@ public class StaticEndpointBuilders {
      * extractText, merge
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static PdfEndpointBuilderFactory.PdfEndpointBuilder pdf(String componentName, String path) {
         return PdfEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * PostgresSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
@@ -13801,11 +13034,9 @@ public class StaticEndpointBuilders {
      * @param path host:port/database/slot:outputPlugin
      * @return the dsl builder
      */
-    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(
-            String path) {
+    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
         return pgReplicationSlot("pg-replication-slot", path);
     }
-
     /**
      * PostgresSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
@@ -13836,15 +13067,13 @@ public class StaticEndpointBuilders {
      * Output plugin name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/database/slot:outputPlugin
+     * instead of the default name
+     * @param path host:port/database/slot:outputPlugin
      * @return the dsl builder
      */
-    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(
-            String componentName, String path) {
+    public static PgReplicationSlotEndpointBuilderFactory.PgReplicationSlotEndpointBuilder pgReplicationSlot(String componentName, String path) {
         return PgReplicationSlotEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * PostgresSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
@@ -13877,7 +13106,6 @@ public class StaticEndpointBuilders {
     public static PgEventEndpointBuilderFactory.PgEventEndpointBuilder pgevent(String path) {
         return pgevent("pgevent", path);
     }
-
     /**
      * PostgresSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
@@ -13905,14 +13133,13 @@ public class StaticEndpointBuilders {
      * The channel name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/database/channel
+     * instead of the default name
+     * @param path host:port/database/channel
      * @return the dsl builder
      */
     public static PgEventEndpointBuilderFactory.PgEventEndpointBuilder pgevent(String componentName, String path) {
         return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
@@ -13932,7 +13159,6 @@ public class StaticEndpointBuilders {
     public static PineconeVectorDbEndpointBuilderFactory.PineconeVectorDbEndpointBuilder pinecone(String path) {
         return pinecone("pinecone", path);
     }
-
     /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
@@ -13947,15 +13173,13 @@ public class StaticEndpointBuilders {
      * The collection Name. (Only used by some actions)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          collection
+     * instead of the default name
+     * @param path collection
      * @return the dsl builder
      */
-    public static PineconeVectorDbEndpointBuilderFactory.PineconeVectorDbEndpointBuilder pinecone(String componentName,
-            String path) {
+    public static PineconeVectorDbEndpointBuilderFactory.PineconeVectorDbEndpointBuilder pinecone(String componentName, String path) {
         return PineconeVectorDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Platform HTTP (camel-platform-http)
      * Expose HTTP endpoints using the HTTP server available in the current
@@ -13977,7 +13201,6 @@ public class StaticEndpointBuilders {
     public static PlatformHttpEndpointBuilderFactory.PlatformHttpEndpointBuilder platformHttp(String path) {
         return platformHttp("platform-http", path);
     }
-
     /**
      * Platform HTTP (camel-platform-http)
      * Expose HTTP endpoints using the HTTP server available in the current
@@ -13994,15 +13217,13 @@ public class StaticEndpointBuilders {
      * use 'proxy'
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          path
+     * instead of the default name
+     * @param path path
      * @return the dsl builder
      */
-    public static PlatformHttpEndpointBuilderFactory.PlatformHttpEndpointBuilder platformHttp(String componentName,
-            String path) {
+    public static PlatformHttpEndpointBuilderFactory.PlatformHttpEndpointBuilder platformHttp(String componentName, String path) {
         return PlatformHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * PLC4X (camel-plc4x)
      * Read and write to PLC devices
@@ -14022,7 +13243,6 @@ public class StaticEndpointBuilders {
     public static Plc4XEndpointBuilderFactory.Plc4XEndpointBuilder plc4x(String path) {
         return plc4x("plc4x", path);
     }
-
     /**
      * PLC4X (camel-plc4x)
      * Read and write to PLC devices
@@ -14037,14 +13257,13 @@ public class StaticEndpointBuilders {
      * PLC4X connection string for the connection to the target
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          driver
+     * instead of the default name
+     * @param path driver
      * @return the dsl builder
      */
     public static Plc4XEndpointBuilderFactory.Plc4XEndpointBuilder plc4x(String componentName, String path) {
         return Plc4XEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * POP3 (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -14067,7 +13286,6 @@ public class StaticEndpointBuilders {
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3(String path) {
         return imap("pop3", path);
     }
-
     /**
      * POP3S (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -14090,7 +13308,6 @@ public class StaticEndpointBuilders {
     public static MailEndpointBuilderFactory.MailEndpointBuilder pop3s(String path) {
         return imap("pop3s", path);
     }
-
     /**
      * PQC Algorithms (camel-pqc)
      * Post Quantum Cryptography Signature and Verification component.
@@ -14110,7 +13327,6 @@ public class StaticEndpointBuilders {
     public static PQCEndpointBuilderFactory.PQCEndpointBuilder pqc(String path) {
         return pqc("pqc", path);
     }
-
     /**
      * PQC Algorithms (camel-pqc)
      * Post Quantum Cryptography Signature and Verification component.
@@ -14125,14 +13341,13 @@ public class StaticEndpointBuilders {
      * Logical name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          label
+     * instead of the default name
+     * @param path label
      * @return the dsl builder
      */
     public static PQCEndpointBuilderFactory.PQCEndpointBuilder pqc(String componentName, String path) {
         return PQCEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
@@ -14153,7 +13368,6 @@ public class StaticEndpointBuilders {
     public static PubNubEndpointBuilderFactory.PubNubEndpointBuilder pubnub(String path) {
         return pubnub("pubnub", path);
     }
-
     /**
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
@@ -14169,14 +13383,13 @@ public class StaticEndpointBuilders {
      * The channel used for subscribing/publishing events
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          channel
+     * instead of the default name
+     * @param path channel
      * @return the dsl builder
      */
     public static PubNubEndpointBuilderFactory.PubNubEndpointBuilder pubnub(String componentName, String path) {
         return PubNubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Pulsar (camel-pulsar)
      * Send and receive messages from/to Apache Pulsar messaging system.
@@ -14206,7 +13419,6 @@ public class StaticEndpointBuilders {
     public static PulsarEndpointBuilderFactory.PulsarEndpointBuilder pulsar(String path) {
         return pulsar("pulsar", path);
     }
-
     /**
      * Pulsar (camel-pulsar)
      * Send and receive messages from/to Apache Pulsar messaging system.
@@ -14231,14 +13443,13 @@ public class StaticEndpointBuilders {
      * The topic
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          persistence://tenant/namespace/topic
+     * instead of the default name
+     * @param path persistence://tenant/namespace/topic
      * @return the dsl builder
      */
     public static PulsarEndpointBuilderFactory.PulsarEndpointBuilder pulsar(String componentName, String path) {
         return PulsarEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Qdrant (camel-qdrant)
      * Perform operations on the Qdrant Vector Database.
@@ -14258,7 +13469,6 @@ public class StaticEndpointBuilders {
     public static QdrantEndpointBuilderFactory.QdrantEndpointBuilder qdrant(String path) {
         return qdrant("qdrant", path);
     }
-
     /**
      * Qdrant (camel-qdrant)
      * Perform operations on the Qdrant Vector Database.
@@ -14273,14 +13483,13 @@ public class StaticEndpointBuilders {
      * The collection Name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          collection
+     * instead of the default name
+     * @param path collection
      * @return the dsl builder
      */
     public static QdrantEndpointBuilderFactory.QdrantEndpointBuilder qdrant(String componentName, String path) {
         return QdrantEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
@@ -14306,7 +13515,6 @@ public class StaticEndpointBuilders {
     public static QuartzEndpointBuilderFactory.QuartzEndpointBuilder quartz(String path) {
         return quartz("quartz", path);
     }
-
     /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
@@ -14327,14 +13535,13 @@ public class StaticEndpointBuilders {
      * name should be unique.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          groupName/triggerName
+     * instead of the default name
+     * @param path groupName/triggerName
      * @return the dsl builder
      */
     public static QuartzEndpointBuilderFactory.QuartzEndpointBuilder quartz(String componentName, String path) {
         return QuartzEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * QuickFix (camel-quickfix)
      * Open a Financial Interchange (FIX) session using an embedded QuickFix/J
@@ -14362,7 +13569,6 @@ public class StaticEndpointBuilders {
     public static QuickfixjEndpointBuilderFactory.QuickfixjEndpointBuilder quickfix(String path) {
         return quickfix("quickfix", path);
     }
-
     /**
      * QuickFix (camel-quickfix)
      * Open a Financial Interchange (FIX) session using an embedded QuickFix/J
@@ -14385,14 +13591,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          configurationName
+     * instead of the default name
+     * @param path configurationName
      * @return the dsl builder
      */
     public static QuickfixjEndpointBuilderFactory.QuickfixjEndpointBuilder quickfix(String componentName, String path) {
         return QuickfixjEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
@@ -14413,7 +13618,6 @@ public class StaticEndpointBuilders {
     public static ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
         return reactiveStreams("reactive-streams", path);
     }
-
     /**
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
@@ -14429,15 +13633,13 @@ public class StaticEndpointBuilders {
      * Name of the stream channel used by the endpoint to exchange messages.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          stream
+     * instead of the default name
+     * @param path stream
      * @return the dsl builder
      */
-    public static ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(
-            String componentName, String path) {
+    public static ReactiveStreamsEndpointBuilderFactory.ReactiveStreamsEndpointBuilder reactiveStreams(String componentName, String path) {
         return ReactiveStreamsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Ref (camel-ref)
      * Route messages to an endpoint looked up dynamically by name in the Camel
@@ -14458,7 +13660,6 @@ public class StaticEndpointBuilders {
     public static RefEndpointBuilderFactory.RefEndpointBuilder ref(String path) {
         return ref("ref", path);
     }
-
     /**
      * Ref (camel-ref)
      * Route messages to an endpoint looked up dynamically by name in the Camel
@@ -14474,14 +13675,13 @@ public class StaticEndpointBuilders {
      * Name of endpoint to lookup in the registry.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static RefEndpointBuilderFactory.RefEndpointBuilder ref(String componentName, String path) {
         return RefEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * REST (camel-rest)
      * Expose REST services or call external REST services.
@@ -14510,7 +13710,6 @@ public class StaticEndpointBuilders {
     public static RestEndpointBuilderFactory.RestEndpointBuilder restEndpoint(String path) {
         return restEndpoint("rest", path);
     }
-
     /**
      * REST (camel-rest)
      * Expose REST services or call external REST services.
@@ -14534,14 +13733,13 @@ public class StaticEndpointBuilders {
      * The uri template
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          method:path:uriTemplate
+     * instead of the default name
+     * @param path method:path:uriTemplate
      * @return the dsl builder
      */
     public static RestEndpointBuilderFactory.RestEndpointBuilder restEndpoint(String componentName, String path) {
         return RestEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * REST API (camel-rest)
      * Expose OpenAPI Specification of the REST services defined using Camel
@@ -14562,7 +13760,6 @@ public class StaticEndpointBuilders {
     public static RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(String path) {
         return restApi("rest-api", path);
     }
-
     /**
      * REST API (camel-rest)
      * Expose OpenAPI Specification of the REST services defined using Camel
@@ -14578,14 +13775,13 @@ public class StaticEndpointBuilders {
      * The base path
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          path
+     * instead of the default name
+     * @param path path
      * @return the dsl builder
      */
     public static RestApiEndpointBuilderFactory.RestApiEndpointBuilder restApi(String componentName, String path) {
         return RestApiEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * REST OpenApi (camel-rest-openapi)
      * To call REST services using OpenAPI specification as contract.
@@ -14623,7 +13819,6 @@ public class StaticEndpointBuilders {
     public static RestOpenApiEndpointBuilderFactory.RestOpenApiEndpointBuilder restOpenapi(String path) {
         return restOpenapi("rest-openapi", path);
     }
-
     /**
      * REST OpenApi (camel-rest-openapi)
      * To call REST services using OpenAPI specification as contract.
@@ -14656,15 +13851,13 @@ public class StaticEndpointBuilders {
      * using producer
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          specificationUri#operationId
+     * instead of the default name
+     * @param path specificationUri#operationId
      * @return the dsl builder
      */
-    public static RestOpenApiEndpointBuilderFactory.RestOpenApiEndpointBuilder restOpenapi(String componentName,
-            String path) {
+    public static RestOpenApiEndpointBuilderFactory.RestOpenApiEndpointBuilder restOpenapi(String componentName, String path) {
         return RestOpenApiEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
@@ -14690,7 +13883,6 @@ public class StaticEndpointBuilders {
     public static RobotFrameworkEndpointBuilderFactory.RobotFrameworkEndpointBuilder robotframework(String path) {
         return robotframework("robotframework", path);
     }
-
     /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
@@ -14711,15 +13903,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static RobotFrameworkEndpointBuilderFactory.RobotFrameworkEndpointBuilder robotframework(
-            String componentName, String path) {
+    public static RobotFrameworkEndpointBuilderFactory.RobotFrameworkEndpointBuilder robotframework(String componentName, String path) {
         return RobotFrameworkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * RocketMQ (camel-rocketmq)
      * Send and receive messages from RocketMQ cluster.
@@ -14739,7 +13929,6 @@ public class StaticEndpointBuilders {
     public static RocketMQEndpointBuilderFactory.RocketMQEndpointBuilder rocketmq(String path) {
         return rocketmq("rocketmq", path);
     }
-
     /**
      * RocketMQ (camel-rocketmq)
      * Send and receive messages from RocketMQ cluster.
@@ -14754,14 +13943,13 @@ public class StaticEndpointBuilders {
      * Topic name of this endpoint.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          topicName
+     * instead of the default name
+     * @param path topicName
      * @return the dsl builder
      */
     public static RocketMQEndpointBuilderFactory.RocketMQEndpointBuilder rocketmq(String componentName, String path) {
         return RocketMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * RSS (camel-rss)
      * Poll RSS feeds.
@@ -14781,7 +13969,6 @@ public class StaticEndpointBuilders {
     public static RssEndpointBuilderFactory.RssEndpointBuilder rss(String path) {
         return rss("rss", path);
     }
-
     /**
      * RSS (camel-rss)
      * Poll RSS feeds.
@@ -14796,14 +13983,13 @@ public class StaticEndpointBuilders {
      * The URI to the feed to poll.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          feedUri
+     * instead of the default name
+     * @param path feedUri
      * @return the dsl builder
      */
     public static RssEndpointBuilderFactory.RssEndpointBuilder rss(String componentName, String path) {
         return RssEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Saga (camel-saga)
      * Execute custom actions within a route using the Saga EIP.
@@ -14824,7 +14010,6 @@ public class StaticEndpointBuilders {
     public static SagaEndpointBuilderFactory.SagaEndpointBuilder saga(String path) {
         return saga("saga", path);
     }
-
     /**
      * Saga (camel-saga)
      * Execute custom actions within a route using the Saga EIP.
@@ -14840,14 +14025,13 @@ public class StaticEndpointBuilders {
      * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          action
+     * instead of the default name
+     * @param path action
      * @return the dsl builder
      */
     public static SagaEndpointBuilderFactory.SagaEndpointBuilder saga(String componentName, String path) {
         return SagaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
@@ -14888,7 +14072,6 @@ public class StaticEndpointBuilders {
     public static SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(String path) {
         return salesforce("salesforce", path);
     }
-
     /**
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
@@ -14924,15 +14107,13 @@ public class StaticEndpointBuilders {
      * The name of the topic/channel to use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operationName:topicName
+     * instead of the default name
+     * @param path operationName:topicName
      * @return the dsl builder
      */
-    public static SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(String componentName,
-            String path) {
+    public static SalesforceEndpointBuilderFactory.SalesforceEndpointBuilder salesforce(String componentName, String path) {
         return SalesforceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
@@ -14952,7 +14133,6 @@ public class StaticEndpointBuilders {
     public static NetWeaverEndpointBuilderFactory.NetWeaverEndpointBuilder sapNetweaver(String path) {
         return sapNetweaver("sap-netweaver", path);
     }
-
     /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
@@ -14967,15 +14147,13 @@ public class StaticEndpointBuilders {
      * Url to the SAP net-weaver gateway server.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          url
+     * instead of the default name
+     * @param path url
      * @return the dsl builder
      */
-    public static NetWeaverEndpointBuilderFactory.NetWeaverEndpointBuilder sapNetweaver(String componentName,
-            String path) {
+    public static NetWeaverEndpointBuilderFactory.NetWeaverEndpointBuilder sapNetweaver(String componentName, String path) {
         return NetWeaverEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
@@ -14996,7 +14174,6 @@ public class StaticEndpointBuilders {
     public static SchedulerEndpointBuilderFactory.SchedulerEndpointBuilder scheduler(String path) {
         return scheduler("scheduler", path);
     }
-
     /**
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
@@ -15012,15 +14189,13 @@ public class StaticEndpointBuilders {
      * The name of the scheduler
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static SchedulerEndpointBuilderFactory.SchedulerEndpointBuilder scheduler(String componentName,
-            String path) {
+    public static SchedulerEndpointBuilderFactory.SchedulerEndpointBuilder scheduler(String componentName, String path) {
         return SchedulerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Schematron (camel-schematron)
      * Validate XML payload using the Schematron Library.
@@ -15043,7 +14218,6 @@ public class StaticEndpointBuilders {
     public static SchematronEndpointBuilderFactory.SchematronEndpointBuilder schematron(String path) {
         return schematron("schematron", path);
     }
-
     /**
      * Schematron (camel-schematron)
      * Validate XML payload using the Schematron Library.
@@ -15061,15 +14235,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          path
+     * instead of the default name
+     * @param path path
      * @return the dsl builder
      */
-    public static SchematronEndpointBuilderFactory.SchematronEndpointBuilder schematron(String componentName,
-            String path) {
+    public static SchematronEndpointBuilderFactory.SchematronEndpointBuilder schematron(String componentName, String path) {
         return SchematronEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SCP (camel-jsch)
      * Copy files to/from remote hosts using the secure copy protocol (SCP).
@@ -15095,7 +14267,6 @@ public class StaticEndpointBuilders {
     public static ScpEndpointBuilderFactory.ScpEndpointBuilder scp(String path) {
         return scp("scp", path);
     }
-
     /**
      * SCP (camel-jsch)
      * Copy files to/from remote hosts using the secure copy protocol (SCP).
@@ -15116,14 +14287,13 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/directoryName
+     * instead of the default name
+     * @param path host:port/directoryName
      * @return the dsl builder
      */
     public static ScpEndpointBuilderFactory.ScpEndpointBuilder scp(String componentName, String path) {
         return ScpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SEDA (camel-seda)
      * Asynchronously call another endpoint from any Camel Context in the same
@@ -15144,7 +14314,6 @@ public class StaticEndpointBuilders {
     public static SedaEndpointBuilderFactory.SedaEndpointBuilder seda(String path) {
         return seda("seda", path);
     }
-
     /**
      * SEDA (camel-seda)
      * Asynchronously call another endpoint from any Camel Context in the same
@@ -15160,14 +14329,13 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static SedaEndpointBuilderFactory.SedaEndpointBuilder seda(String componentName, String path) {
         return SedaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Service (camel-service)
      * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
@@ -15189,7 +14357,6 @@ public class StaticEndpointBuilders {
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String path) {
         return service("service", path);
     }
-
     /**
      * Service (camel-service)
      * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
@@ -15205,15 +14372,14 @@ public class StaticEndpointBuilders {
      * The endpoint uri to expose as service
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          delegateUri
+     * instead of the default name
+     * @param path delegateUri
      * @return the dsl builder
      */
     @Deprecated
     public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String componentName, String path) {
         return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
@@ -15233,7 +14399,6 @@ public class StaticEndpointBuilders {
     public static ServiceNowEndpointBuilderFactory.ServiceNowEndpointBuilder servicenow(String path) {
         return servicenow("servicenow", path);
     }
-
     /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
@@ -15248,15 +14413,13 @@ public class StaticEndpointBuilders {
      * The ServiceNow instance name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          instanceName
+     * instead of the default name
+     * @param path instanceName
      * @return the dsl builder
      */
-    public static ServiceNowEndpointBuilderFactory.ServiceNowEndpointBuilder servicenow(String componentName,
-            String path) {
+    public static ServiceNowEndpointBuilderFactory.ServiceNowEndpointBuilder servicenow(String componentName, String path) {
         return ServiceNowEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Servlet (camel-servlet)
      * Serve HTTP requests by a Servlet.
@@ -15276,7 +14439,6 @@ public class StaticEndpointBuilders {
     public static ServletEndpointBuilderFactory.ServletEndpointBuilder servlet(String path) {
         return servlet("servlet", path);
     }
-
     /**
      * Servlet (camel-servlet)
      * Serve HTTP requests by a Servlet.
@@ -15291,14 +14453,13 @@ public class StaticEndpointBuilders {
      * The context-path to use
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          contextPath
+     * instead of the default name
+     * @param path contextPath
      * @return the dsl builder
      */
     public static ServletEndpointBuilderFactory.ServletEndpointBuilder servlet(String componentName, String path) {
         return ServletEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SFTP (camel-ftp)
      * Upload and download files to/from SFTP servers.
@@ -15324,7 +14485,6 @@ public class StaticEndpointBuilders {
     public static SftpEndpointBuilderFactory.SftpEndpointBuilder sftp(String path) {
         return sftp("sftp", path);
     }
-
     /**
      * SFTP (camel-ftp)
      * Upload and download files to/from SFTP servers.
@@ -15345,14 +14505,13 @@ public class StaticEndpointBuilders {
      * The starting directory
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/directoryName
+     * instead of the default name
+     * @param path host:port/directoryName
      * @return the dsl builder
      */
     public static SftpEndpointBuilderFactory.SftpEndpointBuilder sftp(String componentName, String path) {
         return SftpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
@@ -15379,7 +14538,6 @@ public class StaticEndpointBuilders {
     public static SjmsEndpointBuilderFactory.SjmsEndpointBuilder sjms(String path) {
         return sjms("sjms", path);
     }
-
     /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
@@ -15401,14 +14559,13 @@ public class StaticEndpointBuilders {
      * destinationName is interpreted as a queue name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          destinationType:destinationName
+     * instead of the default name
+     * @param path destinationType:destinationName
      * @return the dsl builder
      */
     public static SjmsEndpointBuilderFactory.SjmsEndpointBuilder sjms(String componentName, String path) {
         return SjmsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
@@ -15435,7 +14592,6 @@ public class StaticEndpointBuilders {
     public static Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(String path) {
         return sjms2("sjms2", path);
     }
-
     /**
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
@@ -15457,14 +14613,13 @@ public class StaticEndpointBuilders {
      * destinationName is interpreted as a queue name.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          destinationType:destinationName
+     * instead of the default name
+     * @param path destinationType:destinationName
      * @return the dsl builder
      */
     public static Sjms2EndpointBuilderFactory.Sjms2EndpointBuilder sjms2(String componentName, String path) {
         return Sjms2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Slack (camel-slack)
      * Send and receive messages to/from Slack.
@@ -15485,7 +14640,6 @@ public class StaticEndpointBuilders {
     public static SlackEndpointBuilderFactory.SlackEndpointBuilder slack(String path) {
         return slack("slack", path);
     }
-
     /**
      * Slack (camel-slack)
      * Send and receive messages to/from Slack.
@@ -15501,14 +14655,13 @@ public class StaticEndpointBuilders {
      * message directly to an user.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          channel
+     * instead of the default name
+     * @param path channel
      * @return the dsl builder
      */
     public static SlackEndpointBuilderFactory.SlackEndpointBuilder slack(String componentName, String path) {
         return SlackEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SMB (camel-smb)
      * Read and write files to Server Message Block (SMB) file shares.
@@ -15538,7 +14691,6 @@ public class StaticEndpointBuilders {
     public static SmbEndpointBuilderFactory.SmbEndpointBuilder smb(String path) {
         return smb("smb", path);
     }
-
     /**
      * SMB (camel-smb)
      * Read and write files to Server Message Block (SMB) file shares.
@@ -15563,14 +14715,13 @@ public class StaticEndpointBuilders {
      * The base directory within the share
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          hostname:port/shareName/path
+     * instead of the default name
+     * @param path hostname:port/shareName/path
      * @return the dsl builder
      */
     public static SmbEndpointBuilderFactory.SmbEndpointBuilder smb(String componentName, String path) {
         return SmbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
@@ -15593,7 +14744,6 @@ public class StaticEndpointBuilders {
     public static SmooksEndpointBuilderFactory.SmooksEndpointBuilder smooks(String path) {
         return smooks("smooks", path);
     }
-
     /**
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
@@ -15611,14 +14761,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          smooksConfig
+     * instead of the default name
+     * @param path smooksConfig
      * @return the dsl builder
      */
     public static SmooksEndpointBuilderFactory.SmooksEndpointBuilder smooks(String componentName, String path) {
         return SmooksEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
@@ -15644,7 +14793,6 @@ public class StaticEndpointBuilders {
     public static SmppEndpointBuilderFactory.SmppEndpointBuilder smpp(String path) {
         return smpp("smpp", path);
     }
-
     /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
@@ -15665,14 +14813,13 @@ public class StaticEndpointBuilders {
      * Default value: 2775
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port
+     * instead of the default name
+     * @param path host:port
      * @return the dsl builder
      */
     public static SmppEndpointBuilderFactory.SmppEndpointBuilder smpp(String componentName, String path) {
         return SmppEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SMPP (Secure) (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
@@ -15698,7 +14845,6 @@ public class StaticEndpointBuilders {
     public static SmppEndpointBuilderFactory.SmppEndpointBuilder smpps(String path) {
         return smpp("smpps", path);
     }
-
     /**
      * SMTP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -15721,7 +14867,6 @@ public class StaticEndpointBuilders {
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtp(String path) {
         return imap("smtp", path);
     }
-
     /**
      * SMTPS (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -15744,7 +14889,6 @@ public class StaticEndpointBuilders {
     public static MailEndpointBuilderFactory.MailEndpointBuilder smtps(String path) {
         return imap("smtps", path);
     }
-
     /**
      * SNMP (camel-snmp)
      * Receive traps and poll SNMP (Simple Network Management Protocol) capable
@@ -15768,7 +14912,6 @@ public class StaticEndpointBuilders {
     public static SnmpEndpointBuilderFactory.SnmpEndpointBuilder snmp(String path) {
         return snmp("snmp", path);
     }
-
     /**
      * SNMP (camel-snmp)
      * Receive traps and poll SNMP (Simple Network Management Protocol) capable
@@ -15787,14 +14930,13 @@ public class StaticEndpointBuilders {
      * Port number of the SNMP enabled device
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port
+     * instead of the default name
+     * @param path host:port
      * @return the dsl builder
      */
     public static SnmpEndpointBuilderFactory.SnmpEndpointBuilder snmp(String componentName, String path) {
         return SnmpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
@@ -15823,7 +14965,6 @@ public class StaticEndpointBuilders {
     public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String path) {
         return solr("solr", path);
     }
-
     /**
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
@@ -15847,14 +14988,13 @@ public class StaticEndpointBuilders {
      * Default value: /solr
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/basePath
+     * instead of the default name
+     * @param path host:port/basePath
      * @return the dsl builder
      */
     public static SolrEndpointBuilderFactory.SolrEndpointBuilder solr(String componentName, String path) {
         return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
@@ -15874,7 +15014,6 @@ public class StaticEndpointBuilders {
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String path) {
         return splunk("splunk", path);
     }
-
     /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
@@ -15889,14 +15028,13 @@ public class StaticEndpointBuilders {
      * Name has no purpose
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static SplunkEndpointBuilderFactory.SplunkEndpointBuilder splunk(String componentName, String path) {
         return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
@@ -15917,7 +15055,6 @@ public class StaticEndpointBuilders {
     public static SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(String path) {
         return splunkHec("splunk-hec", path);
     }
-
     /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
@@ -15933,15 +15070,13 @@ public class StaticEndpointBuilders {
      * Splunk Host and Port (example: my_splunk_server:8089)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          splunkURL
+     * instead of the default name
+     * @param path splunkURL
      * @return the dsl builder
      */
-    public static SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(String componentName,
-            String path) {
+    public static SplunkHECEndpointBuilderFactory.SplunkHECEndpointBuilder splunkHec(String componentName, String path) {
         return SplunkHECEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring AI Chat (camel-spring-ai-chat)
      * Perform chat operations using Spring AI.
@@ -15961,7 +15096,6 @@ public class StaticEndpointBuilders {
     public static SpringAiChatEndpointBuilderFactory.SpringAiChatEndpointBuilder springAiChat(String path) {
         return springAiChat("spring-ai-chat", path);
     }
-
     /**
      * Spring AI Chat (camel-spring-ai-chat)
      * Perform chat operations using Spring AI.
@@ -15976,15 +15110,13 @@ public class StaticEndpointBuilders {
      * The ID of the chat endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          chatId
+     * instead of the default name
+     * @param path chatId
      * @return the dsl builder
      */
-    public static SpringAiChatEndpointBuilderFactory.SpringAiChatEndpointBuilder springAiChat(String componentName,
-            String path) {
+    public static SpringAiChatEndpointBuilderFactory.SpringAiChatEndpointBuilder springAiChat(String componentName, String path) {
         return SpringAiChatEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring AI Embeddings (camel-spring-ai-embeddings)
      * Spring AI Embeddings
@@ -16001,11 +15133,9 @@ public class StaticEndpointBuilders {
      * @param path embeddingId
      * @return the dsl builder
      */
-    public static SpringAiEmbeddingsEndpointBuilderFactory.SpringAiEmbeddingsEndpointBuilder springAiEmbeddings(
-            String path) {
+    public static SpringAiEmbeddingsEndpointBuilderFactory.SpringAiEmbeddingsEndpointBuilder springAiEmbeddings(String path) {
         return springAiEmbeddings("spring-ai-embeddings", path);
     }
-
     /**
      * Spring AI Embeddings (camel-spring-ai-embeddings)
      * Spring AI Embeddings
@@ -16020,15 +15150,13 @@ public class StaticEndpointBuilders {
      * The id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          embeddingId
+     * instead of the default name
+     * @param path embeddingId
      * @return the dsl builder
      */
-    public static SpringAiEmbeddingsEndpointBuilderFactory.SpringAiEmbeddingsEndpointBuilder springAiEmbeddings(
-            String componentName, String path) {
+    public static SpringAiEmbeddingsEndpointBuilderFactory.SpringAiEmbeddingsEndpointBuilder springAiEmbeddings(String componentName, String path) {
         return SpringAiEmbeddingsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring AI Tools (camel-spring-ai-tools)
      * Spring AI Tools and Function Calling Features
@@ -16048,7 +15176,6 @@ public class StaticEndpointBuilders {
     public static SpringAiToolsEndpointBuilderFactory.SpringAiToolsEndpointBuilder springAiTools(String path) {
         return springAiTools("spring-ai-tools", path);
     }
-
     /**
      * Spring AI Tools (camel-spring-ai-tools)
      * Spring AI Tools and Function Calling Features
@@ -16063,15 +15190,13 @@ public class StaticEndpointBuilders {
      * The tool id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          toolId
+     * instead of the default name
+     * @param path toolId
      * @return the dsl builder
      */
-    public static SpringAiToolsEndpointBuilderFactory.SpringAiToolsEndpointBuilder springAiTools(String componentName,
-            String path) {
+    public static SpringAiToolsEndpointBuilderFactory.SpringAiToolsEndpointBuilder springAiTools(String componentName, String path) {
         return SpringAiToolsEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
      * Spring AI Vector Store
@@ -16088,11 +15213,9 @@ public class StaticEndpointBuilders {
      * @param path storeId
      * @return the dsl builder
      */
-    public static SpringAiVectorStoreEndpointBuilderFactory.SpringAiVectorStoreEndpointBuilder springAiVectorStore(
-            String path) {
+    public static SpringAiVectorStoreEndpointBuilderFactory.SpringAiVectorStoreEndpointBuilder springAiVectorStore(String path) {
         return springAiVectorStore("spring-ai-vector-store", path);
     }
-
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
      * Spring AI Vector Store
@@ -16107,15 +15230,13 @@ public class StaticEndpointBuilders {
      * The id
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          storeId
+     * instead of the default name
+     * @param path storeId
      * @return the dsl builder
      */
-    public static SpringAiVectorStoreEndpointBuilderFactory.SpringAiVectorStoreEndpointBuilder springAiVectorStore(
-            String componentName, String path) {
+    public static SpringAiVectorStoreEndpointBuilderFactory.SpringAiVectorStoreEndpointBuilder springAiVectorStore(String componentName, String path) {
         return SpringAiVectorStoreEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
@@ -16135,7 +15256,6 @@ public class StaticEndpointBuilders {
     public static SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(String path) {
         return springBatch("spring-batch", path);
     }
-
     /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
@@ -16150,15 +15270,13 @@ public class StaticEndpointBuilders {
      * The name of the Spring Batch job located in the registry.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          jobName
+     * instead of the default name
+     * @param path jobName
      * @return the dsl builder
      */
-    public static SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(String componentName,
-            String path) {
+    public static SpringBatchEndpointBuilderFactory.SpringBatchEndpointBuilder springBatch(String componentName, String path) {
         return SpringBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring Event (camel-spring)
      * Listen for Spring Application Events.
@@ -16178,7 +15296,6 @@ public class StaticEndpointBuilders {
     public static EventEndpointBuilderFactory.EventEndpointBuilder springEvent(String path) {
         return springEvent("spring-event", path);
     }
-
     /**
      * Spring Event (camel-spring)
      * Listen for Spring Application Events.
@@ -16193,14 +15310,13 @@ public class StaticEndpointBuilders {
      * Name of endpoint
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static EventEndpointBuilderFactory.EventEndpointBuilder springEvent(String componentName, String path) {
         return EventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
@@ -16223,7 +15339,6 @@ public class StaticEndpointBuilders {
     public static SpringJdbcEndpointBuilderFactory.SpringJdbcEndpointBuilder springJdbc(String path) {
         return springJdbc("spring-jdbc", path);
     }
-
     /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
@@ -16241,15 +15356,13 @@ public class StaticEndpointBuilders {
      * found, then this DataSource will be used.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          dataSourceName
+     * instead of the default name
+     * @param path dataSourceName
      * @return the dsl builder
      */
-    public static SpringJdbcEndpointBuilderFactory.SpringJdbcEndpointBuilder springJdbc(String componentName,
-            String path) {
+    public static SpringJdbcEndpointBuilderFactory.SpringJdbcEndpointBuilder springJdbc(String componentName, String path) {
         return SpringJdbcEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
@@ -16269,7 +15382,6 @@ public class StaticEndpointBuilders {
     public static SpringLdapEndpointBuilderFactory.SpringLdapEndpointBuilder springLdap(String path) {
         return springLdap("spring-ldap", path);
     }
-
     /**
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
@@ -16284,15 +15396,13 @@ public class StaticEndpointBuilders {
      * Name of the Spring LDAP Template bean
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          templateName
+     * instead of the default name
+     * @param path templateName
      * @return the dsl builder
      */
-    public static SpringLdapEndpointBuilderFactory.SpringLdapEndpointBuilder springLdap(String componentName,
-            String path) {
+    public static SpringLdapEndpointBuilderFactory.SpringLdapEndpointBuilder springLdap(String componentName, String path) {
         return SpringLdapEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
      * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
@@ -16315,7 +15425,6 @@ public class StaticEndpointBuilders {
     public static SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQEndpointBuilder springRabbitmq(String path) {
         return springRabbitmq("spring-rabbitmq", path);
     }
-
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
      * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
@@ -16333,15 +15442,13 @@ public class StaticEndpointBuilders {
      * then do not use empty name, but use default instead.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          exchangeName
+     * instead of the default name
+     * @param path exchangeName
      * @return the dsl builder
      */
-    public static SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQEndpointBuilder springRabbitmq(
-            String componentName, String path) {
+    public static SpringRabbitMQEndpointBuilderFactory.SpringRabbitMQEndpointBuilder springRabbitmq(String componentName, String path) {
         return SpringRabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
@@ -16364,7 +15471,6 @@ public class StaticEndpointBuilders {
     public static RedisEndpointBuilderFactory.RedisEndpointBuilder springRedis(String path) {
         return springRedis("spring-redis", path);
     }
-
     /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
@@ -16382,14 +15488,13 @@ public class StaticEndpointBuilders {
      * Redis server port number
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port
+     * instead of the default name
+     * @param path host:port
      * @return the dsl builder
      */
     public static RedisEndpointBuilderFactory.RedisEndpointBuilder springRedis(String componentName, String path) {
         return RedisEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Spring WebService (camel-spring-ws)
      * Access external web services as a client or expose your own web services.
@@ -16428,7 +15533,6 @@ public class StaticEndpointBuilders {
     public static SpringWebserviceEndpointBuilderFactory.SpringWebserviceEndpointBuilder springWs(String path) {
         return springWs("spring-ws", path);
     }
-
     /**
      * Spring WebService (camel-spring-ws)
      * Access external web services as a client or expose your own web services.
@@ -16462,15 +15566,13 @@ public class StaticEndpointBuilders {
      * The default Web Service endpoint uri to use for the producer.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          type:lookupKey:webServiceEndpointUri
+     * instead of the default name
+     * @param path type:lookupKey:webServiceEndpointUri
      * @return the dsl builder
      */
-    public static SpringWebserviceEndpointBuilderFactory.SpringWebserviceEndpointBuilder springWs(String componentName,
-            String path) {
+    public static SpringWebserviceEndpointBuilderFactory.SpringWebserviceEndpointBuilder springWs(String componentName, String path) {
         return SpringWebserviceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SQL (camel-sql)
      * Perform SQL queries using Spring JDBC.
@@ -16493,7 +15595,6 @@ public class StaticEndpointBuilders {
     public static SqlEndpointBuilderFactory.SqlEndpointBuilder sql(String path) {
         return sql("sql", path);
     }
-
     /**
      * SQL (camel-sql)
      * Perform SQL queries using Spring JDBC.
@@ -16511,14 +15612,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          query
+     * instead of the default name
+     * @param path query
      * @return the dsl builder
      */
     public static SqlEndpointBuilderFactory.SqlEndpointBuilder sql(String componentName, String path) {
         return SqlEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SQL Stored Procedure (camel-sql)
      * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
@@ -16542,7 +15642,6 @@ public class StaticEndpointBuilders {
     public static SqlStoredEndpointBuilderFactory.SqlStoredEndpointBuilder sqlStored(String path) {
         return sqlStored("sql-stored", path);
     }
-
     /**
      * SQL Stored Procedure (camel-sql)
      * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
@@ -16561,15 +15660,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          template
+     * instead of the default name
+     * @param path template
      * @return the dsl builder
      */
-    public static SqlStoredEndpointBuilderFactory.SqlStoredEndpointBuilder sqlStored(String componentName,
-            String path) {
+    public static SqlStoredEndpointBuilderFactory.SqlStoredEndpointBuilder sqlStored(String componentName, String path) {
         return SqlStoredEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * SSH (camel-ssh)
      * Execute commands on remote hosts using SSH.
@@ -16593,7 +15690,6 @@ public class StaticEndpointBuilders {
     public static SshEndpointBuilderFactory.SshEndpointBuilder ssh(String path) {
         return ssh("ssh", path);
     }
-
     /**
      * SSH (camel-ssh)
      * Execute commands on remote hosts using SSH.
@@ -16612,14 +15708,13 @@ public class StaticEndpointBuilders {
      * Default value: 22
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port
+     * instead of the default name
+     * @param path host:port
      * @return the dsl builder
      */
     public static SshEndpointBuilderFactory.SshEndpointBuilder ssh(String componentName, String path) {
         return SshEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
@@ -16639,7 +15734,6 @@ public class StaticEndpointBuilders {
     public static StAXEndpointBuilderFactory.StAXEndpointBuilder stax(String path) {
         return stax("stax", path);
     }
-
     /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
@@ -16654,14 +15748,13 @@ public class StaticEndpointBuilders {
      * The FQN class name for the ContentHandler implementation to use.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          contentHandlerClass
+     * instead of the default name
+     * @param path contentHandlerClass
      * @return the dsl builder
      */
     public static StAXEndpointBuilderFactory.StAXEndpointBuilder stax(String componentName, String path) {
         return StAXEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
@@ -16685,7 +15778,6 @@ public class StaticEndpointBuilders {
     public static StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(String path) {
         return stitch("stitch", path);
     }
-
     /**
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
@@ -16704,14 +15796,13 @@ public class StaticEndpointBuilders {
      * the destination's allowed limits or data will rejected.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          tableName
+     * instead of the default name
+     * @param path tableName
      * @return the dsl builder
      */
     public static StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(String componentName, String path) {
         return StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Stomp (camel-stomp)
      * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
@@ -16733,7 +15824,6 @@ public class StaticEndpointBuilders {
     public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String path) {
         return stomp("stomp", path);
     }
-
     /**
      * Stomp (camel-stomp)
      * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
@@ -16749,15 +15839,14 @@ public class StaticEndpointBuilders {
      * Name of the queue
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          destination
+     * instead of the default name
+     * @param path destination
      * @return the dsl builder
      */
     @Deprecated
     public static StompEndpointBuilderFactory.StompEndpointBuilder stomp(String componentName, String path) {
         return StompEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
@@ -16780,7 +15869,6 @@ public class StaticEndpointBuilders {
     public static StreamEndpointBuilderFactory.StreamEndpointBuilder stream(String path) {
         return stream("stream", path);
     }
-
     /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
@@ -16798,14 +15886,13 @@ public class StaticEndpointBuilders {
      * file, http
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          kind
+     * instead of the default name
+     * @param path kind
      * @return the dsl builder
      */
     public static StreamEndpointBuilderFactory.StreamEndpointBuilder stream(String componentName, String path) {
         return StreamEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
@@ -16831,7 +15918,6 @@ public class StaticEndpointBuilders {
     public static StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(String path) {
         return stringTemplate("string-template", path);
     }
-
     /**
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
@@ -16852,15 +15938,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(
-            String componentName, String path) {
+    public static StringTemplateEndpointBuilderFactory.StringTemplateEndpointBuilder stringTemplate(String componentName, String path) {
         return StringTemplateEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Stripe (camel-stripe)
      * Interact with the Stripe payment platform.
@@ -16883,7 +15967,6 @@ public class StaticEndpointBuilders {
     public static StripeEndpointBuilderFactory.StripeEndpointBuilder stripe(String path) {
         return stripe("stripe", path);
     }
-
     /**
      * Stripe (camel-stripe)
      * Interact with the Stripe payment platform.
@@ -16901,14 +15984,13 @@ public class StaticEndpointBuilders {
      * products, prices, balanceTransactions
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static StripeEndpointBuilderFactory.StripeEndpointBuilder stripe(String componentName, String path) {
         return StripeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Stub (camel-stub)
      * Stub out any physical endpoints while in development or testing.
@@ -16928,7 +16010,6 @@ public class StaticEndpointBuilders {
     public static StubEndpointBuilderFactory.StubEndpointBuilder stub(String path) {
         return stub("stub", path);
     }
-
     /**
      * Stub (camel-stub)
      * Stub out any physical endpoints while in development or testing.
@@ -16943,14 +16024,13 @@ public class StaticEndpointBuilders {
      * Name of queue
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static StubEndpointBuilderFactory.StubEndpointBuilder stub(String componentName, String path) {
         return StubEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Tahu Edge Node / Device (camel-tahu)
      * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
@@ -16976,7 +16056,6 @@ public class StaticEndpointBuilders {
     public static TahuEdgeEndpointBuilderFactory.TahuEdgeEndpointBuilder tahuEdge(String path) {
         return tahuEdge("tahu-edge", path);
     }
-
     /**
      * Tahu Edge Node / Device (camel-tahu)
      * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
@@ -16997,14 +16076,13 @@ public class StaticEndpointBuilders {
      * ID of this edge node device
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          groupId/edgeNode
+     * instead of the default name
+     * @param path groupId/edgeNode
      * @return the dsl builder
      */
     public static TahuEdgeEndpointBuilderFactory.TahuEdgeEndpointBuilder tahuEdge(String componentName, String path) {
         return TahuEdgeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Tahu Host Application (camel-tahu)
      * Sparkplug B Host Application support over MQTT using Eclipse Tahu
@@ -17024,7 +16102,6 @@ public class StaticEndpointBuilders {
     public static TahuHostEndpointBuilderFactory.TahuHostEndpointBuilder tahuHost(String path) {
         return tahuHost("tahu-host", path);
     }
-
     /**
      * Tahu Host Application (camel-tahu)
      * Sparkplug B Host Application support over MQTT using Eclipse Tahu
@@ -17039,14 +16116,13 @@ public class StaticEndpointBuilders {
      * ID for the host application
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          hostId
+     * instead of the default name
+     * @param path hostId
      * @return the dsl builder
      */
     public static TahuHostEndpointBuilderFactory.TahuHostEndpointBuilder tahuHost(String componentName, String path) {
         return TahuHostEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
@@ -17067,7 +16143,6 @@ public class StaticEndpointBuilders {
     public static TelegramEndpointBuilderFactory.TelegramEndpointBuilder telegram(String path) {
         return telegram("telegram", path);
     }
-
     /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
@@ -17083,14 +16158,13 @@ public class StaticEndpointBuilders {
      * There are 1 enums and the value can be one of: bots
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          type
+     * instead of the default name
+     * @param path type
      * @return the dsl builder
      */
     public static TelegramEndpointBuilderFactory.TelegramEndpointBuilder telegram(String componentName, String path) {
         return TelegramEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * TensorFlow Serving (camel-tensorflow-serving)
      * Provide access to TensorFlow Serving model servers to run inference with
@@ -17110,11 +16184,9 @@ public class StaticEndpointBuilders {
      * @param path api
      * @return the dsl builder
      */
-    public static TensorFlowServingEndpointBuilderFactory.TensorFlowServingEndpointBuilder tensorflowServing(
-            String path) {
+    public static TensorFlowServingEndpointBuilderFactory.TensorFlowServingEndpointBuilder tensorflowServing(String path) {
         return tensorflowServing("tensorflow-serving", path);
     }
-
     /**
      * TensorFlow Serving (camel-tensorflow-serving)
      * Provide access to TensorFlow Serving model servers to run inference with
@@ -17132,15 +16204,13 @@ public class StaticEndpointBuilders {
      * model-metadata, classify, regress, predict
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          api
+     * instead of the default name
+     * @param path api
      * @return the dsl builder
      */
-    public static TensorFlowServingEndpointBuilderFactory.TensorFlowServingEndpointBuilder tensorflowServing(
-            String componentName, String path) {
+    public static TensorFlowServingEndpointBuilderFactory.TensorFlowServingEndpointBuilder tensorflowServing(String componentName, String path) {
         return TensorFlowServingEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
@@ -17170,7 +16240,6 @@ public class StaticEndpointBuilders {
     public static ThriftEndpointBuilderFactory.ThriftEndpointBuilder thrift(String path) {
         return thrift("thrift", path);
     }
-
     /**
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
@@ -17195,14 +16264,13 @@ public class StaticEndpointBuilders {
      * service definition name)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/service
+     * instead of the default name
+     * @param path host:port/service
      * @return the dsl builder
      */
     public static ThriftEndpointBuilderFactory.ThriftEndpointBuilder thrift(String componentName, String path) {
         return ThriftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Thymeleaf (camel-thymeleaf)
      * Transform messages using a Thymeleaf template.
@@ -17228,7 +16296,6 @@ public class StaticEndpointBuilders {
     public static ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(String path) {
         return thymeleaf("thymeleaf", path);
     }
-
     /**
      * Thymeleaf (camel-thymeleaf)
      * Transform messages using a Thymeleaf template.
@@ -17249,15 +16316,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(String componentName,
-            String path) {
+    public static ThymeleafEndpointBuilderFactory.ThymeleafEndpointBuilder thymeleaf(String componentName, String path) {
         return ThymeleafEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Tika (camel-tika)
      * Parse documents and extract metadata and text using Apache Tika.
@@ -17278,7 +16343,6 @@ public class StaticEndpointBuilders {
     public static TikaEndpointBuilderFactory.TikaEndpointBuilder tika(String path) {
         return tika("tika", path);
     }
-
     /**
      * Tika (camel-tika)
      * Parse documents and extract metadata and text using Apache Tika.
@@ -17294,14 +16358,13 @@ public class StaticEndpointBuilders {
      * There are 2 enums and the value can be one of: parse, detect
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
     public static TikaEndpointBuilderFactory.TikaEndpointBuilder tika(String componentName, String path) {
         return TikaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Timer (camel-timer)
      * Generate messages in specified intervals using java.util.Timer.
@@ -17321,7 +16384,6 @@ public class StaticEndpointBuilders {
     public static TimerEndpointBuilderFactory.TimerEndpointBuilder timer(String path) {
         return timer("timer", path);
     }
-
     /**
      * Timer (camel-timer)
      * Generate messages in specified intervals using java.util.Timer.
@@ -17336,14 +16398,13 @@ public class StaticEndpointBuilders {
      * The name of the timer
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          timerName
+     * instead of the default name
+     * @param path timerName
      * @return the dsl builder
      */
     public static TimerEndpointBuilderFactory.TimerEndpointBuilder timer(String componentName, String path) {
         return TimerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * TorchServe (camel-torchserve)
      * Provide access to PyTorch TorchServe servers to run inference with
@@ -17373,7 +16434,6 @@ public class StaticEndpointBuilders {
     public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String path) {
         return torchserve("torchserve", path);
     }
-
     /**
      * TorchServe (camel-torchserve)
      * Provide access to PyTorch TorchServe servers to run inference with
@@ -17397,16 +16457,14 @@ public class StaticEndpointBuilders {
      * set-default, metrics
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          api/operation
+     * instead of the default name
+     * @param path api/operation
      * @return the dsl builder
      */
     @Deprecated
-    public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String componentName,
-            String path) {
+    public static TorchServeEndpointBuilderFactory.TorchServeEndpointBuilder torchserve(String componentName, String path) {
         return TorchServeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Twilio (camel-twilio)
      * Interact with Twilio REST APIs using Twilio Java SDK.
@@ -17450,7 +16508,6 @@ public class StaticEndpointBuilders {
     public static TwilioEndpointBuilderFactory.TwilioEndpointBuilder twilio(String path) {
         return twilio("twilio", path);
     }
-
     /**
      * Twilio (camel-twilio)
      * Interact with Twilio REST APIs using Twilio Java SDK.
@@ -17489,14 +16546,13 @@ public class StaticEndpointBuilders {
      * read, update
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          apiName/methodName
+     * instead of the default name
+     * @param path apiName/methodName
      * @return the dsl builder
      */
     public static TwilioEndpointBuilderFactory.TwilioEndpointBuilder twilio(String componentName, String path) {
         return TwilioEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
@@ -17514,11 +16570,9 @@ public class StaticEndpointBuilders {
      * @param path user
      * @return the dsl builder
      */
-    public static TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(
-            String path) {
+    public static TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(String path) {
         return twitterDirectmessage("twitter-directmessage", path);
     }
-
     /**
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
@@ -17534,15 +16588,13 @@ public class StaticEndpointBuilders {
      * consumer.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          user
+     * instead of the default name
+     * @param path user
      * @return the dsl builder
      */
-    public static TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(
-            String componentName, String path) {
+    public static TwitterDirectMessageEndpointBuilderFactory.TwitterDirectMessageEndpointBuilder twitterDirectmessage(String componentName, String path) {
         return TwitterDirectMessageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
@@ -17563,7 +16615,6 @@ public class StaticEndpointBuilders {
     public static TwitterSearchEndpointBuilderFactory.TwitterSearchEndpointBuilder twitterSearch(String path) {
         return twitterSearch("twitter-search", path);
     }
-
     /**
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
@@ -17579,15 +16630,13 @@ public class StaticEndpointBuilders {
      * results.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          keywords
+     * instead of the default name
+     * @param path keywords
      * @return the dsl builder
      */
-    public static TwitterSearchEndpointBuilderFactory.TwitterSearchEndpointBuilder twitterSearch(String componentName,
-            String path) {
+    public static TwitterSearchEndpointBuilderFactory.TwitterSearchEndpointBuilder twitterSearch(String componentName, String path) {
         return TwitterSearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Twitter Timeline (camel-twitter)
      * Send tweets and receive tweets from user's timeline.
@@ -17609,7 +16658,6 @@ public class StaticEndpointBuilders {
     public static TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(String path) {
         return twitterTimeline("twitter-timeline", path);
     }
-
     /**
      * Twitter Timeline (camel-twitter)
      * Send tweets and receive tweets from user's timeline.
@@ -17626,15 +16674,13 @@ public class StaticEndpointBuilders {
      * MENTIONS, LIST, UNKNOWN
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          timelineType
+     * instead of the default name
+     * @param path timelineType
      * @return the dsl builder
      */
-    public static TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(
-            String componentName, String path) {
+    public static TwitterTimelineEndpointBuilderFactory.TwitterTimelineEndpointBuilder twitterTimeline(String componentName, String path) {
         return TwitterTimelineEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Undertow (camel-undertow)
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
@@ -17655,7 +16701,6 @@ public class StaticEndpointBuilders {
     public static UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(String path) {
         return undertow("undertow", path);
     }
-
     /**
      * Undertow (camel-undertow)
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
@@ -17671,14 +16716,13 @@ public class StaticEndpointBuilders {
      * The url of the HTTP endpoint to use.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          httpURI
+     * instead of the default name
+     * @param path httpURI
      * @return the dsl builder
      */
     public static UndertowEndpointBuilderFactory.UndertowEndpointBuilder undertow(String componentName, String path) {
         return UndertowEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Validator (camel-validator)
      * Validate the payload using XML Schema and JAXP Validation.
@@ -17702,7 +16746,6 @@ public class StaticEndpointBuilders {
     public static ValidatorEndpointBuilderFactory.ValidatorEndpointBuilder validator(String path) {
         return validator("validator", path);
     }
-
     /**
      * Validator (camel-validator)
      * Validate the payload using XML Schema and JAXP Validation.
@@ -17721,15 +16764,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static ValidatorEndpointBuilderFactory.ValidatorEndpointBuilder validator(String componentName,
-            String path) {
+    public static ValidatorEndpointBuilderFactory.ValidatorEndpointBuilder validator(String componentName, String path) {
         return ValidatorEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Velocity (camel-velocity)
      * Transform messages using a Velocity template.
@@ -17755,7 +16796,6 @@ public class StaticEndpointBuilders {
     public static VelocityEndpointBuilderFactory.VelocityEndpointBuilder velocity(String path) {
         return velocity("velocity", path);
     }
-
     /**
      * Velocity (camel-velocity)
      * Transform messages using a Velocity template.
@@ -17776,14 +16816,13 @@ public class StaticEndpointBuilders {
      * file: or classpath: followed by the location of the file.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static VelocityEndpointBuilderFactory.VelocityEndpointBuilder velocity(String componentName, String path) {
         return VelocityEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Vert.x (camel-vertx)
      * Send and receive messages to/from Vert.x Event Bus.
@@ -17803,7 +16842,6 @@ public class StaticEndpointBuilders {
     public static VertxEndpointBuilderFactory.VertxEndpointBuilder vertx(String path) {
         return vertx("vertx", path);
     }
-
     /**
      * Vert.x (camel-vertx)
      * Send and receive messages to/from Vert.x Event Bus.
@@ -17818,14 +16856,13 @@ public class StaticEndpointBuilders {
      * Sets the event bus address used to communicate
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          address
+     * instead of the default name
+     * @param path address
      * @return the dsl builder
      */
     public static VertxEndpointBuilderFactory.VertxEndpointBuilder vertx(String componentName, String path) {
         return VertxEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Vert.x HTTP Client (camel-vertx-http)
      * Send requests to external HTTP servers using Vert.x
@@ -17845,7 +16882,6 @@ public class StaticEndpointBuilders {
     public static VertxHttpEndpointBuilderFactory.VertxHttpEndpointBuilder vertxHttp(String path) {
         return vertxHttp("vertx-http", path);
     }
-
     /**
      * Vert.x HTTP Client (camel-vertx-http)
      * Send requests to external HTTP servers using Vert.x
@@ -17860,15 +16896,13 @@ public class StaticEndpointBuilders {
      * The HTTP URI to connect to
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          httpUri
+     * instead of the default name
+     * @param path httpUri
      * @return the dsl builder
      */
-    public static VertxHttpEndpointBuilderFactory.VertxHttpEndpointBuilder vertxHttp(String componentName,
-            String path) {
+    public static VertxHttpEndpointBuilderFactory.VertxHttpEndpointBuilder vertxHttp(String componentName, String path) {
         return VertxHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
@@ -17896,7 +16930,6 @@ public class StaticEndpointBuilders {
     public static VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(String path) {
         return vertxWebsocket("vertx-websocket", path);
     }
-
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
@@ -17919,15 +16952,13 @@ public class StaticEndpointBuilders {
      * WebSocket path to use.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/path
+     * instead of the default name
+     * @param path host:port/path
      * @return the dsl builder
      */
-    public static VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(
-            String componentName, String path) {
+    public static VertxWebsocketEndpointBuilderFactory.VertxWebsocketEndpointBuilder vertxWebsocket(String componentName, String path) {
         return VertxWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Wasm (camel-wasm)
      * Invoke Wasm functions.
@@ -17947,7 +16978,6 @@ public class StaticEndpointBuilders {
     public static WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(String path) {
         return wasm("wasm", path);
     }
-
     /**
      * Wasm (camel-wasm)
      * Invoke Wasm functions.
@@ -17962,14 +16992,13 @@ public class StaticEndpointBuilders {
      * The Function Name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          functionName
+     * instead of the default name
+     * @param path functionName
      * @return the dsl builder
      */
     public static WasmEndpointBuilderFactory.WasmEndpointBuilder wasm(String componentName, String path) {
         return WasmEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
@@ -17989,7 +17018,6 @@ public class StaticEndpointBuilders {
     public static WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(String path) {
         return weather("weather", path);
     }
-
     /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
@@ -18004,14 +17032,13 @@ public class StaticEndpointBuilders {
      * The name value is not used.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static WeatherEndpointBuilderFactory.WeatherEndpointBuilder weather(String componentName, String path) {
         return WeatherEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * weaviate (camel-weaviate)
      * Perform operations on the Weaviate Vector Database.
@@ -18031,7 +17058,6 @@ public class StaticEndpointBuilders {
     public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbEndpointBuilder weaviate(String path) {
         return weaviate("weaviate", path);
     }
-
     /**
      * weaviate (camel-weaviate)
      * Perform operations on the Weaviate Vector Database.
@@ -18046,15 +17072,13 @@ public class StaticEndpointBuilders {
      * The collection Name
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          collection
+     * instead of the default name
+     * @param path collection
      * @return the dsl builder
      */
-    public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbEndpointBuilder weaviate(String componentName,
-            String path) {
+    public static WeaviateVectorDbEndpointBuilderFactory.WeaviateVectorDbEndpointBuilder weaviate(String componentName, String path) {
         return WeaviateVectorDbEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
@@ -18074,7 +17098,6 @@ public class StaticEndpointBuilders {
     public static Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(String path) {
         return web3j("web3j", path);
     }
-
     /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
@@ -18089,14 +17112,13 @@ public class StaticEndpointBuilders {
      * Sets the node address used to communicate
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          nodeAddress
+     * instead of the default name
+     * @param path nodeAddress
      * @return the dsl builder
      */
     public static Web3jEndpointBuilderFactory.Web3jEndpointBuilder web3j(String componentName, String path) {
         return Web3jEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Webhook (camel-webhook)
      * Expose webhook endpoints to receive push notifications for other Camel
@@ -18117,7 +17139,6 @@ public class StaticEndpointBuilders {
     public static WebhookEndpointBuilderFactory.WebhookEndpointBuilder webhook(String path) {
         return webhook("webhook", path);
     }
-
     /**
      * Webhook (camel-webhook)
      * Expose webhook endpoints to receive push notifications for other Camel
@@ -18133,14 +17154,13 @@ public class StaticEndpointBuilders {
      * The delegate uri. Must belong to a component that supports webhooks.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          endpointUri
+     * instead of the default name
+     * @param path endpointUri
      * @return the dsl builder
      */
     public static WebhookEndpointBuilderFactory.WebhookEndpointBuilder webhook(String componentName, String path) {
         return WebhookEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * WhatsApp (camel-whatsapp)
      * Send messages to WhatsApp.
@@ -18160,7 +17180,6 @@ public class StaticEndpointBuilders {
     public static WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(String path) {
         return whatsapp("whatsapp", path);
     }
-
     /**
      * WhatsApp (camel-whatsapp)
      * Send messages to WhatsApp.
@@ -18175,14 +17194,13 @@ public class StaticEndpointBuilders {
      * The phone number ID taken from whatsapp-business dashboard.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          phoneNumberId
+     * instead of the default name
+     * @param path phoneNumberId
      * @return the dsl builder
      */
     public static WhatsAppEndpointBuilderFactory.WhatsAppEndpointBuilder whatsapp(String componentName, String path) {
         return WhatsAppEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * WordPress (camel-wordpress)
      * Manage posts and users using the WordPress API.
@@ -18208,7 +17226,6 @@ public class StaticEndpointBuilders {
     public static WordpressEndpointBuilderFactory.WordpressEndpointBuilder wordpress(String path) {
         return wordpress("wordpress", path);
     }
-
     /**
      * WordPress (camel-wordpress)
      * Manage posts and users using the WordPress API.
@@ -18229,15 +17246,13 @@ public class StaticEndpointBuilders {
      * There are 1 enums and the value can be one of: delete
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operation
+     * instead of the default name
+     * @param path operation
      * @return the dsl builder
      */
-    public static WordpressEndpointBuilderFactory.WordpressEndpointBuilder wordpress(String componentName,
-            String path) {
+    public static WordpressEndpointBuilderFactory.WordpressEndpointBuilder wordpress(String componentName, String path) {
         return WordpressEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Workday (camel-workday)
      * Detect and parse documents using Workday.
@@ -18261,7 +17276,6 @@ public class StaticEndpointBuilders {
     public static WorkdayEndpointBuilderFactory.WorkdayEndpointBuilder workday(String path) {
         return workday("workday", path);
     }
-
     /**
      * Workday (camel-workday)
      * Detect and parse documents using Workday.
@@ -18280,14 +17294,13 @@ public class StaticEndpointBuilders {
      * The API path to access an entity structure.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          entity:path
+     * instead of the default name
+     * @param path entity:path
      * @return the dsl builder
      */
     public static WorkdayEndpointBuilderFactory.WorkdayEndpointBuilder workday(String componentName, String path) {
         return WorkdayEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XChange (camel-xchange)
      * Access market data and trade on Bitcoin and Altcoin exchanges.
@@ -18307,7 +17320,6 @@ public class StaticEndpointBuilders {
     public static XChangeEndpointBuilderFactory.XChangeEndpointBuilder xchange(String path) {
         return xchange("xchange", path);
     }
-
     /**
      * XChange (camel-xchange)
      * Access market data and trade on Bitcoin and Altcoin exchanges.
@@ -18322,14 +17334,13 @@ public class StaticEndpointBuilders {
      * The exchange to connect to
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
     public static XChangeEndpointBuilderFactory.XChangeEndpointBuilder xchange(String componentName, String path) {
         return XChangeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XJ (camel-xj)
      * Transform JSON and XML message using a XSLT.
@@ -18354,7 +17365,6 @@ public class StaticEndpointBuilders {
     public static XJEndpointBuilderFactory.XJEndpointBuilder xj(String path) {
         return xj("xj", path);
     }
-
     /**
      * XJ (camel-xj)
      * Transform JSON and XML message using a XSLT.
@@ -18374,14 +17384,13 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static XJEndpointBuilderFactory.XJEndpointBuilder xj(String componentName, String path) {
         return XJEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XML Security Sign (camel-xmlsecurity)
      * Sign XML payloads using the XML signature specification.
@@ -18402,7 +17411,6 @@ public class StaticEndpointBuilders {
     public static XmlSignerEndpointBuilderFactory.XmlSignerEndpointBuilder xmlsecuritySign(String path) {
         return xmlsecuritySign("xmlsecurity-sign", path);
     }
-
     /**
      * XML Security Sign (camel-xmlsecurity)
      * Sign XML payloads using the XML signature specification.
@@ -18418,15 +17426,13 @@ public class StaticEndpointBuilders {
      * different signer endpoints within the camel context.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static XmlSignerEndpointBuilderFactory.XmlSignerEndpointBuilder xmlsecuritySign(String componentName,
-            String path) {
+    public static XmlSignerEndpointBuilderFactory.XmlSignerEndpointBuilder xmlsecuritySign(String componentName, String path) {
         return XmlSignerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XML Security Verify (camel-xmlsecurity)
      * Verify XML payloads using the XML signature specification.
@@ -18447,7 +17453,6 @@ public class StaticEndpointBuilders {
     public static XmlVerifierEndpointBuilderFactory.XmlVerifierEndpointBuilder xmlsecurityVerify(String path) {
         return xmlsecurityVerify("xmlsecurity-verify", path);
     }
-
     /**
      * XML Security Verify (camel-xmlsecurity)
      * Verify XML payloads using the XML signature specification.
@@ -18463,15 +17468,13 @@ public class StaticEndpointBuilders {
      * different verify endpoints within the camel context.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          name
+     * instead of the default name
+     * @param path name
      * @return the dsl builder
      */
-    public static XmlVerifierEndpointBuilderFactory.XmlVerifierEndpointBuilder xmlsecurityVerify(String componentName,
-            String path) {
+    public static XmlVerifierEndpointBuilderFactory.XmlVerifierEndpointBuilder xmlsecurityVerify(String componentName, String path) {
         return XmlVerifierEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XMPP (camel-xmpp)
      * Send and receive messages to/from an XMPP chat server.
@@ -18498,7 +17501,6 @@ public class StaticEndpointBuilders {
     public static XmppEndpointBuilderFactory.XmppEndpointBuilder xmpp(String path) {
         return xmpp("xmpp", path);
     }
-
     /**
      * XMPP (camel-xmpp)
      * Send and receive messages to/from an XMPP chat server.
@@ -18520,14 +17522,13 @@ public class StaticEndpointBuilders {
      * precedence over participant.
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          host:port/participant
+     * instead of the default name
+     * @param path host:port/participant
      * @return the dsl builder
      */
     public static XmppEndpointBuilderFactory.XmppEndpointBuilder xmpp(String componentName, String path) {
         return XmppEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XQuery (camel-saxon)
      * Query and/or transform XML payloads using XQuery and Saxon.
@@ -18547,7 +17548,6 @@ public class StaticEndpointBuilders {
     public static XQueryEndpointBuilderFactory.XQueryEndpointBuilder xquery(String path) {
         return xquery("xquery", path);
     }
-
     /**
      * XQuery (camel-saxon)
      * Query and/or transform XML payloads using XQuery and Saxon.
@@ -18562,14 +17562,13 @@ public class StaticEndpointBuilders {
      * The name of the template to load from classpath or file system
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static XQueryEndpointBuilderFactory.XQueryEndpointBuilder xquery(String componentName, String path) {
         return XQueryEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XSLT (camel-xslt)
      * Transforms XML payload using an XSLT template.
@@ -18594,7 +17593,6 @@ public class StaticEndpointBuilders {
     public static XsltEndpointBuilderFactory.XsltEndpointBuilder xslt(String path) {
         return xslt("xslt", path);
     }
-
     /**
      * XSLT (camel-xslt)
      * Transforms XML payload using an XSLT template.
@@ -18614,14 +17612,13 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
     public static XsltEndpointBuilderFactory.XsltEndpointBuilder xslt(String componentName, String path) {
         return XsltEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * XSLT Saxon (camel-xslt-saxon)
      * Transform XML payloads using an XSLT template using Saxon.
@@ -18646,7 +17643,6 @@ public class StaticEndpointBuilders {
     public static XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(String path) {
         return xsltSaxon("xslt-saxon", path);
     }
-
     /**
      * XSLT Saxon (camel-xslt-saxon)
      * Transform XML payloads using an XSLT template using Saxon.
@@ -18666,15 +17662,13 @@ public class StaticEndpointBuilders {
      * you can specify the method name after dot, eg bean:myBean.myMethod
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          resourceUri
+     * instead of the default name
+     * @param path resourceUri
      * @return the dsl builder
      */
-    public static XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(String componentName,
-            String path) {
+    public static XsltSaxonEndpointBuilderFactory.XsltSaxonEndpointBuilder xsltSaxon(String componentName, String path) {
         return XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Zeebe (camel-zeebe)
      * Zeebe component which integrates with Camunda Zeebe to interact with the
@@ -18698,7 +17692,6 @@ public class StaticEndpointBuilders {
     public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String path) {
         return zeebe("zeebe", path);
     }
-
     /**
      * Zeebe (camel-zeebe)
      * Zeebe component which integrates with Camunda Zeebe to interact with the
@@ -18717,14 +17710,13 @@ public class StaticEndpointBuilders {
      * worker, throwError, deployResource
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          operationName
+     * instead of the default name
+     * @param path operationName
      * @return the dsl builder
      */
     public static ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(String componentName, String path) {
         return ZeebeEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
@@ -18880,7 +17872,6 @@ public class StaticEndpointBuilders {
     public static ZendeskEndpointBuilderFactory.ZendeskEndpointBuilder zendesk(String path) {
         return zendesk("zendesk", path);
     }
-
     /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
@@ -19031,14 +18022,13 @@ public class StaticEndpointBuilders {
      * VERIFY_USER_IDENTITY, VERIFY_USER_IDENTITY_1, VERIFY_USER_IDENTITY_2
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          methodName
+     * instead of the default name
+     * @param path methodName
      * @return the dsl builder
      */
     public static ZendeskEndpointBuilderFactory.ZendeskEndpointBuilder zendesk(String componentName, String path) {
         return ZendeskEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
@@ -19061,7 +18051,6 @@ public class StaticEndpointBuilders {
     public static ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(String path) {
         return zookeeper("zookeeper", path);
     }
-
     /**
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
@@ -19079,15 +18068,13 @@ public class StaticEndpointBuilders {
      * The node in the ZooKeeper server (aka znode)
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          serverUrls/path
+     * instead of the default name
+     * @param path serverUrls/path
      * @return the dsl builder
      */
-    public static ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(String componentName,
-            String path) {
+    public static ZooKeeperEndpointBuilderFactory.ZooKeeperEndpointBuilder zookeeper(String componentName, String path) {
         return ZooKeeperEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
-
     /**
      * ZooKeeper Master (camel-zookeeper-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
@@ -19111,7 +18098,6 @@ public class StaticEndpointBuilders {
     public static ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
         return zookeeperMaster("zookeeper-master", path);
     }
-
     /**
      * ZooKeeper Master (camel-zookeeper-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
@@ -19130,12 +18116,11 @@ public class StaticEndpointBuilders {
      * The consumer endpoint to use in master/slave mode
      * 
      * @param componentName to use a custom component name for the endpoint
-     *                      instead of the default name
-     * @param path          groupName:consumerEndpointUri
+     * instead of the default name
+     * @param path groupName:consumerEndpointUri
      * @return the dsl builder
      */
-    public static ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(
-            String componentName, String path) {
+    public static ZooKeeperMasterEndpointBuilderFactory.ZooKeeperMasterEndpointBuilder zookeeperMaster(String componentName, String path) {
         return ZooKeeperMasterEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
 }
