@@ -256,7 +256,7 @@ The full model response is returned as a String in the message body.
 When `streaming=true`, the message body contains an `Iterator<ChatCompletionChunk>` suitable for Camel streaming EIPs (such as `split()` with `streaming()`).
 
 IMPORTANT:
-* Resource cleanup is handled automatically when the Exchange completes (success or failure)
+
 * Conversation memory is **not** automatically updated for streaming responses (only for non-streaming responses)
 
 === Structured Outputs
@@ -274,6 +274,7 @@ The JSON schema must be a valid JSON object. Invalid schema strings will result 
 When `conversationMemory=true`, the component maintains conversation history in the `CamelOpenAIConversationHistory` exchange property (configurable via `conversationHistoryProperty` option). This history is scoped to a single Exchange and allows multi-turn conversations within a route.
 
 IMPORTANT:
+
 * Conversation history is automatically updated with each assistant response for **non-streaming** responses only
 * The history is stored as a `List<ChatCompletionMessageParam>` in the Exchange property
 * The history persists across multiple calls to the endpoint within the same Exchange
@@ -300,7 +301,6 @@ from("direct:with-history")
 This component works with any OpenAI API-compatible endpoint by setting the `baseUrl` parameter. This includes:
 
 - OpenAI official API (`https://api.openai.com/v1`)
-- Azure OpenAI (may require additional configuration)
 - Local LLM servers (e.g., Ollama, LM Studio, LocalAI)
 - Third-party OpenAI-compatible providers
 
@@ -320,7 +320,6 @@ When using local or third-party providers, ensure they support the chat completi
 | Ollama | `nomic-embed-text` | 768
 | Ollama | `mxbai-embed-large` | 1024
 | Mistral | `mistral-embed` | 1024
-| Azure OpenAI | `text-embedding-ada-002` | 1536
 |===
 
 .Example using Ollama for local embeddings:
