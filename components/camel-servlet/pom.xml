@@ -107,9 +107,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.undertow</groupId>
+            <groupId>io.undertow.ee</groupId>
             <artifactId>undertow-servlet</artifactId>
-            <version>${undertow-version}</version>
+            <version>${undertow-ee-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

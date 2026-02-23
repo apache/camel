@@ -135,8 +135,8 @@
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <couchbase-client-version>3.11.1</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
-        <cxf-version>4.1.4</cxf-version>
-        <cxf-codegen-plugin-version>4.1.4</cxf-codegen-plugin-version>
+        <cxf-version>4.2.0</cxf-version>
+        <cxf-codegen-plugin-version>4.2.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.1.2</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.1.2</cxf-xjc-utils-version>
@@ -539,7 +539,8 @@
         <tika-version>3.2.3</tika-version>
         <twilio-version>11.3.4</twilio-version>
         <twitter4j-version>4.1.2</twitter4j-version>
-        <undertow-version>2.3.23.Final</undertow-version>
+        <undertow-version>2.4.0.Alpha1</undertow-version>
+        <undertow-ee-version>2.0.0.Alpha2</undertow-ee-version>
         <univocity-parsers-version>2.10.2</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>1.0.0</vavr-version>

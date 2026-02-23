@@ -22,7 +22,7 @@
     
     <cxf-core:bus>
         <cxf-core:features>
-            <cxf-core:logging/>
+            <bean class="org.apache.cxf.ext.logging.LoggingFeature"/>
         </cxf-core:features>
     </cxf-core:bus>
     
