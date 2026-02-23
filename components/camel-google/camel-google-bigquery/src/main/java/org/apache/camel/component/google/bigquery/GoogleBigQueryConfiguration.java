@@ -17,13 +17,14 @@
 package org.apache.camel.component.google.bigquery;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleBigQueryConfiguration implements Cloneable {
+public class GoogleBigQueryConfiguration implements Cloneable, GoogleCommonConfiguration {
 
     @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If not provided the default one will be used")
     @Metadata(autowired = true)
@@ -110,6 +111,7 @@ public class GoogleBigQueryConfiguration implements Cloneable {
         return this;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
