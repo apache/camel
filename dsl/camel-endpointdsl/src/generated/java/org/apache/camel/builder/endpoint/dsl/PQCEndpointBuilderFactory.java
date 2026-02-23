@@ -135,6 +135,142 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * The classical key agreement algorithm to use in hybrid KEM
+         * operations.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKEMAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalKEMAlgorithm(String classicalKEMAlgorithm) {
+            doSetProperty("classicalKEMAlgorithm", classicalKEMAlgorithm);
+            return this;
+        }
+        /**
+         * The classical KeyAgreement instance to be used in hybrid KEM
+         * operations.
+         * 
+         * The option is a: <code>javax.crypto.KeyAgreement</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKeyAgreement the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalKeyAgreement(javax.crypto.KeyAgreement classicalKeyAgreement) {
+            doSetProperty("classicalKeyAgreement", classicalKeyAgreement);
+            return this;
+        }
+        /**
+         * The classical KeyAgreement instance to be used in hybrid KEM
+         * operations.
+         * 
+         * The option will be converted to a
+         * <code>javax.crypto.KeyAgreement</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKeyAgreement the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalKeyAgreement(String classicalKeyAgreement) {
+            doSetProperty("classicalKeyAgreement", classicalKeyAgreement);
+            return this;
+        }
+        /**
+         * The classical KeyPair to be used in hybrid operations.
+         * 
+         * The option is a: <code>java.security.KeyPair</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKeyPair the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalKeyPair(java.security.KeyPair classicalKeyPair) {
+            doSetProperty("classicalKeyPair", classicalKeyPair);
+            return this;
+        }
+        /**
+         * The classical KeyPair to be used in hybrid operations.
+         * 
+         * The option will be converted to a <code>java.security.KeyPair</code>
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKeyPair the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalKeyPair(String classicalKeyPair) {
+            doSetProperty("classicalKeyPair", classicalKeyPair);
+            return this;
+        }
+        /**
+         * The classical signature algorithm to use in hybrid operations.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalSignatureAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalSignatureAlgorithm(String classicalSignatureAlgorithm) {
+            doSetProperty("classicalSignatureAlgorithm", classicalSignatureAlgorithm);
+            return this;
+        }
+        /**
+         * The classical Signature instance to be used in hybrid signature
+         * operations.
+         * 
+         * The option is a: <code>java.security.Signature</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalSigner the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalSigner(java.security.Signature classicalSigner) {
+            doSetProperty("classicalSigner", classicalSigner);
+            return this;
+        }
+        /**
+         * The classical Signature instance to be used in hybrid signature
+         * operations.
+         * 
+         * The option will be converted to a
+         * <code>java.security.Signature</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalSigner the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder classicalSigner(String classicalSigner) {
+            doSetProperty("classicalSigner", classicalSigner);
+            return this;
+        }
+        /**
+         * The KDF algorithm to use for combining secrets in hybrid KEM
+         * operations.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: HKDF-SHA256
+         * Group: advanced
+         * 
+         * @param hybridKdfAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder hybridKdfAlgorithm(String hybridKdfAlgorithm) {
+            doSetProperty("hybridKdfAlgorithm", hybridKdfAlgorithm);
+            return this;
+        }
+        /**
          * In case there is no keyGenerator, we specify an algorithm to build
          * the KeyGenerator.
          * 
@@ -635,6 +771,103 @@ public interface PQCEndpointBuilderFactory {
          */
         public String pQCRevocationReason() {
             return "CamelPQCRevocationReason";
+        }
+        /**
+         * The hybrid signature combining both classical and PQC signatures.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCHybridSignature}.
+         */
+        public String pQCHybridSignature() {
+            return "CamelPQCHybridSignature";
+        }
+        /**
+         * The classical signature component of a hybrid signature.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCClassicalSignature}.
+         */
+        public String pQCClassicalSignature() {
+            return "CamelPQCClassicalSignature";
+        }
+        /**
+         * The PQC signature component of a hybrid signature.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCPqcSignature}.
+         */
+        public String pQCPqcSignature() {
+            return "CamelPQCPqcSignature";
+        }
+        /**
+         * The classical encapsulation component of a hybrid KEM.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCClassicalEncapsulation}.
+         */
+        public String pQCClassicalEncapsulation() {
+            return "CamelPQCClassicalEncapsulation";
+        }
+        /**
+         * The PQC encapsulation component of a hybrid KEM.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCPqcEncapsulation}.
+         */
+        public String pQCPqcEncapsulation() {
+            return "CamelPQCPqcEncapsulation";
+        }
+        /**
+         * The combined secret key from hybrid KEM operation.
+         * 
+         * The option is a: {@code javax.crypto.SecretKey} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCHybridSecretKey}.
+         */
+        public String pQCHybridSecretKey() {
+            return "CamelPQCHybridSecretKey";
+        }
+        /**
+         * The hybrid encapsulation combining both classical and PQC
+         * encapsulations.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCHybridEncapsulation}.
+         */
+        public String pQCHybridEncapsulation() {
+            return "CamelPQCHybridEncapsulation";
+        }
+        /**
+         * The verification result of hybrid signature (both must pass).
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code PQCHybridVerification}.
+         */
+        public String pQCHybridVerification() {
+            return "CamelPQCHybridVerification";
         }
     }
     static PQCEndpointBuilder endpointBuilder(String componentName, String path) {

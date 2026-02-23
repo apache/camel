@@ -131,6 +131,104 @@ public interface PqcComponentBuilderFactory {
         }
     
         /**
+         * The classical key agreement algorithm to use in hybrid KEM
+         * operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKEMAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder classicalKEMAlgorithm(java.lang.String classicalKEMAlgorithm) {
+            doSetProperty("classicalKEMAlgorithm", classicalKEMAlgorithm);
+            return this;
+        }
+    
+        /**
+         * The classical KeyAgreement instance to be used in hybrid KEM
+         * operations.
+         * 
+         * The option is a: &lt;code&gt;javax.crypto.KeyAgreement&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKeyAgreement the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder classicalKeyAgreement(javax.crypto.KeyAgreement classicalKeyAgreement) {
+            doSetProperty("classicalKeyAgreement", classicalKeyAgreement);
+            return this;
+        }
+    
+        /**
+         * The classical KeyPair to be used in hybrid operations.
+         * 
+         * The option is a: &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalKeyPair the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder classicalKeyPair(java.security.KeyPair classicalKeyPair) {
+            doSetProperty("classicalKeyPair", classicalKeyPair);
+            return this;
+        }
+    
+        /**
+         * The classical signature algorithm to use in hybrid operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalSignatureAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder classicalSignatureAlgorithm(java.lang.String classicalSignatureAlgorithm) {
+            doSetProperty("classicalSignatureAlgorithm", classicalSignatureAlgorithm);
+            return this;
+        }
+    
+        /**
+         * The classical Signature instance to be used in hybrid signature
+         * operations.
+         * 
+         * The option is a: &lt;code&gt;java.security.Signature&lt;/code&gt;
+         * type.
+         * 
+         * Group: advanced
+         * 
+         * @param classicalSigner the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder classicalSigner(java.security.Signature classicalSigner) {
+            doSetProperty("classicalSigner", classicalSigner);
+            return this;
+        }
+    
+        
+        /**
+         * The KDF algorithm to use for combining secrets in hybrid KEM
+         * operations.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: HKDF-SHA256
+         * Group: advanced
+         * 
+         * @param hybridKdfAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder hybridKdfAlgorithm(java.lang.String hybridKdfAlgorithm) {
+            doSetProperty("hybridKdfAlgorithm", hybridKdfAlgorithm);
+            return this;
+        }
+    
+        /**
          * In case there is no keyGenerator, we specify an algorithm to build
          * the KeyGenerator.
          * 
@@ -368,6 +466,12 @@ public interface PqcComponentBuilderFactory {
             case "lazyStartProducer": ((PQCComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((PQCComponent) component).setOperation((org.apache.camel.component.pqc.PQCOperations) value); return true;
             case "autowiredEnabled": ((PQCComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "classicalKEMAlgorithm": getOrCreateConfiguration((PQCComponent) component).setClassicalKEMAlgorithm((java.lang.String) value); return true;
+            case "classicalKeyAgreement": getOrCreateConfiguration((PQCComponent) component).setClassicalKeyAgreement((javax.crypto.KeyAgreement) value); return true;
+            case "classicalKeyPair": getOrCreateConfiguration((PQCComponent) component).setClassicalKeyPair((java.security.KeyPair) value); return true;
+            case "classicalSignatureAlgorithm": getOrCreateConfiguration((PQCComponent) component).setClassicalSignatureAlgorithm((java.lang.String) value); return true;
+            case "classicalSigner": getOrCreateConfiguration((PQCComponent) component).setClassicalSigner((java.security.Signature) value); return true;
+            case "hybridKdfAlgorithm": getOrCreateConfiguration((PQCComponent) component).setHybridKdfAlgorithm((java.lang.String) value); return true;
             case "keyEncapsulationAlgorithm": getOrCreateConfiguration((PQCComponent) component).setKeyEncapsulationAlgorithm((java.lang.String) value); return true;
             case "keyGenerator": getOrCreateConfiguration((PQCComponent) component).setKeyGenerator((javax.crypto.KeyGenerator) value); return true;
             case "keyPair": getOrCreateConfiguration((PQCComponent) component).setKeyPair((java.security.KeyPair) value); return true;
