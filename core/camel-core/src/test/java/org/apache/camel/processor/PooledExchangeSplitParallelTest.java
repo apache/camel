@@ -30,7 +30,7 @@ import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.junit.jupiter.api.Test;
 
-class PooledExchangeSplitTest extends ContextTestSupport {
+class PooledExchangeSplitParallelTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -46,7 +46,7 @@ class PooledExchangeSplitTest extends ContextTestSupport {
     }
 
     @Test
-    public void testSplitter() throws InterruptedException {
+    public void testSplitter() throws Exception {
         List<Integer> data = new ArrayList<>(Arrays.asList(1, 2, 3));
 
         getMockEndpoint("mock:result").expectedMessageCount(3);
@@ -62,7 +62,7 @@ class PooledExchangeSplitTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:processData")
-                        .split(body())
+                        .split(body()).streaming().parallelProcessing()
                         .to("mock:result");
             }
         };
