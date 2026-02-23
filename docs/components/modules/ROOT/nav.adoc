@@ -160,7 +160,6 @@
 *** xref:google-mail-component.adoc[Google Mail]
 *** xref:google-mail-stream-component.adoc[Google Mail Stream]
 *** xref:google-pubsub-component.adoc[Google Pubsub]
-*** xref:google-pubsub-lite-component.adoc[Google PubSub Lite]
 *** xref:google-secret-manager-component.adoc[Google Secret Manager]
 *** xref:google-sheets-component.adoc[Google Sheets]
 *** xref:google-sheets-stream-component.adoc[Google Sheets Stream]

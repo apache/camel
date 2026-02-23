@@ -101,3 +101,12 @@ For example `id` is always first, and the following attributes are ordered so th
 commonly used at in the top. EIPs such as `circuitBreaker` now has `onFallback` last.
 
 This order is also the same order that UI builders like Camel Karavan and Kaoto do as well.
+
+=== camel-google-pubsub-lite
+
+The `camel-google-pubsub-lite` component has been removed. The component was deprecated in Camel 4.10 following Google Cloud Platform's deprecation of the underlying Pub/Sub Lite service.
+
+Google recommends migrating your Pub/Sub Lite workloads to either:
+
+* **Google Cloud Pub/Sub** → use the `camel-google-pubsub` component
+* **Google Cloud Managed Service for Apache Kafka** → use the `camel-kafka` component
