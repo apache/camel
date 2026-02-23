@@ -984,11 +984,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-google-pubsub-lite</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-google-secret-manager</artifactId>
             <version>${project.version}</version>
         </dependency>

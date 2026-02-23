@@ -24,18 +24,22 @@ import org.apache.camel.builder.component.dsl.*;
  * Component DSL builder.
  *
  * You can build a component as follows:
+ * 
  * <pre>
- * KafkaComponent kafka =
- * ComponentBuilderFactory.kafka().setBrokers("{{host:port}}").build();
+ * KafkaComponent kafka = ComponentBuilderFactory.kafka().setBrokers("{{host:port}}").build();
  * </pre>
+ * 
  * This creates a new Kafka component, but often you want to register the
  * component to CamelContext, which can be done as follows:
+ * 
  * <pre>
  * ComponentBuilderFactory.kafka().setBrokers("{{host:port}}").register(camelContext, "kafka");
  * </pre>
+ * 
  * This configures and registers the component to CamelContext with the name
  * kafka. If you have separate Kafka brokers you can register more components
  * with their own name:
+ * 
  * <pre>
  * ComponentBuilderFactory.kafka().setBrokers("{{host2:port}}").register(camelContext, "kafka2");
  * </pre>
@@ -59,6 +63,7 @@ public interface ComponentsBuilderFactory {
     static ActivemqComponentBuilderFactory.ActivemqComponentBuilder activemq() {
         return ActivemqComponentBuilderFactory.activemq();
     }
+
     /**
      * ActiveMQ 6.x (camel-activemq6)
      * Send messages to (or consume from) Apache ActiveMQ 6.x. This component
@@ -73,6 +78,7 @@ public interface ComponentsBuilderFactory {
     static Activemq6ComponentBuilderFactory.Activemq6ComponentBuilder activemq6() {
         return Activemq6ComponentBuilderFactory.activemq6();
     }
+
     /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
@@ -86,6 +92,7 @@ public interface ComponentsBuilderFactory {
     static AmqpComponentBuilderFactory.AmqpComponentBuilder amqp() {
         return AmqpComponentBuilderFactory.amqp();
     }
+
     /**
      * ArangoDb (camel-arangodb)
      * Perform operations on ArangoDb when used as a Document Database, or as a
@@ -100,6 +107,7 @@ public interface ComponentsBuilderFactory {
     static ArangodbComponentBuilderFactory.ArangodbComponentBuilder arangodb() {
         return ArangodbComponentBuilderFactory.arangodb();
     }
+
     /**
      * AS2 (camel-as2)
      * Transfer data securely and reliably using the AS2 protocol (RFC4130).
@@ -113,6 +121,7 @@ public interface ComponentsBuilderFactory {
     static As2ComponentBuilderFactory.As2ComponentBuilder as2() {
         return As2ComponentBuilderFactory.as2();
     }
+
     /**
      * Asterisk (camel-asterisk)
      * Interact with Asterisk PBX Server (VoIP).
@@ -126,6 +135,7 @@ public interface ComponentsBuilderFactory {
     static AsteriskComponentBuilderFactory.AsteriskComponentBuilder asterisk() {
         return AsteriskComponentBuilderFactory.asterisk();
     }
+
     /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
@@ -139,6 +149,7 @@ public interface ComponentsBuilderFactory {
     static AtmosphereWebsocketComponentBuilderFactory.AtmosphereWebsocketComponentBuilder atmosphereWebsocket() {
         return AtmosphereWebsocketComponentBuilderFactory.atmosphereWebsocket();
     }
+
     /**
      * Atom (camel-atom)
      * Poll Atom RSS feeds.
@@ -152,6 +163,7 @@ public interface ComponentsBuilderFactory {
     static AtomComponentBuilderFactory.AtomComponentBuilder atom() {
         return AtomComponentBuilderFactory.atom();
     }
+
     /**
      * Avro RPC (camel-avro-rpc)
      * Produce or consume Apache Avro RPC services.
@@ -165,6 +177,7 @@ public interface ComponentsBuilderFactory {
     static AvroComponentBuilderFactory.AvroComponentBuilder avro() {
         return AvroComponentBuilderFactory.avro();
     }
+
     /**
      * AWS Bedrock (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock service.
@@ -178,6 +191,7 @@ public interface ComponentsBuilderFactory {
     static AwsBedrockComponentBuilderFactory.AwsBedrockComponentBuilder awsBedrock() {
         return AwsBedrockComponentBuilderFactory.awsBedrock();
     }
+
     /**
      * AWS Bedrock Agent (camel-aws-bedrock)
      * Operate on AWS Bedrock through its Agent.
@@ -191,6 +205,7 @@ public interface ComponentsBuilderFactory {
     static AwsBedrockAgentComponentBuilderFactory.AwsBedrockAgentComponentBuilder awsBedrockAgent() {
         return AwsBedrockAgentComponentBuilderFactory.awsBedrockAgent();
     }
+
     /**
      * AWS Bedrock Agent Runtime (camel-aws-bedrock)
      * Invoke Model of AWS Bedrock Agent Runtime service.
@@ -204,6 +219,7 @@ public interface ComponentsBuilderFactory {
     static AwsBedrockAgentRuntimeComponentBuilderFactory.AwsBedrockAgentRuntimeComponentBuilder awsBedrockAgentRuntime() {
         return AwsBedrockAgentRuntimeComponentBuilderFactory.awsBedrockAgentRuntime();
     }
+
     /**
      * AWS Cloudtrail (camel-aws-cloudtrail)
      * Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
@@ -217,6 +233,7 @@ public interface ComponentsBuilderFactory {
     static AwsCloudtrailComponentBuilderFactory.AwsCloudtrailComponentBuilder awsCloudtrail() {
         return AwsCloudtrailComponentBuilderFactory.awsCloudtrail();
     }
+
     /**
      * AWS Config Service (camel-aws-config)
      * Manage AWS Config service.
@@ -230,6 +247,7 @@ public interface ComponentsBuilderFactory {
     static AwsConfigComponentBuilderFactory.AwsConfigComponentBuilder awsConfig() {
         return AwsConfigComponentBuilderFactory.awsConfig();
     }
+
     /**
      * AWS Secrets Manager (camel-aws-secrets-manager)
      * Manage secrets using AWS Secrets Manager.
@@ -243,6 +261,7 @@ public interface ComponentsBuilderFactory {
     static AwsSecretsManagerComponentBuilderFactory.AwsSecretsManagerComponentBuilder awsSecretsManager() {
         return AwsSecretsManagerComponentBuilderFactory.awsSecretsManager();
     }
+
     /**
      * AWS Security Hub (camel-aws-security-hub)
      * Manage and interact with AWS Security Hub for security findings.
@@ -256,6 +275,7 @@ public interface ComponentsBuilderFactory {
     static AwsSecurityHubComponentBuilderFactory.AwsSecurityHubComponentBuilder awsSecurityHub() {
         return AwsSecurityHubComponentBuilderFactory.awsSecurityHub();
     }
+
     /**
      * AWS Athena (camel-aws2-athena)
      * Access AWS Athena.
@@ -269,6 +289,7 @@ public interface ComponentsBuilderFactory {
     static Aws2AthenaComponentBuilderFactory.Aws2AthenaComponentBuilder aws2Athena() {
         return Aws2AthenaComponentBuilderFactory.aws2Athena();
     }
+
     /**
      * AWS Comprehend (camel-aws2-comprehend)
      * Perform natural language processing using AWS Comprehend and AWS SDK
@@ -283,6 +304,7 @@ public interface ComponentsBuilderFactory {
     static Aws2ComprehendComponentBuilderFactory.Aws2ComprehendComponentBuilder aws2Comprehend() {
         return Aws2ComprehendComponentBuilderFactory.aws2Comprehend();
     }
+
     /**
      * AWS CloudWatch (camel-aws2-cw)
      * Sending metrics to AWS CloudWatch.
@@ -296,6 +318,7 @@ public interface ComponentsBuilderFactory {
     static Aws2CwComponentBuilderFactory.Aws2CwComponentBuilder aws2Cw() {
         return Aws2CwComponentBuilderFactory.aws2Cw();
     }
+
     /**
      * AWS DynamoDB (camel-aws2-ddb)
      * Store and retrieve data from AWS DynamoDB.
@@ -309,6 +332,7 @@ public interface ComponentsBuilderFactory {
     static Aws2DdbComponentBuilderFactory.Aws2DdbComponentBuilder aws2Ddb() {
         return Aws2DdbComponentBuilderFactory.aws2Ddb();
     }
+
     /**
      * AWS DynamoDB Streams (camel-aws2-ddb)
      * Receive messages from AWS DynamoDB Stream.
@@ -322,6 +346,7 @@ public interface ComponentsBuilderFactory {
     static Aws2DdbstreamComponentBuilderFactory.Aws2DdbstreamComponentBuilder aws2Ddbstream() {
         return Aws2DdbstreamComponentBuilderFactory.aws2Ddbstream();
     }
+
     /**
      * AWS Elastic Compute Cloud (EC2) (camel-aws2-ec2)
      * Manage AWS EC2 instances.
@@ -335,6 +360,7 @@ public interface ComponentsBuilderFactory {
     static Aws2Ec2ComponentBuilderFactory.Aws2Ec2ComponentBuilder aws2Ec2() {
         return Aws2Ec2ComponentBuilderFactory.aws2Ec2();
     }
+
     /**
      * AWS Elastic Container Service (ECS) (camel-aws2-ecs)
      * Manage AWS ECS cluster instances.
@@ -348,6 +374,7 @@ public interface ComponentsBuilderFactory {
     static Aws2EcsComponentBuilderFactory.Aws2EcsComponentBuilder aws2Ecs() {
         return Aws2EcsComponentBuilderFactory.aws2Ecs();
     }
+
     /**
      * AWS Elastic Kubernetes Service (EKS) (camel-aws2-eks)
      * Manage AWS EKS cluster instances.
@@ -361,6 +388,7 @@ public interface ComponentsBuilderFactory {
     static Aws2EksComponentBuilderFactory.Aws2EksComponentBuilder aws2Eks() {
         return Aws2EksComponentBuilderFactory.aws2Eks();
     }
+
     /**
      * AWS Eventbridge (camel-aws2-eventbridge)
      * Send events to AWS Eventbridge cluster instances.
@@ -374,6 +402,7 @@ public interface ComponentsBuilderFactory {
     static Aws2EventbridgeComponentBuilderFactory.Aws2EventbridgeComponentBuilder aws2Eventbridge() {
         return Aws2EventbridgeComponentBuilderFactory.aws2Eventbridge();
     }
+
     /**
      * AWS Identity and Access Management (IAM) (camel-aws2-iam)
      * Manage AWS IAM instances.
@@ -387,6 +416,7 @@ public interface ComponentsBuilderFactory {
     static Aws2IamComponentBuilderFactory.Aws2IamComponentBuilder aws2Iam() {
         return Aws2IamComponentBuilderFactory.aws2Iam();
     }
+
     /**
      * AWS Kinesis (camel-aws2-kinesis)
      * Consume and produce records from and to AWS Kinesis Streams.
@@ -400,6 +430,7 @@ public interface ComponentsBuilderFactory {
     static Aws2KinesisComponentBuilderFactory.Aws2KinesisComponentBuilder aws2Kinesis() {
         return Aws2KinesisComponentBuilderFactory.aws2Kinesis();
     }
+
     /**
      * AWS Kinesis Firehose (camel-aws2-kinesis)
      * Produce data to AWS Kinesis Firehose streams.
@@ -413,6 +444,7 @@ public interface ComponentsBuilderFactory {
     static Aws2KinesisFirehoseComponentBuilderFactory.Aws2KinesisFirehoseComponentBuilder aws2KinesisFirehose() {
         return Aws2KinesisFirehoseComponentBuilderFactory.aws2KinesisFirehose();
     }
+
     /**
      * AWS Key Management Service (KMS) (camel-aws2-kms)
      * Manage keys stored in AWS KMS instances.
@@ -426,6 +458,7 @@ public interface ComponentsBuilderFactory {
     static Aws2KmsComponentBuilderFactory.Aws2KmsComponentBuilder aws2Kms() {
         return Aws2KmsComponentBuilderFactory.aws2Kms();
     }
+
     /**
      * AWS Lambda (camel-aws2-lambda)
      * Manage and invoke AWS Lambda functions.
@@ -439,6 +472,7 @@ public interface ComponentsBuilderFactory {
     static Aws2LambdaComponentBuilderFactory.Aws2LambdaComponentBuilder aws2Lambda() {
         return Aws2LambdaComponentBuilderFactory.aws2Lambda();
     }
+
     /**
      * AWS MQ (camel-aws2-mq)
      * Send messages to AWS MQ.
@@ -452,6 +486,7 @@ public interface ComponentsBuilderFactory {
     static Aws2MqComponentBuilderFactory.Aws2MqComponentBuilder aws2Mq() {
         return Aws2MqComponentBuilderFactory.aws2Mq();
     }
+
     /**
      * AWS Managed Streaming for Apache Kafka (MSK) (camel-aws2-msk)
      * Manage AWS MSK instances.
@@ -465,6 +500,7 @@ public interface ComponentsBuilderFactory {
     static Aws2MskComponentBuilderFactory.Aws2MskComponentBuilder aws2Msk() {
         return Aws2MskComponentBuilderFactory.aws2Msk();
     }
+
     /**
      * AWS Polly (camel-aws2-polly)
      * Synthesize speech using AWS Polly and AWS SDK version 2.x.
@@ -478,6 +514,7 @@ public interface ComponentsBuilderFactory {
     static Aws2PollyComponentBuilderFactory.Aws2PollyComponentBuilder aws2Polly() {
         return Aws2PollyComponentBuilderFactory.aws2Polly();
     }
+
     /**
      * AWS RedshiftData (camel-aws2-redshift)
      * Perform operations on AWS Redshift using Redshift Data API.
@@ -491,6 +528,7 @@ public interface ComponentsBuilderFactory {
     static Aws2RedshiftDataComponentBuilderFactory.Aws2RedshiftDataComponentBuilder aws2RedshiftData() {
         return Aws2RedshiftDataComponentBuilderFactory.aws2RedshiftData();
     }
+
     /**
      * AWS Rekognition (camel-aws2-rekognition)
      * Manage and invoke AWS Rekognition.
@@ -504,6 +542,7 @@ public interface ComponentsBuilderFactory {
     static Aws2RekognitionComponentBuilderFactory.Aws2RekognitionComponentBuilder aws2Rekognition() {
         return Aws2RekognitionComponentBuilderFactory.aws2Rekognition();
     }
+
     /**
      * AWS S3 Storage Service (camel-aws2-s3)
      * Store and retrieve objects from AWS S3 Storage Service.
@@ -517,6 +556,7 @@ public interface ComponentsBuilderFactory {
     static Aws2S3ComponentBuilderFactory.Aws2S3ComponentBuilder aws2S3() {
         return Aws2S3ComponentBuilderFactory.aws2S3();
     }
+
     /**
      * AWS S3 Vectors (camel-aws2-s3-vectors)
      * Store and query vector embeddings using AWS S3 Vectors with similarity
@@ -531,6 +571,7 @@ public interface ComponentsBuilderFactory {
     static Aws2S3VectorsComponentBuilderFactory.Aws2S3VectorsComponentBuilder aws2S3Vectors() {
         return Aws2S3VectorsComponentBuilderFactory.aws2S3Vectors();
     }
+
     /**
      * AWS Simple Email Service (SES) (camel-aws2-ses)
      * Send e-mails through AWS SES service.
@@ -544,6 +585,7 @@ public interface ComponentsBuilderFactory {
     static Aws2SesComponentBuilderFactory.Aws2SesComponentBuilder aws2Ses() {
         return Aws2SesComponentBuilderFactory.aws2Ses();
     }
+
     /**
      * AWS Simple Notification System (SNS) (camel-aws2-sns)
      * Send messages to AWS Simple Notification Topic.
@@ -557,6 +599,7 @@ public interface ComponentsBuilderFactory {
     static Aws2SnsComponentBuilderFactory.Aws2SnsComponentBuilder aws2Sns() {
         return Aws2SnsComponentBuilderFactory.aws2Sns();
     }
+
     /**
      * AWS Simple Queue Service (SQS) (camel-aws2-sqs)
      * Send and receive messages to/from AWS SQS.
@@ -570,6 +613,7 @@ public interface ComponentsBuilderFactory {
     static Aws2SqsComponentBuilderFactory.Aws2SqsComponentBuilder aws2Sqs() {
         return Aws2SqsComponentBuilderFactory.aws2Sqs();
     }
+
     /**
      * AWS StepFunctions (camel-aws2-step-functions)
      * Manage and invoke AWS Step functions.
@@ -583,6 +627,7 @@ public interface ComponentsBuilderFactory {
     static Aws2StepFunctionsComponentBuilderFactory.Aws2StepFunctionsComponentBuilder aws2StepFunctions() {
         return Aws2StepFunctionsComponentBuilderFactory.aws2StepFunctions();
     }
+
     /**
      * AWS Security Token Service (STS) (camel-aws2-sts)
      * Manage AWS STS cluster instances.
@@ -596,6 +641,7 @@ public interface ComponentsBuilderFactory {
     static Aws2StsComponentBuilderFactory.Aws2StsComponentBuilder aws2Sts() {
         return Aws2StsComponentBuilderFactory.aws2Sts();
     }
+
     /**
      * AWS Textract (camel-aws2-textract)
      * Extract text and data from documents using AWS Textract and AWS SDK
@@ -610,6 +656,7 @@ public interface ComponentsBuilderFactory {
     static Aws2TextractComponentBuilderFactory.Aws2TextractComponentBuilder aws2Textract() {
         return Aws2TextractComponentBuilderFactory.aws2Textract();
     }
+
     /**
      * AWS Timestream (camel-aws2-timestream)
      * Write records and execute queries on AWS time-series database
@@ -623,6 +670,7 @@ public interface ComponentsBuilderFactory {
     static Aws2TimestreamComponentBuilderFactory.Aws2TimestreamComponentBuilder aws2Timestream() {
         return Aws2TimestreamComponentBuilderFactory.aws2Timestream();
     }
+
     /**
      * AWS Transcribe (camel-aws2-transcribe)
      * Automatically convert speech to text using AWS Transcribe service
@@ -636,6 +684,7 @@ public interface ComponentsBuilderFactory {
     static Aws2TranscribeComponentBuilderFactory.Aws2TranscribeComponentBuilder aws2Transcribe() {
         return Aws2TranscribeComponentBuilderFactory.aws2Transcribe();
     }
+
     /**
      * AWS Translate (camel-aws2-translate)
      * Translate texts using AWS Translate and AWS SDK version 2.x.
@@ -649,6 +698,7 @@ public interface ComponentsBuilderFactory {
     static Aws2TranslateComponentBuilderFactory.Aws2TranslateComponentBuilder aws2Translate() {
         return Aws2TranslateComponentBuilderFactory.aws2Translate();
     }
+
     /**
      * Azure CosmosDB (camel-azure-cosmosdb)
      * To read and write records to the CosmosDB database on Azure cloud
@@ -663,6 +713,7 @@ public interface ComponentsBuilderFactory {
     static AzureCosmosdbComponentBuilderFactory.AzureCosmosdbComponentBuilder azureCosmosdb() {
         return AzureCosmosdbComponentBuilderFactory.azureCosmosdb();
     }
+
     /**
      * Azure Event Hubs (camel-azure-eventhubs)
      * Send and receive events to/from Azure Event Hubs using AMQP protocol.
@@ -676,6 +727,7 @@ public interface ComponentsBuilderFactory {
     static AzureEventhubsComponentBuilderFactory.AzureEventhubsComponentBuilder azureEventhubs() {
         return AzureEventhubsComponentBuilderFactory.azureEventhubs();
     }
+
     /**
      * Azure Files (camel-azure-files)
      * Send and receive files to Azure storage file share
@@ -689,6 +741,7 @@ public interface ComponentsBuilderFactory {
     static AzureFilesComponentBuilderFactory.AzureFilesComponentBuilder azureFiles() {
         return AzureFilesComponentBuilderFactory.azureFiles();
     }
+
     /**
      * Azure Functions (camel-azure-functions)
      * Invoke and manage Azure Functions.
@@ -702,6 +755,7 @@ public interface ComponentsBuilderFactory {
     static AzureFunctionsComponentBuilderFactory.AzureFunctionsComponentBuilder azureFunctions() {
         return AzureFunctionsComponentBuilderFactory.azureFunctions();
     }
+
     /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
@@ -715,6 +769,7 @@ public interface ComponentsBuilderFactory {
     static AzureKeyVaultComponentBuilderFactory.AzureKeyVaultComponentBuilder azureKeyVault() {
         return AzureKeyVaultComponentBuilderFactory.azureKeyVault();
     }
+
     /**
      * Azure ServiceBus (camel-azure-servicebus)
      * Send and receive messages to/from Azure Service Bus.
@@ -728,6 +783,7 @@ public interface ComponentsBuilderFactory {
     static AzureServicebusComponentBuilderFactory.AzureServicebusComponentBuilder azureServicebus() {
         return AzureServicebusComponentBuilderFactory.azureServicebus();
     }
+
     /**
      * Azure Storage Blob Service (camel-azure-storage-blob)
      * Store and retrieve blobs from Azure Storage Blob Service.
@@ -741,6 +797,7 @@ public interface ComponentsBuilderFactory {
     static AzureStorageBlobComponentBuilderFactory.AzureStorageBlobComponentBuilder azureStorageBlob() {
         return AzureStorageBlobComponentBuilderFactory.azureStorageBlob();
     }
+
     /**
      * Azure Storage Data Lake Service (camel-azure-storage-datalake)
      * Sends and receives files to/from Azure Data Lake Storage.
@@ -754,6 +811,7 @@ public interface ComponentsBuilderFactory {
     static AzureStorageDatalakeComponentBuilderFactory.AzureStorageDatalakeComponentBuilder azureStorageDatalake() {
         return AzureStorageDatalakeComponentBuilderFactory.azureStorageDatalake();
     }
+
     /**
      * Azure Storage Queue Service (camel-azure-storage-queue)
      * Stores and retrieves messages to/from Azure Storage Queue.
@@ -767,6 +825,7 @@ public interface ComponentsBuilderFactory {
     static AzureStorageQueueComponentBuilderFactory.AzureStorageQueueComponentBuilder azureStorageQueue() {
         return AzureStorageQueueComponentBuilderFactory.azureStorageQueue();
     }
+
     /**
      * Bean (camel-bean)
      * Invoke methods of Java beans stored in Camel registry.
@@ -780,6 +839,7 @@ public interface ComponentsBuilderFactory {
     static BeanComponentBuilderFactory.BeanComponentBuilder bean() {
         return BeanComponentBuilderFactory.bean();
     }
+
     /**
      * Bean Validator (camel-bean-validator)
      * Validate the message body using the Java Bean Validation API.
@@ -793,6 +853,7 @@ public interface ComponentsBuilderFactory {
     static BeanValidatorComponentBuilderFactory.BeanValidatorComponentBuilder beanValidator() {
         return BeanValidatorComponentBuilderFactory.beanValidator();
     }
+
     /**
      * Bonita (camel-bonita)
      * Communicate with a remote Bonita BPM process engine.
@@ -806,6 +867,7 @@ public interface ComponentsBuilderFactory {
     static BonitaComponentBuilderFactory.BonitaComponentBuilder bonita() {
         return BonitaComponentBuilderFactory.bonita();
     }
+
     /**
      * Box (camel-box)
      * Upload, download and manage files, folders, groups, collaborations, etc.
@@ -820,6 +882,7 @@ public interface ComponentsBuilderFactory {
     static BoxComponentBuilderFactory.BoxComponentBuilder box() {
         return BoxComponentBuilderFactory.box();
     }
+
     /**
      * Braintree (camel-braintree)
      * Process payments using Braintree Payments.
@@ -833,6 +896,7 @@ public interface ComponentsBuilderFactory {
     static BraintreeComponentBuilderFactory.BraintreeComponentBuilder braintree() {
         return BraintreeComponentBuilderFactory.braintree();
     }
+
     /**
      * Browse (camel-browse)
      * Inspect the messages received on endpoints supporting BrowsableEndpoint.
@@ -846,6 +910,7 @@ public interface ComponentsBuilderFactory {
     static BrowseComponentBuilderFactory.BrowseComponentBuilder browse() {
         return BrowseComponentBuilderFactory.browse();
     }
+
     /**
      * Caffeine Cache (camel-caffeine)
      * Perform caching operations using Caffeine Cache.
@@ -859,6 +924,7 @@ public interface ComponentsBuilderFactory {
     static CaffeineCacheComponentBuilderFactory.CaffeineCacheComponentBuilder caffeineCache() {
         return CaffeineCacheComponentBuilderFactory.caffeineCache();
     }
+
     /**
      * Caffeine LoadCache (camel-caffeine)
      * Perform caching operations using Caffeine Cache with an attached
@@ -873,6 +939,7 @@ public interface ComponentsBuilderFactory {
     static CaffeineLoadcacheComponentBuilderFactory.CaffeineLoadcacheComponentBuilder caffeineLoadcache() {
         return CaffeineLoadcacheComponentBuilderFactory.caffeineLoadcache();
     }
+
     /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
@@ -886,6 +953,7 @@ public interface ComponentsBuilderFactory {
     static ChatscriptComponentBuilderFactory.ChatscriptComponentBuilder chatscript() {
         return ChatscriptComponentBuilderFactory.chatscript();
     }
+
     /**
      * Chunk (camel-chunk)
      * Transform messages using Chunk templating engine.
@@ -899,6 +967,7 @@ public interface ComponentsBuilderFactory {
     static ChunkComponentBuilderFactory.ChunkComponentBuilder chunk() {
         return ChunkComponentBuilderFactory.chunk();
     }
+
     /**
      * Class (camel-bean)
      * Invoke methods of Java beans specified by class name.
@@ -912,6 +981,7 @@ public interface ComponentsBuilderFactory {
     static ClasComponentBuilderFactory.ClasComponentBuilder clas() {
         return ClasComponentBuilderFactory.clas();
     }
+
     /**
      * ClickUp (camel-clickup)
      * Receives events from ClickUp
@@ -925,6 +995,7 @@ public interface ComponentsBuilderFactory {
     static ClickupComponentBuilderFactory.ClickupComponentBuilder clickup() {
         return ClickupComponentBuilderFactory.clickup();
     }
+
     /**
      * CM SMS Gateway (camel-cm-sms)
      * Send SMS messages via CM SMS Gateway.
@@ -938,6 +1009,7 @@ public interface ComponentsBuilderFactory {
     static CmSmsComponentBuilderFactory.CmSmsComponentBuilder cmSms() {
         return CmSmsComponentBuilderFactory.cmSms();
     }
+
     /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -952,6 +1024,7 @@ public interface ComponentsBuilderFactory {
     static CoapComponentBuilderFactory.CoapComponentBuilder coap() {
         return CoapComponentBuilderFactory.coap();
     }
+
     /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -966,6 +1039,7 @@ public interface ComponentsBuilderFactory {
     static CoapTcpComponentBuilderFactory.CoapTcpComponentBuilder coapTcp() {
         return CoapTcpComponentBuilderFactory.coapTcp();
     }
+
     /**
      * CoAP (Secure) (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -980,6 +1054,7 @@ public interface ComponentsBuilderFactory {
     static CoapsComponentBuilderFactory.CoapsComponentBuilder coaps() {
         return CoapsComponentBuilderFactory.coaps();
     }
+
     /**
      * CoAP (camel-coap)
      * Send and receive messages to/from CoAP (Constrained Application Protocol)
@@ -994,6 +1069,7 @@ public interface ComponentsBuilderFactory {
     static CoapsTcpComponentBuilderFactory.CoapsTcpComponentBuilder coapsTcp() {
         return CoapsTcpComponentBuilderFactory.coapsTcp();
     }
+
     /**
      * CometD (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
@@ -1008,6 +1084,7 @@ public interface ComponentsBuilderFactory {
     static CometdComponentBuilderFactory.CometdComponentBuilder cometd() {
         return CometdComponentBuilderFactory.cometd();
     }
+
     /**
      * CometD (Secure) (camel-cometd)
      * Offers publish/subscribe, peer-to-peer (via a server), and RPC style
@@ -1022,6 +1099,7 @@ public interface ComponentsBuilderFactory {
     static CometdsComponentBuilderFactory.CometdsComponentBuilder cometds() {
         return CometdsComponentBuilderFactory.cometds();
     }
+
     /**
      * Consul (camel-consul)
      * Integrate with Consul service discovery and configuration store.
@@ -1035,6 +1113,7 @@ public interface ComponentsBuilderFactory {
     static ConsulComponentBuilderFactory.ConsulComponentBuilder consul() {
         return ConsulComponentBuilderFactory.consul();
     }
+
     /**
      * Control Bus (camel-controlbus)
      * Manage and monitor Camel routes.
@@ -1048,6 +1127,7 @@ public interface ComponentsBuilderFactory {
     static ControlbusComponentBuilderFactory.ControlbusComponentBuilder controlbus() {
         return ControlbusComponentBuilderFactory.controlbus();
     }
+
     /**
      * Couchbase (camel-couchbase)
      * Query Couchbase Views with a poll strategy and/or perform various
@@ -1062,6 +1142,7 @@ public interface ComponentsBuilderFactory {
     static CouchbaseComponentBuilderFactory.CouchbaseComponentBuilder couchbase() {
         return CouchbaseComponentBuilderFactory.couchbase();
     }
+
     /**
      * CouchDB (camel-couchdb)
      * Consume changesets for inserts, updates and deletes in a CouchDB
@@ -1077,6 +1158,7 @@ public interface ComponentsBuilderFactory {
     static CouchdbComponentBuilderFactory.CouchdbComponentBuilder couchdb() {
         return CouchdbComponentBuilderFactory.couchdb();
     }
+
     /**
      * Cassandra CQL (camel-cassandraql)
      * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
@@ -1091,6 +1173,7 @@ public interface ComponentsBuilderFactory {
     static CqlComponentBuilderFactory.CqlComponentBuilder cql() {
         return CqlComponentBuilderFactory.cql();
     }
+
     /**
      * Cron (camel-cron)
      * A generic interface for triggering events at times specified through the
@@ -1105,6 +1188,7 @@ public interface ComponentsBuilderFactory {
     static CronComponentBuilderFactory.CronComponentBuilder cron() {
         return CronComponentBuilderFactory.cron();
     }
+
     /**
      * Crypto (JCE) (camel-crypto)
      * Sign and verify exchanges using the Signature Service of the Java
@@ -1119,6 +1203,7 @@ public interface ComponentsBuilderFactory {
     static CryptoComponentBuilderFactory.CryptoComponentBuilder crypto() {
         return CryptoComponentBuilderFactory.crypto();
     }
+
     /**
      * CXF (camel-cxf-soap)
      * Expose SOAP WebServices using Apache CXF or connect to external
@@ -1133,6 +1218,7 @@ public interface ComponentsBuilderFactory {
     static CxfComponentBuilderFactory.CxfComponentBuilder cxf() {
         return CxfComponentBuilderFactory.cxf();
     }
+
     /**
      * CXF-RS (camel-cxf-rest)
      * Expose JAX-RS REST services using Apache CXF or connect to external REST
@@ -1147,6 +1233,7 @@ public interface ComponentsBuilderFactory {
     static CxfrsComponentBuilderFactory.CxfrsComponentBuilder cxfrs() {
         return CxfrsComponentBuilderFactory.cxfrs();
     }
+
     /**
      * CyberArk Vault (camel-cyberark-vault)
      * Retrieve secrets from CyberArk Conjur Vault.
@@ -1160,6 +1247,7 @@ public interface ComponentsBuilderFactory {
     static CyberarkVaultComponentBuilderFactory.CyberarkVaultComponentBuilder cyberarkVault() {
         return CyberarkVaultComponentBuilderFactory.cyberarkVault();
     }
+
     /**
      * Dapr (camel-dapr)
      * Dapr component which interfaces with Dapr Building Blocks.
@@ -1173,6 +1261,7 @@ public interface ComponentsBuilderFactory {
     static DaprComponentBuilderFactory.DaprComponentBuilder dapr() {
         return DaprComponentBuilderFactory.dapr();
     }
+
     /**
      * Data Format (camel-dataformat)
      * Use a Camel Data Format as a regular Camel Component.
@@ -1186,6 +1275,7 @@ public interface ComponentsBuilderFactory {
     static DataformatComponentBuilderFactory.DataformatComponentBuilder dataformat() {
         return DataformatComponentBuilderFactory.dataformat();
     }
+
     /**
      * Dataset (camel-dataset)
      * Provide data for load and soak testing of your Camel application.
@@ -1199,6 +1289,7 @@ public interface ComponentsBuilderFactory {
     static DatasetComponentBuilderFactory.DatasetComponentBuilder dataset() {
         return DatasetComponentBuilderFactory.dataset();
     }
+
     /**
      * DataSet Test (camel-dataset)
      * Extends the mock component by pulling messages from another endpoint on
@@ -1213,6 +1304,7 @@ public interface ComponentsBuilderFactory {
     static DatasetTestComponentBuilderFactory.DatasetTestComponentBuilder datasetTest() {
         return DatasetTestComponentBuilderFactory.datasetTest();
     }
+
     /**
      * Debezium DB2 Connector (camel-debezium-db2)
      * Capture changes from a DB2 database.
@@ -1226,6 +1318,7 @@ public interface ComponentsBuilderFactory {
     static DebeziumDb2ComponentBuilderFactory.DebeziumDb2ComponentBuilder debeziumDb2() {
         return DebeziumDb2ComponentBuilderFactory.debeziumDb2();
     }
+
     /**
      * Debezium MongoDB Connector (camel-debezium-mongodb)
      * Capture changes from a MongoDB database.
@@ -1239,6 +1332,7 @@ public interface ComponentsBuilderFactory {
     static DebeziumMongodbComponentBuilderFactory.DebeziumMongodbComponentBuilder debeziumMongodb() {
         return DebeziumMongodbComponentBuilderFactory.debeziumMongodb();
     }
+
     /**
      * Debezium MySQL Connector (camel-debezium-mysql)
      * Capture changes from a MySQL database.
@@ -1252,6 +1346,7 @@ public interface ComponentsBuilderFactory {
     static DebeziumMysqlComponentBuilderFactory.DebeziumMysqlComponentBuilder debeziumMysql() {
         return DebeziumMysqlComponentBuilderFactory.debeziumMysql();
     }
+
     /**
      * Debezium Oracle Connector (camel-debezium-oracle)
      * Capture changes from an Oracle database.
@@ -1265,6 +1360,7 @@ public interface ComponentsBuilderFactory {
     static DebeziumOracleComponentBuilderFactory.DebeziumOracleComponentBuilder debeziumOracle() {
         return DebeziumOracleComponentBuilderFactory.debeziumOracle();
     }
+
     /**
      * Debezium PostgresSQL Connector (camel-debezium-postgres)
      * Capture changes from a PostgresSQL database.
@@ -1278,6 +1374,7 @@ public interface ComponentsBuilderFactory {
     static DebeziumPostgresComponentBuilderFactory.DebeziumPostgresComponentBuilder debeziumPostgres() {
         return DebeziumPostgresComponentBuilderFactory.debeziumPostgres();
     }
+
     /**
      * Debezium SQL Server Connector (camel-debezium-sqlserver)
      * Capture changes from an SQL Server database.
@@ -1291,6 +1388,7 @@ public interface ComponentsBuilderFactory {
     static DebeziumSqlserverComponentBuilderFactory.DebeziumSqlserverComponentBuilder debeziumSqlserver() {
         return DebeziumSqlserverComponentBuilderFactory.debeziumSqlserver();
     }
+
     /**
      * DFDL (camel-dfdl)
      * Transforms fixed format data such as EDI message from/to XML using a Data
@@ -1305,6 +1403,7 @@ public interface ComponentsBuilderFactory {
     static DfdlComponentBuilderFactory.DfdlComponentBuilder dfdl() {
         return DfdlComponentBuilderFactory.dfdl();
     }
+
     /**
      * DHIS2 (camel-dhis2)
      * Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web
@@ -1319,6 +1418,7 @@ public interface ComponentsBuilderFactory {
     static Dhis2ComponentBuilderFactory.Dhis2ComponentBuilder dhis2() {
         return Dhis2ComponentBuilderFactory.dhis2();
     }
+
     /**
      * DigitalOcean (camel-digitalocean)
      * Manage Droplets and resources within the DigitalOcean cloud.
@@ -1332,6 +1432,7 @@ public interface ComponentsBuilderFactory {
     static DigitaloceanComponentBuilderFactory.DigitaloceanComponentBuilder digitalocean() {
         return DigitaloceanComponentBuilderFactory.digitalocean();
     }
+
     /**
      * Direct (camel-direct)
      * Call another endpoint from the same Camel Context synchronously.
@@ -1345,6 +1446,7 @@ public interface ComponentsBuilderFactory {
     static DirectComponentBuilderFactory.DirectComponentBuilder direct() {
         return DirectComponentBuilderFactory.direct();
     }
+
     /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -1358,6 +1460,7 @@ public interface ComponentsBuilderFactory {
     static DisruptorComponentBuilderFactory.DisruptorComponentBuilder disruptor() {
         return DisruptorComponentBuilderFactory.disruptor();
     }
+
     /**
      * Disruptor VM (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -1371,6 +1474,7 @@ public interface ComponentsBuilderFactory {
     static DisruptorVmComponentBuilderFactory.DisruptorVmComponentBuilder disruptorVm() {
         return DisruptorVmComponentBuilderFactory.disruptorVm();
     }
+
     /**
      * Deep Java Library (camel-djl)
      * Infer Deep Learning models from message exchanges data using Deep Java
@@ -1385,6 +1489,7 @@ public interface ComponentsBuilderFactory {
     static DjlComponentBuilderFactory.DjlComponentBuilder djl() {
         return DjlComponentBuilderFactory.djl();
     }
+
     /**
      * DNS (camel-dns)
      * Perform DNS queries using DNSJava.
@@ -1398,6 +1503,7 @@ public interface ComponentsBuilderFactory {
     static DnsComponentBuilderFactory.DnsComponentBuilder dns() {
         return DnsComponentBuilderFactory.dns();
     }
+
     /**
      * Docker (camel-docker)
      * Manage Docker containers.
@@ -1411,6 +1517,7 @@ public interface ComponentsBuilderFactory {
     static DockerComponentBuilderFactory.DockerComponentBuilder docker() {
         return DockerComponentBuilderFactory.docker();
     }
+
     /**
      * Docling (camel-docling)
      * Process documents using Docling library for parsing and conversion.
@@ -1424,6 +1531,7 @@ public interface ComponentsBuilderFactory {
     static DoclingComponentBuilderFactory.DoclingComponentBuilder docling() {
         return DoclingComponentBuilderFactory.docling();
     }
+
     /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
@@ -1437,6 +1545,7 @@ public interface ComponentsBuilderFactory {
     static DrillComponentBuilderFactory.DrillComponentBuilder drill() {
         return DrillComponentBuilderFactory.drill();
     }
+
     /**
      * Dropbox (camel-dropbox)
      * Upload, download and manage files, folders, groups, collaborations, etc
@@ -1451,6 +1560,7 @@ public interface ComponentsBuilderFactory {
     static DropboxComponentBuilderFactory.DropboxComponentBuilder dropbox() {
         return DropboxComponentBuilderFactory.dropbox();
     }
+
     /**
      * Dynamic Router (camel-dynamic-router)
      * The Dynamic Router component routes exchanges to recipients, and the
@@ -1465,6 +1575,7 @@ public interface ComponentsBuilderFactory {
     static DynamicRouterComponentBuilderFactory.DynamicRouterComponentBuilder dynamicRouter() {
         return DynamicRouterComponentBuilderFactory.dynamicRouter();
     }
+
     /**
      * Dynamic Router Control (camel-dynamic-router)
      * The Dynamic Router control endpoint for operations that allow routing
@@ -1480,6 +1591,7 @@ public interface ComponentsBuilderFactory {
     static DynamicRouterControlComponentBuilderFactory.DynamicRouterControlComponentBuilder dynamicRouterControl() {
         return DynamicRouterControlComponentBuilderFactory.dynamicRouterControl();
     }
+
     /**
      * Ehcache (camel-ehcache)
      * Perform caching operations using Ehcache.
@@ -1493,6 +1605,7 @@ public interface ComponentsBuilderFactory {
     static EhcacheComponentBuilderFactory.EhcacheComponentBuilder ehcache() {
         return EhcacheComponentBuilderFactory.ehcache();
     }
+
     /**
      * Elasticsearch (camel-elasticsearch)
      * Send requests to ElasticSearch via Java Client API.
@@ -1506,6 +1619,7 @@ public interface ComponentsBuilderFactory {
     static ElasticsearchComponentBuilderFactory.ElasticsearchComponentBuilder elasticsearch() {
         return ElasticsearchComponentBuilderFactory.elasticsearch();
     }
+
     /**
      * Elasticsearch Low level Rest Client (camel-elasticsearch-rest-client)
      * Perform queries and other operations on Elasticsearch or OpenSearch (uses
@@ -1520,6 +1634,7 @@ public interface ComponentsBuilderFactory {
     static ElasticsearchRestClientComponentBuilderFactory.ElasticsearchRestClientComponentBuilder elasticsearchRestClient() {
         return ElasticsearchRestClientComponentBuilderFactory.elasticsearchRestClient();
     }
+
     /**
      * Exec (camel-exec)
      * Execute commands on the underlying operating system.
@@ -1533,6 +1648,7 @@ public interface ComponentsBuilderFactory {
     static ExecComponentBuilderFactory.ExecComponentBuilder exec() {
         return ExecComponentBuilderFactory.exec();
     }
+
     /**
      * FHIR (camel-fhir)
      * Exchange information in the healthcare domain using the FHIR (Fast
@@ -1547,6 +1663,7 @@ public interface ComponentsBuilderFactory {
     static FhirComponentBuilderFactory.FhirComponentBuilder fhir() {
         return FhirComponentBuilderFactory.fhir();
     }
+
     /**
      * File (camel-file)
      * Read and write files.
@@ -1560,6 +1677,7 @@ public interface ComponentsBuilderFactory {
     static FileComponentBuilderFactory.FileComponentBuilder file() {
         return FileComponentBuilderFactory.file();
     }
+
     /**
      * File Watch (camel-file-watch)
      * Get notified about file events in a directory using
@@ -1574,6 +1692,7 @@ public interface ComponentsBuilderFactory {
     static FileWatchComponentBuilderFactory.FileWatchComponentBuilder fileWatch() {
         return FileWatchComponentBuilderFactory.fileWatch();
     }
+
     /**
      * Flatpack (camel-flatpack)
      * Parse fixed width and delimited files using the FlatPack library.
@@ -1587,6 +1706,7 @@ public interface ComponentsBuilderFactory {
     static FlatpackComponentBuilderFactory.FlatpackComponentBuilder flatpack() {
         return FlatpackComponentBuilderFactory.flatpack();
     }
+
     /**
      * Flink (camel-flink)
      * Send DataSet jobs to an Apache Flink cluster.
@@ -1600,6 +1720,7 @@ public interface ComponentsBuilderFactory {
     static FlinkComponentBuilderFactory.FlinkComponentBuilder flink() {
         return FlinkComponentBuilderFactory.flink();
     }
+
     /**
      * Flowable (camel-flowable)
      * Send and receive messages from the Flowable BPMN and CMMN engines.
@@ -1613,6 +1734,7 @@ public interface ComponentsBuilderFactory {
     static FlowableComponentBuilderFactory.FlowableComponentBuilder flowable() {
         return FlowableComponentBuilderFactory.flowable();
     }
+
     /**
      * FOP (camel-fop)
      * Render messages into PDF and other output formats supported by Apache
@@ -1627,6 +1749,7 @@ public interface ComponentsBuilderFactory {
     static FopComponentBuilderFactory.FopComponentBuilder fop() {
         return FopComponentBuilderFactory.fop();
     }
+
     /**
      * Freemarker (camel-freemarker)
      * Transform messages using FreeMarker templates.
@@ -1640,6 +1763,7 @@ public interface ComponentsBuilderFactory {
     static FreemarkerComponentBuilderFactory.FreemarkerComponentBuilder freemarker() {
         return FreemarkerComponentBuilderFactory.freemarker();
     }
+
     /**
      * FTP (camel-ftp)
      * Upload and download files to/from FTP servers.
@@ -1653,6 +1777,7 @@ public interface ComponentsBuilderFactory {
     static FtpComponentBuilderFactory.FtpComponentBuilder ftp() {
         return FtpComponentBuilderFactory.ftp();
     }
+
     /**
      * FTPS (camel-ftp)
      * Upload and download files to/from FTP servers supporting the FTPS
@@ -1667,6 +1792,7 @@ public interface ComponentsBuilderFactory {
     static FtpsComponentBuilderFactory.FtpsComponentBuilder ftps() {
         return FtpsComponentBuilderFactory.ftps();
     }
+
     /**
      * Geocoder (camel-geocoder)
      * Find geocodes (latitude and longitude) for a given address or the other
@@ -1681,6 +1807,7 @@ public interface ComponentsBuilderFactory {
     static GeocoderComponentBuilderFactory.GeocoderComponentBuilder geocoder() {
         return GeocoderComponentBuilderFactory.geocoder();
     }
+
     /**
      * Git (camel-git)
      * Perform operations on git repositories.
@@ -1694,6 +1821,7 @@ public interface ComponentsBuilderFactory {
     static GitComponentBuilderFactory.GitComponentBuilder git() {
         return GitComponentBuilderFactory.git();
     }
+
     /**
      * GitHub (camel-github)
      * Interact with the GitHub API.
@@ -1707,6 +1835,7 @@ public interface ComponentsBuilderFactory {
     static GithubComponentBuilderFactory.GithubComponentBuilder github() {
         return GithubComponentBuilderFactory.github();
     }
+
     /**
      * GitHub2 (camel-github2)
      * Interact with the GitHub API.
@@ -1720,6 +1849,7 @@ public interface ComponentsBuilderFactory {
     static Github2ComponentBuilderFactory.Github2ComponentBuilder github2() {
         return Github2ComponentBuilderFactory.github2();
     }
+
     /**
      * Google BigQuery (camel-google-bigquery)
      * Google BigQuery data warehouse for analytics.
@@ -1733,6 +1863,7 @@ public interface ComponentsBuilderFactory {
     static GoogleBigqueryComponentBuilderFactory.GoogleBigqueryComponentBuilder googleBigquery() {
         return GoogleBigqueryComponentBuilderFactory.googleBigquery();
     }
+
     /**
      * Google BigQuery Standard SQL (camel-google-bigquery)
      * Access Google Cloud BigQuery service using SQL queries.
@@ -1746,6 +1877,7 @@ public interface ComponentsBuilderFactory {
     static GoogleBigquerySqlComponentBuilderFactory.GoogleBigquerySqlComponentBuilder googleBigquerySql() {
         return GoogleBigquerySqlComponentBuilderFactory.googleBigquerySql();
     }
+
     /**
      * Google Calendar (camel-google-calendar)
      * Perform various operations on a Google Calendar.
@@ -1759,6 +1891,7 @@ public interface ComponentsBuilderFactory {
     static GoogleCalendarComponentBuilderFactory.GoogleCalendarComponentBuilder googleCalendar() {
         return GoogleCalendarComponentBuilderFactory.googleCalendar();
     }
+
     /**
      * Google Calendar Stream (camel-google-calendar)
      * Poll for changes in a Google Calendar.
@@ -1772,6 +1905,7 @@ public interface ComponentsBuilderFactory {
     static GoogleCalendarStreamComponentBuilderFactory.GoogleCalendarStreamComponentBuilder googleCalendarStream() {
         return GoogleCalendarStreamComponentBuilderFactory.googleCalendarStream();
     }
+
     /**
      * Google Drive (camel-google-drive)
      * Manage files in Google Drive.
@@ -1785,6 +1919,7 @@ public interface ComponentsBuilderFactory {
     static GoogleDriveComponentBuilderFactory.GoogleDriveComponentBuilder googleDrive() {
         return GoogleDriveComponentBuilderFactory.googleDrive();
     }
+
     /**
      * Google Firestore (camel-google-firestore)
      * Store and retrieve data from Google Cloud Firestore NoSQL database.
@@ -1798,6 +1933,7 @@ public interface ComponentsBuilderFactory {
     static GoogleFirestoreComponentBuilderFactory.GoogleFirestoreComponentBuilder googleFirestore() {
         return GoogleFirestoreComponentBuilderFactory.googleFirestore();
     }
+
     /**
      * Google Cloud Functions (camel-google-functions)
      * Manage and invoke Google Cloud Functions
@@ -1811,6 +1947,7 @@ public interface ComponentsBuilderFactory {
     static GoogleFunctionsComponentBuilderFactory.GoogleFunctionsComponentBuilder googleFunctions() {
         return GoogleFunctionsComponentBuilderFactory.googleFunctions();
     }
+
     /**
      * Google Mail (camel-google-mail)
      * Manage messages in Google Mail.
@@ -1824,6 +1961,7 @@ public interface ComponentsBuilderFactory {
     static GoogleMailComponentBuilderFactory.GoogleMailComponentBuilder googleMail() {
         return GoogleMailComponentBuilderFactory.googleMail();
     }
+
     /**
      * Google Mail Stream (camel-google-mail)
      * Poll for incoming messages in Google Mail.
@@ -1837,6 +1975,7 @@ public interface ComponentsBuilderFactory {
     static GoogleMailStreamComponentBuilderFactory.GoogleMailStreamComponentBuilder googleMailStream() {
         return GoogleMailStreamComponentBuilderFactory.googleMailStream();
     }
+
     /**
      * Google Pubsub (camel-google-pubsub)
      * Send and receive messages to/from Google Cloud Platform PubSub Service.
@@ -1850,20 +1989,7 @@ public interface ComponentsBuilderFactory {
     static GooglePubsubComponentBuilderFactory.GooglePubsubComponentBuilder googlePubsub() {
         return GooglePubsubComponentBuilderFactory.googlePubsub();
     }
-    /**
-     * Google PubSub Lite (camel-google-pubsub-lite)
-     * Send and receive messages to/from Google Cloud Platform PubSub Lite
-     * Service.
-     * 
-     * Category: cloud,messaging
-     * Since: 4.6
-     * Maven coordinates: org.apache.camel:camel-google-pubsub-lite
-     * 
-     * @return the dsl builder
-     */
-    static GooglePubsubLiteComponentBuilderFactory.GooglePubsubLiteComponentBuilder googlePubsubLite() {
-        return GooglePubsubLiteComponentBuilderFactory.googlePubsubLite();
-    }
+
     /**
      * Google Secret Manager (camel-google-secret-manager)
      * Manage Google Secret Manager Secrets
@@ -1877,6 +2003,7 @@ public interface ComponentsBuilderFactory {
     static GoogleSecretManagerComponentBuilderFactory.GoogleSecretManagerComponentBuilder googleSecretManager() {
         return GoogleSecretManagerComponentBuilderFactory.googleSecretManager();
     }
+
     /**
      * Google Sheets (camel-google-sheets)
      * Manage spreadsheets in Google Sheets.
@@ -1890,6 +2017,7 @@ public interface ComponentsBuilderFactory {
     static GoogleSheetsComponentBuilderFactory.GoogleSheetsComponentBuilder googleSheets() {
         return GoogleSheetsComponentBuilderFactory.googleSheets();
     }
+
     /**
      * Google Sheets Stream (camel-google-sheets)
      * Poll for changes in Google Sheets.
@@ -1903,6 +2031,7 @@ public interface ComponentsBuilderFactory {
     static GoogleSheetsStreamComponentBuilderFactory.GoogleSheetsStreamComponentBuilder googleSheetsStream() {
         return GoogleSheetsStreamComponentBuilderFactory.googleSheetsStream();
     }
+
     /**
      * Google Storage (camel-google-storage)
      * Store and retrieve objects from Google Cloud Storage Service using the
@@ -1917,6 +2046,7 @@ public interface ComponentsBuilderFactory {
     static GoogleStorageComponentBuilderFactory.GoogleStorageComponentBuilder googleStorage() {
         return GoogleStorageComponentBuilderFactory.googleStorage();
     }
+
     /**
      * Google Vertex AI (camel-google-vertexai)
      * Interact with Google Cloud Vertex AI generative models.
@@ -1930,6 +2060,7 @@ public interface ComponentsBuilderFactory {
     static GoogleVertexaiComponentBuilderFactory.GoogleVertexaiComponentBuilder googleVertexai() {
         return GoogleVertexaiComponentBuilderFactory.googleVertexai();
     }
+
     /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
@@ -1944,6 +2075,7 @@ public interface ComponentsBuilderFactory {
     static GrapeComponentBuilderFactory.GrapeComponentBuilder grape() {
         return GrapeComponentBuilderFactory.grape();
     }
+
     /**
      * GraphQL (camel-graphql)
      * Send GraphQL queries and mutations to external systems.
@@ -1957,6 +2089,7 @@ public interface ComponentsBuilderFactory {
     static GraphqlComponentBuilderFactory.GraphqlComponentBuilder graphql() {
         return GraphqlComponentBuilderFactory.graphql();
     }
+
     /**
      * gRPC (camel-grpc)
      * Expose gRPC endpoints and access external gRPC endpoints.
@@ -1970,6 +2103,7 @@ public interface ComponentsBuilderFactory {
     static GrpcComponentBuilderFactory.GrpcComponentBuilder grpc() {
         return GrpcComponentBuilderFactory.grpc();
     }
+
     /**
      * Guava EventBus (camel-guava-eventbus)
      * Send and receive messages to/from Guava EventBus.
@@ -1983,6 +2117,7 @@ public interface ComponentsBuilderFactory {
     static GuavaEventbusComponentBuilderFactory.GuavaEventbusComponentBuilder guavaEventbus() {
         return GuavaEventbusComponentBuilderFactory.guavaEventbus();
     }
+
     /**
      * Hashicorp Vault (camel-hashicorp-vault)
      * Manage secrets in Hashicorp Vault Service
@@ -1996,6 +2131,7 @@ public interface ComponentsBuilderFactory {
     static HashicorpVaultComponentBuilderFactory.HashicorpVaultComponentBuilder hashicorpVault() {
         return HashicorpVaultComponentBuilderFactory.hashicorpVault();
     }
+
     /**
      * Hazelcast Atomic Number (camel-hazelcast)
      * Increment, decrement, set, etc. Hazelcast atomic number (a grid wide
@@ -2010,6 +2146,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastAtomicvalueComponentBuilderFactory.HazelcastAtomicvalueComponentBuilder hazelcastAtomicvalue() {
         return HazelcastAtomicvalueComponentBuilderFactory.hazelcastAtomicvalue();
     }
+
     /**
      * Hazelcast Instance (camel-hazelcast)
      * Consume join/leave events of a cache instance in a Hazelcast cluster.
@@ -2023,6 +2160,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastInstanceComponentBuilderFactory.HazelcastInstanceComponentBuilder hazelcastInstance() {
         return HazelcastInstanceComponentBuilderFactory.hazelcastInstance();
     }
+
     /**
      * Hazelcast List (camel-hazelcast)
      * Perform operations on Hazelcast distributed list.
@@ -2036,6 +2174,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastListComponentBuilderFactory.HazelcastListComponentBuilder hazelcastList() {
         return HazelcastListComponentBuilderFactory.hazelcastList();
     }
+
     /**
      * Hazelcast Map (camel-hazelcast)
      * Perform operations on Hazelcast distributed map.
@@ -2049,6 +2188,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastMapComponentBuilderFactory.HazelcastMapComponentBuilder hazelcastMap() {
         return HazelcastMapComponentBuilderFactory.hazelcastMap();
     }
+
     /**
      * Hazelcast Multimap (camel-hazelcast)
      * Perform operations on Hazelcast distributed multimap.
@@ -2062,6 +2202,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastMultimapComponentBuilderFactory.HazelcastMultimapComponentBuilder hazelcastMultimap() {
         return HazelcastMultimapComponentBuilderFactory.hazelcastMultimap();
     }
+
     /**
      * Hazelcast PN Counter (camel-hazelcast)
      * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
@@ -2076,6 +2217,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastPncounterComponentBuilderFactory.HazelcastPncounterComponentBuilder hazelcastPncounter() {
         return HazelcastPncounterComponentBuilderFactory.hazelcastPncounter();
     }
+
     /**
      * Hazelcast Queue (camel-hazelcast)
      * Perform operations on Hazelcast distributed queue.
@@ -2089,6 +2231,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastQueueComponentBuilderFactory.HazelcastQueueComponentBuilder hazelcastQueue() {
         return HazelcastQueueComponentBuilderFactory.hazelcastQueue();
     }
+
     /**
      * Hazelcast Replicated Map (camel-hazelcast)
      * Perform operations on Hazelcast replicated map.
@@ -2102,6 +2245,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastReplicatedmapComponentBuilderFactory.HazelcastReplicatedmapComponentBuilder hazelcastReplicatedmap() {
         return HazelcastReplicatedmapComponentBuilderFactory.hazelcastReplicatedmap();
     }
+
     /**
      * Hazelcast Ringbuffer (camel-hazelcast)
      * Perform operations on Hazelcast distributed ringbuffer.
@@ -2115,6 +2259,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastRingbufferComponentBuilderFactory.HazelcastRingbufferComponentBuilder hazelcastRingbuffer() {
         return HazelcastRingbufferComponentBuilderFactory.hazelcastRingbuffer();
     }
+
     /**
      * Hazelcast SEDA (camel-hazelcast)
      * Asynchronously send/receive Exchanges between Camel routes running on
@@ -2129,6 +2274,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastSedaComponentBuilderFactory.HazelcastSedaComponentBuilder hazelcastSeda() {
         return HazelcastSedaComponentBuilderFactory.hazelcastSeda();
     }
+
     /**
      * Hazelcast Set (camel-hazelcast)
      * Perform operations on Hazelcast distributed set.
@@ -2142,6 +2288,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastSetComponentBuilderFactory.HazelcastSetComponentBuilder hazelcastSet() {
         return HazelcastSetComponentBuilderFactory.hazelcastSet();
     }
+
     /**
      * Hazelcast Topic (camel-hazelcast)
      * Send and receive messages to/from Hazelcast distributed topic.
@@ -2155,6 +2302,7 @@ public interface ComponentsBuilderFactory {
     static HazelcastTopicComponentBuilderFactory.HazelcastTopicComponentBuilder hazelcastTopic() {
         return HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
+
     /**
      * HTTP (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
@@ -2168,6 +2316,7 @@ public interface ComponentsBuilderFactory {
     static HttpComponentBuilderFactory.HttpComponentBuilder http() {
         return HttpComponentBuilderFactory.http();
     }
+
     /**
      * HTTPS (Secure) (camel-http)
      * Send requests to external HTTP servers using Apache HTTP Client 5.x.
@@ -2181,6 +2330,7 @@ public interface ComponentsBuilderFactory {
     static HttpsComponentBuilderFactory.HttpsComponentBuilder https() {
         return HttpsComponentBuilderFactory.https();
     }
+
     /**
      * Hugging Face (camel-huggingface)
      * Integration with Hugging Face's Model Hub by using the Deep Java Library
@@ -2195,6 +2345,7 @@ public interface ComponentsBuilderFactory {
     static HuggingfaceComponentBuilderFactory.HuggingfaceComponentBuilder huggingface() {
         return HuggingfaceComponentBuilderFactory.huggingface();
     }
+
     /**
      * Huawei Distributed Message Service (DMS) (camel-huaweicloud-dms)
      * To integrate with a fully managed, high-performance message queuing
@@ -2209,6 +2360,7 @@ public interface ComponentsBuilderFactory {
     static HwcloudDmsComponentBuilderFactory.HwcloudDmsComponentBuilder hwcloudDms() {
         return HwcloudDmsComponentBuilderFactory.hwcloudDms();
     }
+
     /**
      * Huawei Cloud Face Recognition Service (FRS) (camel-huaweicloud-frs)
      * Face Recognition Service (FRS) is an intelligent service that uses
@@ -2224,6 +2376,7 @@ public interface ComponentsBuilderFactory {
     static HwcloudFrsComponentBuilderFactory.HwcloudFrsComponentBuilder hwcloudFrs() {
         return HwcloudFrsComponentBuilderFactory.hwcloudFrs();
     }
+
     /**
      * Huawei FunctionGraph (camel-huaweicloud-functiongraph)
      * To call serverless functions on Huawei Cloud
@@ -2237,6 +2390,7 @@ public interface ComponentsBuilderFactory {
     static HwcloudFunctiongraphComponentBuilderFactory.HwcloudFunctiongraphComponentBuilder hwcloudFunctiongraph() {
         return HwcloudFunctiongraphComponentBuilderFactory.hwcloudFunctiongraph();
     }
+
     /**
      * Huawei Identity and Access Management (IAM) (camel-huaweicloud-iam)
      * To securely manage users on Huawei Cloud
@@ -2250,6 +2404,7 @@ public interface ComponentsBuilderFactory {
     static HwcloudIamComponentBuilderFactory.HwcloudIamComponentBuilder hwcloudIam() {
         return HwcloudIamComponentBuilderFactory.hwcloudIam();
     }
+
     /**
      * Huawei Cloud Image Recognition (camel-huaweicloud-imagerecognition)
      * To identify objects, scenes, and concepts in images on Huawei Cloud
@@ -2263,6 +2418,7 @@ public interface ComponentsBuilderFactory {
     static HwcloudImagerecognitionComponentBuilderFactory.HwcloudImagerecognitionComponentBuilder hwcloudImagerecognition() {
         return HwcloudImagerecognitionComponentBuilderFactory.hwcloudImagerecognition();
     }
+
     /**
      * Huawei Object Storage Service (OBS) (camel-huaweicloud-obs)
      * To provide stable, secure, efficient, and easy-to-use cloud storage
@@ -2277,6 +2433,7 @@ public interface ComponentsBuilderFactory {
     static HwcloudObsComponentBuilderFactory.HwcloudObsComponentBuilder hwcloudObs() {
         return HwcloudObsComponentBuilderFactory.hwcloudObs();
     }
+
     /**
      * Huawei Simple Message Notification (SMN) (camel-huaweicloud-smn)
      * To broadcast messages and connect cloud services through notifications on
@@ -2291,6 +2448,7 @@ public interface ComponentsBuilderFactory {
     static HwcloudSmnComponentBuilderFactory.HwcloudSmnComponentBuilder hwcloudSmn() {
         return HwcloudSmnComponentBuilderFactory.hwcloudSmn();
     }
+
     /**
      * IBM Cloud Object Storage (camel-ibm-cos)
      * Store and retrieve objects from IBM Cloud Object Storage.
@@ -2304,6 +2462,7 @@ public interface ComponentsBuilderFactory {
     static IbmCosComponentBuilderFactory.IbmCosComponentBuilder ibmCos() {
         return IbmCosComponentBuilderFactory.ibmCos();
     }
+
     /**
      * IBM Secrets Manager (camel-ibm-secrets-manager)
      * Manage secrets in IBM Secrets Manager Service
@@ -2317,6 +2476,7 @@ public interface ComponentsBuilderFactory {
     static IbmSecretsManagerComponentBuilderFactory.IbmSecretsManagerComponentBuilder ibmSecretsManager() {
         return IbmSecretsManagerComponentBuilderFactory.ibmSecretsManager();
     }
+
     /**
      * IBM Watson Discovery (camel-ibm-watson-discovery)
      * Perform document understanding and search using IBM Watson Discovery
@@ -2330,6 +2490,7 @@ public interface ComponentsBuilderFactory {
     static IbmWatsonDiscoveryComponentBuilderFactory.IbmWatsonDiscoveryComponentBuilder ibmWatsonDiscovery() {
         return IbmWatsonDiscoveryComponentBuilderFactory.ibmWatsonDiscovery();
     }
+
     /**
      * IBM Watson Language (camel-ibm-watson-language)
      * Perform natural language processing using IBM Watson Natural Language
@@ -2344,6 +2505,7 @@ public interface ComponentsBuilderFactory {
     static IbmWatsonLanguageComponentBuilderFactory.IbmWatsonLanguageComponentBuilder ibmWatsonLanguage() {
         return IbmWatsonLanguageComponentBuilderFactory.ibmWatsonLanguage();
     }
+
     /**
      * IBM Watson Speech to Text (camel-ibm-watson-speech-to-text)
      * Convert speech audio to text using IBM Watson Speech to Text
@@ -2357,6 +2519,7 @@ public interface ComponentsBuilderFactory {
     static IbmWatsonSpeechToTextComponentBuilderFactory.IbmWatsonSpeechToTextComponentBuilder ibmWatsonSpeechToText() {
         return IbmWatsonSpeechToTextComponentBuilderFactory.ibmWatsonSpeechToText();
     }
+
     /**
      * IBM Watson Text to Speech (camel-ibm-watson-text-to-speech)
      * Convert text to natural-sounding speech using IBM Watson Text to Speech
@@ -2370,6 +2533,7 @@ public interface ComponentsBuilderFactory {
     static IbmWatsonTextToSpeechComponentBuilderFactory.IbmWatsonTextToSpeechComponentBuilder ibmWatsonTextToSpeech() {
         return IbmWatsonTextToSpeechComponentBuilderFactory.ibmWatsonTextToSpeech();
     }
+
     /**
      * IBM watsonx.ai (camel-ibm-watsonx-ai)
      * Interact with IBM watsonx.ai foundation models for text generation, chat,
@@ -2384,6 +2548,7 @@ public interface ComponentsBuilderFactory {
     static IbmWatsonxAiComponentBuilderFactory.IbmWatsonxAiComponentBuilder ibmWatsonxAi() {
         return IbmWatsonxAiComponentBuilderFactory.ibmWatsonxAi();
     }
+
     /**
      * IEC 60870 Client (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) client using
@@ -2398,6 +2563,7 @@ public interface ComponentsBuilderFactory {
     static Iec60870ClientComponentBuilderFactory.Iec60870ClientComponentBuilder iec60870Client() {
         return Iec60870ClientComponentBuilderFactory.iec60870Client();
     }
+
     /**
      * IEC 60870 Server (camel-iec60870)
      * IEC 60870 supervisory control and data acquisition (SCADA) server using
@@ -2412,6 +2578,7 @@ public interface ComponentsBuilderFactory {
     static Iec60870ServerComponentBuilderFactory.Iec60870ServerComponentBuilder iec60870Server() {
         return Iec60870ServerComponentBuilderFactory.iec60870Server();
     }
+
     /**
      * Iggy (camel-iggy)
      * Send and receive message to Apache Iggy streaming platform.
@@ -2425,6 +2592,7 @@ public interface ComponentsBuilderFactory {
     static IggyComponentBuilderFactory.IggyComponentBuilder iggy() {
         return IggyComponentBuilderFactory.iggy();
     }
+
     /**
      * Ignite Cache (camel-ignite)
      * Perform cache operations on an Ignite cache or consume changes from a
@@ -2439,6 +2607,7 @@ public interface ComponentsBuilderFactory {
     static IgniteCacheComponentBuilderFactory.IgniteCacheComponentBuilder igniteCache() {
         return IgniteCacheComponentBuilderFactory.igniteCache();
     }
+
     /**
      * Ignite Compute (camel-ignite)
      * Run compute operations on an Ignite cluster.
@@ -2452,6 +2621,7 @@ public interface ComponentsBuilderFactory {
     static IgniteComputeComponentBuilderFactory.IgniteComputeComponentBuilder igniteCompute() {
         return IgniteComputeComponentBuilderFactory.igniteCompute();
     }
+
     /**
      * Ignite Events (camel-ignite)
      * Receive events from an Ignite cluster by creating a local event listener.
@@ -2465,6 +2635,7 @@ public interface ComponentsBuilderFactory {
     static IgniteEventsComponentBuilderFactory.IgniteEventsComponentBuilder igniteEvents() {
         return IgniteEventsComponentBuilderFactory.igniteEvents();
     }
+
     /**
      * Ignite ID Generator (camel-ignite)
      * Interact with Ignite Atomic Sequences and ID Generators .
@@ -2478,6 +2649,7 @@ public interface ComponentsBuilderFactory {
     static IgniteIdgenComponentBuilderFactory.IgniteIdgenComponentBuilder igniteIdgen() {
         return IgniteIdgenComponentBuilderFactory.igniteIdgen();
     }
+
     /**
      * Ignite Messaging (camel-ignite)
      * Send and receive messages from an Ignite topic.
@@ -2491,6 +2663,7 @@ public interface ComponentsBuilderFactory {
     static IgniteMessagingComponentBuilderFactory.IgniteMessagingComponentBuilder igniteMessaging() {
         return IgniteMessagingComponentBuilderFactory.igniteMessaging();
     }
+
     /**
      * Ignite Queues (camel-ignite)
      * Interact with Ignite Queue data structures.
@@ -2504,6 +2677,7 @@ public interface ComponentsBuilderFactory {
     static IgniteQueueComponentBuilderFactory.IgniteQueueComponentBuilder igniteQueue() {
         return IgniteQueueComponentBuilderFactory.igniteQueue();
     }
+
     /**
      * Ignite Sets (camel-ignite)
      * Interact with Ignite Set data structures.
@@ -2517,6 +2691,7 @@ public interface ComponentsBuilderFactory {
     static IgniteSetComponentBuilderFactory.IgniteSetComponentBuilder igniteSet() {
         return IgniteSetComponentBuilderFactory.igniteSet();
     }
+
     /**
      * IMAP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -2530,6 +2705,7 @@ public interface ComponentsBuilderFactory {
     static ImapComponentBuilderFactory.ImapComponentBuilder imap() {
         return ImapComponentBuilderFactory.imap();
     }
+
     /**
      * IMAPS (Secure) (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -2543,6 +2719,7 @@ public interface ComponentsBuilderFactory {
     static ImapsComponentBuilderFactory.ImapsComponentBuilder imaps() {
         return ImapsComponentBuilderFactory.imaps();
     }
+
     /**
      * Infinispan (camel-infinispan)
      * Read and write from/to Infinispan distributed key/value store and data
@@ -2557,6 +2734,7 @@ public interface ComponentsBuilderFactory {
     static InfinispanComponentBuilderFactory.InfinispanComponentBuilder infinispan() {
         return InfinispanComponentBuilderFactory.infinispan();
     }
+
     /**
      * Infinispan Embedded (camel-infinispan-embedded)
      * Read and write from/to Infinispan distributed key/value store and data
@@ -2571,6 +2749,7 @@ public interface ComponentsBuilderFactory {
     static InfinispanEmbeddedComponentBuilderFactory.InfinispanEmbeddedComponentBuilder infinispanEmbedded() {
         return InfinispanEmbeddedComponentBuilderFactory.infinispanEmbedded();
     }
+
     /**
      * InfluxDB (camel-influxdb)
      * Interact with InfluxDB v1, a time series database.
@@ -2584,6 +2763,7 @@ public interface ComponentsBuilderFactory {
     static InfluxdbComponentBuilderFactory.InfluxdbComponentBuilder influxdb() {
         return InfluxdbComponentBuilderFactory.influxdb();
     }
+
     /**
      * InfluxDB2 (camel-influxdb2)
      * Interact with InfluxDB v2, a time series database.
@@ -2597,6 +2777,7 @@ public interface ComponentsBuilderFactory {
     static Influxdb2ComponentBuilderFactory.Influxdb2ComponentBuilder influxdb2() {
         return Influxdb2ComponentBuilderFactory.influxdb2();
     }
+
     /**
      * IRC (camel-irc)
      * Send and receive messages to/from and IRC chat.
@@ -2610,6 +2791,7 @@ public interface ComponentsBuilderFactory {
     static IrcComponentBuilderFactory.IrcComponentBuilder irc() {
         return IrcComponentBuilderFactory.irc();
     }
+
     /**
      * IronMQ (camel-ironmq)
      * Send and receive messages to/from IronMQ an elastic and durable hosted
@@ -2624,6 +2806,7 @@ public interface ComponentsBuilderFactory {
     static IronmqComponentBuilderFactory.IronmqComponentBuilder ironmq() {
         return IronmqComponentBuilderFactory.ironmq();
     }
+
     /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
@@ -2637,6 +2820,7 @@ public interface ComponentsBuilderFactory {
     static JcacheComponentBuilderFactory.JcacheComponentBuilder jcache() {
         return JcacheComponentBuilderFactory.jcache();
     }
+
     /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
@@ -2650,6 +2834,7 @@ public interface ComponentsBuilderFactory {
     static JcrComponentBuilderFactory.JcrComponentBuilder jcr() {
         return JcrComponentBuilderFactory.jcr();
     }
+
     /**
      * JDBC (camel-jdbc)
      * Access databases through SQL and JDBC.
@@ -2663,6 +2848,7 @@ public interface ComponentsBuilderFactory {
     static JdbcComponentBuilderFactory.JdbcComponentBuilder jdbc() {
         return JdbcComponentBuilderFactory.jdbc();
     }
+
     /**
      * Jetty (camel-jetty)
      * Expose HTTP endpoints using Jetty 12.
@@ -2676,6 +2862,7 @@ public interface ComponentsBuilderFactory {
     static JettyComponentBuilderFactory.JettyComponentBuilder jetty() {
         return JettyComponentBuilderFactory.jetty();
     }
+
     /**
      * JGroups (camel-jgroups)
      * Exchange messages with JGroups clusters.
@@ -2689,6 +2876,7 @@ public interface ComponentsBuilderFactory {
     static JgroupsComponentBuilderFactory.JgroupsComponentBuilder jgroups() {
         return JgroupsComponentBuilderFactory.jgroups();
     }
+
     /**
      * JGroups raft (camel-jgroups-raft)
      * Exchange messages with JGroups-raft clusters.
@@ -2702,6 +2890,7 @@ public interface ComponentsBuilderFactory {
     static JgroupsRaftComponentBuilderFactory.JgroupsRaftComponentBuilder jgroupsRaft() {
         return JgroupsRaftComponentBuilderFactory.jgroupsRaft();
     }
+
     /**
      * Jira (camel-jira)
      * Interact with JIRA issue tracker.
@@ -2715,6 +2904,7 @@ public interface ComponentsBuilderFactory {
     static JiraComponentBuilderFactory.JiraComponentBuilder jira() {
         return JiraComponentBuilderFactory.jira();
     }
+
     /**
      * JMS (camel-jms)
      * Send and receive messages to/from JMS message brokers.
@@ -2728,6 +2918,7 @@ public interface ComponentsBuilderFactory {
     static JmsComponentBuilderFactory.JmsComponentBuilder jms() {
         return JmsComponentBuilderFactory.jms();
     }
+
     /**
      * JMX (camel-jmx)
      * Receive JMX notifications.
@@ -2741,6 +2932,7 @@ public interface ComponentsBuilderFactory {
     static JmxComponentBuilderFactory.JmxComponentBuilder jmx() {
         return JmxComponentBuilderFactory.jmx();
     }
+
     /**
      * JOLT (camel-jolt)
      * JSON to JSON transformation using JOLT.
@@ -2754,6 +2946,7 @@ public interface ComponentsBuilderFactory {
     static JoltComponentBuilderFactory.JoltComponentBuilder jolt() {
         return JoltComponentBuilderFactory.jolt();
     }
+
     /**
      * JOOQ (camel-jooq)
      * Store and retrieve Java objects from an SQL database using JOOQ.
@@ -2767,6 +2960,7 @@ public interface ComponentsBuilderFactory {
     static JooqComponentBuilderFactory.JooqComponentBuilder jooq() {
         return JooqComponentBuilderFactory.jooq();
     }
+
     /**
      * JPA (camel-jpa)
      * Store and retrieve Java objects from databases using Java Persistence API
@@ -2781,6 +2975,7 @@ public interface ComponentsBuilderFactory {
     static JpaComponentBuilderFactory.JpaComponentBuilder jpa() {
         return JpaComponentBuilderFactory.jpa();
     }
+
     /**
      * JSLT (camel-jslt)
      * Query or transform JSON payloads using JSLT.
@@ -2794,6 +2989,7 @@ public interface ComponentsBuilderFactory {
     static JsltComponentBuilderFactory.JsltComponentBuilder jslt() {
         return JsltComponentBuilderFactory.jslt();
     }
+
     /**
      * JsonPatch (camel-json-patch)
      * Transforms JSON using JSON patch (RFC 6902).
@@ -2807,6 +3003,7 @@ public interface ComponentsBuilderFactory {
     static JsonPatchComponentBuilderFactory.JsonPatchComponentBuilder jsonPatch() {
         return JsonPatchComponentBuilderFactory.jsonPatch();
     }
+
     /**
      * JSON Schema Validator (camel-json-validator)
      * Validate JSON payloads using NetworkNT JSON Schema.
@@ -2820,6 +3017,7 @@ public interface ComponentsBuilderFactory {
     static JsonValidatorComponentBuilderFactory.JsonValidatorComponentBuilder jsonValidator() {
         return JsonValidatorComponentBuilderFactory.jsonValidator();
     }
+
     /**
      * JSONata (camel-jsonata)
      * Transforms JSON payload using JSONata transformation.
@@ -2833,6 +3031,7 @@ public interface ComponentsBuilderFactory {
     static JsonataComponentBuilderFactory.JsonataComponentBuilder jsonata() {
         return JsonataComponentBuilderFactory.jsonata();
     }
+
     /**
      * JT400 (camel-jt400)
      * Exchanges messages with an IBM i system using data queues, message
@@ -2848,6 +3047,7 @@ public interface ComponentsBuilderFactory {
     static Jt400ComponentBuilderFactory.Jt400ComponentBuilder jt400() {
         return Jt400ComponentBuilderFactory.jt400();
     }
+
     /**
      * JTE (camel-jte)
      * Transform messages using a Java based template engine (JTE).
@@ -2861,6 +3061,7 @@ public interface ComponentsBuilderFactory {
     static JteComponentBuilderFactory.JteComponentBuilder jte() {
         return JteComponentBuilderFactory.jte();
     }
+
     /**
      * Kafka (camel-kafka)
      * Send and receive messages to/from an Apache Kafka broker.
@@ -2874,6 +3075,7 @@ public interface ComponentsBuilderFactory {
     static KafkaComponentBuilderFactory.KafkaComponentBuilder kafka() {
         return KafkaComponentBuilderFactory.kafka();
     }
+
     /**
      * Kamelet (camel-kamelet)
      * To call Kamelets
@@ -2887,6 +3089,7 @@ public interface ComponentsBuilderFactory {
     static KameletComponentBuilderFactory.KameletComponentBuilder kamelet() {
         return KameletComponentBuilderFactory.kamelet();
     }
+
     /**
      * Keycloak (camel-keycloak)
      * Manage Keycloak instances via Admin API.
@@ -2900,6 +3103,7 @@ public interface ComponentsBuilderFactory {
     static KeycloakComponentBuilderFactory.KeycloakComponentBuilder keycloak() {
         return KeycloakComponentBuilderFactory.keycloak();
     }
+
     /**
      * Knative (camel-knative)
      * Send and receive events from Knative.
@@ -2913,6 +3117,7 @@ public interface ComponentsBuilderFactory {
     static KnativeComponentBuilderFactory.KnativeComponentBuilder knative() {
         return KnativeComponentBuilderFactory.knative();
     }
+
     /**
      * KServe (camel-kserve)
      * Provide access to AI model servers with the KServe standard to run
@@ -2927,6 +3132,7 @@ public interface ComponentsBuilderFactory {
     static KserveComponentBuilderFactory.KserveComponentBuilder kserve() {
         return KserveComponentBuilderFactory.kserve();
     }
+
     /**
      * Kubernetes ConfigMap (camel-kubernetes)
      * Perform operations on Kubernetes ConfigMaps and get notified on
@@ -2941,6 +3147,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesConfigMapsComponentBuilderFactory.KubernetesConfigMapsComponentBuilder kubernetesConfigMaps() {
         return KubernetesConfigMapsComponentBuilderFactory.kubernetesConfigMaps();
     }
+
     /**
      * Kubernetes Cronjob (camel-kubernetes)
      * Perform operations on Kubernetes CronJob.
@@ -2954,6 +3161,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesCronjobComponentBuilderFactory.KubernetesCronjobComponentBuilder kubernetesCronjob() {
         return KubernetesCronjobComponentBuilderFactory.kubernetesCronjob();
     }
+
     /**
      * Kubernetes Custom Resources (camel-kubernetes)
      * Perform operations on Kubernetes Custom Resources and get notified on
@@ -2968,6 +3176,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesCustomResourcesComponentBuilderFactory.KubernetesCustomResourcesComponentBuilder kubernetesCustomResources() {
         return KubernetesCustomResourcesComponentBuilderFactory.kubernetesCustomResources();
     }
+
     /**
      * Kubernetes Deployments (camel-kubernetes)
      * Perform operations on Kubernetes Deployments and get notified on
@@ -2982,6 +3191,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesDeploymentsComponentBuilderFactory.KubernetesDeploymentsComponentBuilder kubernetesDeployments() {
         return KubernetesDeploymentsComponentBuilderFactory.kubernetesDeployments();
     }
+
     /**
      * Kubernetes Event (camel-kubernetes)
      * Perform operations on Kubernetes Events and get notified on Events
@@ -2996,6 +3206,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesEventsComponentBuilderFactory.KubernetesEventsComponentBuilder kubernetesEvents() {
         return KubernetesEventsComponentBuilderFactory.kubernetesEvents();
     }
+
     /**
      * Kubernetes HPA (camel-kubernetes)
      * Perform operations on Kubernetes Horizontal Pod Autoscalers (HPA) and get
@@ -3010,6 +3221,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesHpaComponentBuilderFactory.KubernetesHpaComponentBuilder kubernetesHpa() {
         return KubernetesHpaComponentBuilderFactory.kubernetesHpa();
     }
+
     /**
      * Kubernetes Job (camel-kubernetes)
      * Perform operations on Kubernetes Jobs.
@@ -3023,6 +3235,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesJobComponentBuilderFactory.KubernetesJobComponentBuilder kubernetesJob() {
         return KubernetesJobComponentBuilderFactory.kubernetesJob();
     }
+
     /**
      * Kubernetes Namespaces (camel-kubernetes)
      * Perform operations on Kubernetes Namespaces and get notified on Namespace
@@ -3037,6 +3250,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesNamespacesComponentBuilderFactory.KubernetesNamespacesComponentBuilder kubernetesNamespaces() {
         return KubernetesNamespacesComponentBuilderFactory.kubernetesNamespaces();
     }
+
     /**
      * Kubernetes Nodes (camel-kubernetes)
      * Perform operations on Kubernetes Nodes and get notified on Node changes.
@@ -3050,6 +3264,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesNodesComponentBuilderFactory.KubernetesNodesComponentBuilder kubernetesNodes() {
         return KubernetesNodesComponentBuilderFactory.kubernetesNodes();
     }
+
     /**
      * Kubernetes Persistent Volume (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes and get notified on
@@ -3064,6 +3279,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesPersistentVolumesComponentBuilderFactory.KubernetesPersistentVolumesComponentBuilder kubernetesPersistentVolumes() {
         return KubernetesPersistentVolumesComponentBuilderFactory.kubernetesPersistentVolumes();
     }
+
     /**
      * Kubernetes Persistent Volume Claim (camel-kubernetes)
      * Perform operations on Kubernetes Persistent Volumes Claims and get
@@ -3078,6 +3294,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesPersistentVolumesClaimsComponentBuilderFactory.KubernetesPersistentVolumesClaimsComponentBuilder kubernetesPersistentVolumesClaims() {
         return KubernetesPersistentVolumesClaimsComponentBuilderFactory.kubernetesPersistentVolumesClaims();
     }
+
     /**
      * Kubernetes Pods (camel-kubernetes)
      * Perform operations on Kubernetes Pods and get notified on Pod changes.
@@ -3091,6 +3308,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesPodsComponentBuilderFactory.KubernetesPodsComponentBuilder kubernetesPods() {
         return KubernetesPodsComponentBuilderFactory.kubernetesPods();
     }
+
     /**
      * Kubernetes Replication Controller (camel-kubernetes)
      * Perform operations on Kubernetes Replication Controllers and get notified
@@ -3105,6 +3323,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesReplicationControllersComponentBuilderFactory.KubernetesReplicationControllersComponentBuilder kubernetesReplicationControllers() {
         return KubernetesReplicationControllersComponentBuilderFactory.kubernetesReplicationControllers();
     }
+
     /**
      * Kubernetes Resources Quota (camel-kubernetes)
      * Perform operations on Kubernetes Resources Quotas.
@@ -3118,6 +3337,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesResourcesQuotaComponentBuilderFactory.KubernetesResourcesQuotaComponentBuilder kubernetesResourcesQuota() {
         return KubernetesResourcesQuotaComponentBuilderFactory.kubernetesResourcesQuota();
     }
+
     /**
      * Kubernetes Secrets (camel-kubernetes)
      * Perform operations on Kubernetes Secrets.
@@ -3131,6 +3351,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesSecretsComponentBuilderFactory.KubernetesSecretsComponentBuilder kubernetesSecrets() {
         return KubernetesSecretsComponentBuilderFactory.kubernetesSecrets();
     }
+
     /**
      * Kubernetes Service Account (camel-kubernetes)
      * Perform operations on Kubernetes Service Accounts.
@@ -3144,6 +3365,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesServiceAccountsComponentBuilderFactory.KubernetesServiceAccountsComponentBuilder kubernetesServiceAccounts() {
         return KubernetesServiceAccountsComponentBuilderFactory.kubernetesServiceAccounts();
     }
+
     /**
      * Kubernetes Services (camel-kubernetes)
      * Perform operations on Kubernetes Services and get notified on Service
@@ -3158,6 +3380,7 @@ public interface ComponentsBuilderFactory {
     static KubernetesServicesComponentBuilderFactory.KubernetesServicesComponentBuilder kubernetesServices() {
         return KubernetesServicesComponentBuilderFactory.kubernetesServices();
     }
+
     /**
      * Kudu (camel-kudu)
      * Interact with Apache Kudu, a free and open source column-oriented data
@@ -3172,6 +3395,7 @@ public interface ComponentsBuilderFactory {
     static KuduComponentBuilderFactory.KuduComponentBuilder kudu() {
         return KuduComponentBuilderFactory.kudu();
     }
+
     /**
      * LangChain4j Agent (camel-langchain4j-agent)
      * LangChain4j Agent component
@@ -3185,6 +3409,7 @@ public interface ComponentsBuilderFactory {
     static Langchain4jAgentComponentBuilderFactory.Langchain4jAgentComponentBuilder langchain4jAgent() {
         return Langchain4jAgentComponentBuilderFactory.langchain4jAgent();
     }
+
     /**
      * LangChain4j Chat (camel-langchain4j-chat)
      * LangChain4j Chat component
@@ -3198,6 +3423,7 @@ public interface ComponentsBuilderFactory {
     static Langchain4jChatComponentBuilderFactory.Langchain4jChatComponentBuilder langchain4jChat() {
         return Langchain4jChatComponentBuilderFactory.langchain4jChat();
     }
+
     /**
      * LangChain4j Embeddings (camel-langchain4j-embeddings)
      * LangChain4j Embeddings
@@ -3211,6 +3437,7 @@ public interface ComponentsBuilderFactory {
     static Langchain4jEmbeddingsComponentBuilderFactory.Langchain4jEmbeddingsComponentBuilder langchain4jEmbeddings() {
         return Langchain4jEmbeddingsComponentBuilderFactory.langchain4jEmbeddings();
     }
+
     /**
      * LangChain4j Embedding Store (camel-langchain4j-embeddingstore)
      * Perform operations on the Langchain4jEmbeddingStores.
@@ -3224,6 +3451,7 @@ public interface ComponentsBuilderFactory {
     static Langchain4jEmbeddingstoreComponentBuilderFactory.Langchain4jEmbeddingstoreComponentBuilder langchain4jEmbeddingstore() {
         return Langchain4jEmbeddingstoreComponentBuilderFactory.langchain4jEmbeddingstore();
     }
+
     /**
      * LangChain4j Tools (camel-langchain4j-tools)
      * LangChain4j Tools and Function Calling Features
@@ -3237,6 +3465,7 @@ public interface ComponentsBuilderFactory {
     static Langchain4jToolsComponentBuilderFactory.Langchain4jToolsComponentBuilder langchain4jTools() {
         return Langchain4jToolsComponentBuilderFactory.langchain4jTools();
     }
+
     /**
      * LangChain4j Web Search (camel-langchain4j-web-search)
      * LangChain4j Web Search Engine
@@ -3250,6 +3479,7 @@ public interface ComponentsBuilderFactory {
     static Langchain4jWebSearchComponentBuilderFactory.Langchain4jWebSearchComponentBuilder langchain4jWebSearch() {
         return Langchain4jWebSearchComponentBuilderFactory.langchain4jWebSearch();
     }
+
     /**
      * Language (camel-language)
      * Execute scripts in any of the languages supported by Camel.
@@ -3263,6 +3493,7 @@ public interface ComponentsBuilderFactory {
     static LanguageComponentBuilderFactory.LanguageComponentBuilder language() {
         return LanguageComponentBuilderFactory.language();
     }
+
     /**
      * LDAP (camel-ldap)
      * Perform searches on LDAP servers.
@@ -3276,6 +3507,7 @@ public interface ComponentsBuilderFactory {
     static LdapComponentBuilderFactory.LdapComponentBuilder ldap() {
         return LdapComponentBuilderFactory.ldap();
     }
+
     /**
      * LDIF (camel-ldif)
      * Perform updates on an LDAP server from an LDIF body content.
@@ -3289,6 +3521,7 @@ public interface ComponentsBuilderFactory {
     static LdifComponentBuilderFactory.LdifComponentBuilder ldif() {
         return LdifComponentBuilderFactory.ldif();
     }
+
     /**
      * Log Data (camel-log)
      * Prints data form the routed message (such as body and headers) to the
@@ -3303,6 +3536,7 @@ public interface ComponentsBuilderFactory {
     static LogComponentBuilderFactory.LogComponentBuilder log() {
         return LogComponentBuilderFactory.log();
     }
+
     /**
      * Printer (camel-printer)
      * Send print jobs to printers.
@@ -3316,6 +3550,7 @@ public interface ComponentsBuilderFactory {
     static LprComponentBuilderFactory.LprComponentBuilder lpr() {
         return LprComponentBuilderFactory.lpr();
     }
+
     /**
      * Lucene (camel-lucene)
      * Perform inserts or queries against Apache Lucene databases.
@@ -3329,6 +3564,7 @@ public interface ComponentsBuilderFactory {
     static LuceneComponentBuilderFactory.LuceneComponentBuilder lucene() {
         return LuceneComponentBuilderFactory.lucene();
     }
+
     /**
      * Lumberjack (camel-lumberjack)
      * Receive logs messages using the Lumberjack protocol.
@@ -3342,6 +3578,7 @@ public interface ComponentsBuilderFactory {
     static LumberjackComponentBuilderFactory.LumberjackComponentBuilder lumberjack() {
         return LumberjackComponentBuilderFactory.lumberjack();
     }
+
     /**
      * MapStruct (camel-mapstruct)
      * Type Conversion using Mapstruct
@@ -3355,6 +3592,7 @@ public interface ComponentsBuilderFactory {
     static MapstructComponentBuilderFactory.MapstructComponentBuilder mapstruct() {
         return MapstructComponentBuilderFactory.mapstruct();
     }
+
     /**
      * Master (camel-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
@@ -3369,6 +3607,7 @@ public interface ComponentsBuilderFactory {
     static MasterComponentBuilderFactory.MasterComponentBuilder master() {
         return MasterComponentBuilderFactory.master();
     }
+
     /**
      * Metrics (camel-metrics)
      * Collect various metrics directly from Camel routes using the DropWizard
@@ -3383,6 +3622,7 @@ public interface ComponentsBuilderFactory {
     static MetricsComponentBuilderFactory.MetricsComponentBuilder metrics() {
         return MetricsComponentBuilderFactory.metrics();
     }
+
     /**
      * Micrometer (camel-micrometer)
      * Collect various metrics directly from Camel routes using the Micrometer
@@ -3397,6 +3637,7 @@ public interface ComponentsBuilderFactory {
     static MicrometerComponentBuilderFactory.MicrometerComponentBuilder micrometer() {
         return MicrometerComponentBuilderFactory.micrometer();
     }
+
     /**
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
@@ -3411,6 +3652,7 @@ public interface ComponentsBuilderFactory {
     static MiloBrowseComponentBuilderFactory.MiloBrowseComponentBuilder miloBrowse() {
         return MiloBrowseComponentBuilderFactory.miloBrowse();
     }
+
     /**
      * OPC UA Client (camel-milo)
      * Connect to OPC UA servers using the binary protocol for acquiring
@@ -3425,6 +3667,7 @@ public interface ComponentsBuilderFactory {
     static MiloClientComponentBuilderFactory.MiloClientComponentBuilder miloClient() {
         return MiloClientComponentBuilderFactory.miloClient();
     }
+
     /**
      * OPC UA Server (camel-milo)
      * Make telemetry data available as an OPC UA server.
@@ -3438,6 +3681,7 @@ public interface ComponentsBuilderFactory {
     static MiloServerComponentBuilderFactory.MiloServerComponentBuilder miloServer() {
         return MiloServerComponentBuilderFactory.miloServer();
     }
+
     /**
      * Milvus (camel-milvus)
      * Perform operations on the Milvus Vector Database.
@@ -3451,6 +3695,7 @@ public interface ComponentsBuilderFactory {
     static MilvusComponentBuilderFactory.MilvusComponentBuilder milvus() {
         return MilvusComponentBuilderFactory.milvus();
     }
+
     /**
      * Mina (camel-mina)
      * Socket level networking using TCP or UDP with Apache Mina 2.x.
@@ -3464,6 +3709,7 @@ public interface ComponentsBuilderFactory {
     static MinaComponentBuilderFactory.MinaComponentBuilder mina() {
         return MinaComponentBuilderFactory.mina();
     }
+
     /**
      * MINA SFTP (camel-mina-sftp)
      * Upload and download files to/from SFTP servers using Apache MINA SSHD.
@@ -3477,6 +3723,7 @@ public interface ComponentsBuilderFactory {
     static MinaSftpComponentBuilderFactory.MinaSftpComponentBuilder minaSftp() {
         return MinaSftpComponentBuilderFactory.minaSftp();
     }
+
     /**
      * Minio (camel-minio)
      * Store and retrieve objects from Minio Storage Service using Minio SDK.
@@ -3490,6 +3737,7 @@ public interface ComponentsBuilderFactory {
     static MinioComponentBuilderFactory.MinioComponentBuilder minio() {
         return MinioComponentBuilderFactory.minio();
     }
+
     /**
      * MLLP (camel-mllp)
      * Communicate with external systems using the MLLP protocol.
@@ -3503,6 +3751,7 @@ public interface ComponentsBuilderFactory {
     static MllpComponentBuilderFactory.MllpComponentBuilder mllp() {
         return MllpComponentBuilderFactory.mllp();
     }
+
     /**
      * Mock (camel-mock)
      * Test routes and mediation rules using mocks.
@@ -3516,6 +3765,7 @@ public interface ComponentsBuilderFactory {
     static MockComponentBuilderFactory.MockComponentBuilder mock() {
         return MockComponentBuilderFactory.mock();
     }
+
     /**
      * MongoDB (camel-mongodb)
      * Perform operations on MongoDB documents and collections.
@@ -3529,6 +3779,7 @@ public interface ComponentsBuilderFactory {
     static MongodbComponentBuilderFactory.MongodbComponentBuilder mongodb() {
         return MongodbComponentBuilderFactory.mongodb();
     }
+
     /**
      * MongoDB GridFS (camel-mongodb-gridfs)
      * Interact with MongoDB GridFS.
@@ -3542,6 +3793,7 @@ public interface ComponentsBuilderFactory {
     static MongodbGridfsComponentBuilderFactory.MongodbGridfsComponentBuilder mongodbGridfs() {
         return MongodbGridfsComponentBuilderFactory.mongodbGridfs();
     }
+
     /**
      * Mustache (camel-mustache)
      * Transform messages using a Mustache template.
@@ -3555,6 +3807,7 @@ public interface ComponentsBuilderFactory {
     static MustacheComponentBuilderFactory.MustacheComponentBuilder mustache() {
         return MustacheComponentBuilderFactory.mustache();
     }
+
     /**
      * MVEL (camel-mvel)
      * Transform messages using an MVEL template.
@@ -3568,6 +3821,7 @@ public interface ComponentsBuilderFactory {
     static MvelComponentBuilderFactory.MvelComponentBuilder mvel() {
         return MvelComponentBuilderFactory.mvel();
     }
+
     /**
      * MyBatis (camel-mybatis)
      * Performs a query, poll, insert, update or delete in a relational database
@@ -3582,6 +3836,7 @@ public interface ComponentsBuilderFactory {
     static MybatisComponentBuilderFactory.MybatisComponentBuilder mybatis() {
         return MybatisComponentBuilderFactory.mybatis();
     }
+
     /**
      * MyBatis Bean (camel-mybatis)
      * Perform queries, inserts, updates or deletes in a relational database
@@ -3596,6 +3851,7 @@ public interface ComponentsBuilderFactory {
     static MybatisBeanComponentBuilderFactory.MybatisBeanComponentBuilder mybatisBean() {
         return MybatisBeanComponentBuilderFactory.mybatisBean();
     }
+
     /**
      * Nats (camel-nats)
      * Send and receive messages from NATS messaging system.
@@ -3609,6 +3865,7 @@ public interface ComponentsBuilderFactory {
     static NatsComponentBuilderFactory.NatsComponentBuilder nats() {
         return NatsComponentBuilderFactory.nats();
     }
+
     /**
      * Neo4j (camel-neo4j)
      * Perform operations on the Neo4j Graph Database
@@ -3622,6 +3879,7 @@ public interface ComponentsBuilderFactory {
     static Neo4jComponentBuilderFactory.Neo4jComponentBuilder neo4j() {
         return Neo4jComponentBuilderFactory.neo4j();
     }
+
     /**
      * Netty (camel-netty)
      * Socket level networking using TCP or UDP with Netty 4.x.
@@ -3635,6 +3893,7 @@ public interface ComponentsBuilderFactory {
     static NettyComponentBuilderFactory.NettyComponentBuilder netty() {
         return NettyComponentBuilderFactory.netty();
     }
+
     /**
      * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x.
@@ -3648,6 +3907,7 @@ public interface ComponentsBuilderFactory {
     static NettyHttpComponentBuilderFactory.NettyHttpComponentBuilder nettyHttp() {
         return NettyHttpComponentBuilderFactory.nettyHttp();
     }
+
     /**
      * Nitrite (camel-nitrite)
      * Access Nitrite databases.
@@ -3661,6 +3921,7 @@ public interface ComponentsBuilderFactory {
     static NitriteComponentBuilderFactory.NitriteComponentBuilder nitrite() {
         return NitriteComponentBuilderFactory.nitrite();
     }
+
     /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
@@ -3674,6 +3935,7 @@ public interface ComponentsBuilderFactory {
     static OaipmhComponentBuilderFactory.OaipmhComponentBuilder oaipmh() {
         return OaipmhComponentBuilderFactory.oaipmh();
     }
+
     /**
      * Olingo2 (camel-olingo2)
      * Communicate with OData 2.0 services using Apache Olingo.
@@ -3687,6 +3949,7 @@ public interface ComponentsBuilderFactory {
     static Olingo2ComponentBuilderFactory.Olingo2ComponentBuilder olingo2() {
         return Olingo2ComponentBuilderFactory.olingo2();
     }
+
     /**
      * Olingo4 (camel-olingo4)
      * Communicate with OData 4.0 services using Apache Olingo OData API.
@@ -3700,6 +3963,7 @@ public interface ComponentsBuilderFactory {
     static Olingo4ComponentBuilderFactory.Olingo4ComponentBuilder olingo4() {
         return Olingo4ComponentBuilderFactory.olingo4();
     }
+
     /**
      * Once (camel-once)
      * Trigger a single message only once at startup (useful for development and
@@ -3714,6 +3978,7 @@ public interface ComponentsBuilderFactory {
     static OnceComponentBuilderFactory.OnceComponentBuilder once() {
         return OnceComponentBuilderFactory.once();
     }
+
     /**
      * OpenAI (camel-openai)
      * OpenAI endpoint for chat completion and embeddings.
@@ -3727,6 +3992,7 @@ public interface ComponentsBuilderFactory {
     static OpenaiComponentBuilderFactory.OpenaiComponentBuilder openai() {
         return OpenaiComponentBuilderFactory.openai();
     }
+
     /**
      * OpenSearch (camel-opensearch)
      * Send requests to OpenSearch via Java Client API.
@@ -3740,6 +4006,7 @@ public interface ComponentsBuilderFactory {
     static OpensearchComponentBuilderFactory.OpensearchComponentBuilder opensearch() {
         return OpensearchComponentBuilderFactory.opensearch();
     }
+
     /**
      * OpenShift Build Config (camel-kubernetes)
      * Perform operations on OpenShift Build Configs.
@@ -3753,6 +4020,7 @@ public interface ComponentsBuilderFactory {
     static OpenshiftBuildConfigsComponentBuilderFactory.OpenshiftBuildConfigsComponentBuilder openshiftBuildConfigs() {
         return OpenshiftBuildConfigsComponentBuilderFactory.openshiftBuildConfigs();
     }
+
     /**
      * OpenShift Builds (camel-kubernetes)
      * Perform operations on OpenShift Builds.
@@ -3766,6 +4034,7 @@ public interface ComponentsBuilderFactory {
     static OpenshiftBuildsComponentBuilderFactory.OpenshiftBuildsComponentBuilder openshiftBuilds() {
         return OpenshiftBuildsComponentBuilderFactory.openshiftBuilds();
     }
+
     /**
      * OpenShift Deployment Configs (camel-kubernetes)
      * Perform operations on OpenShift Deployment Configs and get notified on
@@ -3780,6 +4049,7 @@ public interface ComponentsBuilderFactory {
     static OpenshiftDeploymentconfigsComponentBuilderFactory.OpenshiftDeploymentconfigsComponentBuilder openshiftDeploymentconfigs() {
         return OpenshiftDeploymentconfigsComponentBuilderFactory.openshiftDeploymentconfigs();
     }
+
     /**
      * OpenStack Cinder (camel-openstack)
      * Access data in OpenStack Cinder block storage.
@@ -3793,6 +4063,7 @@ public interface ComponentsBuilderFactory {
     static OpenstackCinderComponentBuilderFactory.OpenstackCinderComponentBuilder openstackCinder() {
         return OpenstackCinderComponentBuilderFactory.openstackCinder();
     }
+
     /**
      * OpenStack Glance (camel-openstack)
      * Manage VM images and metadata definitions in OpenStack Glance.
@@ -3806,6 +4077,7 @@ public interface ComponentsBuilderFactory {
     static OpenstackGlanceComponentBuilderFactory.OpenstackGlanceComponentBuilder openstackGlance() {
         return OpenstackGlanceComponentBuilderFactory.openstackGlance();
     }
+
     /**
      * OpenStack Keystone (camel-openstack)
      * Access OpenStack Keystone for API client authentication, service
@@ -3820,6 +4092,7 @@ public interface ComponentsBuilderFactory {
     static OpenstackKeystoneComponentBuilderFactory.OpenstackKeystoneComponentBuilder openstackKeystone() {
         return OpenstackKeystoneComponentBuilderFactory.openstackKeystone();
     }
+
     /**
      * OpenStack Neutron (camel-openstack)
      * Access OpenStack Neutron for network services.
@@ -3833,6 +4106,7 @@ public interface ComponentsBuilderFactory {
     static OpenstackNeutronComponentBuilderFactory.OpenstackNeutronComponentBuilder openstackNeutron() {
         return OpenstackNeutronComponentBuilderFactory.openstackNeutron();
     }
+
     /**
      * OpenStack Nova (camel-openstack)
      * Access OpenStack to manage compute resources.
@@ -3846,6 +4120,7 @@ public interface ComponentsBuilderFactory {
     static OpenstackNovaComponentBuilderFactory.OpenstackNovaComponentBuilder openstackNova() {
         return OpenstackNovaComponentBuilderFactory.openstackNova();
     }
+
     /**
      * OpenStack Swift (camel-openstack)
      * Access OpenStack Swift object/blob store.
@@ -3859,6 +4134,7 @@ public interface ComponentsBuilderFactory {
     static OpenstackSwiftComponentBuilderFactory.OpenstackSwiftComponentBuilder openstackSwift() {
         return OpenstackSwiftComponentBuilderFactory.openstackSwift();
     }
+
     /**
      * OpenTelemetry Metrics (camel-opentelemetry-metrics)
      * Camel metrics based on the Camel Telemetry spec
@@ -3872,6 +4148,7 @@ public interface ComponentsBuilderFactory {
     static OpentelemetryMetricsComponentBuilderFactory.OpentelemetryMetricsComponentBuilder opentelemetryMetrics() {
         return OpentelemetryMetricsComponentBuilderFactory.opentelemetryMetrics();
     }
+
     /**
      * OptaPlanner (camel-optaplanner)
      * Solve planning problems with OptaPlanner.
@@ -3885,6 +4162,7 @@ public interface ComponentsBuilderFactory {
     static OptaplannerComponentBuilderFactory.OptaplannerComponentBuilder optaplanner() {
         return OptaplannerComponentBuilderFactory.optaplanner();
     }
+
     /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
@@ -3898,6 +4176,7 @@ public interface ComponentsBuilderFactory {
     static PahoComponentBuilderFactory.PahoComponentBuilder paho() {
         return PahoComponentBuilderFactory.paho();
     }
+
     /**
      * Paho MQTT 5 (camel-paho-mqtt5)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT v5 Client.
@@ -3911,6 +4190,7 @@ public interface ComponentsBuilderFactory {
     static PahoMqtt5ComponentBuilderFactory.PahoMqtt5ComponentBuilder pahoMqtt5() {
         return PahoMqtt5ComponentBuilderFactory.pahoMqtt5();
     }
+
     /**
      * PDF (camel-pdf)
      * Create, modify or extract content from PDF documents.
@@ -3924,6 +4204,7 @@ public interface ComponentsBuilderFactory {
     static PdfComponentBuilderFactory.PdfComponentBuilder pdf() {
         return PdfComponentBuilderFactory.pdf();
     }
+
     /**
      * PostgresSQL Replication Slot (camel-pg-replication-slot)
      * Poll for PostgreSQL Write-Ahead Log (WAL) records using Streaming
@@ -3938,6 +4219,7 @@ public interface ComponentsBuilderFactory {
     static PgReplicationSlotComponentBuilderFactory.PgReplicationSlotComponentBuilder pgReplicationSlot() {
         return PgReplicationSlotComponentBuilderFactory.pgReplicationSlot();
     }
+
     /**
      * PostgresSQL Event (camel-pgevent)
      * Send and receive PostgreSQL events via LISTEN and NOTIFY commands.
@@ -3951,6 +4233,7 @@ public interface ComponentsBuilderFactory {
     static PgeventComponentBuilderFactory.PgeventComponentBuilder pgevent() {
         return PgeventComponentBuilderFactory.pgevent();
     }
+
     /**
      * Pinecone (camel-pinecone)
      * Perform operations on the Pinecone Vector Database.
@@ -3964,6 +4247,7 @@ public interface ComponentsBuilderFactory {
     static PineconeComponentBuilderFactory.PineconeComponentBuilder pinecone() {
         return PineconeComponentBuilderFactory.pinecone();
     }
+
     /**
      * Platform HTTP (camel-platform-http)
      * Expose HTTP endpoints using the HTTP server available in the current
@@ -3978,6 +4262,7 @@ public interface ComponentsBuilderFactory {
     static PlatformHttpComponentBuilderFactory.PlatformHttpComponentBuilder platformHttp() {
         return PlatformHttpComponentBuilderFactory.platformHttp();
     }
+
     /**
      * PLC4X (camel-plc4x)
      * Read and write to PLC devices
@@ -3991,6 +4276,7 @@ public interface ComponentsBuilderFactory {
     static Plc4xComponentBuilderFactory.Plc4xComponentBuilder plc4x() {
         return Plc4xComponentBuilderFactory.plc4x();
     }
+
     /**
      * POP3 (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -4004,6 +4290,7 @@ public interface ComponentsBuilderFactory {
     static Pop3ComponentBuilderFactory.Pop3ComponentBuilder pop3() {
         return Pop3ComponentBuilderFactory.pop3();
     }
+
     /**
      * POP3S (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -4017,6 +4304,7 @@ public interface ComponentsBuilderFactory {
     static Pop3sComponentBuilderFactory.Pop3sComponentBuilder pop3s() {
         return Pop3sComponentBuilderFactory.pop3s();
     }
+
     /**
      * PQC Algorithms (camel-pqc)
      * Post Quantum Cryptography Signature and Verification component.
@@ -4030,6 +4318,7 @@ public interface ComponentsBuilderFactory {
     static PqcComponentBuilderFactory.PqcComponentBuilder pqc() {
         return PqcComponentBuilderFactory.pqc();
     }
+
     /**
      * PubNub (camel-pubnub)
      * Send and receive messages to/from PubNub data stream network for
@@ -4044,6 +4333,7 @@ public interface ComponentsBuilderFactory {
     static PubnubComponentBuilderFactory.PubnubComponentBuilder pubnub() {
         return PubnubComponentBuilderFactory.pubnub();
     }
+
     /**
      * Pulsar (camel-pulsar)
      * Send and receive messages from/to Apache Pulsar messaging system.
@@ -4057,6 +4347,7 @@ public interface ComponentsBuilderFactory {
     static PulsarComponentBuilderFactory.PulsarComponentBuilder pulsar() {
         return PulsarComponentBuilderFactory.pulsar();
     }
+
     /**
      * Qdrant (camel-qdrant)
      * Perform operations on the Qdrant Vector Database.
@@ -4070,6 +4361,7 @@ public interface ComponentsBuilderFactory {
     static QdrantComponentBuilderFactory.QdrantComponentBuilder qdrant() {
         return QdrantComponentBuilderFactory.qdrant();
     }
+
     /**
      * Quartz (camel-quartz)
      * Schedule sending of messages using the Quartz 2.x scheduler.
@@ -4083,6 +4375,7 @@ public interface ComponentsBuilderFactory {
     static QuartzComponentBuilderFactory.QuartzComponentBuilder quartz() {
         return QuartzComponentBuilderFactory.quartz();
     }
+
     /**
      * QuickFix (camel-quickfix)
      * Open a Financial Interchange (FIX) session using an embedded QuickFix/J
@@ -4097,6 +4390,7 @@ public interface ComponentsBuilderFactory {
     static QuickfixComponentBuilderFactory.QuickfixComponentBuilder quickfix() {
         return QuickfixComponentBuilderFactory.quickfix();
     }
+
     /**
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
@@ -4111,6 +4405,7 @@ public interface ComponentsBuilderFactory {
     static ReactiveStreamsComponentBuilderFactory.ReactiveStreamsComponentBuilder reactiveStreams() {
         return ReactiveStreamsComponentBuilderFactory.reactiveStreams();
     }
+
     /**
      * Ref (camel-ref)
      * Route messages to an endpoint looked up dynamically by name in the Camel
@@ -4125,6 +4420,7 @@ public interface ComponentsBuilderFactory {
     static RefComponentBuilderFactory.RefComponentBuilder ref() {
         return RefComponentBuilderFactory.ref();
     }
+
     /**
      * REST (camel-rest)
      * Expose REST services or call external REST services.
@@ -4138,6 +4434,7 @@ public interface ComponentsBuilderFactory {
     static RestEndpointComponentBuilderFactory.RestEndpointComponentBuilder restEndpoint() {
         return RestEndpointComponentBuilderFactory.restEndpoint();
     }
+
     /**
      * REST API (camel-rest)
      * Expose OpenAPI Specification of the REST services defined using Camel
@@ -4152,6 +4449,7 @@ public interface ComponentsBuilderFactory {
     static RestApiComponentBuilderFactory.RestApiComponentBuilder restApi() {
         return RestApiComponentBuilderFactory.restApi();
     }
+
     /**
      * REST OpenApi (camel-rest-openapi)
      * To call REST services using OpenAPI specification as contract.
@@ -4165,6 +4463,7 @@ public interface ComponentsBuilderFactory {
     static RestOpenapiComponentBuilderFactory.RestOpenapiComponentBuilder restOpenapi() {
         return RestOpenapiComponentBuilderFactory.restOpenapi();
     }
+
     /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptance test written in Robot DSL.
@@ -4178,6 +4477,7 @@ public interface ComponentsBuilderFactory {
     static RobotframeworkComponentBuilderFactory.RobotframeworkComponentBuilder robotframework() {
         return RobotframeworkComponentBuilderFactory.robotframework();
     }
+
     /**
      * RocketMQ (camel-rocketmq)
      * Send and receive messages from RocketMQ cluster.
@@ -4191,6 +4491,7 @@ public interface ComponentsBuilderFactory {
     static RocketmqComponentBuilderFactory.RocketmqComponentBuilder rocketmq() {
         return RocketmqComponentBuilderFactory.rocketmq();
     }
+
     /**
      * RSS (camel-rss)
      * Poll RSS feeds.
@@ -4204,6 +4505,7 @@ public interface ComponentsBuilderFactory {
     static RssComponentBuilderFactory.RssComponentBuilder rss() {
         return RssComponentBuilderFactory.rss();
     }
+
     /**
      * Saga (camel-saga)
      * Execute custom actions within a route using the Saga EIP.
@@ -4217,6 +4519,7 @@ public interface ComponentsBuilderFactory {
     static SagaComponentBuilderFactory.SagaComponentBuilder saga() {
         return SagaComponentBuilderFactory.saga();
     }
+
     /**
      * Salesforce (camel-salesforce)
      * Communicate with Salesforce using Java DTOs.
@@ -4230,6 +4533,7 @@ public interface ComponentsBuilderFactory {
     static SalesforceComponentBuilderFactory.SalesforceComponentBuilder salesforce() {
         return SalesforceComponentBuilderFactory.salesforce();
     }
+
     /**
      * SAP NetWeaver (camel-sap-netweaver)
      * Send requests to SAP NetWeaver Gateway using HTTP.
@@ -4243,6 +4547,7 @@ public interface ComponentsBuilderFactory {
     static SapNetweaverComponentBuilderFactory.SapNetweaverComponentBuilder sapNetweaver() {
         return SapNetweaverComponentBuilderFactory.sapNetweaver();
     }
+
     /**
      * Scheduler (camel-scheduler)
      * Generate messages in specified intervals using
@@ -4257,6 +4562,7 @@ public interface ComponentsBuilderFactory {
     static SchedulerComponentBuilderFactory.SchedulerComponentBuilder scheduler() {
         return SchedulerComponentBuilderFactory.scheduler();
     }
+
     /**
      * Schematron (camel-schematron)
      * Validate XML payload using the Schematron Library.
@@ -4270,6 +4576,7 @@ public interface ComponentsBuilderFactory {
     static SchematronComponentBuilderFactory.SchematronComponentBuilder schematron() {
         return SchematronComponentBuilderFactory.schematron();
     }
+
     /**
      * SCP (camel-jsch)
      * Copy files to/from remote hosts using the secure copy protocol (SCP).
@@ -4283,6 +4590,7 @@ public interface ComponentsBuilderFactory {
     static ScpComponentBuilderFactory.ScpComponentBuilder scp() {
         return ScpComponentBuilderFactory.scp();
     }
+
     /**
      * SEDA (camel-seda)
      * Asynchronously call another endpoint from any Camel Context in the same
@@ -4297,6 +4605,7 @@ public interface ComponentsBuilderFactory {
     static SedaComponentBuilderFactory.SedaComponentBuilder seda() {
         return SedaComponentBuilderFactory.seda();
     }
+
     /**
      * Service (camel-service)
      * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
@@ -4311,6 +4620,7 @@ public interface ComponentsBuilderFactory {
     static ServiceComponentBuilderFactory.ServiceComponentBuilder service() {
         return ServiceComponentBuilderFactory.service();
     }
+
     /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
@@ -4324,6 +4634,7 @@ public interface ComponentsBuilderFactory {
     static ServicenowComponentBuilderFactory.ServicenowComponentBuilder servicenow() {
         return ServicenowComponentBuilderFactory.servicenow();
     }
+
     /**
      * Servlet (camel-servlet)
      * Serve HTTP requests by a Servlet.
@@ -4337,6 +4648,7 @@ public interface ComponentsBuilderFactory {
     static ServletComponentBuilderFactory.ServletComponentBuilder servlet() {
         return ServletComponentBuilderFactory.servlet();
     }
+
     /**
      * SFTP (camel-ftp)
      * Upload and download files to/from SFTP servers.
@@ -4350,6 +4662,7 @@ public interface ComponentsBuilderFactory {
     static SftpComponentBuilderFactory.SftpComponentBuilder sftp() {
         return SftpComponentBuilderFactory.sftp();
     }
+
     /**
      * Simple JMS (camel-sjms)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
@@ -4364,6 +4677,7 @@ public interface ComponentsBuilderFactory {
     static SjmsComponentBuilderFactory.SjmsComponentBuilder sjms() {
         return SjmsComponentBuilderFactory.sjms();
     }
+
     /**
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
@@ -4378,6 +4692,7 @@ public interface ComponentsBuilderFactory {
     static Sjms2ComponentBuilderFactory.Sjms2ComponentBuilder sjms2() {
         return Sjms2ComponentBuilderFactory.sjms2();
     }
+
     /**
      * Slack (camel-slack)
      * Send and receive messages to/from Slack.
@@ -4391,6 +4706,7 @@ public interface ComponentsBuilderFactory {
     static SlackComponentBuilderFactory.SlackComponentBuilder slack() {
         return SlackComponentBuilderFactory.slack();
     }
+
     /**
      * SMB (camel-smb)
      * Read and write files to Server Message Block (SMB) file shares.
@@ -4404,6 +4720,7 @@ public interface ComponentsBuilderFactory {
     static SmbComponentBuilderFactory.SmbComponentBuilder smb() {
         return SmbComponentBuilderFactory.smb();
     }
+
     /**
      * Smooks (camel-smooks)
      * Use Smooks to transform, route, and bind both XML and non-XML data,
@@ -4418,6 +4735,7 @@ public interface ComponentsBuilderFactory {
     static SmooksComponentBuilderFactory.SmooksComponentBuilder smooks() {
         return SmooksComponentBuilderFactory.smooks();
     }
+
     /**
      * SMPP (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
@@ -4432,6 +4750,7 @@ public interface ComponentsBuilderFactory {
     static SmppComponentBuilderFactory.SmppComponentBuilder smpp() {
         return SmppComponentBuilderFactory.smpp();
     }
+
     /**
      * SMPP (Secure) (camel-smpp)
      * Send and receive SMS messages using a SMSC (Short Message Service
@@ -4446,6 +4765,7 @@ public interface ComponentsBuilderFactory {
     static SmppsComponentBuilderFactory.SmppsComponentBuilder smpps() {
         return SmppsComponentBuilderFactory.smpps();
     }
+
     /**
      * SMTP (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -4459,6 +4779,7 @@ public interface ComponentsBuilderFactory {
     static SmtpComponentBuilderFactory.SmtpComponentBuilder smtp() {
         return SmtpComponentBuilderFactory.smtp();
     }
+
     /**
      * SMTPS (camel-mail)
      * Send and receive emails using imap, pop3 and smtp protocols.
@@ -4472,6 +4793,7 @@ public interface ComponentsBuilderFactory {
     static SmtpsComponentBuilderFactory.SmtpsComponentBuilder smtps() {
         return SmtpsComponentBuilderFactory.smtps();
     }
+
     /**
      * SNMP (camel-snmp)
      * Receive traps and poll SNMP (Simple Network Management Protocol) capable
@@ -4486,6 +4808,7 @@ public interface ComponentsBuilderFactory {
     static SnmpComponentBuilderFactory.SnmpComponentBuilder snmp() {
         return SnmpComponentBuilderFactory.snmp();
     }
+
     /**
      * Solr (camel-solr)
      * Perform operations against Apache Lucene Solr.
@@ -4499,6 +4822,7 @@ public interface ComponentsBuilderFactory {
     static SolrComponentBuilderFactory.SolrComponentBuilder solr() {
         return SolrComponentBuilderFactory.solr();
     }
+
     /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
@@ -4512,6 +4836,7 @@ public interface ComponentsBuilderFactory {
     static SplunkComponentBuilderFactory.SplunkComponentBuilder splunk() {
         return SplunkComponentBuilderFactory.splunk();
     }
+
     /**
      * Splunk HEC (camel-splunk-hec)
      * The splunk component allows publishing events in Splunk using the HTTP
@@ -4526,6 +4851,7 @@ public interface ComponentsBuilderFactory {
     static SplunkHecComponentBuilderFactory.SplunkHecComponentBuilder splunkHec() {
         return SplunkHecComponentBuilderFactory.splunkHec();
     }
+
     /**
      * Spring AI Chat (camel-spring-ai-chat)
      * Perform chat operations using Spring AI.
@@ -4539,6 +4865,7 @@ public interface ComponentsBuilderFactory {
     static SpringAiChatComponentBuilderFactory.SpringAiChatComponentBuilder springAiChat() {
         return SpringAiChatComponentBuilderFactory.springAiChat();
     }
+
     /**
      * Spring AI Embeddings (camel-spring-ai-embeddings)
      * Spring AI Embeddings
@@ -4552,6 +4879,7 @@ public interface ComponentsBuilderFactory {
     static SpringAiEmbeddingsComponentBuilderFactory.SpringAiEmbeddingsComponentBuilder springAiEmbeddings() {
         return SpringAiEmbeddingsComponentBuilderFactory.springAiEmbeddings();
     }
+
     /**
      * Spring AI Tools (camel-spring-ai-tools)
      * Spring AI Tools and Function Calling Features
@@ -4565,6 +4893,7 @@ public interface ComponentsBuilderFactory {
     static SpringAiToolsComponentBuilderFactory.SpringAiToolsComponentBuilder springAiTools() {
         return SpringAiToolsComponentBuilderFactory.springAiTools();
     }
+
     /**
      * Spring AI Vector Store (camel-spring-ai-vector-store)
      * Spring AI Vector Store
@@ -4578,6 +4907,7 @@ public interface ComponentsBuilderFactory {
     static SpringAiVectorStoreComponentBuilderFactory.SpringAiVectorStoreComponentBuilder springAiVectorStore() {
         return SpringAiVectorStoreComponentBuilderFactory.springAiVectorStore();
     }
+
     /**
      * Spring Batch (camel-spring-batch)
      * Send messages to Spring Batch for further processing.
@@ -4591,6 +4921,7 @@ public interface ComponentsBuilderFactory {
     static SpringBatchComponentBuilderFactory.SpringBatchComponentBuilder springBatch() {
         return SpringBatchComponentBuilderFactory.springBatch();
     }
+
     /**
      * Spring Event (camel-spring)
      * Listen for Spring Application Events.
@@ -4604,6 +4935,7 @@ public interface ComponentsBuilderFactory {
     static SpringEventComponentBuilderFactory.SpringEventComponentBuilder springEvent() {
         return SpringEventComponentBuilderFactory.springEvent();
     }
+
     /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
@@ -4617,6 +4949,7 @@ public interface ComponentsBuilderFactory {
     static SpringJdbcComponentBuilderFactory.SpringJdbcComponentBuilder springJdbc() {
         return SpringJdbcComponentBuilderFactory.springJdbc();
     }
+
     /**
      * Spring LDAP (camel-spring-ldap)
      * Perform searches in LDAP servers using filters as the message payload.
@@ -4630,6 +4963,7 @@ public interface ComponentsBuilderFactory {
     static SpringLdapComponentBuilderFactory.SpringLdapComponentBuilder springLdap() {
         return SpringLdapComponentBuilderFactory.springLdap();
     }
+
     /**
      * Spring RabbitMQ (camel-spring-rabbitmq)
      * Send and receive messages from RabbitMQ using the Spring RabbitMQ client.
@@ -4643,6 +4977,7 @@ public interface ComponentsBuilderFactory {
     static SpringRabbitmqComponentBuilderFactory.SpringRabbitmqComponentBuilder springRabbitmq() {
         return SpringRabbitmqComponentBuilderFactory.springRabbitmq();
     }
+
     /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
@@ -4656,6 +4991,7 @@ public interface ComponentsBuilderFactory {
     static SpringRedisComponentBuilderFactory.SpringRedisComponentBuilder springRedis() {
         return SpringRedisComponentBuilderFactory.springRedis();
     }
+
     /**
      * Spring WebService (camel-spring-ws)
      * Access external web services as a client or expose your own web services.
@@ -4669,6 +5005,7 @@ public interface ComponentsBuilderFactory {
     static SpringWsComponentBuilderFactory.SpringWsComponentBuilder springWs() {
         return SpringWsComponentBuilderFactory.springWs();
     }
+
     /**
      * SQL (camel-sql)
      * Perform SQL queries using Spring JDBC.
@@ -4682,6 +5019,7 @@ public interface ComponentsBuilderFactory {
     static SqlComponentBuilderFactory.SqlComponentBuilder sql() {
         return SqlComponentBuilderFactory.sql();
     }
+
     /**
      * SQL Stored Procedure (camel-sql)
      * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
@@ -4695,6 +5033,7 @@ public interface ComponentsBuilderFactory {
     static SqlStoredComponentBuilderFactory.SqlStoredComponentBuilder sqlStored() {
         return SqlStoredComponentBuilderFactory.sqlStored();
     }
+
     /**
      * SSH (camel-ssh)
      * Execute commands on remote hosts using SSH.
@@ -4708,6 +5047,7 @@ public interface ComponentsBuilderFactory {
     static SshComponentBuilderFactory.SshComponentBuilder ssh() {
         return SshComponentBuilderFactory.ssh();
     }
+
     /**
      * StAX (camel-stax)
      * Process XML payloads by a SAX ContentHandler.
@@ -4721,6 +5061,7 @@ public interface ComponentsBuilderFactory {
     static StaxComponentBuilderFactory.StaxComponentBuilder stax() {
         return StaxComponentBuilderFactory.stax();
     }
+
     /**
      * Stitch (camel-stitch)
      * Stitch is a cloud ETL service that integrates various data sources into a
@@ -4735,6 +5076,7 @@ public interface ComponentsBuilderFactory {
     static StitchComponentBuilderFactory.StitchComponentBuilder stitch() {
         return StitchComponentBuilderFactory.stitch();
     }
+
     /**
      * Stomp (camel-stomp)
      * Send and receive messages to/from STOMP (Simple Text Oriented Messaging
@@ -4749,6 +5091,7 @@ public interface ComponentsBuilderFactory {
     static StompComponentBuilderFactory.StompComponentBuilder stomp() {
         return StompComponentBuilderFactory.stomp();
     }
+
     /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
@@ -4762,6 +5105,7 @@ public interface ComponentsBuilderFactory {
     static StreamComponentBuilderFactory.StreamComponentBuilder stream() {
         return StreamComponentBuilderFactory.stream();
     }
+
     /**
      * String Template (camel-stringtemplate)
      * Transform messages using StringTemplate engine.
@@ -4775,6 +5119,7 @@ public interface ComponentsBuilderFactory {
     static StringTemplateComponentBuilderFactory.StringTemplateComponentBuilder stringTemplate() {
         return StringTemplateComponentBuilderFactory.stringTemplate();
     }
+
     /**
      * Stripe (camel-stripe)
      * Interact with the Stripe payment platform.
@@ -4788,6 +5133,7 @@ public interface ComponentsBuilderFactory {
     static StripeComponentBuilderFactory.StripeComponentBuilder stripe() {
         return StripeComponentBuilderFactory.stripe();
     }
+
     /**
      * Stub (camel-stub)
      * Stub out any physical endpoints while in development or testing.
@@ -4801,6 +5147,7 @@ public interface ComponentsBuilderFactory {
     static StubComponentBuilderFactory.StubComponentBuilder stub() {
         return StubComponentBuilderFactory.stub();
     }
+
     /**
      * Tahu Edge Node / Device (camel-tahu)
      * Sparkplug B Edge Node and Device support over MQTT using Eclipse Tahu
@@ -4814,6 +5161,7 @@ public interface ComponentsBuilderFactory {
     static TahuEdgeComponentBuilderFactory.TahuEdgeComponentBuilder tahuEdge() {
         return TahuEdgeComponentBuilderFactory.tahuEdge();
     }
+
     /**
      * Tahu Host Application (camel-tahu)
      * Sparkplug B Host Application support over MQTT using Eclipse Tahu
@@ -4827,6 +5175,7 @@ public interface ComponentsBuilderFactory {
     static TahuHostComponentBuilderFactory.TahuHostComponentBuilder tahuHost() {
         return TahuHostComponentBuilderFactory.tahuHost();
     }
+
     /**
      * Telegram (camel-telegram)
      * Send and receive messages using the Telegram Bot API.
@@ -4840,6 +5189,7 @@ public interface ComponentsBuilderFactory {
     static TelegramComponentBuilderFactory.TelegramComponentBuilder telegram() {
         return TelegramComponentBuilderFactory.telegram();
     }
+
     /**
      * TensorFlow Serving (camel-tensorflow-serving)
      * Provide access to TensorFlow Serving model servers to run inference with
@@ -4854,6 +5204,7 @@ public interface ComponentsBuilderFactory {
     static TensorflowServingComponentBuilderFactory.TensorflowServingComponentBuilder tensorflowServing() {
         return TensorflowServingComponentBuilderFactory.tensorflowServing();
     }
+
     /**
      * Thrift (camel-thrift)
      * Call and expose remote procedures (RPC) with Apache Thrift data format
@@ -4868,6 +5219,7 @@ public interface ComponentsBuilderFactory {
     static ThriftComponentBuilderFactory.ThriftComponentBuilder thrift() {
         return ThriftComponentBuilderFactory.thrift();
     }
+
     /**
      * Thymeleaf (camel-thymeleaf)
      * Transform messages using a Thymeleaf template.
@@ -4881,6 +5233,7 @@ public interface ComponentsBuilderFactory {
     static ThymeleafComponentBuilderFactory.ThymeleafComponentBuilder thymeleaf() {
         return ThymeleafComponentBuilderFactory.thymeleaf();
     }
+
     /**
      * Tika (camel-tika)
      * Parse documents and extract metadata and text using Apache Tika.
@@ -4894,6 +5247,7 @@ public interface ComponentsBuilderFactory {
     static TikaComponentBuilderFactory.TikaComponentBuilder tika() {
         return TikaComponentBuilderFactory.tika();
     }
+
     /**
      * Timer (camel-timer)
      * Generate messages in specified intervals using java.util.Timer.
@@ -4907,6 +5261,7 @@ public interface ComponentsBuilderFactory {
     static TimerComponentBuilderFactory.TimerComponentBuilder timer() {
         return TimerComponentBuilderFactory.timer();
     }
+
     /**
      * TorchServe (camel-torchserve)
      * Provide access to PyTorch TorchServe servers to run inference with
@@ -4921,6 +5276,7 @@ public interface ComponentsBuilderFactory {
     static TorchserveComponentBuilderFactory.TorchserveComponentBuilder torchserve() {
         return TorchserveComponentBuilderFactory.torchserve();
     }
+
     /**
      * Twilio (camel-twilio)
      * Interact with Twilio REST APIs using Twilio Java SDK.
@@ -4934,6 +5290,7 @@ public interface ComponentsBuilderFactory {
     static TwilioComponentBuilderFactory.TwilioComponentBuilder twilio() {
         return TwilioComponentBuilderFactory.twilio();
     }
+
     /**
      * Twitter Direct Message (camel-twitter)
      * Send and receive Twitter direct messages.
@@ -4947,6 +5304,7 @@ public interface ComponentsBuilderFactory {
     static TwitterDirectmessageComponentBuilderFactory.TwitterDirectmessageComponentBuilder twitterDirectmessage() {
         return TwitterDirectmessageComponentBuilderFactory.twitterDirectmessage();
     }
+
     /**
      * Twitter Search (camel-twitter)
      * Access Twitter Search.
@@ -4960,6 +5318,7 @@ public interface ComponentsBuilderFactory {
     static TwitterSearchComponentBuilderFactory.TwitterSearchComponentBuilder twitterSearch() {
         return TwitterSearchComponentBuilderFactory.twitterSearch();
     }
+
     /**
      * Twitter Timeline (camel-twitter)
      * Send tweets and receive tweets from user's timeline.
@@ -4973,6 +5332,7 @@ public interface ComponentsBuilderFactory {
     static TwitterTimelineComponentBuilderFactory.TwitterTimelineComponentBuilder twitterTimeline() {
         return TwitterTimelineComponentBuilderFactory.twitterTimeline();
     }
+
     /**
      * Undertow (camel-undertow)
      * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket
@@ -4987,6 +5347,7 @@ public interface ComponentsBuilderFactory {
     static UndertowComponentBuilderFactory.UndertowComponentBuilder undertow() {
         return UndertowComponentBuilderFactory.undertow();
     }
+
     /**
      * Validator (camel-validator)
      * Validate the payload using XML Schema and JAXP Validation.
@@ -5000,6 +5361,7 @@ public interface ComponentsBuilderFactory {
     static ValidatorComponentBuilderFactory.ValidatorComponentBuilder validator() {
         return ValidatorComponentBuilderFactory.validator();
     }
+
     /**
      * Velocity (camel-velocity)
      * Transform messages using a Velocity template.
@@ -5013,6 +5375,7 @@ public interface ComponentsBuilderFactory {
     static VelocityComponentBuilderFactory.VelocityComponentBuilder velocity() {
         return VelocityComponentBuilderFactory.velocity();
     }
+
     /**
      * Vert.x (camel-vertx)
      * Send and receive messages to/from Vert.x Event Bus.
@@ -5026,6 +5389,7 @@ public interface ComponentsBuilderFactory {
     static VertxComponentBuilderFactory.VertxComponentBuilder vertx() {
         return VertxComponentBuilderFactory.vertx();
     }
+
     /**
      * Vert.x HTTP Client (camel-vertx-http)
      * Send requests to external HTTP servers using Vert.x
@@ -5039,6 +5403,7 @@ public interface ComponentsBuilderFactory {
     static VertxHttpComponentBuilderFactory.VertxHttpComponentBuilder vertxHttp() {
         return VertxHttpComponentBuilderFactory.vertxHttp();
     }
+
     /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
@@ -5053,6 +5418,7 @@ public interface ComponentsBuilderFactory {
     static VertxWebsocketComponentBuilderFactory.VertxWebsocketComponentBuilder vertxWebsocket() {
         return VertxWebsocketComponentBuilderFactory.vertxWebsocket();
     }
+
     /**
      * Wasm (camel-wasm)
      * Invoke Wasm functions.
@@ -5066,6 +5432,7 @@ public interface ComponentsBuilderFactory {
     static WasmComponentBuilderFactory.WasmComponentBuilder wasm() {
         return WasmComponentBuilderFactory.wasm();
     }
+
     /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
@@ -5079,6 +5446,7 @@ public interface ComponentsBuilderFactory {
     static WeatherComponentBuilderFactory.WeatherComponentBuilder weather() {
         return WeatherComponentBuilderFactory.weather();
     }
+
     /**
      * weaviate (camel-weaviate)
      * Perform operations on the Weaviate Vector Database.
@@ -5092,6 +5460,7 @@ public interface ComponentsBuilderFactory {
     static WeaviateComponentBuilderFactory.WeaviateComponentBuilder weaviate() {
         return WeaviateComponentBuilderFactory.weaviate();
     }
+
     /**
      * Web3j Ethereum Blockchain (camel-web3j)
      * Interact with Ethereum nodes using web3j client API.
@@ -5105,6 +5474,7 @@ public interface ComponentsBuilderFactory {
     static Web3jComponentBuilderFactory.Web3jComponentBuilder web3j() {
         return Web3jComponentBuilderFactory.web3j();
     }
+
     /**
      * Webhook (camel-webhook)
      * Expose webhook endpoints to receive push notifications for other Camel
@@ -5119,6 +5489,7 @@ public interface ComponentsBuilderFactory {
     static WebhookComponentBuilderFactory.WebhookComponentBuilder webhook() {
         return WebhookComponentBuilderFactory.webhook();
     }
+
     /**
      * WhatsApp (camel-whatsapp)
      * Send messages to WhatsApp.
@@ -5132,6 +5503,7 @@ public interface ComponentsBuilderFactory {
     static WhatsappComponentBuilderFactory.WhatsappComponentBuilder whatsapp() {
         return WhatsappComponentBuilderFactory.whatsapp();
     }
+
     /**
      * WordPress (camel-wordpress)
      * Manage posts and users using the WordPress API.
@@ -5145,6 +5517,7 @@ public interface ComponentsBuilderFactory {
     static WordpressComponentBuilderFactory.WordpressComponentBuilder wordpress() {
         return WordpressComponentBuilderFactory.wordpress();
     }
+
     /**
      * Workday (camel-workday)
      * Detect and parse documents using Workday.
@@ -5158,6 +5531,7 @@ public interface ComponentsBuilderFactory {
     static WorkdayComponentBuilderFactory.WorkdayComponentBuilder workday() {
         return WorkdayComponentBuilderFactory.workday();
     }
+
     /**
      * XChange (camel-xchange)
      * Access market data and trade on Bitcoin and Altcoin exchanges.
@@ -5171,6 +5545,7 @@ public interface ComponentsBuilderFactory {
     static XchangeComponentBuilderFactory.XchangeComponentBuilder xchange() {
         return XchangeComponentBuilderFactory.xchange();
     }
+
     /**
      * XJ (camel-xj)
      * Transform JSON and XML message using a XSLT.
@@ -5184,6 +5559,7 @@ public interface ComponentsBuilderFactory {
     static XjComponentBuilderFactory.XjComponentBuilder xj() {
         return XjComponentBuilderFactory.xj();
     }
+
     /**
      * XML Security Sign (camel-xmlsecurity)
      * Sign XML payloads using the XML signature specification.
@@ -5197,6 +5573,7 @@ public interface ComponentsBuilderFactory {
     static XmlsecuritySignComponentBuilderFactory.XmlsecuritySignComponentBuilder xmlsecuritySign() {
         return XmlsecuritySignComponentBuilderFactory.xmlsecuritySign();
     }
+
     /**
      * XML Security Verify (camel-xmlsecurity)
      * Verify XML payloads using the XML signature specification.
@@ -5210,6 +5587,7 @@ public interface ComponentsBuilderFactory {
     static XmlsecurityVerifyComponentBuilderFactory.XmlsecurityVerifyComponentBuilder xmlsecurityVerify() {
         return XmlsecurityVerifyComponentBuilderFactory.xmlsecurityVerify();
     }
+
     /**
      * XMPP (camel-xmpp)
      * Send and receive messages to/from an XMPP chat server.
@@ -5223,6 +5601,7 @@ public interface ComponentsBuilderFactory {
     static XmppComponentBuilderFactory.XmppComponentBuilder xmpp() {
         return XmppComponentBuilderFactory.xmpp();
     }
+
     /**
      * XQuery (camel-saxon)
      * Query and/or transform XML payloads using XQuery and Saxon.
@@ -5236,6 +5615,7 @@ public interface ComponentsBuilderFactory {
     static XqueryComponentBuilderFactory.XqueryComponentBuilder xquery() {
         return XqueryComponentBuilderFactory.xquery();
     }
+
     /**
      * XSLT (camel-xslt)
      * Transforms XML payload using an XSLT template.
@@ -5249,6 +5629,7 @@ public interface ComponentsBuilderFactory {
     static XsltComponentBuilderFactory.XsltComponentBuilder xslt() {
         return XsltComponentBuilderFactory.xslt();
     }
+
     /**
      * XSLT Saxon (camel-xslt-saxon)
      * Transform XML payloads using an XSLT template using Saxon.
@@ -5262,6 +5643,7 @@ public interface ComponentsBuilderFactory {
     static XsltSaxonComponentBuilderFactory.XsltSaxonComponentBuilder xsltSaxon() {
         return XsltSaxonComponentBuilderFactory.xsltSaxon();
     }
+
     /**
      * Zeebe (camel-zeebe)
      * Zeebe component which integrates with Camunda Zeebe to interact with the
@@ -5276,6 +5658,7 @@ public interface ComponentsBuilderFactory {
     static ZeebeComponentBuilderFactory.ZeebeComponentBuilder zeebe() {
         return ZeebeComponentBuilderFactory.zeebe();
     }
+
     /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
@@ -5289,6 +5672,7 @@ public interface ComponentsBuilderFactory {
     static ZendeskComponentBuilderFactory.ZendeskComponentBuilder zendesk() {
         return ZendeskComponentBuilderFactory.zendesk();
     }
+
     /**
      * ZooKeeper (camel-zookeeper)
      * Manage ZooKeeper clusters.
@@ -5302,6 +5686,7 @@ public interface ComponentsBuilderFactory {
     static ZookeeperComponentBuilderFactory.ZookeeperComponentBuilder zookeeper() {
         return ZookeeperComponentBuilderFactory.zookeeper();
     }
+
     /**
      * ZooKeeper Master (camel-zookeeper-master)
      * Have only a single consumer in a cluster consuming from a given endpoint;
