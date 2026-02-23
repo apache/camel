@@ -36,6 +36,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "depth": target.setDepth(property(camelContext, int.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -98,6 +99,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "delay": return long.class;
+        case "depth": return int.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -161,6 +163,7 @@ public class GitEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "delay": return target.getDelay();
+        case "depth": return target.getDepth();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

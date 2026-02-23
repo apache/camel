@@ -74,6 +74,11 @@ public class GitEndpoint extends ScheduledPollEndpoint {
     private boolean allowEmpty = true;
 
     @UriParam(label = "producer",
+              description = "Clone depth for shallow clones. A value of 1 fetches only the latest commit. "
+                            + "When set to 0 or not specified, a full clone is performed.")
+    private int depth;
+
+    @UriParam(label = "producer",
               enums = "add,cherryPick,clean,clone,commit,commitAll,createBranch,createTag,deleteBranch,deleteTag,gc,init,log,pull,push,remoteAdd,remoteList,remove,showBranches,showTags,status")
     private String operation;
 
@@ -91,15 +96,11 @@ public class GitEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        if (type == GitType.COMMIT) {
-            return new GitCommitConsumer(this, processor);
-        } else if (type == GitType.TAG) {
-            return new GitTagConsumer(this, processor);
-        } else if (type == GitType.BRANCH) {
-            return new GitBranchConsumer(this, processor);
-        } else {
-            throw new IllegalArgumentException("Cannot create consumer with type " + type);
-        }
+        return switch (type) {
+            case COMMIT -> new GitCommitConsumer(this, processor);
+            case TAG -> new GitTagConsumer(this, processor);
+            case BRANCH -> new GitBranchConsumer(this, processor);
+        };
     }
 
     /**
@@ -210,6 +211,17 @@ public class GitEndpoint extends ScheduledPollEndpoint {
 
     public void setAllowEmpty(boolean allowEmpty) {
         this.allowEmpty = allowEmpty;
+    }
+
+    /**
+     * Clone depth for shallow clones
+     */
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
     /**

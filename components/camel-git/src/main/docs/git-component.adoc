@@ -75,6 +75,18 @@ from("git:///tmp/testRepo?type=commit")
     .to(....)
 ---------------------------------------
 
+=== Shallow Clone
+
+Use the `depth` option to perform a shallow clone, fetching only a limited number of commits. This reduces clone time and disk usage for large repositories when full history is not needed.
+
+[source,java]
+---------------------------------------
+from("direct:clone")
+    .to("git:///tmp/myRepo?operation=clone&remotePath=https://github.com/example/repo.git&depth=1");
+---------------------------------------
+
+A `depth` of 1 fetches only the latest commit. When set to 0 or omitted, a full clone is performed.
+
 === Custom config file
 
 By default, camel-git will load ``.gitconfig`` file from user home folder.

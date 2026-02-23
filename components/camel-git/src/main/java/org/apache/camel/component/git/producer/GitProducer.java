@@ -204,30 +204,26 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
         }
         try {
-            File localRepo = new File(endpoint.getLocalPath(), "");
+            File localRepo = new File(endpoint.getLocalPath());
             if (!localRepo.exists()) {
-                if (ObjectHelper.isNotEmpty(endpoint.getUsername()) && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
-                    UsernamePasswordCredentialsProvider credentials
-                            = new UsernamePasswordCredentialsProvider(endpoint.getUsername(), endpoint.getPassword());
-                    if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
-                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath())
-                                .setDirectory(new File(endpoint.getLocalPath(), ""))
-                                .call();
-                    } else {
-                        result = Git.cloneRepository().setCredentialsProvider(credentials).setURI(endpoint.getRemotePath())
-                                .setDirectory(new File(endpoint.getLocalPath(), ""))
-                                .setBranch(endpoint.getBranchName()).call();
-                    }
-                } else {
-                    if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
-                        result = Git.cloneRepository().setURI(endpoint.getRemotePath())
-                                .setDirectory(new File(endpoint.getLocalPath(), "")).call();
-                    } else {
-                        result = Git.cloneRepository().setURI(endpoint.getRemotePath())
-                                .setDirectory(new File(endpoint.getLocalPath(), "")).setBranch(endpoint.getBranchName())
-                                .call();
-                    }
+                var cloneCommand = Git.cloneRepository()
+                        .setURI(endpoint.getRemotePath())
+                        .setDirectory(localRepo);
+
+                if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
+                    cloneCommand.setBranch(endpoint.getBranchName());
                 }
+                if (ObjectHelper.isNotEmpty(endpoint.getUsername())
+                        && ObjectHelper.isNotEmpty(endpoint.getPassword())) {
+                    cloneCommand.setCredentialsProvider(
+                            new UsernamePasswordCredentialsProvider(
+                                    endpoint.getUsername(), endpoint.getPassword()));
+                }
+                if (endpoint.getDepth() > 0) {
+                    cloneCommand.setDepth(endpoint.getDepth());
+                }
+
+                result = cloneCommand.call();
             } else {
                 throw new IllegalArgumentException("The local repository directory already exists");
             }
@@ -264,7 +260,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Local path must specified to execute " + operation);
         }
         try {
-            result = Git.init().setDirectory(new File(endpoint.getLocalPath(), "")).setBare(false).call();
+            result = Git.init().setDirectory(new File(endpoint.getLocalPath())).setBare(false).call();
         } catch (GitAPIException e) {
             LOG.error("There was an error in Git {} operation", operation);
             throw e;
@@ -585,10 +581,11 @@ public class GitProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Commit id must be specified to execute " + operation);
             }
-            RevWalk walk = new RevWalk(repo);
-            ObjectId id = repo.resolve(commitId);
-            RevCommit commit = walk.parseCommit(id);
-            walk.dispose();
+            RevCommit commit;
+            try (RevWalk walk = new RevWalk(repo)) {
+                ObjectId id = repo.resolve(commitId);
+                commit = walk.parseCommit(id);
+            }
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }

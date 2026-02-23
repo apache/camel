@@ -26,8 +26,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitTestSupport;
@@ -56,14 +54,14 @@ public class GitProducerTest extends GitTestSupport {
     public void cloneTest() {
         template.sendBody("direct:clone", "");
         File gitDir = new File(getCloneDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
     }
 
     @Test
     public void initTest() {
         template.sendBody("direct:init", "");
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
     }
 
     @Test
@@ -71,7 +69,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -90,7 +88,7 @@ public class GitProducerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(true, branchCreated);
+        assertTrue(branchCreated);
         git.close();
     }
 
@@ -102,7 +100,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -118,7 +116,7 @@ public class GitProducerTest extends GitTestSupport {
                 tagCreated = true;
             }
         }
-        assertEquals(true, tagCreated);
+        assertTrue(tagCreated);
 
         // Test camel-git create-branch
         template.sendBody("direct:checkout-specific-tag", "");
@@ -131,7 +129,42 @@ public class GitProducerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(true, branchCreated);
+        assertTrue(branchCreated);
+        git.close();
+    }
+
+    @Test
+    public void shallowCloneTest() throws Exception {
+        // Init - create multiple commits in the source repo
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(getGitDir(), filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        git.commit().setMessage("First commit").call();
+
+        File fileToAdd2 = new File(getGitDir(), filenameBranchToAdd);
+        fileToAdd2.createNewFile();
+        git.add().addFilepattern(filenameBranchToAdd).call();
+        git.commit().setMessage("Second commit").call();
+
+        // Verify source repo has 2 commits
+        validateGitLogs(git, "Second commit", "First commit");
+
+        // Test camel-git shallow clone with depth=1
+        template.sendBody("direct:clone-shallow", "");
+
+        // Check that clone dir exists
+        File gitDir = new File(getCloneDir(), ".git");
+        assertTrue(gitDir.exists());
+
+        // Verify only 1 commit in shallow clone
+        Git clonedGit = Git.open(getCloneDir());
+        int commitCount = 0;
+        for (RevCommit ignored : clonedGit.log().call()) {
+            commitCount++;
+        }
+        assertEquals(1, commitCount);
+        clonedGit.close();
         git.close();
     }
 
@@ -142,14 +175,14 @@ public class GitProducerTest extends GitTestSupport {
         assertThrows(CamelExecutionException.class, () -> template.sendBody("direct:clone", ""));
 
         File gitDir = new File(getCloneDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
     }
 
     @Test
     public void pullTest() {
         template.sendBody("direct:clone", "");
         File gitDir = new File(getCloneDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         PullResult pr = template.requestBody("direct:pull", "", PullResult.class);
         assertTrue(pr.isSuccessful());
     }
@@ -164,7 +197,7 @@ public class GitProducerTest extends GitTestSupport {
         template.sendBodyAndHeader("direct:add", "", GitConstants.GIT_FILE_NAME, filenameToAdd);
 
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.close();
@@ -175,7 +208,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -187,7 +220,7 @@ public class GitProducerTest extends GitTestSupport {
 
         // Check
         gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         git.commit().setMessage(commitMessage).call();
         validateGitLogs(git, commitMessage);
         status = git.status().call();
@@ -218,7 +251,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -239,7 +272,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -261,7 +294,7 @@ public class GitProducerTest extends GitTestSupport {
         // Initialize repository using JGit
         Repository repository = getTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Git git = new Git(repository);
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
@@ -279,7 +312,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -290,12 +323,8 @@ public class GitProducerTest extends GitTestSupport {
         git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
 
         // Test camel-git commit (with branch)
-        template.send("direct:commit-branch", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageBranch);
-            }
-        });
+        template.send("direct:commit-branch",
+                exchange -> exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageBranch));
         validateGitLogs(git, commitMessageBranch, commitMessage);
         git.close();
     }
@@ -307,12 +336,8 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
 
-        template.send("direct:commit-all", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll);
-            }
-        });
+        template.send("direct:commit-all",
+                exchange -> exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll));
         validateGitLogs(git, commitMessageAll);
         git.close();
     }
@@ -322,7 +347,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -335,19 +360,11 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd1.createNewFile();
 
         // Test camel-git add and commit (different branches)
-        template.send("direct:add-on-branch", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameBranchToAdd);
-            }
-        });
+        template.send("direct:add-on-branch",
+                exchange -> exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameBranchToAdd));
 
-        template.send("direct:commit-all-branch", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll);
-            }
-        });
+        template.send("direct:commit-all-branch",
+                exchange -> exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll));
 
         // Check
         validateGitLogs(git, commitMessageAll, commitMessage);
@@ -359,7 +376,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -375,12 +392,8 @@ public class GitProducerTest extends GitTestSupport {
         validateGitLogs(git, commitMessageAll, commitMessage);
 
         // Test camel-git remove
-        template.send("direct:remove-on-branch", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd);
-            }
-        });
+        template.send("direct:remove-on-branch",
+                exchange -> exchange.getIn().setHeader(GitConstants.GIT_FILE_NAME, filenameToAdd));
 
         // Check
         git.checkout().setCreateBranch(false).setName(branchTest).call();
@@ -394,7 +407,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -413,7 +426,7 @@ public class GitProducerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(true, branchCreated);
+        assertTrue(branchCreated);
         git.close();
     }
 
@@ -425,7 +438,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -437,7 +450,7 @@ public class GitProducerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(true, branchCreated);
+        assertTrue(branchCreated);
 
         // Test camel-git delete-branch
         template.sendBody("direct:delete-branch", "");
@@ -449,7 +462,7 @@ public class GitProducerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(false, branchCreated);
+        assertFalse(branchCreated);
         git.close();
     }
 
@@ -461,7 +474,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
 
         // Test camel-git status
         Status status = template.requestBody("direct:status", "", Status.class);
@@ -481,7 +494,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -493,7 +506,7 @@ public class GitProducerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(true, branchCreated);
+        assertTrue(branchCreated);
         File fileToAddDifferent = new File(getGitDir(), filenameBranchToAdd);
         fileToAddDifferent.createNewFile();
         git.add().addFilepattern(filenameBranchToAdd).call();
@@ -517,7 +530,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -543,7 +556,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -555,7 +568,7 @@ public class GitProducerTest extends GitTestSupport {
                 branchCreated = true;
             }
         }
-        assertEquals(true, branchCreated);
+        assertTrue(branchCreated);
         File fileToAddDifferent = new File(getGitDir(), filenameBranchToAdd);
         fileToAddDifferent.createNewFile();
         git.add().addFilepattern(filenameBranchToAdd).call();
@@ -582,7 +595,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -598,7 +611,7 @@ public class GitProducerTest extends GitTestSupport {
                 tagCreated = true;
             }
         }
-        assertEquals(true, tagCreated);
+        assertTrue(tagCreated);
         git.close();
     }
 
@@ -610,7 +623,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -622,7 +635,7 @@ public class GitProducerTest extends GitTestSupport {
                 tagCreated = true;
             }
         }
-        assertEquals(true, tagCreated);
+        assertTrue(tagCreated);
 
         // Test camel-git delete-tag
         template.sendBody("direct:delete-tag", "");
@@ -635,7 +648,7 @@ public class GitProducerTest extends GitTestSupport {
                 tagExists = true;
             }
         }
-        assertEquals(false, tagExists);
+        assertFalse(tagExists);
         git.close();
     }
 
@@ -647,7 +660,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -675,7 +688,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -715,7 +728,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -752,7 +765,7 @@ public class GitProducerTest extends GitTestSupport {
     public void remoteAddTest() throws Exception {
         Repository repository = getTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Git git = new Git(repository);
         List<RemoteConfig> remoteConfigList = git.remoteList().call();
         assertEquals(0, remoteConfigList.size());
@@ -770,7 +783,7 @@ public class GitProducerTest extends GitTestSupport {
     public void remoteListTest() throws Exception {
         Repository repository = getTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Git git = new Git(repository);
         RemoteAddCommand remoteAddCommand = git.remoteAdd();
         remoteAddCommand.setName("origin");
@@ -797,7 +810,7 @@ public class GitProducerTest extends GitTestSupport {
                 = template.requestBodyAndHeader("direct:clean", "", GitConstants.GIT_FILE_NAME, filenameToAdd, Set.class);
 
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         assertTrue(cleaned.contains(filenameToAdd));
         git.close();
     }
@@ -806,7 +819,7 @@ public class GitProducerTest extends GitTestSupport {
     public void gcTest() throws Exception {
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -833,7 +846,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -844,12 +857,8 @@ public class GitProducerTest extends GitTestSupport {
         git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
 
         // Test camel-git commit (with branch)
-        template.send("direct:commit-branch", new Processor() {
-            @Override
-            public void process(Exchange exchange) {
-                exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageBranch);
-            }
-        });
+        template.send("direct:commit-branch",
+                exchange -> exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageBranch));
         validateGitLogs(git, commitMessageBranch, commitMessage);
 
         // Test camel-git commit (with branch)
@@ -866,7 +875,7 @@ public class GitProducerTest extends GitTestSupport {
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
@@ -882,7 +891,7 @@ public class GitProducerTest extends GitTestSupport {
                 tagCreated = true;
             }
         }
-        assertEquals(true, tagCreated);
+        assertTrue(tagCreated);
         git.close();
     }
 
@@ -891,7 +900,7 @@ public class GitProducerTest extends GitTestSupport {
         // Init
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();
@@ -928,6 +937,8 @@ public class GitProducerTest extends GitTestSupport {
             public void configure() {
                 from("direct:clone").to("git://" + cloneDir
                                         + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
+                from("direct:clone-shallow").to("git://" + cloneDir
+                                                + "?remotePath=" + getGitDir().toURI() + "&operation=clone&depth=1");
                 from("direct:init").to("git://" + dir + "?operation=init");
                 from("direct:add").to("git://" + dir + "?operation=add");
                 from("direct:checkout").to("git://" + dir + "?operation=checkout&branchName=" + branchTest);

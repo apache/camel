@@ -79,6 +79,8 @@ public class SqlConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                getContext().getCamelContextExtension().getExchangeFactory().setStatisticsEnabled(true);
+
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("sql:select * from projects order by id?initialDelay=0&delay=50")

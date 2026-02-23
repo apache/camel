@@ -54,6 +54,12 @@ Should be changed to have semicolons as shown below:
             orderId=$sku,total=$sum
 ----
 
+=== camel-mail
+
+When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
+the bean which is similar to what `camel-file` do as well.
+
+
 == Upgrading Camel 4.17 to 4.18
 
 === camel-simple
