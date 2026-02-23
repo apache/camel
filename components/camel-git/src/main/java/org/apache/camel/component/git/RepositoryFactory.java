@@ -24,12 +24,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -38,7 +36,7 @@ import org.eclipse.jgit.util.SystemReader;
 public abstract class RepositoryFactory {
 
     private static final SystemReader DEFAULT_INSTANCE;
-    private static final List<String> VALID_SCHEMES = Arrays.asList("classpath:", "file:", "http:", "https:");
+    private static final List<String> VALID_SCHEMES = List.of("classpath:", "file:", "http:", "https:");
 
     static {
         DEFAULT_INSTANCE = SystemReader.getInstance();
@@ -105,12 +103,9 @@ public abstract class RepositoryFactory {
 
     private static File getTempFileFromHttp(String url) throws IOException {
         Path tempFile = Files.createTempFile(null, null);
-        FileOutputStream outputStream = new FileOutputStream(tempFile.toString());
-        try {
-            ReadableByteChannel byteChannel = Channels.newChannel(URI.create(url).toURL().openStream());
+        try (ReadableByteChannel byteChannel = Channels.newChannel(URI.create(url).toURL().openStream());
+             FileOutputStream outputStream = new FileOutputStream(tempFile.toString())) {
             outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
-        } finally {
-            IOHelper.close(outputStream);
         }
         return tempFile.toFile();
     }

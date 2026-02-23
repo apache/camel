@@ -52,6 +52,16 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "batchSize": getOrCreateConfiguration(target).setBatchSize(property(camelContext, int.class, value)); return true;
         case "batchtimeout":
         case "batchTimeout": getOrCreateConfiguration(target).setBatchTimeout(property(camelContext, long.class, value)); return true;
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": getOrCreateConfiguration(target).setChunkingIncludeRawText(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": getOrCreateConfiguration(target).setChunkingMaxTokens(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": getOrCreateConfiguration(target).setChunkingMergePeers(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": getOrCreateConfiguration(target).setChunkingTokenizer(property(camelContext, java.lang.String.class, value)); return true;
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": getOrCreateConfiguration(target).setChunkingUseMarkdownTables(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.docling.DoclingConfiguration.class, value)); return true;
         case "contentinbody":
         case "contentInBody": getOrCreateConfiguration(target).setContentInBody(property(camelContext, boolean.class, value)); return true;
@@ -148,6 +158,16 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "batchSize": return int.class;
         case "batchtimeout":
         case "batchTimeout": return long.class;
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": return java.lang.Boolean.class;
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": return java.lang.Integer.class;
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": return java.lang.Boolean.class;
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": return java.lang.String.class;
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": return java.lang.Boolean.class;
         case "configuration": return org.apache.camel.component.docling.DoclingConfiguration.class;
         case "contentinbody":
         case "contentInBody": return boolean.class;
@@ -245,6 +265,16 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "batchSize": return getOrCreateConfiguration(target).getBatchSize();
         case "batchtimeout":
         case "batchTimeout": return getOrCreateConfiguration(target).getBatchTimeout();
+        case "chunkingincluderawtext":
+        case "chunkingIncludeRawText": return getOrCreateConfiguration(target).getChunkingIncludeRawText();
+        case "chunkingmaxtokens":
+        case "chunkingMaxTokens": return getOrCreateConfiguration(target).getChunkingMaxTokens();
+        case "chunkingmergepeers":
+        case "chunkingMergePeers": return getOrCreateConfiguration(target).getChunkingMergePeers();
+        case "chunkingtokenizer":
+        case "chunkingTokenizer": return getOrCreateConfiguration(target).getChunkingTokenizer();
+        case "chunkingusemarkdowntables":
+        case "chunkingUseMarkdownTables": return getOrCreateConfiguration(target).getChunkingUseMarkdownTables();
         case "configuration": return target.getConfiguration();
         case "contentinbody":
         case "contentInBody": return getOrCreateConfiguration(target).isContentInBody();

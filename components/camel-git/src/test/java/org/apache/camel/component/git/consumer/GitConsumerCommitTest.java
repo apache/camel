@@ -39,7 +39,7 @@ public class GitConsumerCommitTest extends GitTestSupport {
 
         Git git = getGitTestRepository();
         File gitDir = new File(getGitDir(), ".git");
-        assertEquals(true, gitDir.exists());
+        assertTrue(gitDir.exists());
         File fileToAdd = new File(getGitDir(), filenameToAdd);
         fileToAdd.createNewFile();
         git.add().addFilepattern(filenameToAdd).call();

@@ -44,6 +44,11 @@ import java.util.stream.Stream;
 import ai.docling.core.DoclingDocument;
 import ai.docling.core.DoclingDocument.DocumentOrigin;
 import ai.docling.serve.api.DoclingServeApi;
+import ai.docling.serve.api.chunk.request.HierarchicalChunkDocumentRequest;
+import ai.docling.serve.api.chunk.request.HybridChunkDocumentRequest;
+import ai.docling.serve.api.chunk.request.options.HierarchicalChunkerOptions;
+import ai.docling.serve.api.chunk.request.options.HybridChunkerOptions;
+import ai.docling.serve.api.chunk.response.ChunkDocumentResponse;
 import ai.docling.serve.api.convert.request.ConvertDocumentRequest;
 import ai.docling.serve.api.convert.request.options.ConvertDocumentOptions;
 import ai.docling.serve.api.convert.request.options.ImageRefMode;
@@ -172,6 +177,12 @@ public class DoclingProducer extends DefaultProducer {
                 break;
             case EXTRACT_METADATA:
                 processExtractMetadata(exchange);
+                break;
+            case CHUNK_HYBRID:
+                processChunkHybrid(exchange);
+                break;
+            case CHUNK_HIERARCHICAL:
+                processChunkHierarchical(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation: " + operation);
@@ -376,6 +387,130 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         LOG.debug("Metadata extraction completed for: {}", inputPath);
+    }
+
+    private void processChunkHybrid(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer chunking with HybridChunker");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "CHUNK_HYBRID operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
+        String inputPath = getInputPath(exchange);
+
+        // Build HybridChunkerOptions from configuration and headers
+        HybridChunkerOptions.Builder chunkerOptionsBuilder = HybridChunkerOptions.builder();
+
+        String tokenizer = exchange.getIn().getHeader(DoclingHeaders.CHUNKING_TOKENIZER, String.class);
+        if (tokenizer == null) {
+            tokenizer = configuration.getChunkingTokenizer();
+        }
+        if (tokenizer != null) {
+            chunkerOptionsBuilder.tokenizer(tokenizer);
+        }
+
+        Integer maxTokens = exchange.getIn().getHeader(DoclingHeaders.CHUNKING_MAX_TOKENS, Integer.class);
+        if (maxTokens == null) {
+            maxTokens = configuration.getChunkingMaxTokens();
+        }
+        if (maxTokens != null) {
+            chunkerOptionsBuilder.maxTokens(maxTokens);
+        }
+
+        Boolean mergePeers = exchange.getIn().getHeader(DoclingHeaders.CHUNKING_MERGE_PEERS, Boolean.class);
+        if (mergePeers == null) {
+            mergePeers = configuration.getChunkingMergePeers();
+        }
+        if (mergePeers != null) {
+            chunkerOptionsBuilder.mergePeers(mergePeers);
+        }
+
+        if (configuration.getChunkingIncludeRawText() != null) {
+            chunkerOptionsBuilder.includeRawText(configuration.getChunkingIncludeRawText());
+        }
+        if (configuration.getChunkingUseMarkdownTables() != null) {
+            chunkerOptionsBuilder.useMarkdownTables(configuration.getChunkingUseMarkdownTables());
+        }
+
+        // Build the request
+        HybridChunkDocumentRequest.Builder requestBuilder = HybridChunkDocumentRequest.builder();
+        addSourceToChunkRequest(requestBuilder, inputPath);
+        requestBuilder.chunkingOptions(chunkerOptionsBuilder.build());
+
+        HybridChunkDocumentRequest request = requestBuilder.build();
+        ChunkDocumentResponse response = doclingServeApi.chunkSourceWithHybridChunker(request);
+
+        if (configuration.isContentInBody()) {
+            exchange.getIn().setBody(response.getChunks());
+        } else {
+            exchange.getIn().setBody(response);
+        }
+
+        LOG.debug("HybridChunker produced {} chunks", response.getChunks() != null ? response.getChunks().size() : 0);
+    }
+
+    private void processChunkHierarchical(Exchange exchange) throws Exception {
+        LOG.debug("DoclingProducer chunking with HierarchicalChunker");
+
+        if (!configuration.isUseDoclingServe()) {
+            throw new IllegalStateException(
+                    "CHUNK_HIERARCHICAL operation requires docling-serve mode (useDoclingServe=true)");
+        }
+
+        String inputPath = getInputPath(exchange);
+
+        // Build HierarchicalChunkerOptions from configuration
+        HierarchicalChunkerOptions.Builder chunkerOptionsBuilder = HierarchicalChunkerOptions.builder();
+
+        if (configuration.getChunkingIncludeRawText() != null) {
+            chunkerOptionsBuilder.includeRawText(configuration.getChunkingIncludeRawText());
+        }
+        if (configuration.getChunkingUseMarkdownTables() != null) {
+            chunkerOptionsBuilder.useMarkdownTables(configuration.getChunkingUseMarkdownTables());
+        }
+
+        // Build the request
+        HierarchicalChunkDocumentRequest.Builder requestBuilder = HierarchicalChunkDocumentRequest.builder();
+        addSourceToChunkRequest(requestBuilder, inputPath);
+        requestBuilder.chunkingOptions(chunkerOptionsBuilder.build());
+
+        HierarchicalChunkDocumentRequest request = requestBuilder.build();
+        ChunkDocumentResponse response = doclingServeApi.chunkSourceWithHierarchicalChunker(request);
+
+        if (configuration.isContentInBody()) {
+            exchange.getIn().setBody(response.getChunks());
+        } else {
+            exchange.getIn().setBody(response);
+        }
+
+        LOG.debug("HierarchicalChunker produced {} chunks",
+                response.getChunks() != null ? response.getChunks().size() : 0);
+    }
+
+    private void addSourceToChunkRequest(
+            ai.docling.serve.api.chunk.request.ChunkDocumentRequest.Builder requestBuilder, String inputSource)
+            throws IOException {
+        if (inputSource.startsWith("http://") || inputSource.startsWith("https://")) {
+            requestBuilder.source(
+                    HttpSource.builder()
+                            .url(URI.create(inputSource))
+                            .build());
+        } else {
+            File file = new File(inputSource);
+            if (!file.exists()) {
+                throw new IOException("File not found: " + inputSource);
+            }
+
+            byte[] fileBytes = Files.readAllBytes(file.toPath());
+            String base64Content = Base64.getEncoder().encodeToString(fileBytes);
+
+            requestBuilder.source(
+                    FileSource.builder()
+                            .filename(file.getName())
+                            .base64String(base64Content)
+                            .build());
+        }
     }
 
     private DocumentMetadata extractMetadataUsingApi(String inputPath) throws IOException {

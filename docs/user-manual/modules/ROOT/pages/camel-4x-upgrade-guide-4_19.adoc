@@ -110,3 +110,7 @@ Google recommends migrating your Pub/Sub Lite workloads to either:
 
 * **Google Cloud Pub/Sub** → use the `camel-google-pubsub` component
 * **Google Cloud Managed Service for Apache Kafka** → use the `camel-kafka` component
+=== camel-mail
+
+When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
+the bean which is similar to what `camel-file` do as well.

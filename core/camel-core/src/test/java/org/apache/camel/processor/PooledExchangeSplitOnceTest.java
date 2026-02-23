@@ -16,9 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -30,7 +28,7 @@ import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.impl.engine.PooledProcessorExchangeFactory;
 import org.junit.jupiter.api.Test;
 
-class PooledExchangeSplitTest extends ContextTestSupport {
+class PooledExchangeSplitOnceTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -47,12 +45,7 @@ class PooledExchangeSplitTest extends ContextTestSupport {
 
     @Test
     public void testSplitter() throws InterruptedException {
-        List<Integer> data = new ArrayList<>(Arrays.asList(1, 2, 3));
-
         getMockEndpoint("mock:result").expectedMessageCount(3);
-
-        template.sendBody("direct:processData", data);
-
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -61,7 +54,8 @@ class PooledExchangeSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:processData")
+                from("timer:once?repeatCount=1&delay=0")
+                        .setBody(constant(Arrays.asList(1, 2, 3)))
                         .split(body())
                         .to("mock:result");
             }

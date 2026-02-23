@@ -64,9 +64,9 @@
             <version>${elytron-web}</version>
         </dependency>
         <dependency>
-            <groupId>io.undertow</groupId>
+            <groupId>io.undertow.ee</groupId>
             <artifactId>undertow-servlet</artifactId>
-            <version>${undertow-version}</version>
+            <version>${undertow-ee-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>

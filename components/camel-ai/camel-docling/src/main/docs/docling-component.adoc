@@ -99,6 +99,12 @@ The component supports the following operations:
 | `CHECK_CONVERSION_STATUS`
 | Check the status of an async conversion task (docling-serve only)
 
+| `CHUNK_HYBRID`
+| Chunk document using HybridChunker — token-aware and structure-aware (docling-serve only)
+
+| `CHUNK_HIERARCHICAL`
+| Chunk document using HierarchicalChunker — structure-aware (docling-serve only)
+
 |===
 
 // component options: START
@@ -897,6 +903,7 @@ YAML::
                   steps:
                     - to: "file:///data/failed?fileName=${body.documentId}.error"
 ----
+====
 
 NOTE: For the aggregation example above, you can also use a custom processor. Create a Java class:
 
@@ -923,7 +930,6 @@ Then reference it in the YAML:
   - name: documentListProcessor
     type: "com.example.DocumentListProcessor"
 ----
-====
 
 === Batch Processing with Error Handling
 
@@ -1307,6 +1313,181 @@ YAML::
 - `CamelDoclingBatchSuccessCount`
 - `CamelDoclingBatchFailureCount`
 - `CamelDoclingBatchProcessingTime`
+
+== Document Chunking
+
+The component supports document chunking via docling-serve, which splits documents into semantically meaningful chunks suitable for RAG (Retrieval-Augmented Generation) pipelines, vector databases, and other NLP workflows. Unlike naive text splitting, docling chunking is structure-aware — it respects document headings, paragraphs, and tables — and the hybrid chunker is also token-aware, ensuring chunks fit within model token limits.
+
+NOTE: Both chunking operations require `useDoclingServe=true`. The Docling CLI does not expose chunking as a command — chunking is only available through the docling-serve REST API.
+
+`CHUNK_HYBRID` uses the HybridChunker, which is both structure-aware and token-aware. It respects document structure while ensuring each chunk stays within a configurable token limit. Best for RAG pipelines with embedding models that have fixed token windows. Configure it with the `chunkingTokenizer`, `chunkingMaxTokens`, and `chunkingMergePeers` options (see the endpoint options table above).
+
+`CHUNK_HIERARCHICAL` uses the HierarchicalChunker, which is structure-aware only. It splits at document structure boundaries (sections, paragraphs) without enforcing token limits. Best when chunk size is less important than preserving complete structural units.
+
+When `contentInBody=true`, the exchange body is set to a `List<Chunk>` (`ai.docling.serve.api.chunk.response.Chunk`), ready for use with Camel's `.split(body())` EIP. Each `Chunk` object provides:
+
+- `text` — the chunk text content
+- `chunkIndex` — zero-based position in the document
+- `filename` — source document filename
+- `headings` — list of heading strings leading to this chunk
+- `pageNumbers` — list of page numbers this chunk spans
+- `captions` — list of captions (e.g., table or figure captions)
+- `numTokens` — token count (hybrid chunker only)
+
+When `contentInBody=false`, the full `ChunkDocumentResponse` is returned.
+
+=== Basic Chunking
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .setHeader("CamelDoclingInputFilePath", simple("${file:absolute.path}"))
+    .to("docling:CHUNK_HYBRID?" +
+        "useDoclingServe=true&" +
+        "contentInBody=true&" +
+        "chunkingTokenizer=sentence-transformers/all-MiniLM-L6-v2&" +
+        "chunkingMaxTokens=128&" +
+        "chunkingMergePeers=true")
+    .split(body())
+        .log("Chunk ${body.chunkIndex}: ${body.text}")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - setHeader:
+          name: CamelDoclingInputFilePath
+          simple: "${file:absolute.path}"
+      - to:
+          uri: "docling:CHUNK_HYBRID"
+          parameters:
+            useDoclingServe: true
+            contentInBody: true
+            chunkingTokenizer: "sentence-transformers/all-MiniLM-L6-v2"
+            chunkingMaxTokens: 128
+            chunkingMergePeers: true
+      - split:
+          simple: "${body}"
+          steps:
+            - log: "Chunk ${body.chunkIndex}: ${body.text}"
+----
+====
+
+=== Chunking for RAG Pipelines
+
+A common use case is to chunk documents, generate embeddings, and store them in a vector database:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:ingest-pdf")
+    .setHeader("CamelDoclingInputFilePath", header("pdfFilePath"))
+    .to("docling:CHUNK_HYBRID?" +
+        "useDoclingServe=true&" +
+        "contentInBody=true&" +
+        "chunkingTokenizer={{embedding.tokenizer}}&" +
+        "chunkingMaxTokens={{embedding.max-tokens}}&" +
+        "chunkingMergePeers=true")
+    .split(body())
+        .setBody(simple("${body.text}"))
+        .to("openai:embeddings?embeddingModel={{embedding.model}}")
+        // store embedding in vector database
+        .to("direct:store-embedding")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    id: ingest-pdf
+    from:
+      uri: "direct:ingest-pdf"
+    steps:
+      - setHeader:
+          name: CamelDoclingInputFilePath
+          simple: "${header.pdfFilePath}"
+      - to:
+          uri: "docling:CHUNK_HYBRID"
+          parameters:
+            useDoclingServe: true
+            contentInBody: true
+            chunkingTokenizer: "{{embedding.tokenizer}}"
+            chunkingMaxTokens: "{{embedding.max-tokens}}"
+            chunkingMergePeers: true
+      - split:
+          simple: "${body}"
+          steps:
+            - setBody:
+                simple: "${body.text}"
+            - to:
+                uri: "openai:embeddings"
+                parameters:
+                  embeddingModel: "{{embedding.model}}"
+            - to: "direct:store-embedding"
+----
+====
+
+=== Hierarchical Chunking
+
+Use hierarchical chunking when you want to preserve complete structural units without token limits:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("file:///data/documents?include=.*\\.pdf")
+    .setHeader("CamelDoclingInputFilePath", simple("${file:absolute.path}"))
+    .to("docling:CHUNK_HIERARCHICAL?" +
+        "useDoclingServe=true&" +
+        "contentInBody=true")
+    .split(body())
+        .log("Section [${body.headings}] page ${body.pageNumbers}: ${body.text}")
+    .end();
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:///data/documents"
+      parameters:
+        include: ".*\\.pdf"
+    steps:
+      - setHeader:
+          name: CamelDoclingInputFilePath
+          simple: "${file:absolute.path}"
+      - to:
+          uri: "docling:CHUNK_HIERARCHICAL"
+          parameters:
+            useDoclingServe: true
+            contentInBody: true
+      - split:
+          simple: "${body}"
+          steps:
+            - log: "Section [${body.headings}] page ${body.pageNumbers}: ${body.text}"
+----
+====
 
 == Asynchronous Processing
 

@@ -404,6 +404,143 @@ public interface DoclingEndpointBuilderFactory {
             return this;
         }
         /**
+         * Include raw text in chunk output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingIncludeRawText the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingIncludeRawText(Boolean chunkingIncludeRawText) {
+            doSetProperty("chunkingIncludeRawText", chunkingIncludeRawText);
+            return this;
+        }
+        /**
+         * Include raw text in chunk output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingIncludeRawText the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingIncludeRawText(String chunkingIncludeRawText) {
+            doSetProperty("chunkingIncludeRawText", chunkingIncludeRawText);
+            return this;
+        }
+        /**
+         * Maximum number of tokens per chunk for hybrid chunking.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingMaxTokens the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingMaxTokens(Integer chunkingMaxTokens) {
+            doSetProperty("chunkingMaxTokens", chunkingMaxTokens);
+            return this;
+        }
+        /**
+         * Maximum number of tokens per chunk for hybrid chunking.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingMaxTokens the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingMaxTokens(String chunkingMaxTokens) {
+            doSetProperty("chunkingMaxTokens", chunkingMaxTokens);
+            return this;
+        }
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: true
+         * Group: chunking
+         * 
+         * @param chunkingMergePeers the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingMergePeers(Boolean chunkingMergePeers) {
+            doSetProperty("chunkingMergePeers", chunkingMergePeers);
+            return this;
+        }
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: true
+         * Group: chunking
+         * 
+         * @param chunkingMergePeers the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingMergePeers(String chunkingMergePeers) {
+            doSetProperty("chunkingMergePeers", chunkingMergePeers);
+            return this;
+        }
+        /**
+         * Tokenizer model for hybrid chunking (e.g.
+         * sentence-transformers/all-MiniLM-L6-v2).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: chunking
+         * 
+         * @param chunkingTokenizer the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingTokenizer(String chunkingTokenizer) {
+            doSetProperty("chunkingTokenizer", chunkingTokenizer);
+            return this;
+        }
+        /**
+         * Use markdown format for tables in chunk output.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingUseMarkdownTables the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingUseMarkdownTables(Boolean chunkingUseMarkdownTables) {
+            doSetProperty("chunkingUseMarkdownTables", chunkingUseMarkdownTables);
+            return this;
+        }
+        /**
+         * Use markdown format for tables in chunk output.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Default: false
+         * Group: chunking
+         * 
+         * @param chunkingUseMarkdownTables the value to set
+         * @return the dsl builder
+         */
+        default DoclingEndpointBuilder chunkingUseMarkdownTables(String chunkingUseMarkdownTables) {
+            doSetProperty("chunkingUseMarkdownTables", chunkingUseMarkdownTables);
+            return this;
+        }
+        /**
          * Include metadata in message headers when extracting metadata.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1620,6 +1757,43 @@ public interface DoclingEndpointBuilderFactory {
          */
         public String doclingMetadataRaw() {
             return "CamelDoclingMetadataRaw";
+        }
+        /**
+         * Tokenizer for hybrid chunking (e.g.
+         * sentence-transformers/all-MiniLM-L6-v2).
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingChunkingTokenizer}.
+         */
+        public String doclingChunkingTokenizer() {
+            return "CamelDoclingChunkingTokenizer";
+        }
+        /**
+         * Maximum tokens per chunk for hybrid chunking.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingChunkingMaxTokens}.
+         */
+        public String doclingChunkingMaxTokens() {
+            return "CamelDoclingChunkingMaxTokens";
+        }
+        /**
+         * Whether to merge peer chunks in hybrid chunking.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code DoclingChunkingMergePeers}.
+         */
+        public String doclingChunkingMergePeers() {
+            return "CamelDoclingChunkingMergePeers";
         }
     }
     static DoclingEndpointBuilder endpointBuilder(String componentName, String path) {

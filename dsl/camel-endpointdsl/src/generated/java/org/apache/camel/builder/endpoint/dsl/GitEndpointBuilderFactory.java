@@ -811,6 +811,36 @@ public interface GitEndpointBuilderFactory {
             return this;
         }
         /**
+         * Clone depth for shallow clones. A value of 1 fetches only the latest
+         * commit. When set to 0 or not specified, a full clone is performed.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param depth the value to set
+         * @return the dsl builder
+         */
+        default GitEndpointProducerBuilder depth(int depth) {
+            doSetProperty("depth", depth);
+            return this;
+        }
+        /**
+         * Clone depth for shallow clones. A value of 1 fetches only the latest
+         * commit. When set to 0 or not specified, a full clone is performed.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         * 
+         * @param depth the value to set
+         * @return the dsl builder
+         */
+        default GitEndpointProducerBuilder depth(String depth) {
+            doSetProperty("depth", depth);
+            return this;
+        }
+        /**
          * The operation to do on the repository.
          * 
          * The option is a: <code>java.lang.String</code> type.

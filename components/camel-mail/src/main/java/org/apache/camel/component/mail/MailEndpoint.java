@@ -33,6 +33,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
 import org.eclipse.angus.mail.imap.SortTerm;
 
 import static org.apache.camel.component.mail.MailConstants.MAIL_GENERATE_MISSING_ATTACHMENT_NAMES_NEVER;
@@ -161,6 +162,23 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
         exchange.setProperty(Exchange.BINDING, getBinding());
         exchange.setIn(new MailMessage(exchange, message, getConfiguration().isMapMailMessage()));
         return exchange;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // idempotent repository may be used by others, so add it as a service
+        // so its stopped when CamelContext stops
+        if (idempotentRepository != null) {
+            getCamelContext().addService(idempotentRepository, true);
+        }
+        ServiceHelper.startService(idempotentRepository);
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopService(idempotentRepository);
     }
 
     // Properties

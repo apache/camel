@@ -146,9 +146,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.undertow</groupId>
+            <groupId>io.undertow.ee</groupId>
             <artifactId>undertow-servlet</artifactId>
-            <version>${undertow-version}</version>
+            <version>${undertow-ee-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -176,6 +176,13 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-rm</artifactId>
+            <version>${cxf-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-features-logging</artifactId>
             <version>${cxf-version}</version>
             <scope>test</scope>
         </dependency>
