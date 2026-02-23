@@ -17,11 +17,25 @@
 package org.apache.camel.component.pqc;
 
 public enum PQCOperations {
+    // Standard PQC signature operations
     sign,
     verify,
+
+    // Hybrid signature operations (classical + PQC combined)
+    hybridSign,
+    hybridVerify,
+
+    // Standard PQC KEM operations
     generateSecretKeyEncapsulation,
     extractSecretKeyEncapsulation,
     extractSecretKeyFromEncapsulation,
+
+    // Hybrid KEM operations (classical + PQC combined)
+    hybridGenerateSecretKeyEncapsulation,
+    hybridExtractSecretKeyEncapsulation,
+    hybridExtractSecretKeyFromEncapsulation,
+
+    // Key lifecycle operations
     getRemainingSignatures,
     getKeyState,
     deleteKeyState,

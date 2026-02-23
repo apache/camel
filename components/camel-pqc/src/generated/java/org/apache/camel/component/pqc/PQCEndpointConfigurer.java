@@ -23,6 +23,18 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PQCEndpoint target = (PQCEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "classicalkemalgorithm":
+        case "classicalKEMAlgorithm": target.getConfiguration().setClassicalKEMAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "classicalkeyagreement":
+        case "classicalKeyAgreement": target.getConfiguration().setClassicalKeyAgreement(property(camelContext, javax.crypto.KeyAgreement.class, value)); return true;
+        case "classicalkeypair":
+        case "classicalKeyPair": target.getConfiguration().setClassicalKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
+        case "classicalsignaturealgorithm":
+        case "classicalSignatureAlgorithm": target.getConfiguration().setClassicalSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "classicalsigner":
+        case "classicalSigner": target.getConfiguration().setClassicalSigner(property(camelContext, java.security.Signature.class, value)); return true;
+        case "hybridkdfalgorithm":
+        case "hybridKdfAlgorithm": target.getConfiguration().setHybridKdfAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": target.getConfiguration().setKeyEncapsulationAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keygenerator":
@@ -53,12 +65,24 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"keyGenerator", "keyPair", "keyStore", "signer"};
+        return new String[]{"classicalKeyAgreement", "classicalKeyPair", "classicalSigner", "keyGenerator", "keyPair", "keyStore", "signer"};
     }
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "classicalkemalgorithm":
+        case "classicalKEMAlgorithm": return java.lang.String.class;
+        case "classicalkeyagreement":
+        case "classicalKeyAgreement": return javax.crypto.KeyAgreement.class;
+        case "classicalkeypair":
+        case "classicalKeyPair": return java.security.KeyPair.class;
+        case "classicalsignaturealgorithm":
+        case "classicalSignatureAlgorithm": return java.lang.String.class;
+        case "classicalsigner":
+        case "classicalSigner": return java.security.Signature.class;
+        case "hybridkdfalgorithm":
+        case "hybridKdfAlgorithm": return java.lang.String.class;
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return java.lang.String.class;
         case "keygenerator":
@@ -91,6 +115,18 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PQCEndpoint target = (PQCEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "classicalkemalgorithm":
+        case "classicalKEMAlgorithm": return target.getConfiguration().getClassicalKEMAlgorithm();
+        case "classicalkeyagreement":
+        case "classicalKeyAgreement": return target.getConfiguration().getClassicalKeyAgreement();
+        case "classicalkeypair":
+        case "classicalKeyPair": return target.getConfiguration().getClassicalKeyPair();
+        case "classicalsignaturealgorithm":
+        case "classicalSignatureAlgorithm": return target.getConfiguration().getClassicalSignatureAlgorithm();
+        case "classicalsigner":
+        case "classicalSigner": return target.getConfiguration().getClassicalSigner();
+        case "hybridkdfalgorithm":
+        case "hybridKdfAlgorithm": return target.getConfiguration().getHybridKdfAlgorithm();
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return target.getConfiguration().getKeyEncapsulationAlgorithm();
         case "keygenerator":

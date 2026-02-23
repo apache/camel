@@ -32,11 +32,23 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "classicalkemalgorithm":
+        case "classicalKEMAlgorithm": getOrCreateConfiguration(target).setClassicalKEMAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "classicalkeyagreement":
+        case "classicalKeyAgreement": getOrCreateConfiguration(target).setClassicalKeyAgreement(property(camelContext, javax.crypto.KeyAgreement.class, value)); return true;
+        case "classicalkeypair":
+        case "classicalKeyPair": getOrCreateConfiguration(target).setClassicalKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
+        case "classicalsignaturealgorithm":
+        case "classicalSignatureAlgorithm": getOrCreateConfiguration(target).setClassicalSignatureAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
+        case "classicalsigner":
+        case "classicalSigner": getOrCreateConfiguration(target).setClassicalSigner(property(camelContext, java.security.Signature.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.pqc.PQCConfiguration.class, value)); return true;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": target.setHealthCheckConsumerEnabled(property(camelContext, boolean.class, value)); return true;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
+        case "hybridkdfalgorithm":
+        case "hybridKdfAlgorithm": getOrCreateConfiguration(target).setHybridKdfAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": getOrCreateConfiguration(target).setKeyEncapsulationAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keygenerator":
@@ -67,7 +79,7 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"keyGenerator", "keyPair", "keyStore", "signer"};
+        return new String[]{"classicalKeyAgreement", "classicalKeyPair", "classicalSigner", "keyGenerator", "keyPair", "keyStore", "signer"};
     }
 
     @Override
@@ -75,11 +87,23 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "classicalkemalgorithm":
+        case "classicalKEMAlgorithm": return java.lang.String.class;
+        case "classicalkeyagreement":
+        case "classicalKeyAgreement": return javax.crypto.KeyAgreement.class;
+        case "classicalkeypair":
+        case "classicalKeyPair": return java.security.KeyPair.class;
+        case "classicalsignaturealgorithm":
+        case "classicalSignatureAlgorithm": return java.lang.String.class;
+        case "classicalsigner":
+        case "classicalSigner": return java.security.Signature.class;
         case "configuration": return org.apache.camel.component.pqc.PQCConfiguration.class;
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return boolean.class;
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return boolean.class;
+        case "hybridkdfalgorithm":
+        case "hybridKdfAlgorithm": return java.lang.String.class;
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return java.lang.String.class;
         case "keygenerator":
@@ -114,11 +138,23 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "classicalkemalgorithm":
+        case "classicalKEMAlgorithm": return getOrCreateConfiguration(target).getClassicalKEMAlgorithm();
+        case "classicalkeyagreement":
+        case "classicalKeyAgreement": return getOrCreateConfiguration(target).getClassicalKeyAgreement();
+        case "classicalkeypair":
+        case "classicalKeyPair": return getOrCreateConfiguration(target).getClassicalKeyPair();
+        case "classicalsignaturealgorithm":
+        case "classicalSignatureAlgorithm": return getOrCreateConfiguration(target).getClassicalSignatureAlgorithm();
+        case "classicalsigner":
+        case "classicalSigner": return getOrCreateConfiguration(target).getClassicalSigner();
         case "configuration": return target.getConfiguration();
         case "healthcheckconsumerenabled":
         case "healthCheckConsumerEnabled": return target.isHealthCheckConsumerEnabled();
         case "healthcheckproducerenabled":
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
+        case "hybridkdfalgorithm":
+        case "hybridKdfAlgorithm": return getOrCreateConfiguration(target).getHybridKdfAlgorithm();
         case "keyencapsulationalgorithm":
         case "keyEncapsulationAlgorithm": return getOrCreateConfiguration(target).getKeyEncapsulationAlgorithm();
         case "keygenerator":

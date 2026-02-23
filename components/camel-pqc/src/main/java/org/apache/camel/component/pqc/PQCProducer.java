@@ -19,6 +19,7 @@ package org.apache.camel.component.pqc;
 import java.security.*;
 import java.security.cert.Certificate;
 
+import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,6 +27,8 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.component.pqc.crypto.hybrid.HybridKEM;
+import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
@@ -41,6 +44,11 @@ public class PQCProducer extends DefaultProducer {
     private KeyGenerator keyGenerator;
     private KeyPair keyPair;
 
+    // Hybrid cryptography fields
+    private Signature classicalSigner;
+    private KeyAgreement classicalKeyAgreement;
+    private KeyPair classicalKeyPair;
+
     public PQCProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -54,6 +62,12 @@ public class PQCProducer extends DefaultProducer {
             case verify:
                 verification(exchange);
                 break;
+            case hybridSign:
+                hybridSignature(exchange);
+                break;
+            case hybridVerify:
+                hybridVerification(exchange);
+                break;
             case generateSecretKeyEncapsulation:
                 generateEncapsulation(exchange);
                 break;
@@ -62,6 +76,15 @@ public class PQCProducer extends DefaultProducer {
                 break;
             case extractSecretKeyFromEncapsulation:
                 extractSecretKeyFromEncapsulation(exchange);
+                break;
+            case hybridGenerateSecretKeyEncapsulation:
+                hybridGenerateEncapsulation(exchange);
+                break;
+            case hybridExtractSecretKeyEncapsulation:
+                hybridExtractEncapsulation(exchange);
+                break;
+            case hybridExtractSecretKeyFromEncapsulation:
+                hybridExtractSecretKeyFromEncapsulation(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -121,6 +144,55 @@ public class PQCProducer extends DefaultProducer {
             keyPair = new KeyPair(publicKey, privateKey);
         } else {
             keyPair = getConfiguration().getKeyPair();
+        }
+
+        // Initialize hybrid signature operations
+        if (getConfiguration().getOperation().equals(PQCOperations.hybridSign)
+                || getConfiguration().getOperation().equals(PQCOperations.hybridVerify)) {
+            // Initialize PQC signer
+            signer = getEndpoint().getConfiguration().getSigner();
+            if (ObjectHelper.isEmpty(signer) && ObjectHelper.isNotEmpty(getConfiguration().getSignatureAlgorithm())) {
+                PQCSignatureAlgorithms sigAlg = PQCSignatureAlgorithms.valueOf(getConfiguration().getSignatureAlgorithm());
+                signer = Signature.getInstance(sigAlg.getAlgorithm(), sigAlg.getBcProvider());
+            }
+
+            // Initialize classical signer
+            classicalSigner = getEndpoint().getConfiguration().getClassicalSigner();
+            if (ObjectHelper.isEmpty(classicalSigner)
+                    && ObjectHelper.isNotEmpty(getConfiguration().getClassicalSignatureAlgorithm())) {
+                PQCClassicalSignatureAlgorithms classAlg
+                        = PQCClassicalSignatureAlgorithms.valueOf(getConfiguration().getClassicalSignatureAlgorithm());
+                classicalSigner = Signature.getInstance(classAlg.getAlgorithm());
+            }
+
+            // Initialize classical key pair
+            classicalKeyPair = getConfiguration().getClassicalKeyPair();
+        }
+
+        // Initialize hybrid KEM operations
+        if (getConfiguration().getOperation().equals(PQCOperations.hybridGenerateSecretKeyEncapsulation)
+                || getConfiguration().getOperation().equals(PQCOperations.hybridExtractSecretKeyEncapsulation)
+                || getConfiguration().getOperation().equals(PQCOperations.hybridExtractSecretKeyFromEncapsulation)) {
+            // Initialize PQC KEM
+            keyGenerator = getEndpoint().getConfiguration().getKeyGenerator();
+            if (ObjectHelper.isEmpty(keyGenerator)
+                    && ObjectHelper.isNotEmpty(getConfiguration().getKeyEncapsulationAlgorithm())) {
+                PQCKeyEncapsulationAlgorithms kemAlg
+                        = PQCKeyEncapsulationAlgorithms.valueOf(getConfiguration().getKeyEncapsulationAlgorithm());
+                keyGenerator = KeyGenerator.getInstance(kemAlg.getAlgorithm(), kemAlg.getBcProvider());
+            }
+
+            // Initialize classical key agreement
+            classicalKeyAgreement = getEndpoint().getConfiguration().getClassicalKeyAgreement();
+            if (ObjectHelper.isEmpty(classicalKeyAgreement)
+                    && ObjectHelper.isNotEmpty(getConfiguration().getClassicalKEMAlgorithm())) {
+                PQCClassicalKEMAlgorithms classKemAlg
+                        = PQCClassicalKEMAlgorithms.valueOf(getConfiguration().getClassicalKEMAlgorithm());
+                classicalKeyAgreement = KeyAgreement.getInstance(classKemAlg.getAlgorithm());
+            }
+
+            // Initialize classical key pair
+            classicalKeyPair = getConfiguration().getClassicalKeyPair();
         }
     }
 
@@ -197,6 +269,168 @@ public class PQCProducer extends DefaultProducer {
         }
 
         SecretKey restoredKey = new SecretKeySpec(payload.getEncoded(), getConfiguration().getSymmetricKeyAlgorithm());
+
+        if (!getConfiguration().isStoreExtractedSecretKeyAsHeader()) {
+            exchange.getMessage().setBody(restoredKey, SecretKey.class);
+        } else {
+            exchange.getMessage().setHeader(PQCConstants.SECRET_KEY, restoredKey);
+        }
+    }
+
+    // ========== Hybrid Signature Operations ==========
+
+    private void hybridSignature(Exchange exchange)
+            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+        String payload = exchange.getMessage().getMandatoryBody(String.class);
+        byte[] data = payload.getBytes();
+
+        if (classicalSigner == null || classicalKeyPair == null) {
+            throw new IllegalStateException(
+                    "Classical signer and key pair must be configured for hybrid signature operations");
+        }
+        if (signer == null || keyPair == null) {
+            throw new IllegalStateException("PQC signer and key pair must be configured for hybrid signature operations");
+        }
+
+        // Create hybrid signature
+        byte[] hybridSig = HybridSignature.sign(
+                data,
+                classicalKeyPair.getPrivate(),
+                classicalSigner,
+                keyPair.getPrivate(),
+                signer);
+
+        // Parse to get individual signatures for headers
+        HybridSignature.HybridSignatureComponents components = HybridSignature.parse(hybridSig);
+
+        exchange.getMessage().setHeader(PQCConstants.HYBRID_SIGNATURE, hybridSig);
+        exchange.getMessage().setHeader(PQCConstants.CLASSICAL_SIGNATURE, components.classicalSignature());
+        exchange.getMessage().setHeader(PQCConstants.PQC_SIGNATURE, components.pqcSignature());
+    }
+
+    private void hybridVerification(Exchange exchange)
+            throws InvalidPayloadException, InvalidKeyException, SignatureException {
+        String payload = exchange.getMessage().getMandatoryBody(String.class);
+        byte[] data = payload.getBytes();
+
+        byte[] hybridSig = exchange.getMessage().getHeader(PQCConstants.HYBRID_SIGNATURE, byte[].class);
+        if (hybridSig == null) {
+            throw new IllegalArgumentException("Hybrid signature not found in header: " + PQCConstants.HYBRID_SIGNATURE);
+        }
+
+        if (classicalSigner == null || classicalKeyPair == null) {
+            throw new IllegalStateException(
+                    "Classical signer and key pair must be configured for hybrid verification operations");
+        }
+        if (signer == null || keyPair == null) {
+            throw new IllegalStateException("PQC signer and key pair must be configured for hybrid verification operations");
+        }
+
+        // Verify hybrid signature (both must pass)
+        boolean valid = HybridSignature.verify(
+                data,
+                hybridSig,
+                classicalKeyPair.getPublic(),
+                classicalSigner,
+                keyPair.getPublic(),
+                signer);
+
+        exchange.getMessage().setHeader(PQCConstants.HYBRID_VERIFY, valid);
+        exchange.getMessage().setHeader(PQCConstants.VERIFY, valid);
+    }
+
+    // ========== Hybrid KEM Operations ==========
+
+    private void hybridGenerateEncapsulation(Exchange exchange) throws Exception {
+        if (classicalKeyAgreement == null || classicalKeyPair == null) {
+            throw new IllegalStateException(
+                    "Classical key agreement and key pair must be configured for hybrid KEM operations");
+        }
+        if (keyGenerator == null || keyPair == null) {
+            throw new IllegalStateException("PQC key generator and key pair must be configured for hybrid KEM operations");
+        }
+        if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
+            throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
+        }
+
+        String symmetricAlgorithm = getConfiguration().getSymmetricKeyAlgorithm();
+        int keyLength = getConfiguration().getSymmetricKeyLength();
+        String kdfAlgorithm = getConfiguration().getHybridKdfAlgorithm();
+
+        // Generate hybrid encapsulation
+        HybridKEM.HybridEncapsulationResult result = HybridKEM.encapsulate(
+                classicalKeyPair.getPublic(),
+                keyPair.getPublic(),
+                classicalKeyAgreement,
+                keyGenerator,
+                symmetricAlgorithm,
+                keyLength,
+                kdfAlgorithm);
+
+        // Set results
+        exchange.getMessage().setBody(result.sharedSecret(), SecretKey.class);
+        exchange.getMessage().setHeader(PQCConstants.HYBRID_ENCAPSULATION, result.encapsulation());
+        exchange.getMessage().setHeader(PQCConstants.HYBRID_SECRET_KEY, result.sharedSecret());
+
+        // Parse for individual encapsulations
+        HybridKEM.HybridEncapsulationComponents components = HybridKEM.parse(result.encapsulation());
+        exchange.getMessage().setHeader(PQCConstants.CLASSICAL_ENCAPSULATION, components.classicalEncapsulation());
+        exchange.getMessage().setHeader(PQCConstants.PQC_ENCAPSULATION, components.pqcEncapsulation());
+    }
+
+    private void hybridExtractEncapsulation(Exchange exchange) throws Exception {
+        byte[] hybridEncapsulation = exchange.getMessage().getHeader(PQCConstants.HYBRID_ENCAPSULATION, byte[].class);
+        if (hybridEncapsulation == null) {
+            throw new IllegalArgumentException(
+                    "Hybrid encapsulation not found in header: " + PQCConstants.HYBRID_ENCAPSULATION);
+        }
+
+        if (classicalKeyAgreement == null || classicalKeyPair == null) {
+            throw new IllegalStateException(
+                    "Classical key agreement and key pair must be configured for hybrid KEM extraction");
+        }
+        if (keyGenerator == null || keyPair == null) {
+            throw new IllegalStateException("PQC key generator and key pair must be configured for hybrid KEM extraction");
+        }
+        if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
+            throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
+        }
+
+        String symmetricAlgorithm = getConfiguration().getSymmetricKeyAlgorithm();
+        int keyLength = getConfiguration().getSymmetricKeyLength();
+        String kdfAlgorithm = getConfiguration().getHybridKdfAlgorithm();
+
+        // Extract shared secret from hybrid encapsulation
+        SecretKey sharedSecret = HybridKEM.extract(
+                hybridEncapsulation,
+                classicalKeyPair.getPrivate(),
+                keyPair.getPrivate(),
+                classicalKeyAgreement,
+                keyGenerator,
+                symmetricAlgorithm,
+                keyLength,
+                kdfAlgorithm);
+
+        exchange.getMessage().setBody(sharedSecret, SecretKey.class);
+        exchange.getMessage().setHeader(PQCConstants.HYBRID_SECRET_KEY, sharedSecret);
+    }
+
+    private void hybridExtractSecretKeyFromEncapsulation(Exchange exchange) throws Exception {
+        // Get the hybrid secret key from header or body
+        SecretKey hybridSecretKey = exchange.getMessage().getHeader(PQCConstants.HYBRID_SECRET_KEY, SecretKey.class);
+        if (hybridSecretKey == null) {
+            hybridSecretKey = exchange.getMessage().getBody(SecretKey.class);
+        }
+        if (hybridSecretKey == null) {
+            throw new IllegalArgumentException("Hybrid secret key not found in header or body");
+        }
+
+        if (ObjectHelper.isEmpty(getConfiguration().getSymmetricKeyAlgorithm())) {
+            throw new IllegalArgumentException("Symmetric Algorithm needs to be specified");
+        }
+
+        // Create a new SecretKeySpec with the correct algorithm
+        SecretKey restoredKey = new SecretKeySpec(hybridSecretKey.getEncoded(), getConfiguration().getSymmetricKeyAlgorithm());
 
         if (!getConfiguration().isStoreExtractedSecretKeyAsHeader()) {
             exchange.getMessage().setBody(restoredKey, SecretKey.class);

@@ -1822,6 +1822,206 @@ for (KeyMetadata metadata : keys) {
 logger.info("Migrated {} keys to file-based storage", keys.size());
 --------------------------------------------------------------------------------
 
+== Hybrid Cryptography
+
+Hybrid cryptography combines classical (pre-quantum) algorithms with post-quantum algorithms to provide defense-in-depth during the transition to quantum-resistant cryptography. This approach is recommended by NIST and other security organizations because:
+
+1. **Defense in depth**: If either algorithm is broken, the other still provides protection
+2. **Backward compatibility**: Systems can validate the classical signature even if they don't support PQC
+3. **"Harvest now, decrypt later" protection**: Prevents adversaries from storing encrypted data now to decrypt with future quantum computers
+
+=== Hybrid Signature Operations
+
+The component supports hybrid signatures that combine a classical signature (e.g., ECDSA, Ed25519, RSA) with a PQC signature (e.g., ML-DSA).
+
+**Supported Classical Signature Algorithms:**
+
+- `ECDSA_P256` - ECDSA with NIST P-256 curve (SHA-256)
+- `ECDSA_P384` - ECDSA with NIST P-384 curve (SHA-384)
+- `ECDSA_P521` - ECDSA with NIST P-521 curve (SHA-512)
+- `ED25519` - Edwards curve Ed25519
+- `ED448` - Edwards curve Ed448
+- `RSA_2048` - RSA 2048-bit (SHA-256)
+- `RSA_3072` - RSA 3072-bit (SHA-384)
+- `RSA_4096` - RSA 4096-bit (SHA-512)
+
+**Hybrid Signature Operations:**
+
+- `hybridSign` - Create a hybrid signature using both classical and PQC algorithms
+- `hybridVerify` - Verify a hybrid signature (both components must be valid)
+
+**Example - Hybrid Signature with ECDSA P-256 + ML-DSA:**
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:sign")
+    .to("pqc:hybrid?operation=hybridSign"
+        + "&signatureAlgorithm=MLDSA"
+        + "&classicalSignatureAlgorithm=ECDSA_P256")
+    .to("mock:signed");
+
+from("direct:verify")
+    .to("pqc:hybrid?operation=hybridVerify"
+        + "&signatureAlgorithm=MLDSA"
+        + "&classicalSignatureAlgorithm=ECDSA_P256")
+    .to("mock:verified");
+--------------------------------------------------------------------------------
+
+**Example - Hybrid Signature with Ed25519 + ML-DSA:**
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:sign")
+    .to("pqc:hybrid?operation=hybridSign"
+        + "&signatureAlgorithm=MLDSA"
+        + "&classicalSignatureAlgorithm=ED25519")
+    .to("mock:signed");
+--------------------------------------------------------------------------------
+
+**Hybrid Signature Wire Format:**
+
+The hybrid signature is encoded as: `[4 bytes: classical sig length][classical sig][pqc sig]`
+
+**Headers set by hybrid signature operations:**
+
+- `CamelPQCHybridSignature` - The complete hybrid signature
+- `CamelPQCClassicalSignature` - The classical signature component
+- `CamelPQCPqcSignature` - The PQC signature component
+- `CamelPQCHybridVerification` - Verification result (true if both pass)
+
+=== Hybrid KEM Operations
+
+The component supports hybrid Key Encapsulation Mechanisms that combine classical key agreement (e.g., ECDH, X25519) with PQC KEM (e.g., ML-KEM). The shared secrets from both algorithms are combined using HKDF.
+
+**Supported Classical KEM Algorithms:**
+
+- `ECDH_P256` - ECDH with NIST P-256 curve
+- `ECDH_P384` - ECDH with NIST P-384 curve
+- `ECDH_P521` - ECDH with NIST P-521 curve
+- `X25519` - X25519 key agreement (recommended)
+- `X448` - X448 key agreement
+
+**Hybrid KEM Operations:**
+
+- `hybridGenerateSecretKeyEncapsulation` - Generate hybrid encapsulation and shared secret
+- `hybridExtractSecretKeyEncapsulation` - Extract shared secret from hybrid encapsulation
+- `hybridExtractSecretKeyFromEncapsulation` - Extract the secret key for downstream use
+
+**Supported KDF Algorithms for Hybrid KEM:**
+
+- `HKDF-SHA256` (default)
+- `HKDF-SHA384`
+- `HKDF-SHA512`
+
+**Example - Hybrid KEM with X25519 + ML-KEM:**
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:encapsulate")
+    .to("pqc:hybridkem?operation=hybridGenerateSecretKeyEncapsulation"
+        + "&keyEncapsulationAlgorithm=MLKEM"
+        + "&classicalKEMAlgorithm=X25519"
+        + "&symmetricKeyAlgorithm=AES"
+        + "&symmetricKeyLength=256")
+    .to("mock:encapsulated");
+
+from("direct:extract")
+    .to("pqc:hybridkem?operation=hybridExtractSecretKeyEncapsulation"
+        + "&keyEncapsulationAlgorithm=MLKEM"
+        + "&classicalKEMAlgorithm=X25519"
+        + "&symmetricKeyAlgorithm=AES"
+        + "&symmetricKeyLength=256")
+    .to("mock:extracted");
+--------------------------------------------------------------------------------
+
+**Example - Hybrid KEM with ECDH P-256 + ML-KEM:**
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:encapsulate")
+    .to("pqc:hybridkem?operation=hybridGenerateSecretKeyEncapsulation"
+        + "&keyEncapsulationAlgorithm=MLKEM"
+        + "&classicalKEMAlgorithm=ECDH_P256"
+        + "&symmetricKeyAlgorithm=AES"
+        + "&symmetricKeyLength=128"
+        + "&hybridKdfAlgorithm=HKDF-SHA256")
+    .to("mock:encapsulated");
+--------------------------------------------------------------------------------
+
+**Hybrid KEM Wire Format:**
+
+The hybrid encapsulation is encoded as: `[4 bytes: classical encap length][classical encap][pqc encap]`
+
+**Headers set by hybrid KEM operations:**
+
+- `CamelPQCHybridEncapsulation` - The complete hybrid encapsulation
+- `CamelPQCClassicalEncapsulation` - The classical encapsulation component
+- `CamelPQCPqcEncapsulation` - The PQC encapsulation component
+- `CamelPQCHybridSecretKey` - The combined shared secret key
+
+=== Recommended Algorithm Combinations
+
+Based on NIST recommendations for the transition period:
+
+**For Signatures:**
+
+|===
+|Classical Algorithm |PQC Algorithm |Security Level |Use Case
+
+|ECDSA_P256
+|MLDSA (ML-DSA-65)
+|128-bit
+|General purpose, TLS
+
+|ED25519
+|MLDSA (ML-DSA-65)
+|128-bit
+|High-performance signing
+
+|ECDSA_P384
+|MLDSA (ML-DSA-87)
+|192-bit
+|Higher security requirements
+
+|RSA_3072
+|MLDSA (ML-DSA-65)
+|128-bit
+|Legacy system compatibility
+|===
+
+**For Key Encapsulation:**
+
+|===
+|Classical Algorithm |PQC Algorithm |Security Level |Use Case
+
+|X25519
+|MLKEM (ML-KEM-768)
+|128-bit
+|TLS 1.3, general purpose (recommended)
+
+|ECDH_P256
+|MLKEM (ML-KEM-768)
+|128-bit
+|Legacy ECDH compatibility
+
+|X448
+|MLKEM (ML-KEM-1024)
+|192-bit
+|Higher security requirements
+|===
+
+=== Security Considerations for Hybrid Cryptography
+
+1. **Both algorithms must succeed**: For hybrid verification, both the classical and PQC signatures must be valid. For hybrid KEM, both shared secrets are combined.
+
+2. **Key management**: You need to manage two sets of keys (classical and PQC). Consider using the Key Lifecycle Manager to handle both.
+
+3. **Performance**: Hybrid operations are slower than single-algorithm operations because they perform two cryptographic operations. ML-DSA signatures are larger than classical signatures.
+
+4. **Wire format compatibility**: The hybrid signature and encapsulation formats are specific to this implementation. Ensure both parties use compatible formats.
+
+5. **Algorithm agility**: Design your system to allow algorithm upgrades as standards evolve.
+
 == PQC DataFormat
 
 The PQC component also provides a DataFormat for quantum-resistant encryption and decryption of message payloads using Key Encapsulation Mechanisms (KEM).
