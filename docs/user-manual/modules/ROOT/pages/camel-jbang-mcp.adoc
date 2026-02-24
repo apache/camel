@@ -24,7 +24,7 @@ By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-en
 
 == Available Tools
 
-The server exposes 19 tools organized into seven functional areas.
+The server exposes 24 tools organized into eight functional areas.
 
 === Catalog Exploration
 
@@ -143,6 +143,38 @@ help validate, scaffold, and provide mock guidance for that workflow.
 | Provides guidance on configuring Camel's `missingOperation` modes (`fail`, `ignore`, `mock`). For `mock` mode,
   returns the `camel-mock/` directory structure, mock file paths derived from the API paths, and example content
   from the spec. Explains the behavior of each mode.
+|===
+
+=== Migration
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_migration_analyze`
+| Analyzes a Camel project's `pom.xml` to detect the runtime type (`main`, `spring-boot`, `quarkus`, `wildfly`,
+  `karaf`), Camel version, Java version, and Camel component dependencies. This is the first step in a migration
+  workflow.
+
+| `camel_migration_compatibility`
+| Checks migration compatibility for Camel components by providing relevant migration guide URLs and Java version
+  requirements. The LLM consults the migration guides for detailed component rename mappings and API changes.
+
+| `camel_migration_recipes`
+| Returns Maven commands to run Camel OpenRewrite migration recipes for upgrading between versions. The project
+  must compile successfully before running the recipes, as OpenRewrite requires a compilable project to parse
+  and transform the code.
+
+| `camel_migration_guide_search`
+| Searches Camel migration and upgrade guides for a specific term or component name. Returns matching snippets
+  from the official guides with version info and URLs. Supports fuzzy matching for typo tolerance. Use this
+  instead of web search when looking up migration-related changes, removed components, API renames, or breaking
+  changes.
+
+| `camel_migration_wildfly_karaf`
+| Provides migration guidance for Camel projects running on WildFly, Karaf, or WAR-based application servers.
+  Returns the Maven archetype command to create a new target project, migration steps, and relevant migration
+  guide URLs.
 |===
 
 === Version Management
@@ -352,6 +384,37 @@ What are the latest LTS versions of Camel for Spring Boot?
 
 The assistant calls `camel_version_list` with `runtime=spring-boot` and `lts=true` and returns version
 information including release dates, end-of-life dates, and JDK requirements.
+
+=== Migrating a Camel Project
+
+Start by providing your project's `pom.xml`:
+
+----
+I want to migrate my Camel project to the latest version. Here's my pom.xml.
+----
+
+The assistant calls `camel_migration_analyze` to detect the runtime, current Camel version, Java version, and
+component dependencies. It then calls `camel_migration_compatibility` to check for breaking changes and
+`camel_migration_recipes` to provide the OpenRewrite commands for automated migration.
+
+=== Searching Migration Guides
+
+----
+What changed with the direct-vm component in Camel 4?
+----
+
+The assistant calls `camel_migration_guide_search` with `query=direct-vm` and returns matching snippets from the
+official migration guides with version info and URLs, so you can see exactly what changed and how to adapt.
+
+=== Migrating from WildFly or Karaf
+
+----
+I have a Camel application running on WildFly and I want to migrate it to Quarkus. Here's my pom.xml.
+----
+
+The assistant calls `camel_migration_wildfly_karaf` which returns the Maven archetype command to create a new
+Quarkus-based project, migration steps, and relevant guide URLs. The archetype generates the correct project
+structure so you can then migrate your routes and source files into it.
 
 === Validating an OpenAPI Spec for Camel
 
