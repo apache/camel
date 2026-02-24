@@ -24,7 +24,7 @@ By default, the HTTP server is disabled. To enable it, set `quarkus.http.host-en
 
 == Available Tools
 
-The server exposes 16 tools organized into six functional areas.
+The server exposes 19 tools organized into seven functional areas.
 
 === Catalog Exploration
 
@@ -116,6 +116,33 @@ The server exposes 16 tools organized into six functional areas.
 
 | `camel_transform_route`
 | Assists with route DSL format transformation between YAML and XML.
+|===
+
+=== OpenAPI Contract-First
+
+Since Camel 4.6, the recommended approach for building REST APIs from OpenAPI specifications is **contract-first**:
+referencing the OpenAPI spec directly at runtime via `rest:openApi` rather than generating REST DSL code. These tools
+help validate, scaffold, and provide mock guidance for that workflow.
+
+[cols="1,3",options="header"]
+|===
+| Tool | Description
+
+| `camel_openapi_validate`
+| Validates an OpenAPI specification for compatibility with Camel's contract-first REST support. Checks for missing
+  `operationId` fields, unsupported security schemes, OpenAPI 3.1 limitations, webhooks usage, and empty paths.
+  Returns errors, warnings, and info-level diagnostics.
+
+| `camel_openapi_scaffold`
+| Generates a Camel YAML scaffold for contract-first OpenAPI integration. Produces a `rest:openApi` configuration
+  block referencing the spec file and a `direct:<operationId>` route stub for each operation, with `Content-Type`
+  and `CamelHttpResponseCode` headers pre-configured from the spec. Supports configuring the `missingOperation`
+  mode (`fail`, `ignore`, or `mock`).
+
+| `camel_openapi_mock_guidance`
+| Provides guidance on configuring Camel's `missingOperation` modes (`fail`, `ignore`, `mock`). For `mock` mode,
+  returns the `camel-mock/` directory structure, mock file paths derived from the API paths, and example content
+  from the spec. Explains the behavior of each mode.
 |===
 
 === Version Management
@@ -325,3 +352,54 @@ What are the latest LTS versions of Camel for Spring Boot?
 
 The assistant calls `camel_version_list` with `runtime=spring-boot` and `lts=true` and returns version
 information including release dates, end-of-life dates, and JDK requirements.
+
+=== Validating an OpenAPI Spec for Camel
+
+----
+I have this OpenAPI spec for my Pet Store API. Can you validate it for use with Camel's contract-first REST support?
+----
+
+Paste the OpenAPI spec (JSON or YAML) and the assistant calls `camel_openapi_validate`. It reports any compatibility
+issues such as missing `operationId` fields, unsupported security schemes (OAuth2, mutual TLS), OpenAPI 3.1
+limitations, and webhooks usage. A valid spec with no issues returns `valid: true` with an operation count.
+
+=== Scaffolding a Contract-First REST API
+
+----
+Generate a Camel YAML scaffold for this OpenAPI spec. The spec file will be called petstore.yaml
+and I want missing operations to use mock mode.
+----
+
+The assistant calls `camel_openapi_scaffold` with `specFilename=petstore.yaml` and `missingOperation=mock`.
+It returns a ready-to-use YAML file containing:
+
+* A `rest:openApi` configuration block referencing the spec file with `missingOperation: mock`
+* A `direct:<operationId>` route stub for each operation with `Content-Type` and response code headers
+
+=== Getting Mock Guidance
+
+----
+I want to use Camel's mock mode for my OpenAPI REST API during development. Show me the directory
+structure and mock files I need to create.
+----
+
+The assistant calls `camel_openapi_mock_guidance` with `mode=mock`. It returns:
+
+* An explanation of how mock mode works
+* The YAML configuration snippet with `missingOperation: mock`
+* The `camel-mock/` directory structure with mock file paths derived from the API paths
+* Example content for mock files based on examples defined in the spec
+
+=== Combined Contract-First Workflow
+
+For a complete prototyping workflow, you can combine all three tools:
+
+----
+I'm building a new REST API with Camel using contract-first. Here's my OpenAPI spec.
+Please validate it for compatibility issues, then generate the Camel YAML scaffold
+with mock mode so I can prototype quickly.
+----
+
+The assistant first calls `camel_openapi_validate` to check for issues, then calls `camel_openapi_scaffold`
+to generate the route scaffold. This gives you a validated spec and a complete starting point where you can
+implement routes one at a time while Camel auto-mocks the rest.
