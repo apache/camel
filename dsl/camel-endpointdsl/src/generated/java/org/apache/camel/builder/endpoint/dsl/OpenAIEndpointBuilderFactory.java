@@ -228,7 +228,7 @@ public interface OpenAIEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: float
+         * Default: base64
          * Group: producer
          * 
          * @param encodingFormat the value to set

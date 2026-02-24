@@ -107,9 +107,9 @@ public class OpenAIConfiguration implements Cloneable {
                             "Reducing dimensions can lower costs and improve performance without significant quality loss.")
     private Integer dimensions;
 
-    @UriParam(enums = "float,base64", defaultValue = "float")
+    @UriParam(enums = "float,base64", defaultValue = "base64")
     @Metadata(description = "The format for embedding output: 'float' for list of floats, 'base64' for compressed format")
-    private String encodingFormat = "float";
+    private String encodingFormat = "base64";
 
     public String getApiKey() {
         return apiKey;

@@ -85,6 +85,10 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
                 from("direct:embedding")
                         .to("openai:embeddings")
                         .to("mock:response");
+
+                from("direct:embeddingWithEncodingFormatFloat")
+                        .to("openai:embeddings?encodingFormat=float")
+                        .to("mock:responseEncodingFormatFloat");
             }
         };
     }
@@ -95,6 +99,33 @@ public class OpenAIEmbeddingsIT extends CamelTestSupport {
         mockResponse.expectedMessageCount(1);
 
         Exchange result = template.request("direct:embedding",
+                e -> e.getIn().setBody("Apache Camel is an integration framework"));
+
+        mockResponse.assertIsSatisfied();
+
+        assertThat(result).isNotNull();
+        Object body = result.getMessage().getBody();
+        assertThat(body).isNotNull();
+        assertThat(body).isInstanceOf(List.class);
+
+        @SuppressWarnings("unchecked")
+        List<Float> embedding = (List<Float>) body;
+        assertThat(embedding).isNotEmpty();
+
+        // Verify headers
+        assertThat(result.getMessage().getHeader(OpenAIConstants.EMBEDDING_COUNT)).isEqualTo(1);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.EMBEDDING_VECTOR_SIZE, Integer.class))
+                .isGreaterThan(0);
+        assertThat(result.getMessage().getHeader(OpenAIConstants.ORIGINAL_TEXT))
+                .isEqualTo("Apache Camel is an integration framework");
+    }
+
+    @Test
+    public void testSingleTextEmbeddingWithFloatEncodingFormat() throws Exception {
+        MockEndpoint mockResponse = getMockEndpoint("mock:responseEncodingFormatFloat");
+        mockResponse.expectedMessageCount(1);
+
+        Exchange result = template.request("direct:embeddingWithEncodingFormatFloat",
                 e -> e.getIn().setBody("Apache Camel is an integration framework"));
 
         mockResponse.assertIsSatisfied();

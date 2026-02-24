@@ -25,6 +25,7 @@ import java.util.List;
 import com.openai.models.embeddings.CreateEmbeddingResponse;
 import com.openai.models.embeddings.Embedding;
 import com.openai.models.embeddings.EmbeddingCreateParams;
+import com.openai.models.embeddings.EmbeddingCreateParams.EncodingFormat;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -90,6 +91,10 @@ public class OpenAIEmbeddingsProducer extends DefaultAsyncProducer {
 
         if (dimensions != null) {
             paramsBuilder.dimensions(dimensions.longValue());
+        }
+
+        if (ObjectHelper.isNotEmpty(config.getEncodingFormat())) {
+            paramsBuilder.encodingFormat(EncodingFormat.of(config.getEncodingFormat()));
         }
 
         EmbeddingCreateParams params = paramsBuilder.build();
