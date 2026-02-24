@@ -18,13 +18,14 @@ package org.apache.camel.component.google.functions;
 
 import com.google.cloud.functions.v1.CloudFunctionsServiceClient;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleCloudFunctionsConfiguration implements Cloneable {
+public class GoogleCloudFunctionsConfiguration implements Cloneable, GoogleCommonConfiguration {
 
     @UriPath(label = "common", description = "The user-defined name of the function")
     @Metadata(required = true)
@@ -63,6 +64,7 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
         this.functionName = functionName;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
