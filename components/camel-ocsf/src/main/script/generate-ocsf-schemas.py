@@ -95,7 +95,6 @@ CLASSES_TO_GENERATE = [
     'scan_activity',
 
     # Application Activity (Category 6)
-    'web_resource_activity',
     'web_resources_activity',
     'api_activity',
     'datastore_activity',
