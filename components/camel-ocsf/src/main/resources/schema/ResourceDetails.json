@@ -81,8 +81,8 @@
     },
     "created_time": {
       "type": "integer",
-      "title": "Created Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Created Time"
     },
     "criticality": {
       "type": "string",
@@ -94,8 +94,8 @@
     },
     "modified_time": {
       "type": "integer",
-      "title": "Modified Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Modified Time"
     },
     "resource_relationship": {
       "type": "object",

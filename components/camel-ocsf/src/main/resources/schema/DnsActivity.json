@@ -59,8 +59,8 @@
     },
     "response_time": {
       "type": "integer",
-      "title": "Response Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Response Time"
     },
     "rcode": {
       "type": "string",
@@ -82,8 +82,8 @@
     },
     "query_time": {
       "type": "integer",
-      "title": "Query Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Query Time"
     },
     "proxy": {
       "type": "object",

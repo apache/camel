@@ -61,8 +61,8 @@
     },
     "created_time": {
       "type": "integer",
-      "title": "Created Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Created Time"
     },
     "environment_variables": {
       "type": "array",
@@ -100,8 +100,8 @@
     },
     "terminated_time": {
       "type": "integer",
-      "title": "Terminated Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Terminated Time"
     },
     "working_directory": {
       "type": "string",

@@ -28,8 +28,8 @@
     },
     "accessed_time": {
       "type": "integer",
-      "title": "Accessed Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Accessed Time"
     },
     "confidentiality": {
       "type": "string",
@@ -63,8 +63,8 @@
     },
     "created_time": {
       "type": "integer",
-      "title": "Created Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Created Time"
     },
     "tags": {
       "type": "array",
@@ -118,8 +118,8 @@
     },
     "modified_time": {
       "type": "integer",
-      "title": "Modified Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Modified Time"
     },
     "name": {
       "type": "string",

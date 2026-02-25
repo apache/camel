@@ -60,8 +60,8 @@
     },
     "expiration_time": {
       "type": "integer",
-      "title": "Expiration Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Expiration Time"
     },
     "observation_point_id": {
       "type": "integer",

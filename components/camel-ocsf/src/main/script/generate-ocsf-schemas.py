@@ -91,11 +91,9 @@ CLASSES_TO_GENERATE = [
     'user_access',
     'entity_management',
 
-    # Discovery (Category 5)
-    'scan_activity',
-
     # Application Activity (Category 6)
     'web_resources_activity',
+    'scan_activity',
     'api_activity',
     'datastore_activity',
 

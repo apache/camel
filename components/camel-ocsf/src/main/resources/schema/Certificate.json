@@ -35,13 +35,13 @@
     },
     "created_time": {
       "type": "integer",
-      "title": "Created Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Created Time"
     },
     "expiration_time": {
       "type": "integer",
-      "title": "Expiration Time",
-      "existingJavaType": "java.lang.Long"
+      "existingJavaType": "java.lang.Long",
+      "title": "Expiration Time"
     },
     "sans": {
       "type": "array",
