@@ -1941,7 +1941,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["hasown", "npm:2.0.2"],\
             ["is-core-module", "npm:2.16.1"],\
             ["is-glob", "npm:4.0.3"],\
-            ["minimatch", "npm:3.1.2"],\
+            ["minimatch", "npm:3.1.4"],\
             ["object.fromentries", "npm:2.0.8"],\
             ["object.groupby", "npm:1.0.3"],\
             ["object.values", "npm:1.2.1"],\
@@ -2006,7 +2006,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-es", "virtual:9047dfc540e05a068a9004a402fa7e13a3be59b38e985bb83b3e901a43b276653b821445be7bccafe52acedeeea29c8c748f39c73444368fa744b10fc1c66412#npm:3.0.1"],\
             ["eslint-utils", "npm:2.1.0"],\
             ["ignore", "npm:5.2.0"],\
-            ["minimatch", "npm:3.1.2"],\
+            ["minimatch", "npm:3.1.4"],\
             ["resolve", "patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"],\
             ["semver", "npm:7.5.4"]\
           ],\
@@ -2622,7 +2622,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fs.realpath", "npm:1.0.0"],\
             ["inflight", "npm:1.0.6"],\
             ["inherits", "npm:2.0.4"],\
-            ["minimatch", "npm:3.1.2"],\
+            ["minimatch", "npm:3.1.4"],\
             ["once", "npm:1.4.0"],\
             ["path-is-absolute", "npm:1.0.1"]\
           ],\
@@ -3963,10 +3963,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:3.1.2", {\
-          "packageLocation": "./.yarn/cache/minimatch-npm-3.1.2-9405269906-c154e56640.zip/node_modules/minimatch/",\
+        ["npm:3.1.4", {\
+          "packageLocation": "./.yarn/cache/minimatch-npm-3.1.4-5c2bfccba3-8bc9993c9b.zip/node_modules/minimatch/",\
           "packageDependencies": [\
-            ["minimatch", "npm:3.1.2"],\
+            ["minimatch", "npm:3.1.4"],\
             ["brace-expansion", "npm:2.0.2"]\
           ],\
           "linkType": "HARD"\
