@@ -19,6 +19,7 @@ package org.apache.camel.component.google.mail;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -31,7 +32,7 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 @Configurer(extended = true)
-public class GoogleMailConfiguration {
+public class GoogleMailConfiguration implements GoogleCommonConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleMailApiName apiName;
@@ -78,6 +79,7 @@ public class GoogleMailConfiguration {
         this.methodName = methodName;
     }
 
+    @Override
     public String getClientId() {
         return clientId;
     }
@@ -89,6 +91,7 @@ public class GoogleMailConfiguration {
         this.clientId = clientId;
     }
 
+    @Override
     public String getClientSecret() {
         return clientSecret;
     }
@@ -100,6 +103,7 @@ public class GoogleMailConfiguration {
         this.clientSecret = clientSecret;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
@@ -111,6 +115,7 @@ public class GoogleMailConfiguration {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -134,6 +139,7 @@ public class GoogleMailConfiguration {
         this.applicationName = applicationName;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
@@ -148,6 +154,7 @@ public class GoogleMailConfiguration {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    @Override
     public String getDelegate() {
         return delegate;
     }
@@ -163,6 +170,7 @@ public class GoogleMailConfiguration {
         return scopes;
     }
 
+    @Override
     public Collection<String> getScopesAsList() {
         if (scopes != null) {
             return List.of(scopes.split(","));

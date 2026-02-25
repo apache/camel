@@ -16,17 +16,15 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.gmail.Gmail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.component.google.common.GoogleCredentialsHelper;
 
 public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     private NetHttpTransport transport;
@@ -45,25 +43,19 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Gmail client.");
         }
         try {
-            Credential credential = authorize(clientId, clientSecret);
+            // Use GoogleCredentialsHelper for OAuth credentials
+            GoogleMailConfiguration tempConfig = new GoogleMailConfiguration();
+            tempConfig.setClientId(clientId);
+            tempConfig.setClientSecret(clientSecret);
+            tempConfig.setRefreshToken(refreshToken);
+            tempConfig.setAccessToken(accessToken);
 
-            if (refreshToken != null && !refreshToken.isEmpty()) {
-                credential.setRefreshToken(refreshToken);
-            }
-            if (accessToken != null && !accessToken.isEmpty()) {
-                credential.setAccessToken(accessToken);
-            }
+            Credential credential
+                    = GoogleCredentialsHelper.getOAuthCredential(null, tempConfig, scopes, transport, jsonFactory);
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Gmail client.", e);
         }
-    }
-
-    // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret) {
-        // authorize
-        return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport)
-                .setClientSecrets(clientId, clientSecret).build();
     }
 
     @Override
@@ -74,27 +66,16 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
             throw new IllegalArgumentException("serviceAccountKey is required to create Gmail client.");
         }
         try {
-            Credential credential = authorizeServiceAccount(camelContext, serviceAccountKey, delegate, scopes);
+            // Use GoogleCredentialsHelper for service account credentials
+            GoogleMailConfiguration tempConfig = new GoogleMailConfiguration();
+            tempConfig.setServiceAccountKey(serviceAccountKey);
+            tempConfig.setDelegate(delegate);
+
+            Credential credential
+                    = GoogleCredentialsHelper.getOAuthCredential(camelContext, tempConfig, scopes, transport, jsonFactory);
             return new Gmail.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Gmail client.", e);
-        }
-    }
-
-    private Credential authorizeServiceAccount(
-            CamelContext camelContext, String serviceAccountKey, String delegate, Collection<String> scopes) {
-        // authorize
-        try {
-            GoogleCredential cred = GoogleCredential
-                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
-                            transport,
-                            jsonFactory)
-                    .createScoped(scopes != null && !scopes.isEmpty() ? scopes : null)
-                    .createDelegated(delegate);
-            cred.refreshToken();
-            return cred;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

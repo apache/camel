@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -29,7 +30,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleMail stream component.
  */
 @UriParams
-public class GoogleMailStreamConfiguration implements Cloneable {
+public class GoogleMailStreamConfiguration implements Cloneable, GoogleCommonConfiguration {
     @UriPath
     @Metadata(required = true)
     private String index;
@@ -61,6 +62,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
     @UriParam
     private String scopes;
 
+    @Override
     public String getClientId() {
         return clientId;
     }
@@ -72,6 +74,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
         this.clientId = clientId;
     }
 
+    @Override
     public String getClientSecret() {
         return clientSecret;
     }
@@ -83,6 +86,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
         this.clientSecret = clientSecret;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
@@ -94,6 +98,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -184,6 +189,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
         this.markAsRead = markAsRead;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
@@ -197,6 +203,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    @Override
     public String getDelegate() {
         return delegate;
     }
@@ -212,6 +219,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
         return scopes;
     }
 
+    @Override
     public Collection<String> getScopesAsList() {
         if (scopes != null) {
             return List.of(scopes.split(","));
