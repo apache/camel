@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -24,13 +23,12 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.component.google.common.GoogleCredentialsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,29 +62,19 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Google Drive client.");
         }
         try {
-            Credential credential = authorize(clientId, clientSecret, scopes);
+            // Use GoogleCredentialsHelper for OAuth credentials
+            GoogleDriveConfiguration tempConfig = new GoogleDriveConfiguration();
+            tempConfig.setClientId(clientId);
+            tempConfig.setClientSecret(clientSecret);
+            tempConfig.setRefreshToken(refreshToken);
+            tempConfig.setAccessToken(accessToken);
 
-            if (refreshToken != null && !refreshToken.isEmpty()) {
-                credential.setRefreshToken(refreshToken);
-            }
-            if (accessToken != null && !accessToken.isEmpty()) {
-                credential.setAccessToken(accessToken);
-            }
+            Credential credential
+                    = GoogleCredentialsHelper.getOAuthCredential(null, tempConfig, scopes, transport, jsonFactory);
             return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Google Drive client.", e);
         }
-    }
-
-    // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) {
-        // authorize
-        return new GoogleCredential.Builder()
-                .setJsonFactory(jsonFactory)
-                .setTransport(transport)
-                .setClientSecrets(clientId, clientSecret)
-                .setServiceAccountScopes(scopes)
-                .build();
     }
 
     @Override
@@ -97,27 +85,16 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
             throw new IllegalArgumentException("serviceAccountKey is required to create Drive client.");
         }
         try {
-            Credential credential = authorizeServiceAccount(camelContext, serviceAccountKey, delegate, scopes);
+            // Use GoogleCredentialsHelper for service account credentials
+            GoogleDriveConfiguration tempConfig = new GoogleDriveConfiguration();
+            tempConfig.setServiceAccountKey(serviceAccountKey);
+            tempConfig.setDelegate(delegate);
+
+            Credential credential
+                    = GoogleCredentialsHelper.getOAuthCredential(camelContext, tempConfig, scopes, transport, jsonFactory);
             return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             throw new RuntimeCamelException("Could not create Drive client.", e);
-        }
-    }
-
-    private Credential authorizeServiceAccount(
-            CamelContext camelContext, String serviceAccountKey, String delegate, Collection<String> scopes) {
-        // authorize
-        try {
-            GoogleCredential cred = GoogleCredential
-                    .fromStream(ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, serviceAccountKey),
-                            transport,
-                            jsonFactory)
-                    .createScoped(scopes != null && !scopes.isEmpty() ? scopes : null)
-                    .createDelegated(delegate);
-            cred.refreshToken();
-            return cred;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

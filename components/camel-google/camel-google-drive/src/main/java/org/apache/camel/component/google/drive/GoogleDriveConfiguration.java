@@ -19,6 +19,7 @@ package org.apache.camel.component.google.drive;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -31,7 +32,7 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 @Configurer(extended = true)
-public class GoogleDriveConfiguration {
+public class GoogleDriveConfiguration implements GoogleCommonConfiguration {
     @UriPath
     @Metadata(required = true)
     private GoogleDriveApiName apiName;
@@ -78,6 +79,7 @@ public class GoogleDriveConfiguration {
         this.methodName = methodName;
     }
 
+    @Override
     public String getClientId() {
         return clientId;
     }
@@ -89,6 +91,7 @@ public class GoogleDriveConfiguration {
         this.clientId = clientId;
     }
 
+    @Override
     public String getClientSecret() {
         return clientSecret;
     }
@@ -100,6 +103,7 @@ public class GoogleDriveConfiguration {
         this.clientSecret = clientSecret;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
@@ -111,6 +115,7 @@ public class GoogleDriveConfiguration {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -138,6 +143,7 @@ public class GoogleDriveConfiguration {
         return scopes;
     }
 
+    @Override
     public Collection<String> getScopesAsList() {
         if (scopes != null) {
             return List.of(scopes.split(","));
@@ -157,6 +163,7 @@ public class GoogleDriveConfiguration {
         this.scopes = scopes;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
@@ -171,6 +178,7 @@ public class GoogleDriveConfiguration {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    @Override
     public String getDelegate() {
         return delegate;
     }
