@@ -4,13 +4,10 @@
   "title": "HttpActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.HttpActivity",
-  "additionalProperties": true,
   "description": "HttpActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",

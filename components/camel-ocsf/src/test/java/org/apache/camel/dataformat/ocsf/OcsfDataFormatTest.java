@@ -88,12 +88,11 @@ public class OcsfDataFormatTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
         DetectionFinding finding = new DetectionFinding();
-        // DetectionFinding contains finding-specific attributes
-        // Base event fields like activity_id, severity_id are captured via additionalProperties
-        finding.setAdditionalProperty("activity_id", OcsfConstants.ACTIVITY_CREATE);
-        finding.setAdditionalProperty("severity_id", OcsfConstants.SEVERITY_CRITICAL);
-        finding.setAdditionalProperty("time", (int) (System.currentTimeMillis() / 1000));
-        finding.setAdditionalProperty("class_uid", OcsfConstants.CLASS_DETECTION_FINDING);
+        // DetectionFinding extends OcsfEvent, so base event fields have typed accessors
+        finding.setActivityId(OcsfConstants.ACTIVITY_CREATE);
+        finding.setSeverityId(OcsfConstants.SEVERITY_CRITICAL);
+        finding.setTime(System.currentTimeMillis() / 1000);
+        finding.setClassUid(OcsfConstants.CLASS_DETECTION_FINDING);
         finding.setIsAlert(true);
         finding.setRiskLevelId(Integer.valueOf(4));
         finding.setRiskLevel("High");
@@ -144,9 +143,9 @@ public class OcsfDataFormatTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         DetectionFinding finding = mock.getExchanges().get(0).getIn().getBody(DetectionFinding.class);
-        // Base event fields are captured in additionalProperties
-        assertThat(finding.getAdditionalProperties().get("class_uid")).isEqualTo(2004);
-        assertThat(finding.getAdditionalProperties().get("severity_id")).isEqualTo(5);
+        // Base event fields are now accessible via typed getters (inherited from OcsfEvent)
+        assertThat(finding.getClassUid()).isEqualTo(2004);
+        assertThat(finding.getSeverityId()).isEqualTo(5);
         assertThat(finding.getIsAlert()).isTrue();
         assertThat(finding.getRiskLevel()).isEqualTo("Critical");
         assertThat(finding.getFindingInfo()).isNotNull();

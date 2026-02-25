@@ -4,13 +4,10 @@
   "title": "DnsActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DnsActivity",
-  "additionalProperties": true,
   "description": "DnsActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",

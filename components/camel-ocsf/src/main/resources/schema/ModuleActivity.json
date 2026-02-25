@@ -4,13 +4,10 @@
   "title": "ModuleActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.ModuleActivity",
-  "additionalProperties": true,
   "description": "ModuleActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

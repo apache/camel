@@ -4,13 +4,10 @@
   "title": "ScheduledJobActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.ScheduledJobActivity",
-  "additionalProperties": true,
   "description": "ScheduledJobActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

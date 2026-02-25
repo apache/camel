@@ -446,8 +446,12 @@ def generate_class_schema(ocsf: OcsfJsonSchemaEmbedded, class_name: str,
             "title": pascal_name,
             "type": "object",
             "javaType": f"{JAVA_PACKAGE}.{pascal_name}",
-            "additionalProperties": True,
         }
+
+        # Only set additionalProperties on classes that don't extend OcsfEvent
+        # (the parent OcsfEvent already has it, and duplicates cause @JsonAnySetter conflicts)
+        if not extends_base:
+            result["additionalProperties"] = True
 
         # Add description
         if 'description' in schema:
@@ -457,7 +461,7 @@ def generate_class_schema(ocsf: OcsfJsonSchemaEmbedded, class_name: str,
 
         # Extend base event
         if extends_base:
-            result['allOf'] = [{"$ref": "OcsfEvent.json"}]
+            result['extends'] = {"$ref": "OcsfEvent.json"}
 
         # Process properties (excluding base event properties)
         result['properties'] = {}

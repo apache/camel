@@ -4,13 +4,10 @@
   "title": "DetectionFinding",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DetectionFinding",
-  "additionalProperties": true,
   "description": "DetectionFinding event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "impact": {
       "type": "string",

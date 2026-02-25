@@ -91,12 +91,12 @@ public class OcsfEventExampleTest extends CamelTestSupport {
         assertThat(finding.getRemediation()).isNotNull();
         assertThat(finding.getRemediation().getDesc()).contains("Investigate the EC2 instance");
 
-        // Base event fields are in additionalProperties
-        assertThat(finding.getAdditionalProperties().get("class_uid")).isEqualTo(2004);
-        assertThat(finding.getAdditionalProperties().get("severity_id")).isEqualTo(4);
-        assertThat(finding.getAdditionalProperties().get("severity")).isEqualTo("High");
+        // Base event fields are now accessible via typed getters (inherited from OcsfEvent)
+        assertThat(finding.getClassUid()).isEqualTo(2004);
+        assertThat(finding.getSeverityId()).isEqualTo(4);
+        assertThat(finding.getSeverity()).isEqualTo("High");
 
-        // Verify cloud info in additionalProperties
+        // Verify cloud info in additionalProperties (cloud is not a base event field)
         @SuppressWarnings("unchecked")
         java.util.Map<String, Object> cloud = (java.util.Map<String, Object>) finding.getAdditionalProperties().get("cloud");
         assertThat(cloud.get("provider")).isEqualTo("AWS");
@@ -114,17 +114,17 @@ public class OcsfEventExampleTest extends CamelTestSupport {
         // Create a Detection Finding for a SQL Injection attempt
         DetectionFinding finding = new DetectionFinding();
 
-        // Set base event fields via additionalProperties
-        finding.setAdditionalProperty("class_uid", OcsfConstants.CLASS_DETECTION_FINDING);
-        finding.setAdditionalProperty("class_name", "Detection Finding");
-        finding.setAdditionalProperty("category_uid", OcsfConstants.CATEGORY_FINDINGS);
-        finding.setAdditionalProperty("category_name", "Findings");
-        finding.setAdditionalProperty("activity_id", OcsfConstants.ACTIVITY_CREATE);
-        finding.setAdditionalProperty("activity_name", "Create");
-        finding.setAdditionalProperty("severity_id", OcsfConstants.SEVERITY_HIGH);
-        finding.setAdditionalProperty("severity", "High");
-        finding.setAdditionalProperty("time", 1706198400);
-        finding.setAdditionalProperty("message", "SQL Injection attempt detected in web application");
+        // Set base event fields via typed setters (inherited from OcsfEvent)
+        finding.setClassUid(OcsfConstants.CLASS_DETECTION_FINDING);
+        finding.setClassName("Detection Finding");
+        finding.setCategoryUid(OcsfConstants.CATEGORY_FINDINGS);
+        finding.setCategoryName("Findings");
+        finding.setActivityId(OcsfConstants.ACTIVITY_CREATE);
+        finding.setActivityName("Create");
+        finding.setSeverityId(OcsfConstants.SEVERITY_HIGH);
+        finding.setSeverity("High");
+        finding.setTime(1706198400L);
+        finding.setMessage("SQL Injection attempt detected in web application");
 
         // Set finding-specific fields
         finding.setIsAlert(true);
@@ -196,7 +196,7 @@ public class OcsfEventExampleTest extends CamelTestSupport {
         product.setVendorName("MyCompany");
         product.setVersion("2.5.0");
         metadata.setProduct(product);
-        finding.setAdditionalProperty("metadata", metadata);
+        finding.setMetadata(metadata);
 
         // Send to marshal
         template.sendBody("direct:build-finding", finding);

@@ -4,13 +4,10 @@
   "title": "DhcpActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.DhcpActivity",
-  "additionalProperties": true,
   "description": "DhcpActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",

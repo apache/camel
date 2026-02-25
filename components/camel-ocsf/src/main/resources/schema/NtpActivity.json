@@ -4,13 +4,10 @@
   "title": "NtpActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.NtpActivity",
-  "additionalProperties": true,
   "description": "NtpActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",

@@ -4,13 +4,10 @@
   "title": "MemoryActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.MemoryActivity",
-  "additionalProperties": true,
   "description": "MemoryActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

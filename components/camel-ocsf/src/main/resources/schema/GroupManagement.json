@@ -4,13 +4,10 @@
   "title": "GroupManagement",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.GroupManagement",
-  "additionalProperties": true,
   "description": "GroupManagement event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "privileges": {
       "type": "array",

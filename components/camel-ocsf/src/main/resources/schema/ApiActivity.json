@@ -4,13 +4,10 @@
   "title": "ApiActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.ApiActivity",
-  "additionalProperties": true,
   "description": "ApiActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

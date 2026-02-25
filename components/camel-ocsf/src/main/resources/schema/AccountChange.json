@@ -4,13 +4,10 @@
   "title": "AccountChange",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.AccountChange",
-  "additionalProperties": true,
   "description": "AccountChange event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

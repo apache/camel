@@ -4,13 +4,10 @@
   "title": "SshActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.SshActivity",
-  "additionalProperties": true,
   "description": "SshActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "cumulative_traffic": {
       "type": "object",

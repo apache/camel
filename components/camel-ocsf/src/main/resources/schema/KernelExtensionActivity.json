@@ -4,13 +4,10 @@
   "title": "KernelExtensionActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.KernelExtensionActivity",
-  "additionalProperties": true,
   "description": "KernelExtensionActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

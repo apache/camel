@@ -4,13 +4,10 @@
   "title": "ProcessActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.ProcessActivity",
-  "additionalProperties": true,
   "description": "ProcessActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"

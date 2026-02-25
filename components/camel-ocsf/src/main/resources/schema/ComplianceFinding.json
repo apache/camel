@@ -4,13 +4,10 @@
   "title": "ComplianceFinding",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.ComplianceFinding",
-  "additionalProperties": true,
   "description": "ComplianceFinding event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "resources": {
       "type": "array",

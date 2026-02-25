@@ -4,13 +4,10 @@
   "title": "FileActivity",
   "type": "object",
   "javaType": "org.apache.camel.dataformat.ocsf.model.FileActivity",
-  "additionalProperties": true,
   "description": "FileActivity event class.",
-  "allOf": [
-    {
-      "$ref": "OcsfEvent.json"
-    }
-  ],
+  "extends": {
+    "$ref": "OcsfEvent.json"
+  },
   "properties": {
     "actor": {
       "$ref": "Actor.json"
