@@ -29,7 +29,7 @@ public class NatsLocalContainerAuthService extends NatsLocalContainerService imp
 
         container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
-                .withCommand("-DV", "--user", USERNAME, "--pass", PASSWORD);
+                .withCommand("--jetstream", "-DV", "--user", USERNAME, "--pass", PASSWORD);
 
         return container;
     }

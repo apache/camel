@@ -28,7 +28,7 @@ public class NatsLocalContainerAuthTokenService extends NatsLocalContainerServic
 
         container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
-                .withCommand("-DV", "-auth", TOKEN);
+                .withCommand("--jetstream", "-DV", "-auth", TOKEN);
 
         return container;
     }

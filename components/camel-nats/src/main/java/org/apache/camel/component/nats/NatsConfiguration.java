@@ -20,9 +20,9 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
 import io.nats.client.Connection;
-import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
+import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
@@ -75,6 +75,12 @@ public class NatsConfiguration {
     private boolean replyToDisabled;
     @UriParam(label = "consumer")
     private String maxMessages;
+    @UriParam(label = "consumer", defaultValue = "none", enums = "none,all,explicit")
+    private AckPolicy ackPolicy;
+    @UriParam(label = "consumer", defaultValue = "30000")
+    private long ackWait;
+    @UriParam(label = "consumer", defaultValue = "5000")
+    private long nackWait = 5000;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
     @UriParam(label = "common", defaultValue = "true")
@@ -573,5 +579,47 @@ public class NatsConfiguration {
      */
     public void setDurableName(String durableName) {
         this.durableName = durableName;
+    }
+
+    public AckPolicy getAckPolicy() {
+        return ackPolicy;
+    }
+
+    /**
+     * Acknowledgement mode.
+     *
+     * none = Messages are acknowledged as soon as the server sends them. Clients do not need to ack. all = All messages
+     * with a sequence number less than the message acked are also acknowledged. E.g. reading a batch of messages
+     * 1..100. Ack on message 100 will acknowledge 1..99 as well. explicit = Each message must be acknowledged
+     * individually. Message can be acked out of sequence and create gaps of unacknowledged messages in the consumer.
+     */
+    public void setAckPolicy(AckPolicy ackPolicy) {
+        this.ackPolicy = ackPolicy;
+    }
+
+    public long getAckWait() {
+        return ackWait;
+    }
+
+    /**
+     * After a message is delivered to a consumer, the server waits 30 seconds (default) for an acknowledgement. If none
+     * arrives (timeout), the message becomes eligible for redelivery.
+     */
+    public void setAckWait(long ackWait) {
+        this.ackWait = ackWait;
+    }
+
+    public long getNackWait() {
+        return nackWait;
+    }
+
+    /**
+     * For negative acknowledgements (NAK), redelivery is delayed by 5 seconds (default).
+     *
+     * Setting this to 0 or negative makes the redelivery immediately. Be careful as this can cause the consumer to keep
+     * re-processing the same message over and over again due to intermediate error that last a while.
+     */
+    public void setNackWait(long nackWait) {
+        this.nackWait = nackWait;
     }
 }

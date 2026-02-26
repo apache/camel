@@ -29,7 +29,8 @@ public class NatsLocalContainerTLSAuthService extends NatsLocalContainerService 
         container
                 .waitingFor(Wait.forLogMessage(".*Server.*is.*ready.*", 1))
                 .withClasspathResourceMapping("org/apache/camel/test/infra/nats/services", "/nats", BindMode.READ_ONLY)
-                .withCommand("--tls",
+                .withCommand("--jetstream",
+                        "--tls",
                         "--tlscert=/nats/server.pem",
                         "--tlskey=/nats/key.pem",
                         "--tlsverify",

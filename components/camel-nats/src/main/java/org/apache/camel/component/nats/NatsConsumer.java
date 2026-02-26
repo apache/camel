@@ -30,12 +30,16 @@ import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import io.nats.client.PullSubscribeOptions;
 import io.nats.client.PushSubscribeOptions;
+import io.nats.client.api.AckPolicy;
 import io.nats.client.api.ConsumerConfiguration;
 import io.nats.client.api.StreamConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,6 +188,12 @@ public class NatsConsumer extends DefaultConsumer {
                 if (durableName != null) {
                     ccBuilder.durable(durableName + "-durable");
                 }
+                if (configuration.getAckPolicy() != null) {
+                    ccBuilder.ackPolicy(configuration.getAckPolicy());
+                }
+                if (configuration.getAckWait() > 0) {
+                    ccBuilder.ackWait(configuration.getAckWait());
+                }
                 cc = ccBuilder.build();
             }
 
@@ -206,12 +216,14 @@ public class NatsConsumer extends DefaultConsumer {
                         .deliverGroup(queueName)
                         .build();
 
+                boolean autoAck = configuration.getAckPolicy() == null || configuration.getAckPolicy() == AckPolicy.None;
+
                 NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         queueName,
                         dispatcher,
                         messageHandler,
-                        true,
+                        autoAck,
                         pushOptions);
             }
 
@@ -240,6 +252,31 @@ public class NatsConsumer extends DefaultConsumer {
             public void onMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
                 final Exchange exchange = NatsConsumer.this.createExchange(false);
+                // ensure we either ACK or NACK the message
+                boolean autoAck = configuration.getAckPolicy() == null || configuration.getAckPolicy() == AckPolicy.None;
+
+                if (!autoAck) {
+                    long wait = configuration.getAckWait() == 0 ? 30000 : configuration.getAckWait();
+                    LOG.info("Consuming from topic: {} using AckPolicy: {} (ackWait:{} nackWait:{})",
+                            configuration.getTopic(), configuration.getAckPolicy(), wait, configuration.getNackWait());
+                    exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                        @Override
+                        public void onComplete(Exchange exchange) {
+                            LOG.debug("ACK (delay:{})", configuration.getAckWait());
+                            msg.ack();
+                        }
+
+                        @Override
+                        public void onFailure(Exchange exchange) {
+                            LOG.debug("NACK (delay:{})", configuration.getNackWait());
+                            if (configuration.getNackWait() <= 0) {
+                                msg.nak();
+                            } else {
+                                msg.nakWithDelay(configuration.getNackWait());
+                            }
+                        }
+                    });
+                }
                 try {
                     exchange.getIn().setBody(msg.getData());
                     exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());
@@ -269,6 +306,11 @@ public class NatsConsumer extends DefaultConsumer {
                             }
                         });
                     }
+
+                    // redelivery information
+                    exchange.getMessage().setPayloadForTrait(MessageTrait.REDELIVERY,
+                            evalRedeliveryMessageTrait(msg, exchange));
+
                     NatsConsumer.this.processor.process(exchange);
 
                     // is there a reply?
@@ -300,6 +342,19 @@ public class NatsConsumer extends DefaultConsumer {
             }
             throw jsae;
         }
+    }
+
+    private static RedeliveryTraitPayload evalRedeliveryMessageTrait(Message msg, Exchange exchange) {
+        long counter = 1;
+        if (msg.isJetStream()) {
+            counter = msg.metaData().deliveredCount();
+        }
+        exchange.getIn().setHeader(NatsConstants.NATS_DELIVERY_COUNTER, counter);
+
+        if (counter > 1) {
+            return RedeliveryTraitPayload.IS_REDELIVERY;
+        }
+        return RedeliveryTraitPayload.NON_REDELIVERY;
     }
 
 }

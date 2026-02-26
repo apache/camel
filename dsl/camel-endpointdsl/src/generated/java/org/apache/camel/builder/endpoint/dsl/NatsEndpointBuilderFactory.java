@@ -505,6 +505,83 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Acknowledgement mode. none = Messages are acknowledged as soon as the
+         * server sends them. Clients do not need to ack. all = All messages
+         * with a sequence number less than the message acked are also
+         * acknowledged. E.g. reading a batch of messages 1..100. Ack on message
+         * 100 will acknowledge 1..99 as well. explicit = Each message must be
+         * acknowledged individually. Message can be acked out of sequence and
+         * create gaps of unacknowledged messages in the consumer.
+         * 
+         * The option is a: <code>io.nats.client.api.AckPolicy</code> type.
+         * 
+         * Default: none
+         * Group: consumer
+         * 
+         * @param ackPolicy the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder ackPolicy(io.nats.client.api.AckPolicy ackPolicy) {
+            doSetProperty("ackPolicy", ackPolicy);
+            return this;
+        }
+        /**
+         * Acknowledgement mode. none = Messages are acknowledged as soon as the
+         * server sends them. Clients do not need to ack. all = All messages
+         * with a sequence number less than the message acked are also
+         * acknowledged. E.g. reading a batch of messages 1..100. Ack on message
+         * 100 will acknowledge 1..99 as well. explicit = Each message must be
+         * acknowledged individually. Message can be acked out of sequence and
+         * create gaps of unacknowledged messages in the consumer.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.api.AckPolicy</code> type.
+         * 
+         * Default: none
+         * Group: consumer
+         * 
+         * @param ackPolicy the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder ackPolicy(String ackPolicy) {
+            doSetProperty("ackPolicy", ackPolicy);
+            return this;
+        }
+        /**
+         * After a message is delivered to a consumer, the server waits 30
+         * seconds (default) for an acknowledgement. If none arrives (timeout),
+         * the message becomes eligible for redelivery.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: consumer
+         * 
+         * @param ackWait the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder ackWait(long ackWait) {
+            doSetProperty("ackWait", ackWait);
+            return this;
+        }
+        /**
+         * After a message is delivered to a consumer, the server waits 30
+         * seconds (default) for an acknowledgement. If none arrives (timeout),
+         * the message becomes eligible for redelivery.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 30000
+         * Group: consumer
+         * 
+         * @param ackWait the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder ackWait(String ackWait) {
+            doSetProperty("ackWait", ackWait);
+            return this;
+        }
+        /**
          * Stop receiving messages from a topic we are subscribing to after
          * maxMessages.
          * 
@@ -517,6 +594,44 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder maxMessages(String maxMessages) {
             doSetProperty("maxMessages", maxMessages);
+            return this;
+        }
+        /**
+         * For negative acknowledgements (NAK), redelivery is delayed by 5
+         * seconds (default). Setting this to 0 or negative makes the redelivery
+         * immediately. Be careful as this can cause the consumer to keep
+         * re-processing the same message over and over again due to
+         * intermediate error that last a while.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param nackWait the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder nackWait(long nackWait) {
+            doSetProperty("nackWait", nackWait);
+            return this;
+        }
+        /**
+         * For negative acknowledgements (NAK), redelivery is delayed by 5
+         * seconds (default). Setting this to 0 or negative makes the redelivery
+         * immediately. Be careful as this can cause the consumer to keep
+         * re-processing the same message over and over again due to
+         * intermediate error that last a while.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 5000
+         * Group: consumer
+         * 
+         * @param nackWait the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder nackWait(String nackWait) {
+            doSetProperty("nackWait", nackWait);
             return this;
         }
         /**
@@ -2796,6 +2911,19 @@ public interface NatsEndpointBuilderFactory {
          */
         public String natsStatusError() {
             return "CamelNatsStatusError";
+        }
+        /**
+         * Number of times this message has been delivered (1 = first, 1 then
+         * message has been redelivered).
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code NatsDeliveryCounter}.
+         */
+        public String natsDeliveryCounter() {
+            return "CamelNatsDeliveryCounter";
         }
     }
     static NatsEndpointBuilder endpointBuilder(String componentName, String path) {
