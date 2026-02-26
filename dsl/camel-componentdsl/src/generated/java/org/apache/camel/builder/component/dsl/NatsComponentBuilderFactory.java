@@ -344,12 +344,16 @@ public interface NatsComponentBuilderFactory {
         
         /**
          * Acknowledgement mode. none = Messages are acknowledged as soon as the
-         * server sends them. Clients do not need to ack. all = All messages
-         * with a sequence number less than the message acked are also
-         * acknowledged. E.g. reading a batch of messages 1..100. Ack on message
-         * 100 will acknowledge 1..99 as well. explicit = Each message must be
-         * acknowledged individually. Message can be acked out of sequence and
-         * create gaps of unacknowledged messages in the consumer.
+         * server sends them (danger: messages that Camel failed to process is
+         * also ack). Clients do not need to ack. all = All messages with a
+         * sequence number less than the message acked are also acknowledged.
+         * E.g. reading a batch of messages 1..100. Ack on message 100 will
+         * acknowledge 1..99 as well. explicit (default) = Each message is
+         * acknowledged individually by Camel after the message has been
+         * processed, this ensures the message is only ack if success and nack
+         * if processing failed due to an exception during routing. Message can
+         * be acked out of sequence and create gaps of unacknowledged messages
+         * in the consumer.
          * 
          * The option is a:
          * &lt;code&gt;io.nats.client.api.AckPolicy&lt;/code&gt; type.

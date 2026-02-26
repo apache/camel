@@ -50,6 +50,38 @@ public class NatsComponent extends HeaderFilterStrategyComponent implements SSLC
         return answer;
     }
 
+    /**
+     * @deprecated use getConfiguration()
+     */
+    @Deprecated
+    public String getServers() {
+        return configuration.getServers();
+    }
+
+    /**
+     * @deprecated use getConfiguration()
+     */
+    @Deprecated
+    public void setServers(String servers) {
+        configuration.setServers(servers);
+    }
+
+    /**
+     * @deprecated use getConfiguration()
+     */
+    @Deprecated
+    public void setVerbose(boolean verbose) {
+        configuration.setVerbose(verbose);
+    }
+
+    /**
+     * @deprecated use getConfiguration()
+     */
+    @Deprecated
+    public boolean isVerbose() {
+        return configuration.isVerbose();
+    }
+
     @Override
     public boolean isUseGlobalSslContextParameters() {
         return this.useGlobalSslContextParameters;

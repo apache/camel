@@ -161,7 +161,7 @@ public class NatsConsumer extends DefaultConsumer {
             String durableName = this.configuration.getDurableName();
 
             String subscriptionType = this.configuration.isPullSubscription() ? "PULL" : "PUSH";
-            LOG.debug("Setting up JetStream {}/{} consumer for stream: '{}', subject: {}",
+            LOG.debug("Setting up JetStream {}/{} consumer for stream: '{}', topic: {}",
                     subscriptionType,
                     ObjectHelper.isNotEmpty(durableName)
                             ? String.format("DURABLE, durableName: '%s'", durableName) : "EPHEMERAL",
@@ -219,12 +219,18 @@ public class NatsConsumer extends DefaultConsumer {
                         .deliverGroup(queueName)
                         .build();
 
+                boolean autoAck = false; // ACK is handled by Camel
+
+                LOG.info("Subscribing topic: {} queue:{} using AckPolicy: {} (ackWait:{} nackWait:{})",
+                        configuration.getTopic(), queueName, configuration.getAckPolicy(), configuration.getAckWait(),
+                        configuration.getNackWait());
+
                 NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         queueName,
                         dispatcher,
                         messageHandler,
-                        true,
+                        autoAck,
                         pushOptions);
             }
 
@@ -232,7 +238,6 @@ public class NatsConsumer extends DefaultConsumer {
         }
 
         private void setupStandardNatsConsumer(String topic, String queueName, Integer maxMessages) {
-            LOG.debug("Setting up standard NATS consumer for subject: {}", topic);
             NatsConsumer.this.dispatcher = connection.createDispatcher(new CamelNatsMessageHandler());
             if (ObjectHelper.isNotEmpty(queueName)) {
                 NatsConsumer.this.dispatcher = NatsConsumer.this.dispatcher.subscribe(topic, queueName);
@@ -249,26 +254,27 @@ public class NatsConsumer extends DefaultConsumer {
 
         class CamelNatsMessageHandler implements MessageHandler {
 
+            final boolean ackPolicyNone = configuration.getAckPolicy() == AckPolicy.None;
+
             @Override
             public void onMessage(Message msg) throws InterruptedException {
                 LOG.debug("Received Message: {}", msg);
                 final Exchange exchange = NatsConsumer.this.createExchange(false);
-                // ensure we either ACK or NACK the message
-                boolean autoAck = configuration.getAckPolicy() == null || configuration.getAckPolicy() == AckPolicy.None;
 
-                if (!autoAck) {
-                    long wait = configuration.getAckWait() == 0 ? 30000 : configuration.getAckWait();
-                    LOG.info("Consuming from topic: {} using AckPolicy: {} (ackWait:{} nackWait:{})",
-                            configuration.getTopic(), configuration.getAckPolicy(), wait, configuration.getNackWait());
-                    exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
-                        @Override
-                        public void onComplete(Exchange exchange) {
-                            LOG.debug("ACK (delay:{})", configuration.getAckWait());
+                exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onComplete(Exchange exchange) {
+                        LOG.debug("ACK");
+                        msg.ack();
+                    }
+
+                    @Override
+                    public void onFailure(Exchange exchange) {
+                        if (ackPolicyNone) {
+                            // ACK policy is none which means that we should auto ACK even if the message processed failed in Camel
+                            LOG.debug("ACK");
                             msg.ack();
-                        }
-
-                        @Override
-                        public void onFailure(Exchange exchange) {
+                        } else {
                             LOG.debug("NACK (delay:{})", configuration.getNackWait());
                             if (configuration.getNackWait() <= 0) {
                                 msg.nak();
@@ -276,8 +282,8 @@ public class NatsConsumer extends DefaultConsumer {
                                 msg.nakWithDelay(configuration.getNackWait());
                             }
                         }
-                    });
-                }
+                    }
+                });
                 try {
                     exchange.getIn().setBody(msg.getData());
                     exchange.getIn().setHeader(NatsConstants.NATS_REPLY_TO, msg.getReplyTo());

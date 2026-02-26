@@ -78,7 +78,7 @@ public class NatsConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "explicit", enums = "none,all,explicit")
     private AckPolicy ackPolicy;
     @UriParam(label = "consumer", defaultValue = "30000")
-    private long ackWait;
+    private long ackWait = 30000;
     @UriParam(label = "consumer", defaultValue = "5000")
     private long nackWait = 5000;
     @UriParam(label = "consumer")
@@ -598,10 +598,12 @@ public class NatsConfiguration implements Cloneable {
     /**
      * Acknowledgement mode.
      * <p>
-     * none = Messages are acknowledged as soon as the server sends them. Clients do not need to ack. all = All messages
-     * with a sequence number less than the message acked are also acknowledged. E.g. reading a batch of messages
-     * 1..100. Ack on message 100 will acknowledge 1..99 as well. explicit = Each message must be acknowledged
-     * individually. Message can be acked out of sequence and create gaps of unacknowledged messages in the consumer.
+     * none = Messages are acknowledged as soon as the server sends them (danger: messages that Camel failed to process
+     * is also ack). Clients do not need to ack. all = All messages with a sequence number less than the message acked
+     * are also acknowledged. E.g. reading a batch of messages 1..100. Ack on message 100 will acknowledge 1..99 as
+     * well. explicit (default) = Each message is acknowledged individually by Camel after the message has been
+     * processed, this ensures the message is only ack if success and nack if processing failed due to an exception
+     * during routing. Message can be acked out of sequence and create gaps of unacknowledged messages in the consumer.
      */
     public void setAckPolicy(AckPolicy ackPolicy) {
         this.ackPolicy = ackPolicy;

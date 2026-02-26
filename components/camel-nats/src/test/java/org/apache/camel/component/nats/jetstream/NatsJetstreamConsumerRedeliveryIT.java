@@ -66,7 +66,7 @@ public class NatsJetstreamConsumerRedeliveryIT extends NatsITSupport {
                         = "nats:mytopic2?jetstreamEnabled=true&jetstreamName=mystream2&jetstreamAsync=false&durableName=camel2&pullSubscription=false&ackPolicy=explicit&nackWait=10";
 
                 from("direct:send")
-                        // when running full test suite then send can fail due to nats server setup/tearndown
+                        // when running full test suite then send can fail due to nats server setup/teardown
                         .errorHandler(defaultErrorHandler().maximumRedeliveries(5))
                         .to(uri);
 
