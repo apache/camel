@@ -32,8 +32,7 @@ import com.google.api.gax.grpc.GrpcTransportChannel;
 import com.google.api.gax.rpc.FixedTransportChannelProvider;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.TransportChannelProvider;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.pubsub.v1.MessageReceiver;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.cloud.pubsub.v1.Subscriber;
@@ -47,11 +46,10 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCredentialsHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
-import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,18 +214,13 @@ public class GooglePubsubComponent extends HeaderFilterStrategyComponent {
     }
 
     private CredentialsProvider getCredentialsProvider(GooglePubsubEndpoint endpoint) throws IOException {
-        CredentialsProvider credentialsProvider;
-
-        if (endpoint.isAuthenticate()) {
-            credentialsProvider = FixedCredentialsProvider.create(ObjectHelper.isEmpty(endpoint.getServiceAccountKey())
-                    ? GoogleCredentials.getApplicationDefault() : ServiceAccountCredentials.fromStream(ResourceHelper
-                            .resolveMandatoryResourceAsInputStream(getCamelContext(), endpoint.getServiceAccountKey()))
-                            .createScoped(PublisherStubSettings.getDefaultServiceScopes()));
-        } else {
-            credentialsProvider = NoCredentialsProvider.create();
+        if (!endpoint.isAuthenticate()) {
+            return NoCredentialsProvider.create();
         }
 
-        return credentialsProvider;
+        Credentials credentials = GoogleCredentialsHelper.getCredentials(
+                getCamelContext(), endpoint, PublisherStubSettings.getDefaultServiceScopes());
+        return FixedCredentialsProvider.create(credentials);
     }
 
     public String getEndpoint() {
