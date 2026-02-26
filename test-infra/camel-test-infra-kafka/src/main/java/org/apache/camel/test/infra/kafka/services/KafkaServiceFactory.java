@@ -63,11 +63,11 @@ public final class KafkaServiceFactory {
     public static KafkaService createService() {
         SimpleTestServiceBuilder<KafkaService> builder = new SimpleTestServiceBuilder<>("kafka");
 
-        return builder.addLocalMapping(ContainerLocalKafkaService::kafka3Container)
+        return builder.addLocalMapping(ContainerLocalKafkaService::kafkaContainer)
                 .addMapping("local-strimzi-container", StrimziService::new)
                 .addMapping("local-confluent-container", ConfluentService::new)
                 .addRemoteMapping(RemoteKafkaService::new)
-                .addMapping("local-kafka3-container", ContainerLocalKafkaService::kafka3Container)
+                .addMapping("local-kafka-container", ContainerLocalKafkaService::kafkaContainer)
                 .addMapping("local-redpanda-container", RedpandaService::new)
                 .build();
     }
@@ -82,10 +82,10 @@ public final class KafkaServiceFactory {
             SimpleTestServiceBuilder<KafkaService> instance = builder();
 
             instance.addLocalMapping(
-                    () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka"))
+                    () -> new SingletonKafkaService(ContainerLocalKafkaService.kafkaContainer(), "kafka"))
                     .addRemoteMapping(RemoteKafkaService::new)
-                    .addMapping("local-kafka3-container",
-                            () -> new SingletonKafkaService(ContainerLocalKafkaService.kafka3Container(), "kafka3"))
+                    .addMapping("local-kafka-container",
+                            () -> new SingletonKafkaService(ContainerLocalKafkaService.kafkaContainer(), "kafka"))
                     .addMapping("local-confluent-container",
                             () -> new SingletonKafkaService(new ConfluentService(), "confluent"))
                     .addMapping("local-strimzi-container",
@@ -102,10 +102,10 @@ public final class KafkaServiceFactory {
             super.kafka = kafka;
         }
 
-        public static ContainerLocalKafkaService kafka3Container() {
+        public static ContainerLocalKafkaService kafkaContainer() {
             KafkaContainer container
                     = new KafkaContainer(
-                            DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
+                            DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA_IMAGE_NAME))
                                     .asCompatibleSubstituteFor("apache/kafka"));
 
             return new ContainerLocalKafkaService(container);

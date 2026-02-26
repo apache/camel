@@ -128,6 +128,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // partition.assignment.strategy
     @UriParam(label = "consumer", defaultValue = KafkaConstants.PARTITIONER_RANGE_ASSIGNOR)
     private String partitionAssignor = KafkaConstants.PARTITIONER_RANGE_ASSIGNOR;
+    // group.protocol
+    @UriParam(label = "consumer", defaultValue = "classic", enums = "classic,consumer")
+    private String groupProtocol = "classic";
+    // group.remote.assignor
+    @UriParam(label = "consumer")
+    private String groupRemoteAssignor;
     // request.timeout.ms
     @UriParam(label = "consumer", defaultValue = "30000")
     private Integer consumerRequestTimeoutMs = 30000;
@@ -208,8 +214,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "540000")
     private Integer connectionMaxIdleMs = 540000;
     // linger.ms
-    @UriParam(label = "producer", defaultValue = "0")
-    private Integer lingerMs = 0;
+    @UriParam(label = "producer", defaultValue = "5")
+    private Integer lingerMs = 5;
     // linger.ms
     @UriParam(label = "producer", defaultValue = "60000")
     private Integer maxBlockMs = 60000;
@@ -570,6 +576,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotEmpty(props, ConsumerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, getConnectionMaxIdleMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, getAutoCommitEnable());
         addPropertyIfNotEmpty(props, ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, getPartitionAssignor());
+        addPropertyIfNotEmpty(props, ConsumerConfig.GROUP_PROTOCOL_CONFIG, getGroupProtocol());
+        addPropertyIfNotEmpty(props, ConsumerConfig.GROUP_REMOTE_ASSIGNOR_CONFIG, getGroupRemoteAssignor());
         addPropertyIfNotEmpty(props, ConsumerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotEmpty(props, ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, getConsumerRequestTimeoutMs());
         addPropertyIfNotEmpty(props, ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, getAutoCommitIntervalMs());
@@ -1898,6 +1906,31 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setPartitionAssignor(String partitionAssignor) {
         this.partitionAssignor = partitionAssignor;
+    }
+
+    public String getGroupProtocol() {
+        return groupProtocol;
+    }
+
+    /**
+     * The consumer group protocol to use. The "classic" protocol uses the traditional partition assignment and
+     * rebalancing mechanism. The "consumer" protocol enables the new KIP-848 consumer rebalance protocol which provides
+     * faster and more efficient rebalancing.
+     */
+    public void setGroupProtocol(String groupProtocol) {
+        this.groupProtocol = groupProtocol;
+    }
+
+    public String getGroupRemoteAssignor() {
+        return groupRemoteAssignor;
+    }
+
+    /**
+     * The name of the server-side assignor to use when group.protocol is set to "consumer". If not specified, the group
+     * coordinator will use the default assignor configured on the broker (group.consumer.assignors).
+     */
+    public void setGroupRemoteAssignor(String groupRemoteAssignor) {
+        this.groupRemoteAssignor = groupRemoteAssignor;
     }
 
     public Integer getConsumerRequestTimeoutMs() {

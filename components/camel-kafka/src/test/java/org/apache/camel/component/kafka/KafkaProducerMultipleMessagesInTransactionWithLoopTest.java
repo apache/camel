@@ -43,7 +43,7 @@ public class KafkaProducerMultipleMessagesInTransactionWithLoopTest extends Came
     protected MockEndpoint doneEndpoint;
 
     private MockProducer<String, String> mockProducer
-            = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
+            = new MockProducer<>(true, null, new StringSerializer(), new StringSerializer());
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

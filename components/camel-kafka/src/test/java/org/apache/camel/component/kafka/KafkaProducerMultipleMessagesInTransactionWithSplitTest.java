@@ -45,7 +45,7 @@ public class KafkaProducerMultipleMessagesInTransactionWithSplitTest extends Cam
     protected MockEndpoint doneEndpoint;
 
     private final MockProducer<String, String> mockProducer
-            = new MockProducer<>(true, new StringSerializer(), new StringSerializer());
+            = new MockProducer<>(true, null, new StringSerializer(), new StringSerializer());
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

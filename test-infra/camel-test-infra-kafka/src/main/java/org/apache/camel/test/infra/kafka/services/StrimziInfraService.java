@@ -32,53 +32,37 @@ import org.testcontainers.containers.Network;
 public class StrimziInfraService implements KafkaInfraService, ContainerService<StrimziContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(StrimziInfraService.class);
 
-    private final ZookeeperContainer zookeeperContainer;
     private final StrimziContainer strimziContainer;
 
     public StrimziInfraService() {
-        this("zookeeper-" + TestUtils.randomWithRange(1, 100),
-             "strimzi-" + TestUtils.randomWithRange(1, 100));
+        this("strimzi-" + TestUtils.randomWithRange(1, 100));
     }
 
-    public StrimziInfraService(String zookeeperInstanceName, String strimziInstanceName) {
+    public StrimziInfraService(String strimziInstanceName) {
         Network network = Network.newNetwork();
 
-        zookeeperContainer = initZookeeperContainer(network, zookeeperInstanceName);
-        strimziContainer = initStrimziContainer(network, strimziInstanceName, zookeeperInstanceName);
+        strimziContainer = initStrimziContainer(network, strimziInstanceName);
         String name = ContainerEnvironmentUtil.containerName(this.getClass());
         if (name != null) {
             strimziContainer.withCreateContainerCmdModifier(cmd -> cmd.withName(name));
         }
     }
 
-    public StrimziInfraService(ZookeeperContainer zookeeperContainer, StrimziContainer strimziContainer) {
-        this.zookeeperContainer = zookeeperContainer;
+    public StrimziInfraService(StrimziContainer strimziContainer) {
         this.strimziContainer = strimziContainer;
     }
 
-    protected StrimziContainer initStrimziContainer(Network network, String instanceName, String zookeeperInstanceName) {
+    protected StrimziContainer initStrimziContainer(Network network, String instanceName) {
         class TestInfraStrimziContainer extends StrimziContainer {
-            public TestInfraStrimziContainer(Network network, String name, String zookeeperInstanceName, boolean fixedPort) {
-                super(network, name, zookeeperInstanceName);
+            public TestInfraStrimziContainer(Network network, String name, boolean fixedPort) {
+                super(network, name);
 
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, 9092);
             }
         }
 
         return new TestInfraStrimziContainer(
-                network, instanceName, zookeeperInstanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
-    }
-
-    protected ZookeeperContainer initZookeeperContainer(Network network, String instanceName) {
-        class TestInfraZookeeperContainer extends ZookeeperContainer {
-            public TestInfraZookeeperContainer(Network network, String name, boolean fixedPort) {
-                super(network, name);
-
-                ContainerEnvironmentUtil.configurePort(this, fixedPort, 2181);
-            }
-        }
-
-        return new TestInfraZookeeperContainer(network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
+                network, instanceName, ContainerEnvironmentUtil.isFixedPort(this.getClass()));
     }
 
     protected Integer getKafkaPort() {
@@ -102,11 +86,6 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
 
     @Override
     public void initialize() {
-        zookeeperContainer.start();
-
-        String zookeeperConnect = zookeeperContainer.getHost() + ":" + zookeeperContainer.getZookeeperPort();
-        LOG.info("Apache Zookeeper running at address {}", zookeeperConnect);
-
         strimziContainer.start();
 
         registerProperties();
@@ -114,7 +93,7 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
     }
 
     private boolean stopped() {
-        return !strimziContainer.isRunning() && !zookeeperContainer.isRunning();
+        return !strimziContainer.isRunning();
     }
 
     @Override
@@ -123,9 +102,6 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
             LOG.info("Stopping Kafka container");
             strimziContainer.stop();
         } finally {
-            LOG.info("Stopping Zookeeper container");
-            zookeeperContainer.stop();
-
             TestUtils.waitFor(this::stopped);
         }
     }
@@ -133,9 +109,5 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
     @Override
     public StrimziContainer getContainer() {
         return strimziContainer;
-    }
-
-    protected ZookeeperContainer getZookeeperContainer() {
-        return zookeeperContainer;
     }
 }

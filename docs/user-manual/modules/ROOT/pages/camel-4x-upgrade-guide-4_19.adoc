@@ -102,6 +102,18 @@ commonly used at in the top. EIPs such as `circuitBreaker` now has `onFallback` 
 
 This order is also the same order that UI builders like Camel Karavan and Kaoto do as well.
 
+=== camel-kafka
+
+The Kafka client library has been upgraded from 3.9.1 to 4.2.0. This is a major version upgrade of Apache Kafka with several notable changes:
+
+* The default value of `lingerMs` (producer `linger.ms`) has been changed from `0` to `5` to align with the Kafka 4.x default. This improves batching efficiency as larger batches typically result in similar or lower producer latency.
+
+* Two new consumer configuration options have been added:
+** `groupProtocol` -- Controls which consumer group protocol to use. Valid values are `classic` (default) and `consumer`. Setting this to `consumer` enables the new KIP-848 consumer rebalance protocol which provides faster and more efficient rebalancing.
+** `groupRemoteAssignor` -- The name of the server-side assignor to use when `groupProtocol` is set to `consumer`. If not specified, the group coordinator will use the default assignor configured on the broker.
+
+* If you had explicitly configured the `partitioner` option to use `org.apache.kafka.clients.producer.internals.DefaultPartitioner` or `org.apache.kafka.clients.producer.UniformStickyPartitioner`, you must remove that configuration as these classes have been removed in Kafka 4.0. The built-in default partitioner (used when no partitioner is set) continues to work.
+
 === camel-google-pubsub-lite
 
 The `camel-google-pubsub-lite` component has been removed. The component was deprecated in Camel 4.10 following Google Cloud Platform's deprecation of the underlying Pub/Sub Lite service.

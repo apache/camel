@@ -585,6 +585,43 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * The consumer group protocol to use. The classic protocol uses the
+         * traditional partition assignment and rebalancing mechanism. The
+         * consumer protocol enables the new KIP-848 consumer rebalance protocol
+         * which provides faster and more efficient rebalancing.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: classic
+         * Group: consumer
+         * 
+         * @param groupProtocol the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder groupProtocol(java.lang.String groupProtocol) {
+            doSetProperty("groupProtocol", groupProtocol);
+            return this;
+        }
+    
+        /**
+         * The name of the server-side assignor to use when group.protocol is
+         * set to consumer. If not specified, the group coordinator will use the
+         * default assignor configured on the broker (group.consumer.assignors).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param groupRemoteAssignor the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder groupRemoteAssignor(java.lang.String groupRemoteAssignor) {
+            doSetProperty("groupRemoteAssignor", groupRemoteAssignor);
+            return this;
+        }
+    
         /**
          * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
          * values.
@@ -1286,6 +1323,7 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+        
         /**
          * The producer groups together any records that arrive in between
          * request transmissions into a single, batched, request. Normally, this
@@ -1308,6 +1346,7 @@ public interface KafkaComponentBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 5
          * Group: producer
          * 
          * @param lingerMs the value to set
@@ -2613,6 +2652,8 @@ public interface KafkaComponentBuilderFactory {
             case "fetchWaitMaxMs": getOrCreateConfiguration((KafkaComponent) component).setFetchWaitMaxMs((java.lang.Integer) value); return true;
             case "groupId": getOrCreateConfiguration((KafkaComponent) component).setGroupId((java.lang.String) value); return true;
             case "groupInstanceId": getOrCreateConfiguration((KafkaComponent) component).setGroupInstanceId((java.lang.String) value); return true;
+            case "groupProtocol": getOrCreateConfiguration((KafkaComponent) component).setGroupProtocol((java.lang.String) value); return true;
+            case "groupRemoteAssignor": getOrCreateConfiguration((KafkaComponent) component).setGroupRemoteAssignor((java.lang.String) value); return true;
             case "headerDeserializer": getOrCreateConfiguration((KafkaComponent) component).setHeaderDeserializer((org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((KafkaComponent) component).setHeartbeatIntervalMs((java.lang.Integer) value); return true;
             case "keyDeserializer": getOrCreateConfiguration((KafkaComponent) component).setKeyDeserializer((java.lang.String) value); return true;

@@ -87,6 +87,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "groupId": getOrCreateConfiguration(target).setGroupId(property(camelContext, java.lang.String.class, value)); return true;
         case "groupinstanceid":
         case "groupInstanceId": getOrCreateConfiguration(target).setGroupInstanceId(property(camelContext, java.lang.String.class, value)); return true;
+        case "groupprotocol":
+        case "groupProtocol": getOrCreateConfiguration(target).setGroupProtocol(property(camelContext, java.lang.String.class, value)); return true;
+        case "groupremoteassignor":
+        case "groupRemoteAssignor": getOrCreateConfiguration(target).setGroupRemoteAssignor(property(camelContext, java.lang.String.class, value)); return true;
         case "headerdeserializer":
         case "headerDeserializer": getOrCreateConfiguration(target).setHeaderDeserializer(property(camelContext, org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class, value)); return true;
         case "headerfilterstrategy":
@@ -345,6 +349,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "groupId": return java.lang.String.class;
         case "groupinstanceid":
         case "groupInstanceId": return java.lang.String.class;
+        case "groupprotocol":
+        case "groupProtocol": return java.lang.String.class;
+        case "groupremoteassignor":
+        case "groupRemoteAssignor": return java.lang.String.class;
         case "headerdeserializer":
         case "headerDeserializer": return org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer.class;
         case "headerfilterstrategy":
@@ -599,6 +607,10 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "groupId": return getOrCreateConfiguration(target).getGroupId();
         case "groupinstanceid":
         case "groupInstanceId": return getOrCreateConfiguration(target).getGroupInstanceId();
+        case "groupprotocol":
+        case "groupProtocol": return getOrCreateConfiguration(target).getGroupProtocol();
+        case "groupremoteassignor":
+        case "groupRemoteAssignor": return getOrCreateConfiguration(target).getGroupRemoteAssignor();
         case "headerdeserializer":
         case "headerDeserializer": return getOrCreateConfiguration(target).getHeaderDeserializer();
         case "headerfilterstrategy":

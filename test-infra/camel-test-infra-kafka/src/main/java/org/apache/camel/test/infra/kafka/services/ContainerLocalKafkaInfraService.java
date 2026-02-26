@@ -31,9 +31,9 @@ import org.testcontainers.utility.DockerImageName;
               description = "Apache Kafka, Distributed event streaming platform",
               serviceAlias = "kafka")
 public class ContainerLocalKafkaInfraService implements KafkaInfraService, ContainerService<KafkaContainer> {
-    public static final String KAFKA3_IMAGE_NAME = LocalPropertyResolver.getProperty(
+    public static final String KAFKA_IMAGE_NAME = LocalPropertyResolver.getProperty(
             ContainerLocalKafkaInfraService.class,
-            KafkaProperties.KAFKA3_CONTAINER);
+            KafkaProperties.KAFKA_CONTAINER_IMAGE);
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaInfraService.class);
     protected KafkaContainer kafka;
@@ -57,7 +57,7 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
     protected KafkaContainer initContainer() {
         class TestInfraKafkaContainer extends KafkaContainer {
             public TestInfraKafkaContainer(boolean fixedPort) {
-                super(DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
+                super(DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA_IMAGE_NAME))
                         .asCompatibleSubstituteFor("apache/kafka"));
 
                 ContainerEnvironmentUtil.configurePort(this, fixedPort, 9092);
@@ -100,10 +100,10 @@ public class ContainerLocalKafkaInfraService implements KafkaInfraService, Conta
         return kafka;
     }
 
-    public static ContainerLocalKafkaInfraService kafka3Container() {
+    public static ContainerLocalKafkaInfraService kafkaContainer() {
         KafkaContainer container
                 = new KafkaContainer(
-                        DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA3_IMAGE_NAME))
+                        DockerImageName.parse(System.getProperty(KafkaProperties.KAFKA_CONTAINER, KAFKA_IMAGE_NAME))
                                 .asCompatibleSubstituteFor("apache/kafka"));
 
         return new ContainerLocalKafkaInfraService(container);

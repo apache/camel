@@ -868,6 +868,40 @@ public interface KafkaEndpointBuilderFactory {
             return this;
         }
         /**
+         * The consumer group protocol to use. The classic protocol uses the
+         * traditional partition assignment and rebalancing mechanism. The
+         * consumer protocol enables the new KIP-848 consumer rebalance protocol
+         * which provides faster and more efficient rebalancing.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: classic
+         * Group: consumer
+         * 
+         * @param groupProtocol the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder groupProtocol(String groupProtocol) {
+            doSetProperty("groupProtocol", groupProtocol);
+            return this;
+        }
+        /**
+         * The name of the server-side assignor to use when group.protocol is
+         * set to consumer. If not specified, the group coordinator will use the
+         * default assignor configured on the broker (group.consumer.assignors).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param groupRemoteAssignor the value to set
+         * @return the dsl builder
+         */
+        default KafkaEndpointConsumerBuilder groupRemoteAssignor(String groupRemoteAssignor) {
+            doSetProperty("groupRemoteAssignor", groupRemoteAssignor);
+            return this;
+        }
+        /**
          * To use a custom KafkaHeaderDeserializer to deserialize kafka headers
          * values.
          * 
@@ -2904,7 +2938,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
-         * Default: 0
+         * Default: 5
          * Group: producer
          * 
          * @param lingerMs the value to set
@@ -2937,7 +2971,7 @@ public interface KafkaEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
-         * Default: 0
+         * Default: 5
          * Group: producer
          * 
          * @param lingerMs the value to set

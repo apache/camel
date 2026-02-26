@@ -37,7 +37,7 @@
 
     <dependencies>
 
-        <!-- kafka 3.x is required -->
+        <!-- kafka 4.x is required -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
