@@ -23,7 +23,7 @@ public class MiloBrowseEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(30);
+        Set<String> props = new HashSet<>(31);
         props.add("allowedSecurityPolicies");
         props.add("applicationName");
         props.add("applicationUri");
@@ -48,6 +48,7 @@ public class MiloBrowseEndpointUriFactory extends org.apache.camel.support.compo
         props.add("node");
         props.add("nodeClasses");
         props.add("overrideHost");
+        props.add("overridePort");
         props.add("productUri");
         props.add("recursive");
         props.add("requestTimeout");

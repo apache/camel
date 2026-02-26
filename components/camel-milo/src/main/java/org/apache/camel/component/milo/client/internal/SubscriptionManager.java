@@ -820,30 +820,32 @@ public class SubscriptionManager {
 
         // return result, might override the host part
 
-        return overrideHost(best);
+        return overrideHostOrPort(best);
     }
 
     /**
-     * Optionally override the host of the endpoint URL with the configured one. <br>
-     * The method will call {@link #overrideHost(String)} if the endpoint is not {@code null} and
-     * {@link MiloClientConfiguration#isOverrideHost()} returns {@code true}.
+     * Optionally override the host or port of the endpoint URL with the configured one. <br>
+     * The method will call {@link #overrideHostOrPort(String)} if the endpoint is not {@code null} and
+     * ({@link MiloClientConfiguration#isOverrideHost()} returns {@code true} or
+     * {@link MiloClientConfiguration#isOverridePort()} returns {@code true}).
      *
      * @param  desc               The endpoint descriptor to work on
      * @return                    Either the provided or updated endpoint descriptor. Only returns {@code null} when the
      *                            input was {@code null}.
      * @throws URISyntaxException on case the URI is malformed
      */
-    private EndpointDescription overrideHost(final EndpointDescription desc) throws URISyntaxException {
+    private EndpointDescription overrideHostOrPort(final EndpointDescription desc) throws URISyntaxException {
         if (desc == null) {
             return null;
         }
 
-        if (!this.configuration.isOverrideHost()) {
+        if (!this.configuration.isOverrideHost() && !this.configuration.isOverridePort()) {
             return desc;
         }
 
         return new EndpointDescription(
-                overrideHost(desc.getEndpointUrl()), desc.getServer(), desc.getServerCertificate(), desc.getSecurityMode(),
+                overrideHostOrPort(desc.getEndpointUrl()), desc.getServer(), desc.getServerCertificate(),
+                desc.getSecurityMode(),
                 desc.getSecurityPolicyUri(),
                 desc.getUserIdentityTokens(), desc.getTransportProfileUri(), desc.getSecurityLevel());
     }
@@ -852,11 +854,11 @@ public class SubscriptionManager {
      * Override host part of the endpoint URL with the configured one.
      *
      * @param  endpointUrl        the server provided endpoint URL
-     * @return                    A new endpoint URL with the host part exchanged by the configured host. Will be
-     *                            {@code null} when the input is {@code null}.
+     * @return                    A new endpoint URL with the host part or port part exchanged by the configured host or
+     *                            configured port, respectively. Will be {@code null} when the input is {@code null}.
      * @throws URISyntaxException on case the URI is malformed
      */
-    private String overrideHost(final String endpointUrl) throws URISyntaxException {
+    private String overrideHostOrPort(final String endpointUrl) throws URISyntaxException {
 
         if (endpointUrl == null) {
             return null;
@@ -864,10 +866,11 @@ public class SubscriptionManager {
 
         final URI uri = URI.create(endpointUrl);
         final URI originalUri = URI.create(configuration.getEndpointUri());
+        final String host = configuration.isOverrideHost() ? originalUri.getHost() : uri.getHost();
+        final int port = configuration.isOverridePort() ? originalUri.getPort() : uri.getPort();
 
-        return new URI(
-                uri.getScheme(), uri.getUserInfo(), originalUri.getHost(), uri.getPort(), uri.getPath(), uri.getQuery(),
-                uri.getFragment()).toString();
+        return new URI(uri.getScheme(), uri.getUserInfo(), host, port, uri.getPath(), uri.getQuery(), uri.getFragment())
+                .toString();
     }
 
     protected synchronized void whenConnected(final Worker<Connected> worker) {

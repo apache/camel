@@ -539,6 +539,38 @@ public interface MiloBrowseEndpointBuilderFactory {
             return this;
         }
         /**
+         * Override the server reported endpoint port with the port from the
+         * endpoint URI.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: client
+         * 
+         * @param overridePort the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder overridePort(boolean overridePort) {
+            doSetProperty("overridePort", overridePort);
+            return this;
+        }
+        /**
+         * Override the server reported endpoint port with the port from the
+         * endpoint URI.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: client
+         * 
+         * @param overridePort the value to set
+         * @return the dsl builder
+         */
+        default MiloBrowseEndpointBuilder overridePort(String overridePort) {
+            doSetProperty("overridePort", overridePort);
+            return this;
+        }
+        /**
          * The product URI.
          * 
          * The option is a: <code>java.lang.String</code> type.

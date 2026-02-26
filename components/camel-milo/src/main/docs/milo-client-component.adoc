@@ -74,13 +74,14 @@ If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may
 then you can make use of this via the parameter `discoveryEndpointSuffix`, which will be appended to the `endpointUri`. Or by using
 an explicit `discoveryEndpointUri`.
 
-=== Overriding the host name
+=== Overriding the host name or port
 
-The client uses the host information from the endpoint information, queried from the server. However in some situations this endpoint URI
-might be different, and wrong from the point of view of the connecting client (e.g. an internal hostname).
+The client uses the host and port information from the endpoint information, queried from the server. However in some
+situations this endpoint URI might be different, and wrong from the point of view of the connecting client (e.g. an
+internal hostname or internal port).
 
-In this case it is possible to set the parameter `overrideHost` to `true`, which will take the discovered endpoint information,
-but override the host information with the value of the original URI.
+In this case it is possible to set the parameter(s) `overrideHost` or `overridePort` to `true`, which will take the
+discovered endpoint information, but override the host or port information with the value(s) of the original URI.
 
 [[nodeid]]
 === Node ID

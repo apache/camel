@@ -75,6 +75,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "omitNullValues": target.setOmitNullValues(property(camelContext, boolean.class, value)); return true;
         case "overridehost":
         case "overrideHost": target.getConfiguration().setOverrideHost(property(camelContext, boolean.class, value)); return true;
+        case "overrideport":
+        case "overridePort": target.getConfiguration().setOverridePort(property(camelContext, boolean.class, value)); return true;
         case "producturi":
         case "productUri": target.getConfiguration().setProductUri(property(camelContext, java.lang.String.class, value)); return true;
         case "requesttimeout":
@@ -146,6 +148,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "omitNullValues": return boolean.class;
         case "overridehost":
         case "overrideHost": return boolean.class;
+        case "overrideport":
+        case "overridePort": return boolean.class;
         case "producturi":
         case "productUri": return java.lang.String.class;
         case "requesttimeout":
@@ -218,6 +222,8 @@ public class MiloClientEndpointConfigurer extends PropertyConfigurerSupport impl
         case "omitNullValues": return target.isOmitNullValues();
         case "overridehost":
         case "overrideHost": return target.getConfiguration().isOverrideHost();
+        case "overrideport":
+        case "overridePort": return target.getConfiguration().isOverridePort();
         case "producturi":
         case "productUri": return target.getConfiguration().getProductUri();
         case "requesttimeout":
