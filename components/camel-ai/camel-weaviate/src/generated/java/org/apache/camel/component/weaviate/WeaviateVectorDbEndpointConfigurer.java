@@ -25,6 +25,10 @@ public class WeaviateVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": target.getConfiguration().setApiKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "grpchost":
+        case "grpcHost": target.getConfiguration().setGrpcHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "grpcport":
+        case "grpcPort": target.getConfiguration().setGrpcPort(property(camelContext, java.lang.Integer.class, value)); return true;
         case "host": target.getConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
@@ -44,6 +48,10 @@ public class WeaviateVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
+        case "grpchost":
+        case "grpcHost": return java.lang.String.class;
+        case "grpcport":
+        case "grpcPort": return java.lang.Integer.class;
         case "host": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
@@ -64,6 +72,10 @@ public class WeaviateVectorDbEndpointConfigurer extends PropertyConfigurerSuppor
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "apikey":
         case "apiKey": return target.getConfiguration().getApiKey();
+        case "grpchost":
+        case "grpcHost": return target.getConfiguration().getGrpcHost();
+        case "grpcport":
+        case "grpcPort": return target.getConfiguration().getGrpcPort();
         case "host": return target.getConfiguration().getHost();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();

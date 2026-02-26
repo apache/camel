@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.weaviate;
 
-import io.weaviate.client.Config;
-import io.weaviate.client.WeaviateAuthClient;
-import io.weaviate.client.WeaviateClient;
-import io.weaviate.client.base.Result;
-import io.weaviate.client.v1.auth.exception.AuthException;
+import io.weaviate.client6.v1.api.Authentication;
+import io.weaviate.client6.v1.api.WeaviateClient;
+import io.weaviate.client6.v1.api.WeaviateException;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -77,7 +75,7 @@ public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
         return collection;
     }
 
-    public WeaviateClient getClient() throws AuthException {
+    public WeaviateClient getClient() throws WeaviateException {
         lock.lock();
         try {
             if (this.client == null) {
@@ -109,33 +107,54 @@ public class WeaviateVectorDbEndpoint extends DefaultEndpoint {
 
     @Override
     public void doStop() throws Exception {
+        if (this.client != null) {
+            this.client.close();
+            this.client = null;
+        }
         super.doStop();
     }
 
-    private WeaviateClient createClient() throws AuthException {
-        String scheme = configuration.getScheme();
+    private WeaviateClient createClient() throws WeaviateException {
+        String scheme = configuration.getScheme() != null ? configuration.getScheme() : "http";
         String host = configuration.getHost();
-        Config config = new Config(scheme, host);
 
-        // Configure proxy if we have proxy details within the configuration
-        if (configuration.getProxyHost() != null
-                && configuration.getProxyPort() != null
-                && configuration.getProxyScheme() != null) {
-            config.setProxy(configuration.getProxyHost(), configuration.getProxyPort().intValue(),
-                    configuration.getProxyScheme());
+        // Parse host:port if port is embedded in the host string
+        String httpHost = host;
+        int httpPort = 8080;
+        if (host != null && host.contains(":")) {
+            String[] parts = host.split(":");
+            httpHost = parts[0];
+            httpPort = Integer.parseInt(parts[1]);
         }
+
+        String grpcHost = configuration.getGrpcHost() != null ? configuration.getGrpcHost() : httpHost;
+        int grpcPort = configuration.getGrpcPort() != null ? configuration.getGrpcPort() : 50051;
+
+        final String resolvedScheme = scheme;
+        final String resolvedHttpHost = httpHost;
+        final int resolvedHttpPort = httpPort;
+        final String resolvedGrpcHost = grpcHost;
+        final int resolvedGrpcPort = grpcPort;
 
         WeaviateClient weaviate;
 
         if (configuration.getApiKey() != null) {
-            weaviate = WeaviateAuthClient.apiKey(config, configuration.getApiKey());
+            weaviate = WeaviateClient.connectToCustom(
+                    conn -> conn
+                            .scheme(resolvedScheme)
+                            .httpHost(resolvedHttpHost)
+                            .httpPort(resolvedHttpPort)
+                            .grpcHost(resolvedGrpcHost)
+                            .grpcPort(resolvedGrpcPort)
+                            .authentication(Authentication.apiKey(configuration.getApiKey())));
         } else {
-            weaviate = new WeaviateClient(config);
-        }
-
-        Result<Boolean> result = weaviate.misc().readyChecker().run();
-        if (result.hasErrors()) {
-            throw new AuthException(result.getError().toString());
+            weaviate = WeaviateClient.connectToCustom(
+                    conn -> conn
+                            .scheme(resolvedScheme)
+                            .httpHost(resolvedHttpHost)
+                            .httpPort(resolvedHttpPort)
+                            .grpcHost(resolvedGrpcHost)
+                            .grpcPort(resolvedGrpcPort));
         }
 
         return weaviate;

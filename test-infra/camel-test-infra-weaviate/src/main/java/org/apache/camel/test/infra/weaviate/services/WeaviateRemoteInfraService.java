@@ -49,4 +49,9 @@ public class WeaviateRemoteInfraService implements WeaviateInfraService {
     public int getWeaviatePort() {
         return Integer.parseInt(System.getProperty(WeaviateProperties.WEAVIATE_ENDPOINT_PORT));
     }
+
+    @Override
+    public int getWeaviateGrpcPort() {
+        return Integer.parseInt(System.getProperty(WeaviateProperties.WEAVIATE_ENDPOINT_GRPC_PORT, "50051"));
+    }
 }

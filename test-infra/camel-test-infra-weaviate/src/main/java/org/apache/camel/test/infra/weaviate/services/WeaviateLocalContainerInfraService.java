@@ -75,6 +75,7 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
         System.setProperty(WeaviateProperties.WEAVIATE_ENDPOINT_URL, getWeaviateEndpointUrl());
         System.setProperty(WeaviateProperties.WEAVIATE_ENDPOINT_HOST, getWeaviateHost());
         System.setProperty(WeaviateProperties.WEAVIATE_ENDPOINT_PORT, String.valueOf(getWeaviatePort()));
+        System.setProperty(WeaviateProperties.WEAVIATE_ENDPOINT_GRPC_PORT, String.valueOf(getWeaviateGrpcPort()));
     }
 
     @Override
@@ -122,5 +123,10 @@ public class WeaviateLocalContainerInfraService implements WeaviateInfraService,
             throw new RuntimeException(e);
         }
         return url.getPort();
+    }
+
+    @Override
+    public int getWeaviateGrpcPort() {
+        return container.getMappedPort(50051);
     }
 }

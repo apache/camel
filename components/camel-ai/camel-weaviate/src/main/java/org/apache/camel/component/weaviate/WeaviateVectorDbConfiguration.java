@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.weaviate;
 
-import io.weaviate.client.WeaviateClient;
+import io.weaviate.client6.v1.api.WeaviateClient;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
@@ -53,12 +53,50 @@ public class WeaviateVectorDbConfiguration implements Cloneable {
     private String proxyScheme;
 
     @Metadata(label = "producer",
+              description = "gRPC host for Weaviate server connection")
+    @UriParam
+    private String grpcHost;
+
+    @Metadata(label = "producer",
+              description = "gRPC port for Weaviate server connection", defaultValue = "50051")
+    @UriParam(defaultValue = "50051")
+    private Integer grpcPort;
+
+    @Metadata(label = "producer",
               description = "API Key to authenticate to weaviate with", secret = true)
     @UriParam
     private String apiKey;
 
     @Metadata(autowired = true)
     private WeaviateClient client;
+
+    /**
+     * Get the gRPC host for Weaviate server connection.
+     */
+    public String getGrpcHost() {
+        return grpcHost;
+    }
+
+    /**
+     * Set the gRPC host for Weaviate server connection.
+     */
+    public void setGrpcHost(String grpcHost) {
+        this.grpcHost = grpcHost;
+    }
+
+    /**
+     * Get the gRPC port for Weaviate server connection.
+     */
+    public Integer getGrpcPort() {
+        return grpcPort;
+    }
+
+    /**
+     * Set the gRPC port for Weaviate server connection.
+     */
+    public void setGrpcPort(Integer grpcPort) {
+        this.grpcPort = grpcPort;
+    }
 
     /*
      * Get the api key used to authenticate to weaviate server.
@@ -153,14 +191,14 @@ public class WeaviateVectorDbConfiguration implements Cloneable {
     }
 
     /**
-     * Get the io.weaviate.client.WeaviateClient.
+     * Get the io.weaviate.client6.v1.api.WeaviateClient.
      */
     public WeaviateClient getClient() {
         return client;
     }
 
     /**
-     * Set the io.weaviate.client.WeaviateClient used.
+     * Set the io.weaviate.client6.v1.api.WeaviateClient used.
      *
      * @param client
      */

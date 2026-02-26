@@ -44,6 +44,11 @@ public final class WeaviateServiceFactory {
         public int getWeaviatePort() {
             return getService().getWeaviatePort();
         }
+
+        @Override
+        public int getWeaviateGrpcPort() {
+            return getService().getWeaviateGrpcPort();
+        }
     }
 
     public static SimpleTestServiceBuilder<WeaviateService> builder() {
