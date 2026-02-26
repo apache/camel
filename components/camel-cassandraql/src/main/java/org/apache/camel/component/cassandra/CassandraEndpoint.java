@@ -199,8 +199,10 @@ public class CassandraEndpoint extends ScheduledPollEndpoint implements Endpoint
             }
 
             for (String codec : c) {
-                if (ObjectHelper.isNotEmpty(CassandraExtraCodecs.valueOf(codec))) {
-                    sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());
+                codec = codec.trim();
+                CassandraExtraCodecs ec = getCamelContext().getTypeConverter().tryConvertTo(CassandraExtraCodecs.class, codec);
+                if (ec != null) {
+                    sessionBuilder.addTypeCodecs(ec.codec());
                 }
             }
         }
