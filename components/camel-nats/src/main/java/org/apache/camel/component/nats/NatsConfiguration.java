@@ -34,7 +34,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
-public class NatsConfiguration {
+public class NatsConfiguration implements Cloneable {
 
     @UriPath
     @Metadata(required = true)
@@ -75,18 +75,32 @@ public class NatsConfiguration {
     private boolean replyToDisabled;
     @UriParam(label = "consumer")
     private String maxMessages;
-    @UriParam(label = "consumer", defaultValue = "none", enums = "none,all,explicit")
+    @UriParam(label = "consumer", defaultValue = "explicit", enums = "none,all,explicit")
     private AckPolicy ackPolicy;
     @UriParam(label = "consumer", defaultValue = "30000")
     private long ackWait;
     @UriParam(label = "consumer", defaultValue = "5000")
     private long nackWait = 5000;
+    @UriParam(label = "consumer")
+    private long maxDeliver;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
     @UriParam(label = "common", defaultValue = "true")
     private boolean flushConnection = true;
     @UriParam(label = "common", defaultValue = "1000")
     private int flushTimeout = 1000;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean jetstreamEnabled = false;
+    @UriParam(label = "common")
+    private String jetstreamName;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean jetstreamAsync = true;
+    @UriParam(label = "consumer,advanced")
+    private ConsumerConfiguration consumerConfiguration;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean pullSubscription = true;
+    @UriParam(label = "consumer")
+    private String durableName;
     @UriParam(label = "security")
     private boolean secure;
     @UriParam(label = "security")
@@ -97,18 +111,14 @@ public class NatsConfiguration {
     private boolean traceConnection;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-    @UriParam(label = "common", defaultValue = "false")
-    private boolean jetstreamEnabled = false;
-    @UriParam(label = "common")
-    private String jetstreamName;
-    @UriParam(label = "advanced", defaultValue = "true")
-    private boolean jetstreamAsync = true;
-    @UriParam(label = "advanced")
-    private ConsumerConfiguration consumerConfiguration;
-    @UriParam(label = "advanced", defaultValue = "true")
-    private boolean pullSubscription = true;
-    @UriParam(label = "advanced")
-    private String durableName;
+
+    public NatsConfiguration copy() {
+        try {
+            return (NatsConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -587,7 +597,7 @@ public class NatsConfiguration {
 
     /**
      * Acknowledgement mode.
-     *
+     * <p>
      * none = Messages are acknowledged as soon as the server sends them. Clients do not need to ack. all = All messages
      * with a sequence number less than the message acked are also acknowledged. E.g. reading a batch of messages
      * 1..100. Ack on message 100 will acknowledge 1..99 as well. explicit = Each message must be acknowledged
@@ -615,11 +625,28 @@ public class NatsConfiguration {
 
     /**
      * For negative acknowledgements (NAK), redelivery is delayed by 5 seconds (default).
-     *
+     * <p>
      * Setting this to 0 or negative makes the redelivery immediately. Be careful as this can cause the consumer to keep
      * re-processing the same message over and over again due to intermediate error that last a while.
      */
     public void setNackWait(long nackWait) {
         this.nackWait = nackWait;
+    }
+
+    public long getMaxDeliver() {
+        return maxDeliver;
+    }
+
+    /**
+     * Maximum number of attempts to deliver a message from Nats to a consumer.
+     *
+     * Once MaxDeliver is reached, the NATS server stops attempting to deliver that specific message. The message is not
+     * deleted, it remains in the stream but is simply skipped.
+     *
+     * It is recommended to set this option to a sensible value in case a message is poison and can not successfully be
+     * processed and would always keep failing.
+     */
+    public void setMaxDeliver(long maxDeliver) {
+        this.maxDeliver = maxDeliver;
     }
 }

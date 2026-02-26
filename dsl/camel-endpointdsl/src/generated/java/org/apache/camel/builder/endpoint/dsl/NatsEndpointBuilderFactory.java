@@ -515,7 +515,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>io.nats.client.api.AckPolicy</code> type.
          * 
-         * Default: none
+         * Default: explicit
          * Group: consumer
          * 
          * @param ackPolicy the value to set
@@ -537,7 +537,7 @@ public interface NatsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>io.nats.client.api.AckPolicy</code> type.
          * 
-         * Default: none
+         * Default: explicit
          * Group: consumer
          * 
          * @param ackPolicy the value to set
@@ -579,6 +579,62 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder ackWait(String ackWait) {
             doSetProperty("ackWait", ackWait);
+            return this;
+        }
+        /**
+         * Sets the name to assign to the JetStream durable consumer. Setting
+         * this value makes the consumer durable. The value is used to set the
+         * durable() field in the underlying NATS ConsumerConfiguration.Builder.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param durableName the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder durableName(String durableName) {
+            doSetProperty("durableName", durableName);
+            return this;
+        }
+        /**
+         * Maximum number of attempts to deliver a message from Nats to a
+         * consumer. Once MaxDeliver is reached, the NATS server stops
+         * attempting to deliver that specific message. The message is not
+         * deleted, it remains in the stream but is simply skipped. It is
+         * recommended to set this option to a sensible value in case a message
+         * is poison and can not successfully be processed and would always keep
+         * failing.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param maxDeliver the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder maxDeliver(long maxDeliver) {
+            doSetProperty("maxDeliver", maxDeliver);
+            return this;
+        }
+        /**
+         * Maximum number of attempts to deliver a message from Nats to a
+         * consumer. Once MaxDeliver is reached, the NATS server stops
+         * attempting to deliver that specific message. The message is not
+         * deleted, it remains in the stream but is simply skipped. It is
+         * recommended to set this option to a sensible value in case a message
+         * is poison and can not successfully be processed and would always keep
+         * failing.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: consumer
+         * 
+         * @param maxDeliver the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder maxDeliver(String maxDeliver) {
+            doSetProperty("maxDeliver", maxDeliver);
             return this;
         }
         /**
@@ -662,6 +718,42 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
+            return this;
+        }
+        /**
+         * Sets the consumer subscription type for JetStream. Set to true to use
+         * a Pull Subscription (consumer explicitly requests messages). Set to
+         * false to use a Push Subscription (messages are automatically
+         * delivered).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param pullSubscription the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullSubscription(boolean pullSubscription) {
+            doSetProperty("pullSubscription", pullSubscription);
+            return this;
+        }
+        /**
+         * Sets the consumer subscription type for JetStream. Set to true to use
+         * a Pull Subscription (consumer explicitly requests messages). Set to
+         * false to use a Push Subscription (messages are automatically
+         * delivered).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param pullSubscription the value to set
+         * @return the dsl builder
+         */
+        default NatsEndpointConsumerBuilder pullSubscription(String pullSubscription) {
+            doSetProperty("pullSubscription", pullSubscription);
             return this;
         }
         /**
@@ -849,6 +941,44 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets a custom ConsumerConfiguration object for the JetStream
+         * consumer. This is an advanced option typically used when you need to
+         * configure properties not exposed as simple Camel URI parameters. When
+         * set, this object will be used to build the final consumer
+         * subscription options.
+         * 
+         * The option is a:
+         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder consumerConfiguration(io.nats.client.api.ConsumerConfiguration consumerConfiguration) {
+            doSetProperty("consumerConfiguration", consumerConfiguration);
+            return this;
+        }
+        /**
+         * Sets a custom ConsumerConfiguration object for the JetStream
+         * consumer. This is an advanced option typically used when you need to
+         * configure properties not exposed as simple Camel URI parameters. When
+         * set, this object will be used to build the final consumer
+         * subscription options.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param consumerConfiguration the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNatsEndpointConsumerBuilder consumerConfiguration(String consumerConfiguration) {
+            doSetProperty("consumerConfiguration", consumerConfiguration);
+            return this;
+        }
+        /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
          * option bridgeErrorHandler is enabled then this option is not in use.
          * By default the consumer will deal with exceptions, that will be
@@ -943,60 +1073,6 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a custom ConsumerConfiguration object for the JetStream
-         * consumer. This is an advanced option typically used when you need to
-         * configure properties not exposed as simple Camel URI parameters. When
-         * set, this object will be used to build the final consumer
-         * subscription options.
-         * 
-         * The option is a:
-         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param consumerConfiguration the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointConsumerBuilder consumerConfiguration(io.nats.client.api.ConsumerConfiguration consumerConfiguration) {
-            doSetProperty("consumerConfiguration", consumerConfiguration);
-            return this;
-        }
-        /**
-         * Sets a custom ConsumerConfiguration object for the JetStream
-         * consumer. This is an advanced option typically used when you need to
-         * configure properties not exposed as simple Camel URI parameters. When
-         * set, this object will be used to build the final consumer
-         * subscription options.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param consumerConfiguration the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointConsumerBuilder consumerConfiguration(String consumerConfiguration) {
-            doSetProperty("consumerConfiguration", consumerConfiguration);
-            return this;
-        }
-        /**
-         * Sets the name to assign to the JetStream durable consumer. Setting
-         * this value makes the consumer durable. The value is used to set the
-         * durable() field in the underlying NATS ConsumerConfiguration.Builder.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param durableName the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointConsumerBuilder durableName(String durableName) {
-            doSetProperty("durableName", durableName);
-            return this;
-        }
-        /**
          * To use a custom header filter strategy.
          * 
          * The option is a:
@@ -1054,42 +1130,6 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder jetstreamAsync(String jetstreamAsync) {
             doSetProperty("jetstreamAsync", jetstreamAsync);
-            return this;
-        }
-        /**
-         * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
-         * delivered).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param pullSubscription the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointConsumerBuilder pullSubscription(boolean pullSubscription) {
-            doSetProperty("pullSubscription", pullSubscription);
-            return this;
-        }
-        /**
-         * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
-         * delivered).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param pullSubscription the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointConsumerBuilder pullSubscription(String pullSubscription) {
-            doSetProperty("pullSubscription", pullSubscription);
             return this;
         }
         /**
@@ -1804,60 +1844,6 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a custom ConsumerConfiguration object for the JetStream
-         * consumer. This is an advanced option typically used when you need to
-         * configure properties not exposed as simple Camel URI parameters. When
-         * set, this object will be used to build the final consumer
-         * subscription options.
-         * 
-         * The option is a:
-         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param consumerConfiguration the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointProducerBuilder consumerConfiguration(io.nats.client.api.ConsumerConfiguration consumerConfiguration) {
-            doSetProperty("consumerConfiguration", consumerConfiguration);
-            return this;
-        }
-        /**
-         * Sets a custom ConsumerConfiguration object for the JetStream
-         * consumer. This is an advanced option typically used when you need to
-         * configure properties not exposed as simple Camel URI parameters. When
-         * set, this object will be used to build the final consumer
-         * subscription options.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param consumerConfiguration the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointProducerBuilder consumerConfiguration(String consumerConfiguration) {
-            doSetProperty("consumerConfiguration", consumerConfiguration);
-            return this;
-        }
-        /**
-         * Sets the name to assign to the JetStream durable consumer. Setting
-         * this value makes the consumer durable. The value is used to set the
-         * durable() field in the underlying NATS ConsumerConfiguration.Builder.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param durableName the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointProducerBuilder durableName(String durableName) {
-            doSetProperty("durableName", durableName);
-            return this;
-        }
-        /**
          * To use a custom header filter strategy.
          * 
          * The option is a:
@@ -1915,42 +1901,6 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointProducerBuilder jetstreamAsync(String jetstreamAsync) {
             doSetProperty("jetstreamAsync", jetstreamAsync);
-            return this;
-        }
-        /**
-         * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
-         * delivered).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param pullSubscription the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointProducerBuilder pullSubscription(boolean pullSubscription) {
-            doSetProperty("pullSubscription", pullSubscription);
-            return this;
-        }
-        /**
-         * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
-         * delivered).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param pullSubscription the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointProducerBuilder pullSubscription(String pullSubscription) {
-            doSetProperty("pullSubscription", pullSubscription);
             return this;
         }
         /**
@@ -2579,60 +2529,6 @@ public interface NatsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets a custom ConsumerConfiguration object for the JetStream
-         * consumer. This is an advanced option typically used when you need to
-         * configure properties not exposed as simple Camel URI parameters. When
-         * set, this object will be used to build the final consumer
-         * subscription options.
-         * 
-         * The option is a:
-         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param consumerConfiguration the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointBuilder consumerConfiguration(io.nats.client.api.ConsumerConfiguration consumerConfiguration) {
-            doSetProperty("consumerConfiguration", consumerConfiguration);
-            return this;
-        }
-        /**
-         * Sets a custom ConsumerConfiguration object for the JetStream
-         * consumer. This is an advanced option typically used when you need to
-         * configure properties not exposed as simple Camel URI parameters. When
-         * set, this object will be used to build the final consumer
-         * subscription options.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.api.ConsumerConfiguration</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param consumerConfiguration the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointBuilder consumerConfiguration(String consumerConfiguration) {
-            doSetProperty("consumerConfiguration", consumerConfiguration);
-            return this;
-        }
-        /**
-         * Sets the name to assign to the JetStream durable consumer. Setting
-         * this value makes the consumer durable. The value is used to set the
-         * durable() field in the underlying NATS ConsumerConfiguration.Builder.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: advanced
-         * 
-         * @param durableName the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointBuilder durableName(String durableName) {
-            doSetProperty("durableName", durableName);
-            return this;
-        }
-        /**
          * To use a custom header filter strategy.
          * 
          * The option is a:
@@ -2690,42 +2586,6 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder jetstreamAsync(String jetstreamAsync) {
             doSetProperty("jetstreamAsync", jetstreamAsync);
-            return this;
-        }
-        /**
-         * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
-         * delivered).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param pullSubscription the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointBuilder pullSubscription(boolean pullSubscription) {
-            doSetProperty("pullSubscription", pullSubscription);
-            return this;
-        }
-        /**
-         * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
-         * delivered).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: advanced
-         * 
-         * @param pullSubscription the value to set
-         * @return the dsl builder
-         */
-        default AdvancedNatsEndpointBuilder pullSubscription(String pullSubscription) {
-            doSetProperty("pullSubscription", pullSubscription);
             return this;
         }
         /**

@@ -39,7 +39,7 @@ public class NatsJetstreamConsumerIT extends NatsITSupport {
 
         template.sendBody("direct:send", "Hello World");
 
-        mockResultEndpoint.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context);
     }
 
     @Override

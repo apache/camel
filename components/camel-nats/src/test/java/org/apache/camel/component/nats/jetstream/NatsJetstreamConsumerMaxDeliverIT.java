@@ -31,7 +31,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on GitHub Actions")
 @Isolated
-public class NatsJetstreamConsumerRedeliveryIT extends NatsITSupport {
+public class NatsJetstreamConsumerMaxDeliverIT extends NatsITSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -41,10 +41,7 @@ public class NatsJetstreamConsumerRedeliveryIT extends NatsITSupport {
 
     @Test
     public void testConsumer() throws Exception {
-        mockResultEndpoint.expectedBodiesReceived("Hello World");
-        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2");
-        mockResultEndpoint.expectedHeaderReceived("counter", 3);
-        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_DELIVERY_COUNTER, 3);
+        mockResultEndpoint.expectedMessageCount(0);
 
         mockInputEndpoint.expectedMessageCount(3);
         mockInputEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "mytopic2");
@@ -53,6 +50,8 @@ public class NatsJetstreamConsumerRedeliveryIT extends NatsITSupport {
         mockInputEndpoint.message(2).header(NatsConstants.NATS_DELIVERY_COUNTER).isEqualTo(3);
 
         template.sendBody("direct:send", "Hello World");
+
+        mockInputEndpoint.setAssertPeriod(2000); // if maxDeliver is not working then we receive the message again and again
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -63,7 +62,7 @@ public class NatsJetstreamConsumerRedeliveryIT extends NatsITSupport {
             @Override
             public void configure() {
                 String uri
-                        = "nats:mytopic2?jetstreamEnabled=true&jetstreamName=mystream2&jetstreamAsync=false&durableName=camel2&pullSubscription=false&ackPolicy=explicit&nackWait=10";
+                        = "nats:mytopic2?jetstreamEnabled=true&jetstreamName=mystream2&jetstreamAsync=false&durableName=camel2&pullSubscription=false&ackPolicy=explicit&nackWait=10&maxDeliver=3";
 
                 from("direct:send")
                         // when running full test suite then send can fail due to nats server setup/tearndown
@@ -76,10 +75,9 @@ public class NatsJetstreamConsumerRedeliveryIT extends NatsITSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                if (counter.incrementAndGet() < 3) {
-                                    throw new IllegalArgumentException("Forced");
-                                }
-                                exchange.getMessage().setHeader("counter", counter.intValue());
+                                // always fail
+                                counter.incrementAndGet();
+                                throw new IllegalArgumentException("Forced");
                             }
                         })
                         .to(mockResultEndpoint);

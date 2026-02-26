@@ -28,21 +28,18 @@ import org.apache.camel.support.HeaderFilterStrategyComponent;
 public class NatsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     @Metadata
-    private String servers;
+    private NatsConfiguration configuration = new NatsConfiguration();
+
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    @Metadata
-    private boolean verbose;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        NatsConfiguration config = new NatsConfiguration();
+        NatsConfiguration config = configuration.copy();
         if (getHeaderFilterStrategy() != null) {
             config.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
         config.setTopic(remaining);
-        config.setServers(servers);
-        config.setVerbose(verbose);
 
         if (config.getSslContextParameters() == null) {
             config.setSslContextParameters(retrieveGlobalSslContextParameters());
@@ -51,17 +48,6 @@ public class NatsComponent extends HeaderFilterStrategyComponent implements SSLC
         NatsEndpoint answer = new NatsEndpoint(uri, this, config);
         setProperties(answer, parameters);
         return answer;
-    }
-
-    /**
-     * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
-     */
-    public String getServers() {
-        return servers;
-    }
-
-    public void setServers(String servers) {
-        this.servers = servers;
     }
 
     @Override
@@ -77,14 +63,14 @@ public class NatsComponent extends HeaderFilterStrategyComponent implements SSLC
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    public boolean isVerbose() {
-        return verbose;
+    public NatsConfiguration getConfiguration() {
+        return configuration;
     }
 
     /**
-     * Whether or not running in verbose mode
+     * To use a shared configuration
      */
-    public void setVerbose(boolean verbose) {
-        this.verbose = verbose;
+    public void setConfiguration(NatsConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

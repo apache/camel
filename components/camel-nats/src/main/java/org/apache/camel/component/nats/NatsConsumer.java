@@ -194,6 +194,9 @@ public class NatsConsumer extends DefaultConsumer {
                 if (configuration.getAckWait() > 0) {
                     ccBuilder.ackWait(configuration.getAckWait());
                 }
+                if (configuration.getMaxDeliver() > 0) {
+                    ccBuilder.maxDeliver(configuration.getMaxDeliver());
+                }
                 cc = ccBuilder.build();
             }
 
@@ -216,14 +219,12 @@ public class NatsConsumer extends DefaultConsumer {
                         .deliverGroup(queueName)
                         .build();
 
-                boolean autoAck = configuration.getAckPolicy() == null || configuration.getAckPolicy() == AckPolicy.None;
-
                 NatsConsumer.this.jetStreamSubscription = this.connection.jetStream().subscribe(
                         NatsConsumer.this.getEndpoint().getConfiguration().getTopic(),
                         queueName,
                         dispatcher,
                         messageHandler,
-                        autoAck,
+                        true,
                         pushOptions);
             }
 

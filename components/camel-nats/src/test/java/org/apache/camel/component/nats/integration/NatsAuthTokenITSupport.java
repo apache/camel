@@ -30,7 +30,7 @@ public class NatsAuthTokenITSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         NatsComponent nats = context.getComponent("nats", NatsComponent.class);
-        nats.setServers(service.getServiceAddress());
+        nats.getConfiguration().setServers(service.getServiceAddress());
         return context;
     }
 
