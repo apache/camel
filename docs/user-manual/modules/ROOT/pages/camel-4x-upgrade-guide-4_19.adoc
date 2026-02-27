@@ -123,6 +123,19 @@ Google recommends migrating your Pub/Sub Lite workloads to either:
 * **Google Cloud Pub/Sub** → use the `camel-google-pubsub` component
 * **Google Cloud Managed Service for Apache Kafka** → use the `camel-kafka` component
 
+=== camel-kafka
+
+The Kafka client library has been upgraded from 3.9.x to 4.2.0. This is a major upgrade with the following notable changes:
+
+* The `lingerMs` option default value has changed from `0` to `5` to align with the Kafka 4.x client default for `linger.ms`.
+* Two new consumer options have been added: `groupProtocol` (default `classic`, enums: `classic`, `consumer`) and `groupRemoteAssignor`. These support the KIP-848 consumer rebalance protocol introduced in Kafka 4.0. When `groupProtocol` is set to `consumer`, the classic-only properties (`heartbeatIntervalMs`, `sessionTimeoutMs`, `partitionAssignor`) are automatically excluded from the consumer configuration.
+* The removed `DefaultPartitioner` and `UniformStickyPartitioner` classes are no longer available. If you were explicitly setting `partitioner` to one of these classes, remove the configuration as Kafka 4.x uses the default partitioner automatically.
+
+The test infrastructure for Kafka has been updated:
+
+* The `local-kafka3-container` mapping has been renamed to `local-kafka-container`. If you were using `-Dkafka.instance.type=local-kafka3-container`, update to `-Dkafka.instance.type=local-kafka-container`.
+* The Strimzi test service now runs in KRaft mode (no ZooKeeper). The `ZookeeperContainer` class has been removed.
+
 === camel-mail
 
 When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
