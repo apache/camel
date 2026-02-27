@@ -58,6 +58,7 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
         case "multiLabel": getOrCreateConfiguration(target).setMultiLabel(property(camelContext, boolean.class, value)); return true;
         case "oauthprofile":
         case "oauthProfile": getOrCreateConfiguration(target).setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
+        case "pooling": getOrCreateConfiguration(target).setPooling(property(camelContext, boolean.class, value)); return true;
         case "predicttimeout":
         case "predictTimeout": getOrCreateConfiguration(target).setPredictTimeout(property(camelContext, int.class, value)); return true;
         case "predictorbean":
@@ -105,6 +106,7 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
         case "multiLabel": return boolean.class;
         case "oauthprofile":
         case "oauthProfile": return java.lang.String.class;
+        case "pooling": return boolean.class;
         case "predicttimeout":
         case "predictTimeout": return int.class;
         case "predictorbean":
@@ -153,6 +155,7 @@ public class HuggingFaceComponentConfigurer extends PropertyConfigurerSupport im
         case "multiLabel": return getOrCreateConfiguration(target).isMultiLabel();
         case "oauthprofile":
         case "oauthProfile": return getOrCreateConfiguration(target).getOauthProfile();
+        case "pooling": return getOrCreateConfiguration(target).isPooling();
         case "predicttimeout":
         case "predictTimeout": return getOrCreateConfiguration(target).getPredictTimeout();
         case "predictorbean":

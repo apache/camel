@@ -23,7 +23,7 @@ public class HuggingFaceEndpointUriFactory extends org.apache.camel.support.comp
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(20);
         props.add("authToken");
         props.add("autoSelect");
         props.add("device");
@@ -35,6 +35,7 @@ public class HuggingFaceEndpointUriFactory extends org.apache.camel.support.comp
         props.add("modelLoadingTimeout");
         props.add("multiLabel");
         props.add("oauthProfile");
+        props.add("pooling");
         props.add("predictTimeout");
         props.add("predictorBean");
         props.add("revision");

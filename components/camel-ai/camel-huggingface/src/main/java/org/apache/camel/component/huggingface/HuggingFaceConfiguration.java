@@ -99,6 +99,18 @@ public class HuggingFaceConfiguration implements Cloneable {
     @UriParam(defaultValue = "5", description = "Top-k parameter for classification tasks")
     private int topK = 5;
 
+    @UriParam(defaultValue = "true",
+              description = "Whether to pool the predictor (keep the Python process alive) or create a new one for each request")
+    private boolean pooling = true;
+
+    public boolean isPooling() {
+        return pooling;
+    }
+
+    public void setPooling(boolean pooling) {
+        this.pooling = pooling;
+    }
+
     public int getTopK() {
         return topK;
     }

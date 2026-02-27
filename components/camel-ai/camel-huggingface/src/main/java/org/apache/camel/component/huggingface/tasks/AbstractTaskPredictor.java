@@ -44,6 +44,7 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
     protected HuggingFaceEndpoint endpoint;
     protected HuggingFaceConfiguration config;
     protected ZooModel<Input, Output> model;
+    protected Predictor<Input, Output> predictor;
     protected Path tmpDir;
 
     protected AbstractTaskPredictor(HuggingFaceEndpoint endpoint) {
@@ -118,9 +119,19 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
     @Override
     public void predict(Exchange exchange) throws Exception {
         Input input = prepareInput(exchange);
-        try (Predictor<Input, Output> djlPredictor = model.newPredictor()) {
-            Output output = djlPredictor.predict(input);
-            processOutput(exchange, output);
+        if (config.isPooling()) {
+            synchronized (this) {
+                if (predictor == null) {
+                    predictor = model.newPredictor();
+                }
+                Output output = predictor.predict(input);
+                processOutput(exchange, output);
+            }
+        } else {
+            try (Predictor<Input, Output> djlPredictor = model.newPredictor()) {
+                Output output = djlPredictor.predict(input);
+                processOutput(exchange, output);
+            }
         }
     }
 
@@ -130,6 +141,9 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
 
     @Override
     public void close() throws Exception {
+        if (predictor != null) {
+            predictor.close();
+        }
         if (model != null) {
             model.close();
         }
