@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.huggingface.tasks;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -118,7 +119,7 @@ public class ZeroShotClassificationPredictor extends AbstractTaskPredictor {
         }
         String jsonArray = objectMapper.writeValueAsString(inputArray);
         Input input = new Input();
-        input.add("data", jsonArray.getBytes("UTF-8"));
+        input.add("data", jsonArray.getBytes(StandardCharsets.UTF_8));
         return input;
     }
 
