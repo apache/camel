@@ -247,18 +247,12 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
-        Optional<ModelJAXBContextFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelJAXBContextFactory.FACTORY,
-                ModelJAXBContextFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find ModelJAXBContextFactory on classpath. Add camel-xml-jaxb to classpath.");
-        }
+                ModelJAXBContextFactory.class,
+                "camel-xml-jaxb");
     }
 
     @Override
@@ -303,34 +297,21 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ProcessorFactory createProcessorFactory() {
-        Optional<ProcessorFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 ProcessorFactory.FACTORY,
-                ProcessorFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find ProcessorFactory on classpath. Add camel-core-processor to classpath.");
-        }
+                ProcessorFactory.class, "camel-core-processor");
     }
 
     @Override
     protected InternalProcessorFactory createInternalProcessorFactory() {
-        Optional<InternalProcessorFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 InternalProcessorFactory.FACTORY,
-                InternalProcessorFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find InternalProcessorFactory on classpath. Add camel-core-processor to classpath.");
-        }
+                InternalProcessorFactory.class,
+                "camel-core-processor");
     }
 
     @Override
@@ -409,18 +390,12 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
-        Optional<RuntimeCamelCatalog> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 RuntimeCamelCatalog.FACTORY,
-                RuntimeCamelCatalog.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find RuntimeCamelCatalog on classpath. Add camel-core-catalog to classpath.");
-        }
+                RuntimeCamelCatalog.class,
+                "camel-core-catalog");
     }
 
     @Override
@@ -437,21 +412,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
                 DumpRoutesStrategy.FACTORY,
                 DumpRoutesStrategy.class);
 
-        if (result.isEmpty()) {
-            // lookup default factory
-            result = ResolverHelper.resolveService(
-                    getCamelContextReference(),
-                    getCamelContextExtension().getBootstrapFactoryFinder(),
-                    "default-" + DumpRoutesStrategy.FACTORY,
-                    DumpRoutesStrategy.class);
-        }
-
         if (result.isPresent()) {
             return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find DumpRoutesStrategy on classpath. Add camel-core-engine to classpath.");
         }
+
+        // lookup default factory
+        return ResolverHelper.resolveMandatoryService(
+                getCamelContextReference(),
+                getCamelContextExtension().getBootstrapFactoryFinder(),
+                "default-" + DumpRoutesStrategy.FACTORY,
+                DumpRoutesStrategy.class,
+                "camel-core-engine");
     }
 
     @Override
@@ -509,64 +480,42 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected BeanProxyFactory createBeanProxyFactory() {
-        Optional<BeanProxyFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 BeanProxyFactory.FACTORY,
-                BeanProxyFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException("Cannot find BeanProxyFactory on classpath. Add camel-bean to classpath.");
-        }
+                BeanProxyFactory.class,
+                "camel-bean");
     }
 
     @Override
     protected AnnotationBasedProcessorFactory createAnnotationBasedProcessorFactory() {
-        Optional<AnnotationBasedProcessorFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 AnnotationBasedProcessorFactory.FACTORY,
-                AnnotationBasedProcessorFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find AnnotationBasedProcessorFactory on classpath. Add camel-core-processor to classpath.");
-        }
+                AnnotationBasedProcessorFactory.class,
+                "camel-core-processor");
     }
 
     @Override
     protected DeferServiceFactory createDeferServiceFactory() {
-        Optional<DeferServiceFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 DeferServiceFactory.FACTORY,
-                DeferServiceFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find DeferServiceFactory on classpath. Add camel-core-processor to classpath.");
-        }
+                DeferServiceFactory.class,
+                "camel-core-processor");
     }
 
     @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
-        Optional<BeanProcessorFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 BeanProcessorFactory.FACTORY,
-                BeanProcessorFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException("Cannot find BeanProcessorFactory on classpath. Add camel-bean to classpath.");
-        }
+                BeanProcessorFactory.class,
+                "camel-bean");
     }
 
     @Override
@@ -598,80 +547,52 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ModelToXMLDumper createModelToXMLDumper() {
-        Optional<ModelToXMLDumper> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelToXMLDumper.FACTORY,
-                ModelToXMLDumper.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException("Cannot find ModelToXMLDumper on classpath. Add camel-xml-io to classpath.");
-        }
+                ModelToXMLDumper.class,
+                "camel-xml-io");
     }
 
     @Override
     protected ModelToYAMLDumper createModelToYAMLDumper() {
-        Optional<ModelToYAMLDumper> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelToYAMLDumper.FACTORY,
-                ModelToYAMLDumper.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException("Cannot find ModelToYAMLDumper on classpath. Add camel-yaml-io to classpath.");
-        }
+                ModelToYAMLDumper.class,
+                "camel-yaml-io");
     }
 
     @Override
     protected ModelToStructureDumper createModelToStructureDumper() {
-        Optional<ModelToStructureDumper> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelToStructureDumper.FACTORY,
-                ModelToStructureDumper.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find ModelToStructureDumper on classpath. Add camel-core-engine to classpath.");
-        }
+                ModelToStructureDumper.class,
+                "camel-core-engine");
     }
 
     @Override
     protected RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory() {
-        Optional<RestBindingJaxbDataFormatFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 RestBindingJaxbDataFormatFactory.FACTORY,
-                RestBindingJaxbDataFormatFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find RestBindingJaxbDataFormatFactory on classpath. Add camel-jaxb to classpath.");
-        }
+                RestBindingJaxbDataFormatFactory.class,
+                "camel-jaxb");
     }
 
     @Override
     protected RestBindingJacksonXmlDataFormatFactory createRestBindingJacksonXmlDataFormatFactory() {
-        Optional<RestBindingJacksonXmlDataFormatFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 RestBindingJacksonXmlDataFormatFactory.FACTORY,
-                RestBindingJacksonXmlDataFormatFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find RestBindingJacksonXmlDataFormatFactory on classpath. Add camel-jacksonxml to classpath.");
-        }
+                RestBindingJacksonXmlDataFormatFactory.class,
+                "camel-jacksonxml");
     }
 
     @Override
@@ -712,17 +633,12 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestRegistryFactory createRestRegistryFactory() {
-        Optional<RestRegistryFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 RestRegistryFactory.FACTORY,
-                RestRegistryFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException("Cannot find RestRegistryFactory on classpath. Add camel-rest to classpath.");
-        }
+                RestRegistryFactory.class,
+                "camel-rest");
     }
 
     @Override

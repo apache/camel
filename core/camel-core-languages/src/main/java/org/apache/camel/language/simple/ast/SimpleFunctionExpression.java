@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -394,31 +393,23 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private Expression createSimpleAttachments(CamelContext camelContext, String function) {
-        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
                 camelContext,
                 camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
-                SimpleLanguageFunctionFactory.class);
-
-        if (factory.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-attachments to classpath.");
-        }
-        return factory.get().createFunction(camelContext, function, token.getIndex());
+                SimpleLanguageFunctionFactory.class,
+                "camel-attachments");
+        return factory.createFunction(camelContext, function, token.getIndex());
     }
 
     private Expression createSimpleBase64(CamelContext camelContext, String function) {
-        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
                 camelContext,
                 camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
-                SimpleLanguageFunctionFactory.class);
-
-        if (factory.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-base64 to classpath.");
-        }
-        return factory.get().createFunction(camelContext, function, token.getIndex());
+                SimpleLanguageFunctionFactory.class,
+                "camel-base64");
+        return factory.createFunction(camelContext, function, token.getIndex());
     }
 
     private Expression createSimpleExpressionMessage(CamelContext camelContext, String function, boolean strict) {
@@ -2594,31 +2585,23 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private String createCodeAttachments(CamelContext camelContext, String function) {
-        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
                 camelContext,
                 camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
-                SimpleLanguageFunctionFactory.class);
-
-        if (factory.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-attachments to classpath.");
-        }
-        return factory.get().createCode(camelContext, function, token.getIndex());
+                SimpleLanguageFunctionFactory.class,
+                "camel-attachments");
+        return factory.createCode(camelContext, function, token.getIndex());
     }
 
     private String createCodeBase64(CamelContext camelContext, String function) {
-        Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
                 camelContext,
                 camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
-                SimpleLanguageFunctionFactory.class);
-
-        if (factory.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Cannot find SimpleLanguageFunctionFactory on classpath. Add camel-base64 to classpath.");
-        }
-        return factory.get().createCode(camelContext, function, token.getIndex());
+                SimpleLanguageFunctionFactory.class,
+                "camel-base64");
+        return factory.createCode(camelContext, function, token.getIndex());
     }
 
     private String createCodeExpressionMisc(CamelContext camelContext, String function) {

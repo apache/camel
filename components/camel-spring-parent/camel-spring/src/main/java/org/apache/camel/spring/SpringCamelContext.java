@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import java.util.Optional;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -258,18 +256,12 @@ public class SpringCamelContext extends DefaultCamelContext
     @Override
 
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
-        Optional<ModelJAXBContextFactory> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContextReference(),
                 getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelJAXBContextFactory.FACTORY + "-spring",
-                ModelJAXBContextFactory.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find ModelJAXBContextFactory on classpath. Add camel-spring-xml to classpath.");
-        }
+                ModelJAXBContextFactory.class,
+                "camel-spring-xml");
     }
 
     @Override

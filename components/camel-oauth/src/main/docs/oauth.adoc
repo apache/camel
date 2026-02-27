@@ -162,10 +162,9 @@ import org.apache.camel.spi.OAuthClientAuthenticationFactory;
 import org.apache.camel.spi.OAuthClientConfig;
 import org.apache.camel.support.ResolverHelper;
 
-OAuthClientAuthenticationFactory factory = ResolverHelper.resolveService(
+OAuthClientAuthenticationFactory factory = ResolverHelper.resolveMandatoryService(
         context, OAuthClientAuthenticationFactory.FACTORY,
-        OAuthClientAuthenticationFactory.class)
-    .orElseThrow(() -> new IllegalArgumentException("Add camel-oauth to the classpath"));
+        OAuthClientAuthenticationFactory.class, "camel-oauth");
 
 String token = factory.resolveToken(
     new OAuthClientConfig()

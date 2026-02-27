@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -895,12 +894,11 @@ public class ManagementHttpServer extends ServiceSupport implements CamelContext
     }
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
-        Optional<PlatformHttpPluginRegistry> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContext(),
                 PlatformHttpPluginRegistry.FACTORY,
-                PlatformHttpPluginRegistry.class);
-        return result.orElseThrow(() -> new IllegalArgumentException(
-                "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
+                PlatformHttpPluginRegistry.class,
+                "camel-platform-http");
     }
 
     private static void healthCheckStatus(JsonObject jo, boolean up) {

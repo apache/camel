@@ -19,7 +19,6 @@ package org.apache.camel.component.platform.http.main;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Optional;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.impl.MimeMapping;
@@ -304,12 +303,11 @@ public class MainHttpServer extends ServiceSupport implements CamelContextAware,
     }
 
     protected PlatformHttpPluginRegistry resolvePlatformHttpPluginRegistry() {
-        Optional<PlatformHttpPluginRegistry> result = ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryService(
                 getCamelContext(),
                 PlatformHttpPluginRegistry.FACTORY,
-                PlatformHttpPluginRegistry.class);
-        return result.orElseThrow(() -> new IllegalArgumentException(
-                "Cannot create PlatformHttpPluginRegistry. Make sure camel-platform-http JAR is on classpath."));
+                PlatformHttpPluginRegistry.class,
+                "camel-platform-http");
     }
 
     protected void setupStartupSummary() throws Exception {

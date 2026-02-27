@@ -40,14 +40,11 @@ public final class OAuthHelper {
      * @throws Exception   if the factory is not found or token acquisition fails
      */
     public static String resolveOAuthToken(CamelContext context, String profileName) throws Exception {
-        OAuthClientAuthenticationFactory factory = ResolverHelper.resolveService(
+        OAuthClientAuthenticationFactory factory = ResolverHelper.resolveMandatoryService(
                 context,
                 OAuthClientAuthenticationFactory.FACTORY,
-                OAuthClientAuthenticationFactory.class)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find OAuthClientAuthenticationFactory. "
-                                                                + "Add camel-oauth to the classpath to use oauthProfile."));
-
+                OAuthClientAuthenticationFactory.class,
+                "camel-oauth");
         return factory.resolveToken(context, profileName);
     }
 }

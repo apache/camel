@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.NoSuchServiceException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.FactoryFinder;
@@ -151,6 +152,43 @@ public final class ResolverHelper {
     /**
      * Create an instance of the given factory using the default factory finder
      *
+     * @param  camelContext           the {@link CamelContext}
+     * @param  factoryKey             the key used top lookup the factory class
+     * @param  factoryClass           the type of the class
+     * @param  jarName                the JAR to add to the classpath if service is missing
+     * @return                        an instance of the given factory
+     * @throws NoSuchServiceException is thrown if service is not found
+     */
+    public static <T> T resolveMandatoryService(
+            CamelContext camelContext, String factoryKey, Class<T> factoryClass, String jarName)
+            throws NoSuchServiceException {
+        return resolveMandatoryService(camelContext, camelContext.getCamelContextExtension().getDefaultFactoryFinder(),
+                factoryKey, factoryClass, jarName);
+    }
+
+    /**
+     * Create an instance of the given factory using the default factory finder
+     *
+     * @param  camelContext           the {@link CamelContext}
+     * @param  factoryFinder          the factory finder to use
+     * @param  factoryKey             the key used top lookup the factory class
+     * @param  factoryClass           the type of the class
+     * @param  jarName                the JAR to add to the classpath if service is missing
+     * @return                        an instance of the given factory
+     * @throws NoSuchServiceException is thrown if service is not found
+     */
+    public static <T> T resolveMandatoryService(
+            CamelContext camelContext, FactoryFinder factoryFinder, String factoryKey, Class<T> factoryClass, String jarName)
+            throws NoSuchServiceException {
+        return doResolveService(
+                camelContext,
+                factoryFinder,
+                factoryKey, factoryClass, false).orElseThrow(() -> new NoSuchServiceException(factoryKey, jarName));
+    }
+
+    /**
+     * Create an instance of the given factory using the default factory finder
+     *
      * @param  camelContext the {@link CamelContext}
      * @param  factoryKey   the key used top lookup the factory class
      * @param  factoryClass the type of the class
@@ -175,12 +213,32 @@ public final class ResolverHelper {
      */
     public static <T> Optional<T> resolveService(
             CamelContext camelContext, FactoryFinder factoryFinder, String factoryKey, Class<T> factoryClass) {
+        return doResolveService(camelContext, factoryFinder, factoryKey, factoryClass, true);
+    }
+
+    /**
+     * Create an instance of the given factory.
+     *
+     * @param  camelContext  the {@link CamelContext}
+     * @param  factoryFinder the {@link FactoryFinder} to use
+     * @param  factoryKey    the key used top lookup the factory class
+     * @param  factoryClass  the type of the class
+     * @param  optional      whether the service is optional
+     * @return               an instance fo the given factory
+     */
+    private static <T> Optional<T> doResolveService(
+            CamelContext camelContext, FactoryFinder factoryFinder, String factoryKey, Class<T> factoryClass,
+            boolean optional) {
 
         // use factory finder to find a custom implementations
         Class<?> type = null;
 
         try {
-            type = factoryFinder.findClass(factoryKey).orElse(null);
+            if (optional) {
+                type = factoryFinder.findOptionalClass(factoryKey).orElse(null);
+            } else {
+                type = factoryFinder.findClass(factoryKey).orElse(null);
+            }
         } catch (Exception e) {
             // ignore
         }
