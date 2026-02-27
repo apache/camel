@@ -3635,19 +3635,6 @@ public interface ComponentsBuilderFactory {
         return NettyHttpComponentBuilderFactory.nettyHttp();
     }
     /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * @return the dsl builder
-     */
-    static NitriteComponentBuilderFactory.NitriteComponentBuilder nitrite() {
-        return NitriteComponentBuilderFactory.nitrite();
-    }
-    /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
      * 

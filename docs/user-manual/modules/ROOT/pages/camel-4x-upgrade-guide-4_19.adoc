@@ -127,3 +127,8 @@ Google recommends migrating your Pub/Sub Lite workloads to either:
 
 When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
 the bean which is similar to what `camel-file` do as well.
+
+=== camel-nitrite (Removal)
+
+The camel-nitrite is removed in this version. It was deprecated in 4.10.
+

@@ -236,7 +236,6 @@
         <module>camel-nats</module>
         <module>camel-netty-http</module>
         <module>camel-netty</module>
-        <module>camel-nitrite</module>
         <module>camel-oaipmh</module>
         <module>camel-oauth</module>
         <module>camel-observation</module>

@@ -270,7 +270,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.NettyEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.NettyHttpEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.NeutronEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.NitriteEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.NovaEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OAIPMHEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.OBSEndpointBuilderFactory,

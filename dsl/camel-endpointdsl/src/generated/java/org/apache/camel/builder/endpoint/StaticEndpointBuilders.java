@@ -12091,48 +12091,6 @@ public class StaticEndpointBuilders {
         return NettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * Syntax: <code>nitrite:database</code>
-     * 
-     * Path parameter: database (required)
-     * Path to database file. Will be created if not exists.
-     * 
-     * @param path database
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String path) {
-        return nitrite("nitrite", path);
-    }
-    /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * Syntax: <code>nitrite:database</code>
-     * 
-     * Path parameter: database (required)
-     * Path to database file. Will be created if not exists.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path database
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String componentName, String path) {
-        return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
      * 

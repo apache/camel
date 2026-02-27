@@ -425,7 +425,6 @@
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.9</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.7</nimbus-jose-jwt>
-        <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.10</ognl-version>
@@ -2199,11 +2198,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-netty-http</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-nitrite</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
