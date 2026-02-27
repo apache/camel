@@ -53,6 +53,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "keyEncapsulationAlgorithm": getOrCreateConfiguration(target).setKeyEncapsulationAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "keygenerator":
         case "keyGenerator": getOrCreateConfiguration(target).setKeyGenerator(property(camelContext, javax.crypto.KeyGenerator.class, value)); return true;
+        case "keylifecyclemanager":
+        case "keyLifecycleManager": getOrCreateConfiguration(target).setKeyLifecycleManager(property(camelContext, org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager.class, value)); return true;
         case "keypair":
         case "keyPair": getOrCreateConfiguration(target).setKeyPair(property(camelContext, java.security.KeyPair.class, value)); return true;
         case "keypairalias":
@@ -79,7 +81,7 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"classicalKeyAgreement", "classicalKeyPair", "classicalSigner", "keyGenerator", "keyPair", "keyStore", "signer"};
+        return new String[]{"classicalKeyAgreement", "classicalKeyPair", "classicalSigner", "keyGenerator", "keyLifecycleManager", "keyPair", "keyStore", "signer"};
     }
 
     @Override
@@ -108,6 +110,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "keyEncapsulationAlgorithm": return java.lang.String.class;
         case "keygenerator":
         case "keyGenerator": return javax.crypto.KeyGenerator.class;
+        case "keylifecyclemanager":
+        case "keyLifecycleManager": return org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager.class;
         case "keypair":
         case "keyPair": return java.security.KeyPair.class;
         case "keypairalias":
@@ -159,6 +163,8 @@ public class PQCComponentConfigurer extends PropertyConfigurerSupport implements
         case "keyEncapsulationAlgorithm": return getOrCreateConfiguration(target).getKeyEncapsulationAlgorithm();
         case "keygenerator":
         case "keyGenerator": return getOrCreateConfiguration(target).getKeyGenerator();
+        case "keylifecyclemanager":
+        case "keyLifecycleManager": return getOrCreateConfiguration(target).getKeyLifecycleManager();
         case "keypair":
         case "keyPair": return getOrCreateConfiguration(target).getKeyPair();
         case "keypairalias":

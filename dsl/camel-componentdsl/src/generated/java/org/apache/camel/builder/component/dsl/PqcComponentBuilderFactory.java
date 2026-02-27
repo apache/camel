@@ -261,6 +261,23 @@ public interface PqcComponentBuilderFactory {
         }
     
         /**
+         * The KeyLifecycleManager to use for key lifecycle operations such as
+         * generation, rotation, import/export, expiration, and revocation.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyLifecycleManager the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder keyLifecycleManager(org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager keyLifecycleManager) {
+            doSetProperty("keyLifecycleManager", keyLifecycleManager);
+            return this;
+        }
+    
+        /**
          * The KeyPair to be used.
          * 
          * The option is a: &lt;code&gt;java.security.KeyPair&lt;/code&gt; type.
@@ -474,6 +491,7 @@ public interface PqcComponentBuilderFactory {
             case "hybridKdfAlgorithm": getOrCreateConfiguration((PQCComponent) component).setHybridKdfAlgorithm((java.lang.String) value); return true;
             case "keyEncapsulationAlgorithm": getOrCreateConfiguration((PQCComponent) component).setKeyEncapsulationAlgorithm((java.lang.String) value); return true;
             case "keyGenerator": getOrCreateConfiguration((PQCComponent) component).setKeyGenerator((javax.crypto.KeyGenerator) value); return true;
+            case "keyLifecycleManager": getOrCreateConfiguration((PQCComponent) component).setKeyLifecycleManager((org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager) value); return true;
             case "keyPair": getOrCreateConfiguration((PQCComponent) component).setKeyPair((java.security.KeyPair) value); return true;
             case "keyPairAlias": getOrCreateConfiguration((PQCComponent) component).setKeyPairAlias((java.lang.String) value); return true;
             case "keyStore": getOrCreateConfiguration((PQCComponent) component).setKeyStore((java.security.KeyStore) value); return true;

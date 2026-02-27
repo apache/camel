@@ -315,6 +315,38 @@ public interface PQCEndpointBuilderFactory {
             return this;
         }
         /**
+         * The KeyLifecycleManager to use for key lifecycle operations such as
+         * generation, rotation, import/export, expiration, and revocation.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyLifecycleManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyLifecycleManager(org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager keyLifecycleManager) {
+            doSetProperty("keyLifecycleManager", keyLifecycleManager);
+            return this;
+        }
+        /**
+         * The KeyLifecycleManager to use for key lifecycle operations such as
+         * generation, rotation, import/export, expiration, and revocation.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager</code> type.
+         * 
+         * Group: advanced
+         * 
+         * @param keyLifecycleManager the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder keyLifecycleManager(String keyLifecycleManager) {
+            doSetProperty("keyLifecycleManager", keyLifecycleManager);
+            return this;
+        }
+        /**
          * The KeyPair to be used.
          * 
          * The option is a: <code>java.security.KeyPair</code> type.
