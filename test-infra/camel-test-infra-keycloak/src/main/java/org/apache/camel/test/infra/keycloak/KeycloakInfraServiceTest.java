@@ -25,29 +25,28 @@ import static org.junit.jupiter.api.Assertions.*;
 public class KeycloakInfraServiceTest {
 
     @Test
-    public void testRemoteServiceConfiguration() {
-        KeycloakInfraService service = new KeycloakRemoteInfraService(
+    public void testRemoteServiceConfiguration() throws Exception {
+        try (KeycloakInfraService service = new KeycloakRemoteInfraService(
                 "http://localhost:8080",
                 "master",
                 "admin",
-                "admin");
+                "admin")) {
 
-        assertEquals("http://localhost:8080", service.getKeycloakServerUrl());
-        assertEquals("master", service.getKeycloakRealm());
-        assertEquals("admin", service.getKeycloakUsername());
-        assertEquals("admin", service.getKeycloakPassword());
+            assertEquals("http://localhost:8080", service.getKeycloakServerUrl());
+            assertEquals("master", service.getKeycloakRealm());
+            assertEquals("admin", service.getKeycloakUsername());
+            assertEquals("admin", service.getKeycloakPassword());
+        }
     }
 
     @Test
-    public void testRemoteServiceWithSystemProperties() {
+    public void testRemoteServiceWithSystemProperties() throws Exception {
         System.setProperty("keycloak.server.url", "http://test:8080");
         System.setProperty("keycloak.realm", "test");
         System.setProperty("keycloak.username", "testuser");
         System.setProperty("keycloak.password", "testpass");
 
-        try {
-            KeycloakInfraService service = new KeycloakRemoteInfraService();
-
+        try (KeycloakInfraService service = new KeycloakRemoteInfraService()) {
             assertEquals("http://test:8080", service.getKeycloakServerUrl());
             assertEquals("test", service.getKeycloakRealm());
             assertEquals("testuser", service.getKeycloakUsername());
