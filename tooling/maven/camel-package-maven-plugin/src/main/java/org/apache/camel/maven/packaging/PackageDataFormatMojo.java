@@ -226,6 +226,9 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             log.debug("Generated " + out + " containing JSON schema for " + name + " data format");
                         }
 
+                        String cn = javaType.substring(javaType.lastIndexOf('.') + 1);
+                        String pn = javaType.substring(0, javaType.length() - cn.length() - 1);
+
                         boolean hasSuper = false;
                         String pfqn = "org.apache.camel.support.component.PropertyConfigurerSupport";
                         if ("soap".equals(name)) {
@@ -233,11 +236,13 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             pfqn = "org.apache.camel.converter.jaxb.JaxbDataFormatConfigurer";
                         } else if ("protobufJackson".equals(name)) {
                             hasSuper = true;
-                            pfqn = "org.apache.camel.component.jackson.JacksonDataFormatConfigurer";
+                            // Determine if this is Jackson 2 or Jackson 3 based on package name
+                            if (pn.contains(".jackson3.")) {
+                                pfqn = "org.apache.camel.component.jackson3.JacksonDataFormatConfigurer";
+                            } else {
+                                pfqn = "org.apache.camel.component.jackson.JacksonDataFormatConfigurer";
+                            }
                         }
-
-                        String cn = javaType.substring(javaType.lastIndexOf('.') + 1);
-                        String pn = javaType.substring(0, javaType.length() - cn.length() - 1);
                         Set<String> names = dataFormatModel.getOptions().stream().map(DataFormatOptionModel::getName)
                                 .collect(Collectors.toSet());
                         List<DataFormatOptionModel> options = parseConfigurationSource(project, javaType);
@@ -303,7 +308,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         model.setName(name);
         model.setTitle(asModelTitle(name, def.getTitle()));
         model.setDescription(def.getDescription());
-        model.setFirstVersion(asModelFirstVersion(name, def.getFirstVersion()));
+        model.setFirstVersion(asModelFirstVersion(name, project.getArtifactId(), def.getFirstVersion()));
         model.setLabel(def.getLabel());
         model.setDeprecated(def.isDeprecated());
         model.setDeprecationNote(def.getDeprecationNote());
@@ -384,6 +389,65 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 option.setDisplayName("Jsonb instance");
                 option.setDescription("Lookup and use the existing Jsonb instance with the given id.");
             }
+            // Override descriptions for Jackson 3.x (tools.jackson package) vs Jackson 2.x (com.fasterxml.jackson package)
+            if ("jackson3".equals(name) && "camel-jackson3".equals(project.getArtifactId())) {
+                if ("moduleClassNames".equals(option.getName())) {
+                    option.setDescription(
+                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
+                }
+                if ("enableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+                if ("disableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+            }
+            if (("jacksonXml".equals(name) || "jacksonXml3".equals(name))
+                    && "camel-jackson3xml".equals(project.getArtifactId())) {
+                if ("moduleClassNames".equals(option.getName())) {
+                    option.setDescription(
+                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
+                }
+                if ("enableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+                if ("disableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+            }
+            if (("avroJackson".equals(name) || "avroJackson3".equals(name))
+                    && "camel-jackson3-avro".equals(project.getArtifactId())) {
+                if ("moduleClassNames".equals(option.getName())) {
+                    option.setDescription(
+                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
+                }
+                if ("enableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+                if ("disableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+            }
+            if ("protobufJackson3".equals(name) && "camel-jackson3-protobuf".equals(project.getArtifactId())) {
+                if ("moduleClassNames".equals(option.getName())) {
+                    option.setDescription(
+                            "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
+                }
+                if ("enableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to enable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+                if ("disableFeatures".equals(option.getName())) {
+                    option.setDescription(
+                            "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
+                }
+            }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
                 switch (name) {
                     case "gson":
@@ -458,22 +522,32 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         return name;
     }
 
-    private static String asModelFirstVersion(String name, String firstVersion) {
+    private static String asModelFirstVersion(String name, String artifactId, String firstVersion) {
         switch (name) {
             case "gson":
                 return "2.10.0";
             case "jackson":
-                return "2.0.0";
+                return artifactId.contains("jackson3") ? "4.19.0" : "2.0.0";
+            case "jackson3":
+                return "4.19.0";
             case "johnzon":
                 return "2.18.0";
             case "jsonb":
                 return "3.7.0";
             case "fastjson":
                 return "2.20.0";
+            case "jacksonXml":
+                return artifactId.contains("jackson3") ? "4.19.0" : "2.16.0";
+            case "jacksonXml3":
+                return "4.19.0";
             case "avroJackson":
-                return "3.10.0";
+                return artifactId.contains("jackson3") ? "4.19.0" : "3.10.0";
+            case "avroJackson3":
+                return "4.19.0";
             case "protobufJackson":
-                return "3.10.0";
+                return artifactId.contains("jackson3") ? "4.19.0" : "3.10.0";
+            case "protobufJackson3":
+                return "4.19.0";
             default:
                 return firstVersion;
         }
@@ -485,10 +559,18 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "JSON Gson";
         } else if ("jackson".equals(name)) {
             return "JSON Jackson";
+        } else if ("jackson3".equals(name)) {
+            return "JSON Jackson3";
         } else if ("avroJackson".equals(name)) {
             return "Avro Jackson";
+        } else if ("avroJackson3".equals(name)) {
+            return "Avro Jackson3";
         } else if ("protobufJackson".equals(name)) {
             return "Protobuf Jackson";
+        } else if ("protobufJackson3".equals(name)) {
+            return "Protobuf Jackson3";
+        } else if ("jacksonXml3".equals(name)) {
+            return "XML Jackson3";
         } else if ("johnzon".equals(name)) {
             return "JSON Johnzon";
         } else if ("jsonb".equals(name)) {

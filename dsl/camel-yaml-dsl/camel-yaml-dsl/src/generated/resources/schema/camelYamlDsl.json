@@ -10134,6 +10134,9 @@
           "jacksonXml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
+          "jacksonXml3" : {
+            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXML3DataFormat"
+          },
           "jaxb" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JaxbDataFormat"
           },
@@ -10697,6 +10700,66 @@
             "type" : "string",
             "title" : "Iso Type",
             "description" : "The default ISO-Type to use"
+          }
+        }
+      },
+      "org.apache.camel.model.dataformat.JacksonXML3DataFormat" : {
+        "type" : "object",
+        "additionalProperties" : false,
+        "properties" : {
+          "allowJmsType" : {
+            "type" : "boolean"
+          },
+          "allowUnmarshallType" : {
+            "type" : "boolean"
+          },
+          "collectionType" : {
+            "type" : "string"
+          },
+          "contentTypeHeader" : {
+            "type" : "boolean"
+          },
+          "disableFeatures" : {
+            "type" : "string"
+          },
+          "enableFeatures" : {
+            "type" : "string"
+          },
+          "enableJaxbAnnotationModule" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "include" : {
+            "type" : "string"
+          },
+          "jsonView" : {
+            "type" : "string"
+          },
+          "maxStringLength" : {
+            "type" : "number"
+          },
+          "moduleClassNames" : {
+            "type" : "string"
+          },
+          "moduleRefs" : {
+            "type" : "string"
+          },
+          "prettyPrint" : {
+            "type" : "boolean"
+          },
+          "timezone" : {
+            "type" : "string"
+          },
+          "unmarshalType" : {
+            "type" : "string"
+          },
+          "useList" : {
+            "type" : "boolean"
+          },
+          "xmlMapper" : {
+            "type" : "string"
           }
         }
       },

@@ -1,0 +1,1 @@
+../../../../../components/camel-jackson3xml/src/main/docs/jacksonXml3-dataformat.adoc

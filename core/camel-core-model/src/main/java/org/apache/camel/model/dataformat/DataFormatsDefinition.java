@@ -66,6 +66,7 @@ public class DataFormatsDefinition implements CopyableDefinition<DataFormatsDefi
             @XmlElement(name = "ical", type = IcalDataFormat.class),
             @XmlElement(name = "iso8583", type = Iso8583DataFormat.class),
             @XmlElement(name = "jacksonXml", type = JacksonXMLDataFormat.class),
+            @XmlElement(name = "jacksonXml3", type = JacksonXML3DataFormat.class),
             @XmlElement(name = "jaxb", type = JaxbDataFormat.class),
             @XmlElement(name = "json", type = JsonDataFormat.class),
             @XmlElement(name = "jsonApi", type = JsonApiDataFormat.class),

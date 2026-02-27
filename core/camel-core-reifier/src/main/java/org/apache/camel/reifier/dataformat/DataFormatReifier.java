@@ -182,6 +182,8 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
             return new Iso8583DataFormatReifier(camelContext, definition);
         } else if (definition instanceof JacksonXMLDataFormat) {
             return new JacksonXMLDataFormatReifier(camelContext, definition);
+        } else if (definition instanceof JacksonXML3DataFormat) {
+            return new JacksonXML3DataFormatReifier(camelContext, definition);
         } else if (definition instanceof JaxbDataFormat) {
             return new JaxbDataFormatReifier(camelContext, definition);
         } else if (definition instanceof JsonApiDataFormat) {

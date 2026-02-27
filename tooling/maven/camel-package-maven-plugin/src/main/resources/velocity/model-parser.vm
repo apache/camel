@@ -494,6 +494,19 @@ ${indent}        }##
 #end
 #foreach( $root in $elementRefs )
     #set( $name = ${root.simpleName} )
+    #if( $name == "DataFormatDefinition" )
+    protected ${name} doParseJacksonXMLDataFormatUnified() throws IOException, XmlPullParserException {
+        // Detect which Jackson implementation is available
+        // Try Jackson 3.x first (tools.jackson.databind.ObjectMapper)
+        try {
+            Class.forName("tools.jackson.databind.ObjectMapper");
+            return doParseJacksonXML3DataFormat();
+        } catch (ClassNotFoundException e) {
+            // Fall back to Jackson 2.x
+            return doParseJacksonXMLDataFormat();
+        }
+    }
+    #end
     protected ${name} doParse${name}Ref(String key) throws IOException, XmlPullParserException {
         switch (key) {
     #foreach( $cl in $model )
@@ -502,7 +515,14 @@ ${indent}        }##
             #if( $en == $default )
                 #set( $en = $mojo.lowercase($cl.simpleName) )
             #end
+            ## Skip JacksonXMLDataFormat as it's handled by the unified method
+            #if( !($en == "jacksonXml" && $cl.simpleName == "JacksonXMLDataFormat") )
+                #if( $en == "jacksonXml" && $cl.simpleName == "JacksonXML3DataFormat" )
+            case "${en}": return doParseJacksonXMLDataFormatUnified();
+                #else
             case "${en}": return doParse${cl.simpleName}();
+                #end
+            #end
         #end
     #end
             default: return null;

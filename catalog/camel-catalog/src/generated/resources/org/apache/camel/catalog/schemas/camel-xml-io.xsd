@@ -688,7 +688,7 @@ Create, edit and read ISO-8583 messages.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="jacksonXml" type="tns:jacksonXMLDataFormat">
+  <xs:element name="jacksonXml" nillable="true" type="xs:anyType">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
@@ -7607,177 +7607,23 @@ Whether to auto-discover com.solab.iso8583.MessageFactory from the registry. Def
     <xs:complexContent>
       <xs:extension base="tns:dataFormat">
         <xs:sequence/>
-        <xs:attribute name="xmlMapper" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Lookup and use the existing XmlMapper with the given id.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="prettyPrint" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To enable pretty printing output nicely formatted. Is by default false. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="unmarshalType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Class name of the java type to use when unmarshalling.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="allowUnmarshallType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This
-should only be enabled when desired to be used. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="jsonView" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use
-JSON views to accomplish this. This option is to refer to the class which has JsonView annotations.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="include" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null
-values, you can set this option to NON_NULL.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="allowJmsType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
-Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="collectionType" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to
-use different collection types than java.util.Collection based as default.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="useList" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To unmarshal to a List of Map or a List of Pojo. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="timezone" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-If set then Jackson will use the Timezone when marshalling/unmarshalling.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="enableJaxbAnnotationModule" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by
-Jackson. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="moduleClassNames" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="moduleRefs" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="enableFeatures" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="disableFeatures" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from com.fasterxml.jackson.databind.SerializationFeature,
-com.fasterxml.jackson.databind.DeserializationFeature, or com.fasterxml.jackson.databind.MapperFeature Multiple features
-can be separated by comma.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="contentTypeHeader" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Whether the data format should set the Content-Type header with the type from the data format. For example
-application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON. Default
-value: true
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="maxStringLength" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the maximum string length (in chars or bytes, depending on input context). The default is 20,000,000. This limit is
-not exact, the limit is applied when we increase internal buffer sizes and an exception will happen at sizes greater
-than this limit. Some text values that are a little bigger than the limit may be treated as valid but no text values
-with sizes less than or equal to this limit will be treated as invalid.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
+        <xs:attribute name="xmlMapper" type="xs:string"/>
+        <xs:attribute name="prettyPrint" type="xs:string"/>
+        <xs:attribute name="unmarshalType" type="xs:string"/>
+        <xs:attribute name="allowUnmarshallType" type="xs:string"/>
+        <xs:attribute name="jsonView" type="xs:string"/>
+        <xs:attribute name="include" type="xs:string"/>
+        <xs:attribute name="allowJmsType" type="xs:string"/>
+        <xs:attribute name="collectionType" type="xs:string"/>
+        <xs:attribute name="useList" type="xs:string"/>
+        <xs:attribute name="timezone" type="xs:string"/>
+        <xs:attribute name="enableJaxbAnnotationModule" type="xs:string"/>
+        <xs:attribute name="moduleClassNames" type="xs:string"/>
+        <xs:attribute name="moduleRefs" type="xs:string"/>
+        <xs:attribute name="enableFeatures" type="xs:string"/>
+        <xs:attribute name="disableFeatures" type="xs:string"/>
+        <xs:attribute name="contentTypeHeader" type="xs:string"/>
+        <xs:attribute name="maxStringLength" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -15029,6 +14875,7 @@ Sets the example.
         <xs:element ref="tns:ical"/>
         <xs:element ref="tns:iso8583"/>
         <xs:element ref="tns:jacksonXml"/>
+        <xs:element name="jacksonXml3" type="tns:jacksonXML3DataFormat"/>
         <xs:element ref="tns:jaxb"/>
         <xs:element ref="tns:json"/>
         <xs:element ref="tns:jsonApi"/>
@@ -15054,6 +14901,30 @@ Sets the example.
         <xs:element ref="tns:zipFile"/>
       </xs:choice>
     </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="jacksonXML3DataFormat">
+    <xs:complexContent>
+      <xs:extension base="tns:dataFormat">
+        <xs:sequence/>
+        <xs:attribute name="xmlMapper" type="xs:string"/>
+        <xs:attribute name="prettyPrint" type="xs:string"/>
+        <xs:attribute name="unmarshalType" type="xs:string"/>
+        <xs:attribute name="allowUnmarshallType" type="xs:string"/>
+        <xs:attribute name="jsonView" type="xs:string"/>
+        <xs:attribute name="include" type="xs:string"/>
+        <xs:attribute name="allowJmsType" type="xs:string"/>
+        <xs:attribute name="collectionType" type="xs:string"/>
+        <xs:attribute name="useList" type="xs:string"/>
+        <xs:attribute name="timezone" type="xs:string"/>
+        <xs:attribute name="enableJaxbAnnotationModule" type="xs:string"/>
+        <xs:attribute name="moduleClassNames" type="xs:string"/>
+        <xs:attribute name="moduleRefs" type="xs:string"/>
+        <xs:attribute name="enableFeatures" type="xs:string"/>
+        <xs:attribute name="disableFeatures" type="xs:string"/>
+        <xs:attribute name="contentTypeHeader" type="xs:string"/>
+        <xs:attribute name="maxStringLength" type="xs:string"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="cSimpleExpression">
     <xs:simpleContent>
