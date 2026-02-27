@@ -77,7 +77,6 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateParameterDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
-import org.apache.camel.model.SagaActionUriDefinition;
 import org.apache.camel.model.SagaDefinition;
 import org.apache.camel.model.SamplingDefinition;
 import org.apache.camel.model.ScriptDefinition;
@@ -16240,78 +16239,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
     }
 
     @YamlType(
-            inline = true,
-            types = org.apache.camel.model.SagaActionUriDefinition.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "disabled", type = "boolean"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "note", type = "string"),
-                    @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "uri", type = "string", required = true)
-            }
-    )
-    public static class SagaActionUriDefinitionDeserializer extends YamlDeserializerEndpointAwareBase<SagaActionUriDefinition> {
-        public SagaActionUriDefinitionDeserializer() {
-            super(SagaActionUriDefinition.class);
-        }
-
-        @Override
-        protected SagaActionUriDefinition newInstance() {
-            return new SagaActionUriDefinition();
-        }
-
-        @Override
-        protected SagaActionUriDefinition newInstance(String value) {
-            return new SagaActionUriDefinition(value);
-        }
-
-        @Override
-        protected void setEndpointUri(CamelContext camelContext, Node node,
-                SagaActionUriDefinition target, Map<String, Object> parameters) {
-            target.setUri(org.apache.camel.dsl.yaml.common.YamlSupport.createEndpointUri(camelContext, node, target.getUri(), parameters));
-        }
-
-        @Override
-        protected boolean setProperty(SagaActionUriDefinition target, String propertyKey,
-                String propertyName, Node node) {
-            propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
-            switch(propertyKey) {
-                case "disabled": {
-                    String val = asText(node);
-                    target.setDisabled(val);
-                    break;
-                }
-                case "uri": {
-                    String val = asText(node);
-                    target.setUri(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "description": {
-                    String val = asText(node);
-                    target.setDescription(val);
-                    break;
-                }
-                case "note": {
-                    String val = asText(node);
-                    target.setNote(val);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
             nodes = "saga",
             types = org.apache.camel.model.SagaDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
@@ -16319,8 +16246,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             description = "Enables Sagas on the route",
             deprecated = false,
             properties = {
-                    @YamlProperty(name = "compensation", type = "object:org.apache.camel.model.SagaActionUriDefinition", description = "The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the saga service may call again the compensation URI to retry.", displayName = "Compensation"),
-                    @YamlProperty(name = "completion", type = "object:org.apache.camel.model.SagaActionUriDefinition", description = "The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga service may call again the completion URI to retry.", displayName = "Completion"),
+                    @YamlProperty(name = "compensation", type = "string", description = "The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the saga service may call again the compensation URI to retry.", displayName = "Compensation"),
+                    @YamlProperty(name = "completion", type = "string", description = "The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga service may call again the completion URI to retry.", displayName = "Completion"),
                     @YamlProperty(name = "completionMode", type = "enum:AUTO,MANUAL", defaultValue = "AUTO", description = "Determine how the saga should be considered complete. When set to AUTO, the saga is completed when the exchange that initiates the saga is processed successfully, or compensated when it completes exceptionally. When set to MANUAL, the user must complete or compensate the saga using the saga:complete or saga:compensate endpoints.", displayName = "Completion Mode"),
                     @YamlProperty(name = "description", type = "string", description = "Sets the description of this node", displayName = "Description"),
                     @YamlProperty(name = "disabled", type = "boolean", defaultValue = "false", description = "Disables this EIP from the route.", displayName = "Disabled"),
@@ -16349,12 +16276,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             propertyKey = org.apache.camel.util.StringHelper.dashToCamelCase(propertyKey);
             switch(propertyKey) {
                 case "compensation": {
-                    org.apache.camel.model.SagaActionUriDefinition val = asType(node, org.apache.camel.model.SagaActionUriDefinition.class);
+                    String val = asText(node);
                     target.setCompensation(val);
                     break;
                 }
                 case "completion": {
-                    org.apache.camel.model.SagaActionUriDefinition val = asType(node, org.apache.camel.model.SagaActionUriDefinition.class);
+                    String val = asText(node);
                     target.setCompletion(val);
                     break;
                 }

@@ -13385,55 +13385,10 @@ reduce memory usage to avoid storing too many non frequent used producers.
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="sagaActionUriDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:sendDefinition">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType abstract="true" name="sendDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:noOutputDefinition">
-        <xs:sequence/>
-        <xs:attribute name="uri" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the uri of the endpoint to send to.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
   <xs:complexType name="sagaDefinition">
     <xs:complexContent>
       <xs:extension base="tns:output">
         <xs:sequence>
-          <xs:element minOccurs="0" name="compensation" type="tns:sagaActionUriDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding
-to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the
-saga service may call again the compensation URI to retry.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element minOccurs="0" name="completion" type="tns:sagaActionUriDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the
-completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga
-service may call again the completion URI to retry.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
           <xs:element maxOccurs="unbounded" minOccurs="0" name="option" type="tns:propertyExpressionDefinition">
             <xs:annotation>
               <xs:documentation xml:lang="en">
@@ -13559,6 +13514,28 @@ Set the maximum amount of time for the Saga. After the timeout is expired, the s
             </xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="compensation" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding
+to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the
+saga service may call again the compensation URI to retry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="completion" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the
+completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga
+service may call again the completion URI to retry.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -13619,6 +13596,22 @@ Sets the sample message count which only a single Exchange will pass through aft
           <xs:element ref="tns:xpath"/>
           <xs:element ref="tns:xquery"/>
         </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType abstract="true" name="sendDefinition">
+    <xs:complexContent>
+      <xs:extension base="tns:noOutputDefinition">
+        <xs:sequence/>
+        <xs:attribute name="uri" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+<![CDATA[
+Sets the uri of the endpoint to send to.
+]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

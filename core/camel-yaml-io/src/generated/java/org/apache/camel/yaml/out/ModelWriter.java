@@ -1712,11 +1712,6 @@ public class ModelWriter extends BaseWriter {
         doWriteExpressionNodeElements(def);
         endElement(name);
     }
-    protected void doWriteSagaActionUriDefinition(String name, SagaActionUriDefinition def) throws IOException {
-        startElement(name);
-        doWriteSendDefinitionAttributes(def);
-        endElement(name);
-    }
     protected void doWriteSagaDefinition(String name, SagaDefinition def) throws IOException {
         startElement(name);
         doWriteProcessorDefinitionAttributes(def);
@@ -1724,9 +1719,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("propagation", def.getPropagation(), "REQUIRED");
         doWriteAttribute("completionMode", def.getCompletionMode(), "AUTO");
         doWriteAttribute("timeout", def.getTimeout(), null);
+        doWriteAttribute("compensation", def.getCompensation(), null);
+        doWriteAttribute("completion", def.getCompletion(), null);
         doWriteList(null, "option", def.getOptions(), this::doWritePropertyExpressionDefinition);
-        doWriteElement("compensation", def.getCompensation(), this::doWriteSagaActionUriDefinition);
-        doWriteElement("completion", def.getCompletion(), this::doWriteSagaActionUriDefinition);
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement(name);
     }

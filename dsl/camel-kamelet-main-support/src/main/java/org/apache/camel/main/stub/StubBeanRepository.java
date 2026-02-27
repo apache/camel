@@ -34,6 +34,8 @@ import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.saga.CamelSagaService;
+import org.apache.camel.saga.InMemorySagaService;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.ClaimCheckRepository;
@@ -62,6 +64,7 @@ public class StubBeanRepository implements BeanRepository {
     private final RoutePolicy service9 = new RoutePolicySupport() {
     };
     private final ExecutorService service10 = Executors.newCachedThreadPool();
+    private final CamelSagaService service11 = new InMemorySagaService();
 
     private final String stubPattern;
 
@@ -138,6 +141,9 @@ public class StubBeanRepository implements BeanRepository {
         }
         if (ExecutorService.class.isAssignableFrom(type)) {
             return (T) service10;
+        }
+        if (CamelSagaService.class.isAssignableFrom(type)) {
+            return (T) service11;
         }
         if (Logger.class.isAssignableFrom(type)) {
             return (T) LOG;

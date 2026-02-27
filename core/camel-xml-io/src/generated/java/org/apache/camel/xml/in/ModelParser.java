@@ -1061,20 +1061,17 @@ public class ModelParser extends BaseParser {
     }
     protected SagaDefinition doParseSagaDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaDefinition(), (def, key, val) -> switch (key) {
+                case "compensation": def.setCompensation(val); yield true;
+                case "completion": def.setCompletion(val); yield true;
                 case "completionMode": def.setCompletionMode(val); yield true;
                 case "propagation": def.setPropagation(val); yield true;
                 case "sagaService": def.setSagaService(val); yield true;
                 case "timeout": def.setTimeout(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, (def, key) -> switch (key) {
-                case "compensation": def.setCompensation(doParseSagaActionUriDefinition()); yield true;
-                case "completion": def.setCompletion(doParseSagaActionUriDefinition()); yield true;
                 case "option": doAdd(doParsePropertyExpressionDefinition(), def.getOptions(), def::setOptions); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
-    }
-    protected SagaActionUriDefinition doParseSagaActionUriDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SagaActionUriDefinition(), sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected SamplingDefinition doParseSamplingDefinition() throws IOException, XmlPullParserException {
         return doParse(new SamplingDefinition(), (def, key, val) -> switch (key) {

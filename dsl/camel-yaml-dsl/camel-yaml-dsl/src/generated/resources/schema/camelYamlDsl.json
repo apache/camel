@@ -6102,35 +6102,6 @@
           }
         } ]
       },
-      "org.apache.camel.model.SagaActionUriDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "additionalProperties" : false,
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "note" : {
-              "type" : "string"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "uri" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "required" : [ "uri" ]
-      },
       "org.apache.camel.model.SagaDefinition" : {
         "title" : "Saga",
         "description" : "Enables Sagas on the route",
@@ -6138,14 +6109,14 @@
         "additionalProperties" : false,
         "properties" : {
           "compensation" : {
+            "type" : "string",
             "title" : "Compensation",
-            "description" : "The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the saga service may call again the compensation URI to retry.",
-            "$ref" : "#/items/definitions/org.apache.camel.model.SagaActionUriDefinition"
+            "description" : "The compensation endpoint URI that must be called to compensate all changes done in the route. The route corresponding to the compensation URI must perform compensation and complete without error. If errors occur during compensation, the saga service may call again the compensation URI to retry."
           },
           "completion" : {
+            "type" : "string",
             "title" : "Completion",
-            "description" : "The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga service may call again the completion URI to retry.",
-            "$ref" : "#/items/definitions/org.apache.camel.model.SagaActionUriDefinition"
+            "description" : "The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding to the completion URI must perform completion tasks and terminate without error. If errors occur during completion, the saga service may call again the completion URI to retry."
           },
           "completionMode" : {
             "type" : "string",

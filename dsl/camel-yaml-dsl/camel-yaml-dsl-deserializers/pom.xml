@@ -140,10 +140,6 @@
                                 <bannedDefinition>org.apache.camel.model.app.BeansDefinition</bannedDefinition>
                                 <bannedDefinition>org.apache.camel.model.app.ApplicationDefinition</bannedDefinition>
                             </bannedDefinitions>
-                            <additionalDefinitions>
-                                <!-- saga -->
-                                <additionalDefinition>org.apache.camel.model.SagaActionUriDefinition</additionalDefinition>
-                            </additionalDefinitions>
                         </configuration>
                     </execution>
                 </executions>

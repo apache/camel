@@ -367,7 +367,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.RoutingSlipDefinition": return new ModelDeserializers.RoutingSlipDefinitionDeserializer();
             case "rss": return new ModelDeserializers.RssDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.RssDataFormat": return new ModelDeserializers.RssDataFormatDeserializer();
-            case "org.apache.camel.model.SagaActionUriDefinition": return new ModelDeserializers.SagaActionUriDefinitionDeserializer();
             case "saga": return new ModelDeserializers.SagaDefinitionDeserializer();
             case "org.apache.camel.model.SagaDefinition": return new ModelDeserializers.SagaDefinitionDeserializer();
             case "sample": return new ModelDeserializers.SamplingDefinitionDeserializer();
