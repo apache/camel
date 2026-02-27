@@ -18,7 +18,6 @@ package org.apache.camel.component.as2;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -30,12 +29,10 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.ssl.TrustAllStrategy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.slf4j.Logger;
@@ -145,11 +142,6 @@ public class MendelsonCertLoader {
         return privateKey;
     }
 
-    private List<Certificate> getCertificatesFromStream(InputStream inputStream) throws CertificateException {
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        return (List<Certificate>) certificateFactory.generateCertificates(inputStream);
-    }
-
     private Certificate getCertificateFromStream(InputStream inputStream) throws IOException, CertificateException {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         return certificateFactory.generateCertificate(inputStream);
@@ -179,17 +171,6 @@ public class MendelsonCertLoader {
             LOG.error("Error while retrieving private key: {}", e.getMessage(), e);
         }
         throw new IllegalStateException("Failed to construct a PrivateKey from provided InputStream");
-    }
-
-    private byte[] getBytesFromPem(InputStream inputStream) throws IOException {
-        String privateKeyPEM
-                = IOUtils.toString(inputStream, StandardCharsets.UTF_8).replaceAll("-{5}.+-{5}", "").replaceAll("\\s", "");
-        return Base64.getDecoder().decode(privateKeyPEM);
-    }
-
-    private byte[] getBytesFromPKCS12(InputStream inputStream) throws IOException {
-        String privateKeyPKCS12 = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-        return privateKeyPKCS12.getBytes(StandardCharsets.UTF_8);
     }
 
 }

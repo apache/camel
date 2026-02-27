@@ -41,17 +41,10 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuil
 import org.apache.hc.client5.http.io.ConnectionEndpoint;
 import org.apache.hc.client5.http.io.LeaseRequest;
 import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
-import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
-import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
+import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.*;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ClassicHttpResponse;
-import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.config.Http1Config;
-import org.apache.hc.core5.http.config.Registry;
-import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.impl.io.HttpRequestExecutor;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.HttpConnectionFactory;
@@ -121,22 +114,20 @@ public class AS2ClientConnection {
                     }
                 };
 
-        if (sslContext == null) {
-            connectionPoolManager = PoolingHttpClientConnectionManagerBuilder.create()
-                    .setConnectionFactory(connFactory).build();
-        } else {
-            SSLConnectionSocketFactory sslConnectionSocketFactory;
+        PoolingHttpClientConnectionManagerBuilder builder = PoolingHttpClientConnectionManagerBuilder.create()
+                .setConnectionFactory(connFactory);
+
+        if (sslContext != null) {
+            TlsSocketStrategy tlsStrategy;
             if (hostnameVerifier == null) {
-                sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext);
+                tlsStrategy = new DefaultClientTlsStrategy(sslContext);
             } else {
-                sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+                tlsStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerifier);
             }
-            Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
-                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                    .register("https", sslConnectionSocketFactory)
-                    .build();
-            connectionPoolManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, connFactory);
+            builder.setTlsSocketStrategy(tlsStrategy);
         }
+
+        connectionPoolManager = builder.build();
         connectionPoolManager.setMaxTotal(connectionPoolMaxSize);
         connectionPoolManager.setDefaultSocketConfig(
                 SocketConfig.copy(SocketConfig.DEFAULT)
@@ -156,7 +147,7 @@ public class AS2ClientConnection {
                     }
                 }
                 if (AS2Header.KEEP_ALIVE.equalsIgnoreCase(h.getName())) {
-                    HeaderElement headerElement = MessageSupport.parse(h)[0];
+                    HeaderElement headerElement = MessageSupport.parseElements(h).get(0);
                     if (headerElement.getValue() != null && "timeout".equalsIgnoreCase(headerElement.getName())) {
                         ttl = TimeValue.ofSeconds(Long.parseLong(headerElement.getValue()));
                     }
@@ -197,17 +188,18 @@ public class AS2ClientConnection {
                 connectionPoolManager.connect(endpoint, TimeValue.ofMilliseconds(connectionTimeoutMilliseconds), httpContext);
             }
             // Execute Request
-            HttpRequestExecutor httpExecutor = new HttpRequestExecutor() {
+            ConnectionEndpoint.RequestExecutor requestExecutor = new ConnectionEndpoint.RequestExecutor() {
                 @Override
                 public ClassicHttpResponse execute(ClassicHttpRequest request, HttpClientConnection conn, HttpContext context)
                         throws IOException, HttpException {
-                    super.preProcess(request, httpProcessor, context);
-                    ClassicHttpResponse response = super.execute(request, conn, context);
-                    super.postProcess(response, httpProcessor, context);
+                    HttpRequestExecutor executor = new HttpRequestExecutor();
+                    executor.preProcess(request, httpProcessor, context);
+                    ClassicHttpResponse response = executor.execute(request, conn, context);
+                    executor.postProcess(response, httpProcessor, context);
                     return response;
                 }
             };
-            response = endpoint.execute(UUID.randomUUID().toString(), request, httpExecutor, httpContext);
+            response = endpoint.execute(UUID.randomUUID().toString(), request, requestExecutor, httpContext);
         } finally {
             if (endpoint != null) {
                 TimeValue keepAlive = null;

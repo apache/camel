@@ -17,7 +17,6 @@
 package org.apache.camel.component.as2.api.util;
 
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +31,8 @@ import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.message.ParserCursor;
-import org.apache.hc.core5.http.message.TokenParser;
 import org.apache.hc.core5.util.CharArrayBuffer;
+import org.apache.hc.core5.util.Tokenizer;
 
 public final class DispositionNotificationContentUtils {
 
@@ -127,13 +126,13 @@ public final class DispositionNotificationContentUtils {
 
     }
 
-    private static final TokenParser TOKEN_PARSER = TokenParser.INSTANCE;
+    private static final Tokenizer TOKEN_PARSER = Tokenizer.INSTANCE;
 
     private static final char PARAM_DELIMITER = ',';
     private static final char ELEM_DELIMITER = ';';
     private static final int DEFAULT_BUFFER_SIZE = 8 * 1024;
 
-    private static final BitSet TOKEN_DELIMS = TokenParser.INIT_BITSET(PARAM_DELIMITER, ELEM_DELIMITER);
+    private static final Tokenizer.Delimiter TOKEN_DELIMS = Tokenizer.delimiters(PARAM_DELIMITER, ELEM_DELIMITER);
 
     private DispositionNotificationContentUtils() {
     }

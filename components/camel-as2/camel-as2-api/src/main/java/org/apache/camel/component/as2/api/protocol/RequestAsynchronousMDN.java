@@ -42,7 +42,7 @@ public class RequestAsynchronousMDN implements HttpRequestInterceptor {
     @Override
     public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
 
-        HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+        HttpCoreContext coreContext = HttpCoreContext.castOrCreate(context);
 
         /* MIME header */
         request.addHeader(AS2Header.MIME_VERSION, AS2Constants.MIME_VERSION);

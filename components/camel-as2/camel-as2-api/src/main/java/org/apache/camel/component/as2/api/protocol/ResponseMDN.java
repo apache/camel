@@ -154,9 +154,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     = (Certificate[]) context.getAttribute(AS2ServerConnection.AS2_VALIDATE_SIGNING_CERTIFICATE_CHAIN);
         }
 
-        HttpCoreContext coreContext = HttpCoreContext.adapt(context);
-
-        HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
+        HttpCoreContext coreContext = HttpCoreContext.castOrCreate(context);
+        HttpRequest request = coreContext.getRequest();
         if (request == null || !(request instanceof ClassicHttpRequest httpEntityEnclosingRequest)) {
             // Not an enclosing request so nothing to do.
             return;

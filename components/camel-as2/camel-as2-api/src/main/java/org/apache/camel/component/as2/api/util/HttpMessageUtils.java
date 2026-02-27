@@ -89,7 +89,7 @@ public final class HttpMessageUtils {
         if (header == null) {
             return null;
         }
-        for (HeaderElement headerElement : MessageSupport.parse(header)) {
+        for (HeaderElement headerElement : MessageSupport.parseElements(header)) {
             for (NameValuePair nameValuePair : headerElement.getParameters()) {
                 if (nameValuePair.getName().equalsIgnoreCase(parameterName)) {
                     return nameValuePair.getValue();

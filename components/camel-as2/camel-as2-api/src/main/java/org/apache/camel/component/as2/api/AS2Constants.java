@@ -49,7 +49,10 @@ public interface AS2Constants {
 
     /**
      * HTTP Context Attribute Name for HTTP Client Connection object stored in context.
+     *
+     * @deprecated Use getter method from HttpContext implementation.
      */
+    @Deprecated
     String HTTP_CLIENT_CONNECTION = HttpCoreContext.CONNECTION_ENDPOINT;
 
     /**
