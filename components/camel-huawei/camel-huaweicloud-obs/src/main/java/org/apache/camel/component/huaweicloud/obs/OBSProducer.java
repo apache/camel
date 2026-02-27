@@ -18,7 +18,6 @@ package org.apache.camel.component.huaweicloud.obs;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +108,7 @@ public class OBSProducer extends DefaultProducer {
         }
     }
 
-    private void putObject(Exchange exchange, ClientConfigurations clientConfigurations) throws IOException {
+    private void putObject(Exchange exchange, ClientConfigurations clientConfigurations) throws Exception {
 
         Object body = exchange.getMessage().getBody();
 
@@ -166,7 +165,10 @@ public class OBSProducer extends DefaultProducer {
                     clientConfigurations.getObjectName(), (InputStream) body);
 
         } else {
-            throw new IllegalArgumentException("Body should be of type file, string or an input stream");
+            // fallback: convert via the exchange (e.g., GenericFile from SFTP/FTP)
+            InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
+            putObjectResult = obsClient.putObject(clientConfigurations.getBucketName(),
+                    clientConfigurations.getObjectName(), is);
         }
         exchange.getMessage().setBody(gson.toJson(putObjectResult));
     }
