@@ -18,13 +18,14 @@ package org.apache.camel.component.google.secret.manager;
 
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class GoogleSecretManagerConfiguration implements Cloneable {
+public class GoogleSecretManagerConfiguration implements Cloneable, GoogleCommonConfiguration {
 
     @UriPath(label = "common", description = "The Google Cloud Project Id name related to the Secret Manager")
     @Metadata(required = true)
@@ -44,6 +45,7 @@ public class GoogleSecretManagerConfiguration implements Cloneable {
     @Metadata(autowired = true)
     private SecretManagerServiceClient client;
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
