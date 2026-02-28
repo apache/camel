@@ -256,9 +256,8 @@ public class SpringCamelContext extends DefaultCamelContext
     @Override
 
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
-        return ResolverHelper.resolveMandatoryService(
+        return ResolverHelper.resolveMandatoryBootstrapService(
                 getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelJAXBContextFactory.FACTORY + "-spring",
                 ModelJAXBContextFactory.class,
                 "camel-spring-xml");

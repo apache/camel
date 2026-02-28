@@ -168,9 +168,8 @@ public class JoorCSimpleCompiler extends ServiceSupport implements CSimpleCompil
     protected void doStart() throws Exception {
         // check if camel-attachment is on classpath which then includes custom csimple functions
         if (camelContext != null) {
-            Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveService(
+            Optional<SimpleLanguageFunctionFactory> factory = ResolverHelper.resolveBootstrapService(
                     camelContext,
-                    camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                     SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
                     SimpleLanguageFunctionFactory.class);
             if (factory.isPresent()) {

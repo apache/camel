@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HealthCheckComponent;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
@@ -290,12 +291,9 @@ public class KnativeComponent extends HealthCheckComponent {
         if (producerFactory == null) {
             this.producerFactory = CamelContextHelper.lookup(getCamelContext(), protocol.name(), KnativeProducerFactory.class);
             if (this.producerFactory == null) {
-                this.producerFactory = getCamelContext()
-                        .getCamelContextExtension()
-                        .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
-                        .newInstance(protocol.name() + "-producer", KnativeProducerFactory.class)
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Cannot create KnativeProducerFactory. Make sure camel-knative-http JAR is on classpath."));
+                String key = "knative/transport/" + protocol.name() + "-producer";
+                this.producerFactory = ResolverHelper.resolveMandatoryBootstrapService(getCamelContext(), key,
+                        KnativeProducerFactory.class, "camel-knative-http");
                 if (configuration.getTransportOptions() != null) {
                     setProperties(producerFactory, new HashMap<>(configuration.getTransportOptions()));
                 }
@@ -303,7 +301,6 @@ public class KnativeComponent extends HealthCheckComponent {
             }
             LOGGER.debug("Using Knative producer factory: {} for protocol: {}", producerFactory, protocol.name());
         }
-
         return producerFactory;
     }
 
@@ -311,12 +308,9 @@ public class KnativeComponent extends HealthCheckComponent {
         if (consumerFactory == null) {
             this.consumerFactory = CamelContextHelper.lookup(getCamelContext(), protocol.name(), KnativeConsumerFactory.class);
             if (this.consumerFactory == null) {
-                this.consumerFactory = getCamelContext()
-                        .getCamelContextExtension()
-                        .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
-                        .newInstance(protocol.name() + "-consumer", KnativeConsumerFactory.class)
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Cannot create KnativeConsumerFactory. Make sure camel-knative-http JAR is on classpath."));
+                String key = "knative/transport/" + protocol.name() + "-consumer";
+                this.consumerFactory = ResolverHelper.resolveMandatoryBootstrapService(getCamelContext(), key,
+                        KnativeConsumerFactory.class, "camel-knative-http");
                 if (configuration.getTransportOptions() != null) {
                     setProperties(consumerFactory, new HashMap<>(configuration.getTransportOptions()));
                 }

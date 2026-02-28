@@ -300,9 +300,8 @@ public class RestOpenApiSupport {
     }
 
     protected RestDefinitionsResolver createJmxRestDefinitionsResolver(CamelContext camelContext) {
-        return ResolverHelper.resolveMandatoryService(
+        return ResolverHelper.resolveMandatoryBootstrapService(
                 camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 JMX_REST_DEFINITION_RESOLVER,
                 RestDefinitionsResolver.class,
                 "camel-openapi-java");
