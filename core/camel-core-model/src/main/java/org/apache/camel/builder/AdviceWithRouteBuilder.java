@@ -27,9 +27,8 @@ import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.MockSendToEndpointStrategyFactory;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.spi.FactoryFinder.DEFAULT_PATH;
 
 /**
  * A {@link RouteBuilder} which has extended capabilities when using the
@@ -249,12 +248,8 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
             CamelContext camelContext, String pattern, boolean skip) {
         // the text based input may be property placeholders
         pattern = camelContext.resolvePropertyPlaceholders(pattern);
-        MockSendToEndpointStrategyFactory factory = camelContext.getCamelContextExtension()
-                .getFactoryFinder(DEFAULT_PATH)
-                .newInstance(MockSendToEndpointStrategyFactory.FACTORY, MockSendToEndpointStrategyFactory.class)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Cannot find MockSendToEndpointStrategyFactory on classpath. "
-                                                                + "Add camel-mock to classpath."));
+        MockSendToEndpointStrategyFactory factory = ResolverHelper.resolveMandatoryBootstrapService(camelContext,
+                MockSendToEndpointStrategyFactory.FACTORY, MockSendToEndpointStrategyFactory.class, "camel-mock");
         return factory.mock(pattern, skip);
     }
 

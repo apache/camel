@@ -40,7 +40,7 @@ public final class OAuthHelper {
      * @throws Exception   if the factory is not found or token acquisition fails
      */
     public static String resolveOAuthToken(CamelContext context, String profileName) throws Exception {
-        OAuthClientAuthenticationFactory factory = ResolverHelper.resolveMandatoryService(
+        OAuthClientAuthenticationFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
                 context,
                 OAuthClientAuthenticationFactory.FACTORY,
                 OAuthClientAuthenticationFactory.class,

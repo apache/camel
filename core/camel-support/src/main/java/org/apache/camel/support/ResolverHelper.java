@@ -167,6 +167,23 @@ public final class ResolverHelper {
     }
 
     /**
+     * Create an instance of the given factory using the bootstrap factory finder
+     *
+     * @param  camelContext           the {@link CamelContext}
+     * @param  factoryKey             the key used top lookup the factory class
+     * @param  factoryClass           the type of the class
+     * @param  jarName                the JAR to add to the classpath if service is missing
+     * @return                        an instance of the given factory
+     * @throws NoSuchServiceException is thrown if service is not found
+     */
+    public static <T> T resolveMandatoryBootstrapService(
+            CamelContext camelContext, String factoryKey, Class<T> factoryClass, String jarName)
+            throws NoSuchServiceException {
+        return resolveMandatoryService(camelContext, camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
+                factoryKey, factoryClass, jarName);
+    }
+
+    /**
      * Create an instance of the given factory using the default factory finder
      *
      * @param  camelContext           the {@link CamelContext}
@@ -184,6 +201,20 @@ public final class ResolverHelper {
                 camelContext,
                 factoryFinder,
                 factoryKey, factoryClass, false).orElseThrow(() -> new NoSuchServiceException(factoryKey, jarName));
+    }
+
+    /**
+     * Create an instance of the given factory using the bootstrap factory finder.
+     *
+     * @param  camelContext the {@link CamelContext}
+     * @param  factoryKey   the key used top lookup the factory class
+     * @param  factoryClass the type of the class
+     * @return              an instance fo the given factory
+     */
+    public static <T> Optional<T> resolveBootstrapService(
+            CamelContext camelContext, String factoryKey, Class<T> factoryClass) {
+        FactoryFinder ff = camelContext.getCamelContextExtension().getBootstrapFactoryFinder();
+        return doResolveService(camelContext, ff, factoryKey, factoryClass, true);
     }
 
     /**

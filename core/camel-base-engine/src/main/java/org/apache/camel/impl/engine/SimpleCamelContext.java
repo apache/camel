@@ -247,9 +247,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 ModelJAXBContextFactory.FACTORY,
                 ModelJAXBContextFactory.class,
                 "camel-xml-jaxb");
@@ -297,18 +295,14 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ProcessorFactory createProcessorFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 ProcessorFactory.FACTORY,
                 ProcessorFactory.class, "camel-core-processor");
     }
 
     @Override
     protected InternalProcessorFactory createInternalProcessorFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 InternalProcessorFactory.FACTORY,
                 InternalProcessorFactory.class,
                 "camel-core-processor");
@@ -390,9 +384,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RuntimeCamelCatalog createRuntimeCamelCatalog() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 RuntimeCamelCatalog.FACTORY,
                 RuntimeCamelCatalog.class,
                 "camel-core-catalog");
@@ -417,9 +409,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
         }
 
         // lookup default factory
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 "default-" + DumpRoutesStrategy.FACTORY,
                 DumpRoutesStrategy.class,
                 "camel-core-engine");
@@ -480,9 +470,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected BeanProxyFactory createBeanProxyFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 BeanProxyFactory.FACTORY,
                 BeanProxyFactory.class,
                 "camel-bean");
@@ -490,9 +478,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected AnnotationBasedProcessorFactory createAnnotationBasedProcessorFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 AnnotationBasedProcessorFactory.FACTORY,
                 AnnotationBasedProcessorFactory.class,
                 "camel-core-processor");
@@ -500,9 +486,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected DeferServiceFactory createDeferServiceFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 DeferServiceFactory.FACTORY,
                 DeferServiceFactory.class,
                 "camel-core-processor");
@@ -510,9 +494,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected BeanProcessorFactory createBeanProcessorFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 BeanProcessorFactory.FACTORY,
                 BeanProcessorFactory.class,
                 "camel-bean");
@@ -547,9 +529,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ModelToXMLDumper createModelToXMLDumper() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 ModelToXMLDumper.FACTORY,
                 ModelToXMLDumper.class,
                 "camel-xml-io");
@@ -557,9 +537,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ModelToYAMLDumper createModelToYAMLDumper() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 ModelToYAMLDumper.FACTORY,
                 ModelToYAMLDumper.class,
                 "camel-yaml-io");
@@ -567,9 +545,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected ModelToStructureDumper createModelToStructureDumper() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 ModelToStructureDumper.FACTORY,
                 ModelToStructureDumper.class,
                 "camel-core-engine");
@@ -577,9 +553,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestBindingJaxbDataFormatFactory createRestBindingJaxbDataFormatFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 RestBindingJaxbDataFormatFactory.FACTORY,
                 RestBindingJaxbDataFormatFactory.class,
                 "camel-jaxb");
@@ -587,9 +561,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestBindingJacksonXmlDataFormatFactory createRestBindingJacksonXmlDataFormatFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 RestBindingJacksonXmlDataFormatFactory.FACTORY,
                 RestBindingJacksonXmlDataFormatFactory.class,
                 "camel-jacksonxml");
@@ -633,9 +605,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     @Override
     protected RestRegistryFactory createRestRegistryFactory() {
-        return ResolverHelper.resolveMandatoryService(
-                getCamelContextReference(),
-                getCamelContextExtension().getBootstrapFactoryFinder(),
+        return ResolverHelper.resolveMandatoryBootstrapService(getCamelContextReference(),
                 RestRegistryFactory.FACTORY,
                 RestRegistryFactory.class,
                 "camel-rest");

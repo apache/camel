@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultVariableRepositoryFactory extends ServiceSupport implements VariableRepositoryFactory, StaticService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultVariableRepositoryFactory.class);
-
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/variable-repository/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultVariableRepositoryFactory.class);
 
     private final CamelContext camelContext;
     private VariableRepository global;

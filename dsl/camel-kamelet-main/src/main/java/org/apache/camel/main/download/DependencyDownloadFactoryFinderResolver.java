@@ -17,7 +17,6 @@
 package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.engine.BootstrapFactoryFinder;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -34,7 +33,7 @@ public class DependencyDownloadFactoryFinderResolver implements FactoryFinderRes
 
     @Override
     public FactoryFinder resolveBootstrapFactoryFinder(ClassResolver classResolver, String resourcePath) {
-        return new BootstrapFactoryFinder(classResolver, resourcePath);
+        return new DependencyDownloadFactoryFinder(camelContext, classResolver, resourcePath, knownDeps);
     }
 
     @Override

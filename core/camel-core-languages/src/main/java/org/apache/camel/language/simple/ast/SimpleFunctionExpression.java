@@ -393,9 +393,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private Expression createSimpleAttachments(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
                 camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
                 SimpleLanguageFunctionFactory.class,
                 "camel-attachments");
@@ -403,9 +402,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private Expression createSimpleBase64(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
                 camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
                 SimpleLanguageFunctionFactory.class,
                 "camel-base64");
@@ -2585,9 +2583,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private String createCodeAttachments(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
                 camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-attachments",
                 SimpleLanguageFunctionFactory.class,
                 "camel-attachments");
@@ -2595,9 +2592,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
     }
 
     private String createCodeBase64(CamelContext camelContext, String function) {
-        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryService(
+        SimpleLanguageFunctionFactory factory = ResolverHelper.resolveMandatoryBootstrapService(
                 camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 SimpleLanguageFunctionFactory.FACTORY + "/camel-base64",
                 SimpleLanguageFunctionFactory.class,
                 "camel-base64");

@@ -24,6 +24,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
+import org.apache.camel.NoSuchServiceException;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.InvokeOnHeaderStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -39,8 +41,9 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/invoke-on-header/";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HeaderSelectorProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HeaderSelectorProducer.class);
 
+    private FactoryFinder factoryFinder;
     private final Supplier<String> headerSupplier;
     private final Supplier<String> defaultHeaderValueSupplier;
     private final Object target;
@@ -104,11 +107,13 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
     protected void doBuild() throws Exception {
         super.doBuild();
 
+        if (factoryFinder == null) {
+            factoryFinder = camelContext.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
+        }
+
         String key = this.getClass().getName();
-        String fqn = RESOURCE_PATH + key;
-        strategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
-                .newInstance(key, InvokeOnHeaderStrategy.class)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
+        strategy = factoryFinder.newInstance(key, InvokeOnHeaderStrategy.class)
+                .orElseThrow(() -> new NoSuchServiceException(key, null));
 
         Class<?> sclazz = this.getClass().getSuperclass();
         // NOTE: check specific classes only, not possible subclasses
@@ -117,10 +122,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
                 && sclazz != HeaderSelectorProducer.class) {
             // some components may have a common base class they extend from (such as camel-infinispan)
             // so try to discover that (optional so return null if not present)
-            String key2 = this.getClass().getSuperclass().getName();
-            parentStrategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
-                    .newInstance(key2, InvokeOnHeaderStrategy.class)
-                    .orElse(null);
+            parentStrategy = factoryFinder.newInstance(sclazz.getName(), InvokeOnHeaderStrategy.class).orElse(null);
         }
     }
 
@@ -138,28 +140,28 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
                 throw new NoSuchHeaderException(exchange, header, String.class);
             }
 
-            LOGGER.debug("Invoking @InvokeOnHeader method: {}", action);
+            LOG.debug("Invoking @InvokeOnHeader method: {}", action);
             Object answer = strategy.invoke(target, action, exchange, callback);
             if (answer == null && parentStrategy != null) {
                 answer = parentStrategy.invoke(target, action, exchange, callback);
             }
             if (answer == callback) {
-                // okay it was an async invoked so we should return false
+                // okay it was an async-invoked so we should return false
                 sync = false;
                 answer = null;
             }
             if (sync) {
-                LOGGER.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
+                LOG.trace("Invoked @InvokeOnHeader method: {} -> {}", action, answer);
                 processResult(exchange, answer);
             } else {
-                LOGGER.trace("Invoked @InvokeOnHeader method: {} is continuing asynchronously", action);
+                LOG.trace("Invoked @InvokeOnHeader method: {} is continuing asynchronously", action);
             }
         } catch (Exception e) {
             exchange.setException(e);
         }
 
         if (sync) {
-            // callback was not in use, so we must done it here
+            // callback was not in use, so we must call done here
             callback.done(true);
         }
         return sync;
@@ -169,7 +171,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
      * Process the result. Will by default set the result as the message body.
      *
      * @param exchange the exchange
-     * @param result   the result (may be null)
+     * @param result   the result (can be null)
      */
     protected void processResult(Exchange exchange, Object result) {
         if (result != null) {
