@@ -103,6 +103,7 @@ public abstract class JBangTestSupport {
         DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
         SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml"),
         CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java"),
+        CUSTOM_JAR("CustomJar.java", "/jbang/it/CustomJar.java"),
         SRC_MAPPING_DATA("data.json", "/jbang/it/data-mapping/src/data.json"),
         SRC_MAPPING_TEMPLATE("transform.yaml", "/jbang/it/data-mapping/src/transform.yaml"),
         COMP_MAPPING_DATA("data.xml", "/jbang/it/data-mapping/components/data.xml"),

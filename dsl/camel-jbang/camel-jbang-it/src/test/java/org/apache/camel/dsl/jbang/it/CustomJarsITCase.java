@@ -26,16 +26,13 @@ public class CustomJarsITCase extends JBangTestSupport {
 
     @Test
     public void testCustomJars() throws IOException {
-        copyResourceInDataFolder(TestResources.CIRCUIT_BREAKER);
+        copyResourceInDataFolder(TestResources.CUSTOM_JAR);
         Assertions
                 .assertThatCode(() -> execute(
-                        String.format("run %s/CircuitBreakerRoute.java --max-seconds=30", mountPoint())))
+                        String.format("run %s/CustomJar.java --max-seconds=30", mountPoint())))
                 .as("the application without dependency will cause error")
-                .hasStackTraceContaining("Failed to create route: circuitBreaker")
-                .hasStackTraceContaining(
-                        "Cannot find camel-resilience4j or camel-microprofile-fault-tolerance on the classpath.");
-        executeBackground(String.format("run %s/CircuitBreakerRoute.java --dep=camel-timer,camel-resilience4j", mountPoint()));
-        checkLogContains("timer called");
-        checkLogContains("Fallback message", 10);
+                .hasStackTraceContaining("Compilation error");
+        executeBackground(String.format("run %s/CustomJar.java --dep=org.apache.commons:commons-text:1.15.0", mountPoint()));
+        checkLogContains("Random password");
     }
 }
