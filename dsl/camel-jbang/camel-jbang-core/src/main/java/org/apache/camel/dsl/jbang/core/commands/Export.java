@@ -37,13 +37,11 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import picocli.CommandLine.Command;
 
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.BUILD_TOOL;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_SPRING_BOOT_VERSION;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.CAMEL_VERSION;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXCLUDES;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.EXPORT_DIR;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.GAV;
-import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.GRADLE_WRAPPER;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.JAVA_VERSION;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.KAMELETS_VERSION;
 import static org.apache.camel.dsl.jbang.core.common.CamelJBangConstants.LOCAL_KAMELET_DIR;
@@ -186,10 +184,7 @@ public class Export extends ExportBaseCommand {
             this.springBootVersion = props.getProperty(SPRING_BOOT_VERSION, this.springBootVersion);
             this.mavenWrapper
                     = "true".equals(props.getProperty(MAVEN_WRAPPER, this.mavenWrapper ? "true" : "false"));
-            this.gradleWrapper
-                    = "true".equals(props.getProperty(GRADLE_WRAPPER, this.gradleWrapper ? "true" : "false"));
             this.exportDir = props.getProperty(EXPORT_DIR, this.exportDir);
-            this.buildTool = props.getProperty(BUILD_TOOL, this.buildTool);
             this.openapi = props.getProperty(OPEN_API, this.openapi);
             this.repositories = props.getProperty(REPOS, this.repositories);
             this.mavenSettings = props.getProperty(MAVEN_SETTINGS, this.mavenSettings);
@@ -249,8 +244,6 @@ public class Export extends ExportBaseCommand {
         cmd.quarkusVersion = this.quarkusVersion;
         cmd.springBootVersion = this.springBootVersion;
         cmd.mavenWrapper = this.mavenWrapper;
-        cmd.gradleWrapper = this.gradleWrapper;
-        cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
         cmd.buildProperties = this.buildProperties;
         cmd.openapi = this.openapi;

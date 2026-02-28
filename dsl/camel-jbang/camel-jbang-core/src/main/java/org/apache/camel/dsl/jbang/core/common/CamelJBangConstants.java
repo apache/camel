@@ -92,14 +92,6 @@ public final class CamelJBangConstants {
               javaType = "boolean", defaultValue = "true")
     public static final String MAVEN_WRAPPER = "camel.jbang.mavenWrapper";
 
-    @Metadata(description = "Include Gradle Wrapper files in the exported project",
-              javaType = "boolean", defaultValue = "true")
-    public static final String GRADLE_WRAPPER = "camel.jbang.gradleWrapper";
-
-    @Metadata(description = "Build tool to use (Maven or Gradle)",
-              javaType = "String", defaultValue = "Maven")
-    public static final String BUILD_TOOL = "camel.jbang.buildTool";
-
     @Metadata(description = "Directory where the project will be exported",
               javaType = "String", defaultValue = ".")
     public static final String EXPORT_DIR = "camel.jbang.exportDir";

@@ -3,7 +3,6 @@
     { "name": "camel.jbang", "description": "Camel JBang configurations" }
   ],
   "properties": [
-    { "name": "camel.jbang.buildTool", "required": false, "description": "Build tool to use (Maven or Gradle)", "type": "string", "javaType": "String", "defaultValue": "Maven", "secret": false },
     { "name": "camel.jbang.camel-version", "required": false, "description": "The version of Apache Camel to use", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.camelSpringBootVersion", "required": false, "description": "To use a custom Camel version when running or export to Spring Boot", "label": "spring-boot", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.classpathFiles", "required": false, "description": "Additional files to add to classpath (Use commas to separate multiple files).", "type": "string", "javaType": "String", "secret": false },
@@ -17,7 +16,6 @@
     { "name": "camel.jbang.excludes", "required": false, "description": "Exclude files by name or pattern (Use commas to separate multiple files)", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.exportDir", "required": false, "description": "Directory where the project will be exported", "type": "string", "javaType": "String", "defaultValue": ".", "secret": false },
     { "name": "camel.jbang.gav", "required": false, "description": "Maven coordinate (groupId:artifactId:version)", "type": "string", "javaType": "String", "secret": false },
-    { "name": "camel.jbang.gradleWrapper", "required": false, "description": "Include Gradle Wrapper files in the exported project", "type": "boolean", "javaType": "boolean", "defaultValue": true, "secret": false },
     { "name": "camel.jbang.groovyFiles", "required": false, "description": "Additional groovy source files to export to src\/main\/resources\/camel-groovy directory (Use commas to separate multiple files)", "type": "string", "javaType": "String", "secret": false },
     { "name": "camel.jbang.health", "required": false, "description": "Health check at \/observe\/health on local HTTP server (port 8080 by default)", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false, "deprecated": true },
     { "name": "camel.jbang.ignoreLoadingError", "required": false, "description": "Whether to ignore route loading and compilation errors (use this with care!)", "label": "advanced", "type": "boolean", "javaType": "boolean", "defaultValue": false, "secret": false },

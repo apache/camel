@@ -171,10 +171,6 @@ Should be changed to have semicolons as shown below:
             orderId=$sku,total=$sum
 ----
 
-=== camel-json-patch
-
-The `camel-json-patch` is now deprecated - the library it uses is not active maintained and this module does not work with Jackon 3.
-
 === camel-test-infra
 
 The test infrastructure modules no longer produce `test-jar` artifacts. All classes (service interfaces,
@@ -220,6 +216,11 @@ commonly used at in the top. EIPs such as `circuitBreaker` now has `onFallback` 
 
 This order is also the same order that UI builders like Camel Karavan and Kaoto do as well.
 
+=== camel-jbang
+
+Support for exporting to use Gradle as build tool has been removed (it was deprecated and not working well)
+The deprecated options `buildToool` and `gradleWrapper` has been removed.
+
 === camel-kafka
 
 The Kafka client library has been upgraded from 3.9.1 to 4.2.0. This is a major version upgrade of Apache Kafka with several notable changes:
@@ -240,6 +241,10 @@ Google recommends migrating your Pub/Sub Lite workloads to either:
 
 * **Google Cloud Pub/Sub** → use the `camel-google-pubsub` component
 * **Google Cloud Managed Service for Apache Kafka** → use the `camel-kafka` component
+
+=== camel-json-patch
+
+The `camel-json-patch` is now deprecated - the library it uses is not active maintained and this module does not work with Jackon 3.
 
 === camel-mail
 

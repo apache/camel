@@ -234,10 +234,10 @@ camel run *
 
 TIP: The run goal can also detect files that are `properties`, such as `application.properties`.
 
-=== Running a Maven or Gradle based project
+=== Running a Maven based project
 
 Camel JBang is intended for flat-file-based projects, where you run small integrations.
-However, Camel JBang may be used as a tool for migrating existing Maven or Gradle based projects.
+However, Camel JBang may be used as a tool for migrating existing Maven based projects.
 To make the migration easier, then JBang can do _best effort_ to run, export, or transform these projects.
 
 For example, if you have a Maven-based project, you can execute
@@ -245,13 +245,6 @@ For example, if you have a Maven-based project, you can execute
 [source,bash]
 ----
 camel run pom.xml
-----
-
-or for a Gradle project
-
-[source,bash]
-----
-camel run build.gradle
 ----
 
 Camel JBang will then scan in `src/main/java` and `src/main/resources` for files to include (recursive).
@@ -2218,7 +2211,7 @@ The plugin uses the capabilities of the Open Source test framework https://citru
 The automated test is able to prepare required infrastructure (e.g. PostgreSQL database, Kafka message broker) using containers and Camel infra services. Also, the test is able to automatically start the Camel integration locally with Camel JBang. Following from that the test is able to invoke exposed services of the Camel integration and verify its outcome.
 
 Once the prototyping phase with Camel JBang is complete you can include the automated tests into the project export.
-Usually, the export creates a Maven/Gradle project on top of Quarkus or SpringBoot and the automated tests become part of this project, so the tests are run with the project build lifecycle.
+Usually, the export creates a Maven project on top of Quarkus or SpringBoot and the automated tests become part of this project, so the tests are run with the project build lifecycle.
 
 Read about the plugin in the xref:camel-jbang-test.adoc[Camel Testing plugin] documentation.
 
@@ -3796,7 +3789,7 @@ See the https://github.com/apache/camel-kamelets-examples/tree/main/jbang/open-a
 == Gathering list of dependencies
 
 When working with Camel JBang, then dependencies are automatically resolved. This means that
-you do not have to use a build system like Maven or Gradle to add every Camel component
+you do not have to use a build system like Maven to add every Camel component
 as a dependency.
 
 However, you may want to know what dependencies are required to run the Camel integration.
@@ -3984,7 +3977,7 @@ To export to another directory (copies the files), you execute:
 camel export --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=../myproject
 ----
 
-When exporting to Spring Boot then the Camel version defined in the `pom.xml` or `build.gradle` is
+When exporting to Spring Boot then the Camel version defined in the `pom.xml` is
 the same version as Camel JBang uses. However, you can specify the Camel version as shown below:
 
 [source,bash]
@@ -4099,16 +4092,6 @@ As you can see the first export command will only include `Foo.java`, and then 2
 
 NOTE: If you have `application.properties` in the folder as well, then this will be included in both exports.
 
-=== Exporting as Gradle Project
-
-Camel JBang exports by default as a Maven-based project. To use Gradle instead, you can
-specify the `--build-tool=gradle` when exporting, such as:
-
-[source,bash]
-----
-camel export --build-tool=gradle --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=../myproject
-----
-
 === Exporting with JMX management included
 
 Usually when exporting to Spring Boot, Quarkus or Camel Main, then JMX management is not included out of the box.
@@ -4149,12 +4132,11 @@ The follow options related to _exporting_ or _running_, can be configured in `ap
 
 // jbang options: START
 === Camel JBang configurations
-The camel.jbang supports 47 options, which are listed below.
+The camel.jbang supports 45 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.jbang.buildTool* | Build tool to use (Maven or Gradle) | Maven | String
 | *camel.jbang.camel-version* | The version of Apache Camel to use |  | String
 | *camel.jbang.camelSpringBoot{zwsp}Version* | To use a custom Camel version when running or export to Spring Boot |  | String
 | *camel.jbang.classpathFiles* | Additional files to add to classpath (Use commas to separate multiple files). |  | String
@@ -4168,7 +4150,6 @@ The camel.jbang supports 47 options, which are listed below.
 | *camel.jbang.excludes* | Exclude files by name or pattern (Use commas to separate multiple files) |  | String
 | *camel.jbang.exportDir* | Directory where the project will be exported | . | String
 | *camel.jbang.gav* | Maven coordinate (groupId:artifactId:version) |  | String
-| *camel.jbang.gradleWrapper* | Include Gradle Wrapper files in the exported project | true | boolean
 | *camel.jbang.groovyFiles* | Additional groovy source files to export to src/main/resources/camel-groovy directory (Use commas to separate multiple files) |  | String
 | *camel.jbang.health* | Health check at /observe/health on local HTTP server (port 8080 by default) | false | boolean
 | *camel.jbang.ignoreLoadingError* | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
@@ -4343,7 +4324,7 @@ IMPORTANT: This feature is only intended to include smaller groovy sources as sm
 that makes it easier to use together with Camel for low-code integrations. It is not
 intended to support Groovy as a general purpose programming language for Camel. For this kind
 then you can use groovy and Java together and follow best practices for this, such as
-using the joint-compilation via Maven / Gradle plugins during build.
+using the joint-compilation via Maven plugins during build.
 
 == Troubleshooting
 
