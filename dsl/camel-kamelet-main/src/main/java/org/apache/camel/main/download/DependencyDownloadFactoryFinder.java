@@ -46,6 +46,16 @@ public class DependencyDownloadFactoryFinder extends DefaultFactoryFinder {
         return super.findClass(key);
     }
 
+    @Override
+    public Optional<Class<?>> findOptionalClass(String key) {
+        // this is not optional so we can auto download the JAR as it's intended to be on the classpath
+        MavenGav gav = knownDependenciesResolver.mavenGavForClass(FactoryFinder.DEFAULT_PATH + key);
+        if (gav != null) {
+            downloadLoader(gav.getGroupId(), gav.getArtifactId(), gav.getVersion());
+        }
+        return super.findOptionalClass(key);
+    }
+
     private void downloadLoader(String groupId, String artifactId, String version) {
         if (!downloader.alreadyOnClasspath(groupId, artifactId, version)) {
             downloader.downloadDependency(groupId, artifactId, version);
