@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.apache.camel.test.infra.cli.services.CliService;
 import org.apache.camel.test.infra.cli.services.CliServiceFactory;
-import org.apache.commons.io.FileUtils;
+import org.apache.camel.util.FileUtil;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -90,7 +90,7 @@ public abstract class JBangTestSupport {
         assertNoErrors();
         logger.debug("clean up data folder");
         if (containerDataFolder != null) {
-            FileUtils.deleteQuietly(new File(containerDataFolder));
+            FileUtil.removeDir(new File(containerDataFolder));
         }
     }
 

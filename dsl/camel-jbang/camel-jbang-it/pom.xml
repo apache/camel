@@ -277,6 +277,20 @@
                 <failsafe.forkCount>1</failsafe.forkCount>
                 <failsafe.excludedGroups>container-only</failsafe.excludedGroups>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-test-infra-cli</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-test-infra-mosquitto</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
