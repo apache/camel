@@ -754,7 +754,7 @@ public class Run extends CamelCommand {
             files.add(OPENAPI_GENERATED_FILE);
         }
 
-        // if we only run pom.xml then auto discover from the Maven/Gradle based project
+        // if we only run pom.xml then auto discover from the Maven based project
         if (files.size() == 1 && (files.get(0).endsWith("pom.xml"))) {
             Path projectDir = Path.of(files.get(0)).toAbsolutePath();
             // use a better name when running
