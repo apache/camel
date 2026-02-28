@@ -1,10 +1,11 @@
-= JsonPatch Component
+= JsonPatch Component (deprecated)
 :doctitle: JsonPatch
 :shortname: json-patch
 :artifactid: camel-json-patch
 :description: Transforms JSON using JSON patch (RFC 6902).
 :since: 3.12
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes

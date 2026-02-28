@@ -8906,6 +8906,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String path) {
         return jsonPatch("json-patch", path);
     }
@@ -8933,6 +8934,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String componentName, String path) {
         return JsonPatchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }

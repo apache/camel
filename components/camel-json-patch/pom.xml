@@ -28,7 +28,7 @@
 
   <artifactId>camel-json-patch</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: JsonPatch</name>
+  <name>Camel :: JsonPatch (deprecated)</name>
   <description>Camel JsonPatch Component</description>
 
   <dependencies>
