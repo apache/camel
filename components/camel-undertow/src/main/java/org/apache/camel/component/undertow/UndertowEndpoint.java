@@ -34,8 +34,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.cloud.DiscoverableService;
-import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.component.undertow.spi.UndertowSecurityProvider;
@@ -50,7 +48,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.camel.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.Option;
@@ -60,11 +57,10 @@ import org.xnio.Options;
 /**
  * Expose HTTP and WebSocket endpoints and access external HTTP/WebSocket servers.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-             category = { Category.HTTP, Category.NETWORKING }, lenientProperties = true,
-             headersClass = UndertowConstants.class)
+@UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI", category = {
+        Category.HTTP, Category.NETWORKING }, lenientProperties = true, headersClass = UndertowConstants.class)
 public class UndertowEndpoint extends DefaultEndpoint
-        implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
+        implements AsyncEndpoint, HeaderFilterStrategyAware, EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
@@ -124,8 +120,7 @@ public class UndertowEndpoint extends DefaultEndpoint
                             + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
                             + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
     private String handlers;
-    @UriParam(
-              label = "producer", defaultValue = "true",
+    @UriParam(label = "producer", defaultValue = "true",
               description = "If the option is true, UndertowProducer will set the Host header to the value contained in the current exchange Host header,"
                             + " useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client,"
                             + " this allows applications which use the Host header to generate accurate URL's for a proxied service.")
@@ -193,19 +188,9 @@ public class UndertowEndpoint extends DefaultEndpoint
 
     @Override
     public boolean isLenientProperties() {
-        // true to allow dynamic URI options to be configured and passed to external system for eg. the UndertowProducer
+        // true to allow dynamic URI options to be configured and passed to external
+        // system for eg. the UndertowProducer
         return true;
-    }
-
-    // Service Registration
-    //-------------------------------------------------------------------------
-
-    @Override
-    public Map<String, String> getServiceProperties() {
-        return CollectionHelper.immutableMapOf(
-                ServiceDefinition.SERVICE_META_PORT, Integer.toString(httpURI.getPort()),
-                ServiceDefinition.SERVICE_META_PATH, httpURI.getPath(),
-                ServiceDefinition.SERVICE_META_PROTOCOL, httpURI.getScheme());
     }
 
     public SSLContext getSslContext() {
@@ -525,7 +510,8 @@ public class UndertowEndpoint extends DefaultEndpoint
             optionMap = OptionMap.EMPTY;
         }
 
-        // and then configure these default options if they have not been explicit configured
+        // and then configure these default options if they have not been explicit
+        // configured
         if (keepAlive != null && !optionMap.contains(Options.KEEP_ALIVE)) {
             // rebuild map
             OptionMap.Builder builder = OptionMap.builder();
@@ -549,13 +535,14 @@ public class UndertowEndpoint extends DefaultEndpoint
     private void initSecurityProvider() throws Exception {
         Object securityConfiguration = getSecurityConfiguration();
         if (securityConfiguration != null) {
-            ServiceLoader<UndertowSecurityProvider> securityProvider = ServiceLoader.load(UndertowSecurityProvider.class);
+            ServiceLoader<UndertowSecurityProvider> securityProvider = ServiceLoader
+                    .load(UndertowSecurityProvider.class);
 
             Iterator<UndertowSecurityProvider> iter = securityProvider.iterator();
             List<String> providers = new LinkedList<>();
             while (iter.hasNext()) {
                 UndertowSecurityProvider security = iter.next();
-                //only securityProvider, who accepts security configuration, could be used
+                // only securityProvider, who accepts security configuration, could be used
                 if (security.acceptConfiguration(securityConfiguration, getEndpointUri())) {
                     this.securityProvider = security;
                     LOG.info("Security provider found {}", securityProvider.getClass().getName());
@@ -581,7 +568,9 @@ public class UndertowEndpoint extends DefaultEndpoint
 
     public HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
         if (registrationInfo == null) {
-            registrationInfo = new HttpHandlerRegistrationInfo(getHttpURI(), getHttpMethodRestrict(), getMatchOnUriPrefix());
+            registrationInfo = new HttpHandlerRegistrationInfo(
+                    getHttpURI(), getHttpMethodRestrict(),
+                    getMatchOnUriPrefix());
         }
         return registrationInfo;
     }

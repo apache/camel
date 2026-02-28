@@ -679,11 +679,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-cloud</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-cluster</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2518,11 +2513,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-seda</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

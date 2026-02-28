@@ -37,12 +37,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cloud</artifactId>
-        </dependency>
-        <dependency>
+        </dependency>        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cluster</artifactId>
         </dependency>
@@ -154,11 +149,7 @@
             <artifactId>camel-master</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-service</artifactId>
-            <scope>test</scope>
-        </dependency>
+
 
         <!-- test infra -->
         <dependency>

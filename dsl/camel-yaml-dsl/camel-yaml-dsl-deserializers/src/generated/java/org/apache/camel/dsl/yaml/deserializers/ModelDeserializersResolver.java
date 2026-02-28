@@ -47,14 +47,10 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.BearerTokenDefinition": return new ModelDeserializers.BearerTokenDefinitionDeserializer();
             case "bindy": return new ModelDeserializers.BindyDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.BindyDataFormat": return new ModelDeserializers.BindyDataFormatDeserializer();
-            case "blacklistServiceFilter": return new ModelDeserializers.BlacklistServiceCallServiceFilterConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration": return new ModelDeserializers.BlacklistServiceCallServiceFilterConfigurationDeserializer();
             case "cbor": return new ModelDeserializers.CBORDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.CBORDataFormat": return new ModelDeserializers.CBORDataFormatDeserializer();
             case "csimple": return new ModelDeserializers.CSimpleExpressionDeserializer();
             case "org.apache.camel.model.language.CSimpleExpression": return new ModelDeserializers.CSimpleExpressionDeserializer();
-            case "cachingServiceDiscovery": return new ModelDeserializers.CachingServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.CachingServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.CachingServiceCallServiceDiscoveryConfigurationDeserializer();
             case "doCatch": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "org.apache.camel.model.CatchDefinition": return new ModelDeserializers.CatchDefinitionDeserializer();
             case "choice": return new ModelDeserializers.ChoiceDefinitionDeserializer();
@@ -63,15 +59,9 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.CircuitBreakerDefinition": return new ModelDeserializers.CircuitBreakerDefinitionDeserializer();
             case "claimCheck": return new ModelDeserializers.ClaimCheckDefinitionDeserializer();
             case "org.apache.camel.model.ClaimCheckDefinition": return new ModelDeserializers.ClaimCheckDefinitionDeserializer();
-            case "combinedServiceDiscovery": return new ModelDeserializers.CombinedServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.CombinedServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "combinedServiceFilter": return new ModelDeserializers.CombinedServiceCallServiceFilterConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration": return new ModelDeserializers.CombinedServiceCallServiceFilterConfigurationDeserializer();
             case "org.apache.camel.model.app.ComponentScanDefinition": return new ModelDeserializers.ComponentScanDefinitionDeserializer();
             case "constant": return new ModelDeserializers.ConstantExpressionDeserializer();
             case "org.apache.camel.model.language.ConstantExpression": return new ModelDeserializers.ConstantExpressionDeserializer();
-            case "consulServiceDiscovery": return new ModelDeserializers.ConsulServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.ConsulServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.ConsulServiceCallServiceDiscoveryConfigurationDeserializer();
             case "contextScan": return new ModelDeserializers.ContextScanDefinitionDeserializer();
             case "org.apache.camel.model.ContextScanDefinition": return new ModelDeserializers.ContextScanDefinitionDeserializer();
             case "convertBodyTo": return new ModelDeserializers.ConvertBodyDefinitionDeserializer();
@@ -88,8 +78,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.CustomDataFormat": return new ModelDeserializers.CustomDataFormatDeserializer();
             case "customLoadBalancer": return new ModelDeserializers.CustomLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition": return new ModelDeserializers.CustomLoadBalancerDefinitionDeserializer();
-            case "customServiceFilter": return new ModelDeserializers.CustomServiceCallServiceFilterConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.CustomServiceCallServiceFilterConfiguration": return new ModelDeserializers.CustomServiceCallServiceFilterConfigurationDeserializer();
             case "customTransformer": return new ModelDeserializers.CustomTransformerDefinitionDeserializer();
             case "org.apache.camel.model.transformer.CustomTransformerDefinition": return new ModelDeserializers.CustomTransformerDefinitionDeserializer();
             case "customValidator": return new ModelDeserializers.CustomValidatorDefinitionDeserializer();
@@ -105,16 +93,12 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.errorhandler.DeadLetterChannelDefinition": return new ModelDeserializers.DeadLetterChannelDefinitionDeserializer();
             case "defaultErrorHandler": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
             case "org.apache.camel.model.errorhandler.DefaultErrorHandlerDefinition": return new ModelDeserializers.DefaultErrorHandlerDefinitionDeserializer();
-            case "defaultLoadBalancer": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.DefaultServiceCallServiceLoadBalancerConfiguration": return new ModelDeserializers.DefaultServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "delay": return new ModelDeserializers.DelayDefinitionDeserializer();
             case "org.apache.camel.model.DelayDefinition": return new ModelDeserializers.DelayDefinitionDeserializer();
             case "delete": return new ModelDeserializers.DeleteDefinitionDeserializer();
             case "org.apache.camel.model.rest.DeleteDefinition": return new ModelDeserializers.DeleteDefinitionDeserializer();
             case "dfdl": return new ModelDeserializers.DfdlDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.DfdlDataFormat": return new ModelDeserializers.DfdlDataFormatDeserializer();
-            case "dnsServiceDiscovery": return new ModelDeserializers.DnsServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.DnsServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.DnsServiceCallServiceDiscoveryConfigurationDeserializer();
             case "dynamicRouter": return new ModelDeserializers.DynamicRouterDefinitionDeserializer();
             case "org.apache.camel.model.DynamicRouterDefinition": return new ModelDeserializers.DynamicRouterDefinitionDeserializer();
             case "endpointTransformer": return new ModelDeserializers.EndpointTransformerDefinitionDeserializer();
@@ -163,8 +147,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.HeadDefinition": return new ModelDeserializers.HeadDefinitionDeserializer();
             case "header": return new ModelDeserializers.HeaderExpressionDeserializer();
             case "org.apache.camel.model.language.HeaderExpression": return new ModelDeserializers.HeaderExpressionDeserializer();
-            case "healthyServiceFilter": return new ModelDeserializers.HealthyServiceCallServiceFilterConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration": return new ModelDeserializers.HealthyServiceCallServiceFilterConfigurationDeserializer();
             case "hl7terser": return new ModelDeserializers.Hl7TerserExpressionDeserializer();
             case "org.apache.camel.model.language.Hl7TerserExpression": return new ModelDeserializers.Hl7TerserExpressionDeserializer();
             case "ical": return new ModelDeserializers.IcalDataFormatDeserializer();
@@ -201,8 +183,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.JsonPathExpression": return new ModelDeserializers.JsonPathExpressionDeserializer();
             case "jtaTransactionErrorHandler": return new ModelDeserializers.JtaTransactionErrorHandlerDefinitionDeserializer();
             case "org.apache.camel.model.errorhandler.JtaTransactionErrorHandlerDefinition": return new ModelDeserializers.JtaTransactionErrorHandlerDefinitionDeserializer();
-            case "kubernetesServiceDiscovery": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.KubernetesServiceCallServiceDiscoveryConfigurationDeserializer();
             case "lzf": return new ModelDeserializers.LZFDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.LZFDataFormat": return new ModelDeserializers.LZFDataFormatDeserializer();
             case "langChain4jCharacterTokenizer": return new ModelDeserializers.LangChain4jCharacterTokenizerDefinitionDeserializer();
@@ -275,8 +255,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.rest.ParamDefinition": return new ModelDeserializers.ParamDefinitionDeserializer();
             case "parquetAvro": return new ModelDeserializers.ParquetAvroDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ParquetAvroDataFormat": return new ModelDeserializers.ParquetAvroDataFormatDeserializer();
-            case "passThroughServiceFilter": return new ModelDeserializers.PassThroughServiceCallServiceFilterConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration": return new ModelDeserializers.PassThroughServiceCallServiceFilterConfigurationDeserializer();
             case "patch": return new ModelDeserializers.PatchDefinitionDeserializer();
             case "org.apache.camel.model.rest.PatchDefinition": return new ModelDeserializers.PatchDefinitionDeserializer();
             case "pausable": return new ModelDeserializers.PausableDefinitionDeserializer();
@@ -375,20 +353,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ScriptDefinition": return new ModelDeserializers.ScriptDefinitionDeserializer();
             case "security": return new ModelDeserializers.SecurityDefinitionDeserializer();
             case "org.apache.camel.model.rest.SecurityDefinition": return new ModelDeserializers.SecurityDefinitionDeserializer();
-            case "serviceCallConfiguration": return new ModelDeserializers.ServiceCallConfigurationDefinitionDeserializer();
-            case "org.apache.camel.model.cloud.ServiceCallConfigurationDefinition": return new ModelDeserializers.ServiceCallConfigurationDefinitionDeserializer();
-            case "serviceCall": return new ModelDeserializers.ServiceCallDefinitionDeserializer();
-            case "org.apache.camel.model.cloud.ServiceCallDefinition": return new ModelDeserializers.ServiceCallDefinitionDeserializer();
-            case "serviceExpression": return new ModelDeserializers.ServiceCallExpressionConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.ServiceCallExpressionConfiguration": return new ModelDeserializers.ServiceCallExpressionConfigurationDeserializer();
-            case "serviceChooserConfiguration": return new ModelDeserializers.ServiceCallServiceChooserConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.ServiceCallServiceChooserConfiguration": return new ModelDeserializers.ServiceCallServiceChooserConfigurationDeserializer();
-            case "serviceDiscoveryConfiguration": return new ModelDeserializers.ServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.ServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.ServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "serviceFilterConfiguration": return new ModelDeserializers.ServiceCallServiceFilterConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.ServiceCallServiceFilterConfiguration": return new ModelDeserializers.ServiceCallServiceFilterConfigurationDeserializer();
-            case "loadBalancerConfiguration": return new ModelDeserializers.ServiceCallServiceLoadBalancerConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.ServiceCallServiceLoadBalancerConfiguration": return new ModelDeserializers.ServiceCallServiceLoadBalancerConfigurationDeserializer();
             case "setBody": return new ModelDeserializers.SetBodyDefinitionDeserializer();
             case "org.apache.camel.model.SetBodyDefinition": return new ModelDeserializers.SetBodyDefinitionDeserializer();
             case "setExchangePattern": return new ModelDeserializers.SetExchangePatternDefinitionDeserializer();
@@ -417,8 +381,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.SplitDefinition": return new ModelDeserializers.SplitDefinitionDeserializer();
             case "springTransactionErrorHandler": return new ModelDeserializers.SpringTransactionErrorHandlerDefinitionDeserializer();
             case "org.apache.camel.model.errorhandler.SpringTransactionErrorHandlerDefinition": return new ModelDeserializers.SpringTransactionErrorHandlerDefinitionDeserializer();
-            case "staticServiceDiscovery": return new ModelDeserializers.StaticServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.StaticServiceCallServiceDiscoveryConfigurationDeserializer();
             case "step": return new ModelDeserializers.StepDefinitionDeserializer();
             case "org.apache.camel.model.StepDefinition": return new ModelDeserializers.StepDefinitionDeserializer();
             case "stickyLoadBalancer": return new ModelDeserializers.StickyLoadBalancerDefinitionDeserializer();
@@ -508,8 +470,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.ZipDeflaterDataFormat": return new ModelDeserializers.ZipDeflaterDataFormatDeserializer();
             case "zipFile": return new ModelDeserializers.ZipFileDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.ZipFileDataFormat": return new ModelDeserializers.ZipFileDataFormatDeserializer();
-            case "zookeeperServiceDiscovery": return new ModelDeserializers.ZooKeeperServiceCallServiceDiscoveryConfigurationDeserializer();
-            case "org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfiguration": return new ModelDeserializers.ZooKeeperServiceCallServiceDiscoveryConfigurationDeserializer();
         }
         return null;
     }

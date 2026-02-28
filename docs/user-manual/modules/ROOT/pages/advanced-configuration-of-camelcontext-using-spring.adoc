@@ -65,6 +65,5 @@ And the following options have support for any number of beans defined.
 |`MainListener` |0..n|To use custom `MainListener` implementations.
 |`ModelLifecycleStrategy` |0..n |To use third-party model lifecycle strategies.
 |`RoutePolicyFactory` |0..n |To use a third-party route policy factory to create a route policy for every route.
-|`ServiceRegistry` |0..n |To use camel-cloud xref:service-registry.adoc[Service Registries].
 |=======================================================================
 

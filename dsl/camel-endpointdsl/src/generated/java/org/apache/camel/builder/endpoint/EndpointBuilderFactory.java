@@ -325,7 +325,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.SedaEndpointBuilderFactory.SedaBuilders,
             org.apache.camel.builder.endpoint.dsl.ServerEndpointBuilderFactory.ServerBuilders,
             org.apache.camel.builder.endpoint.dsl.ServiceBusEndpointBuilderFactory.ServiceBusBuilders,
-            org.apache.camel.builder.endpoint.dsl.ServiceEndpointBuilderFactory.ServiceBuilders,
             org.apache.camel.builder.endpoint.dsl.ServiceNowEndpointBuilderFactory.ServiceNowBuilders,
             org.apache.camel.builder.endpoint.dsl.ServletEndpointBuilderFactory.ServletBuilders,
             org.apache.camel.builder.endpoint.dsl.Ses2EndpointBuilderFactory.Ses2Builders,

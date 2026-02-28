@@ -14299,50 +14299,6 @@ public class StaticEndpointBuilders {
         return SedaEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * Syntax: <code>service:delegateUri</code>
-     * 
-     * Path parameter: delegateUri (required)
-     * The endpoint uri to expose as service
-     * 
-     * @param path delegateUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String path) {
-        return service("service", path);
-    }
-    /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * Syntax: <code>service:delegateUri</code>
-     * 
-     * Path parameter: delegateUri (required)
-     * The endpoint uri to expose as service
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path delegateUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String componentName, String path) {
-        return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
      * 
