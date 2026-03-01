@@ -22,7 +22,6 @@ import org.junit.jupiter.api.parallel.Isolated;
 import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class MainPropertyPlaceholderTest {
