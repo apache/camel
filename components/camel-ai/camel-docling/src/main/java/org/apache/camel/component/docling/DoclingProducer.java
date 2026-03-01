@@ -32,12 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -87,6 +89,8 @@ public class DoclingProducer extends DefaultProducer {
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
+    private final Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks = new ConcurrentHashMap<>();
+    private final AtomicLong taskIdCounter = new AtomicLong();
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
@@ -130,6 +134,9 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        // Cancel any pending async tasks
+        pendingAsyncTasks.forEach((id, future) -> future.cancel(true));
+        pendingAsyncTasks.clear();
         if (doclingServeApi != null) {
             doclingServeApi = null;
             LOG.info("DoclingServeApi reference cleared");
@@ -287,10 +294,12 @@ public class DoclingProducer extends DefaultProducer {
 
         // Start async conversion
         ConvertDocumentRequest request = buildConvertRequest(inputPath, outputFormat);
-        CompletionStage<ConvertDocumentResponse> asyncResult = doclingServeApi.convertSourceAsync(request);
+        CompletableFuture<ConvertDocumentResponse> asyncResult
+                = doclingServeApi.convertSourceAsync(request).toCompletableFuture();
 
-        // Generate a task ID for tracking
-        String taskId = "task-" + System.currentTimeMillis() + "-" + inputPath.hashCode();
+        // Generate a unique task ID and store the future for later status checks
+        String taskId = "task-" + taskIdCounter.incrementAndGet();
+        pendingAsyncTasks.put(taskId, asyncResult);
         LOG.debug("Started async conversion with task ID: {}", taskId);
 
         // Set task ID in body and header
@@ -345,6 +354,13 @@ public class DoclingProducer extends DefaultProducer {
     private ConversionStatus checkConversionStatusInternal(String taskId) {
         LOG.debug("Checking status for task: {}", taskId);
 
+        // Check the local pending tasks map first (tasks submitted via SUBMIT_ASYNC_CONVERSION)
+        CompletableFuture<ConvertDocumentResponse> future = pendingAsyncTasks.get(taskId);
+        if (future != null) {
+            return checkLocalAsyncTask(taskId, future);
+        }
+
+        // Fall back to server-side task polling
         try {
             TaskStatusPollRequest pollRequest = TaskStatusPollRequest.builder()
                     .taskId(taskId)
@@ -374,8 +390,37 @@ public class DoclingProducer extends DefaultProducer {
             return new ConversionStatus(taskId, status);
         } catch (Exception e) {
             LOG.warn("Failed to check task status for {}: {}", taskId, e.getMessage());
-            // If the task ID doesn't exist on the server, return a completed status as a fallback
-            return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, errorMsg, null);
+        }
+    }
+
+    private ConversionStatus checkLocalAsyncTask(String taskId, CompletableFuture<ConvertDocumentResponse> future) {
+        if (!future.isDone()) {
+            return new ConversionStatus(taskId, ConversionStatus.Status.IN_PROGRESS);
+        }
+
+        if (future.isCompletedExceptionally() || future.isCancelled()) {
+            // Remove completed task from map
+            pendingAsyncTasks.remove(taskId);
+            String errorMessage;
+            try {
+                future.join();
+                errorMessage = "Unknown error";
+            } catch (Exception e) {
+                errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            }
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, errorMessage, null);
+        }
+
+        // Completed successfully — extract the result and remove from map
+        pendingAsyncTasks.remove(taskId);
+        try {
+            ConvertDocumentResponse response = future.join();
+            String result = extractConvertedContent(response, configuration.getOutputFormat());
+            return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED, result, null, null);
+        } catch (Exception e) {
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, e.getMessage(), null);
         }
     }
 
