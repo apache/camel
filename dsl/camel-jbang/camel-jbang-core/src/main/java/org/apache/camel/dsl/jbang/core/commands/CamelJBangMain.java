@@ -59,12 +59,17 @@ import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.Printer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.ParseResult;
 
 @Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true)
 public class CamelJBangMain implements Callable<Integer> {
     private static CommandLine commandLine;
+
+    private static final Logger log = LoggerFactory.getLogger(CamelJBangMain.class);
 
     private Printer out = new Printer.SystemOutPrinter();
 
@@ -200,7 +205,11 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
                         .addSubcommand("list", new CommandLine(new VersionList(main)))
                         .addSubcommand("set", new CommandLine(new VersionSet(main))))
-                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler());
+                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler())
+                .setExecutionExceptionHandler((Exception ex, CommandLine commandLine, ParseResult fullParseResult) -> {
+                    log.error("A command failed with the following exception: ", ex);
+                    throw ex;
+                });
 
         PluginHelper.addPlugins(commandLine, main, args);
 
