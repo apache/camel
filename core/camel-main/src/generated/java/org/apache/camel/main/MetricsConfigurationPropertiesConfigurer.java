@@ -31,6 +31,8 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         map.put("EnableRouteEventNotifier", boolean.class);
         map.put("EnableRoutePolicy", boolean.class);
         map.put("Enabled", boolean.class);
+        map.put("LogMetricsOnShutdown", boolean.class);
+        map.put("LogMetricsOnShutdownFilters", java.lang.String.class);
         map.put("NamingStrategy", java.lang.String.class);
         map.put("Path", java.lang.String.class);
         map.put("RoutePolicyLevel", java.lang.String.class);
@@ -59,6 +61,10 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "enableroutepolicy":
         case "enableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, boolean.class, value)); return true;
+        case "logmetricsonshutdown":
+        case "logMetricsOnShutdown": target.setLogMetricsOnShutdown(property(camelContext, boolean.class, value)); return true;
+        case "logmetricsonshutdownfilters":
+        case "logMetricsOnShutdownFilters": target.setLogMetricsOnShutdownFilters(property(camelContext, java.lang.String.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
@@ -96,6 +102,10 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "enableroutepolicy":
         case "enableRoutePolicy": return boolean.class;
         case "enabled": return boolean.class;
+        case "logmetricsonshutdown":
+        case "logMetricsOnShutdown": return boolean.class;
+        case "logmetricsonshutdownfilters":
+        case "logMetricsOnShutdownFilters": return java.lang.String.class;
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
         case "path": return java.lang.String.class;
@@ -129,6 +139,10 @@ public class MetricsConfigurationPropertiesConfigurer extends org.apache.camel.s
         case "enableroutepolicy":
         case "enableRoutePolicy": return target.isEnableRoutePolicy();
         case "enabled": return target.isEnabled();
+        case "logmetricsonshutdown":
+        case "logMetricsOnShutdown": return target.isLogMetricsOnShutdown();
+        case "logmetricsonshutdownfilters":
+        case "logMetricsOnShutdownFilters": return target.getLogMetricsOnShutdownFilters();
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
         case "path": return target.getPath();

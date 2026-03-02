@@ -597,7 +597,7 @@ The camel.mdc supports 3 options, which are listed below.
 
 
 === Camel Micrometer Metrics configurations
-The camel.metrics supports 14 options, which are listed below.
+The camel.metrics supports 16 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -611,6 +611,8 @@ The camel.metrics supports 14 options, which are listed below.
 | *camel.metrics.enableMessage{zwsp}History* | Set whether to enable the MicrometerMessageHistoryFactory for capturing metrics on individual route node processing times. Depending on the number of configured route nodes, there is the potential to create a large volume of metrics. Therefore, this option is disabled by default. | false | boolean
 | *camel.metrics.enableRouteEvent{zwsp}Notifier* | Set whether to enable the MicrometerRouteEventNotifier for capturing metrics on the total number of routes and total number of routes running. | true | boolean
 | *camel.metrics.enableRoute{zwsp}Policy* | Set whether to enable the MicrometerRoutePolicyFactory for capturing metrics on route processing times. | true | boolean
+| *camel.metrics.logMetricsOn{zwsp}Shutdown* | Log metrics when application is shutting down. (default, false). | false | boolean
+| *camel.metrics.logMetricsOn{zwsp}ShutdownFilters* | List of metrics (comma separated) to log when application is shutting down. You can use character to log any metrics containing the wildcard, for example camel.exchanges. (default to all metrics available). |  | String
 | *camel.metrics.namingStrategy* | Controls the name style to use for metrics. Default = uses micrometer naming convention. Legacy = uses the classic naming style (camelCase) | default | String
 | *camel.metrics.path* | The path endpoint used to expose the metrics. | /observe/metrics | String
 | *camel.metrics.routePolicyLevel* | Sets the level of information to capture. all = both context and routes. | all | String
