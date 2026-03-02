@@ -41,11 +41,8 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        java: ['17']
+        java: ['21']
         experimental: [ false ]
-        include:
-          - java: '21'
-            experimental: true
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

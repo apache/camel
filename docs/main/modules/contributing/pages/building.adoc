@@ -18,7 +18,7 @@
 
 == Prerequisites for Camel 4.x
 
-* Java 17 (we test using https://adoptium.net/[OpenJDK], but any modern JDK should be fine).
+* Java 21 (we test using https://adoptium.net/[OpenJDK], but any modern JDK should be fine).
 
 * https://github.com/takari/maven-wrapper[Maven Wrapper] can be used and is bundled.
 
@@ -33,7 +33,7 @@ Running the Maven Wrapper `mvnw` script with `-v` parameter from the root direct
 ./mvnw -v
 Apache Maven 1.2.3
 Maven home: /home/user/.m2/wrapper/dists/apache-maven-1.2.3-bin/deadbeef/apache-maven-1.2.3
-Java version: 17.0.5, vendor: Eclipse Adoptium, runtime: /home/user/java/17.0.5-tem
+Java version: 21.0.10, vendor: Eclipse Adoptium, runtime: /home/user/java/21.0.10-tem
 Default locale: en_IE, platform encoding: UTF-8
 OS name: "linux", version: "6.3.7-200.fc38.x86_64", arch: "amd64", family: "unix"
 ----
