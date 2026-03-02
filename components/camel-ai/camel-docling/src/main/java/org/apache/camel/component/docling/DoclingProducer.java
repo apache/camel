@@ -1603,8 +1603,43 @@ public class DoclingProducer extends DefaultProducer {
         @SuppressWarnings("unchecked")
         List<String> customArgs = exchange.getIn().getHeader(DoclingHeaders.CUSTOM_ARGUMENTS, List.class);
         if (customArgs != null && !customArgs.isEmpty()) {
+            validateCustomArguments(customArgs);
             LOG.debug("Adding custom Docling arguments: {}", customArgs);
             command.addAll(customArgs);
+        }
+    }
+
+    /**
+     * Validates custom CLI arguments to ensure they do not conflict with producer-managed options such as the output
+     * directory.
+     */
+    private void validateCustomArguments(List<String> customArgs) {
+        // The output directory is managed by the producer via endpoint configuration
+        // or the OUTPUT_FILE_PATH header, so it must not be overridden through custom arguments.
+        List<String> blockedFlags = List.of("--output", "-o");
+
+        for (int i = 0; i < customArgs.size(); i++) {
+            String arg = customArgs.get(i);
+
+            if (arg == null) {
+                throw new IllegalArgumentException("Custom argument at index " + i + " is null");
+            }
+
+            String argLower = arg.toLowerCase();
+            for (String blocked : blockedFlags) {
+                if (argLower.equals(blocked) || argLower.startsWith(blocked + "=")) {
+                    throw new IllegalArgumentException(
+                            "Custom argument '" + blocked
+                                                       + "' is not allowed because the output directory is managed by the producer. "
+                                                       + "Use the " + DoclingHeaders.OUTPUT_FILE_PATH
+                                                       + " header or endpoint configuration instead.");
+                }
+            }
+
+            if (arg.contains("../") || arg.contains("..\\")) {
+                throw new IllegalArgumentException(
+                        "Custom argument at index " + i + " contains a relative path traversal sequence");
+            }
         }
     }
 
