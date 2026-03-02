@@ -33,7 +33,7 @@ import org.testcontainers.utility.DockerImageName;
 public class ContainerLocalKafkaInfraService implements KafkaInfraService, ContainerService<KafkaContainer> {
     public static final String KAFKA_IMAGE_NAME = LocalPropertyResolver.getProperty(
             ContainerLocalKafkaInfraService.class,
-            KafkaProperties.KAFKA_CONTAINER_IMAGE);
+            KafkaProperties.KAFKA_CONTAINER);
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalKafkaInfraService.class);
     protected KafkaContainer kafka;

@@ -590,7 +590,10 @@ public interface KafkaComponentBuilderFactory {
          * The consumer group protocol to use. The classic protocol uses the
          * traditional partition assignment and rebalancing mechanism. The
          * consumer protocol enables the new KIP-848 consumer rebalance protocol
-         * which provides faster and more efficient rebalancing.
+         * which provides faster and more efficient rebalancing. When set to
+         * consumer, classic-only properties (heartbeatIntervalMs,
+         * sessionTimeoutMs, partitionAssignor) are automatically excluded from
+         * the consumer configuration.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
