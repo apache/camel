@@ -32,12 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,6 +68,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +82,8 @@ public class DoclingProducer extends DefaultProducer {
     private DoclingConfiguration configuration;
     private DoclingServeApi doclingServeApi;
     private ObjectMapper objectMapper;
+    private final Map<String, CompletableFuture<ConvertDocumentResponse>> pendingAsyncTasks = new ConcurrentHashMap<>();
+    private final AtomicLong taskIdCounter = new AtomicLong();
 
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
@@ -121,6 +126,9 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        // Cancel any pending async tasks
+        pendingAsyncTasks.forEach((id, future) -> future.cancel(true));
+        pendingAsyncTasks.clear();
         if (doclingServeApi != null) {
             doclingServeApi = null;
             LOG.info("DoclingServeApi reference cleared");
@@ -261,10 +269,12 @@ public class DoclingProducer extends DefaultProducer {
 
         // Start async conversion
         ConvertDocumentRequest request = buildConvertRequest(inputPath, outputFormat);
-        CompletionStage<ConvertDocumentResponse> asyncResult = doclingServeApi.convertSourceAsync(request);
+        CompletableFuture<ConvertDocumentResponse> asyncResult
+                = doclingServeApi.convertSourceAsync(request).toCompletableFuture();
 
-        // Generate a task ID for tracking
-        String taskId = "task-" + System.currentTimeMillis() + "-" + inputPath.hashCode();
+        // Generate a unique task ID and store the future for later status checks
+        String taskId = "task-" + taskIdCounter.incrementAndGet();
+        pendingAsyncTasks.put(taskId, asyncResult);
         LOG.debug("Started async conversion with task ID: {}", taskId);
 
         // Set task ID in body and header
@@ -319,6 +329,13 @@ public class DoclingProducer extends DefaultProducer {
     private ConversionStatus checkConversionStatusInternal(String taskId) {
         LOG.debug("Checking status for task: {}", taskId);
 
+        // Check the local pending tasks map first (tasks submitted via SUBMIT_ASYNC_CONVERSION)
+        CompletableFuture<ConvertDocumentResponse> future = pendingAsyncTasks.get(taskId);
+        if (future != null) {
+            return checkLocalAsyncTask(taskId, future);
+        }
+
+        // Fall back to server-side task polling
         try {
             TaskStatusPollRequest pollRequest = TaskStatusPollRequest.builder()
                     .taskId(taskId)
@@ -348,8 +365,37 @@ public class DoclingProducer extends DefaultProducer {
             return new ConversionStatus(taskId, status);
         } catch (Exception e) {
             LOG.warn("Failed to check task status for {}: {}", taskId, e.getMessage());
-            // If the task ID doesn't exist on the server, return a completed status as a fallback
-            return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED);
+            String errorMsg = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, errorMsg, null);
+        }
+    }
+
+    private ConversionStatus checkLocalAsyncTask(String taskId, CompletableFuture<ConvertDocumentResponse> future) {
+        if (!future.isDone()) {
+            return new ConversionStatus(taskId, ConversionStatus.Status.IN_PROGRESS);
+        }
+
+        if (future.isCompletedExceptionally() || future.isCancelled()) {
+            // Remove completed task from map
+            pendingAsyncTasks.remove(taskId);
+            String errorMessage;
+            try {
+                future.join();
+                errorMessage = "Unknown error";
+            } catch (Exception e) {
+                errorMessage = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            }
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, errorMessage, null);
+        }
+
+        // Completed successfully — extract the result and remove from map
+        pendingAsyncTasks.remove(taskId);
+        try {
+            ConvertDocumentResponse response = future.join();
+            String result = extractConvertedContent(response, configuration.getOutputFormat());
+            return new ConversionStatus(taskId, ConversionStatus.Status.COMPLETED, result, null, null);
+        } catch (Exception e) {
+            return new ConversionStatus(taskId, ConversionStatus.Status.FAILED, null, e.getMessage(), null);
         }
     }
 
@@ -1357,6 +1403,7 @@ public class DoclingProducer extends DefaultProducer {
                 // Treat as content to be written to a temp file
                 Path tempFile = Files.createTempFile("docling-", ".tmp");
                 Files.write(tempFile, content.getBytes());
+                registerTempFileCleanup(exchange, tempFile);
                 validateFileSize(tempFile.toString());
                 return tempFile.toString();
             }
@@ -1366,6 +1413,7 @@ public class DoclingProducer extends DefaultProducer {
             }
             Path tempFile = Files.createTempFile("docling-", ".tmp");
             Files.write(tempFile, content);
+            registerTempFileCleanup(exchange, tempFile);
             return tempFile.toString();
         } else if (body instanceof File file) {
             validateFileSize(file.getAbsolutePath());
@@ -1373,6 +1421,20 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         throw new InvalidPayloadException(exchange, String.class);
+    }
+
+    private void registerTempFileCleanup(Exchange exchange, Path tempFile) {
+        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                    LOG.debug("Cleaned up temp file: {}", tempFile);
+                } catch (IOException e) {
+                    LOG.warn("Failed to clean up temp file: {}", tempFile, e);
+                }
+            }
+        });
     }
 
     private void validateFileSize(String filePath) throws IOException {
@@ -1603,8 +1665,43 @@ public class DoclingProducer extends DefaultProducer {
         @SuppressWarnings("unchecked")
         List<String> customArgs = exchange.getIn().getHeader(DoclingHeaders.CUSTOM_ARGUMENTS, List.class);
         if (customArgs != null && !customArgs.isEmpty()) {
+            validateCustomArguments(customArgs);
             LOG.debug("Adding custom Docling arguments: {}", customArgs);
             command.addAll(customArgs);
+        }
+    }
+
+    /**
+     * Validates custom CLI arguments to ensure they do not conflict with producer-managed options such as the output
+     * directory.
+     */
+    private void validateCustomArguments(List<String> customArgs) {
+        // The output directory is managed by the producer via endpoint configuration
+        // or the OUTPUT_FILE_PATH header, so it must not be overridden through custom arguments.
+        List<String> blockedFlags = List.of("--output", "-o");
+
+        for (int i = 0; i < customArgs.size(); i++) {
+            String arg = customArgs.get(i);
+
+            if (arg == null) {
+                throw new IllegalArgumentException("Custom argument at index " + i + " is null");
+            }
+
+            String argLower = arg.toLowerCase();
+            for (String blocked : blockedFlags) {
+                if (argLower.equals(blocked) || argLower.startsWith(blocked + "=")) {
+                    throw new IllegalArgumentException(
+                            "Custom argument '" + blocked
+                                                       + "' is not allowed because the output directory is managed by the producer. "
+                                                       + "Use the " + DoclingHeaders.OUTPUT_FILE_PATH
+                                                       + " header or endpoint configuration instead.");
+                }
+            }
+
+            if (arg.contains("../") || arg.contains("..\\")) {
+                throw new IllegalArgumentException(
+                        "Custom argument at index " + i + " contains a relative path traversal sequence");
+            }
         }
     }
 
