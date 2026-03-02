@@ -113,7 +113,10 @@ public class DoclingConfiguration implements Cloneable {
     private long asyncTimeout = 300000; // 5 minutes
 
     @UriParam(label = "batch")
-    @Metadata(description = "Maximum number of documents to process in a single batch (batch operations only)",
+    @Metadata(description = "Number of documents to submit per sub-batch. Documents are partitioned into sub-batches of this size"
+                            + " and each sub-batch is processed before starting the next one. Within each sub-batch, up to"
+                            + " batchParallelism threads are used concurrently. This controls memory usage and back-pressure"
+                            + " when processing large document sets.",
               defaultValue = "10")
     private int batchSize = 10;
 
