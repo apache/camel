@@ -5,9 +5,9 @@
     "title": "Avro X Java Object",
     "description": "Transforms from JSon to Java object using Jackson Avro (supports content schema)",
     "deprecated": false,
-    "javaType": "org.apache.camel.component.jackson3.avro.transform.AvroPojoDataTypeTransformer",
+    "javaType": "org.apache.camel.component.jackson.avro.transform.AvroPojoDataTypeTransformer",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-jackson3-avro",
+    "artifactId": "camel-jackson-avro",
     "version": "4.19.0-SNAPSHOT"
   }
 }

@@ -1,8 +1,8 @@
-= JSON Jackson3 DataFormat
-:doctitle: JSON Jackson3
-:shortname: jackson3
+= JSON Jackson DataFormat
+:doctitle: JSON Jackson
+:shortname: jackson
 :artifactid: camel-jackson3
-:description: Marshal POJOs to JSON and back using Jackson 3.
+:description: Marshal POJOs to JSON and back using Jackson.
 :since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:
@@ -17,7 +17,7 @@ https://github.com/FasterXML/jackson[Jackson 3 Library]
 [source,java]
 -------------------------------
 from("activemq:My.Queue").
-  marshal().jackson3().
+  marshal().jackson().
   to("mqseries:Another.Queue");
 -------------------------------
 
@@ -31,9 +31,9 @@ include::partial$dataformat-options.adoc[]
 
 == Usage
 
-=== Using Jackson3 with the json() DSL
+=== Using Jackson with the json() DSL
 
-Jackson3 can also be used via the generic `json()` DSL method by specifying `JsonLibrary.Jackson`:
+Jackson can also be used via the generic `json()` DSL method by specifying `JsonLibrary.Jackson`:
 
 [source,java]
 -------------------------------

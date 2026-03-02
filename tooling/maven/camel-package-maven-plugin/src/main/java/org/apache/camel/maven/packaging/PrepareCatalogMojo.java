@@ -781,6 +781,9 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // Check duplicates
         duplicateJsonFiles = getDuplicates(jsonFiles);
 
+        // Filter out Jackson 3.x transformers
+        jsonFiles = filterJackson3Duplicates(jsonFiles);
+
         // Copy all descriptors
         Map<Path, Path> newJsons = map(jsonFiles, p -> p, p -> transformersOutDir.resolve(p.getFileName()));
         try (Stream<Path> stream = list(transformersOutDir).filter(p -> !newJsons.containsValue(p))) {

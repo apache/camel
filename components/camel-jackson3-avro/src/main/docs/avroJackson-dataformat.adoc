@@ -1,8 +1,8 @@
-= Avro Jackson3 DataFormat
-:doctitle: Avro Jackson3
-:shortname: avroJackson3
+= Avro Jackson DataFormat
+:doctitle: Avro Jackson
+:shortname: avroJackson
 :artifactid: camel-jackson3-avro
-:description: Marshal POJOs to Avro and back using Jackson 3.
+:description: Marshal POJOs to Avro and back using Jackson.
 :since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:

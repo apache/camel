@@ -1,13 +1,13 @@
-= Protobuf Jackson3 DataFormat
-:doctitle: Protobuf Jackson3
-:shortname: protobufJackson3
+= Protobuf Jackson DataFormat
+:doctitle: Protobuf Jackson
+:shortname: protobufJackson
 :artifactid: camel-jackson3-protobuf
-:description: Marshal POJOs to Protobuf and back using Jackson 3.
+:description: Marshal POJOs to Protobuf and back using Jackson.
 :since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:
 //Manually maintained attributes
-:camel-spring-boot-name: jackson3-protobuf
+:camel-spring-boot-name: jackson-protobuf
 
 *Since Camel {since}*
 
@@ -26,7 +26,7 @@ annotated for JSON serialization/deserialization.
 [source,java]
 -------------------------------
 from("kafka:topic").
-  unmarshal().protobuf(ProtobufLibrary.Jackson3, JsonNode.class).
+  unmarshal().protobuf(ProtobufLibrary.Jackson, JsonNode.class).
   to("log:info");
 -------------------------------
 

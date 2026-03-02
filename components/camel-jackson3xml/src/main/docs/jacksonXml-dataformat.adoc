@@ -1,8 +1,8 @@
-= XML Jackson3 DataFormat
-:doctitle: XML Jackson3
-:shortname: jacksonXml3
+= Jackson XML DataFormat
+:doctitle: Jackson XML
+:shortname: jacksonXml
 :artifactid: camel-jackson3xml
-:description: Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson 3.
+:description: Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.
 :since: 4.19
 :supportlevel: Preview
 :tabs-sync-option:

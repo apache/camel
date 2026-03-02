@@ -3,11 +3,11 @@
     "kind": "transformer",
     "name": "application-x-struct",
     "title": "Application X Struct",
-    "description": "Transforms to generic JSonNode using Jackson 3",
+    "description": "Transforms to generic JSonNode using Jackson",
     "deprecated": false,
-    "javaType": "org.apache.camel.component.jackson3.transform.JsonStructDataTypeTransformer",
+    "javaType": "org.apache.camel.component.jackson.transform.JsonStructDataTypeTransformer",
     "groupId": "org.apache.camel",
-    "artifactId": "camel-jackson3",
+    "artifactId": "camel-jackson",
     "version": "4.19.0-SNAPSHOT"
   }
 }

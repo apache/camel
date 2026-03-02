@@ -1,1 +1,0 @@
-../../../../../components/camel-jackson3-protobuf/src/main/docs/protobufJackson3-dataformat.adoc
