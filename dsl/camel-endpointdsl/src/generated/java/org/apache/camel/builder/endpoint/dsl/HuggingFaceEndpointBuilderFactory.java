@@ -253,6 +253,38 @@ public interface HuggingFaceEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether to pool the predictor (keep the Python process alive) or
+         * create a new one for each request.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param pooling the value to set
+         * @return the dsl builder
+         */
+        default HuggingFaceEndpointBuilder pooling(boolean pooling) {
+            doSetProperty("pooling", pooling);
+            return this;
+        }
+        /**
+         * Whether to pool the predictor (keep the Python process alive) or
+         * create a new one for each request.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param pooling the value to set
+         * @return the dsl builder
+         */
+        default HuggingFaceEndpointBuilder pooling(String pooling) {
+            doSetProperty("pooling", pooling);
+            return this;
+        }
+        /**
          * Bean name of a custom TaskPredictor implementation (for tasks not
          * covered by built-in predictors).
          * 

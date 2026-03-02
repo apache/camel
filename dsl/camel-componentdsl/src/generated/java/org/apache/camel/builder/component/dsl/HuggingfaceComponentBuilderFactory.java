@@ -237,6 +237,24 @@ public interface HuggingfaceComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to pool the predictor (keep the Python process alive) or
+         * create a new one for each request.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param pooling the value to set
+         * @return the dsl builder
+         */
+        default HuggingfaceComponentBuilder pooling(boolean pooling) {
+            doSetProperty("pooling", pooling);
+            return this;
+        }
+    
         /**
          * Bean name of a custom TaskPredictor implementation (for tasks not
          * covered by built-in predictors).
@@ -458,6 +476,7 @@ public interface HuggingfaceComponentBuilderFactory {
             case "modelId": getOrCreateConfiguration((HuggingFaceComponent) component).setModelId((java.lang.String) value); return true;
             case "modelLoadingTimeout": getOrCreateConfiguration((HuggingFaceComponent) component).setModelLoadingTimeout((int) value); return true;
             case "multiLabel": getOrCreateConfiguration((HuggingFaceComponent) component).setMultiLabel((boolean) value); return true;
+            case "pooling": getOrCreateConfiguration((HuggingFaceComponent) component).setPooling((boolean) value); return true;
             case "predictorBean": getOrCreateConfiguration((HuggingFaceComponent) component).setPredictorBean((java.lang.String) value); return true;
             case "predictTimeout": getOrCreateConfiguration((HuggingFaceComponent) component).setPredictTimeout((int) value); return true;
             case "revision": getOrCreateConfiguration((HuggingFaceComponent) component).setRevision((java.lang.String) value); return true;
