@@ -1709,14 +1709,15 @@ public class Run extends CamelCommand {
     }
 
     protected int runKameletMain(KameletMain main) throws Exception {
-        main.start();
-        main.run();
-
-        // cleanup and delete log file
-        if (logFile != null) {
-            FileUtil.deleteFile(logFile);
+        try {
+            main.start();
+            main.run();
+        } finally {
+            // cleanup and delete log file
+            if (logFile != null) {
+                FileUtil.deleteFile(logFile);
+            }
         }
-
         return main.getExitCode();
     }
 
