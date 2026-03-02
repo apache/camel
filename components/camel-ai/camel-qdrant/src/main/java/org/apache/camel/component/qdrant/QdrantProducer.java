@@ -273,7 +273,10 @@ public class QdrantProducer extends DefaultAsyncProducer {
         }
 
         ObjectHelper.notNull(vectors, "vectors");
-        final int maxResults = getEndpoint().getConfiguration().getMaxResults();
+        final int maxResults = in.getHeader(
+                QdrantHeaders.MAX_RESULTS,
+                getEndpoint().getConfiguration().getMaxResults(),
+                int.class);
         final Common.Filter filter = getEndpoint().getConfiguration().getFilter();
         final Duration timeout = getEndpoint().getConfiguration().getTimeout();
 

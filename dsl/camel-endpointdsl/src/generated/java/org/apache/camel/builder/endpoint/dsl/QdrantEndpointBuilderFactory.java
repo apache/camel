@@ -474,6 +474,18 @@ public interface QdrantEndpointBuilderFactory {
         public String qdrantPointId() {
             return "CamelQdrantPointId";
         }
+        /**
+         * The maximum number of results to return from a similarity search.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code QdrantMaxResults}.
+         */
+        public String qdrantMaxResults() {
+            return "CamelQdrantMaxResults";
+        }
     }
     static QdrantEndpointBuilder endpointBuilder(String componentName, String path) {
         class QdrantEndpointBuilderImpl extends AbstractEndpointBuilder implements QdrantEndpointBuilder, AdvancedQdrantEndpointBuilder {
