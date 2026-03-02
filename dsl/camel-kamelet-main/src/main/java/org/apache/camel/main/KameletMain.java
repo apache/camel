@@ -171,6 +171,13 @@ public class KameletMain extends MainCommandLineSupport {
         // normal exit
     }
 
+    @Override
+    protected void doFail(Exception e) {
+        // ensure any unhandled fatal errors are also logged before terminating process
+        LOG.error("Error starting Camel: {}", e, e);
+        super.doFail(e);
+    }
+
     /**
      * Binds the given <code>name</code> to the <code>bean</code> object, so that it can be looked up inside the
      * CamelContext this command line tool runs with.
