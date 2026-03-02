@@ -109,6 +109,10 @@ public class VersionList extends CamelCommand {
                         description = "Additional maven repositories (Use commas to separate multiple repositories)")
     public String repositories;
 
+    @CommandLine.Option(names = { "--vendor" },
+                        description = "Vendor of Apache Camel distribution to use when filtering versions")
+    public String vendor;
+
     @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
     public boolean lts;
 
@@ -177,6 +181,8 @@ public class VersionList extends CamelCommand {
         List<Row> rows = new ArrayList<>();
         filterVersions(versions, rows, releases);
 
+        filterVendor(vendor, rows);
+
         if (lts) {
             rows.removeIf(r -> !"lts".equalsIgnoreCase(r.kind));
         }
@@ -226,9 +232,9 @@ public class VersionList extends CamelCommand {
                     Jsoner.serialize(
                             rows.stream()
                                     .map(row -> new VersionListDTO(
-                                            row.coreVersion, runtime.runtime(), row.runtimeVersion, row.jdks, row.kind,
-                                            row.releaseDate,
-                                            row.eolDate))
+                                            row.coreVersion, runtime.runtime(), row.runtimeVersion,
+                                            vendor, row.jdks, row.kind,
+                                            row.releaseDate, row.eolDate))
                                     .map(VersionListDTO::toMap)
                                     .collect(Collectors.toList())));
         } else {
@@ -273,6 +279,12 @@ public class VersionList extends CamelCommand {
         }
 
         return 0;
+    }
+
+    private void filterVendor(String vendor, List<Row> rows) {
+        if (vendor != null && !vendor.isBlank()) {
+            rows.removeIf(r -> !r.coreVersion.contains(vendor));
+        }
     }
 
     public static JsonObject updateCheckerFile(JsonObject root, String runtime, String repositories) {
