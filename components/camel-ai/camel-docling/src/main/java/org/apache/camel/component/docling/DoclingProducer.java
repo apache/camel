@@ -66,6 +66,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.OAuthHelper;
+import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1357,6 +1360,7 @@ public class DoclingProducer extends DefaultProducer {
                 // Treat as content to be written to a temp file
                 Path tempFile = Files.createTempFile("docling-", ".tmp");
                 Files.write(tempFile, content.getBytes());
+                registerTempFileCleanup(exchange, tempFile);
                 validateFileSize(tempFile.toString());
                 return tempFile.toString();
             }
@@ -1366,6 +1370,7 @@ public class DoclingProducer extends DefaultProducer {
             }
             Path tempFile = Files.createTempFile("docling-", ".tmp");
             Files.write(tempFile, content);
+            registerTempFileCleanup(exchange, tempFile);
             return tempFile.toString();
         } else if (body instanceof File file) {
             validateFileSize(file.getAbsolutePath());
@@ -1373,6 +1378,20 @@ public class DoclingProducer extends DefaultProducer {
         }
 
         throw new InvalidPayloadException(exchange, String.class);
+    }
+
+    private void registerTempFileCleanup(Exchange exchange, Path tempFile) {
+        exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                    LOG.debug("Cleaned up temp file: {}", tempFile);
+                } catch (IOException e) {
+                    LOG.warn("Failed to clean up temp file: {}", tempFile, e);
+                }
+            }
+        });
     }
 
     private void validateFileSize(String filePath) throws IOException {
