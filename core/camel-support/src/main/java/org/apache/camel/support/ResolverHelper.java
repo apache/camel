@@ -137,9 +137,9 @@ public final class ResolverHelper {
      *
      * @param  camelContext the {@link CamelContext}
      * @param  factoryPath  the path of the factory file
-     * @param  factoryKey   the key used top lookup the factory class
+     * @param  factoryKey   the key used to lookup the factory class
      * @param  factoryClass the type of the class
-     * @return              an instance fo the given factory
+     * @return              an instance of the given factory
      */
     public static <T> Optional<T> resolveService(
             CamelContext camelContext, String factoryPath, String factoryKey, Class<T> factoryClass) {
@@ -153,7 +153,7 @@ public final class ResolverHelper {
      * Create an instance of the given factory using the default factory finder
      *
      * @param  camelContext           the {@link CamelContext}
-     * @param  factoryKey             the key used top lookup the factory class
+     * @param  factoryKey             the key used to lookup the factory class
      * @param  factoryClass           the type of the class
      * @param  jarName                the JAR to add to the classpath if service is missing
      * @return                        an instance of the given factory
@@ -170,7 +170,7 @@ public final class ResolverHelper {
      * Create an instance of the given factory using the bootstrap factory finder
      *
      * @param  camelContext           the {@link CamelContext}
-     * @param  factoryKey             the key used top lookup the factory class
+     * @param  factoryKey             the key used to lookup the factory class
      * @param  factoryClass           the type of the class
      * @param  jarName                the JAR to add to the classpath if service is missing
      * @return                        an instance of the given factory
@@ -188,7 +188,7 @@ public final class ResolverHelper {
      *
      * @param  camelContext           the {@link CamelContext}
      * @param  factoryFinder          the factory finder to use
-     * @param  factoryKey             the key used top lookup the factory class
+     * @param  factoryKey             the key used to lookup the factory class
      * @param  factoryClass           the type of the class
      * @param  jarName                the JAR to add to the classpath if service is missing
      * @return                        an instance of the given factory
@@ -207,9 +207,9 @@ public final class ResolverHelper {
      * Create an instance of the given factory using the bootstrap factory finder.
      *
      * @param  camelContext the {@link CamelContext}
-     * @param  factoryKey   the key used top lookup the factory class
+     * @param  factoryKey   the key used to lookup the factory class
      * @param  factoryClass the type of the class
-     * @return              an instance fo the given factory
+     * @return              an instance of the given factory
      */
     public static <T> Optional<T> resolveBootstrapService(
             CamelContext camelContext, String factoryKey, Class<T> factoryClass) {
@@ -221,9 +221,9 @@ public final class ResolverHelper {
      * Create an instance of the given factory using the default factory finder
      *
      * @param  camelContext the {@link CamelContext}
-     * @param  factoryKey   the key used top lookup the factory class
+     * @param  factoryKey   the key used to lookup the factory class
      * @param  factoryClass the type of the class
-     * @return              an instance fo the given factory
+     * @return              an instance of the given factory
      */
     public static <T> Optional<T> resolveService(
             CamelContext camelContext, String factoryKey, Class<T> factoryClass) {
@@ -238,9 +238,9 @@ public final class ResolverHelper {
      *
      * @param  camelContext  the {@link CamelContext}
      * @param  factoryFinder the {@link FactoryFinder} to use
-     * @param  factoryKey    the key used top lookup the factory class
+     * @param  factoryKey    the key used to lookup the factory class
      * @param  factoryClass  the type of the class
-     * @return               an instance fo the given factory
+     * @return               an instance of the given factory
      */
     public static <T> Optional<T> resolveService(
             CamelContext camelContext, FactoryFinder factoryFinder, String factoryKey, Class<T> factoryClass) {
@@ -252,10 +252,10 @@ public final class ResolverHelper {
      *
      * @param  camelContext  the {@link CamelContext}
      * @param  factoryFinder the {@link FactoryFinder} to use
-     * @param  factoryKey    the key used top lookup the factory class
+     * @param  factoryKey    the key used to lookup the factory class
      * @param  factoryClass  the type of the class
      * @param  optional      whether the service is optional
-     * @return               an instance fo the given factory
+     * @return               an instance of the given factory
      */
     private static <T> Optional<T> doResolveService(
             CamelContext camelContext, FactoryFinder factoryFinder, String factoryKey, Class<T> factoryClass,
