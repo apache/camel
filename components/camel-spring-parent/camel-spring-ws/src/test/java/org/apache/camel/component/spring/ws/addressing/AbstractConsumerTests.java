@@ -18,7 +18,7 @@ package org.apache.camel.component.spring.ws.addressing;
 
 import java.net.URI;
 
-import org.fest.assertions.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
