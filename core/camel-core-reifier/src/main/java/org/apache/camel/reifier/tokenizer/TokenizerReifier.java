@@ -24,7 +24,6 @@ import org.apache.camel.model.TokenizerImplementationDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
 import org.apache.camel.processor.TokenizerProcessor;
 import org.apache.camel.reifier.ProcessorReifier;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Tokenizer;
 import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorReifier<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TokenizerReifier.class);
-    private static final String TOKENIZER_PATH = FactoryFinder.DEFAULT_PATH + "tokenizer/";
+    private static final String TOKENIZER_PATH = "tokenizer/";
 
     public TokenizerReifier(Route route, T definition) {
         super(route, definition);
