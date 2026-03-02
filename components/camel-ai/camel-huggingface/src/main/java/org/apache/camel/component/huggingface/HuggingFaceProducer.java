@@ -23,6 +23,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.tasks.TaskPredictor;
 import org.apache.camel.component.huggingface.tasks.TaskPredictorFactory;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.OAuthHelper;
+import org.apache.camel.util.ObjectHelper;
 
 public class HuggingFaceProducer extends DefaultProducer {
 
@@ -35,8 +37,17 @@ public class HuggingFaceProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        resolveOAuthToken();
         predictor = TaskPredictorFactory.getPredictor(getEndpoint());
         predictor.loadModel();
+    }
+
+    private void resolveOAuthToken() throws Exception {
+        HuggingFaceConfiguration config = getEndpoint().getConfiguration();
+        if (ObjectHelper.isEmpty(config.getOauthProfile())) {
+            return;
+        }
+        config.setAuthToken(OAuthHelper.resolveOAuthToken(getEndpoint().getCamelContext(), config.getOauthProfile()));
     }
 
     @Override

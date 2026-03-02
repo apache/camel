@@ -169,7 +169,7 @@ public class HuggingFaceIT extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:start-sum")
-                        .to("huggingface:summarization?modelId=facebook/bart-large-cnn&device=cpu&maxTokens=50&minLength=20&modelLoadingTimeout=360&predictTimeout=360")
+                        .to("huggingface:summarization?modelId=facebook/bart-large-cnn&device=cpu&maxTokens=50&minLength=20&modelLoadingTimeout=720&predictTimeout=360")
                         .to("mock:result");
 
                 from("direct:start-zero")
@@ -181,23 +181,23 @@ public class HuggingFaceIT extends CamelTestSupport {
                         .to("mock:result");
 
                 from("direct:start-tti")
-                        .to("huggingface:text-to-image?modelId=CompVis/stable-diffusion-v1-4&device=cpu&modelLoadingTimeout=650&predictTimeout=10000")
+                        .to("huggingface:text-to-image?modelId=CompVis/stable-diffusion-v1-4&device=cpu&modelLoadingTimeout=1200&predictTimeout=720")
                         .to("mock:result");
 
                 from("direct:start-asr")
-                        .to("huggingface:automatic-speech-recognition?modelId=openai/whisper-medium&device=cpu&modelLoadingTimeout=360&predictTimeout=360")
+                        .to("huggingface:automatic-speech-recognition?modelId=openai/whisper-medium&device=cpu&modelLoadingTimeout=720&predictTimeout=360")
                         .to("mock:result");
 
                 from("direct:start-tts")
-                        .to("huggingface:text-to-speech?modelId=facebook/mms-tts-eng&device=cpu&modelLoadingTimeout=360&predictTimeout=360")
+                        .to("huggingface:text-to-speech?modelId=facebook/mms-tts-eng&device=cpu&modelLoadingTimeout=1200&predictTimeout=360")
                         .to("mock:result");
 
                 from("direct:start-chat")
-                        .to("huggingface:chat?modelId=Qwen/Qwen2.5-3B-Instruct&systemPrompt=You are a helpful assistant named Alan&device=cpu&maxTokens=50&temperature=0.7&modelLoadingTimeout=360&predictTimeout=700")
+                        .to("huggingface:chat?modelId=Qwen/Qwen2.5-3B-Instruct&systemPrompt=You are a helpful assistant named Alan&device=cpu&maxTokens=50&temperature=0.7&modelLoadingTimeout=1200&predictTimeout=700")
                         .to("mock:result");
 
                 from("direct:start-custom")
-                        .to("huggingface:translation?modelId=Helsinki-NLP/opus-mt-en-fr&device=cpu&predictorBean=myCustomPredictor&modelLoadingTimeout=360&predictTimeout=360")
+                        .to("huggingface:translation?modelId=Helsinki-NLP/opus-mt-en-fr&device=cpu&predictorBean=myCustomPredictor&modelLoadingTimeout=720&predictTimeout=360")
                         .to("mock:result");
 
             }

@@ -71,6 +71,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.OAuthHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +96,7 @@ public class DoclingProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        resolveOAuthToken();
         if (configuration.isUseDoclingServe()) {
             String baseUrl = configuration.getDoclingServeUrl();
             if (baseUrl.endsWith("/")) {
@@ -129,6 +132,17 @@ public class DoclingProducer extends DefaultProducer {
         if (doclingServeApi != null) {
             doclingServeApi = null;
             LOG.info("DoclingServeApi reference cleared");
+        }
+    }
+
+    private void resolveOAuthToken() throws Exception {
+        if (ObjectHelper.isEmpty(configuration.getOauthProfile())) {
+            return;
+        }
+        String token = OAuthHelper.resolveOAuthToken(getEndpoint().getCamelContext(), configuration.getOauthProfile());
+        configuration.setAuthenticationToken(token);
+        if (configuration.getAuthenticationScheme() == AuthenticationScheme.NONE) {
+            configuration.setAuthenticationScheme(AuthenticationScheme.BEARER);
         }
     }
 

@@ -21,9 +21,11 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerKey;
 import org.apache.camel.spi.TransformerResolver;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +61,7 @@ public class DefaultTransformerResolver implements TransformerResolver<Transform
     }
 
     private Optional<Transformer> findTransformer(String key, CamelContext context) {
-        return context.getCamelContextExtension()
-                .getBootstrapFactoryFinder(DATA_TYPE_TRANSFORMER_RESOURCE_PATH)
-                .newInstance(key, Transformer.class);
+        FactoryFinder ff = context.getCamelContextExtension().getBootstrapFactoryFinder(DATA_TYPE_TRANSFORMER_RESOURCE_PATH);
+        return ResolverHelper.resolveService(context, ff, key, Transformer.class);
     }
 }

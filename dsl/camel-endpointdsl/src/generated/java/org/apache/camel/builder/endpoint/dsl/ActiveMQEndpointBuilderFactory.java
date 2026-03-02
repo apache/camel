@@ -153,10 +153,13 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Allows you to force the use of a specific jakarta.jms.Message
-         * implementation for sending JMS messages. Possible values are: Bytes,
-         * Map, Object, Stream, Text. By default, Camel would determine which
-         * JMS message type to use from the In body type. This option allows you
-         * to specify it.
+         * implementation for sending JMS messages from Camel to the broker
+         * (also when Camel is used for request/reply). This is not in use when
+         * Camel receives messages as the message is locked to the type from the
+         * client that sent the message to the broker. Possible values are:
+         * Bytes, Map, Object, Stream, Text. By default, Camel would determine
+         * which JMS message type to use from the message body type. This option
+         * allows you to specify it.
          * 
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
@@ -172,10 +175,13 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Allows you to force the use of a specific jakarta.jms.Message
-         * implementation for sending JMS messages. Possible values are: Bytes,
-         * Map, Object, Stream, Text. By default, Camel would determine which
-         * JMS message type to use from the In body type. This option allows you
-         * to specify it.
+         * implementation for sending JMS messages from Camel to the broker
+         * (also when Camel is used for request/reply). This is not in use when
+         * Camel receives messages as the message is locked to the type from the
+         * client that sent the message to the broker. Possible values are:
+         * Bytes, Map, Object, Stream, Text. By default, Camel would determine
+         * which JMS message type to use from the message body type. This option
+         * allows you to specify it.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
@@ -2869,10 +2875,13 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Allows you to force the use of a specific jakarta.jms.Message
-         * implementation for sending JMS messages. Possible values are: Bytes,
-         * Map, Object, Stream, Text. By default, Camel would determine which
-         * JMS message type to use from the In body type. This option allows you
-         * to specify it.
+         * implementation for sending JMS messages from Camel to the broker
+         * (also when Camel is used for request/reply). This is not in use when
+         * Camel receives messages as the message is locked to the type from the
+         * client that sent the message to the broker. Possible values are:
+         * Bytes, Map, Object, Stream, Text. By default, Camel would determine
+         * which JMS message type to use from the message body type. This option
+         * allows you to specify it.
          * 
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
@@ -2888,10 +2897,13 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Allows you to force the use of a specific jakarta.jms.Message
-         * implementation for sending JMS messages. Possible values are: Bytes,
-         * Map, Object, Stream, Text. By default, Camel would determine which
-         * JMS message type to use from the In body type. This option allows you
-         * to specify it.
+         * implementation for sending JMS messages from Camel to the broker
+         * (also when Camel is used for request/reply). This is not in use when
+         * Camel receives messages as the message is locked to the type from the
+         * client that sent the message to the broker. Possible values are:
+         * Bytes, Map, Object, Stream, Text. By default, Camel would determine
+         * which JMS message type to use from the message body type. This option
+         * allows you to specify it.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
@@ -5449,10 +5461,13 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Allows you to force the use of a specific jakarta.jms.Message
-         * implementation for sending JMS messages. Possible values are: Bytes,
-         * Map, Object, Stream, Text. By default, Camel would determine which
-         * JMS message type to use from the In body type. This option allows you
-         * to specify it.
+         * implementation for sending JMS messages from Camel to the broker
+         * (also when Camel is used for request/reply). This is not in use when
+         * Camel receives messages as the message is locked to the type from the
+         * client that sent the message to the broker. Possible values are:
+         * Bytes, Map, Object, Stream, Text. By default, Camel would determine
+         * which JMS message type to use from the message body type. This option
+         * allows you to specify it.
          * 
          * The option is a:
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
@@ -5468,10 +5483,13 @@ public interface ActiveMQEndpointBuilderFactory {
         }
         /**
          * Allows you to force the use of a specific jakarta.jms.Message
-         * implementation for sending JMS messages. Possible values are: Bytes,
-         * Map, Object, Stream, Text. By default, Camel would determine which
-         * JMS message type to use from the In body type. This option allows you
-         * to specify it.
+         * implementation for sending JMS messages from Camel to the broker
+         * (also when Camel is used for request/reply). This is not in use when
+         * Camel receives messages as the message is locked to the type from the
+         * client that sent the message to the broker. Possible values are:
+         * Bytes, Map, Object, Stream, Text. By default, Camel would determine
+         * which JMS message type to use from the message body type. This option
+         * allows you to specify it.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.JmsMessageType</code> type.

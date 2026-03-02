@@ -102,7 +102,7 @@ public final class KafkaTestUtil {
             List<TopicPartitionInfo> pi = td.partitions();
             assertEquals(numPartitions, pi.size());
         } catch (Exception e) {
-            fail(e.getMessage());
+            fail("Exception while creating Kafka topic", e);
         }
     }
 }

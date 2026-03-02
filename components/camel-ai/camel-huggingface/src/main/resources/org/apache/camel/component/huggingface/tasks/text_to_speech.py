@@ -22,17 +22,23 @@ import torch
 import numpy as np
 import logging
 
-pipe = pipeline(
-    task='text-to-speech',
-    model='%s',
-    revision='%s',
-    device_map='%s'
-)
+pipe = None
 
 def handle(inputs: Input):
+    global pipe
     try:
+        if not pipe:
+            logging.debug("Initializing pipeline")
+            pipe = pipeline(
+                task='text-to-speech',
+                model='%s',
+                revision='%s',
+                device_map='%s'
+            )
+            logging.debug("Pipeline initialized")
+
         if inputs.content.size() == 0:
-            logging.info("Handling warmup call - returning empty output")
+            logging.debug("Handling warmup call - returning empty output")
             return Output()
 
         input_str = inputs.get_as_string("data")

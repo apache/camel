@@ -2997,7 +2997,7 @@ public class OriginalSimpleTest extends LanguageTestSupport {
         assertExpression("${header.value == null ? 'empty' : 'full'}", "full");
     }
 
-    @Test
+    @Disabled("Nested Ternary operator is not supported with csimple")
     public void testTernaryOperatorNested() {
         // not supported in csimple
     }

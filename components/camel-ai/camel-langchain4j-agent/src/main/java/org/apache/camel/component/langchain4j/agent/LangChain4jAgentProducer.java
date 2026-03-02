@@ -274,7 +274,7 @@ public class LangChain4jAgentProducer extends DefaultProducer {
                 materializedMcpClients = new ArrayList<>();
                 for (LangChain4jMcpServerDefinition def : serverDefs) {
                     LOG.debug("Building MCP client '{}' (transport: {})", def.getServerName(), def.getTransportType());
-                    materializedMcpClients.add(def.buildClient());
+                    materializedMcpClients.add(def.buildClient(endpoint.getCamelContext()));
                 }
                 LOG.debug("Materialized {} MCP clients from server definitions", materializedMcpClients.size());
             }
@@ -335,6 +335,9 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             }
             if (props.containsKey("logResponses")) {
                 def.setLogResponses(Boolean.parseBoolean(props.get("logResponses")));
+            }
+            if (props.containsKey("oauthProfile")) {
+                def.setOauthProfile(props.get("oauthProfile"));
             }
 
             // Collect environment variables (environment.<key>=<value>)

@@ -31,9 +31,7 @@
     <jmxAgent id="jmx" disabled="true"/>
     <route>
       <from uri="direct:start"/>
-      <saga>
-        <compensation uri="mock:compensation" />
-        <completion uri="mock:completion" />
+      <saga compensation="mock:compensation" completion="mock:completion">
         <option key="myOptionKey">
           <constant>myOptionValue</constant>
         </option>

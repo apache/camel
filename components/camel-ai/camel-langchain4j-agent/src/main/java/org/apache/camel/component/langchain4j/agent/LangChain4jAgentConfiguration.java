@@ -49,10 +49,11 @@ public class LangChain4jAgentConfiguration implements Cloneable {
     private List<McpClient> mcpClients;
 
     @UriParam(description = "MCP server definitions in the form of mcpServer.<name>.<property>=<value>."
-                            + " Supported properties: transportType (stdio or http, default: stdio),"
-                            + " command (comma-separated, for stdio), url (for http),"
+                            + " Supported properties: transportType (stdio, http, streamableHttp, or sse, default: stdio),"
+                            + " command (comma-separated, for stdio), url (for http/sse),"
                             + " environment.<key>=<value> (for stdio), timeout (in seconds, default: 60),"
-                            + " logRequests, logResponses.",
+                            + " logRequests, logResponses,"
+                            + " oauthProfile (OAuth profile for HTTP auth, requires camel-oauth).",
               prefix = "mcpServer.", multiValue = true, label = "advanced")
     private Map<String, Object> mcpServer;
 

@@ -66,6 +66,36 @@ API key resolution order:
 The API key can be omitted if using OpenAI-compatible providers that don't require authentication (e.g., some local LLM servers).
 ====
 
+==== OAuth Authentication
+
+When using an identity provider (e.g., Azure AD for Azure OpenAI), set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used in place of the API key. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.azure.client-id=my-client
+camel.oauth.azure.client-secret=my-secret
+camel.oauth.azure.token-endpoint=https://login.microsoftonline.com/tenant/oauth2/v2.0/token
+camel.oauth.azure.scope=https://cognitiveservices.azure.com/.default
+----
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4&oauthProfile=azure");
+----
+
+MCP servers can also use OAuth independently via per-server `oauthProfile`:
+
+[source,java]
+----
+from("direct:chat")
+    .to("openai:chat-completion?model=gpt-4"
+        + "&oauthProfile=azure"
+        + "&mcpServer.tools.transportType=streamableHttp"
+        + "&mcpServer.tools.url=https://mcp.internal/mcp"
+        + "&mcpServer.tools.oauthProfile=keycloak");
+----
+
 === Basic Chat Completion with String Input
 
 [tabs]

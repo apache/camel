@@ -17,16 +17,17 @@
 package org.apache.camel.reifier;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.PropertyExpressionDefinition;
-import org.apache.camel.model.SagaActionUriDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SagaDefinition;
 import org.apache.camel.processor.saga.SagaCompletionMode;
 import org.apache.camel.processor.saga.SagaProcessor;
@@ -34,6 +35,7 @@ import org.apache.camel.processor.saga.SagaProcessorBuilder;
 import org.apache.camel.processor.saga.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
+import org.apache.camel.support.EndpointHelper;
 
 public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
@@ -43,15 +45,38 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
     @Override
     public Processor createProcessor() throws Exception {
-        Endpoint compensationEndpoint = Optional.ofNullable(definition.getCompensation())
-                .map(SagaActionUriDefinition::getUri)
-                .map(this::resolveEndpoint)
-                .orElse(null);
 
-        Endpoint completionEndpoint = Optional.ofNullable(definition.getCompletion())
-                .map(SagaActionUriDefinition::getUri)
-                .map(this::resolveEndpoint)
-                .orElse(null);
+        // compensation
+        String uri;
+        if (definition.getCompensationEndpointProducerBuilder() != null) {
+            uri = definition.getCompensationEndpointProducerBuilder().getRawUri();
+        } else {
+            uri = definition.getCompensation();
+        }
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
+        if (uri != null && rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+        }
+        Endpoint compensationEndpoint = null;
+        if (uri != null) {
+            compensationEndpoint = camelContext.getEndpoint(uri);
+        }
+
+        // completion
+        if (definition.getCompletionEndpointProducerBuilder() != null) {
+            uri = definition.getCompletionEndpointProducerBuilder().getRawUri();
+        } else {
+            uri = definition.getCompletion();
+        }
+        // route templates should pre parse uri as they have dynamic values as part of their template parameters
+        if (uri != null && rd != null && rd.isTemplate() != null && rd.isTemplate()) {
+            uri = EndpointHelper.resolveEndpointUriPropertyPlaceholders(camelContext, uri);
+        }
+        Endpoint completionEndpoint = null;
+        if (uri != null) {
+            completionEndpoint = camelContext.getEndpoint(uri);
+        }
 
         Map<String, Expression> optionsMap = new TreeMap<>();
         if (definition.getOptions() != null) {
@@ -81,6 +106,7 @@ public class SagaReifier extends ProcessorReifier<SagaDefinition> {
 
         Processor childProcessor = this.createChildProcessor(true);
         CamelSagaService camelSagaService = resolveSagaService();
+        CamelContextAware.trySetCamelContext(camelSagaService, getCamelContext());
 
         camelSagaService.registerStep(step);
 

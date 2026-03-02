@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * <b>META-INF/services/org/apache/camel/urifactory/</b>.
  */
 public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryResolver {
+
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/urifactory/";
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultUriFactoryResolver.class);

@@ -43,6 +43,7 @@ import org.apache.camel.main.download.BasePackageScanDownloadListener;
 import org.apache.camel.main.download.CamelCustomClassLoader;
 import org.apache.camel.main.download.CircuitBreakerDownloader;
 import org.apache.camel.main.download.CommandLineDependencyDownloader;
+import org.apache.camel.main.download.DependencyDownloadFactoryFinderResolver;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.DependencyDownloaderClassResolver;
 import org.apache.camel.main.download.DependencyDownloaderComponentResolver;
@@ -630,6 +631,12 @@ public class KameletMain extends MainCommandLineSupport {
 
             String springBootVersion = (String) getInitialProperties().get(getInstanceType() + ".springBootVersion");
             String quarkusVersion = (String) getInitialProperties().get(getInstanceType() + ".quarkusVersion");
+
+            // factory finder that can autodownload from known dependencies
+            KnownDependenciesResolver ffKnownDeps = new KnownDependenciesResolver(answer, springBootVersion, quarkusVersion);
+            ffKnownDeps.loadKnownFactoryFinderDependencies();
+            DependencyDownloadFactoryFinderResolver fr = new DependencyDownloadFactoryFinderResolver(answer, ffKnownDeps);
+            answer.getCamelContextExtension().addContextPlugin(FactoryFinderResolver.class, fr);
 
             KnownDependenciesResolver knownDeps = new KnownDependenciesResolver(answer, springBootVersion, quarkusVersion);
             knownDeps.loadKnownDependencies();

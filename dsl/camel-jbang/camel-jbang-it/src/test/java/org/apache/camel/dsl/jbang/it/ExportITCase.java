@@ -71,17 +71,6 @@ public class ExportITCase extends JBangTestSupport {
     }
 
     @Test
-    @Tag("spring-boot")
-    public void testExportGradle() {
-        execute(String.format(
-                "export --build-tool=gradle --runtime=spring-boot --gav=com.foo:acme:1.0-SNAPSHOT --directory=%s",
-                mountPoint()));
-        assertFileInDataFolderExists("gradlew");
-        assertFileInDataFolderExists("build.gradle");
-        assertFileInDataFolderExists("gradle/wrapper/gradle-wrapper.jar");
-    }
-
-    @Test
     @Tag("quarkus")
     public void testExportProperties() throws IOException {
         newFileInDataFolder("application.properties", "camel.jbang.runtime=quarkus");

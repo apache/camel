@@ -493,11 +493,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-cloud</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cloudevents</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
@@ -1724,11 +1719,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-nitrite</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-oaipmh</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
@@ -2064,11 +2054,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-service</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-servicenow</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
@@ -2305,11 +2290,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-tensorflow-serving</artifactId>
-        <version>4.19.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-test</artifactId>
         <version>4.19.0-SNAPSHOT</version>
       </dependency>
       <dependency>

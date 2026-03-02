@@ -58,7 +58,7 @@
 
         <!-- dependency versions -->
         <activemq-version>5.19.2</activemq-version>
-        <activemq6-version>6.2.0</activemq6-version>
+        <activemq6-version>6.2.1</activemq6-version>
         <activemq-artemis-version>2.44.0</activemq-artemis-version>
         <allegro-converter-version>0.3.0</allegro-converter-version>
         <amazon-kinesis-client-version>3.4.0</amazon-kinesis-client-version>
@@ -337,7 +337,7 @@
         <javax-json-api-version>1.1.4</javax-json-api-version>
         <jsonschema-generator-version>4.38.0</jsonschema-generator-version>
         <jsonassert-version>1.5.3</jsonassert-version>
-        <json-path-version>2.10.0</json-path-version>
+        <json-path-version>3.0.0</json-path-version>
         <json-patch-version>1.13</json-patch-version>
         <json-smart-version>2.6.0</json-smart-version>
         <jsonata-version>0.9.9</jsonata-version>
@@ -425,7 +425,6 @@
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.5.9</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>10.7</nimbus-jose-jwt>
-        <nitrite-version>3.4.4</nitrite-version>
         <olingo2-version>2.0.13</olingo2-version>
         <olingo4-version>5.0.0</olingo4-version>
         <ognl-version>3.4.10</ognl-version>
@@ -676,11 +675,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core-xml</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-cloud</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2203,11 +2197,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-nitrite</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-oaipmh</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2528,11 +2517,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-servicenow</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2765,11 +2749,6 @@
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-tensorflow-serving</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test</artifactId>
-                <version>4.19.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>

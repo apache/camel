@@ -17,10 +17,7 @@
 package org.apache.camel.http.common;
 
 import java.net.URI;
-import java.util.Map;
 
-import org.apache.camel.cloud.DiscoverableService;
-import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -29,10 +26,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.util.CollectionHelper;
 
 public abstract class HttpCommonEndpoint extends DefaultEndpoint
-        implements HeaderFilterStrategyAware, DiscoverableService, EndpointServiceLocation {
+        implements HeaderFilterStrategyAware, EndpointServiceLocation {
 
     // Note: all options must be documented with description in annotations so
     // extended components can access the documentation
@@ -173,8 +169,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
                             +
                             "If you set this parameter to too small value, you can get 4xx http errors because camel will think that the received token is still valid, while in reality the token is expired for the Authentication server.")
     private long oauth2CachedTokensExpirationMarginSeconds = 5;
-    @UriParam(label = "producer,security",
-              description = "Whether to use OAuth2 body authentication.")
+    @UriParam(label = "producer,security", description = "Whether to use OAuth2 body authentication.")
     private boolean oauth2BodyAuthentication;
     @Deprecated
     @UriParam(label = "producer,security", description = "Authentication domain to use with NTLM")
@@ -259,17 +254,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint
         // true to allow dynamic URI options to be configured and passed to external
         // system for eg. the HttpProducer
         return true;
-    }
-
-    // Service Registration
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Map<String, String> getServiceProperties() {
-        return CollectionHelper.immutableMapOf(
-                ServiceDefinition.SERVICE_META_PORT, Integer.toString(getPort()),
-                ServiceDefinition.SERVICE_META_PATH, getPath(),
-                ServiceDefinition.SERVICE_META_PROTOCOL, getProtocol());
     }
 
     // Properties

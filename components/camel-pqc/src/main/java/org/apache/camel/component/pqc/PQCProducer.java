@@ -18,6 +18,7 @@ package org.apache.camel.component.pqc;
 
 import java.security.*;
 import java.security.cert.Certificate;
+import java.util.List;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
@@ -29,11 +30,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridKEM;
 import org.apache.camel.component.pqc.crypto.hybrid.HybridSignature;
+import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
+import org.apache.camel.component.pqc.lifecycle.KeyMetadata;
+import org.apache.camel.component.pqc.stateful.StatefulKeyState;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
+import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
+import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
+import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
 /**
  * A Producer which sign or verify a payload
@@ -85,6 +92,39 @@ public class PQCProducer extends DefaultProducer {
                 break;
             case hybridExtractSecretKeyFromEncapsulation:
                 hybridExtractSecretKeyFromEncapsulation(exchange);
+                break;
+            case generateKeyPair:
+                lifecycleGenerateKeyPair(exchange);
+                break;
+            case exportKey:
+                lifecycleExportKey(exchange);
+                break;
+            case importKey:
+                lifecycleImportKey(exchange);
+                break;
+            case rotateKey:
+                lifecycleRotateKey(exchange);
+                break;
+            case getKeyMetadata:
+                lifecycleGetKeyMetadata(exchange);
+                break;
+            case listKeys:
+                lifecycleListKeys(exchange);
+                break;
+            case expireKey:
+                lifecycleExpireKey(exchange);
+                break;
+            case revokeKey:
+                lifecycleRevokeKey(exchange);
+                break;
+            case getRemainingSignatures:
+                statefulGetRemainingSignatures(exchange);
+                break;
+            case getKeyState:
+                statefulGetKeyState(exchange);
+                break;
+            case deleteKeyState:
+                statefulDeleteKeyState(exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -436,6 +476,192 @@ public class PQCProducer extends DefaultProducer {
             exchange.getMessage().setBody(restoredKey, SecretKey.class);
         } else {
             exchange.getMessage().setHeader(PQCConstants.SECRET_KEY, restoredKey);
+        }
+    }
+
+    // ========== Key Lifecycle Operations ==========
+
+    private KeyLifecycleManager getRequiredKeyLifecycleManager() {
+        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
+        if (klm == null) {
+            throw new IllegalStateException(
+                    "A KeyLifecycleManager must be configured to use key lifecycle operations. "
+                                            + "Set the keyLifecycleManager option on the PQC endpoint.");
+        }
+        return klm;
+    }
+
+    private void lifecycleGenerateKeyPair(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        String algorithm = exchange.getMessage().getHeader(PQCConstants.ALGORITHM, String.class);
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+
+        if (ObjectHelper.isEmpty(algorithm)) {
+            throw new IllegalArgumentException(
+                    "Algorithm header (" + PQCConstants.ALGORITHM + ") is required for generateKeyPair");
+        }
+        if (ObjectHelper.isEmpty(keyId)) {
+            throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for generateKeyPair");
+        }
+
+        KeyPair generated = klm.generateKeyPair(algorithm, keyId);
+        exchange.getMessage().setHeader(PQCConstants.KEY_PAIR, generated);
+    }
+
+    private void lifecycleExportKey(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        String formatStr = exchange.getMessage().getHeader(PQCConstants.KEY_FORMAT, String.class);
+        Boolean includePrivate = exchange.getMessage().getHeader(PQCConstants.INCLUDE_PRIVATE, Boolean.class);
+
+        KeyLifecycleManager.KeyFormat format = formatStr != null
+                ? KeyLifecycleManager.KeyFormat.valueOf(formatStr)
+                : KeyLifecycleManager.KeyFormat.DER;
+        boolean inclPriv = includePrivate != null ? includePrivate : false;
+
+        byte[] exported = klm.exportKey(keyPair, format, inclPriv);
+        exchange.getMessage().setHeader(PQCConstants.EXPORTED_KEY, exported);
+    }
+
+    private void lifecycleImportKey(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        byte[] keyData = exchange.getMessage().getMandatoryBody(byte[].class);
+        String formatStr = exchange.getMessage().getHeader(PQCConstants.KEY_FORMAT, String.class);
+        String algorithm = exchange.getMessage().getHeader(PQCConstants.ALGORITHM, String.class);
+
+        KeyLifecycleManager.KeyFormat format = formatStr != null
+                ? KeyLifecycleManager.KeyFormat.valueOf(formatStr)
+                : KeyLifecycleManager.KeyFormat.DER;
+
+        if (ObjectHelper.isEmpty(algorithm)) {
+            throw new IllegalArgumentException("Algorithm header (" + PQCConstants.ALGORITHM + ") is required for importKey");
+        }
+
+        KeyPair imported = klm.importKey(keyData, format, algorithm);
+        exchange.getMessage().setHeader(PQCConstants.KEY_PAIR, imported);
+    }
+
+    private void lifecycleRotateKey(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        String oldKeyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+        String newKeyId = exchange.getMessage().getHeader("CamelPQCNewKeyId", String.class);
+        String algorithm = exchange.getMessage().getHeader(PQCConstants.ALGORITHM, String.class);
+
+        if (ObjectHelper.isEmpty(oldKeyId)) {
+            throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for rotateKey");
+        }
+        if (ObjectHelper.isEmpty(newKeyId)) {
+            throw new IllegalArgumentException("New Key ID header (CamelPQCNewKeyId) is required for rotateKey");
+        }
+        if (ObjectHelper.isEmpty(algorithm)) {
+            throw new IllegalArgumentException("Algorithm header (" + PQCConstants.ALGORITHM + ") is required for rotateKey");
+        }
+
+        KeyPair rotated = klm.rotateKey(oldKeyId, newKeyId, algorithm);
+        exchange.getMessage().setHeader(PQCConstants.KEY_PAIR, rotated);
+    }
+
+    private void lifecycleGetKeyMetadata(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+
+        if (ObjectHelper.isEmpty(keyId)) {
+            throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for getKeyMetadata");
+        }
+
+        KeyMetadata metadata = klm.getKeyMetadata(keyId);
+        exchange.getMessage().setHeader(PQCConstants.KEY_METADATA, metadata);
+    }
+
+    private void lifecycleListKeys(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        List<KeyMetadata> keys = klm.listKeys();
+        exchange.getMessage().setHeader(PQCConstants.KEY_LIST, keys);
+    }
+
+    private void lifecycleExpireKey(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+
+        if (ObjectHelper.isEmpty(keyId)) {
+            throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for expireKey");
+        }
+
+        klm.expireKey(keyId);
+    }
+
+    private void lifecycleRevokeKey(Exchange exchange) throws Exception {
+        KeyLifecycleManager klm = getRequiredKeyLifecycleManager();
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+        String reason = exchange.getMessage().getHeader(PQCConstants.REVOCATION_REASON, String.class);
+
+        if (ObjectHelper.isEmpty(keyId)) {
+            throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for revokeKey");
+        }
+
+        klm.revokeKey(keyId, reason);
+    }
+
+    // ========== Stateful Key Operations ==========
+
+    private void statefulGetRemainingSignatures(Exchange exchange) {
+        if (keyPair == null || keyPair.getPrivate() == null) {
+            throw new IllegalStateException("A KeyPair with a private key is required for getRemainingSignatures");
+        }
+
+        PrivateKey privateKey = keyPair.getPrivate();
+        long remaining;
+
+        if (privateKey instanceof XMSSPrivateKey) {
+            remaining = ((XMSSPrivateKey) privateKey).getUsagesRemaining();
+        } else if (privateKey instanceof XMSSMTPrivateKey) {
+            remaining = ((XMSSMTPrivateKey) privateKey).getUsagesRemaining();
+        } else if (privateKey instanceof LMSPrivateKey) {
+            remaining = ((LMSPrivateKey) privateKey).getUsagesRemaining();
+        } else {
+            throw new IllegalArgumentException(
+                    "getRemainingSignatures is only supported for stateful signature schemes (XMSS, XMSSMT, LMS/HSS). "
+                                               + "Key type: " + privateKey.getClass().getName());
+        }
+
+        exchange.getMessage().setHeader(PQCConstants.REMAINING_SIGNATURES, remaining);
+    }
+
+    private void statefulGetKeyState(Exchange exchange) {
+        if (keyPair == null || keyPair.getPrivate() == null) {
+            throw new IllegalStateException("A KeyPair with a private key is required for getKeyState");
+        }
+
+        PrivateKey privateKey = keyPair.getPrivate();
+        StatefulKeyState state;
+
+        if (privateKey instanceof XMSSPrivateKey) {
+            XMSSPrivateKey xmssKey = (XMSSPrivateKey) privateKey;
+            state = new StatefulKeyState(privateKey.getAlgorithm(), xmssKey.getIndex(), xmssKey.getUsagesRemaining());
+        } else if (privateKey instanceof XMSSMTPrivateKey) {
+            XMSSMTPrivateKey xmssmtKey = (XMSSMTPrivateKey) privateKey;
+            state = new StatefulKeyState(privateKey.getAlgorithm(), xmssmtKey.getIndex(), xmssmtKey.getUsagesRemaining());
+        } else if (privateKey instanceof LMSPrivateKey) {
+            LMSPrivateKey lmsKey = (LMSPrivateKey) privateKey;
+            state = new StatefulKeyState(privateKey.getAlgorithm(), lmsKey.getIndex(), lmsKey.getUsagesRemaining());
+        } else {
+            throw new IllegalArgumentException(
+                    "getKeyState is only supported for stateful signature schemes (XMSS, XMSSMT, LMS/HSS). "
+                                               + "Key type: " + privateKey.getClass().getName());
+        }
+
+        exchange.getMessage().setHeader(PQCConstants.KEY_STATE, state);
+    }
+
+    private void statefulDeleteKeyState(Exchange exchange) throws Exception {
+        String keyId = exchange.getMessage().getHeader(PQCConstants.KEY_ID, String.class);
+
+        if (ObjectHelper.isEmpty(keyId)) {
+            throw new IllegalArgumentException("Key ID header (" + PQCConstants.KEY_ID + ") is required for deleteKeyState");
+        }
+
+        KeyLifecycleManager klm = getConfiguration().getKeyLifecycleManager();
+        if (klm != null) {
+            klm.deleteKey(keyId);
         }
     }
 

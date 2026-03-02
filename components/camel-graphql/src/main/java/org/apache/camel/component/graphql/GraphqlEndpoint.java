@@ -28,6 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -44,9 +45,7 @@ import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.message.BasicHeader;
@@ -135,30 +134,35 @@ public class GraphqlEndpoint extends DefaultEndpoint implements EndpointServiceL
         throw new UnsupportedOperationException("You cannot receive messages at this endpoint: " + getEndpointUri());
     }
 
-    CloseableHttpClient createHttpClient() {
-        HttpClientBuilder httpClientBuilder = HttpClients.custom();
-        if (proxyHost != null) {
-            String[] parts = proxyHost.split(":");
-            String hostname = parts[0];
-            int port = Integer.parseInt(parts[1]);
-            httpClientBuilder.setProxy(new HttpHost(hostname, port));
-        }
-        if (accessToken != null) {
-            String authType = "Bearer";
-            if (this.jwtAuthorizationType != null) {
-                authType = this.jwtAuthorizationType;
+    HttpClientConfigurer createHttpClientConfigurer() {
+        return new AuthClientConfigurer();
+    }
+
+    private class AuthClientConfigurer implements HttpClientConfigurer {
+        @Override
+        public void configureHttpClient(HttpClientBuilder httpClientBuilder) {
+            if (proxyHost != null) {
+                String[] parts = proxyHost.split(":");
+                String hostname = parts[0];
+                int port = Integer.parseInt(parts[1]);
+                httpClientBuilder.setProxy(new HttpHost(hostname, port));
             }
-            httpClientBuilder.setDefaultHeaders(
-                    Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken)));
+            if (accessToken != null) {
+                String authType = "Bearer";
+                if (jwtAuthorizationType != null) {
+                    authType = jwtAuthorizationType;
+                }
+                httpClientBuilder.setDefaultHeaders(
+                        Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken)));
+            }
+            if (username != null && password != null) {
+                CredentialsStore credentialsProvider = new BasicCredentialsProvider();
+                credentialsProvider.setCredentials(
+                        new AuthScope(null, -1),
+                        new UsernamePasswordCredentials(username, password.toCharArray()));
+                httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            }
         }
-        if (username != null && password != null) {
-            CredentialsStore credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(
-                    new AuthScope(null, -1),
-                    new UsernamePasswordCredentials(username, password.toCharArray()));
-            httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-        }
-        return httpClientBuilder.build();
     }
 
     public URI getHttpUri() {

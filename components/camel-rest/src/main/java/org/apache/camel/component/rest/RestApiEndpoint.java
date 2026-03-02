@@ -26,7 +26,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestApiProcessorFactory;
@@ -36,6 +35,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -146,8 +146,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
             if (name == null) {
                 name = DEFAULT_API_COMPONENT_NAME; //use openapi first
             }
-            FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
-            factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
+            factory = ResolverHelper.resolveService(getCamelContext(), "restapi/" + name, RestApiProcessorFactory.class)
+                    .orElse(null);
         }
 
         if (factory == null) {
@@ -155,8 +155,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
             if (name == null) {
                 name = "swagger"; //use swagger as fallback
             }
-            FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
-            factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
+            factory = ResolverHelper.resolveService(getCamelContext(), "restapi/" + name, RestApiProcessorFactory.class)
+                    .orElse(null);
         }
 
         if (factory != null) {

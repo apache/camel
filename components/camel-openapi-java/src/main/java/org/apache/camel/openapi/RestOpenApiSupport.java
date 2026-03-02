@@ -300,13 +300,11 @@ public class RestOpenApiSupport {
     }
 
     protected RestDefinitionsResolver createJmxRestDefinitionsResolver(CamelContext camelContext) {
-        return ResolverHelper.resolveService(
+        return ResolverHelper.resolveMandatoryBootstrapService(
                 camelContext,
-                camelContext.getCamelContextExtension().getBootstrapFactoryFinder(),
                 JMX_REST_DEFINITION_RESOLVER,
-                RestDefinitionsResolver.class)
-                .orElseThrow(
-                        () -> new IllegalArgumentException("Cannot find camel-openapi-java on classpath."));
+                RestDefinitionsResolver.class,
+                "camel-openapi-java");
     }
 
     public void setupXForwardHeaders(RestApiResponseAdapter response, Exchange exchange) {

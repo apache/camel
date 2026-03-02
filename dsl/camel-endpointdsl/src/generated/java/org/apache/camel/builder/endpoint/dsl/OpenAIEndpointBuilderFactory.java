@@ -404,8 +404,9 @@ public interface OpenAIEndpointBuilderFactory {
          * using prefix notation:
          * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
          * (stdio), mcpServer..args= (stdio), mcpServer..url=
-         * (sse/streamableHttp). This is a multi-value option with prefix:
-         * mcpServer.
+         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
+         * HTTP auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -428,8 +429,9 @@ public interface OpenAIEndpointBuilderFactory {
          * using prefix notation:
          * mcpServer..transportType=stdiossestreamableHttp, mcpServer..command=
          * (stdio), mcpServer..args= (stdio), mcpServer..url=
-         * (sse/streamableHttp). This is a multi-value option with prefix:
-         * mcpServer.
+         * (sse/streamableHttp), mcpServer..oauthProfile= (OAuth profile for
+         * HTTP auth, requires camel-oauth). This is a multi-value option with
+         * prefix: mcpServer.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -652,6 +654,25 @@ public interface OpenAIEndpointBuilderFactory {
          */
         default OpenAIEndpointBuilder userMessage(String userMessage) {
             doSetProperty("userMessage", userMessage);
+            return this;
+        }
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used instead of apiKey. Requires
+         * camel-oauth on the classpath. The profile properties are resolved
+         * from camel.oauth..client-id, camel.oauth..client-secret, and
+         * camel.oauth..token-endpoint.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default OpenAIEndpointBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
             return this;
         }
     }

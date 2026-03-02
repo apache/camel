@@ -13,12 +13,134 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.18 to 4.19
 
+=== camel-bom
+
+The `camel-test` module has been removed from `camel-bom`. This module was included by mistake, as since Camel 4, this is
+not a JAR but a pom.xml file. Camel end users should use the `camel-test-junit5` / `camel-test-junit6` JARs and the others directly.
+
+=== camel-cloud (Removal)
+
+The `camel-cloud` module and the `serviceCall` EIP have been removed. These were deprecated in Camel 3.19 and 4.7.
+The `camel-service` component has also been removed.
+
+The cloud integration from the following components has been removed: `camel-consul`, `camel-dns`, `camel-http`, `camel-jetty`, `camel-kubernetes`, `camel-netty-http`, and `camel-zookeeper`.
+
 === camel-core
 
 The WireTap EIP has removed the `pattern` option from its model (not in use) as wiretap always
 uses `InOnly` pattern.
 
 Removed 2 deprecated methods in Java DSL for `throttler` EIP.
+
+==== Saga EIP
+
+The Saga EIP has _fixed_ the model for how to configure completion and compensation URIs.
+
+For Java DSL there is no changes, but XML and YAML DSL is affected. Here the `<compensation>` and `<completion>` tags
+has been changed to be an attribute on `<saga>` instead as shown below:
+
+Before:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <saga sagaService="mySagaService">
+        <compensation uri="mock:compensation"/>
+        <completion uri="mock:completion"/>
+        <option key="myOptionKey">
+            <constant>myOptionValue</constant>
+        </option>
+        <option key="myOptionKey2">
+            <constant>myOptionValue2</constant>
+        </option>
+    </saga>
+    <choice>
+        <when>
+            <simple>${body} == 'fail'</simple>
+            <throwException exceptionType="java.lang.RuntimeException" message="fail"/>
+        </when>
+    </choice>
+    <to uri="mock:end"/>
+</route>
+----
+
+In YAML DSL the changes are even simpler as the endpoint is moved from `uri` to the value of `completion` or `compensation`.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - saga:
+            sagaService: mySagaService
+            compensation:
+              uri: mock:compensation
+            completion:
+              uri: mock:completion
+            key: myOptionKey2
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == 'fail'"
+                steps:
+                  - throwException:
+                      message: fail
+                      exceptionType: java.lang.RuntimeException
+        - to:
+            uri: mock:end
+
+----
+
+After:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <saga sagaService="mySagaService" compensation="mock:compensation" completion="mock:completion">
+        <option key="myOptionKey">
+            <constant>myOptionValue</constant>
+        </option>
+        <option key="myOptionKey2">
+            <constant>myOptionValue2</constant>
+        </option>
+    </saga>
+    <choice>
+        <when>
+            <simple>${body} == 'fail'</simple>
+            <throwException exceptionType="java.lang.RuntimeException" message="fail"/>
+        </when>
+    </choice>
+    <to uri="mock:end"/>
+</route>
+----
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - saga:
+            sagaService: mySagaService
+            compensation: mock:compensation
+            completion: mock:completion
+            key: myOptionKey2
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == 'fail'"
+                steps:
+                  - throwException:
+                      message: fail
+                      exceptionType: java.lang.RuntimeException
+        - to:
+            uri: mock:end
+----
 
 === camel-simple
 
@@ -55,7 +177,6 @@ Should be changed to have semicolons as shown below:
             }init$
             orderId=$sku,total=$sum
 ----
-
 
 === camel-test-infra
 
@@ -102,6 +223,11 @@ commonly used at in the top. EIPs such as `circuitBreaker` now has `onFallback` 
 
 This order is also the same order that UI builders like Camel Karavan and Kaoto do as well.
 
+=== camel-jbang
+
+Support for exporting to use Gradle as build tool has been removed (it was deprecated and not working well)
+The deprecated options `buildToool` and `gradleWrapper` has been removed.
+
 === camel-kafka
 
 The Kafka client library has been upgraded from 3.9.1 to 4.2.0. This is a major version upgrade of Apache Kafka with several notable changes:
@@ -136,7 +262,16 @@ The test infrastructure for Kafka has been updated:
 * The `local-kafka3-container` mapping has been renamed to `local-kafka-container`. If you were using `-Dkafka.instance.type=local-kafka3-container`, update to `-Dkafka.instance.type=local-kafka-container`.
 * The Strimzi test service now runs in KRaft mode (no ZooKeeper). The `ZookeeperContainer` class has been removed.
 
+=== camel-json-patch
+
+The `camel-json-patch` is now deprecated - the library it uses is not active maintained and this module does not work with Jackon 3.
+
 === camel-mail
 
 When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
 the bean which is similar to what `camel-file` do as well.
+
+=== camel-nitrite (Removal)
+
+The camel-nitrite is removed in this version. It was deprecated in 4.10.
+

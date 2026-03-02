@@ -18,14 +18,12 @@
 
 -->
 <routes id="camel" xmlns="http://camel.apache.org/schema/spring">
-  <route>
-    <from uri="direct:start"/>
-    <saga>
-      <compensation uri="mock:uri" />
-    </saga>
-    <setBody>
-      <simple>${in.body} extra data!</simple>
-    </setBody>
-    <to uri="mock:end"/>
-  </route>
+    <route>
+        <from uri="direct:start"/>
+        <saga compensation="mock:uri"/>
+        <setBody>
+            <simple>${in.body} extra data!</simple>
+        </setBody>
+        <to uri="mock:end"/>
+    </route>
 </routes>

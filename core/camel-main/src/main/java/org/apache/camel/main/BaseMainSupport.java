@@ -90,6 +90,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.jsse.CipherSuitesParameters;
@@ -717,8 +718,8 @@ public abstract class BaseMainSupport extends BaseService {
                 || mainConfigurationProperties.getStartupRecorder() == null) {
             // try to auto discover camel-jfr to use
             try {
-                StartupStepRecorder fr = ecc.getBootstrapFactoryFinder()
-                        .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
+                StartupStepRecorder fr = ResolverHelper.resolveService(camelContext, ecc.getBootstrapFactoryFinder(),
+                        StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
                 if (fr != null) {
                     LOG.debug("Discovered startup recorder: {} from classpath", fr);
                     fr.setRecording(mainConfigurationProperties.isStartupRecorderRecording());
@@ -996,8 +997,8 @@ public abstract class BaseMainSupport extends BaseService {
     }
 
     protected void detectCamelDebugJar(CamelContext camelContext) {
-        DebuggerFactory df = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                .newInstance(Debugger.FACTORY, DebuggerFactory.class).orElse(null);
+        DebuggerFactory df
+                = ResolverHelper.resolveBootstrapService(camelContext, Debugger.FACTORY, DebuggerFactory.class).orElse(null);
         if (df != null) {
             // if camel-debug is on classpath then we need to eager to turn on source location which is needed for Java DSL
             camelContext.setSourceLocationEnabled(true);
@@ -1006,8 +1007,8 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void detectResilience4jMicrometer(CamelContext camelContext) throws Exception {
         // optional discover camel-resilience4j-micrometer
-        Resilience4jMicrometerFactory mf = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                .newInstance(Resilience4jMicrometerFactory.FACTORY, Resilience4jMicrometerFactory.class).orElse(null);
+        Resilience4jMicrometerFactory mf = ResolverHelper.resolveBootstrapService(camelContext,
+                Resilience4jMicrometerFactory.FACTORY, Resilience4jMicrometerFactory.class).orElse(null);
         if (mf == null) {
             ModelCamelContext model = (ModelCamelContext) camelContext;
             Resilience4jConfigurationDefinition config = model.getResilience4jConfiguration(null);
@@ -1016,8 +1017,9 @@ public abstract class BaseMainSupport extends BaseService {
             boolean micrometer = config != null && config.getMicrometerEnabled() != null
                     && CamelContextHelper.parseBoolean(camelContext, config.getMicrometerEnabled());
             if (micrometer) {
-                throw new IllegalArgumentException(
-                        "Cannot find Resilience4jMicrometerFactory on classpath. Add camel-resilience4j-micrometer to classpath.");
+                // okay micrometer is explicit enabled then resolve mandatory
+                mf = ResolverHelper.resolveMandatoryBootstrapService(camelContext, Resilience4jMicrometerFactory.FACTORY,
+                        Resilience4jMicrometerFactory.class, "camel-resilience4j-micrometer");
             }
         }
         if (mf != null) {
@@ -2757,10 +2759,8 @@ public abstract class BaseMainSupport extends BaseService {
             answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
         }
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance("lra-saga-service", CamelSagaService.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, "lra-saga-service", CamelSagaService.class,
+                    "camel-lra");
         }
         return answer;
     }
@@ -2771,10 +2771,8 @@ public abstract class BaseMainSupport extends BaseService {
             answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
         }
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance("opentelemetry-tracer", CamelTracingService.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find OpenTelemetryTracer on classpath. Add camel-opentelemetry to classpath."));
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, "opentelemetry-tracer",
+                    CamelTracingService.class, "camel-opentelemetry");
         }
         return answer;
     }
@@ -2785,10 +2783,8 @@ public abstract class BaseMainSupport extends BaseService {
             answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
         }
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance("opentelemetry-tracer-2", CamelTracingService.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find OpenTelemetryTracer2 on classpath. Add camel-opentelemetry2 to classpath."));
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, "opentelemetry-tracer-2",
+                    CamelTracingService.class, "camel-opentelemetry2");
         }
         return answer;
     }
@@ -2799,10 +2795,8 @@ public abstract class BaseMainSupport extends BaseService {
             answer = camelContext.getRegistry().findSingleByType(CamelTracingService.class);
         }
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance("telemetry-dev-tracer", CamelTracingService.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find TelemetryDevTracer on classpath. Add camel-telemetry-dev to classpath."));
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, "telemetry-dev-tracer",
+                    CamelTracingService.class, "camel-telemetry-dev");
         }
         return answer;
     }
@@ -2813,10 +2807,8 @@ public abstract class BaseMainSupport extends BaseService {
             answer = camelContext.getRegistry().findSingleByType(CamelMetricsService.class);
         }
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance("micrometer-prometheus", CamelMetricsService.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find CamelMetricsService on classpath. Add camel-micrometer-prometheus to classpath."));
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, "micrometer-prometheus",
+                    CamelMetricsService.class, "camel-micrometer-prometheus");
         }
         return answer;
     }
@@ -2827,10 +2819,8 @@ public abstract class BaseMainSupport extends BaseService {
             answer = camelContext.getRegistry().findSingleByType(CamelMDCService.class);
         }
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance("mdc-service", CamelMDCService.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find CamelMDCService on classpath. Add camel-mdc to classpath."));
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, "mdc-service", CamelMDCService.class,
+                    "camel-mdc");
         }
         return answer;
     }
@@ -2839,10 +2829,8 @@ public abstract class BaseMainSupport extends BaseService {
         // lookup in service registry first
         MainHttpServerFactory answer = camelContext.getRegistry().findSingleByType(MainHttpServerFactory.class);
         if (answer == null) {
-            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
-                    .newInstance(MainConstants.PLATFORM_HTTP_SERVER, MainHttpServerFactory.class)
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Cannot find MainHttpServerFactory on classpath. Add camel-platform-http-main to classpath."));
+            answer = ResolverHelper.resolveMandatoryBootstrapService(camelContext, MainConstants.PLATFORM_HTTP_SERVER,
+                    MainHttpServerFactory.class, "camel-platform-http-main");
         }
         return CamelContextAware.trySetCamelContext(answer, camelContext);
     }

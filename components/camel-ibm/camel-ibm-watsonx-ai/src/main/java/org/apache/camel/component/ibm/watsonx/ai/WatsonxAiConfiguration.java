@@ -32,6 +32,12 @@ public class WatsonxAiConfiguration implements Cloneable {
     @Metadata(required = true)
     private String apiKey;
 
+    @UriParam(label = "security",
+              description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
+                            + "When set, the token is acquired from the configured identity provider and used as apiKey. "
+                            + "Requires camel-oauth on the classpath.")
+    private String oauthProfile;
+
     // Connection
     @UriParam(label = "common", description = "The watsonx.ai base URL (e.g., https://us-south.ml.cloud.ibm.com)")
     @Metadata(required = true)
@@ -152,6 +158,14 @@ public class WatsonxAiConfiguration implements Cloneable {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 
     public String getBaseUrl() {

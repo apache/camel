@@ -164,7 +164,7 @@ public final class RunHelper {
         return value;
     }
 
-    public static List<String> scanMavenOrGradleProject(Path parentPath) {
+    public static List<String> scanMavenProject(Path parentPath) {
         List<String> answer = new ArrayList<>();
 
         // scan as maven based project

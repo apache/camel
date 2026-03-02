@@ -44,6 +44,22 @@ public class UserProfile {
         this.attributes = attributes;
     }
 
+    /**
+     * Creates a UserProfile from a token endpoint response without JWT verification. Suitable for the SPI path where
+     * the response comes directly from a trusted token endpoint via client_credentials grant.
+     */
+    public static UserProfile fromTokenResponse(JsonObject json) {
+        var principal = json.deepCopy();
+        var attributes = new JsonObject();
+        long now = System.currentTimeMillis() / 1000L;
+        if (principal.has("expires_in")) {
+            var expiresIn = json.get("expires_in").getAsLong();
+            attributes.addProperty("exp", now + expiresIn);
+            attributes.addProperty("iat", now);
+        }
+        return new UserProfile(principal, attributes);
+    }
+
     public static UserProfile fromJson(OAuthConfig config, JsonObject json) {
         var principal = json.deepCopy();
         var attributes = new JsonObject();

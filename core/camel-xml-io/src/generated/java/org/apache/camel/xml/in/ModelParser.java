@@ -31,7 +31,6 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.model.*;
 import org.apache.camel.model.app.*;
-import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.*;
 import org.apache.camel.model.dataformat.*;
 import org.apache.camel.model.errorhandler.*;
@@ -1061,20 +1060,17 @@ public class ModelParser extends BaseParser {
     }
     protected SagaDefinition doParseSagaDefinition() throws IOException, XmlPullParserException {
         return doParse(new SagaDefinition(), (def, key, val) -> switch (key) {
+                case "compensation": def.setCompensation(val); yield true;
+                case "completion": def.setCompletion(val); yield true;
                 case "completionMode": def.setCompletionMode(val); yield true;
                 case "propagation": def.setPropagation(val); yield true;
                 case "sagaService": def.setSagaService(val); yield true;
                 case "timeout": def.setTimeout(val); yield true;
                 default: yield processorDefinitionAttributeHandler().accept(def, key, val);
             }, (def, key) -> switch (key) {
-                case "compensation": def.setCompensation(doParseSagaActionUriDefinition()); yield true;
-                case "completion": def.setCompletion(doParseSagaActionUriDefinition()); yield true;
                 case "option": doAdd(doParsePropertyExpressionDefinition(), def.getOptions(), def::setOptions); yield true;
                 default: yield outputDefinitionElementHandler().accept(def, key);
             }, noValueHandler());
-    }
-    protected SagaActionUriDefinition doParseSagaActionUriDefinition() throws IOException, XmlPullParserException {
-        return doParse(new SagaActionUriDefinition(), sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
     }
     protected SamplingDefinition doParseSamplingDefinition() throws IOException, XmlPullParserException {
         return doParse(new SamplingDefinition(), (def, key, val) -> switch (key) {
@@ -1485,216 +1481,6 @@ public class ModelParser extends BaseParser {
                 case "properties": def.setProperties(doParseBeanPropertiesDefinition()); yield true;
                 default: yield false;
             }, noValueHandler());
-    }
-    protected BlacklistServiceCallServiceFilterConfiguration doParseBlacklistServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new BlacklistServiceCallServiceFilterConfiguration(), identifiedTypeAttributeHandler(), (def, key) -> switch (key) {
-                case "servers": doAdd(doParseText(), def.getServers(), def::setServers); yield true;
-                default: yield serviceCallConfigurationElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected ServiceCallServiceFilterConfiguration doParseServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallServiceFilterConfiguration(), identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected <T extends ServiceCallConfiguration> ElementHandler<T> serviceCallConfigurationElementHandler() {
-        return (def, key) -> switch (key) {
-            case "properties": doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties); yield true;
-            default: yield false;
-        };
-    }
-    protected CachingServiceCallServiceDiscoveryConfiguration doParseCachingServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new CachingServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> switch (key) {
-                case "timeout": def.setTimeout(val); yield true;
-                case "units": def.setUnits(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "consulServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseConsulServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "dnsServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseDnsServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "kubernetesServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseKubernetesServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "staticServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseStaticServiceCallServiceDiscoveryConfiguration()); yield true;
-                default: yield serviceCallConfigurationElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected ServiceCallServiceDiscoveryConfiguration doParseServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallServiceDiscoveryConfiguration(), identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected CombinedServiceCallServiceDiscoveryConfiguration doParseCombinedServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new CombinedServiceCallServiceDiscoveryConfiguration(), identifiedTypeAttributeHandler(), (def, key) -> switch (key) {
-                case "consulServiceDiscovery": doAdd(doParseConsulServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); yield true;
-                case "dnsServiceDiscovery": doAdd(doParseDnsServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); yield true;
-                case "kubernetesServiceDiscovery": doAdd(doParseKubernetesServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); yield true;
-                case "staticServiceDiscovery": doAdd(doParseStaticServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); yield true;
-                case "cachingServiceDiscovery": doAdd(doParseCachingServiceCallServiceDiscoveryConfiguration(), def.getServiceDiscoveryConfigurations(), def::setServiceDiscoveryConfigurations); yield true;
-                default: yield serviceCallConfigurationElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected CombinedServiceCallServiceFilterConfiguration doParseCombinedServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new CombinedServiceCallServiceFilterConfiguration(), identifiedTypeAttributeHandler(), (def, key) -> switch (key) {
-                case "blacklistServiceFilter": doAdd(doParseBlacklistServiceCallServiceFilterConfiguration(), def.getServiceFilterConfigurations(), def::setServiceFilterConfigurations); yield true;
-                case "customServiceFilter": doAdd(doParseCustomServiceCallServiceFilterConfiguration(), def.getServiceFilterConfigurations(), def::setServiceFilterConfigurations); yield true;
-                case "healthyServiceFilter": doAdd(doParseHealthyServiceCallServiceFilterConfiguration(), def.getServiceFilterConfigurations(), def::setServiceFilterConfigurations); yield true;
-                case "passThroughServiceFilter": doAdd(doParsePassThroughServiceCallServiceFilterConfiguration(), def.getServiceFilterConfigurations(), def::setServiceFilterConfigurations); yield true;
-                default: yield serviceCallConfigurationElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected ConsulServiceCallServiceDiscoveryConfiguration doParseConsulServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ConsulServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> switch (key) {
-                case "aclToken": def.setAclToken(val); yield true;
-                case "blockSeconds": def.setBlockSeconds(val); yield true;
-                case "connectTimeoutMillis": def.setConnectTimeoutMillis(val); yield true;
-                case "datacenter": def.setDatacenter(val); yield true;
-                case "password": def.setPassword(val); yield true;
-                case "readTimeoutMillis": def.setReadTimeoutMillis(val); yield true;
-                case "url": def.setUrl(val); yield true;
-                case "userName": def.setUserName(val); yield true;
-                case "writeTimeoutMillis": def.setWriteTimeoutMillis(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected CustomServiceCallServiceFilterConfiguration doParseCustomServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new CustomServiceCallServiceFilterConfiguration(), (def, key, val) -> switch (key) {
-                case "ref": def.setServiceFilterRef(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected DefaultServiceCallServiceLoadBalancerConfiguration doParseDefaultServiceCallServiceLoadBalancerConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new DefaultServiceCallServiceLoadBalancerConfiguration(), identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected ServiceCallServiceLoadBalancerConfiguration doParseServiceCallServiceLoadBalancerConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallServiceLoadBalancerConfiguration(), identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected DnsServiceCallServiceDiscoveryConfiguration doParseDnsServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new DnsServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> switch (key) {
-                case "domain": def.setDomain(val); yield true;
-                case "proto": def.setProto(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected HealthyServiceCallServiceFilterConfiguration doParseHealthyServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new HealthyServiceCallServiceFilterConfiguration(), identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected KubernetesServiceCallServiceDiscoveryConfiguration doParseKubernetesServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new KubernetesServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> switch (key) {
-                case "apiVersion": def.setApiVersion(val); yield true;
-                case "caCertData": def.setCaCertData(val); yield true;
-                case "caCertFile": def.setCaCertFile(val); yield true;
-                case "clientCertData": def.setClientCertData(val); yield true;
-                case "clientCertFile": def.setClientCertFile(val); yield true;
-                case "clientKeyAlgo": def.setClientKeyAlgo(val); yield true;
-                case "clientKeyData": def.setClientKeyData(val); yield true;
-                case "clientKeyFile": def.setClientKeyFile(val); yield true;
-                case "clientKeyPassphrase": def.setClientKeyPassphrase(val); yield true;
-                case "dnsDomain": def.setDnsDomain(val); yield true;
-                case "lookup": def.setLookup(val); yield true;
-                case "masterUrl": def.setMasterUrl(val); yield true;
-                case "namespace": def.setNamespace(val); yield true;
-                case "oauthToken": def.setOauthToken(val); yield true;
-                case "password": def.setPassword(val); yield true;
-                case "portName": def.setPortName(val); yield true;
-                case "portProtocol": def.setPortProtocol(val); yield true;
-                case "trustCerts": def.setTrustCerts(val); yield true;
-                case "username": def.setUsername(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected PassThroughServiceCallServiceFilterConfiguration doParsePassThroughServiceCallServiceFilterConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new PassThroughServiceCallServiceFilterConfiguration(), identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected ServiceCallConfigurationDefinition doParseServiceCallConfigurationDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallConfigurationDefinition(), (def, key, val) -> switch (key) {
-                case "component": def.setComponent(val); yield true;
-                case "expressionRef": def.setExpressionRef(val); yield true;
-                case "loadBalancerRef": def.setLoadBalancerRef(val); yield true;
-                case "pattern": def.setPattern(val); yield true;
-                case "serviceChooserRef": def.setServiceChooserRef(val); yield true;
-                case "serviceDiscoveryRef": def.setServiceDiscoveryRef(val); yield true;
-                case "serviceFilterRef": def.setServiceFilterRef(val); yield true;
-                case "uri": def.setUri(sanitizeUri(val)); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "expression": def.setExpressionConfiguration(doParseServiceCallExpressionConfiguration()); yield true;
-                case "defaultLoadBalancer": def.setLoadBalancerConfiguration(doParseDefaultServiceCallServiceLoadBalancerConfiguration()); yield true;
-                case "cachingServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCachingServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "consulServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseConsulServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "dnsServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseDnsServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "kubernetesServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseKubernetesServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "staticServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseStaticServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "zookeeperServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseZooKeeperServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "blacklistServiceFilter": def.setServiceFilterConfiguration(doParseBlacklistServiceCallServiceFilterConfiguration()); yield true;
-                case "combinedServiceFilter": def.setServiceFilterConfiguration(doParseCombinedServiceCallServiceFilterConfiguration()); yield true;
-                case "customServiceFilter": def.setServiceFilterConfiguration(doParseCustomServiceCallServiceFilterConfiguration()); yield true;
-                case "healthyServiceFilter": def.setServiceFilterConfiguration(doParseHealthyServiceCallServiceFilterConfiguration()); yield true;
-                case "passThroughServiceFilter": def.setServiceFilterConfiguration(doParsePassThroughServiceCallServiceFilterConfiguration()); yield true;
-                default: yield false;
-            }, noValueHandler());
-    }
-    protected ServiceCallExpressionConfiguration doParseServiceCallExpressionConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallExpressionConfiguration(), (def, key, val) -> switch (key) {
-                case "hostHeader": def.setHostHeader(val); yield true;
-                case "portHeader": def.setPortHeader(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, (def, key) -> {
-                ExpressionDefinition v = doParseExpressionDefinitionRef(key);
-                if (v != null) {
-                    def.setExpressionType(v);
-                    return true;
-                }
-                return serviceCallConfigurationElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected ServiceCallDefinition doParseServiceCallDefinition() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallDefinition(), (def, key, val) -> switch (key) {
-                case "component": def.setComponent(val); yield true;
-                case "configurationRef": def.setConfigurationRef(val); yield true;
-                case "expressionRef": def.setExpressionRef(val); yield true;
-                case "loadBalancerRef": def.setLoadBalancerRef(val); yield true;
-                case "name": def.setName(val); yield true;
-                case "pattern": def.setPattern(val); yield true;
-                case "serviceChooserRef": def.setServiceChooserRef(val); yield true;
-                case "serviceDiscoveryRef": def.setServiceDiscoveryRef(val); yield true;
-                case "serviceFilterRef": def.setServiceFilterRef(val); yield true;
-                case "uri": def.setUri(sanitizeUri(val)); yield true;
-                default: yield processorDefinitionAttributeHandler().accept(def, key, val);
-            }, (def, key) -> switch (key) {
-                case "expression": def.setExpressionConfiguration(doParseServiceCallExpressionConfiguration()); yield true;
-                case "defaultLoadBalancer": def.setLoadBalancerConfiguration(doParseDefaultServiceCallServiceLoadBalancerConfiguration()); yield true;
-                case "cachingServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCachingServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "combinedServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseCombinedServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "consulServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseConsulServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "dnsServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseDnsServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "kubernetesServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseKubernetesServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "staticServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseStaticServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "zookeeperServiceDiscovery": def.setServiceDiscoveryConfiguration(doParseZooKeeperServiceCallServiceDiscoveryConfiguration()); yield true;
-                case "blacklistServiceFilter": def.setServiceFilterConfiguration(doParseBlacklistServiceCallServiceFilterConfiguration()); yield true;
-                case "combinedServiceFilter": def.setServiceFilterConfiguration(doParseCombinedServiceCallServiceFilterConfiguration()); yield true;
-                case "customServiceFilter": def.setServiceFilterConfiguration(doParseCustomServiceCallServiceFilterConfiguration()); yield true;
-                case "healthyServiceFilter": def.setServiceFilterConfiguration(doParseHealthyServiceCallServiceFilterConfiguration()); yield true;
-                case "passThroughServiceFilter": def.setServiceFilterConfiguration(doParsePassThroughServiceCallServiceFilterConfiguration()); yield true;
-                default: yield optionalIdentifiedDefinitionElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected ServiceCallServiceChooserConfiguration doParseServiceCallServiceChooserConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ServiceCallServiceChooserConfiguration(), identifiedTypeAttributeHandler(), serviceCallConfigurationElementHandler(), noValueHandler());
-    }
-    protected StaticServiceCallServiceDiscoveryConfiguration doParseStaticServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new StaticServiceCallServiceDiscoveryConfiguration(), identifiedTypeAttributeHandler(), (def, key) -> switch (key) {
-                case "servers": doAdd(doParseText(), def.getServers(), def::setServers); yield true;
-                default: yield serviceCallConfigurationElementHandler().accept(def, key);
-            }, noValueHandler());
-    }
-    protected ZooKeeperServiceCallServiceDiscoveryConfiguration doParseZooKeeperServiceCallServiceDiscoveryConfiguration() throws IOException, XmlPullParserException {
-        return doParse(new ZooKeeperServiceCallServiceDiscoveryConfiguration(), (def, key, val) -> switch (key) {
-                case "basePath": def.setBasePath(val); yield true;
-                case "connectionTimeout": def.setConnectionTimeout(val); yield true;
-                case "namespace": def.setNamespace(val); yield true;
-                case "nodes": def.setNodes(val); yield true;
-                case "reconnectBaseSleepTime": def.setReconnectBaseSleepTime(val); yield true;
-                case "reconnectMaxRetries": def.setReconnectMaxRetries(val); yield true;
-                case "reconnectMaxSleepTime": def.setReconnectMaxSleepTime(val); yield true;
-                case "sessionTimeout": def.setSessionTimeout(val); yield true;
-                default: yield identifiedTypeAttributeHandler().accept(def, key, val);
-            }, serviceCallConfigurationElementHandler(), noValueHandler());
     }
     protected BatchResequencerConfig doParseBatchResequencerConfig() throws IOException, XmlPullParserException {
         return doParse(new BatchResequencerConfig(), (def, key, val) -> switch (key) {
@@ -2972,7 +2758,6 @@ public class ModelParser extends BaseParser {
             case "unmarshal": return doParseUnmarshalDefinition();
             case "validate": return doParseValidateDefinition();
             case "wireTap": return doParseWireTapDefinition();
-            case "serviceCall": return doParseServiceCallDefinition();
             default: return null;
         }
     }

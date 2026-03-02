@@ -23,7 +23,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(27);
+        Set<String> props = new HashSet<>(28);
         props.add("additionalBodyProperty");
         props.add("apiKey");
         props.add("autoToolExecution");
@@ -43,6 +43,7 @@ public class OpenAIEndpointUriFactory extends org.apache.camel.support.component
         props.add("mcpServer");
         props.add("mcpTimeout");
         props.add("model");
+        props.add("oauthProfile");
         props.add("operation");
         props.add("outputClass");
         props.add("storeFullResponse");

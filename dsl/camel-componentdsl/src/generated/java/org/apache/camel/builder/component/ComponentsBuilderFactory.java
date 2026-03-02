@@ -3635,19 +3635,6 @@ public interface ComponentsBuilderFactory {
         return NettyHttpComponentBuilderFactory.nettyHttp();
     }
     /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * @return the dsl builder
-     */
-    static NitriteComponentBuilderFactory.NitriteComponentBuilder nitrite() {
-        return NitriteComponentBuilderFactory.nitrite();
-    }
-    /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
      * 
@@ -4282,20 +4269,6 @@ public interface ComponentsBuilderFactory {
      */
     static SedaComponentBuilderFactory.SedaComponentBuilder seda() {
         return SedaComponentBuilderFactory.seda();
-    }
-    /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * @return the dsl builder
-     */
-    static ServiceComponentBuilderFactory.ServiceComponentBuilder service() {
-        return ServiceComponentBuilderFactory.service();
     }
     /**
      * ServiceNow (camel-servicenow)

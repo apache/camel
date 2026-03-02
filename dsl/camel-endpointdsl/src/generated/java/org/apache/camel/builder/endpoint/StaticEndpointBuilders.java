@@ -9026,6 +9026,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String path) {
         return jsonPatch("json-patch", path);
     }
@@ -9053,6 +9054,7 @@ public class StaticEndpointBuilders {
      * @param path resourceUri
      * @return the dsl builder
      */
+    @Deprecated
     public static JsonPatchEndpointBuilderFactory.JsonPatchEndpointBuilder jsonPatch(String componentName, String path) {
         return JsonPatchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
@@ -12091,48 +12093,6 @@ public class StaticEndpointBuilders {
         return NettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * Syntax: <code>nitrite:database</code>
-     * 
-     * Path parameter: database (required)
-     * Path to database file. Will be created if not exists.
-     * 
-     * @param path database
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String path) {
-        return nitrite("nitrite", path);
-    }
-    /**
-     * Nitrite (camel-nitrite)
-     * Access Nitrite databases.
-     * 
-     * Category: database
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-nitrite
-     * 
-     * Syntax: <code>nitrite:database</code>
-     * 
-     * Path parameter: database (required)
-     * Path to database file. Will be created if not exists.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path database
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static NitriteEndpointBuilderFactory.NitriteEndpointBuilder nitrite(String componentName, String path) {
-        return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * OAI-PMH (camel-oaipmh)
      * Harvest metadata using OAI-PMH protocol
      * 
@@ -14337,50 +14297,6 @@ public class StaticEndpointBuilders {
      */
     public static SedaEndpointBuilderFactory.SedaEndpointBuilder seda(String componentName, String path) {
         return SedaEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * Syntax: <code>service:delegateUri</code>
-     * 
-     * Path parameter: delegateUri (required)
-     * The endpoint uri to expose as service
-     * 
-     * @param path delegateUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String path) {
-        return service("service", path);
-    }
-    /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * Syntax: <code>service:delegateUri</code>
-     * 
-     * Path parameter: delegateUri (required)
-     * The endpoint uri to expose as service
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path delegateUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static ServiceEndpointBuilderFactory.ServiceEndpointBuilder service(String componentName, String path) {
-        return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * ServiceNow (camel-servicenow)

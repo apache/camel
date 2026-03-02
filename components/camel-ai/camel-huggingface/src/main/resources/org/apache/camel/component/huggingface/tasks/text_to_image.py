@@ -22,17 +22,23 @@ import json
 import torch
 import logging
 
-pipe = StableDiffusionPipeline.from_pretrained(
-    '%s',
-    torch_dtype=torch.float32,  # CPU-safe
-    safety_checker=None
-)
-pipe = pipe.to('%s')
+pipe = None
 
 def handle(inputs: Input):
+    global pipe
     try:
+        if not pipe:
+            logging.debug("Initializing pipeline")
+            pipe = StableDiffusionPipeline.from_pretrained(
+                '%s',
+                torch_dtype=torch.float32,  # CPU-safe
+                safety_checker=None
+            )
+            pipe = pipe.to('%s')
+            logging.debug("Pipeline initialized")
+
         if inputs.content.size() == 0:
-            logging.info("Handling warmup call - returning empty output")
+            logging.debug("Handling warmup call - returning empty output")
             return Output()
         input_str = inputs.get_as_string("data")
         torch.manual_seed(42)

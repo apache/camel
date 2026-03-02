@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openai;
 
+import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.OAuthHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +134,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    private void initializeMcpServers() {
+    private void initializeMcpServers() throws Exception {
         Map<String, Object> mcpServerConfig = configuration.getMcpServer();
         if (mcpServerConfig == null || mcpServerConfig.isEmpty()) {
             LOG.debug("No MCP server configuration found, skipping MCP initialization");
@@ -200,7 +202,17 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         }
     }
 
-    private McpClientTransport createMcpTransport(String serverName, String transportType, Map<String, String> props) {
+    private McpClientTransport createMcpTransport(String serverName, String transportType, Map<String, String> props)
+            throws Exception {
+        // Resolve per-server OAuth token if configured
+        String mcpOauthProfile = props.get("oauthProfile");
+        HttpRequest.Builder authRequestBuilder = null;
+        if (ObjectHelper.isNotEmpty(mcpOauthProfile)) {
+            String token = OAuthHelper.resolveOAuthToken(getCamelContext(), mcpOauthProfile);
+            authRequestBuilder = HttpRequest.newBuilder()
+                    .header("Authorization", "Bearer " + token);
+        }
+
         return switch (transportType) {
             case "stdio" -> {
                 String command = props.get("command");
@@ -219,7 +231,11 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 if (url == null) {
                     throw new IllegalArgumentException("mcpServer." + serverName + ".url is required for sse transport");
                 }
-                yield HttpClientSseClientTransport.builder(url).build();
+                HttpClientSseClientTransport.Builder sseBuilder = HttpClientSseClientTransport.builder(url);
+                if (authRequestBuilder != null) {
+                    sseBuilder.requestBuilder(authRequestBuilder);
+                }
+                yield sseBuilder.build();
             }
             case "streamableHttp" -> {
                 String url = props.get("url");
@@ -232,6 +248,9 @@ public class OpenAIEndpoint extends DefaultEndpoint {
                 List<String> protocolVersions = parseMcpProtocolVersions();
                 if (protocolVersions != null) {
                     transportBuilder.supportedProtocolVersions(protocolVersions);
+                }
+                if (authRequestBuilder != null) {
+                    transportBuilder.requestBuilder(authRequestBuilder);
                 }
                 yield transportBuilder.build();
             }
@@ -339,7 +358,7 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         }
     }
 
-    protected OpenAIClient createClient() {
+    protected OpenAIClient createClient() throws Exception {
         String apiKey = resolveApiKey();
 
         OpenAIOkHttpClient.Builder builder = OpenAIOkHttpClient.builder();
@@ -353,10 +372,15 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         return builder.build();
     }
 
-    protected String resolveApiKey() {
-        // Priority: URI parameter > component config > environment variable > application.properties
+    protected String resolveApiKey() throws Exception {
+        // Priority: URI parameter > OAuth profile > environment variable > system property
         if (ObjectHelper.isNotEmpty(configuration.getApiKey())) {
             return configuration.getApiKey();
+        }
+
+        // Try OAuth profile if configured
+        if (ObjectHelper.isNotEmpty(configuration.getOauthProfile())) {
+            return resolveOAuthToken();
         }
 
         String envApiKey = System.getenv("OPENAI_API_KEY");
@@ -365,6 +389,10 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         }
 
         return System.getProperty("openai.api.key");
+    }
+
+    private String resolveOAuthToken() throws Exception {
+        return OAuthHelper.resolveOAuthToken(getCamelContext(), configuration.getOauthProfile());
     }
 
     public String getOperation() {

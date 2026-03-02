@@ -2177,6 +2177,28 @@ docling.serve.url=http://localhost:5001
 docling.serve.token=your-bearer-token-here
 ----
 
+==== OAuth Authentication
+
+When the docling-serve instance is protected by an OAuth identity provider, set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used as the `authenticationToken` and the `authenticationScheme` is automatically set to `BEARER`. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.docling.client-id=my-client
+camel.oauth.docling.client-secret=my-secret
+camel.oauth.docling.token-endpoint=https://idp.example.com/token
+----
+
+[source,java]
+----
+from("file:///data/input")
+    .to("docling:CONVERT_TO_MARKDOWN"
+        + "?useDoclingServe=true"
+        + "&doclingServeUrl=http://localhost:5001"
+        + "&oauthProfile=docling"
+        + "&contentInBody=true")
+    .log("${body}");
+----
+
 == Advanced Processing Options (API Mode)
 
 When using docling-serve API mode (`useDoclingServe=true`), the component exposes advanced processing options that control how the server processes documents. These options are passed directly to the docling-serve API and provide fine-grained control over OCR, table recognition, enrichment features, and output formatting.

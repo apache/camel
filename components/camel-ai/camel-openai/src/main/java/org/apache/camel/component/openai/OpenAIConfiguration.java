@@ -33,6 +33,14 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "OpenAI API key. Can also be set via OPENAI_API_KEY environment variable.", secret = true)
     private String apiKey;
 
+    @UriParam(label = "security")
+    @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
+                            + "When set, the token is acquired from the configured identity provider and used instead of apiKey. "
+                            + "Requires camel-oauth on the classpath. The profile properties are resolved from "
+                            + "camel.oauth.<profileName>.client-id, camel.oauth.<profileName>.client-secret, "
+                            + "and camel.oauth.<profileName>.token-endpoint.")
+    private String oauthProfile;
+
     @UriParam
     @Metadata(description = "Base URL for OpenAI API. Defaults to OpenAI's official endpoint. Can be used for local or third-party providers.",
               defaultValue = ClientOptions.PRODUCTION_URL)
@@ -100,7 +108,8 @@ public class OpenAIConfiguration implements Cloneable {
     @Metadata(description = "MCP (Model Context Protocol) server configurations. "
                             + "Define servers using prefix notation: mcpServer.<name>.transportType=stdio|sse|streamableHttp, "
                             + "mcpServer.<name>.command=<cmd> (stdio), mcpServer.<name>.args=<comma-separated> (stdio), "
-                            + "mcpServer.<name>.url=<url> (sse/streamableHttp)")
+                            + "mcpServer.<name>.url=<url> (sse/streamableHttp), "
+                            + "mcpServer.<name>.oauthProfile=<profile> (OAuth profile for HTTP auth, requires camel-oauth)")
     private Map<String, Object> mcpServer;
 
     @UriParam(defaultValue = "50")
@@ -149,6 +158,14 @@ public class OpenAIConfiguration implements Cloneable {
 
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 
     public String getBaseUrl() {

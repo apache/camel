@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.google.common.GoogleCommonConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -29,7 +30,7 @@ import org.apache.camel.spi.UriPath;
  * Component configuration for GoogleSheets stream component.
  */
 @UriParams
-public class GoogleSheetsStreamConfiguration implements Cloneable {
+public class GoogleSheetsStreamConfiguration implements Cloneable, GoogleCommonConfiguration {
 
     @UriPath
     @Metadata(required = true)
@@ -64,6 +65,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
     @UriParam
     private String delegate;
 
+    @Override
     public String getClientId() {
         return clientId;
     }
@@ -75,6 +77,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         this.clientId = clientId;
     }
 
+    @Override
     public String getClientSecret() {
         return clientSecret;
     }
@@ -86,6 +89,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         this.clientSecret = clientSecret;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
@@ -97,6 +101,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         this.accessToken = accessToken;
     }
 
+    @Override
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -124,6 +129,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         return scopes;
     }
 
+    @Override
     public Collection<String> getScopesAsList() {
         if (scopes != null) {
             return List.of(scopes.split(","));
@@ -223,6 +229,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         this.splitResults = splitResults;
     }
 
+    @Override
     public String getServiceAccountKey() {
         return serviceAccountKey;
     }
@@ -236,6 +243,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
         this.serviceAccountKey = serviceAccountKey;
     }
 
+    @Override
     public String getDelegate() {
         return delegate;
     }

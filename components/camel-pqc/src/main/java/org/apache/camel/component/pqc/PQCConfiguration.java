@@ -24,6 +24,7 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.pqc.lifecycle.KeyLifecycleManager;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -99,6 +100,10 @@ public class PQCConfiguration implements Cloneable {
               description = "The KDF algorithm to use for combining secrets in hybrid KEM operations")
     @Metadata(label = "advanced")
     private String hybridKdfAlgorithm = "HKDF-SHA256";
+
+    @UriParam(description = "The KeyLifecycleManager to use for key lifecycle operations such as generation, rotation, import/export, expiration, and revocation")
+    @Metadata(label = "advanced", autowired = true)
+    private KeyLifecycleManager keyLifecycleManager;
 
     public PQCOperations getOperation() {
         return operation;
@@ -297,6 +302,18 @@ public class PQCConfiguration implements Cloneable {
      */
     public void setHybridKdfAlgorithm(String hybridKdfAlgorithm) {
         this.hybridKdfAlgorithm = hybridKdfAlgorithm;
+    }
+
+    public KeyLifecycleManager getKeyLifecycleManager() {
+        return keyLifecycleManager;
+    }
+
+    /**
+     * The KeyLifecycleManager to use for key lifecycle operations such as generation, rotation, import/export,
+     * expiration, and revocation
+     */
+    public void setKeyLifecycleManager(KeyLifecycleManager keyLifecycleManager) {
+        this.keyLifecycleManager = keyLifecycleManager;
     }
 
     // *************************************************

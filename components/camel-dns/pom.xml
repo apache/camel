@@ -32,11 +32,11 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cloud</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
+
         <dependency>
             <groupId>dnsjava</groupId>
             <artifactId>dnsjava</artifactId>

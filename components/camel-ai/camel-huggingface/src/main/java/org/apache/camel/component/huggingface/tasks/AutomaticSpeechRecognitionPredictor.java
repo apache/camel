@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.huggingface.tasks;
 
+import java.nio.charset.StandardCharsets;
+
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import ai.djl.modality.audio.Audio;
@@ -126,7 +128,7 @@ public class AutomaticSpeechRecognitionPredictor extends AbstractTaskPredictor {
         String waveformJson = objectMapper.writeValueAsString(waveform);
 
         Input input = new Input();
-        input.add("data", waveformJson.getBytes("UTF-8"));
+        input.add("data", waveformJson.getBytes(StandardCharsets.UTF_8));
         return input;
     }
 

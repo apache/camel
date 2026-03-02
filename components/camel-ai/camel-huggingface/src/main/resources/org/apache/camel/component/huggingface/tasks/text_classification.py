@@ -22,18 +22,24 @@ import torch
 import sys
 import logging
 
-pipe = pipeline(
-    task='text-classification',
-    model='%s',
-    revision='%s',
-    device_map='%s',
-    top_k=%s
-)
+pipe = None
 
 def handle(inputs: Input):
+    global pipe
     try:
+        if not pipe:
+            logging.debug("Initializing pipeline")
+            pipe = pipeline(
+                task='text-classification',
+                model='%s',
+                revision='%s',
+                device_map='%s',
+                top_k=%s
+            )
+            logging.debug("Pipeline initialized")
+
         if inputs.content.size() == 0:
-            logging.info("Handling warmup call - returning empty output")
+            logging.debug("Handling warmup call - returning empty output")
             return Output()
         input_str = inputs.get_as_string("data")
         torch.manual_seed(42)

@@ -21,17 +21,23 @@ import json
 import torch
 import logging
 
-pipe = pipeline(
-    task='zero-shot-classification',
-    model='%s',
-    revision='%s',
-    device_map='%s'
-)
+pipe = None
 
 def handle(inputs: Input):
+    global pipe
     try:
+        if not pipe:
+            logging.debug("Initializing pipeline")
+            pipe = pipeline(
+                task='zero-shot-classification',
+                model='%s',
+                revision='%s',
+                device_map='%s'
+            )
+            logging.debug("Pipeline initialized")
+
         if inputs.content.size() == 0:
-            logging.info("Handling warmup call - returning empty output")
+            logging.debug("Handling warmup call - returning empty output")
             return Output()
         input_str = inputs.get_as_string("data")
         input_data = json.loads(input_str)  # [text, label1, label2, ...]

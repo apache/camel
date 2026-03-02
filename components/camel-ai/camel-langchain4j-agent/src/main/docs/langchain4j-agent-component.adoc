@@ -55,6 +55,70 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
+== OAuth Authentication
+
+=== Quarkus Runtime
+
+When running in Quarkus, use the https://quarkus.io/extensions/io.quarkiverse.langchain4j/quarkus-langchain4j-oidc-mcp-auth-provider/[quarkus-langchain4j-oidc-mcp-auth-provider] extension for MCP server authentication. This is the recommended approach as it integrates natively with Quarkus OIDC, supports automatic token propagation, and follows Quarkus security best practices.
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.langchain4j</groupId>
+    <artifactId>quarkus-langchain4j-oidc-mcp-auth-provider</artifactId>
+</dependency>
+----
+
+With this extension, the authenticated user's OIDC access token is automatically propagated to MCP servers. MCP clients are configured via `quarkus.langchain4j.mcp.*` properties and are injected as pre-built beans. Camel picks them up via the `mcpClients` parameter — no `oauthProfile` or `camel-oauth` is needed.
+
+=== camel-main and manual MCP server configuration
+
+When running outside Quarkus (e.g., camel-main) or when manually configuring MCP servers via inline `mcpServer.<name>.*` parameters, use the `oauthProfile` option to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is injected as an `Authorization: Bearer` header on HTTP-based MCP transports. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.keycloak.client-id=camel-client
+camel.oauth.keycloak.client-secret=camel-client-secret
+camel.oauth.keycloak.token-endpoint=https://keycloak.example.com/realms/camel/protocol/openid-connect/token
+----
+
+[source,java]
+----
+from("direct:agent")
+    .to("langchain4j-agent:myAgent"
+        + "?mcpServer.tools.transportType=http"
+        + "&mcpServer.tools.url=https://mcp.internal/mcp"
+        + "&mcpServer.tools.oauthProfile=keycloak");
+----
+
+=== LLM Provider Authentication
+
+The langchain4j-agent component accepts a pre-built `Agent` or `ChatModel` bean — it does not create the LLM client itself. For LLM providers that require OAuth authentication (e.g., Azure OpenAI), use `OAuthHelper` when building the bean programmatically:
+
+[source,java]
+----
+import org.apache.camel.support.OAuthHelper;
+
+public class MyRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        String token = OAuthHelper.resolveOAuthToken(getContext(), "azure");
+
+        ChatModel chatModel = OpenAiChatModel.builder()
+                .apiKey(token)
+                .modelName("gpt-4")
+                .build();
+
+        getContext().getRegistry().bind("myChatModel", chatModel);
+
+        from("direct:agent")
+            .to("langchain4j-agent:myAgent");
+    }
+}
+----
+
+NOTE: In Quarkus or Spring Boot, configure the ChatModel via the framework's own properties and dependency injection instead of programmatic bean registration.
+
 include::spring-boot:partial$starter.adoc[]
 
 

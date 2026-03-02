@@ -408,6 +408,24 @@ public interface HuggingfaceComponentBuilderFactory {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
+    
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used as authToken. Requires
+         * camel-oauth on the classpath.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default HuggingfaceComponentBuilder oauthProfile(java.lang.String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
     }
 
     class HuggingfaceComponentBuilderImpl
@@ -450,6 +468,7 @@ public interface HuggingfaceComponentBuilderFactory {
             case "autowiredEnabled": ((HuggingFaceComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "healthCheckConsumerEnabled": ((HuggingFaceComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((HuggingFaceComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "oauthProfile": getOrCreateConfiguration((HuggingFaceComponent) component).setOauthProfile((java.lang.String) value); return true;
             default: return false;
             }
         }

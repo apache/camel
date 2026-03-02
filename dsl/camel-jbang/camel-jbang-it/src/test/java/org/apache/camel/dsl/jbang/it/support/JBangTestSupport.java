@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.test.infra.cli.common.CliProperties;
 import org.apache.camel.test.infra.cli.services.CliService;
 import org.apache.camel.test.infra.cli.services.CliServiceFactory;
-import org.apache.commons.io.FileUtils;
+import org.apache.camel.util.FileUtil;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -90,7 +90,7 @@ public abstract class JBangTestSupport {
         assertNoErrors();
         logger.debug("clean up data folder");
         if (containerDataFolder != null) {
-            FileUtils.deleteQuietly(new File(containerDataFolder));
+            FileUtil.removeDir(new File(containerDataFolder));
         }
     }
 
@@ -100,10 +100,10 @@ public abstract class JBangTestSupport {
         HELLO_NAME("helloName.xml", "/jbang/it/helloName.xml"),
         JOKE("joke.yaml", "/jbang/it/joke.yaml"),
         MQQT_CONSUMER("mqttConsumer.yaml", "/jbang/it/mqttConsumer.yaml"),
-        BUILD_GRADLE("build.gradle", "/jbang/it/maven-gradle/build.gradle"),
         DIR_ROUTE("FromDirectoryRoute.java", "/jbang/it/from-source-dir/FromDirectoryRoute.java"),
         SERVER_ROUTE("server.yaml", "/jbang/it/server.yaml"),
         CIRCUIT_BREAKER("CircuitBreakerRoute.java", "/jbang/it/CircuitBreakerRoute.java"),
+        CUSTOM_JAR("CustomJar.java", "/jbang/it/CustomJar.java"),
         SRC_MAPPING_DATA("data.json", "/jbang/it/data-mapping/src/data.json"),
         SRC_MAPPING_TEMPLATE("transform.yaml", "/jbang/it/data-mapping/src/transform.yaml"),
         COMP_MAPPING_DATA("data.xml", "/jbang/it/data-mapping/components/data.xml"),

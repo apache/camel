@@ -164,6 +164,16 @@ public final class CommandLineHelper {
         public CamelUserConfigDefaultValueProvider(Properties properties) {
             super(properties);
         }
+
+        @Override
+        public String defaultValue(CommandLine.Model.ArgSpec argSpec) throws Exception {
+            // all plugin commands should not support default values from camel-jbang-user.properties
+            CommandLine.Model.CommandSpec parent = argSpec.command().parent();
+            if (parent != null && parent.name().equals("plugin")) {
+                return null;
+            }
+            return super.defaultValue(argSpec);
+        }
     }
 
 }

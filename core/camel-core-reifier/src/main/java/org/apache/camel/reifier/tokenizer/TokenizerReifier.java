@@ -17,11 +17,8 @@
 
 package org.apache.camel.reifier.tokenizer;
 
-import java.util.Optional;
-
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.TokenizerDefinition;
 import org.apache.camel.model.TokenizerImplementationDefinition;
 import org.apache.camel.model.tokenizer.LangChain4jTokenizerDefinition;
@@ -29,6 +26,7 @@ import org.apache.camel.processor.TokenizerProcessor;
 import org.apache.camel.reifier.ProcessorReifier;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Tokenizer;
+import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,18 +42,8 @@ public class TokenizerReifier<T extends TokenizerDefinition> extends ProcessorRe
     public Processor createProcessor() throws Exception {
         Processor childProcessor = createChildProcessor(false);
 
-        final FactoryFinder factoryFinder
-                = camelContext.getCamelContextExtension().getFactoryFinder(TOKENIZER_PATH);
-
-        final Optional<Tokenizer> tokenize = factoryFinder.newInstance(
-                definition.tokenizerName(), Tokenizer.class);
-
-        if (tokenize.isEmpty()) {
-            throw new RuntimeCamelException(
-                    "Cannot find a tokenizer named: " + definition.tokenizerName() + " in the classpath");
-        }
-
-        final Tokenizer tokenizer = tokenize.get();
+        Tokenizer tokenizer = ResolverHelper.resolveMandatoryBootstrapService(camelContext,
+                TOKENIZER_PATH + definition.tokenizerName(), Tokenizer.class, definition.tokenizerName());
         LOG.info("Creating a tokenizer of type {}", tokenizer.getClass().getName());
         configure(tokenizer);
 

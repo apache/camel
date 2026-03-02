@@ -61,6 +61,23 @@ You must provide the following options to use this component:
 * (optional) `documentConnectionId`, `documentBucket`, `cosUrl` - needed by services like `textExtraction` or `textClassification`
 * (optional) `wxUrl` - For hosted IBM tools
 
+== OAuth Authentication
+
+When using an identity provider for service-to-service authentication instead of a static API key, set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used as the `apiKey`. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.ibm.client-id=my-client
+camel.oauth.ibm.client-secret=my-secret
+camel.oauth.ibm.token-endpoint=https://iam.cloud.ibm.com/identity/token
+----
+
+[source,java]
+----
+from("direct:generate")
+    .to("ibm-watsonx-ai:myLabel?oauthProfile=ibm&baseUrl=https://us-south.ml.cloud.ibm.com&projectId=my-project&modelId=ibm/granite-13b-instruct-v2");
+----
+
 == Security Considerations
 
 === Sensitive Data Logging

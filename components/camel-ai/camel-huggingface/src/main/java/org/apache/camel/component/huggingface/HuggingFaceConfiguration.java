@@ -56,6 +56,12 @@ public class HuggingFaceConfiguration implements Cloneable {
     @Metadata(description = "HF API token for private models")
     private String authToken;
 
+    @UriParam(label = "security")
+    @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
+                            + "When set, the token is acquired from the configured identity provider and used as authToken. "
+                            + "Requires camel-oauth on the classpath.")
+    private String oauthProfile;
+
     @UriParam
     @Metadata(description = "Min tokens for summarization tasks")
     private int minLength = 30;
@@ -203,6 +209,14 @@ public class HuggingFaceConfiguration implements Cloneable {
 
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 
     public HuggingFaceTask getTask() {

@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.google.secret.manager;
 
-import java.io.InputStream;
-
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.Credentials;
-import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceSettings;
-import com.google.common.base.Strings;
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.component.google.common.GoogleCredentialsHelper;
 
 public final class GoogleSecretManagerClientFactory {
     /**
@@ -38,22 +34,19 @@ public final class GoogleSecretManagerClientFactory {
             CamelContext context,
             GoogleSecretManagerConfiguration configuration)
             throws Exception {
-        SecretManagerServiceClient secretManagerServiceClient = null;
-        if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
-            InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
-            Credentials myCredentials = ServiceAccountCredentials
-                    .fromStream(resolveMandatoryResourceAsInputStream);
+
+        Credentials credentials = GoogleCredentialsHelper.getCredentials(context, configuration);
+
+        if (credentials != null) {
             SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder()
-                    .setCredentialsProvider(FixedCredentialsProvider.create(myCredentials)).build();
-            secretManagerServiceClient = SecretManagerServiceClient.create(settings);
+                    .setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
+            return SecretManagerServiceClient.create(settings);
         } else {
             // it needs to define the environment variable GOOGLE_APPLICATION_CREDENTIALS
             // with the service account file
             // more info at https://cloud.google.com/docs/authentication/production
             SecretManagerServiceSettings settings = SecretManagerServiceSettings.newBuilder().build();
-            secretManagerServiceClient = SecretManagerServiceClient.create(settings);
+            return SecretManagerServiceClient.create(settings);
         }
-        return secretManagerServiceClient;
     }
 }

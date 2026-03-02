@@ -59,6 +59,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptimeout":
         case "mcpTimeout": target.getConfiguration().setMcpTimeout(property(camelContext, int.class, value)); return true;
         case "model": target.getConfiguration().setModel(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": target.getConfiguration().setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "outputclass":
         case "outputClass": target.getConfiguration().setOutputClass(property(camelContext, java.lang.String.class, value)); return true;
         case "storefullresponse":
@@ -114,6 +116,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptimeout":
         case "mcpTimeout": return int.class;
         case "model": return java.lang.String.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "outputclass":
         case "outputClass": return java.lang.String.class;
         case "storefullresponse":
@@ -170,6 +174,8 @@ public class OpenAIEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "mcptimeout":
         case "mcpTimeout": return target.getConfiguration().getMcpTimeout();
         case "model": return target.getConfiguration().getModel();
+        case "oauthprofile":
+        case "oauthProfile": return target.getConfiguration().getOauthProfile();
         case "outputclass":
         case "outputClass": return target.getConfiguration().getOutputClass();
         case "storefullresponse":

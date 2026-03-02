@@ -86,6 +86,12 @@ public class DoclingConfiguration implements Cloneable {
     private String authenticationToken;
 
     @UriParam(label = "security")
+    @Metadata(description = "OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. "
+                            + "When set, the token is acquired from the configured identity provider and used as authenticationToken. "
+                            + "Requires camel-oauth on the classpath.")
+    private String oauthProfile;
+
+    @UriParam(label = "security")
     @Metadata(description = "Authentication scheme (BEARER, API_KEY, NONE)", defaultValue = "NONE",
               enums = "BEARER,API_KEY,NONE")
     private AuthenticationScheme authenticationScheme = AuthenticationScheme.NONE;
@@ -331,6 +337,14 @@ public class DoclingConfiguration implements Cloneable {
 
     public void setAuthenticationToken(String authenticationToken) {
         this.authenticationToken = authenticationToken;
+    }
+
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
     }
 
     public AuthenticationScheme getAuthenticationScheme() {

@@ -13,10 +13,125 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.0 to 4.18.1
 
+=== camel-bom
+
+The `camel-test` module has been removed from `camel-bom`. This module was included by mistake, as since Camel 4, this is
+not a JAR but a pom.xml file. Camel end users should use the `camel-test-junit5` / `camel-test-junit6` JARs and the others directly.
+
 === camel-yaml-io / camel-xml-io
 
 In the YAML DSL we have renamed `routePolicy` to `routePolicyRef` on the `route` node,
 as that is the correct name.
+
+==== Saga EIP
+
+The Saga EIP has _fixed_ the model for how to configure completion and compensation URIs.
+
+For Java DSL there is no changes, but XML and YAML DSL is affected. Here the `<compensation>` and `<completion>` tags
+has been changed to be an attribute on `<saga>` instead as shown below:
+
+Before:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <saga sagaService="mySagaService">
+        <compensation uri="mock:compensation"/>
+        <completion uri="mock:completion"/>
+        <option key="myOptionKey">
+            <constant>myOptionValue</constant>
+        </option>
+        <option key="myOptionKey2">
+            <constant>myOptionValue2</constant>
+        </option>
+    </saga>
+    <choice>
+        <when>
+            <simple>${body} == 'fail'</simple>
+            <throwException exceptionType="java.lang.RuntimeException" message="fail"/>
+        </when>
+    </choice>
+    <to uri="mock:end"/>
+</route>
+----
+
+In YAML DSL the changes are even simpler as the endpoint is moved from `uri` to the value of `completion` or `compensation`.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - saga:
+            sagaService: mySagaService
+            compensation:
+              uri: mock:compensation
+            completion:
+              uri: mock:completion
+            key: myOptionKey2
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == 'fail'"
+                steps:
+                  - throwException:
+                      message: fail
+                      exceptionType: java.lang.RuntimeException
+        - to:
+            uri: mock:end
+
+----
+
+After:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <saga sagaService="mySagaService" compensation="mock:compensation" completion="mock:completion">
+        <option key="myOptionKey">
+            <constant>myOptionValue</constant>
+        </option>
+        <option key="myOptionKey2">
+            <constant>myOptionValue2</constant>
+        </option>
+    </saga>
+    <choice>
+        <when>
+            <simple>${body} == 'fail'</simple>
+            <throwException exceptionType="java.lang.RuntimeException" message="fail"/>
+        </when>
+    </choice>
+    <to uri="mock:end"/>
+</route>
+----
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - saga:
+            sagaService: mySagaService
+            compensation: mock:compensation
+            completion: mock:completion
+            key: myOptionKey2
+        - choice:
+            when:
+              - expression:
+                  simple:
+                    expression: "${body} == 'fail'"
+                steps:
+                  - throwException:
+                      message: fail
+                      exceptionType: java.lang.RuntimeException
+        - to:
+            uri: mock:end
+----
 
 === camel-simple
 
@@ -59,6 +174,9 @@ Should be changed to have semicolons as shown below:
 When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
 the bean which is similar to what `camel-file` do as well.
 
+=== camel-json-patch
+
+The `camel-json-patch` is now deprecated - the library it uses is not active maintained and this module does not work with Jackon 3.
 
 == Upgrading Camel 4.17 to 4.18
 

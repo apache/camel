@@ -275,7 +275,7 @@ public class KubernetesRun extends KubernetesBaseCommand {
     String packageName;
 
     @CommandLine.Option(names = { "--build-property" },
-                        description = "Maven/Gradle build properties, ex. --build-property=prop1=foo")
+                        description = "Maven properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
     @CommandLine.Option(names = { "--disable-auto" },
@@ -457,7 +457,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 camelSpringBootVersion,
                 quarkusGroupId,
                 quarkusArtifactId,
-                "maven",
                 openApi,
                 workingDir,
                 packageName,
@@ -467,7 +466,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
                 true,
                 true,
                 false,
-                true,
                 download,
                 packageScanJars,
                 (quiet || output != null),

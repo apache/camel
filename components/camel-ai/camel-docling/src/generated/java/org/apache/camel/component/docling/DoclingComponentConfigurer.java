@@ -105,6 +105,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "maxFileSize": getOrCreateConfiguration(target).setMaxFileSize(property(camelContext, long.class, value)); return true;
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": getOrCreateConfiguration(target).setMdPageBreakPlaceholder(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": getOrCreateConfiguration(target).setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "ocrengine":
         case "ocrEngine": getOrCreateConfiguration(target).setOcrEngine(property(camelContext, java.lang.String.class, value)); return true;
         case "ocrlanguage":
@@ -211,6 +213,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "maxFileSize": return long.class;
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": return java.lang.String.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "ocrengine":
         case "ocrEngine": return java.lang.String.class;
         case "ocrlanguage":
@@ -318,6 +322,8 @@ public class DoclingComponentConfigurer extends PropertyConfigurerSupport implem
         case "maxFileSize": return getOrCreateConfiguration(target).getMaxFileSize();
         case "mdpagebreakplaceholder":
         case "mdPageBreakPlaceholder": return getOrCreateConfiguration(target).getMdPageBreakPlaceholder();
+        case "oauthprofile":
+        case "oauthProfile": return getOrCreateConfiguration(target).getOauthProfile();
         case "ocrengine":
         case "ocrEngine": return getOrCreateConfiguration(target).getOcrEngine();
         case "ocrlanguage":

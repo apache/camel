@@ -26,6 +26,8 @@ import dev.langchain4j.mcp.client.transport.McpTransport;
 import dev.langchain4j.mcp.client.transport.http.HttpMcpTransport;
 import dev.langchain4j.mcp.client.transport.http.StreamableHttpMcpTransport;
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.support.OAuthHelper;
 
 /**
  * A simplified configuration POJO for declaratively defining MCP (Model Context Protocol) servers.
@@ -63,6 +65,7 @@ public class LangChain4jMcpServerDefinition {
     private Duration timeout = Duration.ofSeconds(60);
     private boolean logRequests;
     private boolean logResponses;
+    private String oauthProfile;
 
     /**
      * Gets the server name (used for identification and as the MCP client key).
@@ -177,13 +180,32 @@ public class LangChain4jMcpServerDefinition {
     }
 
     /**
+     * Gets the OAuth profile name for HTTP transport authentication.
+     */
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    /**
+     * Sets the OAuth profile name for obtaining an access token via the OAuth 2.0 Client Credentials grant. When set,
+     * the token is injected as an Authorization: Bearer header on HTTP-based MCP transports. Requires camel-oauth on
+     * the classpath.
+     */
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
+    }
+
+    /**
      * Builds an {@link McpClient} from this definition.
      *
+     * @param  camelContext             the CamelContext for resolving OAuth profiles (may be null if no oauthProfile is
+     *                                  set)
      * @return                          a configured and ready-to-use McpClient
      * @throws IllegalArgumentException if required configuration is missing
+     * @throws Exception                if OAuth token resolution fails
      */
-    public McpClient buildClient() {
-        McpTransport transport = buildTransport();
+    public McpClient buildClient(CamelContext camelContext) throws Exception {
+        McpTransport transport = buildTransport(camelContext);
 
         DefaultMcpClient.Builder clientBuilder = new DefaultMcpClient.Builder()
                 .transport(transport)
@@ -197,27 +219,40 @@ public class LangChain4jMcpServerDefinition {
     }
 
     @SuppressWarnings("deprecation")
-    private McpTransport buildTransport() {
-        if ("http".equalsIgnoreCase(transportType)) {
+    private McpTransport buildTransport(CamelContext camelContext) throws Exception {
+        // Resolve OAuth token for HTTP-based transports
+        Map<String, String> authHeaders = null;
+        if (oauthProfile != null && !oauthProfile.isBlank() && camelContext != null) {
+            String token = OAuthHelper.resolveOAuthToken(camelContext, oauthProfile);
+            authHeaders = Map.of("Authorization", "Bearer " + token);
+        }
+
+        if ("http".equalsIgnoreCase(transportType) || "streamableHttp".equalsIgnoreCase(transportType)) {
             if (url == null || url.trim().isEmpty()) {
                 throw new IllegalArgumentException("URL is required for HTTP MCP transport");
             }
-            return new StreamableHttpMcpTransport.Builder()
+            StreamableHttpMcpTransport.Builder builder = new StreamableHttpMcpTransport.Builder()
                     .url(url)
                     .logRequests(logRequests)
                     .logResponses(logResponses)
-                    .timeout(timeout)
-                    .build();
+                    .timeout(timeout);
+            if (authHeaders != null) {
+                builder.customHeaders(authHeaders);
+            }
+            return builder.build();
         } else if ("sse".equalsIgnoreCase(transportType)) {
             if (url == null || url.trim().isEmpty()) {
                 throw new IllegalArgumentException("URL is required for SSE MCP transport");
             }
-            return new HttpMcpTransport.Builder()
+            HttpMcpTransport.Builder builder = new HttpMcpTransport.Builder()
                     .sseUrl(url)
                     .logRequests(logRequests)
                     .logResponses(logResponses)
-                    .timeout(timeout)
-                    .build();
+                    .timeout(timeout);
+            if (authHeaders != null) {
+                builder.customHeaders(authHeaders);
+            }
+            return builder.build();
         } else if ("stdio".equalsIgnoreCase(transportType)) {
             if (command == null || command.isEmpty()) {
                 throw new IllegalArgumentException("Command is required for stdio MCP transport");
@@ -232,7 +267,7 @@ public class LangChain4jMcpServerDefinition {
         } else {
             throw new IllegalArgumentException(
                     "Unsupported MCP transport type: " + transportType
-                                               + ". Supported values: stdio, http, sse");
+                                               + ". Supported values: stdio, http, streamableHttp, sse");
         }
     }
 }

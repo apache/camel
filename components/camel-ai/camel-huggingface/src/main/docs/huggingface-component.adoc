@@ -95,6 +95,23 @@ include::partial$component-endpoint-headers.adoc[]
 // endpoint options: START
 // endpoint options: END
 
+== OAuth Authentication
+
+When accessing private or gated models behind an OAuth-protected endpoint, set the `oauthProfile` parameter to acquire an access token via the OAuth 2.0 Client Credentials grant. The token is used as the `authToken`. This requires `camel-oauth` on the classpath.
+
+[source,properties]
+----
+camel.oauth.hf.client-id=my-client
+camel.oauth.hf.client-secret=my-secret
+camel.oauth.hf.token-endpoint=https://idp.example.com/token
+----
+
+[source,java]
+----
+from("direct:chat")
+    .to("huggingface:chat?modelId=mistralai/Mistral-7B-Instruct-v0.2&oauthProfile=hf");
+----
+
 == Examples
 
 .Classify sentiment of text:

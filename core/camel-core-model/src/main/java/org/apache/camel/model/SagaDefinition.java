@@ -30,7 +30,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
+import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.saga.CamelSagaService;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.TimeUtils;
@@ -42,6 +44,11 @@ import org.apache.camel.util.TimeUtils;
 @XmlRootElement(name = "saga")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SagaDefinition extends OutputDefinition<SagaDefinition> {
+
+    @XmlTransient
+    private EndpointProducerBuilder compensationEndpointProducerBuilder;
+    @XmlTransient
+    private EndpointProducerBuilder completionEndpointProducerBuilder;
 
     @XmlTransient
     private CamelSagaService sagaServiceBean;
@@ -59,10 +66,12 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     @XmlAttribute
     @Metadata(javaType = "java.time.Duration")
     private String timeout;
-    @XmlElement
-    private SagaActionUriDefinition compensation;
-    @XmlElement
-    private SagaActionUriDefinition completion;
+    @XmlAttribute
+    @Metadata
+    private String compensation;
+    @XmlAttribute
+    @Metadata
+    private String completion;
     @XmlElement(name = "option")
     @Metadata(label = "advanced")
     private List<PropertyExpressionDefinition> options;
@@ -77,8 +86,10 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.propagation = source.propagation;
         this.completionMode = source.completionMode;
         this.timeout = source.timeout;
-        this.compensation = source.compensation != null ? source.compensation.copyDefinition() : null;
-        this.completion = source.completion != null ? source.completion.copyDefinition() : null;
+        this.compensation = source.compensation;
+        this.completion = source.completion;
+        this.compensationEndpointProducerBuilder = source.compensationEndpointProducerBuilder;
+        this.completionEndpointProducerBuilder = source.completionEndpointProducerBuilder;
         this.options = ProcessorDefinitionHelper.deepCopyDefinitions(source.options);
     }
 
@@ -135,6 +146,14 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     // Properties
 
+    public EndpointProducerBuilder getCompensationEndpointProducerBuilder() {
+        return compensationEndpointProducerBuilder;
+    }
+
+    public EndpointProducerBuilder getCompletionEndpointProducerBuilder() {
+        return completionEndpointProducerBuilder;
+    }
+
     public CamelSagaService getSagaServiceBean() {
         return sagaServiceBean;
     }
@@ -150,7 +169,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.sagaService = sagaService;
     }
 
-    public SagaActionUriDefinition getCompensation() {
+    public String getCompensation() {
         return compensation;
     }
 
@@ -159,11 +178,20 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * corresponding to the compensation URI must perform compensation and complete without error. If errors occur
      * during compensation, the saga service may call again the compensation URI to retry.
      */
-    public void setCompensation(SagaActionUriDefinition compensation) {
+    public void setCompensation(@AsEndpointUri String compensation) {
         this.compensation = compensation;
     }
 
-    public SagaActionUriDefinition getCompletion() {
+    /**
+     * The compensation endpoint URI that must be called to compensate all changes done in the route. The route
+     * corresponding to the compensation URI must perform compensation and complete without error. If errors occur
+     * during compensation, the saga service may call again the compensation URI to retry.
+     */
+    public void setCompensation(@AsEndpointUri EndpointProducerBuilder compensation) {
+        this.compensationEndpointProducerBuilder = compensation;
+    }
+
+    public String getCompletion() {
         return completion;
     }
 
@@ -172,8 +200,17 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
      * to the completion URI must perform completion tasks and terminate without error. If errors occur during
      * completion, the saga service may call again the completion URI to retry.
      */
-    public void setCompletion(SagaActionUriDefinition completion) {
+    public void setCompletion(@AsEndpointUri String completion) {
         this.completion = completion;
+    }
+
+    /**
+     * The completion endpoint URI that will be called when the Saga is completed successfully. The route corresponding
+     * to the completion URI must perform completion tasks and terminate without error. If errors occur during
+     * completion, the saga service may call again the completion URI to retry.
+     */
+    public void setCompletion(@AsEndpointUri EndpointProducerBuilder completion) {
+        this.completionEndpointProducerBuilder = completion;
     }
 
     public String getPropagation() {
@@ -236,18 +273,12 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     // Builders
 
     public SagaDefinition compensation(String compensation) {
-        if (this.compensation != null) {
-            throw new IllegalStateException("Compensation has already been set");
-        }
-        this.compensation = new SagaActionUriDefinition(compensation);
+        this.compensation = compensation;
         return this;
     }
 
     public SagaDefinition completion(String completion) {
-        if (this.completion != null) {
-            throw new IllegalStateException("Completion has already been set");
-        }
-        this.completion = new SagaActionUriDefinition(completion);
+        this.completion = completion;
         return this;
     }
 

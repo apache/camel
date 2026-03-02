@@ -399,6 +399,23 @@ public interface HuggingFaceEndpointBuilderFactory {
             doSetProperty("userRole", userRole);
             return this;
         }
+        /**
+         * OAuth profile name for obtaining an access token via the OAuth 2.0
+         * Client Credentials grant. When set, the token is acquired from the
+         * configured identity provider and used as authToken. Requires
+         * camel-oauth on the classpath.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param oauthProfile the value to set
+         * @return the dsl builder
+         */
+        default HuggingFaceEndpointBuilder oauthProfile(String oauthProfile) {
+            doSetProperty("oauthProfile", oauthProfile);
+            return this;
+        }
     }
 
     /**

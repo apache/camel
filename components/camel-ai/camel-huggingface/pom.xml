@@ -73,7 +73,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <forkedProcessTimeoutInSeconds>1200</forkedProcessTimeoutInSeconds>
+                            <forkedProcessTimeoutInSeconds>7200</forkedProcessTimeoutInSeconds>
                             <skipITs>${skipITs}</skipITs>
                             <skipTests>${skipTests}</skipTests>
                         </configuration>

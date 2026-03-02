@@ -65,6 +65,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "maxNewTokens": getOrCreateConfiguration(target).setMaxNewTokens(property(camelContext, java.lang.Integer.class, value)); return true;
         case "modelid":
         case "modelId": getOrCreateConfiguration(target).setModelId(property(camelContext, java.lang.String.class, value)); return true;
+        case "oauthprofile":
+        case "oauthProfile": getOrCreateConfiguration(target).setOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": getOrCreateConfiguration(target).setOperation(property(camelContext, org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class, value)); return true;
         case "presencepenalty":
         case "presencePenalty": getOrCreateConfiguration(target).setPresencePenalty(property(camelContext, java.lang.Double.class, value)); return true;
@@ -136,6 +138,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "maxNewTokens": return java.lang.Integer.class;
         case "modelid":
         case "modelId": return java.lang.String.class;
+        case "oauthprofile":
+        case "oauthProfile": return java.lang.String.class;
         case "operation": return org.apache.camel.component.ibm.watsonx.ai.WatsonxAiOperations.class;
         case "presencepenalty":
         case "presencePenalty": return java.lang.Double.class;
@@ -208,6 +212,8 @@ public class WatsonxAiComponentConfigurer extends PropertyConfigurerSupport impl
         case "maxNewTokens": return getOrCreateConfiguration(target).getMaxNewTokens();
         case "modelid":
         case "modelId": return getOrCreateConfiguration(target).getModelId();
+        case "oauthprofile":
+        case "oauthProfile": return getOrCreateConfiguration(target).getOauthProfile();
         case "operation": return getOrCreateConfiguration(target).getOperation();
         case "presencepenalty":
         case "presencePenalty": return getOrCreateConfiguration(target).getPresencePenalty();

@@ -35,13 +35,7 @@
     <properties>
     </properties>
 
-    <dependencies>
-
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cloud</artifactId>
-        </dependency>
-        <dependency>
+    <dependencies>        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http-common</artifactId>
         </dependency>
@@ -169,6 +163,22 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- generate the attached tests jar -->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>log4j2.properties</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

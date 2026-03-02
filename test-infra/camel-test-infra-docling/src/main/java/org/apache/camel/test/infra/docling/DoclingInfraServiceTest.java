@@ -25,19 +25,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DoclingInfraServiceTest {
 
     @Test
-    public void testRemoteServiceConfiguration() {
-        DoclingInfraService service = new DoclingRemoteInfraService("http://localhost:5001");
-
-        assertEquals("http://localhost:5001", service.doclingServerUrl());
+    public void testRemoteServiceConfiguration() throws Exception {
+        try (DoclingInfraService service = new DoclingRemoteInfraService("http://localhost:5001")) {
+            assertEquals("http://localhost:5001", service.doclingServerUrl());
+        }
     }
 
     @Test
-    public void testRemoteServiceWithSystemProperties() {
+    public void testRemoteServiceWithSystemProperties() throws Exception {
         System.setProperty("docling.server.url", "http://test:5001");
 
-        try {
-            DoclingInfraService service = new DoclingRemoteInfraService();
-
+        try (DoclingInfraService service = new DoclingRemoteInfraService()) {
             assertEquals("http://test:5001", service.doclingServerUrl());
         } finally {
             System.clearProperty("docling.server.url");

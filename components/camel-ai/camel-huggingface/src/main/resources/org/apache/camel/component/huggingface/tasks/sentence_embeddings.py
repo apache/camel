@@ -21,16 +21,21 @@ import json
 import torch
 import logging
 
-device = '%s'
-if device == 'auto':
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-model = SentenceTransformer('%s', device=device)
+model = None
 
 def handle(inputs: Input):
+    global model
     try:
+        if not model:
+            logging.debug("Initializing model")
+            device = '%s'
+            if device == 'auto':
+                device = 'cuda' if torch.cuda.is_available() else 'cpu'
+            model = SentenceTransformer('%s', device=device)
+            logging.debug("Model initialized")
+
         if inputs.content.size() == 0:
-            logging.info("Handling warmup call - returning empty output")
+            logging.debug("Handling warmup call - returning empty output")
             return Output()
 
         input_str = inputs.get_as_string("data")

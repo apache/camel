@@ -754,15 +754,15 @@ public class Run extends CamelCommand {
             files.add(OPENAPI_GENERATED_FILE);
         }
 
-        // if we only run pom.xml/build.gradle then auto discover from the Maven/Gradle based project
-        if (files.size() == 1 && (files.get(0).endsWith("pom.xml") || files.get(0).endsWith("build.gradle"))) {
+        // if we only run pom.xml then auto discover from the Maven based project
+        if (files.size() == 1 && (files.get(0).endsWith("pom.xml"))) {
             Path projectDir = Path.of(files.get(0)).toAbsolutePath();
             // use a better name when running
             if (name == null || "CamelJBang".equals(name)) {
                 name = RunHelper.mavenArtifactId(projectDir);
             }
             // find source files
-            files = RunHelper.scanMavenOrGradleProject(projectDir.getParent());
+            files = RunHelper.scanMavenProject(projectDir.getParent());
             // include extra dependencies from pom.xml
             var pomDependencies = RunHelper.scanMavenDependenciesFromPom(projectDir);
             addDependencies(pomDependencies.toArray(new String[0]));
@@ -1122,7 +1122,6 @@ public class Run extends CamelCommand {
         eq.javaLiveReload = this.dev;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
-        eq.gradleWrapper = false;
         eq.quarkusVersion = PropertyResolver.fromSystemProperty(QUARKUS_VERSION, () -> this.quarkusVersion);
         eq.quarkusGroupId = PropertyResolver.fromSystemProperty(QUARKUS_GROUP_ID, () -> this.quarkusGroupId);
         eq.quarkusArtifactId = PropertyResolver.fromSystemProperty(QUARKUS_ARTIFACT_ID, () -> this.quarkusArtifactId);
@@ -1230,7 +1229,6 @@ public class Run extends CamelCommand {
         eq.javaLiveReload = false;
         eq.symbolicLink = this.dev;
         eq.mavenWrapper = true;
-        eq.gradleWrapper = false;
         eq.springBootVersion = this.springBootVersion;
         eq.camelVersion = this.camelVersion;
         eq.camelSpringBootVersion = PropertyResolver.fromSystemProperty(CAMEL_SPRING_BOOT_VERSION,

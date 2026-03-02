@@ -85,7 +85,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     static {
         // legacy camel-spring-xml error-handling using its own model and parsers
         ErrorHandlerReifier.registerReifier(LegacyDeadLetterChannelBuilder.class, LegacyDeadLetterChannelReifier::new);
-        ErrorHandlerReifier.registerReifier(LegacyDefaultErrorHandlerBuilder.class, LegacyDefaultErrorHandlerReifier::new);
+        ErrorHandlerReifier.registerReifier(LegacyDefaultErrorHandlerBuilder.class,
+                LegacyDefaultErrorHandlerReifier::new);
         ErrorHandlerReifier.registerReifier(LegacyNoErrorHandlerBuilder.class, LegacyNoErrorHandlerReifier::new);
         // note: spring transaction error handler is registered in camel-spring
     }
@@ -93,7 +94,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
     protected BeanDefinitionParser endpointParser = new EndpointDefinitionParser();
-    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
+    protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(
+            CamelBeanPostProcessor.class,
+            false);
     protected Set<String> parserElementNames = new HashSet<>();
     protected Map<String, BeanDefinitionParser> parserMap = new HashMap<>();
 
@@ -106,15 +109,19 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public static void doBeforeParse(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
 
-            // ensure namespace with versions etc is renamed to be same namespace so we can parse using this handler
+            // ensure namespace with versions etc is renamed to be same namespace so we can
+            // parse using this handler
             Document doc = node.getOwnerDocument();
             if (node.getNamespaceURI().startsWith(SPRING_NS + "/v")) {
                 doc.renameNode(node, SPRING_NS, node.getNodeName());
             }
 
-            // remove whitespace noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to format
-            // their Camel routes in more human readable format, but at runtime those attributes must be trimmed
-            // the parser removes most of the noise, but keeps double spaces in the attribute values
+            // remove whitespace noise from uri, xxxUri attributes, eg new lines, and tabs
+            // etc, which allows end users to format
+            // their Camel routes in more human readable format, but at runtime those
+            // attributes must be trimmed
+            // the parser removes most of the noise, but keeps double spaces in the
+            // attribute values
             NamedNodeMap map = node.getAttributes();
             for (int i = 0; i < map.getLength(); i++) {
                 Node att = map.item(i);
@@ -164,13 +171,15 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("threadPool", CamelThreadPoolFactoryBean.class, true, true);
         addBeanDefinitionParser("redeliveryPolicyProfile", CamelRedeliveryPolicyFactoryBean.class, true, true);
 
-        // jmx agent, stream caching, service call configurations and property placeholder cannot be used outside of the camel context
+        // jmx agent, stream caching, service call configurations and property
+        // placeholder cannot be used outside of the camel context
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false, false);
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
         addBeanDefinitionParser("routeController", CamelRouteControllerDefinition.class, false, false);
 
-        // error handler could be the sub element of camelContext or defined outside camelContext
+        // error handler could be the sub element of camelContext or defined outside
+        // camelContext
         BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();
         registerParser("errorHandler", errorHandlerParser);
         parserMap.put("errorHandler", errorHandlerParser);
@@ -219,7 +228,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             doBeforeParse(element);
             super.doParse(element, builder);
 
-            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires
+            // Note: prefer to use doParse from parent and postProcess; however,
+            // parseUsingJaxb requires
             // parserContext for no apparent reason.
             Binder<Node> binder;
             try {
@@ -469,8 +479,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
                 builder.addPropertyValue("beansFactory", factoryBean.getBeansFactory());
                 builder.addPropertyValue("beans", factoryBean.getBeans());
-                builder.addPropertyValue("defaultServiceCallConfiguration", factoryBean.getDefaultServiceCallConfiguration());
-                builder.addPropertyValue("serviceCallConfigurations", factoryBean.getServiceCallConfigurations());
+
                 // add any depends-on
                 addDependsOn(factoryBean, builder);
             }
@@ -592,7 +601,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         childElement.setAttribute("id", beanPostProcessorId);
         BeanDefinition definition = beanPostProcessorParser.parse(childElement, parserContext);
         // only register to camel context id as a String. Then we can look it up later
-        // otherwise we get a circular reference in spring and it will not allow custom bean post processing
+        // otherwise we get a circular reference in spring and it will not allow custom
+        // bean post processing
         // see more at CAMEL-1663
         definition.getPropertyValues().addPropertyValue("camelId", contextId);
         if (factoryBean != null && factoryBean.getBeanPostProcessorEnabled() != null) {
@@ -628,16 +638,20 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
 
         if (!template) {
-            // either we have not used template before or we have auto registered it already and therefore we
-            // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+            // either we have not used template before or we have auto registered it already
+            // and therefore we
+            // need it to allow to do it so it can remove the existing auto registered as
+            // there is now a clash id
             // since we have multiple camel contexts
             boolean existing = autoRegisterMap.get("template") != null;
             boolean inUse = false;
             try {
                 inUse = parserContext.getRegistry().isBeanNameInUse("template");
             } catch (BeanCreationException e) {
-                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML online in Eclipse
-                // when the isBeanNameInUse method is invoked, so ignore this and continue (CAMEL-2739)
+                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML
+                // online in Eclipse
+                // when the isBeanNameInUse method is invoked, so ignore this and continue
+                // (CAMEL-2739)
                 LOG.debug("Error checking isBeanNameInUse(template). This exception will be ignored", e);
             }
             if (!inUse || existing) {
@@ -654,16 +668,20 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
 
         if (!fluentTemplate) {
-            // either we have not used fluentTemplate before or we have auto registered it already and therefore we
-            // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+            // either we have not used fluentTemplate before or we have auto registered it
+            // already and therefore we
+            // need it to allow to do it so it can remove the existing auto registered as
+            // there is now a clash id
             // since we have multiple camel contexts
             boolean existing = autoRegisterMap.get("fluentTemplate") != null;
             boolean inUse = false;
             try {
                 inUse = parserContext.getRegistry().isBeanNameInUse("fluentTemplate");
             } catch (BeanCreationException e) {
-                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML online in Eclipse
-                // when the isBeanNameInUse method is invoked, so ignore this and continue (CAMEL-2739)
+                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML
+                // online in Eclipse
+                // when the isBeanNameInUse method is invoked, so ignore this and continue
+                // (CAMEL-2739)
                 LOG.debug("Error checking isBeanNameInUse(fluentTemplate). This exception will be ignored", e);
             }
             if (!inUse || existing) {
@@ -680,16 +698,20 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
 
         if (!consumerTemplate) {
-            // either we have not used template before or we have auto registered it already and therefore we
-            // need it to allow to do it so it can remove the existing auto registered as there is now a clash id
+            // either we have not used template before or we have auto registered it already
+            // and therefore we
+            // need it to allow to do it so it can remove the existing auto registered as
+            // there is now a clash id
             // since we have multiple camel contexts
             boolean existing = autoRegisterMap.get("consumerTemplate") != null;
             boolean inUse = false;
             try {
                 inUse = parserContext.getRegistry().isBeanNameInUse("consumerTemplate");
             } catch (BeanCreationException e) {
-                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML online in Eclipse
-                // when the isBeanNameInUse method is invoked, so ignore this and continue (CAMEL-2739)
+                // Spring Eclipse Tooling may throw an exception when you edit the Spring XML
+                // online in Eclipse
+                // when the isBeanNameInUse method is invoked, so ignore this and continue
+                // (CAMEL-2739)
                 LOG.debug("Error checking isBeanNameInUse(consumerTemplate). This exception will be ignored", e);
             }
             if (!inUse || existing) {
@@ -710,9 +732,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private void autoRegisterBeanDefinition(
             String id, BeanDefinition definition, ParserContext parserContext, String contextId) {
         // it is a bit cumbersome to work with the spring bean definition parser
-        // as we kinda need to eagerly register the bean definition on the parser context
-        // and then later we might find out that we should not have done that in case we have multiple camel contexts
-        // that would have a id clash by auto registering the same bean definition with the same id such as a producer template
+        // as we kinda need to eagerly register the bean definition on the parser
+        // context
+        // and then later we might find out that we should not have done that in case we
+        // have multiple camel contexts
+        // that would have a id clash by auto registering the same bean definition with
+        // the same id such as a producer template
 
         // see if we have already auto registered this id
         BeanDefinition existing = autoRegisterMap.get(id);
@@ -725,10 +750,13 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                         contextId);
             }
         } else {
-            // ups we have already registered it before with same id, but on another camel context
+            // ups we have already registered it before with same id, but on another camel
+            // context
             // this is not good so we need to remove all traces of this auto registering.
-            // end user must manually add the needed XML elements and provide unique ids access all camel context himself.
-            LOG.debug("Unregistered default: {} with id: {} as we have multiple camel contexts and they must use unique ids."
+            // end user must manually add the needed XML elements and provide unique ids
+            // access all camel context himself.
+            LOG.debug(
+                    "Unregistered default: {} with id: {} as we have multiple camel contexts and they must use unique ids."
                       + " You must define the definition in the XML file manually to avoid id clashes when using multiple camel contexts",
                     definition.getBeanClassName(), id);
 
