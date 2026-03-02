@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.google.vertexai;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.common.base.Strings;
 import com.google.genai.Client;
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.component.google.common.GoogleCredentialsHelper;
 
 public final class GoogleVertexAIConnectionFactory {
 
@@ -50,15 +49,11 @@ public final class GoogleVertexAIConnectionFactory {
                 .project(configuration.getProjectId())
                 .location(configuration.getLocation());
 
-        if (!Strings.isNullOrEmpty(configuration.getServiceAccountKey())) {
-            // Load credentials from the service account key file
-            InputStream credentialsStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configuration.getServiceAccountKey());
-            GoogleCredentials credentials = GoogleCredentials.fromStream(credentialsStream)
-                    .createScoped(VERTEX_AI_SCOPES);
-            clientBuilder.credentials(credentials);
+        Credentials credentials = GoogleCredentialsHelper.getCredentials(context, configuration, VERTEX_AI_SCOPES);
+        if (credentials instanceof GoogleCredentials) {
+            clientBuilder.credentials((GoogleCredentials) credentials);
         }
-        // If no service account key is provided, it will use Application Default Credentials
+        // If no credentials are returned (null), it will use Application Default Credentials
         // This requires the environment variable GOOGLE_APPLICATION_CREDENTIALS to be set
         // with the service account file path
         // More info at https://cloud.google.com/docs/authentication/production
