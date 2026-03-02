@@ -200,9 +200,6 @@ a|image::eip/MessageExpirationIcon.gif[image]
 a|image::eip/MessageExpirationIcon.gif[image]
 |xref:throwException-eip.adoc[Throw Exception] |How can I throw an exception during routing?
 
-a|image::eip/MessagingGatewayIcon.gif[image]
-|xref:serviceCall-eip.adoc[Service Call] |How can I call a remote service in a distributed system
-where the service is looked up from a service registry of some sorts?
 
 a|image::eip/TransactionalClientIcon.gif[image]
 |xref:saga-eip.adoc[Saga] |How can I define a series of related actions in a Camel route

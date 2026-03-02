@@ -4271,20 +4271,6 @@ public interface ComponentsBuilderFactory {
         return SedaComponentBuilderFactory.seda();
     }
     /**
-     * Service (camel-service)
-     * Register a Camel endpoint to a Service Registry (such as Consul, Etcd)
-     * and delegate to it.
-     * 
-     * Category: cloud
-     * Since: 2.22
-     * Maven coordinates: org.apache.camel:camel-service
-     * 
-     * @return the dsl builder
-     */
-    static ServiceComponentBuilderFactory.ServiceComponentBuilder service() {
-        return ServiceComponentBuilderFactory.service();
-    }
-    /**
      * ServiceNow (camel-servicenow)
      * Interact with ServiceNow via its REST API.
      * 

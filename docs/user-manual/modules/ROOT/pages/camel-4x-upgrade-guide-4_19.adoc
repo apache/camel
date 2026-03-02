@@ -18,6 +18,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 The `camel-test` module has been removed from `camel-bom`. This module was included by mistake, as since Camel 4, this is
 not a JAR but a pom.xml file. Camel end users should use the `camel-test-junit5` / `camel-test-junit6` JARs and the others directly.
 
+=== camel-cloud (Removal)
+
+The `camel-cloud` module and the `serviceCall` EIP have been removed. These were deprecated in Camel 3.19 and 4.7.
+The `camel-service` component has also been removed.
+
+The cloud integration from the following components has been removed: `camel-consul`, `camel-dns`, `camel-http`, `camel-jetty`, `camel-kubernetes`, `camel-netty-http`, and `camel-zookeeper`.
+
 === camel-core
 
 The WireTap EIP has removed the `pattern` option from its model (not in use) as wiretap always

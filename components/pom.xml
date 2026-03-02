@@ -70,7 +70,7 @@
         <module>camel-cxf</module>
         <module>camel-jms</module>
         <module>camel-master</module>
-        <module>camel-service</module>
+
 
         <!-- Abstract components -->
         <module>camel-tracing</module>

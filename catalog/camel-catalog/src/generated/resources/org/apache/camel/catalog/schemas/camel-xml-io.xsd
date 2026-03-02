@@ -127,24 +127,6 @@ messages).
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="blacklistServiceFilter" type="tns:blacklistServiceCallServiceFilterConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="cachingServiceDiscovery" type="tns:cachingServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="camel" type="tns:applicationDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -192,38 +174,11 @@ retrieve the message content at a later time.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="combinedServiceDiscovery" type="tns:combinedServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="combinedServiceFilter" type="tns:combinedServiceCallServiceFilterConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="constant" type="tns:constantExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en">
 <![CDATA[
 A fixed value set only once during the route startup.
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="consulServiceDiscovery" type="tns:consulServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -309,15 +264,6 @@ To use a custom load balancer implementation.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="customServiceFilter" type="tns:customServiceCallServiceFilterConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="customTransformer" type="tns:customTransformerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -383,15 +329,6 @@ The default error handler.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="defaultLoadBalancer" type="tns:defaultServiceCallServiceLoadBalancerConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="delay" type="tns:delayDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -415,15 +352,6 @@ Rest DELETE command
       <xs:documentation xml:lang="en">
 <![CDATA[
 Transforms fixed format data such as EDI message from/to XML using a Data Format Description Language (DFDL).
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="dnsServiceDiscovery" type="tns:dnsServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -674,15 +602,6 @@ Gets a header from the Exchange.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="healthyServiceFilter" type="tns:healthyServiceCallServiceFilterConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="hl7" type="tns:hl7DataFormat">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -872,15 +791,6 @@ use this Kamelet EIP instead of using the kamelet component.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="kubernetesServiceDiscovery" type="tns:kubernetesServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="langChain4jCharacterTokenizer" type="tns:langChain4JCharacterTokenizerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -940,15 +850,6 @@ Evaluates a custom language.
       <xs:documentation xml:lang="en">
 <![CDATA[
 Balances message processing among a number of nodes
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="loadBalancerConfiguration" type="tns:serviceCallServiceLoadBalancerConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1188,15 +1089,6 @@ To specify the rest operation parameters.
       <xs:documentation xml:lang="en">
 <![CDATA[
 Parquet Avro serialization and de-serialization.
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="passThroughServiceFilter" type="tns:passThroughServiceCallServiceFilterConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -1706,60 +1598,6 @@ To configure rest security definitions.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="serviceCall" type="tns:serviceCallDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: To call remote services
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="serviceCallConfiguration" type="tns:serviceCallConfigurationDefinition">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: Remote service call configuration
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="serviceChooserConfiguration" type="tns:serviceCallServiceChooserConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="serviceDiscoveryConfiguration" type="tns:serviceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="serviceExpression" type="tns:serviceCallExpressionConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="serviceFilterConfiguration" type="tns:serviceCallServiceFilterConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:element name="setBody" type="tns:setBodyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -1882,15 +1720,6 @@ Splits a single message into many sub-messages.
       <xs:documentation xml:lang="en">
 <![CDATA[
 Spring based transactional error handler (requires camel-spring).
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:element name="staticServiceDiscovery" type="tns:staticServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
 ]]>
       </xs:documentation>
     </xs:annotation>
@@ -2310,15 +2139,6 @@ Compression and decompress streams using java.util.zip.ZipStream.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:element name="zookeeperServiceDiscovery" type="tns:zooKeeperServiceCallServiceDiscoveryConfiguration">
-    <xs:annotation>
-      <xs:documentation xml:lang="en">
-<![CDATA[
-Deprecated: null
-]]>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
   <xs:complexType name="output">
     <xs:complexContent>
       <xs:extension base="tns:processorDefinition">
@@ -2496,7 +2316,6 @@ will fallback to use the fixed value if the Expression result was null or 0.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="parallelProcessing" type="xs:string">
@@ -3141,7 +2960,6 @@ The exception(s) to catch.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -3306,7 +3124,6 @@ during startup to keep at runtime only the branch that matched. Default value: f
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="disabled" type="xs:string">
@@ -3396,7 +3213,6 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="disabled" type="xs:string">
@@ -3488,7 +3304,6 @@ Disables this EIP from the route. Default value: false
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
           <xs:element minOccurs="0" ref="tns:onFallback"/>
         </xs:sequence>
@@ -3989,7 +3804,6 @@ References a custom thread pool to use when offloading a guarded action to anoth
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="fallbackViaNetwork" type="xs:string">
@@ -5159,7 +4973,6 @@ Sets the logging level to use for logging transactional rollback. This option is
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="statusPropertyName" type="xs:string">
@@ -5250,7 +5063,6 @@ predicate evaluated as true or false.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -5412,7 +5224,6 @@ Global option value.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="idempotentRepository" type="xs:string" use="required">
@@ -5574,7 +5385,6 @@ Whether if validation is required for this input type. Default value: false
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -5673,7 +5483,6 @@ intercepted.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="uri" type="xs:string" use="required">
@@ -5782,7 +5591,6 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required">
@@ -5882,7 +5690,6 @@ mynamecount=4&type=gold.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -6223,7 +6030,6 @@ such as groovy.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="copy" type="xs:string">
@@ -9958,7 +9764,6 @@ maximum decompressed size. Default value: 1073741824
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="aggregationStrategy" type="xs:string">
@@ -10177,7 +9982,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="mode" type="xs:string">
@@ -10367,7 +10171,6 @@ its considered handled as well.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="redeliveryPolicyRef" type="xs:string">
@@ -10626,7 +10429,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -10707,7 +10509,6 @@ one of the available events. Implementations should not assume the predicate to 
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string" use="required">
@@ -11415,7 +11216,6 @@ Name of variable to remove.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -11773,7 +11573,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="autoStartup" type="xs:string">
@@ -12165,7 +11964,6 @@ actions. Option values will be transformed into input headers of the compensatio
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="sagaService" type="xs:string">
@@ -12661,7 +12459,6 @@ Sets the comparator to use for sorting.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="delimiter" type="xs:string">
@@ -12895,7 +12692,6 @@ individual unit of work. Default value: false
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -13621,7 +13417,6 @@ Sets the model name.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
         <xs:attribute name="ref" type="xs:string">
@@ -13771,7 +13566,6 @@ To type used as a target data type in the transformation.
             <xs:element ref="tns:unmarshal"/>
             <xs:element ref="tns:validate"/>
             <xs:element ref="tns:wireTap"/>
-            <xs:element ref="tns:serviceCall"/>
           </xs:choice>
         </xs:sequence>
       </xs:extension>
@@ -15209,853 +15003,6 @@ Sets the example.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-  </xs:complexType>
-  <xs:complexType name="blacklistServiceCallServiceFilterConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceFilterConfiguration">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="servers" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the server blacklist. Each entry can be a list of servers separated by comma in the format:
-servicehost:port,servicehost2:port,servicehost3:port.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="serviceCallServiceFilterConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType abstract="true" name="serviceCallConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:identifiedType">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="properties" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Set client properties to use. These properties are specific to what service call implementation are in use. For example
-if using a different one, then the client properties are defined according to the specific service in use.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="cachingServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:consulServiceDiscovery"/>
-            <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:kubernetesServiceDiscovery"/>
-            <xs:element ref="tns:combinedServiceDiscovery"/>
-            <xs:element ref="tns:staticServiceDiscovery"/>
-          </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="timeout" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set the time the services will be retained. Default value: 60
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="units" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set the time unit for the timeout. Default value: SECONDS
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="serviceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="consulServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="url" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The Consul agent URL.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="datacenter" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The data center.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="aclToken" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the ACL token to be used with Consul.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="userName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the username to be used for basic authentication.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="password" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the password to be used for basic authentication.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="connectTimeoutMillis" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Connect timeout for OkHttpClient.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="readTimeoutMillis" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Read timeout for OkHttpClient.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="writeTimeoutMillis" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Write timeout for OkHttpClient.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="blockSeconds" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The seconds to wait for a watch event, default 10 seconds. Default value: 10
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="dnsServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="proto" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The transport protocol of the desired service. Default value: _tcp
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="domain" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The domain name;.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="kubernetesServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="lookup" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-How to perform service lookup. Possible values: client, dns, environment. When using client, then the client queries the
-kubernetes master to obtain a list of active pods that provides the service, and then random (or round robin) select a
-pod. When using dns the service name is resolved as name.namespace.svc.dnsDomain. When using dnssrv the service name is
-resolved with SRV query for _._...svc... When using environment then environment variables are used to lookup the
-service. By default environment is used. Default value: environment
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="dnsDomain" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the DNS domain to use for DNS lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="portName" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Port Name to use for DNS/DNSSRV lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="portProtocol" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Port Protocol to use for DNS/DNSSRV lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="namespace" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the namespace to use. Will by default use namespace from the ENV variable KUBERNETES_MASTER.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="apiVersion" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the API version when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="masterUrl" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the URL to the master when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="username" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the username for authentication when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="password" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the password for authentication when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="oauthToken" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the OAUTH token for authentication (instead of username/password) when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="caCertData" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Certificate Authority data when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="caCertFile" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Certificate Authority data that are loaded from the file when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="clientCertData" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Client Certificate data when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="clientCertFile" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Client Certificate data that are loaded from the file when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="clientKeyAlgo" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Client Keystore algorithm, such as RSA when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="clientKeyData" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Client Keystore data when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="clientKeyFile" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Client Keystore data that are loaded from the file when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="clientKeyPassphrase" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the Client Keystore passphrase when using client lookup.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="trustCerts" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets whether to turn on trust certificate check when using client lookup. Default value: false
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="combinedServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence>
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:consulServiceDiscovery"/>
-            <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:kubernetesServiceDiscovery"/>
-            <xs:element ref="tns:staticServiceDiscovery"/>
-            <xs:element ref="tns:cachingServiceDiscovery"/>
-          </xs:choice>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="staticServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence>
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="servers" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the server list. Each entry can be a list of servers separated by comma in the format:
-servicehost:port,servicehost2:port,servicehost3:port.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="combinedServiceCallServiceFilterConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceFilterConfiguration">
-        <xs:sequence>
-          <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element ref="tns:blacklistServiceFilter"/>
-            <xs:element ref="tns:customServiceFilter"/>
-            <xs:element ref="tns:healthyServiceFilter"/>
-            <xs:element ref="tns:passThroughServiceFilter"/>
-          </xs:choice>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="customServiceCallServiceFilterConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceFilterConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="ref" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Reference of a ServiceFilter.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="healthyServiceCallServiceFilterConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceFilterConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="passThroughServiceCallServiceFilterConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceFilterConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="defaultServiceCallServiceLoadBalancerConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceLoadBalancerConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="serviceCallServiceLoadBalancerConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="serviceCallConfigurationDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:identifiedType">
-        <xs:sequence>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:cachingServiceDiscovery"/>
-            <xs:element ref="tns:combinedServiceDiscovery"/>
-            <xs:element ref="tns:consulServiceDiscovery"/>
-            <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:kubernetesServiceDiscovery"/>
-            <xs:element ref="tns:staticServiceDiscovery"/>
-            <xs:element ref="tns:zookeeperServiceDiscovery"/>
-          </xs:choice>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:blacklistServiceFilter"/>
-            <xs:element ref="tns:combinedServiceFilter"/>
-            <xs:element ref="tns:customServiceFilter"/>
-            <xs:element ref="tns:healthyServiceFilter"/>
-            <xs:element ref="tns:passThroughServiceFilter"/>
-          </xs:choice>
-          <xs:element minOccurs="0" ref="tns:defaultLoadBalancer"/>
-          <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Configures the Expression using the given configuration.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute name="uri" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The uri of the endpoint to send to. The uri can be dynamic computed using the simple language expression.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="component" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The component to use. Default value: http
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="pattern" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the optional ExchangePattern used to invoke this endpoint.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceDiscoveryRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceDiscovery to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceFilterRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceFilter to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceChooserRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceChooser to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="loadBalancerRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceLoadBalancer to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="expressionRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set a reference to a custom Expression to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="zooKeeperServiceCallServiceDiscoveryConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallServiceDiscoveryConfiguration">
-        <xs:sequence/>
-        <xs:attribute name="nodes" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-A comma separate list of servers to connect to in the form host:port.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="namespace" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-As ZooKeeper is a shared space, users of a given cluster should stay within a pre-defined namespace. If a namespace is
-set here, all paths will get pre-pended with the namespace.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="reconnectBaseSleepTime" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Initial amount of time to wait between retries.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="reconnectMaxSleepTime" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Max time in ms to sleep on each retry.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="reconnectMaxRetries" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Max number of times to retry.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="sessionTimeout" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Session timeout.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="connectionTimeout" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Connection timeout.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="basePath" type="xs:string" use="required">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set the base path to store in ZK.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="serviceCallExpressionConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallConfiguration">
-        <xs:sequence>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:expressionDefinition"/>
-            <xs:element ref="tns:csimple"/>
-            <xs:element ref="tns:constant"/>
-            <xs:element ref="tns:datasonnet"/>
-            <xs:element ref="tns:exchangeProperty"/>
-            <xs:element ref="tns:groovy"/>
-            <xs:element ref="tns:header"/>
-            <xs:element ref="tns:hl7terser"/>
-            <xs:element ref="tns:java"/>
-            <xs:element ref="tns:js"/>
-            <xs:element ref="tns:joor"/>
-            <xs:element ref="tns:jq"/>
-            <xs:element ref="tns:jsonpath"/>
-            <xs:element ref="tns:language"/>
-            <xs:element ref="tns:method"/>
-            <xs:element ref="tns:mvel"/>
-            <xs:element ref="tns:ognl"/>
-            <xs:element ref="tns:python"/>
-            <xs:element ref="tns:ref"/>
-            <xs:element ref="tns:simple"/>
-            <xs:element ref="tns:spel"/>
-            <xs:element ref="tns:tokenize"/>
-            <xs:element ref="tns:variable"/>
-            <xs:element ref="tns:wasm"/>
-            <xs:element ref="tns:xtokenize"/>
-            <xs:element ref="tns:xpath"/>
-            <xs:element ref="tns:xquery"/>
-          </xs:choice>
-        </xs:sequence>
-        <xs:attribute name="hostHeader" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The header that holds the service host information, default ServiceCallConstants.SERVICE_HOST. Default value:
-CamelServiceCallServiceHost
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="portHeader" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The header that holds the service port information, default ServiceCallConstants.SERVICE_PORT. Default value:
-CamelServiceCallServicePort
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType name="serviceCallDefinition">
-    <xs:complexContent>
-      <xs:extension base="tns:noOutputDefinition">
-        <xs:sequence>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:cachingServiceDiscovery"/>
-            <xs:element ref="tns:combinedServiceDiscovery"/>
-            <xs:element ref="tns:consulServiceDiscovery"/>
-            <xs:element ref="tns:dnsServiceDiscovery"/>
-            <xs:element ref="tns:kubernetesServiceDiscovery"/>
-            <xs:element ref="tns:staticServiceDiscovery"/>
-            <xs:element ref="tns:zookeeperServiceDiscovery"/>
-          </xs:choice>
-          <xs:choice minOccurs="0">
-            <xs:element ref="tns:blacklistServiceFilter"/>
-            <xs:element ref="tns:combinedServiceFilter"/>
-            <xs:element ref="tns:customServiceFilter"/>
-            <xs:element ref="tns:healthyServiceFilter"/>
-            <xs:element ref="tns:passThroughServiceFilter"/>
-          </xs:choice>
-          <xs:element minOccurs="0" ref="tns:defaultLoadBalancer"/>
-          <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration">
-            <xs:annotation>
-              <xs:documentation xml:lang="en">
-<![CDATA[
-Configures the Expression using the given configuration.
-]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
-        <xs:attribute name="name" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the name of the service to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="uri" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The uri of the endpoint to send to. The uri can be dynamic computed using the
-org.apache.camel.language.simple.SimpleLanguage expression.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="component" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-The component to use. Default value: http
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="pattern" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets the optional ExchangePattern used to invoke this endpoint.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="configurationRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Refers to a ServiceCall configuration to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceDiscoveryRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceDiscovery to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceFilterRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceFilter to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="serviceChooserRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceChooser to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="loadBalancerRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Sets a reference to a custom ServiceLoadBalancer to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="expressionRef" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en">
-<![CDATA[
-Set a reference to a custom Expression to use.
-]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:complexType final="extension restriction" name="serviceCallDefinitionConstants">
-    <xs:sequence/>
-  </xs:complexType>
-  <xs:complexType name="serviceCallServiceChooserConfiguration">
-    <xs:complexContent>
-      <xs:extension base="tns:serviceCallConfiguration">
-        <xs:sequence/>
-      </xs:extension>
-    </xs:complexContent>
   </xs:complexType>
   <xs:complexType name="dataFormatsDefinition">
     <xs:sequence>

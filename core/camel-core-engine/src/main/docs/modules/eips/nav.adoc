@@ -85,7 +85,6 @@
 ** xref:script-eip.adoc[Script]
 ** xref:selective-consumer.adoc[Selective Consumer]
 ** xref:service-activator.adoc[Service Activator]
-** xref:serviceCall-eip.adoc[Service Call]
 ** xref:setBody-eip.adoc[Set Body]
 ** xref:setHeader-eip.adoc[Set Header]
 ** xref:setHeaders-eip.adoc[Set Headers]

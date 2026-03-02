@@ -1,1 +1,0 @@
-../../../../../components/camel-service/src/main/docs/service-component.adoc

@@ -23,7 +23,6 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RouteTemplateContext;
-import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
@@ -192,7 +191,8 @@ public interface Model {
      * @param  routeTemplateDefinitions route template(s) definitions to remove
      * @throws Exception                if the route template definitions could not be removed for whatever reason
      */
-    void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions) throws Exception;
+    void removeRouteTemplateDefinitions(Collection<RouteTemplateDefinition> routeTemplateDefinitions)
+            throws Exception;
 
     /**
      * Removes a route template definition from the context
@@ -228,7 +228,8 @@ public interface Model {
      * @return                 the id of the route added (for example when an id was auto assigned)
      * @throws Exception       is thrown if error creating and adding the new route
      */
-    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters) throws Exception;
+    String addRouteFromTemplate(String routeId, String routeTemplateId, Map<String, Object> parameters)
+            throws Exception;
 
     /**
      * Adds a new route from a given route template
@@ -449,37 +450,6 @@ public interface Model {
      * @return the transformers available
      */
     List<TransformerDefinition> getTransformers();
-
-    /**
-     * Gets the service call configuration by the given name. If no name is given the default configuration is returned,
-     * see <tt>setServiceCallConfiguration</tt>
-     *
-     * @param  serviceName name of service, or <tt>null</tt> to return the default configuration
-     * @return             the configuration, or <tt>null</tt> if no configuration has been registered
-     */
-    ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
-
-    /**
-     * Sets the default service call configuration
-     *
-     * @param configuration the configuration
-     */
-    void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
-
-    /**
-     * Sets the service call configurations
-     *
-     * @param configurations the configuration list
-     */
-    void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations);
-
-    /**
-     * Adds the service call configuration
-     *
-     * @param serviceName   name of the service
-     * @param configuration the configuration
-     */
-    void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
 
     /**
      * Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route

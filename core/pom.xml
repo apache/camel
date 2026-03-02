@@ -56,7 +56,6 @@
         <module>camel-yaml-io</module>
         <module>camel-core</module>
         <module>camel-core-xml</module>
-        <module>camel-cloud</module>
         <module>camel-health</module>
         <module>camel-console</module>
         <module>camel-main</module>
