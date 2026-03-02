@@ -36,6 +36,7 @@ camel version list [options]
 | `--tail` | The number of lines from the end of the table to show. |  | int
 | `--to-date` | Filter by release date (exclusive) |  | String
 | `--to-version` | Filter by Camel version (exclusive) |  | String
+| `--vendor` | Vendor of Apache Camel distribution to use when filtering versions |  | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
