@@ -68,9 +68,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.OAuthHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
