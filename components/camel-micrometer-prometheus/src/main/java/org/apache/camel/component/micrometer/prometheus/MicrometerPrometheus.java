@@ -104,10 +104,14 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
     private boolean clearOnReload = true;
     @Metadata(defaultValue = "false")
     private boolean skipCamelInfo = false;
+    @Metadata(defaultValue = "false")
+    private boolean logMetricsOnShutdown = false;
     @Metadata(defaultValue = "0.0.4", enums = "0.0.4,1.0.0")
     private String textFormatVersion = "0.0.4";
     @Metadata
     private String binders;
+    @Metadata
+    private String logMetricsOnShutdownFilters;
     @Metadata(defaultValue = "/observe/metrics")
     private String path = "/observe/metrics";
 
@@ -239,6 +243,17 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         this.skipCamelInfo = skipCamelInfo;
     }
 
+    public boolean isLogMetricsOnShutdown() {
+        return logMetricsOnShutdown;
+    }
+
+    /**
+     * Log metrics when application is shutting down. (default, `false`).
+     */
+    public void setLogMetricsOnShutdown(boolean logMetricsOnShutdown) {
+        this.logMetricsOnShutdown = logMetricsOnShutdown;
+    }
+
     public String getTextFormatVersion() {
         return textFormatVersion;
     }
@@ -278,6 +293,18 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
      */
     public void setBinders(String binders) {
         this.binders = binders;
+    }
+
+    public String getLogMetricsOnShutdownFilters() {
+        return logMetricsOnShutdownFilters;
+    }
+
+    /**
+     * List of metrics (comma separated) to log when application is shutting down. You can use `*` character to log any
+     * metrics containing the wildcard, for example `camel.exchanges.*` (default to all metrics available).
+     */
+    public void setLogMetricsOnShutdownFilters(String logMetricsOnShutdownFilters) {
+        this.logMetricsOnShutdownFilters = logMetricsOnShutdownFilters;
     }
 
     @Override
@@ -331,6 +358,11 @@ public class MicrometerPrometheus extends ServiceSupport implements CamelMetrics
         if (isEnableExchangeEventNotifier()) {
             MicrometerExchangeEventNotifier notifier = new MicrometerExchangeEventNotifier();
             notifier.setSkipCamelInfo(isSkipCamelInfo());
+            notifier.setLogMetricsOnShutdown(isLogMetricsOnShutdown());
+            if (getLogMetricsOnShutdownFilters() != null) {
+                String[] meterFilters = getLogMetricsOnShutdownFilters().split(",");
+                notifier.setLogMetricsOnShutdownFilters(meterFilters);
+            }
             notifier.setBaseEndpointURI(isBaseEndpointURIExchangeEventNotifier());
             if ("legacy".equalsIgnoreCase(namingStrategy)) {
                 notifier.setNamingStrategy(

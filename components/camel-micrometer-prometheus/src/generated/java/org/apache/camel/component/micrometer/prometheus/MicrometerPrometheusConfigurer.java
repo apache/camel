@@ -40,6 +40,10 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRouteEventNotifier": target.setEnableRouteEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "enableroutepolicy":
         case "enableRoutePolicy": target.setEnableRoutePolicy(property(camelContext, boolean.class, value)); return true;
+        case "logmetricsonshutdown":
+        case "logMetricsOnShutdown": target.setLogMetricsOnShutdown(property(camelContext, boolean.class, value)); return true;
+        case "logmetricsonshutdownfilters":
+        case "logMetricsOnShutdownFilters": target.setLogMetricsOnShutdownFilters(property(camelContext, java.lang.String.class, value)); return true;
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
@@ -73,6 +77,10 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRouteEventNotifier": return boolean.class;
         case "enableroutepolicy":
         case "enableRoutePolicy": return boolean.class;
+        case "logmetricsonshutdown":
+        case "logMetricsOnShutdown": return boolean.class;
+        case "logmetricsonshutdownfilters":
+        case "logMetricsOnShutdownFilters": return java.lang.String.class;
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
         case "path": return java.lang.String.class;
@@ -107,6 +115,10 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "enableRouteEventNotifier": return target.isEnableRouteEventNotifier();
         case "enableroutepolicy":
         case "enableRoutePolicy": return target.isEnableRoutePolicy();
+        case "logmetricsonshutdown":
+        case "logMetricsOnShutdown": return target.isLogMetricsOnShutdown();
+        case "logmetricsonshutdownfilters":
+        case "logMetricsOnShutdownFilters": return target.getLogMetricsOnShutdownFilters();
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
         case "path": return target.getPath();
