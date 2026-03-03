@@ -96,10 +96,10 @@ calculate the name as localhost based.
 |schemes |String |The protocol schemes to use. Multiple values can be
 separated by comma such as "http,https". The default value is "http".
 
-|base.path |String |*Required*: To set up the base path where the REST services are available.
+|base.path |String |To set up the base path where the REST services are available.
 The path is relative (e.g., do not start with http/https) and
 camel-openapi-java will calculate the absolute base path at runtime,
-which will be `protocol://host:port/context-path/base.path`
+which will be `protocol://host:port/base.path`. If the base.path option is not set, context-path will be used.
 
 |api.path |String |To set up the path where the API is available (eg /api-docs). The path is
 relative (e.g., do not start with http/https) and camel-openapi-java will
