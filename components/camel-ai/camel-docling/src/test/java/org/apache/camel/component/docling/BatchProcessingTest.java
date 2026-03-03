@@ -142,6 +142,16 @@ public class BatchProcessingTest extends CamelTestSupport {
     }
 
     @Test
+    public void testBatchSizeParsedFromEndpointUri() throws Exception {
+        DoclingEndpoint endpoint = (DoclingEndpoint) context.getEndpoint(
+                "docling:convert?useDoclingServe=true&batchSize=5&batchParallelism=2");
+        DoclingConfiguration config = endpoint.getConfiguration();
+
+        assertEquals(5, config.getBatchSize());
+        assertEquals(2, config.getBatchParallelism());
+    }
+
+    @Test
     public void testBatchTimeoutConfiguration() {
         DoclingConfiguration config = new DoclingConfiguration();
 

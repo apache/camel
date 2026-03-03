@@ -678,8 +678,11 @@ public interface DoclingComponentBuilderFactory {
     
         
         /**
-         * Maximum number of documents to process in a single batch (batch
-         * operations only).
+         * Number of documents to submit per sub-batch. Documents are
+         * partitioned into sub-batches of this size and each sub-batch is
+         * processed before starting the next one. Within each sub-batch, up to
+         * batchParallelism threads are used concurrently. This controls memory
+         * usage and back-pressure when processing large document sets.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
