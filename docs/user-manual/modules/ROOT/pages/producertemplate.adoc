@@ -109,6 +109,28 @@ Object result = FluentProducerTemplate.on(context)
     .request();
 ----
 
+== Configuring default cache size
+
+You can configure globally the default cache size for both `ProducerTemplate` and `ConsumerTemplate`
+which will be created or dependency inject by `CamelContext`.
+
+This can be done on the `CamelContext` as a global option as shown in the following Java code:
+
+[source,java]
+----
+getCamelContext().getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "50");
+----
+
+Or in `application.properties`:
+
+[source,properties]
+----
+camel.main.producerTemplateCacheSize = 50
+----
+
+The default maximum cache size is 1000.
+
+
 == See Also
 
 See xref:consumertemplate.adoc[ConsumerTemplate]

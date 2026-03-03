@@ -306,6 +306,22 @@ And then we would need to remove the `RAW` from the properties file:
 myFtpPassword=se+re?t&23
 ----
 
+== Configuring CamelContext default cache size
+
+The xref:ROOT:camelcontext.adoc[CamelContext] will by default cache the last 1000
+used endpoints (based on a LRUCache).
+
+This must be done on the `CamelContext` as a global option as shown in the following Java code:
+
+[source,java]
+----
+getCamelContext().getGlobalOptions().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "500");
+----
+
+The default maximum cache size is 1000.
+
+You need to configure this before xref:ROOT:camelcontext.adoc[CamelContext] is started.
+
 
 == Java Endpoint API
 
