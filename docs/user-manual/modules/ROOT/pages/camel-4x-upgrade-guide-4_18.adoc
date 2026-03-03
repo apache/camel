@@ -178,6 +178,43 @@ the bean which is similar to what `camel-file` do as well.
 
 The `camel-json-patch` is now deprecated - the library it uses is not active maintained and this module does not work with Jackon 3.
 
+=== camel-openapi-java
+
+When using _code first_ Rest DSL and have configured `base.path` then this will now be exclusively used
+for the returned server url in the API specification.
+
+For example here we set `base.path=cheese`:
+
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(getPort())
+        .contextPath("myapp")
+        .apiContextPath("/api-doc")
+        .apiProperty("cors", "true").apiProperty("base.path", "cheese")
+        .apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");
+----
+
+Then the generated API specification now returns:
+
+[source,json]
+----
+  "servers" : [ {
+    "url" : "http://localhost:58678/cheese"
+  } ],
+----
+
+Previously the context-path would always be used:
+
+[source,json]
+----
+  "servers" : [ {
+    "url" : "http://localhost:58678/myapp"
+  } ],
+----
+
+The intention is to allow to configure the `base.path` _as is_ in the return API specification.
+
+
 == Upgrading Camel 4.17 to 4.18
 
 === camel-simple
