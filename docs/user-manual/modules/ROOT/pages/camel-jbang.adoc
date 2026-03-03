@@ -4153,7 +4153,7 @@ The camel.jbang supports 45 options, which are listed below.
 | *camel.jbang.groovyFiles* | Additional groovy source files to export to src/main/resources/camel-groovy directory (Use commas to separate multiple files) |  | String
 | *camel.jbang.health* | Health check at /observe/health on local HTTP server (port 8080 by default) | false | boolean
 | *camel.jbang.ignoreLoadingError* | Whether to ignore route loading and compilation errors (use this with care!) | false | boolean
-| *camel.jbang.javaVersion* | Java version (17 or 21) | 21 | String
+| *camel.jbang.javaVersion* | Java version | 21 | String
 | *camel.jbang.jfr* | Enables Java Flight Recorder saving recording to disk on exit | false | boolean
 | *camel.jbang.jfr-profile* | Java Flight Recorder profile to use (such as default or profile) | default | String
 | *camel.jbang.jib-maven-plugin-version* | Version to use for jib-maven-plugin if exporting to camel-main and have Kubernetes enabled (jkube.xxx options) | 3.4.5 | String

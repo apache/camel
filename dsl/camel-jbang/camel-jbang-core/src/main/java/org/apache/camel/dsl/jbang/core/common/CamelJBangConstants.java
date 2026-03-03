@@ -64,8 +64,8 @@ public final class CamelJBangConstants {
               javaType = "String")
     public static final String GAV = "camel.jbang.gav";
 
-    @Metadata(description = "Java version (17 or 21)",
-              javaType = "String", enums = "17,21", defaultValue = "21")
+    @Metadata(description = "Java version",
+              javaType = "String", enums = "21", defaultValue = "21")
     public static final String JAVA_VERSION = "camel.jbang.javaVersion";
 
     @Metadata(description = "Apache Camel Kamelets version. By default the Kamelets are the same version as Camel.",

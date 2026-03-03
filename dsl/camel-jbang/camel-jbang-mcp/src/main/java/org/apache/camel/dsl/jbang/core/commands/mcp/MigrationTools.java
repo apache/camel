@@ -128,11 +128,25 @@ public class MigrationTools {
         if (javaVersion != null && !javaVersion.isBlank()) {
             int javaVer = parseJavaVersion(javaVersion);
             boolean javaCompatible = true;
-            String requiredVersion = "17";
+            String requiredVersion;
 
-            if (targetMajor >= 4 && javaVer < 17) {
-                javaCompatible = false;
-                blockers.add("Camel 4.x requires Java 17+. Current Java version is " + javaVersion + ".");
+            if (targetMajor >= 4) {
+                int targetMinor = parseMinorVersion(targetVersion);
+                if (targetMajor > 4 || targetMinor >= 19) {
+                    requiredVersion = "21";
+                    if (javaVer < 21) {
+                        javaCompatible = false;
+                        blockers.add("Camel 4.19+ requires Java 21+. Current Java version is " + javaVersion + ".");
+                    }
+                } else {
+                    requiredVersion = "17";
+                    if (javaVer < 17) {
+                        javaCompatible = false;
+                        blockers.add("Camel 4.x requires Java 17+. Current Java version is " + javaVersion + ".");
+                    }
+                }
+            } else {
+                requiredVersion = "11";
             }
 
             javaCompat = new JavaCompatibility(javaVersion, requiredVersion, javaCompatible);
@@ -247,13 +261,9 @@ public class MigrationTools {
         List<String> javaUpgradeSuggestions = new ArrayList<>();
         if (javaVersion != null && !javaVersion.isBlank()) {
             int javaVer = parseJavaVersion(javaVersion);
-            if (javaVer < 17) {
+            if (javaVer < 21) {
                 javaUpgradeSuggestions.add(
-                        "Consider upgrading to Java 17. "
-                                           + "OpenRewrite recipe: org.openrewrite.java.migrate.UpgradeToJava17");
-            } else if (javaVer < 21) {
-                javaUpgradeSuggestions.add(
-                        "Consider upgrading to Java 21 for virtual threads support. "
+                        "Camel 4.19+ requires Java 21+. "
                                            + "OpenRewrite recipe: org.openrewrite.java.migrate.UpgradeToJava21");
             }
         }
@@ -320,6 +330,21 @@ public class MigrationTools {
         }
         try {
             return Integer.parseInt(version.split("\\.")[0]);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private int parseMinorVersion(String version) {
+        if (version == null) {
+            return 0;
+        }
+        try {
+            String[] parts = version.split("\\.");
+            if (parts.length >= 2) {
+                return Integer.parseInt(parts[1]);
+            }
+            return 0;
         } catch (NumberFormatException e) {
             return 0;
         }
