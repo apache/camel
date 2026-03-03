@@ -250,6 +250,10 @@ The code was upgraded to LangChain4j version 1.0.0, which brings a few breaking 
 - By default, tokenization now uses segment sizes
 - To tokenize by tokens, the model used in the system must be provided
 
+=== camel-http
+
+Deprecate NTLM as an authentication method, you can use the Basic/Bearer authentication with TLS.
+
 === Known regressions
 
 On Windows, Camel Jbang export is no more working out of the box. A workaround consists in providing `--maven-wrapper=false`.
