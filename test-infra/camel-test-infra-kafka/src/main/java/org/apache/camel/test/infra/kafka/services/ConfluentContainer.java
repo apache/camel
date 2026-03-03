@@ -17,11 +17,12 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.UUID;
 
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
-import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -45,8 +46,7 @@ public class ConfluentContainer extends GenericContainer<ConfluentContainer> {
                 .withEnv("KAFKA_BROKER_ID", "1")
                 .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP",
                         "BROKER:PLAINTEXT,PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT")
-                .withEnv("KAFKA_ADVERTISED_LISTENERS",
-                        String.format("PLAINTEXT://%s:9092,BROKER://%s:9093", getHost(), getHost()))
+                // KAFKA_ADVERTISED_LISTENERS is set dynamically in start() with the correct mapped port
                 .withEnv("KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS", "0")
                 .withEnv("KAFKA_TRANSACTION_STATE_LOG_MIN_ISR", "1")
                 .withEnv("KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR", "1")
@@ -86,7 +86,29 @@ public class ConfluentContainer extends GenericContainer<ConfluentContainer> {
 
     @Override
     public void start() {
-        ContainerEnvironmentUtil.configurePort(this, true, KAFKA_PORT);
+        int hostPort = resolveHostPort();
+        withEnv("KAFKA_ADVERTISED_LISTENERS",
+                String.format("PLAINTEXT://%s:%d,BROKER://localhost:9093", getHost(), hostPort));
         super.start();
+    }
+
+    private int resolveHostPort() {
+        String suffix = ":" + KAFKA_PORT;
+        for (String binding : getPortBindings()) {
+            if (binding.endsWith(suffix)) {
+                return Integer.parseInt(binding.substring(0, binding.indexOf(':')));
+            }
+        }
+        int port = findFreePort();
+        addFixedExposedPort(port, KAFKA_PORT);
+        return port;
+    }
+
+    private static int findFreePort() {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to find a free port", e);
+        }
     }
 }
