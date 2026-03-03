@@ -59,10 +59,6 @@ public final class HttpHelper {
         HttpUtil.setCharsetFromContentType(contentType, exchange);
     }
 
-    public static String getCharsetFromContentType(String contentType) {
-        return HttpUtil.getCharsetFromContentType(contentType);
-    }
-
     /**
      * Writes the given object as response body to the servlet response
      * <p/>

@@ -37,7 +37,6 @@ import static org.apache.camel.component.http.HttpMethods.TRACE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpMethodsTest extends BaseHttpTest {
 
@@ -101,7 +100,7 @@ public class HttpMethodsTest extends BaseHttpTest {
                 exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PATCH"));
 
         assertNotNull(exchange);
-        assertTrue(exchange.hasOut());
+        assertNotNull(exchange.getMessage());
 
         Message out = exchange.getMessage();
         Map<String, Object> headers = out.getHeaders();
@@ -119,7 +118,7 @@ public class HttpMethodsTest extends BaseHttpTest {
                 exchange1 -> exchange1.getIn().setBody("rocks camel?"));
 
         assertNotNull(exchange);
-        assertTrue(exchange.hasOut());
+        assertNotNull(exchange.getMessage());
 
         Message out = exchange.getMessage();
         Map<String, Object> headers = out.getHeaders();

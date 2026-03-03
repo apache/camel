@@ -30,7 +30,7 @@ import org.apache.hc.core5.http.protocol.HttpProcessor;
 public abstract class HttpServerTestSupport extends CamelTestSupport {
 
     /**
-     * Returns the org.apache.http.protocol.BasicHttpProcessor which should be used by the server.
+     * Returns the org.apache.hc.core5.http.protocol.HttpProcessor which should be used by the server.
      *
      * @return HttpProcessor
      */

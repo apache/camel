@@ -17,8 +17,10 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -29,8 +31,8 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
     private HttpHeaderFilterStrategy filter;
     private Exchange exchange;
 
-    @Override
-    public void doPostSetup() throws Exception {
+    @BeforeEach
+    public void setupTest() throws Exception {
         filter = new HttpHeaderFilterStrategy();
         exchange = new DefaultExchange(context);
     }

@@ -31,6 +31,7 @@ import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -65,9 +66,9 @@ public class CookieHandlerTest extends CamelTestSupport {
                         "ExchangeCookieHandler with ACCEPT_ALL"));
     }
 
-    @Override
-    public void doPostSetup() throws Exception {
-        exchange = createExchangeWithBody(null);
+    @BeforeEach
+    public void setupTest() throws Exception {
+        exchange = new org.apache.camel.support.DefaultExchange(context);
     }
 
     @ParameterizedTest
