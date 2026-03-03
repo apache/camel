@@ -109,7 +109,7 @@ class ProtobufBinaryDataTypeTransformerTest {
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("protobuf-binary-jackson3"));
+                .resolveTransformer(new TransformerKey("protobuf-binary"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(ProtobufBinaryDataTypeTransformer.class, transformer.getClass());
     }

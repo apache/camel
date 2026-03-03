@@ -10134,9 +10134,6 @@
           "jacksonXml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXMLDataFormat"
           },
-          "jacksonXml3" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JacksonXML3DataFormat"
-          },
           "jaxb" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.JaxbDataFormat"
           },

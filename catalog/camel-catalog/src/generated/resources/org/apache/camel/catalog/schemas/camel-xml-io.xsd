@@ -14875,7 +14875,6 @@ Sets the example.
         <xs:element ref="tns:ical"/>
         <xs:element ref="tns:iso8583"/>
         <xs:element ref="tns:jacksonXml"/>
-        <xs:element name="jacksonXml3" type="tns:jacksonXML3DataFormat"/>
         <xs:element ref="tns:jaxb"/>
         <xs:element ref="tns:json"/>
         <xs:element ref="tns:jsonApi"/>

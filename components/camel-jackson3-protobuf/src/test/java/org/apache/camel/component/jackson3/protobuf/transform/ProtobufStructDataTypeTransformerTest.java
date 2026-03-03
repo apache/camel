@@ -107,7 +107,7 @@ class ProtobufStructDataTypeTransformerTest {
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("protobuf-x-struct-jackson3"));
+                .resolveTransformer(new TransformerKey("protobuf-x-struct"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(ProtobufStructDataTypeTransformer.class, transformer.getClass());
     }

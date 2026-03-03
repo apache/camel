@@ -3418,7 +3418,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ical", type = "object:org.apache.camel.model.dataformat.IcalDataFormat"),
                     @YamlProperty(name = "iso8583", type = "object:org.apache.camel.model.dataformat.Iso8583DataFormat"),
                     @YamlProperty(name = "jacksonXml", type = "object:org.apache.camel.model.dataformat.JacksonXMLDataFormat"),
-                    @YamlProperty(name = "jacksonXml3", type = "object:org.apache.camel.model.dataformat.JacksonXML3DataFormat"),
                     @YamlProperty(name = "jaxb", type = "object:org.apache.camel.model.dataformat.JaxbDataFormat"),
                     @YamlProperty(name = "json", type = "object:org.apache.camel.model.dataformat.JsonDataFormat"),
                     @YamlProperty(name = "jsonApi", type = "object:org.apache.camel.model.dataformat.JsonApiDataFormat"),
@@ -3676,16 +3675,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "jacksonXml": {
                     org.apache.camel.model.dataformat.JacksonXMLDataFormat val = asType(node, org.apache.camel.model.dataformat.JacksonXMLDataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
-                    break;
-                }
-                case "jacksonXml3": {
-                    org.apache.camel.model.dataformat.JacksonXML3DataFormat val = asType(node, org.apache.camel.model.dataformat.JacksonXML3DataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();

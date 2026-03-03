@@ -111,7 +111,7 @@ class AvroBinaryDataTypeTransformerTest {
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("avro-binary-jackson3"));
+                .resolveTransformer(new TransformerKey("avro-binary"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AvroBinaryDataTypeTransformer.class, transformer.getClass());
     }

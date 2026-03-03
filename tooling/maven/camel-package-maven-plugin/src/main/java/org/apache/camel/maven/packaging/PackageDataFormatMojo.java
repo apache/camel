@@ -404,8 +404,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
                 }
             }
-            if (("jacksonXml".equals(name) || "jacksonXml3".equals(name))
-                    && "camel-jackson3xml".equals(project.getArtifactId())) {
+            if ("jacksonXml".equals(name) && "camel-jackson3xml".equals(project.getArtifactId())) {
                 if ("moduleClassNames".equals(option.getName())) {
                     option.setDescription(
                             "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
@@ -419,8 +418,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
                 }
             }
-            if (("avroJackson".equals(name) || "avroJackson3".equals(name))
-                    && "camel-jackson3-avro".equals(project.getArtifactId())) {
+            if ("avroJackson".equals(name) && "camel-jackson3-avro".equals(project.getArtifactId())) {
                 if ("moduleClassNames".equals(option.getName())) {
                     option.setDescription(
                             "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
@@ -434,7 +432,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             "Set of features to disable on the Jackson tools.jackson.databind.ObjectMapper. The features should be a name that matches a enum from tools.jackson.databind.SerializationFeature, tools.jackson.databind.DeserializationFeature, or tools.jackson.databind.MapperFeature Multiple features can be separated by comma");
                 }
             }
-            if ("protobufJackson3".equals(name) && "camel-jackson3-protobuf".equals(project.getArtifactId())) {
+            if ("protobufJackson".equals(name) && "camel-jackson3-protobuf".equals(project.getArtifactId())) {
                 if ("moduleClassNames".equals(option.getName())) {
                     option.setDescription(
                             "To use custom Jackson modules tools.jackson.databind.JacksonModule specified as a String with FQN class names. Multiple classes can be separated by comma.");
@@ -538,16 +536,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 return "2.20.0";
             case "jacksonXml":
                 return artifactId.contains("jackson3") ? "4.19.0" : "2.16.0";
-            case "jacksonXml3":
-                return "4.19.0";
             case "avroJackson":
                 return artifactId.contains("jackson3") ? "4.19.0" : "3.10.0";
-            case "avroJackson3":
-                return "4.19.0";
             case "protobufJackson":
                 return artifactId.contains("jackson3") ? "4.19.0" : "3.10.0";
-            case "protobufJackson3":
-                return "4.19.0";
             default:
                 return firstVersion;
         }
@@ -563,14 +555,8 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "JSON Jackson3";
         } else if ("avroJackson".equals(name)) {
             return "Avro Jackson";
-        } else if ("avroJackson3".equals(name)) {
-            return "Avro Jackson3";
         } else if ("protobufJackson".equals(name)) {
             return "Protobuf Jackson";
-        } else if ("protobufJackson3".equals(name)) {
-            return "Protobuf Jackson3";
-        } else if ("jacksonXml3".equals(name)) {
-            return "XML Jackson3";
         } else if ("johnzon".equals(name)) {
             return "JSON Johnzon";
         } else if ("jsonb".equals(name)) {

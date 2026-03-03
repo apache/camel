@@ -115,7 +115,7 @@ class AvroStructDataTypeTransformerTest {
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("avro-x-struct-jackson3"));
+                .resolveTransformer(new TransformerKey("avro-x-struct"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AvroStructDataTypeTransformer.class, transformer.getClass());
     }

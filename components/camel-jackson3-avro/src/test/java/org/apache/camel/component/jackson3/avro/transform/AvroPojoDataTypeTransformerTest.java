@@ -129,7 +129,7 @@ class AvroPojoDataTypeTransformerTest {
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("avro-x-java-object-jackson3"));
+                .resolveTransformer(new TransformerKey("avro-x-java-object"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(AvroPojoDataTypeTransformer.class, transformer.getClass());
     }

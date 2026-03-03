@@ -127,7 +127,7 @@ class ProtobufPojoDataTypeTransformerTest {
     @Test
     public void shouldLookupDataTypeTransformer() throws Exception {
         Transformer transformer = camelContext.getTransformerRegistry()
-                .resolveTransformer(new TransformerKey("protobuf-x-java-object-jackson3"));
+                .resolveTransformer(new TransformerKey("protobuf-x-java-object"));
         Assertions.assertNotNull(transformer);
         Assertions.assertEquals(ProtobufPojoDataTypeTransformer.class, transformer.getClass());
     }

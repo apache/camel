@@ -2238,7 +2238,6 @@ public class ModelWriter extends BaseWriter {
                 case "IcalDataFormat" -> doWriteIcalDataFormat("ical", (IcalDataFormat) v);
                 case "Iso8583DataFormat" -> doWriteIso8583DataFormat("iso8583", (Iso8583DataFormat) v);
                 case "JacksonXMLDataFormat" -> doWriteJacksonXMLDataFormat("jacksonXml", (JacksonXMLDataFormat) v);
-                case "JacksonXML3DataFormat" -> doWriteJacksonXML3DataFormat("jacksonXml3", (JacksonXML3DataFormat) v);
                 case "JaxbDataFormat" -> doWriteJaxbDataFormat("jaxb", (JaxbDataFormat) v);
                 case "JsonDataFormat" -> doWriteJsonDataFormat("json", (JsonDataFormat) v);
                 case "JsonApiDataFormat" -> doWriteJsonApiDataFormat("jsonApi", (JsonApiDataFormat) v);
