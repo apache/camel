@@ -49,6 +49,7 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
@@ -713,26 +714,7 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             milliSeconds += 1000 * 60 * 60;
         }
-        S3Presigner presigner;
-
-        if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonS3Presigner())) {
-            presigner = getConfiguration().getAmazonS3Presigner();
-        } else {
-            S3Presigner.Builder builder = S3Presigner.builder();
-            builder.credentialsProvider(
-                    getConfiguration().isUseDefaultCredentialsProvider()
-                            ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
-                                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
-                                            getConfiguration().getSecretKey())))
-                    .region(Region.of(getConfiguration().getRegion()));
-
-            String uriEndpointOverride = getConfiguration().getUriEndpointOverride();
-            if (ObjectHelper.isNotEmpty(uriEndpointOverride)) {
-                builder.endpointOverride(URI.create(uriEndpointOverride));
-            }
-
-            presigner = builder.build();
-        }
+        S3Presigner presigner = getOrCreatePresigner();
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -1032,26 +1014,7 @@ public class AWS2S3Producer extends DefaultProducer {
         } else {
             milliSeconds += 1000 * 60 * 60;
         }
-        S3Presigner presigner;
-
-        if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonS3Presigner())) {
-            presigner = getConfiguration().getAmazonS3Presigner();
-        } else {
-            S3Presigner.Builder builder = S3Presigner.builder();
-            builder.credentialsProvider(
-                    getConfiguration().isUseDefaultCredentialsProvider()
-                            ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
-                                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
-                                            getConfiguration().getSecretKey())))
-                    .region(Region.of(getConfiguration().getRegion()));
-
-            String uriEndpointOverride = getConfiguration().getUriEndpointOverride();
-            if (ObjectHelper.isNotEmpty(uriEndpointOverride)) {
-                builder.endpointOverride(URI.create(uriEndpointOverride));
-            }
-
-            presigner = builder.build();
-        }
+        S3Presigner presigner = getOrCreatePresigner();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -1086,6 +1049,31 @@ public class AWS2S3Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(getConfiguration().getAmazonS3Presigner())) {
             presigner.close();
         }
+    }
+
+    private S3Presigner getOrCreatePresigner() {
+        if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonS3Presigner())) {
+            return getConfiguration().getAmazonS3Presigner();
+        }
+
+        S3Presigner.Builder builder = S3Presigner.builder();
+        builder.credentialsProvider(
+                getConfiguration().isUseDefaultCredentialsProvider()
+                        ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
+                                AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                                        getConfiguration().getSecretKey())))
+                .region(Region.of(getConfiguration().getRegion()));
+
+        if (getConfiguration().isForcePathStyle()) {
+            builder.serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build());
+        }
+
+        String uriEndpointOverride = getConfiguration().getUriEndpointOverride();
+        if (ObjectHelper.isNotEmpty(uriEndpointOverride)) {
+            builder.endpointOverride(URI.create(uriEndpointOverride));
+        }
+
+        return builder.build();
     }
 
     private void createBucket(S3Client s3Client, Exchange exchange) throws InvalidPayloadException {
