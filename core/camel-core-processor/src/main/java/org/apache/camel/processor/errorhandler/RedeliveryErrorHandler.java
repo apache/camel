@@ -891,12 +891,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 exchange.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID, rc.getRouteId());
             }
 
-            // create log message
-            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
-            msg = msg + ". Exhausted after delivery attempt: 1 caught: " + exchange.getException();
+            if (redeliveryPolicy.isLogExhausted()) {
+                // create log message
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+                msg = msg + ". Exhausted after delivery attempt: 1 caught: " + exchange.getException();
 
-            // log that we failed delivery as we are exhausted
-            logFailedDelivery(exchange, msg, null);
+                // log that we failed delivery as we are exhausted
+                logFailedDelivery(exchange, msg, null);
+            }
         }
 
         private void logFailedDelivery(Exchange exchange, String message, Throwable e) {
