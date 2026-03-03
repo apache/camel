@@ -187,7 +187,7 @@ public class AbstractMicrometerService extends ServiceSupport {
     @Override
     protected void doStop() {
         if (logMetricsOnShutdown) {
-            LOG.info("Micrometer component is stopping, here a list of metrics collected so far.");
+            LOG.warn("Micrometer service is stopping, here a list of metrics collected so far.");
             // Default: all metrics
             logMetricsOnShutdown(logMetricsOnShutdownFilters == null ? new String[] { "*" } : logMetricsOnShutdownFilters);
         }
@@ -249,7 +249,11 @@ public class AbstractMicrometerService extends ServiceSupport {
                 .map(AbstractMicrometerService::convertMeterToMap)
                 .forEach(logEntry -> {
                     try {
-                        LOG.info(mapper.writeValueAsString(logEntry));
+                        // We put on warn level to make sure it is printed even if the log is
+                        // at higher levels. Important: we also include a start and end tag to make sure the
+                        // scraper can more easily identify the metric content.
+                        String metric = "#METRIC-START#" + mapper.writeValueAsString(logEntry) + "#METRIC-END#";
+                        LOG.warn(metric);
                     } catch (Exception e) {
                         LOG.error("Error logging metric " + logEntry.get("name"), e);
                     }
