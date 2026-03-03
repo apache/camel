@@ -20,4 +20,4 @@ The query parameters have two parameters:
 
 == More Information
 
-You can read the guide xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints] to learn more about configuring _endpoints_. Among other things, this guide explains how to refer to beans in the xref:registry.adoc[registry], how to use raw values for password options, how to use xref:using-propertyplaceholder.adoc[property placeholders], or how to use the type safe xref:Endpoint-dsl.adoc[Endpoint DSL] and xref:dataformat-dsl.adoc[DataFormat DSL].
+See also xref:endpoint.adoc[]

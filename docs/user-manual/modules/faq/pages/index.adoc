@@ -37,8 +37,6 @@ Questions on using Apache Camel
 * xref:how-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[How do I specify which method to use when using beans in routes?]
 * xref:how-can-i-create-a-custom-component-or-endpoint.adoc[How can I create a custom component or endpoint?]
 * xref:how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
-* xref:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
-* xref:how-do-i-configure-password-options-on-camel-endpoints-without-the-value-being-encoded.adoc[How do I configure password options on Camel endpoints without the value being encoded?]
 * xref:how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How do I configure the default maximum cache size for ProducerCache or ProducerTemplate?]
 * xref:how-do-i-configure-the-maximum-endpoint-cache-size-for-camelcontext.adoc[How do I configure the maximum endpoint cache size for CamelContext?]
 * xref:how-do-i-debug-my-route.adoc[How do I debug my route?]

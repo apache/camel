@@ -47,7 +47,267 @@ YAML::
 ----
 ====
 
-== Endpoint API
+=== Referring beans from endpoints
+
+When configuring endpoints using the URI syntax you can refer to beans
+in the xref:registry.adoc[Registry] using the `#bean:id` notation.
+
+NOTE: The older syntax with just `#id` has been deprecated due to ambiguity
+as Camel supports a number of additional functions that start with the # notation.
+
+If the URI parameter value starts with `#bean:` then Camel will lookup in
+the xref:registry.adoc[Registry] for a bean of the given type by id. For instance:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:messages/foo?sorter=#bean:mySpecialFileSorter")
+    .to("jms:queue:foo");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:messages/foo?sorter=#bean:mySpecialFileSorter"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:messages/foo?sorter=#bean:mySpecialFileSorter
+      steps:
+        - to:
+            uri: jms:queue:foo
+----
+====
+
+Will lookup a bean with the id `mySpecialFileSorter` in the Registry.
+
+==== Referring beans by class
+
+Camel also supports to refer to beans by their class type, such as `#class:com.foo.MySpecialSorter`,
+which then will create a new bean instance of the given class name.
+
+If you need to provide parameters to the constructor, then this is also possible
+(limited to numbers, boolean, literal, and null values)
+
+[source,text]
+----
+file://inbox?sorter=#class:com.foo.MySpecialSorter(10, 'Hello world', true)
+----
+
+TIP: Inlining constructor arguments is only recommended for beans with a few options so the code is easy to understand and maintain.
+Also beware that if the bean constructor is refactored then the string text would need to be updated accordingly.
+
+==== Referring beans by type
+
+When configuring endpoints using URI syntax you can now refer to bean by its type which
+are used to lookup the bean by the given type from the xref:ROOT:registry.adoc[Registry].
+
+If there is one bean found in the registry of the given type, then that bean instance will be used;
+otherwise an exception is thrown.
+
+For example below we expect there is a single bean of the `org.apache.camel.spi.IdempotentRepository` type
+in the xref:registry.adoc[Registry] that the file endpoint should use.
+
+[source,text]
+----
+file://inbox?idempontentRepository=#type:org.apache.camel.spi.IdempotentRepository
+----
+
+=== Configuring parameter values using raw values, such as passwords
+
+When configuring endpoint options using URI syntax, then the values is
+by default URI encoded. This can be a problem if you want to configure
+passwords and just use the value _as is_ without any encoding. For
+example, you may have a plus sign in the password, which would be decimal
+encoded by default.
+
+You can define parameter value to be *raw* using the following syntax `RAW(value)`, e.g.
+the value starts with `RAW(` and then ends with the parenthesis `)`.
+
+Here is a little example with the password: `se+re?t&23`:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .to("ftp:joe@myftpserver.com?password=RAW(se+re?t&23)&binary=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:inbox"/>
+    <to uri="ftp:joe@myftpserver.com?password=RAW(se+re?t&amp;23)&amp;binary=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: ftp:joe@myftpserver.com?password=RAW(se+re?t&23)&binary=true
+----
+
+YAML expanded::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file
+      parameters:
+        directoryName: inbox
+      steps:
+        - to:
+            uri: ftp
+            parameters:
+              host: joe@myftpserver.com
+              password: "RAW(se+re?t&23)"
+              binary: true
+----
+====
+
+In the above example, we have declared the password value as raw, and the
+actual password would be as typed, eg `se+re?t&23`.
+
+NOTE: you may find a corner case when you use both `)` and `&` character as part of your password (ie, `se+re)t&23`). The parser will interpret the `)` as closing the `RAW` function and having a parameter started by `&`. In such case, you can instead use the `RAW{}` notation to let you include the `)` character and have it decoded as part of the password (ie, `RAW{se+re)t&23}`). As a safe alternative you can also use `password=#property:myPass` and then have `myPass` a xref:ROOT:property-binding.adoc[property placeholder value].
+
+==== Using ENV variables with raw values
+
+If you need to use environment variables, for example as username or passwords then this is now possible by inlining
+the xref:components:languages:simple-language.adoc[Simple] language
+using `+++$simple{xxx}+++` syntax in `RAW(...)` as shown below:
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .to("ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})&binary=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:inbox"/>
+    <to uri="ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})&amp;binary=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: "ftp:joe@myftpserver.com?password=RAW($simple{env:MY_FTP_PASSWORD})&binary=true"
+----
+
+====
+
+=== Endpoint URIs with property placeholders
+
+Camel has extensive support for using xref:using-propertyplaceholder.adoc[].
+
+For example in the ftp example above we can externalize the password to the `application.properties` file.
+
+[source,properties]
+----
+myFtpPassword=RAW(se+re?t&23)
+----
+
+And the Camel routes can then refer to this placeholder using `{\{key}}` style.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+from("file:inbox")
+  .to("ftp:joe@myftpserver.com?password={{myFtpPassword}}&binary=true");
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="file:inbox"/>
+    <to uri="ftp:joe@myftpserver.com?password={{myFtpPassword}}&amp;binary=true"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: file:inbox
+      steps:
+        - to:
+            uri: "ftp:joe@myftpserver.com?password={{myFtpPassword}}&binary=true"
+----
+====
+
+And have a `application.properties` file with password. Notice we still define
+the `RAW(value)` style to ensure the password is used _as is_:
+
+[source,properties]
+----
+myFtpPassword=RAW(se+re?t&23)
+----
+
+We could still have used the `RAW(value)` in the Camel route instead:
+
+[source,java]
+----
+.to("ftp:joe@myftpserver.com?password=RAW({{myFtpPassword}})&binary=true")
+----
+
+And then we would need to remove the `RAW` from the properties file:
+
+[source,properties]
+----
+myFtpPassword=se+re?t&23
+----
+
+
+== Java Endpoint API
 
 You will almost never have the need for creating endpoints manually via Java API.
 
