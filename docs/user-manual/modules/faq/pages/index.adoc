@@ -37,9 +37,6 @@ Questions on using Apache Camel
 * xref:how-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[How do I specify which method to use when using beans in routes?]
 * xref:how-can-i-create-a-custom-component-or-endpoint.adoc[How can I create a custom component or endpoint?]
 * xref:how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
-* xref:how-do-i-debug-my-route.adoc[How do I debug my route?]
-* xref:how-do-i-disable-jmx.adoc[How do I disable JMX?]
-* xref:how-do-i-enable-streams-when-debug-logging-messages-in-camel.adoc[How do I enable streams when debug logging messages in Camel?]
 * xref:how-do-i-handle-failures-when-consuming-for-example-from-a-ftp-server.adoc[How do I handle failures when consuming for example from a FTP server?]
 * xref:how-do-i-import-rests-from-other-xml-files.adoc[How do I import rests from other XML files?]
 * xref:how-do-i-import-routes-from-other-xml-files.adoc[How do I import routes from other XML files?]
@@ -79,7 +76,6 @@ Questions on using Apache Camel
 Questions on logging output from Camel to a console, using the
 xref:components::log-component.adoc[Log] endpoint or JDK 1.4 logging or Log4j etc
 
-* xref:how-do-i-enable-debug-logging.adoc[How do I enable debug logging?]
 * xref:how-do-i-use-log4j.adoc[How do I use log4j?]
 
 [[FAQ-CamelEndpointQuestions]]
