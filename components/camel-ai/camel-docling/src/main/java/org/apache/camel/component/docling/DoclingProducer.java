@@ -764,8 +764,9 @@ public class DoclingProducer extends DefaultProducer {
             List<String> inputSources, String outputFormat, int batchSize, int parallelism,
             boolean failOnFirstError, boolean useAsync, long batchTimeout) {
 
-        LOG.info("Starting batch conversion of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
-                inputSources.size(), parallelism, failOnFirstError, batchTimeout);
+        LOG.info(
+                "Starting batch conversion of {} documents with batchSize={}, parallelism={}, failOnFirstError={}, timeout={}ms",
+                inputSources.size(), batchSize, parallelism, failOnFirstError, batchTimeout);
 
         BatchProcessingResults results = new BatchProcessingResults();
         results.setStartTimeMs(System.currentTimeMillis());
@@ -776,101 +777,118 @@ public class DoclingProducer extends DefaultProducer {
         AtomicBoolean shouldCancel = new AtomicBoolean(false);
 
         try {
-            // Create CompletableFutures for all conversion tasks
-            List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
+            // Partition documents into sub-batches of batchSize
+            for (int batchStart = 0; batchStart < inputSources.size(); batchStart += batchSize) {
+                if (failOnFirstError && shouldCancel.get()) {
+                    break;
+                }
 
-            for (String inputSource : inputSources) {
-                final int currentIndex = index.getAndIncrement();
-                final String documentId = "doc-" + currentIndex;
+                int batchEnd = Math.min(batchStart + batchSize, inputSources.size());
+                List<String> subBatch = inputSources.subList(batchStart, batchEnd);
 
-                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
-                    // Check if we should skip this task due to early termination
-                    if (failOnFirstError && shouldCancel.get()) {
-                        BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
-                        cancelledResult.setBatchIndex(currentIndex);
-                        cancelledResult.setSuccess(false);
-                        cancelledResult.setErrorMessage("Cancelled due to previous failure");
-                        return cancelledResult;
-                    }
+                LOG.debug("Processing sub-batch [{}-{}] of {} total documents",
+                        batchStart, batchEnd - 1, inputSources.size());
 
-                    BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
-                    result.setBatchIndex(currentIndex);
-                    long startTime = System.currentTimeMillis();
+                List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
 
-                    try {
-                        LOG.debug("Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
+                for (String inputSource : subBatch) {
+                    final int currentIndex = index.getAndIncrement();
+                    final String documentId = "doc-" + currentIndex;
 
-                        String converted;
-                        if (useAsync) {
-                            converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
-                        } else {
-                            converted = convertDocumentSync(inputSource, outputFormat);
+                    CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
+                        // Check if we should skip this task due to early termination
+                        if (failOnFirstError && shouldCancel.get()) {
+                            BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
+                            cancelledResult.setBatchIndex(currentIndex);
+                            cancelledResult.setSuccess(false);
+                            cancelledResult.setErrorMessage("Cancelled due to previous failure");
+                            return cancelledResult;
                         }
 
-                        result.setResult(converted);
-                        result.setSuccess(true);
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                        BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
+                        result.setBatchIndex(currentIndex);
+                        long startTime = System.currentTimeMillis();
 
-                        LOG.debug("Successfully processed document {} in {}ms", documentId,
-                                result.getProcessingTimeMs());
+                        try {
+                            LOG.debug("Processing document {} (index {}): {}", documentId, currentIndex, inputSource);
 
-                    } catch (Exception e) {
-                        result.setSuccess(false);
-                        result.setErrorMessage(e.getMessage());
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                            String converted;
+                            if (useAsync) {
+                                converted = convertDocumentAsyncAndWait(inputSource, outputFormat);
+                            } else {
+                                converted = convertDocumentSync(inputSource, outputFormat);
+                            }
 
-                        LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
-                                e.getMessage(), e);
+                            result.setResult(converted);
+                            result.setSuccess(true);
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
 
-                        // Signal other tasks to cancel if failOnFirstError is enabled
-                        if (failOnFirstError) {
-                            shouldCancel.set(true);
+                            LOG.debug("Successfully processed document {} in {}ms", documentId,
+                                    result.getProcessingTimeMs());
+
+                        } catch (Exception e) {
+                            result.setSuccess(false);
+                            result.setErrorMessage(e.getMessage());
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                            LOG.error("Failed to process document {} (index {}): {}", documentId, currentIndex,
+                                    e.getMessage(), e);
+
+                            // Signal other tasks to cancel if failOnFirstError is enabled
+                            if (failOnFirstError) {
+                                shouldCancel.set(true);
+                            }
                         }
-                    }
 
-                    return result;
-                }, executor);
+                        return result;
+                    }, executor);
 
-                futures.add(future);
-            }
+                    futures.add(future);
+                }
 
-            // Wait for all futures to complete with timeout
-            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+                // Wait for sub-batch to complete with remaining timeout
+                long elapsed = System.currentTimeMillis() - results.getStartTimeMs();
+                long remainingTimeout = batchTimeout - elapsed;
+                if (remainingTimeout <= 0) {
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms");
+                }
 
-            try {
-                allOf.get(batchTimeout, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException e) {
-                LOG.error("Batch processing timed out after {}ms", batchTimeout);
-                // Cancel all incomplete futures
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOG.error("Batch processing interrupted", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch processing interrupted", e);
-            } catch (Exception e) {
-                LOG.error("Batch processing failed", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch processing failed", e);
-            }
+                CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
-            // Collect all results
-            for (CompletableFuture<BatchConversionResult> future : futures) {
                 try {
-                    BatchConversionResult result = future.getNow(null);
-                    if (result != null) {
-                        results.addResult(result);
-
-                        // If failOnFirstError and we hit a failure, stop adding more results
-                        if (failOnFirstError && !result.isSuccess()) {
-                            LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
-                                    result.getErrorMessage());
-                            break;
-                        }
-                    }
+                    allOf.get(remainingTimeout, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    LOG.error("Batch processing timed out after {}ms", batchTimeout);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing timed out after " + batchTimeout + "ms", e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOG.error("Batch processing interrupted", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing interrupted", e);
                 } catch (Exception e) {
-                    LOG.error("Error retrieving result", e);
+                    LOG.error("Batch processing failed", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch processing failed", e);
+                }
+
+                // Collect results from this sub-batch
+                for (CompletableFuture<BatchConversionResult> future : futures) {
+                    try {
+                        BatchConversionResult result = future.getNow(null);
+                        if (result != null) {
+                            results.addResult(result);
+
+                            if (failOnFirstError && !result.isSuccess()) {
+                                LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                                        result.getErrorMessage());
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Error retrieving result", e);
+                    }
                 }
             }
 
@@ -1115,8 +1133,8 @@ public class DoclingProducer extends DefaultProducer {
             boolean failOnFirstError, boolean useAsync, long batchTimeout) {
 
         LOG.info(
-                "Starting batch structured data extraction of {} documents with parallelism={}, failOnFirstError={}, timeout={}ms",
-                inputSources.size(), parallelism, failOnFirstError, batchTimeout);
+                "Starting batch structured data extraction of {} documents with batchSize={}, parallelism={}, failOnFirstError={}, timeout={}ms",
+                inputSources.size(), batchSize, parallelism, failOnFirstError, batchTimeout);
 
         BatchProcessingResults results = new BatchProcessingResults();
         results.setStartTimeMs(System.currentTimeMillis());
@@ -1127,93 +1145,117 @@ public class DoclingProducer extends DefaultProducer {
         AtomicBoolean shouldCancel = new AtomicBoolean(false);
 
         try {
-            List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
+            // Partition documents into sub-batches of batchSize
+            for (int batchStart = 0; batchStart < inputSources.size(); batchStart += batchSize) {
+                if (failOnFirstError && shouldCancel.get()) {
+                    break;
+                }
 
-            for (String inputSource : inputSources) {
-                final int currentIndex = index.getAndIncrement();
-                final String documentId = "doc-" + currentIndex;
+                int batchEnd = Math.min(batchStart + batchSize, inputSources.size());
+                List<String> subBatch = inputSources.subList(batchStart, batchEnd);
 
-                CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
-                    if (failOnFirstError && shouldCancel.get()) {
-                        BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
-                        cancelledResult.setBatchIndex(currentIndex);
-                        cancelledResult.setSuccess(false);
-                        cancelledResult.setErrorMessage("Cancelled due to previous failure");
-                        return cancelledResult;
-                    }
+                LOG.debug("Processing sub-batch [{}-{}] of {} total documents",
+                        batchStart, batchEnd - 1, inputSources.size());
 
-                    BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
-                    result.setBatchIndex(currentIndex);
-                    long startTime = System.currentTimeMillis();
+                List<CompletableFuture<BatchConversionResult>> futures = new ArrayList<>();
 
-                    try {
-                        LOG.debug("Extracting structured data from document {} (index {}): {}", documentId, currentIndex,
-                                inputSource);
+                for (String inputSource : subBatch) {
+                    final int currentIndex = index.getAndIncrement();
+                    final String documentId = "doc-" + currentIndex;
 
-                        ConvertDocumentRequest request = buildStructuredDataRequest(inputSource);
-                        String converted;
-                        if (useAsync) {
-                            converted = convertDocumentAsyncAndWait(request);
-                        } else {
-                            converted = convertDocumentSync(request);
+                    CompletableFuture<BatchConversionResult> future = CompletableFuture.supplyAsync(() -> {
+                        if (failOnFirstError && shouldCancel.get()) {
+                            BatchConversionResult cancelledResult = new BatchConversionResult(documentId, inputSource);
+                            cancelledResult.setBatchIndex(currentIndex);
+                            cancelledResult.setSuccess(false);
+                            cancelledResult.setErrorMessage("Cancelled due to previous failure");
+                            return cancelledResult;
                         }
 
-                        result.setResult(converted);
-                        result.setSuccess(true);
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                        BatchConversionResult result = new BatchConversionResult(documentId, inputSource);
+                        result.setBatchIndex(currentIndex);
+                        long startTime = System.currentTimeMillis();
 
-                    } catch (Exception e) {
-                        result.setSuccess(false);
-                        result.setErrorMessage(e.getMessage());
-                        result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+                        try {
+                            LOG.debug("Extracting structured data from document {} (index {}): {}", documentId,
+                                    currentIndex, inputSource);
 
-                        LOG.error("Failed to extract structured data from document {} (index {}): {}", documentId,
-                                currentIndex, e.getMessage(), e);
+                            ConvertDocumentRequest request = buildStructuredDataRequest(inputSource);
+                            String converted;
+                            if (useAsync) {
+                                converted = convertDocumentAsyncAndWait(request);
+                            } else {
+                                converted = convertDocumentSync(request);
+                            }
 
-                        if (failOnFirstError) {
-                            shouldCancel.set(true);
+                            result.setResult(converted);
+                            result.setSuccess(true);
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                        } catch (Exception e) {
+                            result.setSuccess(false);
+                            result.setErrorMessage(e.getMessage());
+                            result.setProcessingTimeMs(System.currentTimeMillis() - startTime);
+
+                            LOG.error("Failed to extract structured data from document {} (index {}): {}", documentId,
+                                    currentIndex, e.getMessage(), e);
+
+                            if (failOnFirstError) {
+                                shouldCancel.set(true);
+                            }
                         }
-                    }
 
-                    return result;
-                }, executor);
+                        return result;
+                    }, executor);
 
-                futures.add(future);
-            }
+                    futures.add(future);
+                }
 
-            CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+                // Wait for sub-batch to complete with remaining timeout
+                long elapsed = System.currentTimeMillis() - results.getStartTimeMs();
+                long remainingTimeout = batchTimeout - elapsed;
+                if (remainingTimeout <= 0) {
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException(
+                            "Batch structured data extraction timed out after " + batchTimeout + "ms");
+                }
 
-            try {
-                allOf.get(batchTimeout, TimeUnit.MILLISECONDS);
-            } catch (TimeoutException e) {
-                LOG.error("Batch structured data extraction timed out after {}ms", batchTimeout);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch structured data extraction timed out after " + batchTimeout + "ms", e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                LOG.error("Batch structured data extraction interrupted", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch structured data extraction interrupted", e);
-            } catch (Exception e) {
-                LOG.error("Batch structured data extraction failed", e);
-                futures.forEach(f -> f.cancel(true));
-                throw new RuntimeException("Batch structured data extraction failed", e);
-            }
+                CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
-            for (CompletableFuture<BatchConversionResult> future : futures) {
                 try {
-                    BatchConversionResult result = future.getNow(null);
-                    if (result != null) {
-                        results.addResult(result);
-
-                        if (failOnFirstError && !result.isSuccess()) {
-                            LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
-                                    result.getErrorMessage());
-                            break;
-                        }
-                    }
+                    allOf.get(remainingTimeout, TimeUnit.MILLISECONDS);
+                } catch (TimeoutException e) {
+                    LOG.error("Batch structured data extraction timed out after {}ms", batchTimeout);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException(
+                            "Batch structured data extraction timed out after " + batchTimeout + "ms", e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOG.error("Batch structured data extraction interrupted", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch structured data extraction interrupted", e);
                 } catch (Exception e) {
-                    LOG.error("Error retrieving result", e);
+                    LOG.error("Batch structured data extraction failed", e);
+                    futures.forEach(f -> f.cancel(true));
+                    throw new RuntimeException("Batch structured data extraction failed", e);
+                }
+
+                // Collect results from this sub-batch
+                for (CompletableFuture<BatchConversionResult> future : futures) {
+                    try {
+                        BatchConversionResult result = future.getNow(null);
+                        if (result != null) {
+                            results.addResult(result);
+
+                            if (failOnFirstError && !result.isSuccess()) {
+                                LOG.warn("Failing batch due to error in document {}: {}", result.getDocumentId(),
+                                        result.getErrorMessage());
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Error retrieving result", e);
+                    }
                 }
             }
 
