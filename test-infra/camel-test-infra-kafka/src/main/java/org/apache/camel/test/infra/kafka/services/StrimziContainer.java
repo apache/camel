@@ -17,11 +17,12 @@
 
 package org.apache.camel.test.infra.kafka.services;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.UUID;
 
 import com.github.dockerjava.api.command.CreateContainerCmd;
 import org.apache.camel.test.infra.common.LocalPropertyResolver;
-import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.kafka.common.KafkaProperties;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -47,7 +48,6 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
                 .withEnv("KAFKA_NODE_ID", "1")
                 .withEnv("KAFKA_PROCESS_ROLES", "broker,controller")
                 .withEnv("KAFKA_LISTENERS", "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093")
-                .withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:9092", getHost()))
                 .withEnv("KAFKA_CONTROLLER_LISTENER_NAMES", "CONTROLLER")
                 .withEnv("KAFKA_LISTENER_SECURITY_PROTOCOL_MAP", "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT")
                 .withEnv("KAFKA_CONTROLLER_QUORUM_VOTERS", "1@localhost:9093")
@@ -84,7 +84,28 @@ public class StrimziContainer extends GenericContainer<StrimziContainer> {
 
     @Override
     public void start() {
-        ContainerEnvironmentUtil.configurePort(this, true, KAFKA_PORT);
+        int hostPort = resolveHostPort();
+        withEnv("KAFKA_ADVERTISED_LISTENERS", String.format("PLAINTEXT://%s:%d", getHost(), hostPort));
         super.start();
+    }
+
+    private int resolveHostPort() {
+        String suffix = ":" + KAFKA_PORT;
+        for (String binding : getPortBindings()) {
+            if (binding.endsWith(suffix)) {
+                return Integer.parseInt(binding.substring(0, binding.indexOf(':')));
+            }
+        }
+        int port = findFreePort();
+        addFixedExposedPort(port, KAFKA_PORT);
+        return port;
+    }
+
+    private static int findFreePort() {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to find a free port", e);
+        }
     }
 }
