@@ -271,6 +271,42 @@ The `camel-json-patch` is now deprecated - the library it uses is not active mai
 When configured a custom `IdempotentRepository` on `camel-mail` endpoint, then Camel will now auto-start
 the bean which is similar to what `camel-file` do as well.
 
+=== camel-openapi-java
+
+When using _code first_ Rest DSL and have configured `base.path` then this will now be exclusively used
+for the returned server url in the API specification.
+
+For example here we set `base.path=cheese`:
+
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost").port(getPort())
+        .contextPath("myapp")
+        .apiContextPath("/api-doc")
+        .apiProperty("cors", "true").apiProperty("base.path", "cheese")
+        .apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");
+----
+
+Then the generated API specification now returns:
+
+[source,json]
+----
+  "servers" : [ {
+    "url" : "http://localhost:58678/cheese"
+  } ],
+----
+
+Previously the context-path would always be used:
+
+[source,json]
+----
+  "servers" : [ {
+    "url" : "http://localhost:58678/myapp"
+  } ],
+----
+
+The intention is to allow to configure the `base.path` _as is_ in the return API specification.
+
 === camel-nitrite (Removal)
 
 The camel-nitrite is removed in this version. It was deprecated in 4.10.

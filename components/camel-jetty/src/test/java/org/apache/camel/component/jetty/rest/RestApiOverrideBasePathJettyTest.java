@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*", disabledReason = "Flaky on Github CI due to use of JMX")
-public class RestApiOverrideHostJettyTest extends BaseJettyTest {
+public class RestApiOverrideBasePathJettyTest extends BaseJettyTest {
 
     @Override
     protected boolean useJmx() {
@@ -35,12 +35,13 @@ public class RestApiOverrideHostJettyTest extends BaseJettyTest {
 
     @Test
     public void testApi() {
-        String out = template.requestBody("http://localhost:{{port}}/api-doc", null, String.class);
+        String out = template.requestBody("http://localhost:{{port}}/myapp/api-doc", null, String.class);
         assertNotNull(out);
+        System.out.println(out);
 
         assertTrue(out.contains("\"version\" : \"1.2.3\""));
         assertTrue(out.contains("\"title\" : \"The hello rest thing\""));
-        assertTrue(out.contains("\"url\" : \"http://mycoolserver/myapi\""));
+        assertTrue(out.contains("\"url\" : \"http://localhost:" + getPort() + "/cheese\""));
         assertTrue(out.contains("\"/hello/bye/{name}\""));
         assertTrue(out.contains("\"/hello/hi/{name}\""));
         assertTrue(out.contains("\"summary\" : \"To update the greeting message\""));
@@ -51,8 +52,11 @@ public class RestApiOverrideHostJettyTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                restConfiguration().component("jetty").host("localhost").port(getPort()).apiContextPath("/api-doc")
-                        .apiHost("mycoolserver/myapi").apiProperty("cors", "true")
+                restConfiguration().component("jetty").host("localhost").port(getPort())
+                        .contextPath("myapp")
+                        .apiContextPath("/api-doc")
+                        .apiProperty("base.path", "cheese")
+                        .apiProperty("cors", "true")
                         .apiProperty("api.title", "The hello rest thing").apiProperty("api.version", "1.2.3");
 
                 rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}")
