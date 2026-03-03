@@ -33,14 +33,14 @@ public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport 
 
     @Test
     public void testAdviceWith() throws Exception {
-        AdviceWith.adviceWith(context.getRouteDefinition("a"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("a", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().to("mock:error");
             }
         });
 
-        AdviceWith.adviceWith(context.getRouteDefinition("b"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("b", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 interceptSendToEndpoint("mock:b").skipSendToOriginalEndpoint().to("mock:error");

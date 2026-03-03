@@ -29,7 +29,7 @@ public class AdviceWithContextScopedErrorHandlerIssueTest extends ContextTestSup
 
     @Test
     public void testAdviceWith() throws Exception {
-        AdviceWith.adviceWith(context.getRouteDefinition("route-a"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("route-a", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 interceptSendToEndpoint("direct:bar").skipSendToOriginalEndpoint()

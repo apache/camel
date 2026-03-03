@@ -39,7 +39,7 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
 
     @Test
     public void testProducerWithDifferentUri() throws Exception {
-        AdviceWith.adviceWith(context.getRouteDefinition("sedaroute"), context, new Advice());
+        AdviceWith.adviceWith("sedaroute", context, new Advice());
 
         getMockEndpoint("mock:target").expectedMessageCount(0);
         getMockEndpoint("mock:target2").expectedMessageCount(1);
@@ -51,7 +51,7 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
 
     @Test
     public void testProducerWithSameUri() throws Exception {
-        AdviceWith.adviceWith(context.getRouteDefinition("sedaroute"), context, new Advice());
+        AdviceWith.adviceWith("sedaroute", context, new Advice());
 
         getMockEndpoint("mock:target").expectedMessageCount(0);
         getMockEndpoint("mock:target2").expectedMessageCount(1);

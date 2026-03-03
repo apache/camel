@@ -41,13 +41,13 @@ public class AdviceWithFromRestInlineRoutesTest extends ContextTestSupport {
 
     @Test
     public void testAdviceWithInlined() throws Exception {
-        AdviceWith.adviceWith(context.getRouteDefinition("hello"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("hello", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddLast().to("mock:hello");
             }
         });
-        AdviceWith.adviceWith(context.getRouteDefinition("bye"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("bye", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByType(TransformDefinition.class).replace().transform().simple("Echo ${body}");

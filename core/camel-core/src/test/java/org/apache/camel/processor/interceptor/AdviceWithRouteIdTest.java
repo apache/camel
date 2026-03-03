@@ -26,7 +26,7 @@ public class AdviceWithRouteIdTest extends AdviceWithTest {
     @Override
     @Test
     public void testAdvised() throws Exception {
-        AdviceWith.adviceWith(context.getRouteDefinition("myRoute"), context, new AdviceWithRouteBuilder() {
+        AdviceWith.adviceWith("myRoute", context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
