@@ -1469,21 +1469,34 @@ public class DoclingProducer extends DefaultProducer {
             StringBuilder output = new StringBuilder();
             StringBuilder error = new StringBuilder();
 
-            try (BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            // Read stdout and stderr concurrently to prevent deadlock.
+            // If stderr fills the OS pipe buffer (~64KB) while we're blocked
+            // reading stdout, the process would hang waiting to write to stderr.
+            Thread stderrReader = new Thread(() -> {
+                try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = errorReader.readLine()) != null) {
+                        error.append(line).append("\n");
+                    }
+                } catch (IOException e) {
+                    LOG.debug("Error reading stderr: {}", e.getMessage());
+                }
+            }, "docling-stderr-reader");
+            stderrReader.setDaemon(true);
+            stderrReader.start();
 
+            try (BufferedReader outputReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = outputReader.readLine()) != null) {
                     LOG.debug("Docling output: {}", line);
                     output.append(line).append("\n");
                 }
-
-                while ((line = errorReader.readLine()) != null) {
-                    error.append(line).append("\n");
-                }
             }
 
             boolean finished = process.waitFor(configuration.getProcessTimeout(), TimeUnit.MILLISECONDS);
+
+            // Wait for stderr reader to finish (with a bounded wait to avoid hanging)
+            stderrReader.join(5000);
 
             if (!finished) {
                 process.destroyForcibly();
