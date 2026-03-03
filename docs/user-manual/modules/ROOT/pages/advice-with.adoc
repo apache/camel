@@ -56,7 +56,7 @@ But first, you need to select which route to manipulate which you can do by the 
 
 [source,java]
 ----
-AdviceWith.adviceWith(context, "myRoute", new AdviceWithRouteBuilder() {
+AdviceWith.adviceWith("myRoute", context, new AdviceWithRouteBuilder() {
         @Override
         public void configure() throws Exception {
             weaveAddLast().to("mock:result");
