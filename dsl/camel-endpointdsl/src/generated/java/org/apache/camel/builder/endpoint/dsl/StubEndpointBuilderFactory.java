@@ -83,7 +83,7 @@ public interface StubEndpointBuilderFactory {
          * = unlimited) and defaults to 0 instead of 1.
          * 
          * The option is a: <code>int</code> type.
-         *
+         * 
          * Default: 1
          * Group: consumer
          * 
@@ -100,7 +100,7 @@ public interface StubEndpointBuilderFactory {
          * = unlimited) and defaults to 0 instead of 1.
          * 
          * The option will be converted to a <code>int</code> type.
-         *
+         * 
          * Default: 1
          * Group: consumer
          * 
