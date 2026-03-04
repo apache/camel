@@ -15,7 +15,6 @@
 ** xref:why-the-name-camel.adoc[Why the name Camel?]
 ** xref:how-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[How do I specify which method to use when using beans in routes?]
 ** xref:how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
-** xref:how-do-i-retry-processing-a-message-from-a-certain-point-back-or-an-entire-route.adoc[How do I retry processing a message from a certain point back or an entire route?]
 ** xref:how-do-i-reuse-the-contexttestsupport-class-in-my-unit-tests.adoc[How do I reuse the ContextTestSupport class in my unit tests?]
 ** xref:how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How do I set the max chars when debug logging messages in Camel?]
 ** xref:how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs with parameters in XML?]
