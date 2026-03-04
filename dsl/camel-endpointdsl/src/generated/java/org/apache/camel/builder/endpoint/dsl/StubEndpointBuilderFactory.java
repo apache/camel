@@ -78,13 +78,15 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of concurrent threads processing exchanges.
-         * 
+         * Number of concurrent threads processing exchanges. When
+         * virtualThreadPerTask is enabled, this becomes a concurrency limit (0
+         * = unlimited) and defaults to 0 instead of 1.
+         *
          * The option is a: <code>int</code> type.
-         * 
+         *
          * Default: 1
          * Group: consumer
-         * 
+         *
          * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
@@ -93,13 +95,15 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of concurrent threads processing exchanges.
-         * 
+         * Number of concurrent threads processing exchanges. When
+         * virtualThreadPerTask is enabled, this becomes a concurrency limit (0
+         * = unlimited) and defaults to 0 instead of 1.
+         *
          * The option will be converted to a <code>int</code> type.
-         * 
+         *
          * Default: 1
          * Group: consumer
-         * 
+         *
          * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
