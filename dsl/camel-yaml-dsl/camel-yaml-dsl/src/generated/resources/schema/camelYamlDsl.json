@@ -10700,66 +10700,6 @@
           }
         }
       },
-      "org.apache.camel.model.dataformat.JacksonXML3DataFormat" : {
-        "type" : "object",
-        "additionalProperties" : false,
-        "properties" : {
-          "allowJmsType" : {
-            "type" : "boolean"
-          },
-          "allowUnmarshallType" : {
-            "type" : "boolean"
-          },
-          "collectionType" : {
-            "type" : "string"
-          },
-          "contentTypeHeader" : {
-            "type" : "boolean"
-          },
-          "disableFeatures" : {
-            "type" : "string"
-          },
-          "enableFeatures" : {
-            "type" : "string"
-          },
-          "enableJaxbAnnotationModule" : {
-            "type" : "boolean"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "include" : {
-            "type" : "string"
-          },
-          "jsonView" : {
-            "type" : "string"
-          },
-          "maxStringLength" : {
-            "type" : "number"
-          },
-          "moduleClassNames" : {
-            "type" : "string"
-          },
-          "moduleRefs" : {
-            "type" : "string"
-          },
-          "prettyPrint" : {
-            "type" : "boolean"
-          },
-          "timezone" : {
-            "type" : "string"
-          },
-          "unmarshalType" : {
-            "type" : "string"
-          },
-          "useList" : {
-            "type" : "boolean"
-          },
-          "xmlMapper" : {
-            "type" : "string"
-          }
-        }
-      },
       "org.apache.camel.model.dataformat.JacksonXMLDataFormat" : {
         "title" : "Jackson XML",
         "description" : "Unmarshal an XML payloads to POJOs and back using XMLMapper extension of Jackson.",

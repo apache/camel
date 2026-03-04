@@ -449,9 +449,6 @@ public class ModelWriter extends BaseWriter {
     public void writeIso8583DataFormat(Iso8583DataFormat def) throws IOException {
         doWriteIso8583DataFormat("iso8583", def);
     }
-    public void writeJacksonXML3DataFormat(JacksonXML3DataFormat def) throws IOException {
-        doWriteJacksonXML3DataFormat("jacksonXml", def);
-    }
     public void writeJacksonXMLDataFormat(JacksonXMLDataFormat def) throws IOException {
         doWriteJacksonXMLDataFormat("jacksonXml", def);
     }
@@ -2370,28 +2367,6 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("configFile", def.getConfigFile(), "j8583-config.xml");
         doWriteAttribute("isoType", def.getIsoType(), null);
         doWriteAttribute("allowAutoWiredMessageFormat", def.getAllowAutoWiredMessageFormat(), "true");
-        endElement(name);
-    }
-    protected void doWriteJacksonXML3DataFormat(String name, JacksonXML3DataFormat def) throws IOException {
-        startElement(name);
-        doWriteIdentifiedTypeAttributes(def);
-        doWriteAttribute("include", def.getInclude(), null);
-        doWriteAttribute("allowUnmarshallType", def.getAllowUnmarshallType(), null);
-        doWriteAttribute("contentTypeHeader", def.getContentTypeHeader(), "true");
-        doWriteAttribute("prettyPrint", def.getPrettyPrint(), null);
-        doWriteAttribute("unmarshalType", def.getUnmarshalTypeName(), null);
-        doWriteAttribute("timezone", def.getTimezone(), null);
-        doWriteAttribute("moduleClassNames", def.getModuleClassNames(), null);
-        doWriteAttribute("collectionType", def.getCollectionTypeName(), null);
-        doWriteAttribute("allowJmsType", def.getAllowJmsType(), null);
-        doWriteAttribute("jsonView", def.getJsonViewTypeName(), null);
-        doWriteAttribute("enableFeatures", def.getEnableFeatures(), null);
-        doWriteAttribute("useList", def.getUseList(), null);
-        doWriteAttribute("maxStringLength", def.getMaxStringLength(), null);
-        doWriteAttribute("disableFeatures", def.getDisableFeatures(), null);
-        doWriteAttribute("moduleRefs", def.getModuleRefs(), null);
-        doWriteAttribute("enableJaxbAnnotationModule", def.getEnableJaxbAnnotationModule(), null);
-        doWriteAttribute("xmlMapper", def.getXmlMapper(), null);
         endElement(name);
     }
     protected void doWriteJacksonXMLDataFormat(String name, JacksonXMLDataFormat def) throws IOException {
