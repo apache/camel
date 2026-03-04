@@ -64,7 +64,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
-import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.utils.URIUtils;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
@@ -81,8 +80,8 @@ import org.apache.hc.core5.http.io.entity.FileEntity;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.apache.hc.core5.http.io.entity.NullEntity;
 import org.apache.hc.core5.http.io.entity.StringEntity;
-import org.apache.hc.core5.http.protocol.BasicHttpContext;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -239,7 +238,6 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
         if (getEndpoint().isPreserveHostHeader()) {
             String hostHeader = exchange.getIn().getHeader(HttpConstants.HTTP_HEADER_HOST, String.class);
             if (hostHeader != null) {
-                //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
                 httpRequest.setHeader(HttpConstants.HTTP_HEADER_HOST, hostHeader);
             }
         }
@@ -485,12 +483,7 @@ public class HttpProducer extends DefaultProducer implements LineNumberAware {
             Exchange exchange, HttpHost httpHost, HttpUriRequest httpRequest, HttpClientResponseHandler<T> handler)
             throws IOException, HttpException {
         // use a local context per execution
-        HttpContext localContext;
-        if (httpContext != null) {
-            localContext = new BasicHttpContext(httpContext);
-        } else {
-            localContext = HttpClientContext.create();
-        }
+        HttpContext localContext = new HttpCoreContext(httpContext);
         if (getEndpoint().getHttpActivityListener() != null) {
             localContext.setAttribute("org.apache.camel.Exchange", exchange);
             localContext.setAttribute("org.apache.hc.core5.http.HttpHost", httpHost);

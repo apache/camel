@@ -17,6 +17,7 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.http.base.HttpHeaderFilterStrategy;
 
 public class HttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy {
 

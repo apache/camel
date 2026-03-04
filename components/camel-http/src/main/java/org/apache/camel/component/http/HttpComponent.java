@@ -54,18 +54,17 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.io.HttpClientConnectionManager;
-import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
-import org.apache.hc.client5.http.socket.PlainConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
-import org.apache.hc.core5.http.config.Registry;
-import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
@@ -541,17 +540,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
         // do not remove as we set this later again
         final boolean sysProp = getParameter(parameters, "useSystemProperties", boolean.class, useSystemProperties);
-
-        final Registry<ConnectionSocketFactory> connectionRegistry
-                = createConnectionRegistry(hostnameVerifier, sslContextParameters, sysProp);
+        final TlsSocketStrategy tlsStrategy = createTlsStrategy(hostnameVerifier, sslContextParameters, sysProp);
 
         // allow the builder pattern
         httpConnectionOptions.putAll(PropertiesHelper.extractProperties(parameters, "httpConnection."));
         SocketConfig.Builder socketConfigBuilder = SocketConfig.custom();
         PropertyBindingSupport.bindProperties(getCamelContext(), socketConfigBuilder, httpConnectionOptions);
 
-        return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute,
-                socketConfigBuilder.build());
+        return createConnectionManager(tlsStrategy, maxTotalConnections, connectionsPerRoute, socketConfigBuilder.build());
     }
 
     protected HttpClientBuilder createHttpClientBuilder(
@@ -601,45 +597,50 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         return clientBuilder;
     }
 
-    protected Registry<ConnectionSocketFactory> createConnectionRegistry(
-            HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams,
-            boolean useSystemProperties)
+    protected TlsSocketStrategy createTlsStrategy(
+            HostnameVerifier x509HostnameVerifier,
+            SSLContextParameters sslContextParams, boolean useSystemProperties)
             throws GeneralSecurityException, IOException {
-        // create the default connection registry to use
-        RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.create();
-        builder.register("http", PlainConnectionSocketFactory.getSocketFactory());
+        // create the TLS strategy to use
         if (sslContextParams != null) {
-            builder.register("https",
-                    new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
+            return new DefaultClientTlsStrategy(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier);
         } else {
-            builder.register("https", new SSLConnectionSocketFactory(
+            return new DefaultClientTlsStrategy(
                     useSystemProperties ? SSLContexts.createSystemDefault() : SSLContexts.createDefault(),
-                    x509HostnameVerifier));
+                    x509HostnameVerifier);
         }
-        return builder.build();
     }
 
     protected HttpClientConnectionManager createConnectionManager(
-            Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute,
-            SocketConfig defaultSocketConfig) {
-        // set up the connection live time
-        PoolingHttpClientConnectionManager answer = new PoolingHttpClientConnectionManager(
-                registry, PoolConcurrencyPolicy.STRICT, TimeValue.ofMilliseconds(getConnectionTimeToLive()), null);
+            TlsSocketStrategy tlsStrategy,
+            int maxTotalConnections, int connectionsPerRoute, SocketConfig defaultSocketConfig) {
+        // set up the connection using the builder pattern
+        ConnectionConfig connConfig = ConnectionConfig.custom()
+                .setTimeToLive(TimeValue.ofMilliseconds(getConnectionTimeToLive()))
+                .build();
+        PoolingHttpClientConnectionManagerBuilder builder = PoolingHttpClientConnectionManagerBuilder.create()
+                .setTlsSocketStrategy(tlsStrategy)
+                .setPoolConcurrencyPolicy(PoolConcurrencyPolicy.STRICT)
+                .setDefaultConnectionConfig(connConfig)
+                .setDefaultSocketConfig(defaultSocketConfig);
+
         int localMaxTotalConnections = maxTotalConnections;
         if (localMaxTotalConnections == 0) {
             localMaxTotalConnections = getMaxTotalConnections();
         }
         if (localMaxTotalConnections > 0) {
-            answer.setMaxTotal(localMaxTotalConnections);
+            builder.setMaxConnTotal(localMaxTotalConnections);
         }
-        answer.setDefaultSocketConfig(defaultSocketConfig);
+
         int localConnectionsPerRoute = connectionsPerRoute;
         if (localConnectionsPerRoute == 0) {
             localConnectionsPerRoute = getConnectionsPerRoute();
         }
         if (localConnectionsPerRoute > 0) {
-            answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
+            builder.setMaxConnPerRoute(localConnectionsPerRoute);
         }
+
+        PoolingHttpClientConnectionManager answer = builder.build();
         LOG.debug("Created ClientConnectionManager {}", answer);
 
         return answer;
@@ -740,7 +741,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom org.apache.http.protocol.HttpContext when executing requests.
+     * To use a custom HttpContext when executing requests.
      */
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
@@ -829,9 +830,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom org.apache.http.client.CookieStore. By default, the org.apache.http.impl.client.BasicCookieStore
-     * is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to
-     * be a noop cookie store as cookie shouldn't be stored as we are just bridging (e.g., acting as a proxy).
+     * To use a custom CookieStore. By default, the BasicCookieStore is used which is an in-memory only cookie store.
+     * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be
+     * stored as we are just bridging (e.g., acting as a proxy).
      */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
