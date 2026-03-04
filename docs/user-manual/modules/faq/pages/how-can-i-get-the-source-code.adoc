@@ -1,11 +1,10 @@
 = How can I get the source code?
 
-The source code is at https://github.com/apache/camel/ 
-so you can also checkout the source code from GitHub, if you are
-familiar with using GitHub. By using GitHub you can submit pull requests
-to the project using the standard GitHub way.
+The source code is on GitHub at: https://github.com/apache/camel
 
-https://github.com/apache/camel/
+From GitHub you can checkout the code, and contribute back
+by sending Pull Requests. Working with the code is similar to
+other projects hosted on GitHub.
 
 == Building the code
 

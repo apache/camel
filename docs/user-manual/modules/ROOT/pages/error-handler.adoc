@@ -330,3 +330,184 @@ See xref:components:eips:transactional-client.adoc[Transactional Client] that ha
 samples for how to use and transactional behavior and configuration with
 this error handler.
 
+== How do I retry failed messages forever?
+
+If you want to keep the bad message in the original system (such as a message broker),
+then you are also blocking the following messages that has arrived on the queue after the bad
+message.
+
+For example with  xref:components::activemq-component.adoc[ActiveMQ], Camel will retry consuming a message up til 6 times before
+its moved to the default dead letter queue on the broker (this is ActiveMQ broker specific).
+
+If you configure the xref:defaulterrorhandler.adoc[Default Error Handler] or xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel]
+to use `maximumRedeliveries = -1` then Camel will retry forever.
+
+IMPORTANT: Beware that there is a difference between letting Camel retry processing a message, such as Camel fails to route a message to an external system (producer) vs
+consuming messages from a messaging system that offers redelivery such as xref:components::activemq-component.adoc[ActiveMQ]. The latter allows
+to roll back the entire message and attempt processing the same message again from Camel.
+
+If an external system such as xref:components::activemq-component.adoc[ActiveMQ] is redelivering a message,
+then Camel enriches the message with headers that mark this.
+
+The `CamelRedeliveryCounter` contains the number of times it has been redelivered.
+The `CamelRedelivered` contains a boolean if its redelivered or if it is the first time the message is processed.
+
+See also xref:components:eips:transactional-client.adoc[Transactional Client].
+
+
+== How do I retry processing a message from a certain point back or an entire route
+
+By default, Camel will perform any redelivery (retry) attempts
+from the point of failure. So if you want to retry from a point before
+this, you would need to split up your route.
+
+In the example below we have 2 routes (`direct:start`, `direct:sub`). In
+case of a failure anywhere in the `direct:sub` route, then the entire
+route is retried. This happens because we have instructed the `direct:sub`
+route to not use any error handler (e.g. the no error handler). Then we
+link the routes using the xref:components::direct-component.adoc[Direct] component by calling
+the sub route from the 1st route.
+
+[tabs]
+====
+
+Java::
++
+[source,java]
+----
+// in case of io exception then try to redeliver up till 2 times
+// (do not use any delay due faster unit testing)
+onException(IOException.class)
+    .maximumRedeliveries(2).redeliveryDelay(0);
+
+from("direct:start")
+    .to("mock:a")
+    // call sub route (using direct)
+    .to("direct:sub")
+    .to("mock:c");
+
+from("direct:sub")
+    // disable error handler, so the entire route can be retried in case of redelivery
+    .errorHandler(noErrorHandler())
+    .to("mock:b")
+    .bean("myProcessor");
+----
+
+Spring XML::
++
+[source,xml]
+----
+<!-- this is the processor that will fail the first 2 attempts -->
+<bean id="myProcessor" class="org.apache.camel.processor.RedeliverToSubRouteTest.MyProcessor"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <!-- setup no error handler with an id, we refer to from the 2nd route -->
+    <errorHandler id="noErrorHandler" type="NoErrorHandler"/>
+
+    <!-- configure on exception to redelivery at most 2 times when an IOException was thrown
+         do not use redelivery delay to run unit test faster -->
+    <onException>
+        <exception>java.io.IOException</exception>
+        <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0"/>
+    </onException>
+
+    <!-- 1st route, no need to setup error handler, as it will use the default error handler -->
+    <route>
+        <from uri="direct:start"/>
+        <to uri="mock:a"/>
+        <to uri="direct:sub"/>
+        <to uri="mock:c"/>
+    </route>
+
+    <!-- disable error handler on this route, so the entire route can be redelivered
+         when called from the 1st route -->
+    <route errorHandlerRef="noErrorHandler">
+        <from uri="direct:sub"/>
+        <to uri="mock:b"/>
+        <process ref="myProcessor"/>
+    </route>
+</camelContext>
+----
+
+XML::
++
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <onException>
+        <exception>java.io.IOException</exception>
+        <redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0"/>
+    </onException>
+    <to uri="mock:a"/>
+    <to uri="direct:sub"/>
+    <to uri="mock:c"/>
+</route>
+
+<route>
+    <errorHandler>
+        <noErrorHandler/>
+    </errorHandler>
+    <from uri="direct:sub"/>
+    <to uri="mock:b"/>
+    <process ref="myProcessor"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - onException:
+            exception:
+              - java.io.IOException
+        - redeliveryPolicy:
+            maximumRedeliveries: 2
+            redeliveryDelay: 0
+        - to:
+            uri: mock:a
+        - to:
+            uri: direct:sub
+        - to:
+            uri: mock:c
+
+- route:
+    errorHandler:
+      noErrorHandler: {}
+    from:
+      uri: direct:sub
+      steps:
+        - to:
+            uri: mock:b
+        - process:
+            ref: myProcessor
+----
+
+====
+
+The code above is based on a unit test, and as you can see the
+processor below is configured to fail the first 2 attempts.
+So that means the entire `direct:sub` route is redelivered, meaning that
+the `mock:b` endpoint receives the incoming message again.
+
+[source,java]
+----
+public static class MyProcessor implements Processor {
+
+    private int counter;
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        // use a processor to simulate error in the first 2 calls
+        if (counter++ < 2) {
+            throw new IOException("Forced");
+        }
+        exchange.getIn().setBody("Bye World");
+    }
+}
+----
