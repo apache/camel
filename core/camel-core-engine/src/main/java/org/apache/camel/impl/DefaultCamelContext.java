@@ -42,7 +42,6 @@ import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.model.BeanFactoryDefinition;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
-import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
@@ -106,7 +105,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContext.class);
     private static final UuidGenerator UUID = new SimpleUuidGenerator();
 
-    private final Model model = new DefaultModel(this);
+    private final DefaultModel model = new DefaultModel(this);
 
     /**
      * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
@@ -839,9 +838,10 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     protected boolean removeRoute(String routeId, LoggingLevel loggingLevel) throws Exception {
-        // synchronize on model first to avoid deadlock with concurrent 'addRoutes'
+        // lock on model first to avoid deadlock with concurrent 'addRoutes'
         // calls:
-        synchronized (model) {
+        model.getLock().lock();
+        try {
             getLock().lock();
             try {
                 boolean removed = super.removeRoute(routeId, loggingLevel);
@@ -856,15 +856,20 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             } finally {
                 getLock().unlock();
             }
+        } finally {
+            model.getLock().unlock();
         }
     }
 
     @Override
     public boolean removeRoute(String routeId) throws Exception {
-        // synchronize on model first to avoid deadlock with concurrent 'addRoutes'
+        // lock on model first to avoid deadlock with concurrent 'addRoutes'
         // calls:
-        synchronized (model) {
+        model.getLock().lock();
+        try {
             return super.removeRoute(routeId);
+        } finally {
+            model.getLock().unlock();
         }
     }
 

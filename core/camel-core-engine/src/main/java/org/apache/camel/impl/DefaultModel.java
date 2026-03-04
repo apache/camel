@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -68,6 +70,7 @@ import org.apache.camel.util.StringHelper;
 public class DefaultModel implements Model {
 
     private final CamelContext camelContext;
+    private final Lock lock = new ReentrantLock();
 
     private ModelReifierFactory modelReifierFactory = new DefaultModelReifierFactory();
     private final List<ModelLifecycleStrategy> modelLifecycleStrategies = new ArrayList<>();
@@ -92,6 +95,10 @@ public class DefaultModel implements Model {
 
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    public Lock getLock() {
+        return lock;
     }
 
     @Override
@@ -154,15 +161,20 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public synchronized RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
-        for (RouteConfigurationDefinition def : routesConfigurations) {
-            if (def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
-                    .equals(id)) {
-                return def;
+    public RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
+        lock.lock();
+        try {
+            for (RouteConfigurationDefinition def : routesConfigurations) {
+                if (def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
+                        .equals(id)) {
+                    return def;
+                }
             }
+            // you can have a global route configuration that has no ID assigned
+            return routesConfigurations.stream().filter(c -> c.getId() == null).findFirst().orElse(null);
+        } finally {
+            lock.unlock();
         }
-        // you can have a global route configuration that has no ID assigned
-        return routesConfigurations.stream().filter(c -> c.getId() == null).findFirst().orElse(null);
     }
 
     @Override
@@ -173,132 +185,137 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        if (routeDefinitions == null || routeDefinitions.isEmpty()) {
-            return;
-        }
-
-        List<RouteDefinition> list;
-        if (routeFilter == null) {
-            list = new ArrayList<>(routeDefinitions);
-        } else {
-            list = new ArrayList<>();
-            for (RouteDefinition r : routeDefinitions) {
-                if (routeFilter.apply(r)) {
-                    list.add(r);
-                }
+    public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        lock.lock();
+        try {
+            if (routeDefinitions == null || routeDefinitions.isEmpty()) {
+                return;
             }
-        }
 
-        removeRouteDefinitions(list);
-
-        // special if rest-dsl is inlining routes
-        if (camelContext.getRestConfiguration().isInlineRoutes()) {
-            List<RouteDefinition> allRoutes = new ArrayList<>();
-            allRoutes.addAll(list);
-            allRoutes.addAll(this.routeDefinitions);
-
-            List<RouteDefinition> toBeRemoved = new ArrayList<>();
-            Map<String, RouteDefinition> directs = new HashMap<>();
-            for (RouteDefinition r : allRoutes) {
-                // does the route start with direct, which is candidate for rest-dsl
-                FromDefinition from = r.getInput();
-                if (from != null) {
-                    String uri = from.getEndpointUri();
-                    if (uri != null && uri.startsWith("direct:")) {
-                        directs.put(uri, r);
+            List<RouteDefinition> list;
+            if (routeFilter == null) {
+                list = new ArrayList<>(routeDefinitions);
+            } else {
+                list = new ArrayList<>();
+                for (RouteDefinition r : routeDefinitions) {
+                    if (routeFilter.apply(r)) {
+                        list.add(r);
                     }
                 }
             }
-            for (RouteDefinition r : allRoutes) {
-                // loop all rest routes
-                FromDefinition from = r.getInput();
-                if (from != null && !r.isInlined()) {
-                    // only attempt to inline if not already inlined
-                    String uri = from.getEndpointUri();
-                    if (uri != null && uri.startsWith("rest:")) {
-                        // find first EIP in the outputs (skip abstract which are onException/intercept
-                        // etc)
-                        ToDefinition to = null;
-                        for (ProcessorDefinition<?> def : r.getOutputs()) {
-                            if (def.isAbstract()) {
-                                continue;
-                            }
-                            if (def instanceof ToDefinition toDefinition) {
-                                to = toDefinition;
-                            }
-                            break;
+
+            removeRouteDefinitions(list);
+
+            // special if rest-dsl is inlining routes
+            if (camelContext.getRestConfiguration().isInlineRoutes()) {
+                List<RouteDefinition> allRoutes = new ArrayList<>();
+                allRoutes.addAll(list);
+                allRoutes.addAll(this.routeDefinitions);
+
+                List<RouteDefinition> toBeRemoved = new ArrayList<>();
+                Map<String, RouteDefinition> directs = new HashMap<>();
+                for (RouteDefinition r : allRoutes) {
+                    // does the route start with direct, which is candidate for rest-dsl
+                    FromDefinition from = r.getInput();
+                    if (from != null) {
+                        String uri = from.getEndpointUri();
+                        if (uri != null && uri.startsWith("direct:")) {
+                            directs.put(uri, r);
                         }
-                        if (to != null) {
-                            String toUri = to.getEndpointUri();
-                            RouteDefinition toBeInlined = directs.get(toUri);
-                            if (toBeInlined != null) {
-                                toBeRemoved.add(toBeInlined);
-                                // inline the source loc:line as starting from this direct input
-                                FromDefinition inlinedFrom = toBeInlined.getInput();
-                                from.setLocation(inlinedFrom.getLocation());
-                                from.setLineNumber(inlinedFrom.getLineNumber());
-                                // inline by replacing the outputs (preserve all abstracts such as interceptors)
-                                List<ProcessorDefinition<?>> toBeRemovedOut = new ArrayList<>();
-                                for (ProcessorDefinition<?> out : r.getOutputs()) {
-                                    // should be removed if to be added via inlined
-                                    boolean remove = toBeInlined.getOutputs().stream().anyMatch(o -> o == out);
-                                    if (!remove) {
-                                        remove = !out.isAbstract(); // remove all non abstract
+                    }
+                }
+                for (RouteDefinition r : allRoutes) {
+                    // loop all rest routes
+                    FromDefinition from = r.getInput();
+                    if (from != null && !r.isInlined()) {
+                        // only attempt to inline if not already inlined
+                        String uri = from.getEndpointUri();
+                        if (uri != null && uri.startsWith("rest:")) {
+                            // find first EIP in the outputs (skip abstract which are onException/intercept
+                            // etc)
+                            ToDefinition to = null;
+                            for (ProcessorDefinition<?> def : r.getOutputs()) {
+                                if (def.isAbstract()) {
+                                    continue;
+                                }
+                                if (def instanceof ToDefinition toDefinition) {
+                                    to = toDefinition;
+                                }
+                                break;
+                            }
+                            if (to != null) {
+                                String toUri = to.getEndpointUri();
+                                RouteDefinition toBeInlined = directs.get(toUri);
+                                if (toBeInlined != null) {
+                                    toBeRemoved.add(toBeInlined);
+                                    // inline the source loc:line as starting from this direct input
+                                    FromDefinition inlinedFrom = toBeInlined.getInput();
+                                    from.setLocation(inlinedFrom.getLocation());
+                                    from.setLineNumber(inlinedFrom.getLineNumber());
+                                    // inline by replacing the outputs (preserve all abstracts such as interceptors)
+                                    List<ProcessorDefinition<?>> toBeRemovedOut = new ArrayList<>();
+                                    for (ProcessorDefinition<?> out : r.getOutputs()) {
+                                        // should be removed if to be added via inlined
+                                        boolean remove = toBeInlined.getOutputs().stream().anyMatch(o -> o == out);
+                                        if (!remove) {
+                                            remove = !out.isAbstract(); // remove all non abstract
+                                        }
+                                        if (remove) {
+                                            toBeRemovedOut.add(out);
+                                        }
                                     }
-                                    if (remove) {
-                                        toBeRemovedOut.add(out);
+                                    r.getOutputs().removeAll(toBeRemovedOut);
+                                    r.getOutputs().addAll(toBeInlined.getOutputs());
+                                    // inlined outputs should have re-assigned parent to this route
+                                    r.getOutputs().forEach(o -> o.setParent(r));
+                                    // and copy over various configurations
+                                    if (toBeInlined.getRouteId() != null) {
+                                        r.setId(toBeInlined.getRouteId());
                                     }
+                                    r.setNodePrefixId(toBeInlined.getNodePrefixId());
+                                    r.setGroup(toBeInlined.getGroup());
+                                    r.setAutoStartup(toBeInlined.getAutoStartup());
+                                    r.setDelayer(toBeInlined.getDelayer());
+                                    r.setInputType(toBeInlined.getInputType());
+                                    r.setOutputType(toBeInlined.getOutputType());
+                                    r.setLogMask(toBeInlined.getLogMask());
+                                    r.setMessageHistory(toBeInlined.getMessageHistory());
+                                    r.setStreamCache(toBeInlined.getStreamCache());
+                                    r.setTrace(toBeInlined.getTrace());
+                                    r.setStartupOrder(toBeInlined.getStartupOrder());
+                                    r.setRoutePolicyRef(toBeInlined.getRoutePolicyRef());
+                                    r.setRouteConfigurationId(toBeInlined.getRouteConfigurationId());
+                                    r.setRoutePolicies(toBeInlined.getRoutePolicies());
+                                    r.setShutdownRoute(toBeInlined.getShutdownRoute());
+                                    r.setShutdownRunningTask(toBeInlined.getShutdownRunningTask());
+                                    r.setErrorHandlerRef(toBeInlined.getErrorHandlerRef());
+                                    r.setPrecondition(toBeInlined.getPrecondition());
+                                    if (toBeInlined.isErrorHandlerFactorySet()) {
+                                        r.setErrorHandler(toBeInlined.getErrorHandler());
+                                    }
+                                    r.markInlined();
                                 }
-                                r.getOutputs().removeAll(toBeRemovedOut);
-                                r.getOutputs().addAll(toBeInlined.getOutputs());
-                                // inlined outputs should have re-assigned parent to this route
-                                r.getOutputs().forEach(o -> o.setParent(r));
-                                // and copy over various configurations
-                                if (toBeInlined.getRouteId() != null) {
-                                    r.setId(toBeInlined.getRouteId());
-                                }
-                                r.setNodePrefixId(toBeInlined.getNodePrefixId());
-                                r.setGroup(toBeInlined.getGroup());
-                                r.setAutoStartup(toBeInlined.getAutoStartup());
-                                r.setDelayer(toBeInlined.getDelayer());
-                                r.setInputType(toBeInlined.getInputType());
-                                r.setOutputType(toBeInlined.getOutputType());
-                                r.setLogMask(toBeInlined.getLogMask());
-                                r.setMessageHistory(toBeInlined.getMessageHistory());
-                                r.setStreamCache(toBeInlined.getStreamCache());
-                                r.setTrace(toBeInlined.getTrace());
-                                r.setStartupOrder(toBeInlined.getStartupOrder());
-                                r.setRoutePolicyRef(toBeInlined.getRoutePolicyRef());
-                                r.setRouteConfigurationId(toBeInlined.getRouteConfigurationId());
-                                r.setRoutePolicies(toBeInlined.getRoutePolicies());
-                                r.setShutdownRoute(toBeInlined.getShutdownRoute());
-                                r.setShutdownRunningTask(toBeInlined.getShutdownRunningTask());
-                                r.setErrorHandlerRef(toBeInlined.getErrorHandlerRef());
-                                r.setPrecondition(toBeInlined.getPrecondition());
-                                if (toBeInlined.isErrorHandlerFactorySet()) {
-                                    r.setErrorHandler(toBeInlined.getErrorHandler());
-                                }
-                                r.markInlined();
                             }
                         }
                     }
                 }
+                // remove all the routes that was inlined
+                list.removeAll(toBeRemoved);
+                this.routeDefinitions.removeAll(toBeRemoved);
             }
-            // remove all the routes that was inlined
-            list.removeAll(toBeRemoved);
-            this.routeDefinitions.removeAll(toBeRemoved);
-        }
 
-        for (RouteDefinition r : list) {
-            for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
-                s.onAddRouteDefinition(r);
+            for (RouteDefinition r : list) {
+                for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+                    s.onAddRouteDefinition(r);
+                }
+                this.routeDefinitions.add(r);
             }
-            this.routeDefinitions.add(r);
-        }
 
-        if (shouldStartRoutes()) {
-            ((ModelCamelContext) getCamelContext()).startRouteDefinitions(list);
+            if (shouldStartRoutes()) {
+                ((ModelCamelContext) getCamelContext()).startRouteDefinitions(list);
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -308,51 +325,76 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public synchronized void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        for (RouteDefinition routeDefinition : routeDefinitions) {
-            removeRouteDefinition(routeDefinition);
-        }
-    }
-
-    @Override
-    public synchronized void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        RouteDefinition toBeRemoved = routeDefinition;
-        String id = routeDefinition.getId();
-        if (id != null) {
-            // remove existing route
-            camelContext.getRouteController().stopRoute(id);
-            camelContext.removeRoute(id);
-            toBeRemoved = getRouteDefinition(id);
-        }
-        for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
-            s.onRemoveRouteDefinition(toBeRemoved);
-        }
-        this.routeDefinitions.remove(toBeRemoved);
-    }
-
-    @Override
-    public synchronized void removeRouteTemplateDefinitions(String pattern) throws Exception {
-        for (RouteTemplateDefinition def : new ArrayList<>(routeTemplateDefinitions)) {
-            if (PatternHelper.matchPattern(def.getId(), pattern)) {
-                removeRouteTemplateDefinition(def);
+    public void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        lock.lock();
+        try {
+            for (RouteDefinition routeDefinition : routeDefinitions) {
+                removeRouteDefinition(routeDefinition);
             }
+        } finally {
+            lock.unlock();
         }
     }
 
     @Override
-    public synchronized List<RouteDefinition> getRouteDefinitions() {
-        return routeDefinitions;
-    }
-
-    @Override
-    public synchronized RouteDefinition getRouteDefinition(String id) {
-        for (RouteDefinition route : routeDefinitions) {
-            if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
-                    .equals(id)) {
-                return route;
+    public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+        lock.lock();
+        try {
+            RouteDefinition toBeRemoved = routeDefinition;
+            String id = routeDefinition.getId();
+            if (id != null) {
+                // remove existing route
+                camelContext.getRouteController().stopRoute(id);
+                camelContext.removeRoute(id);
+                toBeRemoved = getRouteDefinition(id);
             }
+            for (ModelLifecycleStrategy s : modelLifecycleStrategies) {
+                s.onRemoveRouteDefinition(toBeRemoved);
+            }
+            this.routeDefinitions.remove(toBeRemoved);
+        } finally {
+            lock.unlock();
         }
-        return null;
+    }
+
+    @Override
+    public void removeRouteTemplateDefinitions(String pattern) throws Exception {
+        lock.lock();
+        try {
+            for (RouteTemplateDefinition def : new ArrayList<>(routeTemplateDefinitions)) {
+                if (PatternHelper.matchPattern(def.getId(), pattern)) {
+                    removeRouteTemplateDefinition(def);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public List<RouteDefinition> getRouteDefinitions() {
+        lock.lock();
+        try {
+            return routeDefinitions;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public RouteDefinition getRouteDefinition(String id) {
+        lock.lock();
+        try {
+            for (RouteDefinition route : routeDefinitions) {
+                if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class))
+                        .equals(id)) {
+                    return route;
+                }
+            }
+            return null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -663,24 +705,34 @@ public class DefaultModel implements Model {
     }
 
     @Override
-    public synchronized List<RestDefinition> getRestDefinitions() {
-        return restDefinitions;
+    public List<RestDefinition> getRestDefinitions() {
+        lock.lock();
+        try {
+            return restDefinitions;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
-    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes)
+    public void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes)
             throws Exception {
-        if (restDefinitions == null || restDefinitions.isEmpty()) {
-            return;
-        }
-
-        this.restDefinitions.addAll(restDefinitions);
-        if (addToRoutes) {
-            // rests are also routes so need to add them there too
-            for (final RestDefinition restDefinition : restDefinitions) {
-                List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(camelContext);
-                addRouteDefinitions(routeDefinitions);
+        lock.lock();
+        try {
+            if (restDefinitions == null || restDefinitions.isEmpty()) {
+                return;
             }
+
+            this.restDefinitions.addAll(restDefinitions);
+            if (addToRoutes) {
+                // rests are also routes so need to add them there too
+                for (final RestDefinition restDefinition : restDefinitions) {
+                    List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(camelContext);
+                    addRouteDefinitions(routeDefinitions);
+                }
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

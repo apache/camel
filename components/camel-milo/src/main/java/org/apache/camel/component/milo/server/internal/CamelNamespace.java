@@ -19,6 +19,8 @@ package org.apache.camel.component.milo.server.internal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.ManagedNamespaceWithLifecycle;
@@ -43,6 +45,7 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
     private UaObjectNode itemsObject;
     private UaFolderNode folder;
 
+    private final Lock lock = new ReentrantLock();
     private final Map<String, CamelServerItem> itemMap = new HashMap<>();
 
     private final BinaryDataTypeDictionaryManager dictionaryManager;
@@ -124,9 +127,12 @@ public class CamelNamespace extends ManagedNamespaceWithLifecycle {
     }
 
     public CamelServerItem getOrAddItem(final String itemId) {
-        synchronized (this) {
+        lock.lock();
+        try {
             return this.itemMap.computeIfAbsent(itemId,
                     k -> new CamelServerItem(itemId, getNodeContext(), getNamespaceIndex(), this.itemsObject));
+        } finally {
+            lock.unlock();
         }
     }
 }
