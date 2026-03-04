@@ -80,7 +80,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private int browseLimit = 100;
 
     @UriParam(label = "consumer", defaultValue = "1",
-              description = "Number of concurrent threads processing exchanges.")
+              description = "Number of concurrent threads processing exchanges."
+                            + " When virtualThreadPerTask is enabled, this becomes a concurrency limit"
+                            + " (0 = unlimited) and defaults to 0 instead of 1.")
     private int concurrentConsumers = 1;
     @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "Whether to limit the number of concurrentConsumers to the maximum of 500. By default, an exception will be thrown"
@@ -413,7 +415,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Number of concurrent threads processing exchanges.
+     * Number of concurrent threads processing exchanges. When virtualThreadPerTask is enabled, this becomes a
+     * concurrency limit (0 = unlimited) and defaults to 0 instead of 1.
      */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;

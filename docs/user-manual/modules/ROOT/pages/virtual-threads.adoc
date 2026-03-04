@@ -241,7 +241,7 @@ The `virtualThreadPerTask` mode uses a fundamentally different approach: *spawn 
 2. For each message, a new task is submitted to a cached thread pool
 3. When virtual threads are enabled, `Executors.newThreadPerTaskExecutor()` is used
 4. Each message gets its own lightweight virtual thread
-5. The `concurrentConsumers` option becomes a *concurrency limit* (0 = unlimited)
+5. The `concurrentConsumers` option becomes a *concurrency limit* (default: 0 = unlimited)
 
 ==== Configuration
 
