@@ -630,6 +630,12 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     protected void doInit() throws Exception {
         super.doInit();
 
+        // When virtualThreadPerTask is enabled, default concurrentConsumers to 0 (unlimited)
+        // since the traditional default of 1 defeats the purpose of thread-per-task mode
+        if (virtualThreadPerTask && concurrentConsumers == 1) {
+            concurrentConsumers = 0;
+        }
+
         if (discardWhenFull && blockWhenFull) {
             throw new IllegalArgumentException(
                     "Cannot enable both discardWhenFull=true and blockWhenFull=true."

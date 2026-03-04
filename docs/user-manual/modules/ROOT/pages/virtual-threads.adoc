@@ -801,7 +801,7 @@ public class ParallelEnrichmentRoute extends RouteBuilder {
 }
 ----
 
-=== Example 3: Context Propagation Across Routes
+=== Example 3: Context Propagation Within a Route
 
 [source,java]
 ----
@@ -811,27 +811,28 @@ public class TenantAwareRoute extends RouteBuilder {
 
     @Override
     public void configure() {
+        // ContextValue is scoped to the current thread - it works within a single
+        // route or call chain, not across asynchronous boundaries like SEDA queues.
+        // For cross-route context, use exchange properties instead.
         from("platform-http:/api/{tenant}/orders")
             .process(exchange -> {
                 String tenant = exchange.getMessage().getHeader("tenant", String.class);
-                // Bind tenant for the entire processing scope
-                ContextValue.where(TENANT_ID, tenant, () -> {
-                    exchange.setProperty("tenantId", tenant);
-                    return null;
-                });
+                exchange.setProperty("tenantId", tenant);
             })
             .to("seda:process?virtualThreadPerTask=true");
 
         from("seda:process?virtualThreadPerTask=true&concurrentConsumers=500")
             .process(exchange -> {
-                // Access tenant ID in any processor
-                String tenant = TENANT_ID.orElse("default");
+                // Use exchange properties for context that crosses async boundaries
+                String tenant = exchange.getProperty("tenantId", "default", String.class);
                 log.info("Processing for tenant: {}", tenant);
             })
             .toD("jpa:Order?persistenceUnit=${exchangeProperty.tenantId}");
     }
 }
 ----
+
+NOTE: `ContextValue` is scoped to the current thread (or `ScopedValue` scope on JDK 25+). It does *not* propagate across asynchronous boundaries like SEDA queues. For data that needs to cross route boundaries, use exchange properties or headers. `ContextValue` is designed for propagating context *within* a synchronous call chain (e.g., during route creation or processor initialization).
 
 == Summary
 
