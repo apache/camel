@@ -330,3 +330,26 @@ See xref:components:eips:transactional-client.adoc[Transactional Client] that ha
 samples for how to use and transactional behavior and configuration with
 this error handler.
 
+== How do I retry failed messages forever?
+
+If you want to keep the bad message in the original system (such as a message broker),
+then you are also blocking the following messages that has arrived on the queue after the bad
+message.
+
+For example with  xref:components::activemq-component.adoc[ActiveMQ], Camel will retry consuming a message up til 6 times before
+its moved to the default dead letter queue on the broker (this is ActiveMQ broker specific).
+
+If you configure the xref:defaulterrorhandler.adoc[Default Error Handler] or xref:components:eips:dead-letter-channel.adoc[Dead Letter Channel]
+to use `maximumRedeliveries = -1` then Camel will retry forever.
+
+IMPORTANT: Beware that there is a difference between letting Camel retry processing a message, such as Camel fails to route a message to an external system (producer) vs
+consuming messages from a messaging system that offers redelivery such as xref:components::activemq-component.adoc[ActiveMQ]. The latter allows
+to roll back the entire message and attempt processing the same message again from Camel.
+
+If an external system such as xref:components::activemq-component.adoc[ActiveMQ] is redelivering a message,
+then Camel enriches the message with headers that mark this.
+
+The `CamelRedeliveryCounter` contains the number of times it has been redelivered.
+The `CamelRedelivered` contains a boolean if its redelivered or if it is the first time the message is processed.
+
+See also xref:components:eips:transactional-client.adoc[Transactional Client].
