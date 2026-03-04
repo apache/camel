@@ -43,6 +43,8 @@ public class KameletProcessor extends BaseProcessorSupport
 
     private final String name;
     private final AsyncProcessor processor;
+    private final String parentRouteId;
+    private final String parentProcessorId;
     private KameletProducer producer;
     private KameletComponent component;
     private CamelContext camelContext;
@@ -50,9 +52,16 @@ public class KameletProcessor extends BaseProcessorSupport
     private String routeId;
 
     public KameletProcessor(CamelContext camelContext, String name, Processor processor) throws Exception {
+        this(camelContext, name, processor, null, null);
+    }
+
+    public KameletProcessor(CamelContext camelContext, String name, Processor processor,
+                            String parentRouteId, String parentProcessorId) throws Exception {
         this.camelContext = camelContext;
         this.name = name;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
+        this.parentRouteId = parentRouteId;
+        this.parentProcessorId = parentProcessorId;
     }
 
     @ManagedAttribute(description = "Kamelet name (templateId/routeId?options)")
@@ -118,7 +127,30 @@ public class KameletProcessor extends BaseProcessorSupport
     @Override
     protected void doInit() throws Exception {
         this.component = camelContext.getComponent("kamelet", KameletComponent.class);
-        this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
+
+        // set the route/processor context so the KameletEndpoint.doInit() can pick them up
+        // these were captured during construction (within the createProcessor scope)
+        // use the scoped API for ScopedValue compatibility on JDK 25+
+        Runnable initProducer = () -> {
+            try {
+                this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+        if (parentRouteId != null) {
+            camelContext.getCamelContextExtension().createRoute(parentRouteId, () -> {
+                if (parentProcessorId != null) {
+                    camelContext.getCamelContextExtension().createProcessor(parentProcessorId, initProducer);
+                } else {
+                    initProducer.run();
+                }
+            });
+        } else if (parentProcessorId != null) {
+            camelContext.getCamelContextExtension().createProcessor(parentProcessorId, initProducer);
+        } else {
+            initProducer.run();
+        }
 
         ServiceHelper.initService(processor, producer);
 

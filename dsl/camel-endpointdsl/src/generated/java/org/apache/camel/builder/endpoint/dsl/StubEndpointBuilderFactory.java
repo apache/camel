@@ -78,13 +78,15 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of concurrent threads processing exchanges.
-         * 
+         * Number of concurrent threads processing exchanges. When
+         * virtualThreadPerTask is enabled, this becomes a concurrency limit (0
+         * = unlimited) and defaults to 0 instead of 1.
+         *
          * The option is a: <code>int</code> type.
-         * 
+         *
          * Default: 1
          * Group: consumer
-         * 
+         *
          * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
@@ -93,13 +95,15 @@ public interface StubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Number of concurrent threads processing exchanges.
-         * 
+         * Number of concurrent threads processing exchanges. When
+         * virtualThreadPerTask is enabled, this becomes a concurrency limit (0
+         * = unlimited) and defaults to 0 instead of 1.
+         *
          * The option will be converted to a <code>int</code> type.
-         * 
+         *
          * Default: 1
          * Group: consumer
-         * 
+         *
          * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
@@ -377,6 +381,46 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(String purgeWhenStopping) {
             doSetProperty("purgeWhenStopping", purgeWhenStopping);
+            return this;
+        }
+        /**
+         * If enabled, spawns a new virtual thread for each message instead of
+         * using a fixed pool of consumer threads. This model is optimized for
+         * virtual threads (JDK 21) and I/O-bound workloads where creating
+         * threads is cheap. The concurrentConsumers option becomes a limit on
+         * max concurrent tasks (0 = unlimited). Requires virtual threads to be
+         * enabled via camel.threads.virtual.enabled=true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param virtualThreadPerTask the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointConsumerBuilder virtualThreadPerTask(boolean virtualThreadPerTask) {
+            doSetProperty("virtualThreadPerTask", virtualThreadPerTask);
+            return this;
+        }
+        /**
+         * If enabled, spawns a new virtual thread for each message instead of
+         * using a fixed pool of consumer threads. This model is optimized for
+         * virtual threads (JDK 21) and I/O-bound workloads where creating
+         * threads is cheap. The concurrentConsumers option becomes a limit on
+         * max concurrent tasks (0 = unlimited). Requires virtual threads to be
+         * enabled via camel.threads.virtual.enabled=true.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param virtualThreadPerTask the value to set
+         * @return the dsl builder
+         */
+        default AdvancedStubEndpointConsumerBuilder virtualThreadPerTask(String virtualThreadPerTask) {
+            doSetProperty("virtualThreadPerTask", virtualThreadPerTask);
             return this;
         }
         /**

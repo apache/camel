@@ -53,11 +53,23 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     private volatile boolean shutdownPending;
     private volatile boolean forceShutdown;
     private ExecutorService executor;
-    private final int pollTimeout;
+    protected final int pollTimeout;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.pollTimeout = endpoint.getPollTimeout();
+    }
+
+    protected int getPollTimeout() {
+        return pollTimeout;
+    }
+
+    protected boolean isShutdownPending() {
+        return shutdownPending;
+    }
+
+    protected void setShutdownPending(boolean shutdownPending) {
+        this.shutdownPending = shutdownPending;
     }
 
     @Override
@@ -174,6 +186,11 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
 
             Exchange exchange = null;
             try {
+                // hook for subclasses to prepare before polling (e.g., acquire permits)
+                if (!beforePoll()) {
+                    continue;
+                }
+
                 // use the end user configured poll timeout
                 exchange = queue.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 if (LOG.isTraceEnabled()) {
@@ -182,20 +199,20 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                 }
                 if (exchange != null) {
                     try {
-                        final Exchange original = exchange;
-                        // prepare the exchange before sending to consumer
-                        final Exchange prepared = prepareExchange(exchange);
-                        // callback to be executed when sending to consumer and processing is done
-                        AsyncCallback callback = doneSync -> onProcessingDone(original, prepared);
-                        // process the exchange
-                        sendToConsumers(prepared, callback);
+                        // process the exchange (subclasses can override to dispatch to another thread)
+                        processPolledExchange(exchange);
                     } catch (Exception e) {
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
                     }
-                } else if (shutdownPending && queue.isEmpty()) {
-                    LOG.trace("Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
-                    // we want to shutdown so break out if there queue is empty
-                    break;
+                } else {
+                    // hook for subclasses to cleanup after empty poll (e.g., release permits)
+                    afterPollEmpty();
+                    if (shutdownPending && queue.isEmpty()) {
+                        LOG.trace(
+                                "Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
+                        // we want to shutdown so break out if there queue is empty
+                        break;
+                    }
                 }
             } catch (InterruptedException e) {
                 LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
@@ -207,6 +224,42 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
                     getExceptionHandler().handleException(e);
                 }
             }
+        }
+    }
+
+    /**
+     * Hook called before polling the queue. Subclasses can override to acquire resources (e.g., permits).
+     *
+     * @return                      true to proceed with polling, false to skip this poll iteration
+     * @throws InterruptedException if interrupted while acquiring resources
+     */
+    protected boolean beforePoll() throws InterruptedException {
+        return true;
+    }
+
+    /**
+     * Hook called when poll returned no exchange. Subclasses can override to release resources (e.g., permits).
+     */
+    protected void afterPollEmpty() {
+        // nothing by default
+    }
+
+    /**
+     * Process a polled exchange. Subclasses can override to dispatch to another thread.
+     *
+     * @param exchange the exchange to process
+     */
+    protected void processPolledExchange(Exchange exchange) {
+        final Exchange original = exchange;
+        // prepare the exchange before sending to consumer
+        final Exchange prepared = prepareExchange(exchange);
+        // callback to be executed when sending to consumer and processing is done
+        AsyncCallback callback = doneSync -> onProcessingDone(original, prepared);
+        // process the exchange
+        try {
+            sendToConsumers(prepared, callback);
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, e);
         }
     }
 
@@ -332,7 +385,10 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
         shutdownExecutor();
     }
 
-    private void shutdownExecutor() {
+    /**
+     * Shuts down the executor service.
+     */
+    protected void shutdownExecutor() {
         if (executor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
@@ -340,15 +396,27 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
     }
 
     /**
+     * Creates the executor service used for consumer threads.
+     * <p/>
+     * Subclasses can override this method to provide a different executor, such as one using virtual threads.
+     *
+     * @param  poolSize the number of concurrent consumers
+     * @return          the executor service
+     */
+    protected ExecutorService createExecutor(int poolSize) {
+        return getEndpoint().getCamelContext().getExecutorServiceManager()
+                .newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
+    }
+
+    /**
      * Setup the thread pool and ensures tasks gets executed (if needed)
      */
-    private void setupTasks() {
+    protected void setupTasks() {
         int poolSize = getEndpoint().getConcurrentConsumers();
 
         // create thread pool if needed
         if (executor == null) {
-            executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                    getEndpoint().getEndpointUri(), poolSize);
+            executor = createExecutor(poolSize);
         }
 
         // submit needed number of tasks
