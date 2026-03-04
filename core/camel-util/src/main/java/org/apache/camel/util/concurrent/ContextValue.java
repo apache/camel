@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * A context value abstraction that provides thread-scoped data sharing.
  * <p>
  * This interface provides a unified API for sharing data within a thread context, with implementations that use either
- * {@link ThreadLocal} (for JDK 17+) or {@link java.lang.ScopedValue} (for JDK 21+ with virtual threads).
+ * {@link ThreadLocal} (for JDK 17+) or ScopedValue (for JDK 25+ with virtual threads).
  * <p>
  * The implementation is chosen automatically based on the JDK version and whether virtual threads are enabled via the
  * {@code camel.threads.virtual.enabled} system property.
@@ -55,7 +55,7 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of value stored in this context
  * @see       java.lang.ThreadLocal
- * @see       java.lang.ScopedValue
+ * @see       ScopedValue (JDK 25+)
  */
 public interface ContextValue<T> {
 

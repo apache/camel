@@ -114,7 +114,7 @@ public interface ExtendedCamelContext {
      * @deprecated      use {@link #setupRoutes(Runnable)} or {@link #setupRoutes(Callable)} for ScopedValue
      *                  compatibility
      */
-    @Deprecated(since = "4.17.0")
+    @Deprecated(since = "4.19.0")
     void setupRoutes(boolean done);
 
     /**
@@ -138,7 +138,14 @@ public interface ExtendedCamelContext {
      *
      * @param operation the operation to execute
      */
-    void setupRoutes(Runnable operation);
+    default void setupRoutes(Runnable operation) {
+        setupRoutes(false);
+        try {
+            operation.run();
+        } finally {
+            setupRoutes(true);
+        }
+    }
 
     /**
      * Executes the given callable within a "setup routes" context and returns its result.
@@ -150,7 +157,14 @@ public interface ExtendedCamelContext {
      * @return           the result of the callable
      * @throws Exception if the callable throws
      */
-    <T> T setupRoutes(Callable<T> callable) throws Exception;
+    default <T> T setupRoutes(Callable<T> callable) throws Exception {
+        setupRoutes(false);
+        try {
+            return callable.call();
+        } finally {
+            setupRoutes(true);
+        }
+    }
 
     /**
      * Method to signal to {@link CamelContext} that the process to create routes is in progress.
@@ -160,7 +174,7 @@ public interface ExtendedCamelContext {
      * @deprecated         use {@link #createRoute(String, Runnable)} or {@link #createRoute(String, Callable)} for
      *                     ScopedValue compatibility
      */
-    @Deprecated(since = "4.17.0")
+    @Deprecated(since = "4.19.0")
     void createRoute(String routeId);
 
     /**
@@ -181,7 +195,14 @@ public interface ExtendedCamelContext {
      * @param routeId   the id of the route being created
      * @param operation the operation to execute
      */
-    void createRoute(String routeId, Runnable operation);
+    default void createRoute(String routeId, Runnable operation) {
+        createRoute(routeId);
+        try {
+            operation.run();
+        } finally {
+            createRoute(null);
+        }
+    }
 
     /**
      * Executes the given callable within a "create route" context and returns its result.
@@ -194,7 +215,14 @@ public interface ExtendedCamelContext {
      * @return           the result of the callable
      * @throws Exception if the callable throws
      */
-    <T> T createRoute(String routeId, Callable<T> callable) throws Exception;
+    default <T> T createRoute(String routeId, Callable<T> callable) throws Exception {
+        createRoute(routeId);
+        try {
+            return callable.call();
+        } finally {
+            createRoute(null);
+        }
+    }
 
     /**
      * Method to signal to {@link CamelContext} that creation of a given processor is in progress.
@@ -204,7 +232,7 @@ public interface ExtendedCamelContext {
      * @deprecated             use {@link #createProcessor(String, Runnable)} or
      *                         {@link #createProcessor(String, Callable)} for ScopedValue compatibility
      */
-    @Deprecated(since = "4.17.0")
+    @Deprecated(since = "4.19.0")
     void createProcessor(String processorId);
 
     /**
@@ -225,7 +253,14 @@ public interface ExtendedCamelContext {
      * @param processorId the id of the processor being created
      * @param operation   the operation to execute
      */
-    void createProcessor(String processorId, Runnable operation);
+    default void createProcessor(String processorId, Runnable operation) {
+        createProcessor(processorId);
+        try {
+            operation.run();
+        } finally {
+            createProcessor(null);
+        }
+    }
 
     /**
      * Executes the given callable within a "create processor" context and returns its result.
@@ -238,7 +273,14 @@ public interface ExtendedCamelContext {
      * @return             the result of the callable
      * @throws Exception   if the callable throws
      */
-    <T> T createProcessor(String processorId, Callable<T> callable) throws Exception;
+    default <T> T createProcessor(String processorId, Callable<T> callable) throws Exception {
+        createProcessor(processorId);
+        try {
+            return callable.call();
+        } finally {
+            createProcessor(null);
+        }
+    }
 
     /**
      * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom logic when an

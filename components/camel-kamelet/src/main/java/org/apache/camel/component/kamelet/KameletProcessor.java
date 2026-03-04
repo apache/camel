@@ -130,21 +130,26 @@ public class KameletProcessor extends BaseProcessorSupport
 
         // set the route/processor context so the KameletEndpoint.doInit() can pick them up
         // these were captured during construction (within the createProcessor scope)
+        // use the scoped API for ScopedValue compatibility on JDK 25+
+        Runnable initProducer = () -> {
+            try {
+                this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
         if (parentRouteId != null) {
-            camelContext.getCamelContextExtension().createRoute(parentRouteId);
-        }
-        if (parentProcessorId != null) {
-            camelContext.getCamelContextExtension().createProcessor(parentProcessorId);
-        }
-        try {
-            this.producer = (KameletProducer) camelContext.getEndpoint("kamelet://" + name).createAsyncProducer();
-        } finally {
-            if (parentRouteId != null) {
-                camelContext.getCamelContextExtension().createRoute(null);
-            }
-            if (parentProcessorId != null) {
-                camelContext.getCamelContextExtension().createProcessor(null);
-            }
+            camelContext.getCamelContextExtension().createRoute(parentRouteId, () -> {
+                if (parentProcessorId != null) {
+                    camelContext.getCamelContextExtension().createProcessor(parentProcessorId, initProducer);
+                } else {
+                    initProducer.run();
+                }
+            });
+        } else if (parentProcessorId != null) {
+            camelContext.getCamelContextExtension().createProcessor(parentProcessorId, initProducer);
+        } else {
+            initProducer.run();
         }
 
         ServiceHelper.initService(processor, producer);

@@ -23,9 +23,9 @@ import java.util.function.Supplier;
  *
  * @deprecated Use {@link ContextValue#newThreadLocal(String)} or {@link ContextValue#newThreadLocal(String, Supplier)}
  *             instead. The ContextValue API provides better abstraction and will automatically use ScopedValue when
- *             running with virtual threads on Java 21+.
+ *             running with virtual threads on JDK 25+.
  */
-@Deprecated(since = "4.17.0")
+@Deprecated(since = "4.19.0")
 public final class NamedThreadLocal<T> extends ThreadLocal<T> {
 
     private final String name;

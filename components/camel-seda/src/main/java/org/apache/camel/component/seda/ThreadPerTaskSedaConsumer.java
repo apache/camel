@@ -124,9 +124,13 @@ public class ThreadPerTaskSedaConsumer extends SedaConsumer {
 
                 // Process asynchronously
                 AsyncCallback callback = doneSync -> {
-                    if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange", exchange,
-                                exchange.getException());
+                    try {
+                        onProcessingDone(exchange, prepared);
+                    } finally {
+                        if (prepared.getException() != null) {
+                            getExceptionHandler().handleException("Error processing exchange", prepared,
+                                    prepared.getException());
+                        }
                     }
                 };
                 sendToConsumers(prepared, callback);
