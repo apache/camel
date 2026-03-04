@@ -372,6 +372,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
             for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
                 lifecycle.onThreadPoolRemove(camelContext, threadPool);
             }
+        } else {
+            // for non-ThreadPoolExecutor instances (e.g., virtual thread executors)
+            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
+                lifecycle.onThreadPoolRemove(camelContext, executorService);
+            }
         }
 
         // remove reference as its shutdown (do not remove if fail-safe)
@@ -591,6 +596,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
         if (threadPool != null) {
             for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
                 lifecycle.onThreadPoolAdd(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
+            }
+        } else {
+            // for non-ThreadPoolExecutor instances (e.g., virtual thread executors)
+            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
+                lifecycle.onThreadPoolAdd(camelContext, executorService, id, sourceId, routeId, threadPoolProfileId);
             }
         }
 

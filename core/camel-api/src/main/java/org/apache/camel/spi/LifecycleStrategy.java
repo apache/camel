@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
@@ -208,5 +209,31 @@ public interface LifecycleStrategy {
      * @param threadPool   the thread pool
      */
     void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool);
+
+    /**
+     * Notification on adding an executor service (such as a virtual thread executor) that is not a
+     * {@link ThreadPoolExecutor}.
+     *
+     * @param camelContext        the camel context
+     * @param executorService     the executor service
+     * @param id                  id of the thread pool (can be null in special cases)
+     * @param sourceId            id of the source creating the thread pool (can be null in special cases)
+     * @param routeId             id of the route for the source (is null if no source)
+     * @param threadPoolProfileId id of the thread pool profile, if used for creating this thread pool (can be null)
+     */
+    default void onThreadPoolAdd(
+            CamelContext camelContext, ExecutorService executorService, String id,
+            String sourceId, String routeId, String threadPoolProfileId) {
+    }
+
+    /**
+     * Notification on removing an executor service (such as a virtual thread executor) that is not a
+     * {@link ThreadPoolExecutor}.
+     *
+     * @param camelContext    the camel context
+     * @param executorService the executor service
+     */
+    default void onThreadPoolRemove(CamelContext camelContext, ExecutorService executorService) {
+    }
 
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.net.UnknownHostException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.management.MalformedObjectNameException;
@@ -54,6 +55,7 @@ import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedSupervisingRouteController;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
+import org.apache.camel.management.mbean.ManagedVirtualThreadExecutor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
@@ -162,6 +164,9 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
             objectName = getObjectNameForTracer(mt.getContext(), mt.getTracer());
         } else if (managedObject instanceof ManagedThreadPool mes) {
             objectName = getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());
+        } else if (managedObject instanceof ManagedVirtualThreadExecutor mvte) {
+            objectName = getObjectNameForThreadPool(
+                    mvte.getContext(), mvte.getExecutorService(), mvte.getId(), mvte.getSourceId());
         } else if (managedObject instanceof ManagedClusterService mcs) {
             objectName = getObjectNameForClusterService(mcs.getContext(), mcs.getService());
         } else if (managedObject instanceof ManagedService ms) {
@@ -421,6 +426,18 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     @Override
     public ObjectName getObjectNameForThreadPool(
             CamelContext context, ThreadPoolExecutor threadPool, String id, String sourceId)
+            throws MalformedObjectNameException {
+        return getObjectNameForThreadPool(context, id, sourceId);
+    }
+
+    @Override
+    public ObjectName getObjectNameForThreadPool(
+            CamelContext context, ExecutorService executorService, String id, String sourceId)
+            throws MalformedObjectNameException {
+        return getObjectNameForThreadPool(context, id, sourceId);
+    }
+
+    private ObjectName getObjectNameForThreadPool(CamelContext context, String id, String sourceId)
             throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
