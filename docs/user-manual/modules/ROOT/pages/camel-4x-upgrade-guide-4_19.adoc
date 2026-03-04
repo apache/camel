@@ -228,6 +228,10 @@ This order is also the same order that UI builders like Camel Karavan and Kaoto 
 Support for exporting to use Gradle as build tool has been removed (it was deprecated and not working well)
 The deprecated options `buildToool` and `gradleWrapper` has been removed.
 
+The `camel-tooling-maven` which is used for downloading JARs from Maven has been refactored to use
+the new https://github.com/maveniverse/mima[MIMA] project (jbang is using this also).
+
+
 === camel-kafka
 
 The Kafka client library has been upgraded from 3.9.1 to 4.2.0. This is a major version upgrade of Apache Kafka with several notable changes:
