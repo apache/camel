@@ -494,36 +494,15 @@ class MavenDownloaderImplTest {
     }
 
     @Test
-    @Disabled("Repository ID preservation issue - see detailed explanation below")
     void testAuthenticationAndMirrors() throws Exception {
-        // This test attempts to verify that MIMA correctly handles:
-        // 1. Settings.xml with profile activation
+        // This test verifies that MIMA correctly handles:
+        // 1. Settings.xml with server authentication
         // 2. Repository mirrors
-        // 3. Server authentication (encrypted passwords)
+        // 3. The id=url format for preserving repository IDs
         //
-        // ISSUE: When repositories are passed via setRepos("test-server") or Set<String>,
-        // they are converted to RemoteRepository with auto-generated IDs like "custom1", "custom2"
-        // (see MavenDownloaderImpl.java:355). This breaks authentication because settings.xml
-        // server authentication is ID-based:
+        // The id=url format (e.g., "test-server=http://...") preserves the repository ID,
+        // which is required for settings.xml server authentication matching:
         //   <server><id>test-server</id><username>...</username></server>
-        //
-        // The auto-generated ID "custom1" doesn't match "test-server", so auth fails with 401.
-        //
-        // PROOF THAT AUTH/MIRRORS WORK: The 401 error actually proves that:
-        // - MIMA is reading settings.xml (otherwise no auth would be attempted)
-        // - The HTTP transport layer is working
-        // - Authentication is being attempted (just with wrong credentials due to ID mismatch)
-        //
-        // TO FIX: Would need to change setRepos() API to accept "id=url" format or Map<String,String>
-        // to preserve repository IDs. This is a larger API change beyond the scope of MIMA migration.
-        //
-        // WORKAROUND IN PRODUCTION: Users can:
-        // - Use profile-based repositories (IDs are preserved from settings.xml profiles)
-        // - Rely on MIMA's automatic profile activation
-        // - Authentication/mirrors work correctly in real usage (embedded Maven mode)
-        //
-        // NOTE: The old MavenResolverTest worked because it manually called internal methods
-        // that don't exist in the MIMA-based implementation.
 
         String localSettings = "src/test/resources/.m2/settings.xml";
         String localSettingsSecurity = "src/test/resources/.m2/settings-security.xml";
@@ -542,40 +521,14 @@ class MavenDownloaderImplTest {
         FileUtil.removeDir(customLocalRepo);
         Files.createDirectories(customLocalRepo.toPath());
 
-        // Create a custom RepositoryResolver that maps "test-server" to our dynamic test URL
         String testRepoUrl = "http://localhost:" + localServer.getLocalPort() + "/maven/repository";
-        RepositoryResolver testResolver = new RepositoryResolver() {
-            @Override
-            public String resolveRepository(String idOrUrl) {
-                if ("test-server".equals(idOrUrl)) {
-                    return testRepoUrl;
-                }
-                return idOrUrl;
-            }
-
-            @Override
-            public void build() {
-            }
-
-            @Override
-            public void start() {
-            }
-
-            @Override
-            public void stop() {
-            }
-
-            @Override
-            public void close() {
-            }
-        };
 
         try (MavenDownloaderImpl downloader = new MavenDownloaderImpl()) {
-            downloader.setRepositoryResolver(testResolver);
             downloader.setMavenSettingsLocation(tempSettings.getAbsolutePath());
             downloader.setMavenSettingsSecurityLocation(localSettingsSecurity);
             downloader.setMavenCentralEnabled(false); // Disable Maven Central
-            downloader.setRepos("test-server"); // Use the repository ID from settings.xml
+            // Use id=url format to preserve repository ID for settings.xml auth matching
+            downloader.setRepos("test-server=" + testRepoUrl);
             downloader.build();
 
             // Customize with our local repository
@@ -600,7 +553,7 @@ class MavenDownloaderImplTest {
             assertTrue(content.contains("/mirror/org/apache/camel/camel-anything/3.42.0/camel-anything-3.42.0.jar"),
                     "Should have downloaded from mirror, got: " + content);
 
-            LOG.info("✓ Authentication and mirror test passed - artifact resolved through authenticated mirror");
+            LOG.info("Authentication and mirror test passed - artifact resolved through authenticated mirror");
         }
     }
 }

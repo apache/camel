@@ -440,15 +440,30 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     }
 
     /**
-     * Helper method to configure custom repositories from URLs. Translates repository URLs to RemoteRepository
-     * instances.
+     * Helper method to configure custom repositories from URLs or id=url pairs. Translates repository specifications to
+     * RemoteRepository instances.
+     * <p>
+     * Repository format: either a plain URL (e.g., {@code https://repo.example.com/maven}) or an {@code id=url} pair
+     * (e.g., {@code my-repo=https://repo.example.com/maven}). Using the {@code id=url} format preserves the repository
+     * ID, which is required for settings.xml server authentication matching.
      */
     private void configureRepositories(List<RemoteRepository> repositories, Set<String> urls) {
         urls.forEach(repo -> {
             try {
                 repo = repositoryResolver.resolveRepository(repo);
                 if (repo != null && !repo.isBlank()) {
-                    URL url = URI.create(repo).toURL();
+                    // Support id=url format for repository ID preservation (needed for settings.xml auth)
+                    String id;
+                    String repoUrl;
+                    int eqIdx = repo.indexOf('=');
+                    if (eqIdx > 0 && eqIdx < repo.length() - 1 && !repo.startsWith("http")) {
+                        id = repo.substring(0, eqIdx);
+                        repoUrl = repo.substring(eqIdx + 1);
+                    } else {
+                        id = "custom" + customRepositoryCounter.getAndIncrement();
+                        repoUrl = repo;
+                    }
+                    URL url = URI.create(repoUrl).toURL();
                     if (mavenCentralEnabled && url.getHost().equals("repo1.maven.org")) {
                         // Maven Central is always used, so skip it
                         return;
@@ -460,8 +475,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         apacheSnapshotsIncluded = true;
                     } else {
                         // both snapshots and releases allowed for custom repos
-                        String id = "custom" + customRepositoryCounter.getAndIncrement();
-                        repositories.add(new RemoteRepository.Builder(id, "default", repo)
+                        repositories.add(new RemoteRepository.Builder(id, "default", repoUrl)
                                 .setReleasePolicy(defaultPolicy)
                                 .setSnapshotPolicy(defaultPolicy)
                                 .build());
@@ -606,6 +620,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
         try {
             if (repository == null) {
+                if (centralResolutionRepository == null) {
+                    throw new MavenResolutionException(
+                            "Cannot resolve available versions: no repository specified and Maven Central is disabled");
+                }
                 req.setRepository(centralResolutionRepository);
             } else {
                 String id = "custom" + customRepositoryCounter.getAndIncrement();
