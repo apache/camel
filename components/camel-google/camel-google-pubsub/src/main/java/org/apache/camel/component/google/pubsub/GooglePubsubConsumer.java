@@ -18,12 +18,11 @@ package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
@@ -69,7 +68,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
-        this.subscribers = Collections.synchronizedList(new LinkedList<>());
+        this.subscribers = new CopyOnWriteArrayList<>();
         this.pendingSynchronousPullResponses = ConcurrentHashMap.newKeySet();
         String loggerId = endpoint.getLoggerId();
 
@@ -96,11 +95,9 @@ public class GooglePubsubConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         localLog.info("Stopping Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
 
-        synchronized (subscribers) {
-            if (!subscribers.isEmpty()) {
-                localLog.info("Stopping subscribers for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
-                subscribers.forEach(AbstractApiService::stopAsync);
-            }
+        if (!subscribers.isEmpty()) {
+            localLog.info("Stopping subscribers for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
+            subscribers.forEach(AbstractApiService::stopAsync);
         }
 
         safeCancelSynchronousPullResponses();

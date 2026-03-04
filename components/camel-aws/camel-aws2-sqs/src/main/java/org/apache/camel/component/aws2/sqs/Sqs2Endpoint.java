@@ -23,6 +23,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -63,8 +65,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     private static final Logger LOG = LoggerFactory.getLogger(Sqs2Endpoint.class);
 
     private SqsClient client;
-    private String queueUrl;
-    private boolean queueUrlInitialized;
+    private final Lock queueUrlLock = new ReentrantLock();
+    private volatile String queueUrl;
     private Clock clock = new MonotonicClock();
 
     @UriPath(description = "Queue name or ARN")
@@ -157,7 +159,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
         if (ObjectHelper.isNotEmpty(configuration.getQueueUrl())) {
             queueUrl = configuration.getQueueUrl();
-            queueUrlInitialized = true;
         } else {
             // If both region and Account ID is provided the queue URL can be
             // built manually.
@@ -167,14 +168,12 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                     && ObjectHelper.isNotEmpty(configuration.getQueueOwnerAWSAccountId())) {
                 queueUrl = getAwsEndpointUri() + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
                            + configuration.getQueueName();
-                queueUrlInitialized = true;
             } else if (ObjectHelper.isNotEmpty(configuration.getQueueOwnerAWSAccountId())) {
                 GetQueueUrlRequest.Builder getQueueUrlRequest = GetQueueUrlRequest.builder();
                 getQueueUrlRequest.queueName(configuration.getQueueName());
                 getQueueUrlRequest.queueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
                 GetQueueUrlResponse getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest.build());
                 queueUrl = getQueueUrlResult.queueUrl();
-                queueUrlInitialized = true;
             } else {
                 initQueueUrl();
             }
@@ -205,7 +204,6 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             }
 
             if (ObjectHelper.isNotEmpty(queueUrl)) {
-                queueUrlInitialized = true;
                 break;
             }
 
@@ -385,12 +383,22 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
      * If queue does not exist during endpoint initialization, the queueUrl has to be initialized again. See
      * https://issues.apache.org/jira/browse/CAMEL-18968 for more details.
      */
-    protected synchronized String getQueueUrl() {
-        if (!queueUrlInitialized) {
-            LOG.trace("Queue url was not initialized during the start of the component. Initializing again.");
-            initQueueUrl();
+    protected String getQueueUrl() {
+        String url = queueUrl;
+        if (url == null) {
+            queueUrlLock.lock();
+            try {
+                url = queueUrl;
+                if (url == null) {
+                    LOG.trace("Queue url was not initialized during the start of the component. Initializing again.");
+                    initQueueUrl();
+                    url = queueUrl;
+                }
+            } finally {
+                queueUrlLock.unlock();
+            }
         }
-        return queueUrl;
+        return url;
     }
 
     public int getMaxMessagesPerPoll() {

@@ -19,6 +19,7 @@ package org.apache.camel.component.google.firestore;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -48,12 +49,11 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
 
     private final GoogleFirestoreEndpoint endpoint;
     private ListenerRegistration listenerRegistration;
-    private volatile Queue<Exchange> pendingExchanges;
+    private final Queue<Exchange> pendingExchanges = new ConcurrentLinkedQueue<>();
 
     public GoogleFirestoreConsumer(GoogleFirestoreEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.pendingExchanges = new LinkedList<>();
     }
 
     @Override
@@ -93,9 +93,7 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
                     for (DocumentChange dc : snapshots.getDocumentChanges()) {
                         try {
                             Exchange exchange = createExchangeFromDocument(dc.getDocument(), dc.getType());
-                            synchronized (pendingExchanges) {
-                                pendingExchanges.add(exchange);
-                            }
+                            pendingExchanges.add(exchange);
                         } catch (Exception ex) {
                             LOG.error("Error creating exchange from document change", ex);
                         }
@@ -119,10 +117,11 @@ public class GoogleFirestoreConsumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> exchanges;
 
         if (endpoint.getConfiguration().isRealtimeUpdates()) {
-            // Get pending exchanges from realtime listener
-            synchronized (pendingExchanges) {
-                exchanges = new LinkedList<>(pendingExchanges);
-                pendingExchanges.clear();
+            // Drain pending exchanges from realtime listener (lock-free)
+            exchanges = new LinkedList<>();
+            Exchange e;
+            while ((e = pendingExchanges.poll()) != null) {
+                exchanges.add(e);
             }
         } else {
             // Poll the collection
