@@ -33,7 +33,6 @@ import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolExecutorCache;
 import org.apache.camel.component.langchain4j.tools.spec.CamelToolSpecification;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +62,11 @@ public class LangChain4jAgentProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        Object messagePayload = exchange.getIn().getBody();
-        ObjectHelper.notNull(messagePayload, "body");
+        // Object messagePayload = exchange.getIn().getBody();
+        // AiAgentBody<?> aiAgentBody = exchange.getMessage().getMandatoryBody(String.class);
+        //ObjectHelper.notNull(messagePayload, "body");
+
+        AiAgentBody<?> body = exchange.getMessage().getMandatoryBody(AiAgentBody.class);
 
         // tags for Camel Routes as Tools
         String tags = endpoint.getConfiguration().getTags();
@@ -73,10 +75,10 @@ public class LangChain4jAgentProducer extends DefaultProducer {
             agent = agentFactory.createAgent(exchange);
         }
 
-        AiAgentBody<?> aiAgentBody = agent.processBody(messagePayload, exchange);
+        //AiAgentBody<?> aiAgentBody = agent.processBody(messagePayload, exchange);
 
         ToolProvider toolProvider = createCamelToolProvider(tags, exchange);
-        String response = agent.chat(aiAgentBody, toolProvider);
+        String response = agent.chat(body, toolProvider);
         exchange.getMessage().setBody(response);
     }
 

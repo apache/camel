@@ -16,11 +16,16 @@
  */
 package org.apache.camel.component.langchain4j.agent;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.util.Base64;
+
+import javax.imageio.ImageIO;
 
 import dev.langchain4j.data.audio.Audio;
 import dev.langchain4j.data.image.Image;
@@ -34,6 +39,7 @@ import dev.langchain4j.data.pdf.PdfFile;
 import dev.langchain4j.data.video.Video;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.langchain4j.agent.api.AiAgentBody;
 import org.slf4j.Logger;
@@ -192,9 +198,78 @@ public final class LangChain4jAgentConverter {
     }
 
     /**
+     * Converts a {@link String} to an {@link AiAgentBody} with the appropriate {@link Content} type.
+     * <p>
+     * This converter is useful for the text components that return Text Body.
+     * </p>
+     *
+     * @param  text
+     * @param  exchange
+     * @return          an AiAgentBody with the appropriate Content type
+     */
+    @Converter
+    public static AiAgentBody<?> textToAiAgentBody(String text, Exchange exchange) {
+        String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
+        String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
+        Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
+
+        TextContent content = TextContent.from(text);
+
+        AiAgentBody<TextContent> body = new AiAgentBody<>();
+        body.setUserMessage(userMessage != null ? userMessage : text);
+        body.setSystemMessage(systemMessage);
+        body.setMemoryId(memoryId);
+        body.setContent(content);
+        return body;
+    }
+
+    /**
+     * Converts a {@link String} to an {@link AiAgentBody} with the appropriate {@link Content} type.
+     * <p>
+     * This converter is useful for the text components that return Text Body.
+     * </p>
+     *
+     * @param  bufferedImage
+     * @param  exchange
+     * @return               an AiAgentBody with the appropriate Content type
+     */
+    @Converter
+    public static AiAgentBody<?> bufferImageToAiAgentBody(BufferedImage bufferedImage, Exchange exchange) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(bufferedImage, "png", baos);
+            byte[] bytes = baos.toByteArray();
+            String base64 = Base64.getEncoder().encodeToString(bytes);
+            Image img = Image.builder().base64Data(base64).mimeType("image/png").build();
+            ImageContent content = ImageContent.from(img);
+            String userMessage = exchange.getIn().getHeader(USER_MESSAGE, String.class);
+            String systemMessage = exchange.getIn().getHeader(SYSTEM_MESSAGE, String.class);
+            Object memoryId = exchange.getIn().getHeader(MEMORY_ID);
+
+            AiAgentBody<ImageContent> body = new AiAgentBody<ImageContent>();
+            body.setUserMessage(userMessage != null ? userMessage : "");
+            body.setSystemMessage(systemMessage);
+            body.setMemoryId(memoryId);
+            body.setContent(content);
+            return body;
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to convert BufferedImage", e);
+        }
+
+    }
+
+    @Converter
+    public static AiAgentBody<?> inputStreamCacheToAiAgentBody(
+            org.apache.camel.converter.stream.ByteArrayInputStreamCache cache,
+            Exchange exchange) {
+
+        return inputStreamToAiAgentBody(cache, exchange);
+    }
+
+    /**
      * Creates the appropriate LangChain4j Content object based on the MIME type.
      */
     static Content createContent(byte[] data, String mimeType) {
+
         String base64Data = Base64.getEncoder().encodeToString(data);
 
         if (mimeType.startsWith("image/")) {
@@ -273,43 +348,48 @@ public final class LangChain4jAgentConverter {
      */
     private static String detectMimeTypeFromHeaders(Exchange exchange) {
         // Check agent-specific header first (highest priority)
-        String mediaType = exchange.getIn().getHeader(MEDIA_TYPE, String.class);
+        Message message = exchange.getMessage();
+
+        String mediaType = message.getHeader(MEDIA_TYPE, String.class);
         if (mediaType != null) {
             return normalizeContentType(mediaType);
         }
-
         // Cloud storage component content type headers
         String[] cloudContentTypeHeaders = {
-                "CamelAwsS3ContentType",                  // AWS S3
-                "CamelAzureStorageBlobContentType",       // Azure Blob Storage
-                "CamelAzureStorageDataLakeContentType",   // Azure Data Lake Storage
-                "CamelGoogleCloudStorageContentType",     // Google Cloud Storage
-                "CamelMinioContentType",                  // Minio (S3-compatible)
-                "CamelIBMCOSContentType"                  // IBM Cloud Object Storage
+                "CamelAwsS3ContentType",
+                "CamelAzureStorageBlobContentType",
+                "CamelAzureStorageDataLakeContentType",
+                "CamelGoogleCloudStorageContentType",
+                "CamelMinioContentType",
+                "CamelIBMCOSContentType"
         };
 
         for (String header : cloudContentTypeHeaders) {
-            String cloudContentType = exchange.getIn().getHeader(header, String.class);
+            String cloudContentType = message.getHeader(header, String.class);
             if (cloudContentType != null) {
                 return normalizeContentType(cloudContentType);
             }
         }
-
         // Check standard content type header
-        String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
         if (contentType != null) {
             return normalizeContentType(contentType);
         }
-
         // Check file component's content type header
-        String fileContentType = exchange.getIn().getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
+        String fileContentType = message.getHeader(Exchange.FILE_CONTENT_TYPE, String.class);
         if (fileContentType != null) {
             return normalizeContentType(fileContentType);
         }
 
-        throw new IllegalArgumentException(
-                "MIME type is required for byte[] or InputStream input. "
-                                           + "Please set the CamelLangChain4jAgentMediaType header.");
+        String fileName = message.getHeader(Exchange.FILE_NAME, String.class);
+        if (fileName != null) {
+            String mime = URLConnection.guessContentTypeFromName(fileName);
+            if (mime != null) {
+                return normalizeContentType(mime);
+            }
+        }
+
+        return "text/plain";
     }
 
     /**
